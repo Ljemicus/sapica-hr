@@ -4,30 +4,35 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Users, ClipboardList, Shield, CheckCircle, XCircle, Search } from 'lucide-react';
+import { Users, ClipboardList, Shield, CheckCircle, XCircle, Search, TrendingUp, DollarSign, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { PageHeader } from '@/components/shared/page-header';
 import { createClient } from '@/lib/supabase/client';
 import { STATUS_LABELS, SERVICE_LABELS, type User, type Booking, type SitterProfile, type BookingStatus, type ServiceType } from '@/lib/types';
 import { toast } from 'sonner';
 
 const statusColors: Record<BookingStatus, string> = {
-  pending: 'bg-yellow-100 text-yellow-700',
-  accepted: 'bg-blue-100 text-blue-700',
-  rejected: 'bg-red-100 text-red-700',
-  completed: 'bg-green-100 text-green-700',
-  cancelled: 'bg-gray-100 text-gray-700',
+  pending: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+  accepted: 'bg-blue-50 text-blue-700 border-blue-200',
+  rejected: 'bg-red-50 text-red-700 border-red-200',
+  completed: 'bg-green-50 text-green-700 border-green-200',
+  cancelled: 'bg-gray-50 text-gray-700 border-gray-200',
 };
 
 const roleColors: Record<string, string> = {
-  owner: 'bg-blue-100 text-blue-700',
-  sitter: 'bg-green-100 text-green-700',
-  admin: 'bg-purple-100 text-purple-700',
+  owner: 'bg-blue-50 text-blue-700 border-blue-200',
+  sitter: 'bg-green-50 text-green-700 border-green-200',
+  admin: 'bg-purple-50 text-purple-700 border-purple-200',
+};
+
+const roleLabels: Record<string, string> = {
+  owner: 'Vlasnik',
+  sitter: 'Sitter',
+  admin: 'Admin',
 };
 
 interface Props {
@@ -42,11 +47,7 @@ export function AdminContent({ users, bookings, sitters }: Props) {
   const supabase = createClient();
 
   const toggleVerification = async (userId: string, currentStatus: boolean) => {
-    const { error } = await supabase
-      .from('sitter_profiles')
-      .update({ verified: !currentStatus })
-      .eq('user_id', userId);
-
+    const { error } = await supabase.from('sitter_profiles').update({ verified: !currentStatus }).eq('user_id', userId);
     if (error) toast.error('Greška pri ažuriranju');
     else { toast.success(!currentStatus ? 'Sitter verificiran!' : 'Verifikacija uklonjena'); router.refresh(); }
   };
@@ -56,115 +57,144 @@ export function AdminContent({ users, bookings, sitters }: Props) {
     u.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const totalRevenue = bookings.filter(b => b.status === 'completed').reduce((sum, b) => sum + b.total_price, 0);
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <PageHeader title="Admin panel" description="Upravljajte korisnicima, rezervacijama i verifikacijama" />
+      <div className="mb-8 animate-fade-in-up">
+        <h1 className="text-3xl font-bold tracking-tight">Admin panel</h1>
+        <p className="text-muted-foreground mt-1">Upravljajte korisnicima, rezervacijama i verifikacijama</p>
+      </div>
 
-      {/* Stats */}
+      {/* KPI Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{users.length}</p>
-            <p className="text-xs text-muted-foreground">Korisnika</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{sitters.length}</p>
-            <p className="text-xs text-muted-foreground">Sittera</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{bookings.length}</p>
-            <p className="text-xs text-muted-foreground">Rezervacija</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{sitters.filter(s => s.verified).length}</p>
-            <p className="text-xs text-muted-foreground">Verificiranih</p>
-          </CardContent>
-        </Card>
+        {[
+          { label: 'Korisnika', value: users.length, icon: Users, color: 'from-blue-500 to-cyan-500' },
+          { label: 'Sittera', value: sitters.length, icon: Shield, color: 'from-green-500 to-emerald-500' },
+          { label: 'Rezervacija', value: bookings.length, icon: ClipboardList, color: 'from-purple-500 to-pink-500' },
+          { label: 'Ukupan prihod', value: `${totalRevenue}€`, icon: DollarSign, color: 'from-orange-500 to-amber-500' },
+        ].map((stat, i) => (
+          <Card key={stat.label} className={`border-0 shadow-sm animate-fade-in-up delay-${(i + 1) * 100}`}>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-sm flex-shrink-0`}>
+                  <stat.icon className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{stat.value}</p>
+                  <p className="text-xs text-muted-foreground">{stat.label}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <Tabs defaultValue="users" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="users"><Users className="h-4 w-4 mr-1" /> Korisnici</TabsTrigger>
-          <TabsTrigger value="bookings"><ClipboardList className="h-4 w-4 mr-1" /> Rezervacije</TabsTrigger>
-          <TabsTrigger value="verification"><Shield className="h-4 w-4 mr-1" /> Verifikacija</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 h-12">
+          <TabsTrigger value="users" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><Users className="h-4 w-4 mr-1.5" /> Korisnici</TabsTrigger>
+          <TabsTrigger value="bookings" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><ClipboardList className="h-4 w-4 mr-1.5" /> Rezervacije</TabsTrigger>
+          <TabsTrigger value="verification" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><Shield className="h-4 w-4 mr-1.5" /> Verifikacija</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="users" className="space-y-4">
+        <TabsContent value="users" className="space-y-4 animate-fade-in">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input placeholder="Pretraži korisnike..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
+            <Input placeholder="Pretraži korisnike po imenu ili emailu..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 focus:border-orange-300 rounded-xl" />
           </div>
-          <div className="space-y-2">
-            {filteredUsers.map((u) => (
-              <Card key={u.id}>
-                <CardContent className="p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+          <div className="bg-white rounded-xl border-0 shadow-sm overflow-hidden">
+            <div className="grid grid-cols-12 gap-4 p-3 bg-gray-50 text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
+              <div className="col-span-5">Korisnik</div>
+              <div className="col-span-3">Uloga</div>
+              <div className="col-span-2">Grad</div>
+              <div className="col-span-2 text-right">Status</div>
+            </div>
+            <div className="divide-y">
+              {filteredUsers.map((u) => (
+                <div key={u.id} className="grid grid-cols-12 gap-4 p-3 items-center hover:bg-gray-50/50 transition-colors">
+                  <div className="col-span-5 flex items-center gap-3">
                     <Avatar className="h-9 w-9">
                       <AvatarImage src={u.avatar_url || ''} />
-                      <AvatarFallback className="bg-orange-100 text-orange-600 text-sm">{u.name?.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm">{u.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>
                       <p className="font-medium text-sm">{u.name}</p>
                       <p className="text-xs text-muted-foreground">{u.email}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge className={roleColors[u.role]}>{u.role}</Badge>
-                    <span className="text-xs text-muted-foreground">{u.city || '—'}</span>
+                  <div className="col-span-3">
+                    <Badge className={`${roleColors[u.role]} border text-xs`}>{roleLabels[u.role] || u.role}</Badge>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <div className="col-span-2 text-sm text-muted-foreground flex items-center gap-1">
+                    <MapPin className="h-3 w-3" />
+                    {u.city || '—'}
+                  </div>
+                  <div className="col-span-2 text-right">
+                    <div className="w-2 h-2 rounded-full bg-green-400 inline-block" title="Aktivan" />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="bookings" className="space-y-2">
-          {bookings.map((b) => (
-            <Card key={b.id}>
-              <CardContent className="p-3">
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <div>
-                    <p className="text-sm"><span className="font-medium">{b.owner?.name}</span> → <span className="font-medium">{b.sitter?.name}</span></p>
+        <TabsContent value="bookings" className="space-y-2 animate-fade-in">
+          <div className="bg-white rounded-xl border-0 shadow-sm overflow-hidden">
+            <div className="grid grid-cols-12 gap-4 p-3 bg-gray-50 text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b">
+              <div className="col-span-4">Vlasnik → Sitter</div>
+              <div className="col-span-3">Usluga / Datum</div>
+              <div className="col-span-2">Status</div>
+              <div className="col-span-3 text-right">Cijena</div>
+            </div>
+            <div className="divide-y">
+              {bookings.map((b) => (
+                <div key={b.id} className="grid grid-cols-12 gap-4 p-3 items-center hover:bg-gray-50/50 transition-colors">
+                  <div className="col-span-4">
+                    <p className="text-sm"><span className="font-medium">{b.owner?.name}</span> <span className="text-muted-foreground">→</span> <span className="font-medium">{b.sitter?.name}</span></p>
+                  </div>
+                  <div className="col-span-3">
+                    <p className="text-xs font-medium">{SERVICE_LABELS[b.service_type as ServiceType]}</p>
                     <p className="text-xs text-muted-foreground">
-                      {SERVICE_LABELS[b.service_type as ServiceType]} · {format(new Date(b.start_date), 'd. MMM', { locale: hr })} — {format(new Date(b.end_date), 'd. MMM yyyy.', { locale: hr })}
+                      {format(new Date(b.start_date), 'd. MMM', { locale: hr })} — {format(new Date(b.end_date), 'd. MMM', { locale: hr })}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge className={statusColors[b.status as BookingStatus]}>{STATUS_LABELS[b.status as BookingStatus]}</Badge>
-                    <span className="font-semibold text-sm text-orange-500">{b.total_price}€</span>
+                  <div className="col-span-2">
+                    <Badge className={`${statusColors[b.status as BookingStatus]} border text-xs`}>{STATUS_LABELS[b.status as BookingStatus]}</Badge>
+                  </div>
+                  <div className="col-span-3 text-right">
+                    <span className="font-bold text-sm text-orange-500">{b.total_price}€</span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+              ))}
+            </div>
+          </div>
         </TabsContent>
 
-        <TabsContent value="verification" className="space-y-2">
+        <TabsContent value="verification" className="space-y-3 animate-fade-in">
           {sitters.map((s) => (
-            <Card key={s.user_id}>
-              <CardContent className="p-3 flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-sm">{s.user?.name}</p>
-                  <p className="text-xs text-muted-foreground">{s.user?.email} · {s.city} · {s.experience_years} god. iskustva · {s.review_count} recenzija</p>
+            <Card key={s.user_id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${s.verified ? 'from-green-400 to-emerald-300' : 'from-gray-300 to-gray-200'} flex items-center justify-center`}>
+                    <Shield className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium">{s.user?.name}</p>
+                    <p className="text-xs text-muted-foreground">{s.user?.email} · {s.city} · {s.experience_years} god. iskustva · {s.review_count} recenzija</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   {s.verified ? (
-                    <Badge className="bg-green-100 text-green-700">
+                    <Badge className="bg-green-50 text-green-700 border border-green-200 hover:bg-green-50">
                       <CheckCircle className="h-3 w-3 mr-1" /> Verificiran
                     </Badge>
                   ) : (
-                    <Badge variant="secondary">Neverificiran</Badge>
+                    <Badge variant="secondary" className="bg-gray-50">Neverificiran</Badge>
                   )}
                   <Button
                     size="sm"
                     variant={s.verified ? 'outline' : 'default'}
-                    className={!s.verified ? 'bg-green-600 hover:bg-green-700' : 'text-red-500'}
+                    className={!s.verified ? 'bg-green-600 hover:bg-green-700 btn-hover shadow-sm' : 'text-red-500 hover:bg-red-50 hover:border-red-200'}
                     onClick={() => toggleVerification(s.user_id, s.verified)}
                   >
                     {s.verified ? <><XCircle className="h-3 w-3 mr-1" /> Ukloni</> : <><CheckCircle className="h-3 w-3 mr-1" /> Verificiraj</>}

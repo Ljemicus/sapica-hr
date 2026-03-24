@@ -1,20 +1,22 @@
 import Link from 'next/link';
-import { Search, Shield, Star, Heart, Clock, MapPin, ChevronRight, Dog, Cat, PawPrint } from 'lucide-react';
+import {
+  Search, Shield, Star, Heart, Clock, MapPin, ChevronRight,
+  Home, Dog, House, Eye, Sun, Users, Calendar, CheckCircle2,
+  ArrowRight, Quote
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { SERVICE_LABELS } from '@/lib/types';
 
-// Hero section featured sitters (hardcoded)
 const featuredSitters = [
-  { id: '11111111-1111-1111-1111-111111111111', name: 'Ana Horvat', city: 'Rijeka', rating: 4.9, reviews: 23, price: 25, bio: 'Obožavam životinje od malih nogu! Imam veliku kuću s dvorištem.', verified: true, superhost: true, initial: 'A' },
-  { id: '44444444-4444-4444-4444-444444444444', name: 'Luka Jurić', city: 'Rijeka', rating: 4.6, reviews: 31, price: 22, bio: 'Umirovljeni vatrogasac s velikom kućom na Trsatu.', verified: true, superhost: true, initial: 'L' },
-  { id: '88888888-8888-8888-8888-888888888888', name: 'Ivan Knežević', city: 'Zagreb', rating: 4.9, reviews: 27, price: 32, bio: 'Iskusni čuvar s fokusom na ljubimce s posebnim potrebama.', verified: true, superhost: true, initial: 'I' },
-  { id: '33333333-3333-3333-3333-333333333333', name: 'Ivana Babić', city: 'Rijeka', rating: 4.8, reviews: 19, price: 8, bio: 'Studentica biologije i velika ljubiteljica životinja.', verified: true, superhost: false, initial: 'I' },
-  { id: '66666666-6666-6666-6666-666666666666', name: 'Filip Matić', city: 'Zagreb', rating: 4.8, reviews: 18, price: 27, bio: 'Živim u kući s velikim vrtom i dva vlastita psa.', verified: true, superhost: false, initial: 'F' },
-  { id: '22222222-2222-2222-2222-222222222222', name: 'Marko Novak', city: 'Rijeka', rating: 4.7, reviews: 15, price: 30, bio: 'Veterinarski tehničar s iskustvom u brizi o životinjama.', verified: true, superhost: false, initial: 'M' },
+  { id: '11111111-1111-1111-1111-111111111111', name: 'Ana Horvat', city: 'Rijeka', rating: 4.9, reviews: 23, price: 25, bio: 'Obožavam životinje od malih nogu! Imam veliku kuću s dvorištem.', verified: true, superhost: true, initial: 'A', gradient: 'from-orange-400 to-amber-300' },
+  { id: '44444444-4444-4444-4444-444444444444', name: 'Luka Jurić', city: 'Rijeka', rating: 4.6, reviews: 31, price: 22, bio: 'Umirovljeni vatrogasac s velikom kućom na Trsatu.', verified: true, superhost: true, initial: 'L', gradient: 'from-blue-400 to-cyan-300' },
+  { id: '88888888-8888-8888-8888-888888888888', name: 'Ivan Knežević', city: 'Zagreb', rating: 4.9, reviews: 27, price: 32, bio: 'Iskusni čuvar s fokusom na ljubimce s posebnim potrebama.', verified: true, superhost: true, initial: 'I', gradient: 'from-purple-400 to-pink-300' },
+  { id: '33333333-3333-3333-3333-333333333333', name: 'Ivana Babić', city: 'Rijeka', rating: 4.8, reviews: 19, price: 8, bio: 'Studentica biologije i velika ljubiteljica životinja.', verified: true, superhost: false, initial: 'I', gradient: 'from-green-400 to-emerald-300' },
+  { id: '66666666-6666-6666-6666-666666666666', name: 'Filip Matić', city: 'Zagreb', rating: 4.8, reviews: 18, price: 27, bio: 'Živim u kući s velikim vrtom i dva vlastita psa.', verified: true, superhost: false, initial: 'F', gradient: 'from-rose-400 to-orange-300' },
+  { id: '22222222-2222-2222-2222-222222222222', name: 'Marko Novak', city: 'Rijeka', rating: 4.7, reviews: 15, price: 30, bio: 'Veterinarski tehničar s iskustvom u brizi o životinjama.', verified: true, superhost: false, initial: 'M', gradient: 'from-teal-400 to-cyan-300' },
 ];
 
 const testimonials = [
@@ -25,101 +27,143 @@ const testimonials = [
 
 const howItWorks = [
   { step: 1, title: 'Pretražite sittere', description: 'Unesite svoj grad i datume, pregledajte profile verificiranih sittera i pročitajte recenzije drugih vlasnika.', icon: Search },
-  { step: 2, title: 'Rezervirajte termin', description: 'Kontaktirajte sittera, dogovorite detalje i rezervirajte uslugu online. Plaćanje je sigurno i jednostavno.', icon: Heart },
+  { step: 2, title: 'Rezervirajte termin', description: 'Kontaktirajte sittera, dogovorite detalje i rezervirajte uslugu online. Plaćanje je sigurno i jednostavno.', icon: Calendar },
   { step: 3, title: 'Uživajte bez brige', description: 'Vaš ljubimac je u sigurnim rukama! Primajte ažuriranja i fotke. Nakon usluge, ostavite recenziju.', icon: Shield },
 ];
 
 const services = [
-  { type: 'boarding' as const, title: 'Smještaj', description: 'Vaš ljubimac boravi kod sittera', emoji: '🏠', price: 'od 20€/noć' },
-  { type: 'walking' as const, title: 'Šetnja', description: 'Šetnja vašeg psa u kvartu', emoji: '🐕', price: 'od 8€/šetnja' },
-  { type: 'house-sitting' as const, title: 'Čuvanje u kući', description: 'Sitter dolazi u vašu kuću', emoji: '🏡', price: 'od 30€/noć' },
-  { type: 'drop-in' as const, title: 'Kratki posjet', description: 'Posjet vašem ljubimcu od 30min', emoji: '👋', price: 'od 12€/posjet' },
-  { type: 'daycare' as const, title: 'Dnevna briga', description: 'Cjelodnevna briga kod sittera', emoji: '☀️', price: 'od 18€/dan' },
+  { type: 'boarding' as const, title: 'Smještaj', description: 'Vaš ljubimac boravi kod sittera', icon: Home, price: 'od 20€/noć', color: 'from-orange-500 to-amber-500' },
+  { type: 'walking' as const, title: 'Šetnja', description: 'Šetnja vašeg psa u kvartu', icon: Dog, price: 'od 8€/šetnja', color: 'from-green-500 to-emerald-500' },
+  { type: 'house-sitting' as const, title: 'Čuvanje u kući', description: 'Sitter dolazi u vašu kuću', icon: House, price: 'od 30€/noć', color: 'from-blue-500 to-cyan-500' },
+  { type: 'drop-in' as const, title: 'Kratki posjet', description: 'Posjet vašem ljubimcu od 30min', icon: Eye, price: 'od 12€/posjet', color: 'from-purple-500 to-pink-500' },
+  { type: 'daycare' as const, title: 'Dnevna briga', description: 'Cjelodnevna briga kod sittera', icon: Sun, price: 'od 18€/dan', color: 'from-rose-500 to-orange-500' },
+];
+
+const cities = [
+  { name: 'Zagreb', sitters: 180, gradient: 'from-blue-600 to-blue-400' },
+  { name: 'Rijeka', sitters: 95, gradient: 'from-cyan-600 to-cyan-400' },
+  { name: 'Split', sitters: 120, gradient: 'from-orange-600 to-amber-400' },
+  { name: 'Osijek', sitters: 45, gradient: 'from-green-600 to-emerald-400' },
+  { name: 'Pula', sitters: 55, gradient: 'from-purple-600 to-purple-400' },
+  { name: 'Zadar', sitters: 60, gradient: 'from-rose-600 to-rose-400' },
+];
+
+const stats = [
+  { value: '500+', label: 'Verificiranih sittera', icon: Users },
+  { value: '2.000+', label: 'Uspješnih rezervacija', icon: Calendar },
+  { value: '4.8', label: 'Prosječna ocjena', icon: Star },
+  { value: '50+', label: 'Gradova u Hrvatskoj', icon: MapPin },
 ];
 
 export default function HomePage() {
   return (
     <div>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-amber-50">
-        <div className="absolute inset-0 bg-[url('/images/paw-pattern.svg')] opacity-5" />
-        <div className="container mx-auto px-4 py-20 md:py-32 relative">
+      {/* ── Hero Section ── */}
+      <section className="relative overflow-hidden hero-gradient">
+        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-amber-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float delay-300" />
+        <div className="container mx-auto px-4 py-24 md:py-36 relative">
           <div className="max-w-3xl mx-auto text-center">
-            <Badge className="mb-4 bg-orange-100 text-orange-700 hover:bg-orange-100 border-0 text-sm px-4 py-1">
-              🐾 #1 Pet Sitting platforma u Hrvatskoj
+            <Badge className="mb-6 bg-orange-100 text-orange-700 hover:bg-orange-100 border-0 text-sm px-5 py-1.5 animate-fade-in-up shadow-sm">
+              <PawPrintIcon className="h-3.5 w-3.5 mr-1.5" />
+              #1 Pet Sitting platforma u Hrvatskoj
             </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 animate-fade-in-up delay-100">
               Tko čuva vašeg ljubimca{' '}
-              <span className="text-orange-500">dok ste na putu?</span>
+              <span className="text-gradient">dok ste na putu?</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto animate-fade-in-up delay-200 leading-relaxed">
               Pronađite pouzdane i verificirane čuvare ljubimaca u vašem gradu.
               Vaš ljubimac zaslužuje najbolju brigu — čak i kad niste tu.
             </p>
 
             {/* Search Bar */}
-            <div className="bg-white rounded-2xl shadow-xl p-3 md:p-4 max-w-2xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl shadow-orange-100/50 p-3 md:p-4 max-w-2xl mx-auto animate-fade-in-up delay-300 border border-orange-100/50">
               <form action="/pretraga" className="flex flex-col md:flex-row gap-3">
                 <div className="flex-1 relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-orange-400" />
                   <Input
                     name="city"
                     placeholder="Grad (npr. Rijeka, Zagreb...)"
-                    className="pl-10 h-12 border-gray-200"
+                    className="pl-10 h-12 border-gray-200 focus:border-orange-300 focus:ring-orange-200"
                   />
                 </div>
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-orange-400" />
                   <Input
                     name="service"
                     placeholder="Usluga (smještaj, šetnja...)"
-                    className="pl-10 h-12 border-gray-200"
+                    className="pl-10 h-12 border-gray-200 focus:border-orange-300 focus:ring-orange-200"
                   />
                 </div>
                 <Link href="/pretraga">
-                  <Button size="lg" className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 h-12 px-8">
+                  <Button size="lg" className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 h-12 px-8 btn-hover shadow-md shadow-orange-200">
+                    <Search className="h-4 w-4 mr-2" />
                     Pretraži
                   </Button>
                 </Link>
               </form>
             </div>
 
-            <div className="flex items-center justify-center gap-6 mt-8 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
+            <div className="flex items-center justify-center gap-6 md:gap-8 mt-10 text-sm text-muted-foreground animate-fade-in-up delay-400">
+              <div className="flex items-center gap-1.5">
                 <Shield className="h-4 w-4 text-green-500" />
-                Verificirani sitteri
+                <span>Verificirani sitteri</span>
               </div>
-              <div className="flex items-center gap-1">
-                <Star className="h-4 w-4 text-amber-400" />
-                4.8 prosječna ocjena
+              <div className="flex items-center gap-1.5">
+                <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                <span>4.8 prosječna ocjena</span>
               </div>
-              <div className="flex items-center gap-1">
-                <Heart className="h-4 w-4 text-red-400" />
-                500+ sretnih ljubimaca
+              <div className="hidden sm:flex items-center gap-1.5">
+                <Heart className="h-4 w-4 text-red-400 fill-red-400" />
+                <span>500+ sretnih ljubimaca</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="py-20 bg-white">
+      {/* ── Stats Section ── */}
+      <section className="py-0 relative z-10">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-3">Usluge koje nudimo</h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">
+          <div className="bg-white rounded-2xl shadow-lg shadow-gray-100/50 border border-gray-100 -mt-8 md:-mt-12 p-6 md:p-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+              {stats.map((stat, i) => (
+                <div key={stat.label} className={`text-center animate-fade-in-up delay-${(i + 1) * 100}`}>
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-orange-50 mb-3">
+                    <stat.icon className="h-6 w-6 text-orange-500" />
+                  </div>
+                  <p className="text-3xl md:text-4xl font-extrabold text-gray-900">{stat.value}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Services Section ── */}
+      <section className="py-20 md:py-28 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-14">
+            <Badge variant="secondary" className="mb-4 text-orange-600 bg-orange-50 border-0">Usluge</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Sve što vaš ljubimac treba</h2>
+            <p className="text-muted-foreground max-w-lg mx-auto text-lg">
               Od smještaja do šetnje — pronađite savršenu uslugu za vašeg ljubimca
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {services.map((service) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+            {services.map((service, i) => (
               <Link key={service.type} href={`/pretraga?service=${service.type}`}>
-                <Card className="group hover:shadow-md transition-all hover:border-orange-200 cursor-pointer h-full">
-                  <CardContent className="p-6 text-center">
-                    <div className="text-4xl mb-3">{service.emoji}</div>
-                    <h3 className="font-semibold mb-1 group-hover:text-orange-500 transition-colors">{service.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">{service.description}</p>
-                    <p className="text-sm font-medium text-orange-500">{service.price}</p>
+                <Card className={`group card-hover cursor-pointer h-full border-0 shadow-sm overflow-hidden animate-fade-in-up delay-${(i + 1) * 100}`}>
+                  <CardContent className="p-6 text-center relative">
+                    <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br ${service.color} text-white mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <service.icon className="h-7 w-7" />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-1 group-hover:text-orange-500 transition-colors">{service.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-3">{service.description}</p>
+                    <p className="text-sm font-semibold text-orange-500">{service.price}</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -128,84 +172,98 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-20 bg-orange-50/50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-3">Kako funkcionira?</h2>
-            <p className="text-muted-foreground">Tri jednostavna koraka do savršenog čuvara</p>
+      {/* ── How It Works ── */}
+      <section className="py-20 md:py-28 bg-gradient-to-b from-orange-50/50 to-white relative overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+        <div className="container mx-auto px-4 relative">
+          <div className="text-center mb-14">
+            <Badge variant="secondary" className="mb-4 text-orange-600 bg-orange-50 border-0">Kako funkcionira</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Tri jednostavna koraka</h2>
+            <p className="text-muted-foreground text-lg">Od pretrage do sretnog ljubimca</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {howItWorks.map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-orange-500 text-white mb-4 shadow-lg shadow-orange-200">
-                  <item.icon className="h-7 w-7" />
-                  <span className="absolute -top-2 -right-2 w-7 h-7 bg-white text-orange-500 rounded-full text-sm font-bold flex items-center justify-center shadow">
+            {howItWorks.map((item, i) => (
+              <div key={item.step} className={`text-center animate-fade-in-up delay-${(i + 1) * 200}`}>
+                <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-orange-500 to-amber-400 text-white mb-6 shadow-xl shadow-orange-200/50">
+                  <item.icon className="h-8 w-8" />
+                  <span className="absolute -top-2 -right-2 w-8 h-8 bg-white text-orange-500 rounded-full text-sm font-bold flex items-center justify-center shadow-md border-2 border-orange-100">
                     {item.step}
                   </span>
                 </div>
+                {i < howItWorks.length - 1 && (
+                  <div className="hidden md:block absolute top-1/2 left-1/2 w-px h-px">
+                    {/* Connector line rendered via spacing */}
+                  </div>
+                )}
                 <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.description}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Featured Sitters */}
-      <section className="py-20 bg-white">
+      {/* ── Featured Sitters ── */}
+      <section className="py-20 md:py-28 bg-white">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-12">
+          <div className="flex items-end justify-between mb-14">
             <div>
-              <h2 className="text-3xl font-bold mb-3">Popularni sitteri</h2>
-              <p className="text-muted-foreground">Upoznajte naše najbolje ocijenjene čuvare ljubimaca</p>
+              <Badge variant="secondary" className="mb-4 text-orange-600 bg-orange-50 border-0">Top sitteri</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">Popularni sitteri</h2>
+              <p className="text-muted-foreground text-lg">Upoznajte naše najbolje ocijenjene čuvare ljubimaca</p>
             </div>
-            <Link href="/pretraga">
-              <Button variant="outline" className="hidden md:flex items-center gap-1">
+            <Link href="/pretraga" className="hidden md:block">
+              <Button variant="outline" className="items-center gap-1 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200">
                 Vidi sve <ChevronRight className="h-4 w-4" />
               </Button>
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredSitters.map((sitter) => (
+            {featuredSitters.map((sitter, i) => (
               <Link key={sitter.id} href={`/sitter/${sitter.id}`}>
-                <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden">
+                <Card className={`group card-hover cursor-pointer overflow-hidden border-0 shadow-sm animate-fade-in-up delay-${(i + 1) * 100}`}>
                   <CardContent className="p-0">
-                    <div className="relative h-40 bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center">
-                      <Avatar className="h-20 w-20 border-4 border-white shadow-md group-hover:scale-105 transition-transform">
-                        <AvatarFallback className="bg-orange-200 text-orange-700 text-xl">
+                    <div className={`relative h-44 bg-gradient-to-br ${sitter.gradient} flex items-center justify-center`}>
+                      <div className="absolute inset-0 paw-pattern opacity-10" />
+                      <Avatar className="h-22 w-22 border-4 border-white shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <AvatarFallback className="bg-white/90 text-gray-700 text-2xl font-bold">
                           {sitter.initial}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="absolute top-3 right-3 flex gap-1">
+                      <div className="absolute top-3 right-3 flex gap-1.5">
                         {sitter.verified && (
-                          <Badge className="bg-blue-500 text-xs">
+                          <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90">
                             <Shield className="h-3 w-3 mr-1" />
                             Verificiran
                           </Badge>
                         )}
                         {sitter.superhost && (
-                          <Badge className="bg-amber-500 text-xs">Superhost</Badge>
+                          <Badge className="bg-white/90 text-amber-600 text-xs shadow-sm hover:bg-white/90">
+                            <Star className="h-3 w-3 mr-1 fill-amber-500" />
+                            Superhost
+                          </Badge>
                         )}
                       </div>
                     </div>
-                    <div className="p-4">
+                    <div className="p-5">
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-semibold group-hover:text-orange-500 transition-colors">{sitter.name}</h3>
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                          <span className="text-sm font-medium">{sitter.rating}</span>
-                          <span className="text-xs text-muted-foreground">({sitter.reviews})</span>
+                        <h3 className="font-semibold text-lg group-hover:text-orange-500 transition-colors">{sitter.name}</h3>
+                        <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-full">
+                          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                          <span className="text-sm font-semibold text-amber-700">{sitter.rating}</span>
+                          <span className="text-xs text-amber-600/70">({sitter.reviews})</span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground mb-3">
                         <MapPin className="h-3.5 w-3.5" />
                         {sitter.city}
                       </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{sitter.bio}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{sitter.bio}</p>
                       <div className="flex items-center justify-between pt-3 border-t">
-                        <span className="text-lg font-bold text-orange-500">od {sitter.price}€</span>
-                        <span className="text-xs text-muted-foreground">po usluzi</span>
+                        <span className="text-xl font-bold text-orange-500">od {sitter.price}€</span>
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                          Pogledaj profil <ArrowRight className="h-3 w-3" />
+                        </span>
                       </div>
                     </div>
                   </CardContent>
@@ -213,40 +271,76 @@ export default function HomePage() {
               </Link>
             ))}
           </div>
-          <div className="text-center mt-8 md:hidden">
+          <div className="text-center mt-10 md:hidden">
             <Link href="/pretraga">
-              <Button variant="outline">Vidi sve sittere</Button>
+              <Button variant="outline" className="hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200">
+                Vidi sve sittere <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20 bg-gray-50">
+      {/* ── Cities Section ── */}
+      <section className="py-20 md:py-28 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-3">Što kažu naši korisnici</h2>
-            <p className="text-muted-foreground">Stvarna iskustva vlasnika ljubimaca</p>
+          <div className="text-center mb-14">
+            <Badge variant="secondary" className="mb-4 text-orange-600 bg-orange-50 border-0">Lokacije</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Dostupni u cijeloj Hrvatskoj</h2>
+            <p className="text-muted-foreground text-lg">Pronađite čuvare u vašem gradu</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {cities.map((city, i) => (
+              <Link key={city.name} href={`/pretraga?city=${city.name}`}>
+                <Card className={`group card-hover cursor-pointer overflow-hidden border-0 shadow-sm animate-fade-in-up delay-${(i + 1) * 100}`}>
+                  <CardContent className="p-0">
+                    <div className={`h-28 bg-gradient-to-br ${city.gradient} relative flex items-end p-4`}>
+                      <div className="absolute inset-0 paw-pattern opacity-10" />
+                      <div className="relative">
+                        <h3 className="text-white font-bold text-lg leading-none">{city.name}</h3>
+                        <p className="text-white/80 text-xs mt-1">{city.sitters} sittera</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Testimonials ── */}
+      <section className="py-20 md:py-28 bg-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-50 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl opacity-50" />
+        <div className="container mx-auto px-4 relative">
+          <div className="text-center mb-14">
+            <Badge variant="secondary" className="mb-4 text-orange-600 bg-orange-50 border-0">Recenzije</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Što kažu naši korisnici</h2>
+            <p className="text-muted-foreground text-lg">Stvarna iskustva vlasnika ljubimaca</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {testimonials.map((t, i) => (
-              <Card key={i} className="bg-white">
-                <CardContent className="p-6">
+              <Card key={i} className={`bg-white border-0 shadow-sm card-hover animate-fade-in-up delay-${(i + 1) * 200}`}>
+                <CardContent className="p-6 relative">
+                  <Quote className="h-8 w-8 text-orange-100 absolute top-4 right-4" />
                   <div className="flex items-center gap-0.5 mb-4">
                     {Array.from({ length: 5 }, (_, j) => (
                       <Star key={j} className={`h-4 w-4 ${j < t.rating ? 'fill-amber-400 text-amber-400' : 'fill-gray-200 text-gray-200'}`} />
                     ))}
                   </div>
-                  <p className="text-sm text-gray-600 mb-4 italic">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-orange-100 text-orange-600 text-xs">
+                  <p className="text-sm text-gray-600 mb-6 leading-relaxed">&ldquo;{t.text}&rdquo;</p>
+                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm font-medium">
                         {t.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="text-sm font-medium">{t.name}</p>
-                      <p className="text-xs text-muted-foreground">{t.city}</p>
+                      <p className="text-sm font-semibold">{t.name}</p>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <MapPin className="h-3 w-3" />
+                        {t.city}
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -256,45 +350,72 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA for Sitters */}
-      <section className="py-20 bg-gradient-to-br from-orange-500 to-amber-500 text-white">
-        <div className="container mx-auto px-4 text-center">
+      {/* ── CTA for Sitters ── */}
+      <section className="py-20 md:py-28 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-orange-500 to-amber-500" />
+        <div className="absolute inset-0 paw-pattern opacity-[0.06]" />
+        <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-y-1/2 -translate-x-1/2 opacity-[0.06]" />
+        <div className="absolute bottom-0 right-0 w-72 h-72 bg-white rounded-full translate-y-1/2 translate-x-1/2 opacity-[0.06]" />
+        <div className="container mx-auto px-4 text-center relative">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Volite životinje? Zarađujte čuvajući ljubimce!</h2>
-            <p className="text-lg text-orange-100 mb-8">
+            <Badge className="mb-6 bg-white/20 text-white hover:bg-white/20 border-0 text-sm px-4 py-1.5">
+              <Heart className="h-3.5 w-3.5 mr-1.5 fill-white" />
+              Pridruži se zajednici
+            </Badge>
+            <h2 className="text-3xl md:text-5xl font-extrabold mb-6 text-white leading-tight">
+              Volite životinje?<br />Zarađujte čuvajući ljubimce!
+            </h2>
+            <p className="text-lg text-white/80 mb-10 max-w-lg mx-auto leading-relaxed">
               Pridružite se stotinama sittera diljem Hrvatske. Postavite vlastite cijene,
               upravljajte rasporedom i zarađujte radeći ono što volite.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/registracija?role=sitter">
-                <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 shadow-lg text-base px-8">
+                <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 shadow-xl shadow-black/10 text-base px-8 btn-hover font-semibold">
                   Postani sitter
-                  <ChevronRight className="ml-1 h-5 w-5" />
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link href="#kako-funkcionira">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 text-base px-8">
-                  Saznaj više
+              <Link href="/pretraga">
+                <Button size="lg" variant="outline" className="border-2 border-white/40 text-white hover:bg-white/10 text-base px-8">
+                  Pretraži sittere
                 </Button>
               </Link>
             </div>
-            <div className="grid grid-cols-3 gap-8 mt-12 max-w-md mx-auto">
-              <div>
-                <p className="text-3xl font-bold">500+</p>
-                <p className="text-sm text-orange-100">Sittera</p>
+
+            <div className="grid grid-cols-3 gap-8 mt-16 max-w-md mx-auto">
+              <div className="animate-count-up">
+                <p className="text-4xl font-extrabold text-white">500+</p>
+                <p className="text-sm text-white/70 mt-1">Sittera</p>
               </div>
-              <div>
-                <p className="text-3xl font-bold">2000+</p>
-                <p className="text-sm text-orange-100">Rezervacija</p>
+              <div className="animate-count-up delay-200">
+                <p className="text-4xl font-extrabold text-white">2000+</p>
+                <p className="text-sm text-white/70 mt-1">Rezervacija</p>
               </div>
-              <div>
-                <p className="text-3xl font-bold">4.8★</p>
-                <p className="text-sm text-orange-100">Prosječna ocjena</p>
+              <div className="animate-count-up delay-400">
+                <p className="text-4xl font-extrabold text-white">4.8</p>
+                <div className="flex items-center justify-center gap-0.5 mt-1">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <Star key={i} className="h-3 w-3 fill-white text-white" />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
     </div>
+  );
+}
+
+function PawPrintIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <ellipse cx="12" cy="15" rx="3.5" ry="4" />
+      <ellipse cx="7.5" cy="9" rx="2" ry="2.8" />
+      <ellipse cx="16.5" cy="9" rx="2" ry="2.8" />
+      <ellipse cx="5" cy="13.5" rx="1.8" ry="2.5" />
+      <ellipse cx="19" cy="13.5" rx="1.8" ry="2.5" />
+    </svg>
   );
 }

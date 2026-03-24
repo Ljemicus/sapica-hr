@@ -7,18 +7,33 @@ import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import {
   Star, MapPin, Clock, Shield, Award, Calendar, MessageCircle,
-  Heart, ChevronLeft, CheckCircle2
+  Heart, ChevronLeft, CheckCircle2, Home, Dog, House, Eye, Sun
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
 import { SERVICE_LABELS, type SitterProfile, type User, type Review, type Availability, type ServiceType } from '@/lib/types';
 import { useUser } from '@/hooks/use-user';
 import { BookingDialog } from './booking-dialog';
+
+const serviceIcons: Record<ServiceType, React.ElementType> = {
+  'boarding': Home,
+  'walking': Dog,
+  'house-sitting': House,
+  'drop-in': Eye,
+  'daycare': Sun,
+};
+
+const serviceColors: Record<ServiceType, string> = {
+  'boarding': 'from-orange-500 to-amber-500',
+  'walking': 'from-green-500 to-emerald-500',
+  'house-sitting': 'from-blue-500 to-cyan-500',
+  'drop-in': 'from-purple-500 to-pink-500',
+  'daycare': 'from-rose-500 to-orange-500',
+};
 
 interface SitterProfileContentProps {
   profile: SitterProfile & { user: User };
@@ -33,9 +48,13 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
 
   const availableDates = new Set(availability.map((a) => a.date));
 
+  const gradient = profile.user?.name
+    ? ['from-orange-400 to-amber-300', 'from-blue-400 to-cyan-300', 'from-purple-400 to-pink-300', 'from-green-400 to-emerald-300'][profile.user.name.charCodeAt(0) % 4]
+    : 'from-orange-400 to-amber-300';
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <Button variant="ghost" onClick={() => router.back()} className="mb-4 -ml-2">
+      <Button variant="ghost" onClick={() => router.back()} className="mb-4 -ml-2 hover:bg-orange-50 hover:text-orange-600">
         <ChevronLeft className="h-4 w-4 mr-1" />
         Natrag
       </Button>
@@ -44,17 +63,20 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Profile Header */}
-          <Card>
-            <CardContent className="p-6">
+          <Card className="overflow-hidden border-0 shadow-sm">
+            <div className={`h-32 bg-gradient-to-br ${gradient} relative`}>
+              <div className="absolute inset-0 paw-pattern opacity-10" />
+            </div>
+            <CardContent className="p-6 -mt-16 relative">
               <div className="flex flex-col sm:flex-row gap-6">
-                <Avatar className="h-28 w-28 border-4 border-orange-100">
+                <Avatar className="h-28 w-28 border-4 border-white shadow-lg ring-4 ring-white">
                   <AvatarImage src={profile.user?.avatar_url || ''} alt={profile.user?.name} />
-                  <AvatarFallback className="bg-orange-200 text-orange-700 text-3xl">
+                  <AvatarFallback className="bg-white text-gray-700 text-3xl font-bold">
                     {profile.user?.name?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-start justify-between">
+                <div className="flex-1 pt-2 sm:pt-8">
+                  <div className="flex items-start justify-between flex-wrap gap-2">
                     <div>
                       <h1 className="text-2xl font-bold">{profile.user?.name}</h1>
                       <div className="flex items-center gap-2 text-muted-foreground mt-1">
@@ -62,26 +84,26 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
                         <span>{profile.city}</span>
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2">
                       {profile.verified && (
-                        <Badge className="bg-blue-500">
+                        <Badge className="bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-50 animate-fade-in">
                           <Shield className="h-3 w-3 mr-1" />
                           Verificiran
                         </Badge>
                       )}
                       {profile.superhost && (
-                        <Badge className="bg-amber-500">
+                        <Badge className="bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-50 animate-fade-in delay-100">
                           <Award className="h-3 w-3 mr-1" />
                           Superhost
                         </Badge>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 mt-3">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                  <div className="flex items-center gap-4 mt-3 flex-wrap">
+                    <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1 rounded-full">
+                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                       <span className="font-semibold">{profile.rating_avg.toFixed(1)}</span>
-                      <span className="text-sm text-muted-foreground">({profile.review_count} recenzija)</span>
+                      <span className="text-sm text-amber-700/70">({profile.review_count} recenzija)</span>
                     </div>
                     {profile.response_time && (
                       <div className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -89,18 +111,33 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
                         Odgovara {profile.response_time}
                       </div>
                     )}
-                  </div>
-                  <div className="flex items-center gap-1 mt-2 text-sm text-muted-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    {profile.experience_years} godina iskustva
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      {profile.experience_years} god. iskustva
+                    </div>
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
+          {/* Photo Gallery Placeholder */}
+          <Card className="border-0 shadow-sm overflow-hidden">
+            <CardContent className="p-0">
+              <div className="grid grid-cols-4 gap-1 h-48">
+                {[gradient, 'from-gray-200 to-gray-300', 'from-gray-100 to-gray-200', 'from-gray-200 to-gray-100'].map((g, i) => (
+                  <div key={i} className={`bg-gradient-to-br ${g} flex items-center justify-center ${i === 0 ? 'col-span-2 row-span-1' : ''}`}>
+                    <span className="text-white/60 text-xs font-medium">
+                      {i === 0 ? `${profile.user?.name?.charAt(0)}` : ''}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Bio */}
-          <Card>
+          <Card className="border-0 shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg">O meni</CardTitle>
             </CardHeader>
@@ -110,51 +147,55 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
           </Card>
 
           {/* Services & Prices */}
-          <Card>
+          <Card className="border-0 shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg">Usluge i cijene</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {profile.services.map((service) => (
-                  <div
-                    key={service}
-                    className="flex items-center justify-between p-3 rounded-lg border bg-gray-50"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center">
-                        <Heart className="h-4 w-4 text-orange-500" />
+                {profile.services.map((service) => {
+                  const Icon = serviceIcons[service] || Heart;
+                  const color = serviceColors[service] || 'from-orange-500 to-amber-500';
+                  return (
+                    <div
+                      key={service}
+                      className="flex items-center justify-between p-4 rounded-xl border bg-white hover:shadow-md transition-shadow group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}>
+                          <Icon className="h-5 w-5 text-white" />
+                        </div>
+                        <span className="font-medium">{SERVICE_LABELS[service]}</span>
                       </div>
-                      <span className="font-medium text-sm">{SERVICE_LABELS[service]}</span>
+                      <span className="font-bold text-lg text-orange-500">
+                        {profile.prices[service]}&euro;
+                      </span>
                     </div>
-                    <span className="font-bold text-orange-500">
-                      {profile.prices[service]}&euro;
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
 
           {/* Reviews */}
-          <Card>
+          <Card className="border-0 shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 Recenzije
-                <Badge variant="secondary">{reviews.length}</Badge>
+                <Badge variant="secondary" className="bg-orange-50 text-orange-600">{reviews.length}</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
               {reviews.length === 0 ? (
-                <p className="text-muted-foreground text-center py-4">Još nema recenzija</p>
+                <p className="text-muted-foreground text-center py-6">Još nema recenzija</p>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {reviews.map((review) => (
                     <div key={review.id} className="space-y-2">
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8">
+                        <Avatar className="h-9 w-9">
                           <AvatarImage src={review.reviewer?.avatar_url || ''} />
-                          <AvatarFallback className="bg-orange-100 text-orange-600 text-xs">
+                          <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-xs">
                             {review.reviewer?.name?.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
@@ -170,7 +211,7 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
                           </div>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground pl-11">{review.comment}</p>
+                      <p className="text-sm text-muted-foreground pl-12 leading-relaxed">{review.comment}</p>
                       <Separator className="mt-4" />
                     </div>
                   ))}
@@ -182,19 +223,19 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
 
         {/* Sidebar */}
         <div className="space-y-4">
-          <Card className="sticky top-24">
-            <CardContent className="p-6 space-y-4">
-              <div className="text-center">
-                <span className="text-3xl font-bold text-orange-500">
+          <Card className="sticky top-20 border-0 shadow-sm">
+            <CardContent className="p-6 space-y-5">
+              <div className="text-center py-2">
+                <span className="text-4xl font-extrabold text-gradient">
                   od {Math.min(...Object.values(profile.prices).filter((p): p is number => typeof p === 'number'))}&euro;
                 </span>
-                <span className="text-muted-foreground">/usluga</span>
+                <span className="text-muted-foreground block text-sm mt-1">po usluzi</span>
               </div>
 
               {user && user.role === 'owner' ? (
                 <>
                   <Button
-                    className="w-full bg-orange-500 hover:bg-orange-600"
+                    className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50"
                     size="lg"
                     onClick={() => setShowBooking(true)}
                   >
@@ -202,7 +243,7 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
                     Rezerviraj
                   </Button>
                   <Link href={`/poruke?to=${profile.user_id}`}>
-                    <Button variant="outline" className="w-full" size="lg">
+                    <Button variant="outline" className="w-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200" size="lg">
                       <MessageCircle className="h-4 w-4 mr-2" />
                       Kontaktiraj
                     </Button>
@@ -210,7 +251,7 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
                 </>
               ) : !user ? (
                 <Link href={`/prijava?redirect=/sitter/${profile.user_id}`}>
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600" size="lg">
+                  <Button className="w-full bg-orange-500 hover:bg-orange-600 btn-hover" size="lg">
                     Prijavi se za rezervaciju
                   </Button>
                 </Link>
@@ -220,11 +261,11 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
 
               {/* Availability Calendar Preview */}
               <div>
-                <h3 className="font-medium text-sm mb-2 flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
+                <h3 className="font-medium text-sm mb-3 flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4 text-orange-500" />
                   Dostupnost (sljedećih 14 dana)
                 </h3>
-                <div className="grid grid-cols-7 gap-1">
+                <div className="grid grid-cols-7 gap-1.5">
                   {Array.from({ length: 14 }, (_, i) => {
                     const date = new Date();
                     date.setDate(date.getDate() + i);
@@ -233,10 +274,10 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
                     return (
                       <div
                         key={i}
-                        className={`aspect-square rounded-md flex items-center justify-center text-xs font-medium ${
+                        className={`aspect-square rounded-lg flex items-center justify-center text-xs font-medium transition-all ${
                           isAvailable
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-red-50 text-red-400'
+                            ? 'bg-green-100 text-green-700 shadow-sm'
+                            : 'bg-red-50 text-red-300'
                         }`}
                         title={`${format(date, 'd.M.')} — ${isAvailable ? 'Dostupan' : 'Nedostupan'}`}
                       >
@@ -245,12 +286,14 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
                     );
                   })}
                 </div>
-                <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded bg-green-100" /> Dostupan
+                <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded bg-green-100 border border-green-200" />
+                    <span>Dostupan</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded bg-red-50" /> Nedostupan
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded bg-red-50 border border-red-100" />
+                    <span>Nedostupan</span>
                   </div>
                 </div>
               </div>
