@@ -40,6 +40,9 @@ const services = [
   { type: 'house-sitting' as const, title: 'Čuvanje u kući', description: 'Sitter dolazi u vašu kuću', icon: House, price: 'od 30€/noć', color: 'from-blue-500 to-cyan-500', image: '/images/services/06-community.jpg' },
   { type: 'drop-in' as const, title: 'Kratki posjet', description: 'Posjet vašem ljubimcu od 30min', icon: Eye, price: 'od 12€/posjet', color: 'from-purple-500 to-pink-500', image: '/images/services/08-macka.jpg' },
   { type: 'daycare' as const, title: 'Dnevna briga', description: 'Cjelodnevna briga kod sittera', icon: Sun, price: 'od 18€/dan', color: 'from-rose-500 to-orange-500', image: '/images/services/07-hero-puppy.jpg' },
+  { type: 'grooming' as const, title: 'Grooming', description: 'Kupanje, šišanje i njega dlake', icon: Scissors, price: 'od 25€', color: 'from-pink-500 to-fuchsia-500', image: '/images/services/08-macka.jpg' },
+  { type: 'agility' as const, title: 'Agility trening', description: 'Sportski trening za aktivne pse', icon: GraduationCap, price: 'od 15€/sat', color: 'from-yellow-500 to-orange-500', image: '/images/services/04-setanje-pasa.jpg' },
+  { type: 'training' as const, title: 'Dresura', description: 'Profesionalna obuka i socijalizacija', icon: BookOpen, price: 'od 20€/sat', color: 'from-teal-500 to-green-500', image: '/images/services/06-community.jpg' },
 ];
 
 const cities = [
