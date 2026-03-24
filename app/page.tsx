@@ -133,11 +133,12 @@ export default function HomePage() {
       <section className="py-0 relative z-10">
         <div className="container mx-auto px-4">
           <div className="bg-white rounded-2xl shadow-lg shadow-gray-100/50 border border-gray-100 -mt-8 md:-mt-12 p-5 md:p-6">
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-4 md:grid-cols-7 gap-3 md:gap-4">
               {[
                 { href: '/pretraga', emoji: '🐾', label: 'Sitteri', color: 'from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100' },
                 { href: '/njega', emoji: '✂️', label: 'Grooming', color: 'from-pink-50 to-rose-50 hover:from-pink-100 hover:to-rose-100' },
                 { href: '/dresura', emoji: '🎓', label: 'Dresura', color: 'from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100' },
+                { href: '/izgubljeni', emoji: '🚨', label: 'Izgubljeni', color: 'from-red-50 to-rose-50 hover:from-red-100 hover:to-rose-100' },
                 { href: '/forum', emoji: '💬', label: 'Forum', color: 'from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100' },
                 { href: '/zajednica', emoji: '📝', label: 'Blog', color: 'from-purple-50 to-violet-50 hover:from-purple-100 hover:to-violet-100' },
                 { href: '/prijava', emoji: '👤', label: 'Prijava', color: 'from-gray-50 to-slate-50 hover:from-gray-100 hover:to-slate-100' },
