@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import { getMockUser } from '@/lib/mock-auth';
+import { mockUsers, mockBookings, mockSitterProfiles, getUserById } from '@/lib/mock-data';
 import { AdminContent } from './admin-content';
 
 export const metadata: Metadata = {
@@ -8,24 +9,27 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-  const supabase = await createClient();
-  const { data: { user: authUser } } = await supabase.auth.getUser();
-  if (!authUser) redirect('/prijava');
+  const user = await getMockUser();
+  if (!user) redirect('/prijava');
+  if (user.role !== 'admin') redirect('/');
 
-  const { data: userData } = await supabase.from('users').select('*').eq('id', authUser.id).single();
-  if (!userData || userData.role !== 'admin') redirect('/');
+  const users = [...mockUsers].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-  const [usersRes, bookingsRes, sittersRes] = await Promise.all([
-    supabase.from('users').select('*').order('created_at', { ascending: false }),
-    supabase.from('bookings').select('*, owner:users!bookings_owner_id_fkey(name), sitter:users!bookings_sitter_id_fkey(name)').order('created_at', { ascending: false }),
-    supabase.from('sitter_profiles').select('*, user:users!sitter_profiles_user_id_fkey(name, email)').order('created_at', { ascending: false }),
-  ]);
+  const bookings = [...mockBookings]
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .map(b => ({
+      ...b,
+      owner: getUserById(b.owner_id) || { id: b.owner_id, name: 'Nepoznato', email: '', role: 'owner' as const, avatar_url: null, phone: null, city: null, created_at: '' },
+      sitter: getUserById(b.sitter_id) || { id: b.sitter_id, name: 'Nepoznato', email: '', role: 'sitter' as const, avatar_url: null, phone: null, city: null, created_at: '' },
+    }));
+
+  const sitters = mockSitterProfiles;
 
   return (
     <AdminContent
-      users={usersRes.data || []}
-      bookings={bookingsRes.data || []}
-      sitters={sittersRes.data || []}
+      users={users}
+      bookings={bookings}
+      sitters={sitters}
     />
   );
 }

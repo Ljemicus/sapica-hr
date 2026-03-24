@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import { getMockUser } from '@/lib/mock-auth';
+import { getPetsForOwner, getBookingsForUser, getReviewsByUser } from '@/lib/mock-data';
 import { OwnerDashboardContent } from './owner-dashboard-content';
 
 export const metadata: Metadata = {
@@ -8,34 +9,23 @@ export const metadata: Metadata = {
 };
 
 export default async function OwnerDashboardPage() {
-  const supabase = await createClient();
-  const { data: { user: authUser } } = await supabase.auth.getUser();
-  if (!authUser) redirect('/prijava');
+  const user = await getMockUser();
+  if (!user) redirect('/prijava');
+  if (user.role !== 'owner') redirect('/');
 
-  const { data: userData } = await supabase.from('users').select('*').eq('id', authUser.id).single();
-  if (!userData || userData.role !== 'owner') redirect('/');
+  const pets = getPetsForOwner(user.id);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const bookings = getBookingsForUser(user.id, 'owner') as any[];
 
-  const [petsRes, bookingsRes] = await Promise.all([
-    supabase.from('pets').select('*').eq('owner_id', authUser.id).order('created_at', { ascending: false }),
-    supabase.from('bookings').select('*, sitter:users!bookings_sitter_id_fkey(name, avatar_url), pet:pets(name, species)').eq('owner_id', authUser.id).order('created_at', { ascending: false }),
-  ]);
-
-  // Get bookings that are completed but don't have reviews yet
-  const completedBookingIds = (bookingsRes.data || []).filter(b => b.status === 'completed').map(b => b.id);
-  const { data: existingReviews } = await supabase
-    .from('reviews')
-    .select('booking_id')
-    .eq('reviewer_id', authUser.id)
-    .in('booking_id', completedBookingIds.length > 0 ? completedBookingIds : ['none']);
-
-  const reviewedBookingIds = new Set((existingReviews || []).map(r => r.booking_id));
+  const existingReviews = getReviewsByUser(user.id);
+  const reviewedBookingIds = existingReviews.map(r => r.booking_id);
 
   return (
     <OwnerDashboardContent
-      user={userData}
-      pets={petsRes.data || []}
-      bookings={bookingsRes.data || []}
-      reviewedBookingIds={Array.from(reviewedBookingIds)}
+      user={user}
+      pets={pets}
+      bookings={bookings}
+      reviewedBookingIds={reviewedBookingIds}
     />
   );
 }

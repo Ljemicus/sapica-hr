@@ -15,16 +15,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useUser } from '@/hooks/use-user';
-import { createClient } from '@/lib/supabase/client';
+import { clearMockUserClient } from '@/lib/mock-auth-client';
 
 export function Navbar() {
   const { user, loading } = useUser();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const supabase = createClient();
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    clearMockUserClient();
+    window.dispatchEvent(new Event('mock-auth-change'));
     router.push('/');
     router.refresh();
   };

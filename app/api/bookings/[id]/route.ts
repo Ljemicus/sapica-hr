@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getMockUser } from '@/lib/mock-auth';
+import { mockBookings } from '@/lib/mock-data';
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getMockUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await request.json();
@@ -14,13 +14,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
   }
 
-  const { data: booking, error } = await supabase
-    .from('bookings')
-    .update({ status })
-    .eq('id', id)
-    .select()
-    .single();
+  const booking = mockBookings.find(b => b.id === id);
+  if (!booking) return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  // Mutate in-memory
+  (booking as { status: string }).status = status;
+
   return NextResponse.json(booking);
 }

@@ -1,21 +1,37 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getMockUser } from '@/lib/mock-auth';
+import { mockPets, getPetsForOwner } from '@/lib/mock-data';
 import { petSchema } from '@/lib/validations';
 
+export async function GET() {
+  const user = await getMockUser();
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const pets = getPetsForOwner(user.id);
+  return NextResponse.json(pets);
+}
+
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getMockUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await request.json();
   const parsed = petSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
-  const { data: pet, error } = await supabase.from('pets').insert({
+  const pet = {
+    id: `pet-mock-${Date.now()}`,
     owner_id: user.id,
-    ...parsed.data,
-  }).select().single();
+    name: parsed.data.name,
+    species: parsed.data.species,
+    breed: parsed.data.breed || null,
+    age: parsed.data.age ?? null,
+    weight: parsed.data.weight ?? null,
+    special_needs: parsed.data.special_needs || null,
+    photo_url: null,
+    created_at: new Date().toISOString(),
+  };
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  mockPets.push(pet);
   return NextResponse.json(pet, { status: 201 });
 }

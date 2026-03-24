@@ -1,24 +1,38 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getMockUser } from '@/lib/mock-auth';
+import { mockMessages, getMessagesForUser, mockUsers } from '@/lib/mock-data';
 import { messageSchema } from '@/lib/validations';
 
+export async function GET() {
+  const user = await getMockUser();
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const messages = getMessagesForUser(user.id);
+  return NextResponse.json(messages);
+}
+
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getMockUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await request.json();
   const parsed = messageSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
-  const { data: message, error } = await supabase.from('messages').insert({
+  const sender = mockUsers.find(u => u.id === user.id)!;
+
+  const message = {
+    id: `msg-mock-${Date.now()}`,
     sender_id: user.id,
     receiver_id: parsed.data.receiver_id,
     booking_id: parsed.data.booking_id || null,
     content: parsed.data.content,
+    image_url: null,
     read: false,
-  }).select().single();
+    created_at: new Date().toISOString(),
+    sender,
+  };
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  mockMessages.push(message);
   return NextResponse.json(message, { status: 201 });
 }

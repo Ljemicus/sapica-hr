@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getMockUser } from '@/lib/mock-auth';
+import { mockAvailability, getAvailabilityForSitter } from '@/lib/mock-data';
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getMockUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await request.json();
@@ -13,17 +13,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'dates must be an array' }, { status: 400 });
   }
 
-  const records = dates.map((date: string) => ({
-    sitter_id: user.id,
-    date,
-    available: available ?? true,
-  }));
+  // Upsert mock availability
+  for (const date of dates) {
+    const existing = mockAvailability.find(a => a.sitter_id === user.id && a.date === date);
+    if (existing) {
+      (existing as { available: boolean }).available = available ?? true;
+    } else {
+      mockAvailability.push({
+        id: `avail-mock-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        sitter_id: user.id,
+        date,
+        available: available ?? true,
+      });
+    }
+  }
 
-  const { error } = await supabase.from('availability').upsert(records, {
-    onConflict: 'sitter_id,date',
-  });
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });
 }
 
@@ -32,15 +36,6 @@ export async function GET(request: Request) {
   const sitterId = searchParams.get('sitter_id');
   if (!sitterId) return NextResponse.json({ error: 'sitter_id required' }, { status: 400 });
 
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from('availability')
-    .select('*')
-    .eq('sitter_id', sitterId)
-    .eq('available', true)
-    .gte('date', new Date().toISOString().split('T')[0])
-    .order('date');
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  const data = getAvailabilityForSitter(sitterId);
   return NextResponse.json(data);
 }

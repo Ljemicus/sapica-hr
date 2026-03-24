@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import { getMockUser } from '@/lib/mock-auth';
+import { getSitterProfile, getBookingsForUser, getReviewsForSitter, mockAvailability } from '@/lib/mock-data';
 import { SitterDashboardContent } from './sitter-dashboard-content';
 
 export const metadata: Metadata = {
@@ -8,37 +9,30 @@ export const metadata: Metadata = {
 };
 
 export default async function SitterDashboardPage() {
-  const supabase = await createClient();
-  const { data: { user: authUser } } = await supabase.auth.getUser();
-  if (!authUser) redirect('/prijava');
+  const user = await getMockUser();
+  if (!user) redirect('/prijava');
+  if (user.role !== 'sitter') redirect('/');
 
-  const { data: userData } = await supabase.from('users').select('*').eq('id', authUser.id).single();
-  if (!userData || userData.role !== 'sitter') redirect('/');
+  const profile = getSitterProfile(user.id);
 
-  const [profileRes, bookingsRes, reviewsRes, availabilityRes] = await Promise.all([
-    supabase.from('sitter_profiles').select('*').eq('user_id', authUser.id).single(),
-    supabase.from('bookings')
-      .select('*, owner:users!bookings_owner_id_fkey(name, avatar_url, email), pet:pets(name, species, breed, special_needs)')
-      .eq('sitter_id', authUser.id)
-      .order('created_at', { ascending: false }),
-    supabase.from('reviews')
-      .select('*, reviewer:users!reviews_reviewer_id_fkey(name, avatar_url)')
-      .eq('reviewee_id', authUser.id)
-      .order('created_at', { ascending: false }),
-    supabase.from('availability')
-      .select('*')
-      .eq('sitter_id', authUser.id)
-      .gte('date', new Date().toISOString().split('T')[0])
-      .order('date'),
-  ]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const bookings = getBookingsForUser(user.id, 'sitter') as any[];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const reviews = getReviewsForSitter(user.id) as any[];
+
+  const today = new Date().toISOString().split('T')[0];
+  const availability = mockAvailability
+    .filter(a => a.sitter_id === user.id && a.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date));
 
   return (
     <SitterDashboardContent
-      user={userData}
-      profile={profileRes.data}
-      bookings={bookingsRes.data || []}
-      reviews={reviewsRes.data || []}
-      availability={availabilityRes.data || []}
+      user={user}
+      profile={profile}
+      bookings={bookings}
+      reviews={reviews}
+      availability={availability}
     />
   );
 }
