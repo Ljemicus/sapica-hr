@@ -1,16 +1,20 @@
 import { NextResponse } from 'next/server';
-import { setMockUser } from '@/lib/mock-auth';
-import { mockUsers } from '@/lib/mock-data';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { user_id } = body;
+  const { email, password } = body;
 
-  const user = mockUsers.find(u => u.id === user_id);
-  if (!user) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+  if (!email || !password) {
+    return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
   }
 
-  await setMockUser(user_id);
-  return NextResponse.json({ user });
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 401 });
+  }
+
+  return NextResponse.json({ user: data.user });
 }

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { clearMockUser } from '@/lib/mock-auth';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST() {
-  await clearMockUser();
+  const supabase = await createClient();
+  await supabase.auth.signOut();
   return NextResponse.json({ success: true });
 }

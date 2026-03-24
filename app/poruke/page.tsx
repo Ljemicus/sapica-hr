@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { getMockUser } from '@/lib/mock-auth';
+import { getAuthUser } from '@/lib/auth';
 import { getMessagesForUser, getUserById } from '@/lib/mock-data';
 import { MessagesContent } from './messages-content';
 
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function MessagesPage() {
-  const user = await getMockUser();
+  const user = await getAuthUser();
   if (!user) redirect('/prijava');
 
   const messages = getMessagesForUser(user.id);

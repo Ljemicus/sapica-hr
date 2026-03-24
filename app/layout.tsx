@@ -5,6 +5,7 @@ import { Navbar } from '@/components/shared/navbar';
 import { Footer } from '@/components/shared/footer';
 import { ScrollToTop } from '@/components/shared/scroll-to-top';
 import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider } from '@/contexts/auth-context';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -56,11 +57,13 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
       <body className="min-h-full flex flex-col font-sans">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <ScrollToTop />
-        <Toaster position="top-right" richColors />
+        <AuthProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <ScrollToTop />
+          <Toaster position="top-right" richColors />
+        </AuthProvider>
       </body>
     </html>
   );

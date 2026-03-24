@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { getMockUser } from '@/lib/mock-auth';
+import { getAuthUser } from '@/lib/auth';
 import { getPetsForOwner, getBookingsForUser, getReviewsByUser, mockWalks, mockUsers, mockPets } from '@/lib/mock-data';
 import { OwnerDashboardContent } from './owner-dashboard-content';
 
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function OwnerDashboardPage() {
-  const user = await getMockUser();
+  const user = await getAuthUser();
   if (!user) redirect('/prijava');
   if (user.role !== 'owner') redirect('/');
 

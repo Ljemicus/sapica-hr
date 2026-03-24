@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getMockUser } from '@/lib/mock-auth';
+import { getAuthUser } from '@/lib/auth';
 import { mockBookings } from '@/lib/mock-data';
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const user = await getMockUser();
+  const user = await getAuthUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await request.json();

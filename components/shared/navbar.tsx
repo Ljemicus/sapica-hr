@@ -14,8 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useUser } from '@/hooks/use-user';
-import { clearMockUserClient } from '@/lib/mock-auth-client';
+import { useAuth } from '@/contexts/auth-context';
 import { mockPets } from '@/lib/mock-data';
 
 function PawLogo({ className }: { className?: string }) {
@@ -31,7 +30,7 @@ function PawLogo({ className }: { className?: string }) {
 }
 
 export function Navbar() {
-  const { user, loading } = useUser();
+  const { user, loading, signOut } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -42,9 +41,8 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const handleLogout = () => {
-    clearMockUserClient();
-    window.dispatchEvent(new Event('mock-auth-change'));
+  const handleLogout = async () => {
+    await signOut();
     router.push('/');
     router.refresh();
   };

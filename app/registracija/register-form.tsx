@@ -55,8 +55,31 @@ export function RegisterForm() {
         await supabase.from('sitter_profiles').insert({ user_id: authData.user.id, city: data.city });
       }
     }
-    toast.success('Registracija uspješna! Provjerite email za potvrdu.');
-    router.push('/prijava');
+
+    // If email confirmation is required, the session won't be set yet
+    if (authData.session) {
+      toast.success('Registracija uspješna!');
+      const target = data.role === 'sitter' ? '/dashboard/sitter' : '/dashboard/vlasnik';
+      router.push(target);
+      router.refresh();
+    } else {
+      toast.success('Registracija uspješna! Provjerite email za potvrdu.');
+      router.push('/prijava');
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/api/auth/callback?next=/dashboard/vlasnik`,
+      },
+    });
+    if (error) {
+      toast.error('Greška pri registraciji s Google računom');
+      setLoading(false);
+    }
   };
 
   return (
@@ -144,8 +167,9 @@ export function RegisterForm() {
             </button>
             <button
               type="button"
-              onClick={() => toast.info('Google prijava će biti dostupna uskoro!')}
+              onClick={handleGoogleSignup}
               className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl border-2 border-gray-200 font-medium hover:bg-gray-50 hover:border-gray-300 transition-colors"
+              disabled={loading}
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>

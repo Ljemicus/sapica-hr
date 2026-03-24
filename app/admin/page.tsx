@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { getMockUser } from '@/lib/mock-auth';
+import { getAuthUser } from '@/lib/auth';
 import { mockUsers, mockBookings, mockSitterProfiles, getUserById } from '@/lib/mock-data';
 import { AdminContent } from './admin-content';
 
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-  const user = await getMockUser();
+  const user = await getAuthUser();
   if (!user) redirect('/prijava');
   if (user.role !== 'admin') redirect('/');
 

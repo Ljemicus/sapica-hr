@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { getMockUser } from '@/lib/mock-auth';
+import { getAuthUser } from '@/lib/auth';
 import { getSitterProfile, getBookingsForUser, getReviewsForSitter, mockAvailability } from '@/lib/mock-data';
 import { SitterDashboardContent } from './sitter-dashboard-content';
 
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SitterDashboardPage() {
-  const user = await getMockUser();
+  const user = await getAuthUser();
   if (!user) redirect('/prijava');
   if (user.role !== 'sitter') redirect('/');
 

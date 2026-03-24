@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getMockUser } from '@/lib/mock-auth';
+import { getAuthUser } from '@/lib/auth';
 import { mockReviews, mockBookings, mockUsers } from '@/lib/mock-data';
 import { reviewSchema } from '@/lib/validations';
 
@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const user = await getMockUser();
+  const user = await getAuthUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await request.json();
