@@ -126,19 +126,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Stats Section ── */}
+      {/* ── Quick Menu Section ── */}
       <section className="py-0 relative z-10">
         <div className="container mx-auto px-4">
-          <div className="bg-white rounded-2xl shadow-lg shadow-gray-100/50 border border-gray-100 -mt-8 md:-mt-12 p-6 md:p-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-              {stats.map((stat, i) => (
-                <div key={stat.label} className={`text-center animate-fade-in-up delay-${(i + 1) * 100}`}>
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-orange-50 mb-3">
-                    <stat.icon className="h-6 w-6 text-orange-500" />
-                  </div>
-                  <p className="text-3xl md:text-4xl font-extrabold text-gray-900">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
-                </div>
+          <div className="bg-white rounded-2xl shadow-lg shadow-gray-100/50 border border-gray-100 -mt-8 md:-mt-12 p-5 md:p-6">
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
+              {[
+                { href: '/pretraga', emoji: '🐾', label: 'Sitteri', color: 'from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100' },
+                { href: '/njega', emoji: '✂️', label: 'Grooming', color: 'from-pink-50 to-rose-50 hover:from-pink-100 hover:to-rose-100' },
+                { href: '/dresura', emoji: '🎓', label: 'Dresura', color: 'from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100' },
+                { href: '/forum', emoji: '💬', label: 'Forum', color: 'from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100' },
+                { href: '/zajednica', emoji: '📝', label: 'Blog', color: 'from-purple-50 to-violet-50 hover:from-purple-100 hover:to-violet-100' },
+                { href: '/prijava', emoji: '👤', label: 'Prijava', color: 'from-gray-50 to-slate-50 hover:from-gray-100 hover:to-slate-100' },
+              ].map((item, i) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex flex-col items-center gap-2 p-4 rounded-xl bg-gradient-to-br ${item.color} transition-all duration-200 hover:shadow-md hover:scale-[1.02] group animate-fade-in-up`}
+                >
+                  <span className="text-2xl md:text-3xl group-hover:scale-110 transition-transform">{item.emoji}</span>
+                  <span className="text-xs md:text-sm font-medium text-gray-700">{item.label}</span>
+                </Link>
               ))}
             </div>
           </div>
