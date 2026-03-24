@@ -182,7 +182,7 @@ export default function HomePage() {
               Od smještaja do šetnje — pronađite savršenu uslugu za vašeg ljubimca
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {services.map((service, i) => (
               <Link key={service.type} href={`/pretraga?service=${service.type}`}>
                 <Card className={`group card-hover cursor-pointer h-full border-0 shadow-sm overflow-hidden animate-fade-in-up delay-${(i + 1) * 100}`}>
