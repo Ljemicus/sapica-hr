@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, MapPin, Calendar, Share2, Phone, Mail, Eye, Plus, Filter, AlertTriangle } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { Search, MapPin, Calendar, Share2, Phone, Mail, Eye, Plus, Filter, AlertTriangle, Map, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +14,8 @@ import type { LostPet } from '@/lib/types';
 import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS, CITIES } from '@/lib/types';
 import { getLostPets } from '@/lib/mock-data';
 import { ShareButtons } from './share-buttons';
+
+const LostPetsMap = dynamic(() => import('@/components/shared/lost-pets-map'), { ssr: false });
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('hr-HR', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -30,6 +33,7 @@ export function LostPetsContent({ initialPets }: { initialPets: LostPet[] }) {
   const [speciesFilter, setSpeciesFilter] = useState<string | null>('all');
   const [statusFilter, setStatusFilter] = useState<string | null>('all');
   const [revealedContacts, setRevealedContacts] = useState<Set<string>>(new Set());
+  const [view, setView] = useState<'list' | 'map'>('list');
 
   const filteredPets = getLostPets({
     city: cityFilter && cityFilter !== 'all' ? cityFilter : undefined,
@@ -110,8 +114,44 @@ export function LostPetsContent({ initialPets }: { initialPets: LostPet[] }) {
         </div>
       </section>
 
+      {/* View Toggle */}
+      <section className="container mx-auto px-4 mt-6">
+        <div className="flex items-center gap-2">
+          <Button
+            variant={view === 'list' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setView('list')}
+            className={view === 'list' ? 'bg-red-500 hover:bg-red-600' : ''}
+          >
+            <List className="h-4 w-4 mr-2" />
+            Lista
+          </Button>
+          <Button
+            variant={view === 'map' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setView('map')}
+            className={view === 'map' ? 'bg-red-500 hover:bg-red-600' : ''}
+          >
+            <Map className="h-4 w-4 mr-2" />
+            Mapa
+          </Button>
+          <span className="text-sm text-gray-500 ml-2">
+            {filteredPets.length} rezultata
+          </span>
+        </div>
+      </section>
+
+      {/* Map View */}
+      {view === 'map' && (
+        <section className="container mx-auto px-4 mt-4">
+          <div className="h-[400px] rounded-2xl overflow-hidden border border-gray-200 shadow-lg">
+            <LostPetsMap pets={filteredPets} />
+          </div>
+        </section>
+      )}
+
       {/* Pet Cards */}
-      <section className="container mx-auto px-4 py-8 md:py-12">
+      <section className={`container mx-auto px-4 py-8 md:py-12 ${view === 'map' ? 'hidden' : ''}`}>
         {filteredPets.length === 0 ? (
           <div className="text-center py-16">
             <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
