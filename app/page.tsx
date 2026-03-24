@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Search, Shield, Star, Heart, Clock, MapPin, ChevronRight,
   Home, Dog, House, Eye, Sun, Users, Calendar, CheckCircle2,
@@ -32,11 +33,11 @@ const howItWorks = [
 ];
 
 const services = [
-  { type: 'boarding' as const, title: 'Smještaj', description: 'Vaš ljubimac boravi kod sittera', icon: Home, price: 'od 20€/noć', color: 'from-orange-500 to-amber-500' },
-  { type: 'walking' as const, title: 'Šetnja', description: 'Šetnja vašeg psa u kvartu', icon: Dog, price: 'od 8€/šetnja', color: 'from-green-500 to-emerald-500' },
-  { type: 'house-sitting' as const, title: 'Čuvanje u kući', description: 'Sitter dolazi u vašu kuću', icon: House, price: 'od 30€/noć', color: 'from-blue-500 to-cyan-500' },
-  { type: 'drop-in' as const, title: 'Kratki posjet', description: 'Posjet vašem ljubimcu od 30min', icon: Eye, price: 'od 12€/posjet', color: 'from-purple-500 to-pink-500' },
-  { type: 'daycare' as const, title: 'Dnevna briga', description: 'Cjelodnevna briga kod sittera', icon: Sun, price: 'od 18€/dan', color: 'from-rose-500 to-orange-500' },
+  { type: 'boarding' as const, title: 'Smještaj', description: 'Vaš ljubimac boravi kod sittera', icon: Home, price: 'od 20€/noć', color: 'from-orange-500 to-amber-500', image: '/images/services/01-pet-sitting.jpg' },
+  { type: 'walking' as const, title: 'Šetnja', description: 'Šetnja vašeg psa u kvartu', icon: Dog, price: 'od 8€/šetnja', color: 'from-green-500 to-emerald-500', image: '/images/services/04-setanje-pasa.jpg' },
+  { type: 'house-sitting' as const, title: 'Čuvanje u kući', description: 'Sitter dolazi u vašu kuću', icon: House, price: 'od 30€/noć', color: 'from-blue-500 to-cyan-500', image: '/images/services/06-community.jpg' },
+  { type: 'drop-in' as const, title: 'Kratki posjet', description: 'Posjet vašem ljubimcu od 30min', icon: Eye, price: 'od 12€/posjet', color: 'from-purple-500 to-pink-500', image: '/images/services/08-macka.jpg' },
+  { type: 'daycare' as const, title: 'Dnevna briga', description: 'Cjelodnevna briga kod sittera', icon: Sun, price: 'od 18€/dan', color: 'from-rose-500 to-orange-500', image: '/images/services/07-hero-puppy.jpg' },
 ];
 
 const cities = [
@@ -173,6 +174,9 @@ export default function HomePage() {
                     </div>
                     <h3 className="font-semibold text-lg mb-1 group-hover:text-orange-500 transition-colors">{service.title}</h3>
                     <p className="text-sm text-muted-foreground mb-3">{service.description}</p>
+                    <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-3">
+                      <Image src={service.image} alt={service.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                    </div>
                     <p className="text-sm font-semibold text-orange-500">{service.price}</p>
                   </CardContent>
                 </Card>
@@ -426,6 +430,7 @@ export default function HomePage() {
                 color: 'from-pink-500 to-rose-500',
                 href: '/njega',
                 stat: '8 salona',
+                image: '/images/services/02-grooming.jpg',
               },
               {
                 title: 'Dresura & Trening',
@@ -434,6 +439,7 @@ export default function HomePage() {
                 color: 'from-indigo-500 to-blue-500',
                 href: '/dresura',
                 stat: '6 trenera',
+                image: '/images/services/03-dresura-agility.jpg',
               },
               {
                 title: 'Zajednica & Blog',
@@ -442,6 +448,7 @@ export default function HomePage() {
                 color: 'from-amber-500 to-orange-500',
                 href: '/zajednica',
                 stat: '8 članaka',
+                image: '/images/services/06-community.jpg',
               },
               {
                 title: 'Forum zajednice',
@@ -450,6 +457,7 @@ export default function HomePage() {
                 color: 'from-violet-500 to-purple-500',
                 href: '/forum',
                 stat: '15 tema',
+                image: '/images/services/07-hero-puppy.jpg',
               },
             ].map((item, i) => (
               <Link key={item.title} href={item.href}>
@@ -460,6 +468,9 @@ export default function HomePage() {
                     </div>
                     <h3 className="font-semibold text-lg mb-2 group-hover:text-orange-500 transition-colors">{item.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed mb-4">{item.description}</p>
+                    <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-4">
+                      <Image src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                    </div>
                     <Badge variant="secondary" className="bg-gray-100 text-gray-600">{item.stat}</Badge>
                     <div className="mt-4 text-sm font-medium text-orange-500 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       Istraži <ArrowRight className="h-3 w-3" />
