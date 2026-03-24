@@ -15,7 +15,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/auth-context';
-import { mockPets } from '@/lib/mock-data';
 
 function PawLogo({ className }: { className?: string }) {
   return (
@@ -156,12 +155,10 @@ export function Navbar() {
                       <div className="px-2 py-1.5">
                         <p className="text-xs font-medium text-muted-foreground flex items-center gap-1"><PawPrint className="h-3 w-3" /> Moji ljubimci</p>
                       </div>
-                      {mockPets.filter(p => p.owner_id === user.id).map(pet => (
-                        <DropdownMenuItem key={pet.id} render={<Link href={`/ljubimac/${pet.id}/karton`} />} className="cursor-pointer">
-                            <FileHeart className="mr-2 h-4 w-4" />
-                            {pet.name} — karton
-                        </DropdownMenuItem>
-                      ))}
+                      <DropdownMenuItem render={<Link href="/dashboard/vlasnik" />} className="cursor-pointer">
+                          <FileHeart className="mr-2 h-4 w-4" />
+                          Pogledaj ljubimce
+                      </DropdownMenuItem>
                     </>
                   )}
                   <DropdownMenuSeparator />

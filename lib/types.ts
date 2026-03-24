@@ -420,6 +420,7 @@ export interface LostPetUpdate {
 
 export interface LostPet {
   id: string;
+  user_id?: string | null;
   name: string;
   species: LostPetSpecies;
   breed: string;

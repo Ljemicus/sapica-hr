@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { getLostPets } from '@/lib/mock-data';
 import { LostPetsContent } from './lost-pets-content';
 
 export const metadata: Metadata = {
@@ -13,7 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function LostPetsPage() {
-  const pets = getLostPets();
-
-  return <LostPetsContent initialPets={pets} />;
+  return <LostPetsContent />;
 }

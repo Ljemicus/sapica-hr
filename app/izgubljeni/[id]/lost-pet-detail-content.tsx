@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, AlertTriangle, Clock, User, MessageCircle, ChevronRight, Tag, Shield } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, AlertTriangle, Clock, User, MessageCircle, Tag, Shield, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,8 @@ import { Label } from '@/components/ui/label';
 import { ShareButtons } from '../share-buttons';
 import type { LostPet } from '@/lib/types';
 import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS } from '@/lib/types';
+import { insertSighting } from '@/lib/supabase/lost-pets';
+import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'sonner';
 
 const MapComponent = dynamic(() => import('./map-component'), { ssr: false });
@@ -35,11 +37,41 @@ function daysAgo(dateStr: string) {
 export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const [contactRevealed, setContactRevealed] = useState(false);
   const [showSightingForm, setShowSightingForm] = useState(false);
+  const [sightingLocation, setSightingLocation] = useState('');
+  const [sightingDescription, setSightingDescription] = useState('');
+  const [submittingSighting, setSubmittingSighting] = useState(false);
+  const [localSightings, setLocalSightings] = useState(pet.sightings);
+  const { user } = useAuth();
 
-  const handleSightingSubmit = (e: React.FormEvent) => {
+  const handleSightingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmittingSighting(true);
+
+    const { error } = await insertSighting({
+      lost_pet_id: pet.id,
+      user_id: user?.id,
+      location: sightingLocation,
+      description: sightingDescription,
+    });
+
+    if (error) {
+      toast.error('Greška pri slanju prijave. Pokušajte ponovo.');
+      setSubmittingSighting(false);
+      return;
+    }
+
+    setLocalSightings(prev => [...prev, {
+      id: crypto.randomUUID(),
+      date: new Date().toISOString(),
+      location: sightingLocation,
+      description: sightingDescription,
+    }]);
+
     toast.success('Hvala! Vaša prijava viđenja je zabilježena.');
+    setSightingLocation('');
+    setSightingDescription('');
     setShowSightingForm(false);
+    setSubmittingSighting(false);
   };
 
   return (
@@ -152,36 +184,8 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
               </CardContent>
             </Card>
 
-            {/* Timeline */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-blue-500" />
-                  Ažuriranja
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {pet.updates.map((update, i) => (
-                    <div key={update.id} className="flex gap-3">
-                      <div className="flex flex-col items-center">
-                        <div className={`w-3 h-3 rounded-full mt-1.5 ${
-                          i === 0 ? 'bg-red-500' : update.text.includes('PRONAĐEN') ? 'bg-green-500' : 'bg-gray-300'
-                        }`} />
-                        {i < pet.updates.length - 1 && <div className="w-0.5 flex-1 bg-gray-200 mt-1" />}
-                      </div>
-                      <div className="pb-4">
-                        <p className="text-xs text-gray-400 mb-1">{formatDateTime(update.date)}</p>
-                        <p className="text-sm text-gray-700">{update.text}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Sightings */}
-            {pet.sightings.length > 0 && (
+            {localSightings.length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -191,7 +195,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {pet.sightings.map(sighting => (
+                    {localSightings.map(sighting => (
                       <div key={sighting.id} className="bg-amber-50 border border-amber-200 rounded-lg p-3">
                         <p className="text-xs text-amber-600 mb-1">{formatDateTime(sighting.date)} — {sighting.location}</p>
                         <p className="text-sm text-amber-800">{sighting.description}</p>
@@ -219,15 +223,27 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                     <form onSubmit={handleSightingSubmit} className="space-y-4">
                       <h3 className="text-lg font-bold text-amber-800">Prijavi viđenje</h3>
                       <div>
-                        <Label>Gdje ste vidjeli ljubimca?</Label>
-                        <Input placeholder="npr. Park Maksimir, kod jezera" required />
+                        <Label>Gdje ste vidjeli ljubimca? *</Label>
+                        <Input
+                          placeholder="npr. Park Maksimir, kod jezera"
+                          required
+                          value={sightingLocation}
+                          onChange={(e) => setSightingLocation(e.target.value)}
+                        />
                       </div>
                       <div>
                         <Label>Opis</Label>
-                        <Textarea placeholder="Opišite što ste vidjeli..." required />
+                        <Textarea
+                          placeholder="Opišite što ste vidjeli..."
+                          required
+                          value={sightingDescription}
+                          onChange={(e) => setSightingDescription(e.target.value)}
+                        />
                       </div>
                       <div className="flex gap-2">
-                        <Button type="submit" className="bg-amber-500 hover:bg-amber-600">Pošalji prijavu</Button>
+                        <Button type="submit" className="bg-amber-500 hover:bg-amber-600" disabled={submittingSighting}>
+                          {submittingSighting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Slanje...</> : 'Pošalji prijavu'}
+                        </Button>
                         <Button type="button" variant="outline" onClick={() => setShowSightingForm(false)}>Odustani</Button>
                       </div>
                     </form>
@@ -266,10 +282,12 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                         <Phone className="h-4 w-4" />
                         {pet.contact_phone}
                       </a>
-                      <a href={`mailto:${pet.contact_email}`} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
-                        <Mail className="h-4 w-4" />
-                        {pet.contact_email}
-                      </a>
+                      {pet.contact_email && (
+                        <a href={`mailto:${pet.contact_email}`} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
+                          <Mail className="h-4 w-4" />
+                          {pet.contact_email}
+                        </a>
+                      )}
                     </div>
                   ) : (
                     <Button onClick={() => setContactRevealed(true)} className="w-full" variant="outline">

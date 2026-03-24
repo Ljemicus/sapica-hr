@@ -1,18 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { Search, MapPin, Calendar, Share2, Phone, Mail, Eye, Plus, Filter, AlertTriangle, Map, List } from 'lucide-react';
+import { Search, MapPin, Calendar, Phone, Mail, Eye, Plus, Filter, AlertTriangle, Map, List, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import type { LostPet } from '@/lib/types';
 import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS, CITIES } from '@/lib/types';
-import { getLostPets } from '@/lib/mock-data';
+import { fetchLostPets } from '@/lib/supabase/lost-pets';
 import { ShareButtons } from './share-buttons';
 
 const LostPetsMap = dynamic(() => import('@/components/shared/lost-pets-map'), { ssr: false });
@@ -28,20 +27,30 @@ function daysAgo(dateStr: string) {
   return `Prije ${diff} dana`;
 }
 
-export function LostPetsContent({ initialPets }: { initialPets: LostPet[] }) {
+export function LostPetsContent() {
+  const [pets, setPets] = useState<LostPet[]>([]);
+  const [loading, setLoading] = useState(true);
   const [cityFilter, setCityFilter] = useState<string | null>('all');
   const [speciesFilter, setSpeciesFilter] = useState<string | null>('all');
   const [statusFilter, setStatusFilter] = useState<string | null>('all');
   const [revealedContacts, setRevealedContacts] = useState<Set<string>>(new Set());
   const [view, setView] = useState<'list' | 'map'>('list');
 
-  const filteredPets = getLostPets({
-    city: cityFilter && cityFilter !== 'all' ? cityFilter : undefined,
-    species: speciesFilter && speciesFilter !== 'all' ? speciesFilter : undefined,
-    status: statusFilter && statusFilter !== 'all' ? statusFilter : undefined,
-  });
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      const data = await fetchLostPets({
+        city: cityFilter && cityFilter !== 'all' ? cityFilter : undefined,
+        species: speciesFilter && speciesFilter !== 'all' ? speciesFilter : undefined,
+        status: statusFilter && statusFilter !== 'all' ? statusFilter : undefined,
+      });
+      setPets(data);
+      setLoading(false);
+    }
+    load();
+  }, [cityFilter, speciesFilter, statusFilter]);
 
-  const lostCount = initialPets.filter(p => p.status === 'lost').length;
+  const lostCount = pets.filter(p => p.status === 'lost').length;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-50/50 via-white to-orange-50/30">
@@ -52,7 +61,7 @@ export function LostPetsContent({ initialPets }: { initialPets: LostPet[] }) {
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6 text-sm font-medium">
               <AlertTriangle className="h-4 w-4" />
-              {lostCount} ljubimaca se trenutno traži
+              {loading ? '...' : `${lostCount} ljubimaca se trenutno traži`}
             </div>
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
               Izgubljeni ljubimci
@@ -136,7 +145,7 @@ export function LostPetsContent({ initialPets }: { initialPets: LostPet[] }) {
             Mapa
           </Button>
           <span className="text-sm text-gray-500 ml-2">
-            {filteredPets.length} rezultata
+            {loading ? '...' : `${pets.length} rezultata`}
           </span>
         </div>
       </section>
@@ -145,21 +154,26 @@ export function LostPetsContent({ initialPets }: { initialPets: LostPet[] }) {
       {view === 'map' && (
         <section className="container mx-auto px-4 mt-4">
           <div className="h-[400px] rounded-2xl overflow-hidden border border-gray-200 shadow-lg">
-            <LostPetsMap pets={filteredPets} />
+            <LostPetsMap pets={pets} />
           </div>
         </section>
       )}
 
       {/* Pet Cards */}
       <section className={`container mx-auto px-4 py-8 md:py-12 ${view === 'map' ? 'hidden' : ''}`}>
-        {filteredPets.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="h-8 w-8 animate-spin text-red-400" />
+            <span className="ml-3 text-gray-500">Učitavanje...</span>
+          </div>
+        ) : pets.length === 0 ? (
           <div className="text-center py-16">
             <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500 text-lg">Nema rezultata za odabrane filtere.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPets.map((pet) => (
+            {pets.map((pet) => (
               <Card key={pet.id} className={`overflow-hidden hover:shadow-xl transition-all duration-300 border-2 ${
                 pet.status === 'lost' ? 'border-red-200 hover:border-red-300' : 'border-green-200 hover:border-green-300'
               }`}>
@@ -192,7 +206,7 @@ export function LostPetsContent({ initialPets }: { initialPets: LostPet[] }) {
                 <CardContent className="p-4 space-y-3">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <MapPin className="h-4 w-4 text-red-400 shrink-0" />
-                    <span className="font-medium">{pet.city}, {pet.neighborhood}</span>
+                    <span className="font-medium">{pet.city}{pet.neighborhood ? `, ${pet.neighborhood}` : ''}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Calendar className="h-4 w-4 text-gray-400 shrink-0" />
@@ -207,10 +221,12 @@ export function LostPetsContent({ initialPets }: { initialPets: LostPet[] }) {
                           <Phone className="h-3.5 w-3.5 text-green-500" />
                           <a href={`tel:${pet.contact_phone}`} className="text-green-600 font-medium hover:underline">{pet.contact_phone}</a>
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <Mail className="h-3.5 w-3.5 text-blue-500" />
-                          <a href={`mailto:${pet.contact_email}`} className="text-blue-600 hover:underline">{pet.contact_email}</a>
-                        </div>
+                        {pet.contact_email && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <Mail className="h-3.5 w-3.5 text-blue-500" />
+                            <a href={`mailto:${pet.contact_email}`} className="text-blue-600 hover:underline">{pet.contact_email}</a>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <Button
