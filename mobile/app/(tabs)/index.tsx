@@ -54,12 +54,47 @@ export default function HomeScreen() {
               onPress={() => {
                 if (cat.name === 'Izgubljeni') {
                   router.push('/lost-pets');
+                } else if (cat.name === 'Grooming') {
+                  router.push('/grooming');
+                } else if (cat.name === 'Dresura') {
+                  router.push('/training');
                 } else {
                   router.push('/(tabs)/search');
                 }
               }}
             />
           ))}
+        </View>
+      </View>
+
+      {/* Quick Features */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Za tvog ljubimca</Text>
+        <View style={styles.featureRow}>
+          <TouchableOpacity
+            style={[styles.featureCard, { backgroundColor: '#ecfdf5' }]}
+            onPress={() => router.push('/walk-tracking')}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="navigate" size={28} color={Colors.success} />
+            <Text style={styles.featureLabel}>GPS{'\n'}šetnja</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.featureCard, { backgroundColor: '#fdf2f8' }]}
+            onPress={() => router.push('/photo-updates')}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="camera" size={28} color={Colors.categoryPink} />
+            <Text style={styles.featureLabel}>Foto{'\n'}ažuriranja</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.featureCard, { backgroundColor: '#eff6ff' }]}
+            onPress={() => router.push('/pet-passport/1')}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="document-text" size={28} color={Colors.info} />
+            <Text style={styles.featureLabel}>Zdravstveni{'\n'}karton</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -231,5 +266,24 @@ const styles = StyleSheet.create({
   },
   ctaButton: {
     minWidth: 160,
+  },
+  featureRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  featureCard: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 18,
+    borderRadius: 16,
+    gap: 8,
+  },
+  featureLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.text,
+    textAlign: 'center',
+    lineHeight: 16,
   },
 });

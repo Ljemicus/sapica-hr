@@ -68,12 +68,22 @@ export default function ProfileScreen() {
         <Text style={styles.sectionTitle}>Moji ljubimci</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {myPets.map((pet) => (
-            <Card key={pet.id} style={styles.petCard}>
-              <Avatar uri={pet.image} name={pet.name} size={56} />
-              <Text style={styles.petName}>{pet.name}</Text>
-              <Text style={styles.petBreed}>{pet.breed}</Text>
-              <Text style={styles.petAge}>{pet.age} god.</Text>
-            </Card>
+            <TouchableOpacity
+              key={pet.id}
+              activeOpacity={0.7}
+              onPress={() => router.push(`/pet-passport/${pet.id}`)}
+            >
+              <Card style={styles.petCard}>
+                <Avatar uri={pet.image} name={pet.name} size={56} />
+                <Text style={styles.petName}>{pet.name}</Text>
+                <Text style={styles.petBreed}>{pet.breed}</Text>
+                <Text style={styles.petAge}>{pet.age} god.</Text>
+                <View style={styles.passportLink}>
+                  <Ionicons name="document-text-outline" size={12} color={Colors.primary} />
+                  <Text style={styles.passportLinkText}>Karton</Text>
+                </View>
+              </Card>
+            </TouchableOpacity>
           ))}
           <TouchableOpacity style={styles.addPetCard}>
             <Ionicons name="add-circle-outline" size={36} color={Colors.primary} />
@@ -189,6 +199,21 @@ const styles = StyleSheet.create({
   petAge: {
     fontSize: 12,
     color: Colors.textLight,
+  },
+  passportLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 6,
+    backgroundColor: Colors.backgroundWarm,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  passportLinkText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: Colors.primary,
   },
   addPetCard: {
     width: 110,

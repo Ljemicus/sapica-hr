@@ -45,6 +45,26 @@ export default function RootLayout() {
           name="become-sitter"
           options={{ title: 'Postani sitter', headerBackTitle: 'Natrag', presentation: 'modal' }}
         />
+        <Stack.Screen
+          name="walk-tracking"
+          options={{ title: 'GPS praćenje šetnje', headerBackTitle: 'Natrag' }}
+        />
+        <Stack.Screen
+          name="photo-updates"
+          options={{ title: 'Foto ažuriranja', headerBackTitle: 'Natrag' }}
+        />
+        <Stack.Screen
+          name="pet-passport/[id]"
+          options={{ title: 'Zdravstveni karton', headerBackTitle: 'Natrag' }}
+        />
+        <Stack.Screen
+          name="grooming"
+          options={{ title: 'Grooming', headerBackTitle: 'Natrag' }}
+        />
+        <Stack.Screen
+          name="training"
+          options={{ title: 'Dresura', headerBackTitle: 'Natrag' }}
+        />
       </Stack>
     </>
   );

@@ -1,4 +1,4 @@
-import { Sitter, Conversation, LostPet, Booking, Review, Pet } from '../types';
+import { Sitter, Conversation, LostPet, Booking, Review, Pet, WalkSession, PhotoUpdate, PetPassport, GroomingService, TrainingProgram } from '../types';
 
 export const sitters: Sitter[] = [
   {
@@ -245,4 +245,146 @@ export const services = [
   { id: '4', name: 'Grooming', price: 'od 18€' },
   { id: '5', name: 'Dresura', price: 'od 20€/h' },
   { id: '6', name: 'Agility', price: 'od 15€/h' },
+];
+
+export const walkSession: WalkSession = {
+  id: '1',
+  sitterName: 'Ana Horvat',
+  sitterAvatar: 'https://i.pravatar.cc/150?img=1',
+  petName: 'Luna',
+  status: 'u_tijeku',
+  startTime: '09:30',
+  duration: '42 min',
+  distance: '2.3 km',
+  avgSpeed: '3.3 km/h',
+  checkpoints: [
+    { id: '1', time: '09:30', label: 'Početak šetnje', lat: 45.815, lng: 15.982 },
+    { id: '2', time: '09:42', label: 'Park Maksimir - ulaz', lat: 45.819, lng: 15.988 },
+    { id: '3', time: '09:55', label: 'Jezero', lat: 45.822, lng: 15.993 },
+    { id: '4', time: '10:08', label: 'Dječje igralište', lat: 45.818, lng: 15.990 },
+  ],
+  route: [
+    { lat: 45.815, lng: 15.982 },
+    { lat: 45.816, lng: 15.984 },
+    { lat: 45.818, lng: 15.986 },
+    { lat: 45.819, lng: 15.988 },
+    { lat: 45.820, lng: 15.990 },
+    { lat: 45.822, lng: 15.993 },
+    { lat: 45.821, lng: 15.992 },
+    { lat: 45.819, lng: 15.991 },
+    { lat: 45.818, lng: 15.990 },
+  ],
+};
+
+export const photoUpdates: PhotoUpdate[] = [
+  {
+    id: '1',
+    sitterName: 'Ana Horvat',
+    sitterAvatar: 'https://i.pravatar.cc/150?img=1',
+    petName: 'Luna',
+    image: 'https://placedog.net/500/400?id=20',
+    caption: 'Luna uživa u parku! Jako je vesela danas 🐾',
+    timestamp: '10:15',
+    liked: false,
+  },
+  {
+    id: '2',
+    sitterName: 'Ana Horvat',
+    sitterAvatar: 'https://i.pravatar.cc/150?img=1',
+    petName: 'Luna',
+    image: 'https://placedog.net/500/400?id=21',
+    caption: 'Odmor nakon šetnje. Zaslužila je poslasticu!',
+    timestamp: '11:30',
+    liked: true,
+  },
+  {
+    id: '3',
+    sitterName: 'Ana Horvat',
+    sitterAvatar: 'https://i.pravatar.cc/150?img=1',
+    petName: 'Luna',
+    image: 'https://placedog.net/500/400?id=22',
+    caption: 'Ručak je gotov! Pojela je sve do zadnje mrvice 🍖',
+    timestamp: '13:00',
+    liked: false,
+  },
+  {
+    id: '4',
+    sitterName: 'Ana Horvat',
+    sitterAvatar: 'https://i.pravatar.cc/150?img=1',
+    petName: 'Luna',
+    image: 'https://placedog.net/500/400?id=23',
+    caption: 'Popodnevna drzemka na suncu ☀️',
+    timestamp: '15:20',
+    liked: false,
+  },
+];
+
+export const petPassports: PetPassport[] = [
+  {
+    id: '1',
+    petId: '1',
+    petName: 'Luna',
+    petImage: 'https://placedog.net/200/200?id=10',
+    breed: 'Labrador',
+    type: 'Pas',
+    birthDate: '15.06.2023.',
+    weight: '28 kg',
+    microchipId: 'HR-191-000123456',
+    vaccinations: [
+      { id: '1', name: 'Bjesnoća', date: '10.01.2026.', nextDate: '10.01.2027.', vet: 'dr. Marić' },
+      { id: '2', name: 'DHPP', date: '15.03.2025.', nextDate: '15.03.2026.', vet: 'dr. Marić' },
+      { id: '3', name: 'Leptospiroza', date: '20.06.2025.', nextDate: '20.06.2026.', vet: 'dr. Marić' },
+      { id: '4', name: 'Bordetella', date: '01.09.2025.', nextDate: '01.09.2026.', vet: 'dr. Kovačević' },
+    ],
+    allergies: ['Piletina', 'Pelud trave'],
+    medications: [
+      { name: 'Antiparazitik', dosage: '1 tableta', frequency: 'Mjesečno' },
+    ],
+    vetContact: {
+      name: 'dr. Ivan Marić',
+      clinic: 'Veterinarska ambulanta Maksimir',
+      phone: '+385 1 234 5678',
+      address: 'Maksimirska 128, Zagreb',
+    },
+  },
+  {
+    id: '2',
+    petId: '2',
+    petName: 'Miki',
+    petImage: 'https://placekitten.com/200/200',
+    breed: 'Domaća',
+    type: 'Mačka',
+    birthDate: '03.04.2021.',
+    weight: '4.5 kg',
+    microchipId: 'HR-191-000654321',
+    vaccinations: [
+      { id: '1', name: 'Bjesnoća', date: '05.02.2026.', nextDate: '05.02.2027.', vet: 'dr. Marić' },
+      { id: '2', name: 'FVRCP', date: '20.04.2025.', nextDate: '20.04.2026.', vet: 'dr. Marić' },
+    ],
+    allergies: [],
+    medications: [],
+    vetContact: {
+      name: 'dr. Ivan Marić',
+      clinic: 'Veterinarska ambulanta Maksimir',
+      phone: '+385 1 234 5678',
+      address: 'Maksimirska 128, Zagreb',
+    },
+  },
+];
+
+export const groomingServices: GroomingService[] = [
+  { id: '1', name: 'Kupanje', description: 'Kompletno kupanje sa šamponom i sušenjem', price: '25€', duration: '45 min', icon: 'water' },
+  { id: '2', name: 'Šišanje', description: 'Profesionalno šišanje po pasmini', price: '35€', duration: '60 min', icon: 'cut' },
+  { id: '3', name: 'Trimanje noktiju', description: 'Sigurno i precizno skraćivanje noktiju', price: '10€', duration: '15 min', icon: 'hand-left' },
+  { id: '4', name: 'Čišćenje ušiju', description: 'Nježno čišćenje i pregled ušiju', price: '12€', duration: '15 min', icon: 'ear' },
+  { id: '5', name: 'Kompletna njega', description: 'Kupanje + šišanje + nokti + uši', price: '65€', duration: '90 min', icon: 'sparkles' },
+  { id: '6', name: 'Četkanje dlake', description: 'Detaljno četkanje i uklanjanje čvorova', price: '15€', duration: '30 min', icon: 'brush' },
+];
+
+export const trainingPrograms: TrainingProgram[] = [
+  { id: '1', name: 'Osnovna poslušnost', description: 'Sjedi, lezi, ostani, dođi - temelji dobre komunikacije', price: '150€', duration: '4 tjedna', sessions: 8, icon: 'school' },
+  { id: '2', name: 'Agility', description: 'Prepreke, tuneli, slalom - zabava i fitness za psa', price: '120€', duration: '6 tjedana', sessions: 12, icon: 'fitness' },
+  { id: '3', name: 'Socijalizacija', description: 'Rad u grupi, navikavanje na druge pse i ljude', price: '100€', duration: '3 tjedna', sessions: 6, icon: 'people' },
+  { id: '4', name: 'Korekcija ponašanja', description: 'Rješavanje lajanja, skakanja, vuče na povodcu', price: '200€', duration: '6 tjedana', sessions: 12, icon: 'build' },
+  { id: '5', name: 'Trikovi', description: 'Zabavni trikovi - daj šapu, okreni se, donesi', price: '80€', duration: '3 tjedna', sessions: 6, icon: 'star' },
 ];
