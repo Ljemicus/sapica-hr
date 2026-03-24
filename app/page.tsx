@@ -77,10 +77,19 @@ export default function HomePage() {
               Tko čuva vašeg ljubimca{' '}
               <span className="text-gradient">dok ste na putu?</span>
             </h1>
-            <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto animate-fade-in-up delay-200 leading-relaxed">
+            <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in-up delay-200 leading-relaxed">
               Pronađite pouzdane i verificirane čuvare ljubimaca u vašem gradu.
               Vaš ljubimac zaslužuje najbolju brigu — čak i kad niste tu.
             </p>
+
+            {/* Hero Pets Image */}
+            <div className="mb-10 animate-fade-in-up delay-250 max-w-2xl mx-auto">
+              <img
+                src="/hero-pets.jpg"
+                alt="Sretni psi i mačke zajedno"
+                className="w-full h-48 md:h-64 lg:h-72 object-cover rounded-3xl shadow-xl shadow-orange-200/30 border-4 border-white/80"
+              />
+            </div>
 
             {/* Search Bar */}
             <div className="bg-white rounded-full shadow-2xl shadow-orange-200/40 p-2.5 md:p-3 max-w-2xl mx-auto animate-fade-in-up delay-300 border border-orange-100/60">
