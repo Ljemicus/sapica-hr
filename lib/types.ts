@@ -216,6 +216,106 @@ export const ALLERGY_SEVERITY_LABELS: Record<string, string> = {
   'ozbiljna': 'Ozbiljna',
 };
 
+// ── Grooming ──
+
+export type GroomingServiceType = 'sisanje' | 'kupanje' | 'trimanje' | 'nokti' | 'spa';
+
+export const GROOMING_SERVICE_LABELS: Record<GroomingServiceType, string> = {
+  'sisanje': 'Šišanje',
+  'kupanje': 'Kupanje',
+  'trimanje': 'Trimanje',
+  'nokti': 'Nokti',
+  'spa': 'Spa',
+};
+
+export type GroomerSpecialization = 'psi' | 'macke' | 'oba';
+
+export const GROOMER_SPECIALIZATION_LABELS: Record<GroomerSpecialization, string> = {
+  'psi': 'Psi',
+  'macke': 'Mačke',
+  'oba': 'Psi i mačke',
+};
+
+export interface Groomer {
+  id: string;
+  name: string;
+  city: string;
+  services: GroomingServiceType[];
+  prices: Record<GroomingServiceType, number>;
+  rating: number;
+  reviews: number;
+  bio: string;
+  verified: boolean;
+  specialization: GroomerSpecialization;
+}
+
+// ── Training / Dresura ──
+
+export type TrainingType = 'osnovna' | 'napredna' | 'agility' | 'ponasanje' | 'stenci';
+
+export const TRAINING_TYPE_LABELS: Record<TrainingType, string> = {
+  'osnovna': 'Osnovna poslušnost',
+  'napredna': 'Napredna dresura',
+  'agility': 'Agility',
+  'ponasanje': 'Korekcija ponašanja',
+  'stenci': 'Štenci',
+};
+
+export interface Trainer {
+  id: string;
+  name: string;
+  city: string;
+  specializations: TrainingType[];
+  price_per_hour: number;
+  certificates: string[];
+  rating: number;
+  reviews: number;
+  bio: string;
+  certified: boolean;
+}
+
+export interface TrainingProgram {
+  id: string;
+  trainer_id: string;
+  name: string;
+  type: TrainingType;
+  duration_weeks: number;
+  sessions: number;
+  price: number;
+  description: string;
+}
+
+// ── Blog ──
+
+export type BlogCategory = 'zdravlje' | 'prehrana' | 'dresura' | 'putovanje' | 'zabava';
+
+export const BLOG_CATEGORY_LABELS: Record<BlogCategory, string> = {
+  'zdravlje': 'Zdravlje',
+  'prehrana': 'Prehrana',
+  'dresura': 'Dresura',
+  'putovanje': 'Putovanje',
+  'zabava': 'Zabava',
+};
+
+export const BLOG_CATEGORY_EMOJI: Record<BlogCategory, string> = {
+  'zdravlje': '🏥',
+  'prehrana': '🥗',
+  'dresura': '🎓',
+  'putovanje': '✈️',
+  'zabava': '🎾',
+};
+
+export interface Article {
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;
+  author: string;
+  date: string;
+  category: BlogCategory;
+  emoji: string;
+}
+
 export const CITIES = [
   'Zagreb',
   'Rijeka',

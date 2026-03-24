@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, MessageCircle, User, LogOut, Search, PawPrint, FileHeart } from 'lucide-react';
+import { Menu, X, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -65,9 +65,28 @@ export function Navbar() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-6">
-          <Link href="/pretraga" className="text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors flex items-center gap-1.5">
-            <Search className="h-4 w-4" />
-            Pretraži sittere
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<button />} className="text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors flex items-center gap-1">
+              Usluge <ChevronDown className="h-3.5 w-3.5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuItem render={<Link href="/pretraga" />} className="cursor-pointer">
+                <Search className="mr-2 h-4 w-4" />
+                Sitteri
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/njega" />} className="cursor-pointer">
+                <Scissors className="mr-2 h-4 w-4" />
+                Grooming
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/dresura" />} className="cursor-pointer">
+                <GraduationCap className="mr-2 h-4 w-4" />
+                Dresura
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Link href="/zajednica" className="text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors flex items-center gap-1.5">
+            <BookOpen className="h-4 w-4" />
+            Blog
           </Link>
           {!user && (
             <Link href="/registracija?role=sitter" className="text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors">
@@ -169,6 +188,18 @@ export function Navbar() {
               <Link href="/pretraga" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
                 <Search className="h-5 w-5" />
                 Pretraži sittere
+              </Link>
+              <Link href="/njega" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
+                <Scissors className="h-5 w-5" />
+                Grooming
+              </Link>
+              <Link href="/dresura" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
+                <GraduationCap className="h-5 w-5" />
+                Dresura
+              </Link>
+              <Link href="/zajednica" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
+                <BookOpen className="h-5 w-5" />
+                Blog
               </Link>
               {user ? (
                 <>

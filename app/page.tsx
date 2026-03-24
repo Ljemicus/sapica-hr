@@ -2,7 +2,7 @@ import Link from 'next/link';
 import {
   Search, Shield, Star, Heart, Clock, MapPin, ChevronRight,
   Home, Dog, House, Eye, Sun, Users, Calendar, CheckCircle2,
-  ArrowRight, Quote
+  ArrowRight, Quote, Scissors, GraduationCap, BookOpen,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -391,6 +391,62 @@ export default function HomePage() {
                     <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
                     <div className="mt-4 text-sm font-medium text-orange-500 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       Pogledaj demo <ArrowRight className="h-3 w-3" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── More Services Section ── */}
+      <section className="py-20 md:py-28 bg-gray-50 relative overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+        <div className="container mx-auto px-4 relative">
+          <div className="text-center mb-14">
+            <Badge variant="secondary" className="mb-4 text-orange-600 bg-orange-50 border-0">Istraži više</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Još više za vašeg ljubimca</h2>
+            <p className="text-muted-foreground text-lg max-w-lg mx-auto">Osim čuvanja, nudimo grooming, dresuru i zajednicu ljubitelja životinja</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              {
+                title: 'Grooming & Njega',
+                description: 'Premium saloni za šišanje, kupanje, trimanje i spa tretmane. Pronađite verificirane groomere u vašem gradu.',
+                icon: Scissors,
+                color: 'from-pink-500 to-rose-500',
+                href: '/njega',
+                stat: '8 salona',
+              },
+              {
+                title: 'Dresura & Trening',
+                description: 'Certificirani treneri za osnovnu poslušnost, agility, korekciju ponašanja i rad sa štencima.',
+                icon: GraduationCap,
+                color: 'from-indigo-500 to-blue-500',
+                href: '/dresura',
+                stat: '6 trenera',
+              },
+              {
+                title: 'Zajednica & Blog',
+                description: 'Savjeti, vodiči i priče za vlasnike ljubimaca. Zdravlje, prehrana, dresura i putovanja.',
+                icon: BookOpen,
+                color: 'from-amber-500 to-orange-500',
+                href: '/zajednica',
+                stat: '8 članaka',
+              },
+            ].map((item, i) => (
+              <Link key={item.title} href={item.href}>
+                <Card className={`group card-hover cursor-pointer h-full border-0 shadow-sm rounded-2xl overflow-hidden animate-fade-in-up delay-${(i + 1) * 100}`}>
+                  <CardContent className="p-6 text-center">
+                    <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${item.color} text-white mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <item.icon className="h-7 w-7" />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-2 group-hover:text-orange-500 transition-colors">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">{item.description}</p>
+                    <Badge variant="secondary" className="bg-gray-100 text-gray-600">{item.stat}</Badge>
+                    <div className="mt-4 text-sm font-medium text-orange-500 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      Istraži <ArrowRight className="h-3 w-3" />
                     </div>
                   </CardContent>
                 </Card>

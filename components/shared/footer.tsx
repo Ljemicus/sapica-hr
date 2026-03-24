@@ -68,9 +68,10 @@ export function Footer() {
             <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Šapica</h3>
             <ul className="space-y-3 text-sm">
               <li><Link href="/pretraga" className="hover:text-orange-400 transition-colors">Pretraži sittere</Link></li>
+              <li><Link href="/njega" className="hover:text-orange-400 transition-colors">Grooming & Njega</Link></li>
+              <li><Link href="/dresura" className="hover:text-orange-400 transition-colors">Dresura & Trening</Link></li>
+              <li><Link href="/zajednica" className="hover:text-orange-400 transition-colors">Zajednica & Blog</Link></li>
               <li><Link href="/registracija?role=sitter" className="hover:text-orange-400 transition-colors">Postani sitter</Link></li>
-              <li><Link href="/#kako-funkcionira" className="hover:text-orange-400 transition-colors">Kako funkcionira</Link></li>
-              <li><Link href="/prijava" className="hover:text-orange-400 transition-colors">Prijava</Link></li>
             </ul>
           </div>
           <div>

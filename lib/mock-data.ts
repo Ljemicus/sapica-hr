@@ -1,4 +1,4 @@
-import type { User, Pet, SitterProfile, Booking, Review, Message, Availability, ServiceType, Walk, PetUpdate, PetPassport } from './types';
+import type { User, Pet, SitterProfile, Booking, Review, Message, Availability, ServiceType, Walk, PetUpdate, PetPassport, Groomer, Trainer, TrainingProgram, Article } from './types';
 
 // ============================================================
 // USERS
@@ -779,4 +779,257 @@ export function getUpdatesForBooking(bookingId: string) {
 
 export function getPetPassport(petId: string) {
   return mockPetPassports.find(p => p.pet_id === petId) || null;
+}
+
+// ============================================================
+// GROOMERS
+// ============================================================
+
+export const mockGroomers: Groomer[] = [
+  { id: 'gr-1', name: 'Salon Šapica', city: 'Zagreb', services: ['sisanje', 'kupanje', 'trimanje', 'nokti', 'spa'], prices: { sisanje: 35, kupanje: 25, trimanje: 40, nokti: 15, spa: 60 }, rating: 4.9, reviews: 42, bio: 'Premium grooming salon u centru Zagreba. Specijalizirani smo za sve pasmine pasa i mačaka. Koristimo isključivo profesionalnu kozmetiku.', verified: true, specialization: 'oba' },
+  { id: 'gr-2', name: 'Petra Grooming', city: 'Rijeka', services: ['sisanje', 'kupanje', 'trimanje'], prices: { sisanje: 30, kupanje: 20, trimanje: 35, nokti: 0, spa: 0 }, rating: 4.8, reviews: 28, bio: 'Mobilan grooming servis u Rijeci. Dolazim na vašu adresu s kompletnom opremom. Nježan pristup svakom ljubimcu.', verified: true, specialization: 'psi' },
+  { id: 'gr-3', name: 'Mačji Raj', city: 'Split', services: ['kupanje', 'trimanje', 'nokti'], prices: { sisanje: 0, kupanje: 30, trimanje: 35, nokti: 12, spa: 0 }, rating: 4.7, reviews: 19, bio: 'Jedini specijalizirani salon za mačke u Splitu. Mirno okruženje bez pasa, prilagođeno osjetljivim mačkama.', verified: true, specialization: 'macke' },
+  { id: 'gr-4', name: 'DogStyle Studio', city: 'Zagreb', services: ['sisanje', 'kupanje', 'spa'], prices: { sisanje: 40, kupanje: 30, trimanje: 0, nokti: 0, spa: 70 }, rating: 4.9, reviews: 56, bio: 'Luksuzni spa tretmani za pse. Aromaterapija, masaža i premium njega. Vaš ljubimac zaslužuje najbolje!', verified: true, specialization: 'psi' },
+  { id: 'gr-5', name: 'Grooming Pula', city: 'Pula', services: ['sisanje', 'kupanje', 'trimanje', 'nokti'], prices: { sisanje: 28, kupanje: 18, trimanje: 32, nokti: 10, spa: 0 }, rating: 4.6, reviews: 15, bio: 'Obiteljski grooming salon u Puli. Radimo s ljubavlju i strpljenjem. Posebne cijene za udomljene ljubimce.', verified: false, specialization: 'oba' },
+  { id: 'gr-6', name: 'Bella Grooming', city: 'Osijek', services: ['sisanje', 'kupanje', 'trimanje', 'spa'], prices: { sisanje: 25, kupanje: 18, trimanje: 30, nokti: 0, spa: 50 }, rating: 4.8, reviews: 33, bio: 'Profesionalni grooming u Osijeku. Certificirana groomerica s 8 godina iskustva. Specijalnost: pudlice i bichoni.', verified: true, specialization: 'psi' },
+  { id: 'gr-7', name: 'Pet Spa Zadar', city: 'Zadar', services: ['kupanje', 'nokti', 'spa'], prices: { sisanje: 0, kupanje: 22, trimanje: 0, nokti: 12, spa: 55 }, rating: 4.5, reviews: 11, bio: 'Wellness za ljubimce uz more. Prirodni proizvodi, opuštajuća atmosfera. Idealno nakon ljetne sezone.', verified: false, specialization: 'oba' },
+  { id: 'gr-8', name: 'Šišaj Me', city: 'Rijeka', services: ['sisanje', 'trimanje', 'nokti'], prices: { sisanje: 32, kupanje: 0, trimanje: 38, nokti: 14, spa: 0 }, rating: 4.7, reviews: 22, bio: 'Iskusna groomerica specijalizirana za teže pasmine — huskije, samojede, zlatne retrivere. Brza i precizna usluga.', verified: true, specialization: 'psi' },
+];
+
+export function getGroomerById(id: string) {
+  return mockGroomers.find(g => g.id === id) || null;
+}
+
+export function getGroomers(filters?: { city?: string; service?: string }) {
+  let result = [...mockGroomers];
+  if (filters?.city) result = result.filter(g => g.city === filters.city);
+  if (filters?.service) result = result.filter(g => g.services.includes(filters.service as Groomer['services'][number]));
+  return result.sort((a, b) => b.rating - a.rating);
+}
+
+// ============================================================
+// TRAINERS
+// ============================================================
+
+export const mockTrainers: Trainer[] = [
+  { id: 'tr-1', name: 'Marko Šimić', city: 'Zagreb', specializations: ['osnovna', 'napredna', 'ponasanje'], price_per_hour: 50, certificates: ['KIF certifikat', 'FCI licenca'], rating: 4.9, reviews: 38, bio: 'Profesionalni trener pasa s 12 godina iskustva. Radim individualno i u grupama. Pozitivan pristup dresuri — bez kažnjavanja.', certified: true },
+  { id: 'tr-2', name: 'Ana Petrović', city: 'Zagreb', specializations: ['stenci', 'osnovna'], price_per_hour: 40, certificates: ['KIF certifikat'], rating: 4.8, reviews: 25, bio: 'Specijalizirana za rad sa štencima i prvu socijalizaciju. Pomažem novim vlasnicima da postave temelje dobrog ponašanja od prvog dana.', certified: true },
+  { id: 'tr-3', name: 'Ivan Delić', city: 'Split', specializations: ['agility', 'napredna'], price_per_hour: 45, certificates: ['FCI licenca', 'Agility sudac'], rating: 4.7, reviews: 20, bio: 'Natjecatelj i trener agility-ja. Vodim agility grupu u Splitu. Savršeno za aktivne pse koji trebaju mentalni i fizički izazov.', certified: true },
+  { id: 'tr-4', name: 'Lana Horvat', city: 'Rijeka', specializations: ['ponasanje', 'osnovna', 'stenci'], price_per_hour: 45, certificates: ['KIF certifikat', 'Canine Behaviour Diploma'], rating: 4.9, reviews: 31, bio: 'Bihevioristica s fokusom na problematično ponašanje — agresija, strah, separacijska anksioznost. Holistički pristup koji uključuje cijelu obitelj.', certified: true },
+  { id: 'tr-5', name: 'Tomislav Radić', city: 'Osijek', specializations: ['osnovna', 'napredna', 'agility'], price_per_hour: 35, certificates: ['KIF certifikat'], rating: 4.6, reviews: 14, bio: 'Trener u Osijeku s fokusom na sportske discipline. Vodim tečajeve osnove poslušnosti i napredni agility. Grupni i individualni rad.', certified: true },
+  { id: 'tr-6', name: 'Mia Barić', city: 'Zadar', specializations: ['stenci', 'ponasanje'], price_per_hour: 38, certificates: [], rating: 4.5, reviews: 9, bio: 'Mlada trenerica s modernim pristupom. Koristim clicker training i pozitivno potkrepljenje. Posebno volim rad sa štencima i plašljivim psima.', certified: false },
+];
+
+export const mockTrainingPrograms: TrainingProgram[] = [
+  { id: 'tp-1', trainer_id: 'tr-1', name: 'Osnovna poslušnost', type: 'osnovna', duration_weeks: 8, sessions: 16, price: 400, description: 'Temelji poslušnosti: sjedi, lezi, ostani, dolazak na poziv, šetnja na povodcu. Grupni tečaj do 6 pasa.' },
+  { id: 'tp-2', trainer_id: 'tr-1', name: 'Napredna poslušnost', type: 'napredna', duration_weeks: 6, sessions: 12, price: 350, description: 'Za pse koji su završili osnovnu. Rad bez povodca, distancijske komande, odbijanje hrane s poda.' },
+  { id: 'tp-3', trainer_id: 'tr-1', name: 'Korekcija agresije', type: 'ponasanje', duration_weeks: 10, sessions: 10, price: 500, description: 'Individualni program za pse s agresivnim ponašanjem. Procjena, plan i postupna rehabilitacija.' },
+  { id: 'tp-4', trainer_id: 'tr-2', name: 'Škola za štence', type: 'stenci', duration_weeks: 6, sessions: 12, price: 300, description: 'Za štence od 8 tjedana do 6 mjeseci. Socijalizacija, osnove poslušnosti, navikavanje na okruženje.' },
+  { id: 'tp-5', trainer_id: 'tr-2', name: 'Puppy Start', type: 'osnovna', duration_weeks: 4, sessions: 8, price: 200, description: 'Kratki uvodni tečaj za nove vlasnike. Higijena, rutina, osnove komunikacije s ljubimcem.' },
+  { id: 'tp-6', trainer_id: 'tr-3', name: 'Agility početni', type: 'agility', duration_weeks: 8, sessions: 16, price: 450, description: 'Uvod u agility sport. Prolazak kroz prepreke, tunele, mostiće. Razvija koordinaciju i vezu pas-vlasnik.' },
+  { id: 'tp-7', trainer_id: 'tr-3', name: 'Agility natjecateljski', type: 'agility', duration_weeks: 12, sessions: 24, price: 700, description: 'Za pse koji žele na natjecanja. Intenzivni trening brzine, preciznosti i poslušnosti na stazi.' },
+  { id: 'tp-8', trainer_id: 'tr-4', name: 'Separacijska anksioznost', type: 'ponasanje', duration_weeks: 6, sessions: 6, price: 350, description: 'Program za pse koji pate kad vlasnik ode. Postupna desenzitizacija i izgradnja samopouzdanja.' },
+  { id: 'tp-9', trainer_id: 'tr-4', name: 'Reaktivni psi', type: 'ponasanje', duration_weeks: 8, sessions: 8, price: 420, description: 'Za pse koji reagiraju na druge pse ili ljude. Rad na smirenosti, preusmjeravanju i pozitivnim asocijacijama.' },
+  { id: 'tp-10', trainer_id: 'tr-5', name: 'Osnovna dresura Osijek', type: 'osnovna', duration_weeks: 8, sessions: 16, price: 320, description: 'Grupni tečaj u Osijeku. Maksimalno 5 pasa. Šetnja, poslušnost, socijalizacija u gradskim uvjetima.' },
+  { id: 'tp-11', trainer_id: 'tr-6', name: 'Clicker trening', type: 'osnovna', duration_weeks: 4, sessions: 8, price: 220, description: 'Naučite komunicirati sa psom pomoću clickera. Brze i zabavne sesije prilagođene svakom psu.' },
+];
+
+export function getTrainerById(id: string) {
+  return mockTrainers.find(t => t.id === id) || null;
+}
+
+export function getTrainers(filters?: { city?: string; type?: string }) {
+  let result = [...mockTrainers];
+  if (filters?.city) result = result.filter(t => t.city === filters.city);
+  if (filters?.type) result = result.filter(t => t.specializations.includes(filters.type as Trainer['specializations'][number]));
+  return result.sort((a, b) => b.rating - a.rating);
+}
+
+export function getTrainingProgramsForTrainer(trainerId: string) {
+  return mockTrainingPrograms.filter(p => p.trainer_id === trainerId);
+}
+
+// ============================================================
+// BLOG / ARTICLES
+// ============================================================
+
+export const mockArticles: Article[] = [
+  {
+    slug: 'kako-pripremiti-psa-za-cuvanje',
+    title: 'Kako pripremiti psa za čuvanje',
+    excerpt: 'Praktični savjeti za vlasnike koji prvi put ostavljaju ljubimca kod sittera.',
+    body: `Ostavljanje psa kod sittera može biti stresno — i za vas i za vašeg ljubimca. No uz dobru pripremu, iskustvo može biti pozitivno za sve.
+
+Prije svega, organizirajte upoznavanje vašeg psa sa sitterom. Kratki susret od 15-20 minuta u neutralnom okruženju pomoći će psu da se navikne na novu osobu. Obratite pažnju na govor tijela — opušten rep i radoznalost su dobar znak.
+
+Pripremite torbu za svog ljubimca: omiljenu igračku, hranu koju inače jede, poslastice i bilo kakve lijekove. Ostavite pisane upute o rutini — kad jede, kad ide van, što voli a što ne.
+
+Važno je da se oprostite mirno i brzo. Dugačka i emotivna rastanka stvaraju anksioznost kod psa. Jednostavno se pozdravite i odite s povjerenjem da je vaš ljubimac u dobrim rukama.
+
+Nakon što odete, dajte psu vremena da se prilagodi. Većina pasa se udomaći kod sittera unutar nekoliko sati. Tražite od sittera redovita ažuriranja i fotografije — to će i vama olakšati rastanak.`,
+    author: 'Dr. Maja Kovač',
+    date: '2026-03-10',
+    category: 'dresura',
+    emoji: '🐕',
+  },
+  {
+    slug: 'top-5-parkova-za-setnju-u-zagrebu',
+    title: 'Top 5 parkova za šetnju u Zagrebu',
+    excerpt: 'Otkrijte najbolje parkove za šetnju s vašim ljubimcem u glavnom gradu.',
+    body: `Zagreb je grad zelenila i savršen za šetnju s ljubimcima. Evo naših top 5 preporuka za parkove gdje će vaš pas uživati.
+
+Maksimir je neosporno na prvom mjestu. Najveći zagrebački park nudi kilometre staza okruženih drevnim stablima. Mnogi vlasnici ovdje puštaju pse s povodca u ranim jutarnjim satima. Jezera su savršena za pse koji vole vodu.
+
+Bundek je popularan izbor za obiteljske šetnje. Jezero, travnate površine i ravne staze čine ga idealnim za starije pse. Vikendima se ovdje skupljaju grupe vlasnika — odlična prilika za socijalizaciju.
+
+Jarun nudi duge staze oko jezera, savršene za aktivne pse. Postoje i dijelovi plaže gdje psi mogu trčati slobodno izvan sezone. Bring frisbee!
+
+Park Ribnjak u centru grada je manji, ali miran i lijep za kratku šetnju. Idealan za pauzu tijekom radnog dana.
+
+Šestine i okolica nude ruralniji ugođaj — šumske staze, potoci i manje ljudi. Savršeno za pse koji preferiraju mir i prirodu.`,
+    author: 'Filip Matić',
+    date: '2026-03-08',
+    category: 'zabava',
+    emoji: '🌳',
+  },
+  {
+    slug: 'zimska-njega-sapa',
+    title: 'Zimska njega šapa — sve što trebate znati',
+    excerpt: 'Zaštitite šape svog ljubimca od soli, leda i hladnoće.',
+    body: `Zima može biti teška za šape vašeg psa. Sol za posipanje, led i niske temperature mogu uzrokovati pukotine, iritaciju pa čak i ozljede. Evo kako zaštititi šape svog ljubimca.
+
+Najvažniji korak je redoviti pregled šapa nakon svake šetnje. Provjerite ima li pukotina, crvenila ili stranih tijela zaglavljenih između prstiju. Operite šape toplom vodom nakon šetnje da uklonite sol i kemikalije.
+
+Balzam za šape je vaš najbolji prijatelj zimi. Nanesite tanki sloj prije šetnje — djeluje kao barijera. Nakon šetnje, nanesite hranjivi balzam za oporavak. Možete koristiti i kokosovo ulje kao prirodnu alternativu.
+
+Čizmica za pse nisu samo modni dodatak — one su praktična zaštita. Potrebno je malo strpljenja da se pas navikne, ali jednom kad prihvati, šetnje po snijegu postaju bezbrižne.
+
+Skratite dlaku između prstiju jer se u njoj nakuplja led i stvara bolne grudice. Redovito šišanje ove dlake spriječit će probleme. Ne zaboravite ni nokte — dugi nokti na ledu mogu uzrokovati proklizavanje i ozljede.`,
+    author: 'Dr. Maja Kovač',
+    date: '2026-02-15',
+    category: 'zdravlje',
+    emoji: '🐾',
+  },
+  {
+    slug: 'kako-odabrati-pravog-sittera',
+    title: 'Kako odabrati pravog sittera za svog ljubimca',
+    excerpt: 'Vodič kroz najvažnije kriterije pri odabiru čuvara ljubimaca.',
+    body: `Odabir pravog sittera je jedna od najvažnijih odluka koju ćete donijeti za svog ljubimca. Evo na što obratiti pažnju.
+
+Prvo, čitajte recenzije. Iskustva drugih vlasnika su najbolji pokazatelj kvalitete. Obratite pažnju na komentare o komunikaciji, fotke koje sitter šalje i kako se nosi s nepredviđenim situacijama.
+
+Verificirani sitteri na Šapici prošli su provjeru identiteta i pozadine. To je prvi filter, ali ne i jedini. Organizirajte upoznavanje — kemija između sittera i vašeg ljubimca je ključna.
+
+Pitajte o iskustvu s vašom pasminom. Nije isto čuvati čivavu i njemačkog ovčara. Dobar sitter zna razlike i prilagođava pristup. Pitajte i o hitnim situacijama — ima li plan, zna li put do veterinara?
+
+Jasno komunicirajte rutinu svog ljubimca. Dobar sitter će postaviti puno pitanja — to je dobar znak. Onaj tko samo kaže "bit će sve OK" bez detalja možda nije pravi izbor.
+
+Konačno, povjerenje. Ako se nakon upoznavanja osjećate sigurno i vaš pas reagira pozitivno — pronašli ste pravog sittera!`,
+    author: 'Nina Šimunović',
+    date: '2026-03-01',
+    category: 'zabava',
+    emoji: '🔍',
+  },
+  {
+    slug: 'prehrana-stenca-vodic',
+    title: 'Prehrana štenca — kompletni vodič',
+    excerpt: 'Sve što trebate znati o pravilnoj prehrani vašeg štenca od prvog dana.',
+    body: `Pravilna prehrana u prvim mjesecima života postavlja temelje za zdravlje cijelog života vašeg psa. Evo što trebate znati.
+
+Od 8 tjedana do 4 mjeseca, štenac treba jesti 3-4 puta dnevno. Koristite kvalitetnu hranu za štence — ona sadrži više proteina i kalorija nego hrana za odrasle pse. Veličina obroka ovisi o pasmini, pa se posavjetujte s veterinarom.
+
+Od 4 do 12 mjeseci, postupno smanjite na 2 obroka dnevno. Ovo je razdoblje intenzivnog rasta — ne štedite na kvaliteti hrane. Izbjegavajte hranu za ljude, posebno čokoladu, luk, grožđe i ksilitol.
+
+Voda mora biti dostupna cijeli dan. Štenac koji se igra treba više vode nego mirni odrasli pas. Pratite koliko pije — prekomjerna žeđ može biti znak zdravstvenog problema.
+
+Dodaci prehrani obično nisu potrebni ako koristite kvalitetnu kompletnu hranu. No za velike pasmine, veterinar može preporučiti dodatke za zglobove. Nikad ne dajte dodatke bez konzultacije.
+
+Prelazak na hranu za odrasle obično se radi između 12 i 18 mjeseci, ovisno o pasmini. Velike pasmine prelaze kasnije. Prelazak radite postupno — miješajte staru i novu hranu 7-10 dana.`,
+    author: 'Dr. Maja Kovač',
+    date: '2026-02-20',
+    category: 'prehrana',
+    emoji: '🍖',
+  },
+  {
+    slug: 'putovanje-s-ljubimcem-u-eu',
+    title: 'Putovanje s ljubimcem u EU — što trebate znati',
+    excerpt: 'Kompletni vodič za putovanje s ljubimcem unutar Europske unije.',
+    body: `Putovanje s ljubimcem u EU zahtijeva pripremu, ali nije komplicirano ako znate korake. Hrvatska je članica EU, što olakšava putovanje unutar Unije.
+
+EU putovnica za kućne ljubimce je obavezan dokument. Izdaje ju ovlašteni veterinar i sadrži podatke o cijepljenjima, mikročipu i vlasniku. Cijena je oko 20-30€ i vrijedi doživotno.
+
+Mikročip je obavezan prije cijepljenja protiv bjesnoće. Pas mora biti čipiran standardom ISO 11784/11785. Ako vaš ljubimac već ima čip starijeg standarda, nosite vlastiti čitač.
+
+Cijepljenje protiv bjesnoće mora biti obavljeno najmanje 21 dan prije putovanja. Godišnje docjepljivanje mora biti uredno evidentirano u putovnici.
+
+Za neke zemlje vrijede dodatna pravila. Finska, Irska, Malta i Norveška zahtijevaju tretman protiv trakavice 24-120 sati prije ulaska. Provjerite specifične zahtjeve odredišne zemlje.
+
+Prijevoz avionom zahtijeva odobrenu transportnu kutiju. Psi do 8 kg obično mogu u kabinu, veći idu u prtljažni prostor. Rezervirajte mjesto za ljubimca unaprijed — broj je ograničen po letu.`,
+    author: 'Filip Matić',
+    date: '2026-01-28',
+    category: 'putovanje',
+    emoji: '✈️',
+  },
+  {
+    slug: 'separacijska-anksioznost-savjeti',
+    title: 'Separacijska anksioznost — savjeti za vlasnike',
+    excerpt: 'Kako prepoznati i ublažiti separacijsku anksioznost kod pasa.',
+    body: `Separacijska anksioznost je jedan od najčešćih problema ponašanja kod pasa. Vaš pas vas obožava, ali to ne znači da mora patiti kad odete.
+
+Prepoznajte znakove: pretjerano lajanje ili cviljenje kad odlazite, destruktivno ponašanje (grizenje namještaja, kopanje), nečistoća u kući unatoč treningu, pretjerano slinenje ili znojenje šapa.
+
+Počnite s kratkim odlascima. Ostavite psa samog 5 minuta, pa se vratite. Postupno produžujte vrijeme. Ključno je da se vraćate PRIJE nego pas postane anksiozan — tako gradite pozitivnu asocijaciju.
+
+Rituali odlaska i dolaska trebaju biti dosadni. Nemojte se emotivno opraštati niti pretjerano slaviti dolazak. Mirno odete, mirno se vratite. Pažnju dajete tek kad se pas smiri.
+
+Ostavite nešto što miriše na vas — staru majicu ili jastučnicu. Poznati miris djeluje umirujuće. Kong igračka napunjena poslasticama odlična je za okupaciju prvih 20-30 minuta nakon vašeg odlaska.
+
+Konzultirajte stručnjaka ako je anksioznost teška. Profesionalni trener ili veterinarski biheviorist mogu osmisliti prilagođeni program. U teškim slučajevima, veterinar može preporučiti i medikamentoznu potporu.`,
+    author: 'Lana Horvat',
+    date: '2026-02-05',
+    category: 'dresura',
+    emoji: '💔',
+  },
+  {
+    slug: 'grooming-kod-kuce-vodic',
+    title: 'Grooming kod kuće — vodič za početnike',
+    excerpt: 'Naučite osnove kućnog groominga i održavajte ljubimca urednim između posjeta salonu.',
+    body: `Redoviti grooming nije samo estetski — on je bitan za zdravlje vašeg ljubimca. Između posjeta profesionalnom groomeru, evo što možete raditi kod kuće.
+
+Četkanje je osnova svega. Kratke dlake trebaju četkanje jednom tjedno, duge dlake svaki dan. Koristite odgovarajuću četku — slicker brush za duge dlake, gumenu rukavicu za kratke. Četkanje uklanja mrtvu dlaku i sprječava kovrče.
+
+Kupanje radite svaka 4-6 tjedana, osim ako se pas izvaljao u nečemu smrdljivom. Koristite šampon za pse — ljudski šampon ima krivi pH. Temeljito isperite jer ostaci šampona uzrokuju svrbež.
+
+Nokti se šišaju svaka 2-3 tjedna. Koristite giljotina ili škare za nokte. Režite malo po malo da ne pogodite živac (roze dio unutar nokta). Ako pas ima tamne nokte, režite u malim koracima.
+
+Uši čistite jednom tjedno vatenim štapićem i otopinom za čišćenje ušiju. Nikad ne gurajte duboko u ušni kanal. Crvene, smrdljive ili ljepljive uši su znak infekcije — posjetite veterinara.
+
+Za profesionalno šišanje, trimanje i spa tretmane prepustite posao stručnjacima. Pogledajte naše groomere na Šapici i pronađite savršeni salon u vašem gradu!`,
+    author: 'Salon Šapica',
+    date: '2026-03-15',
+    category: 'zdravlje',
+    emoji: '✂️',
+  },
+];
+
+export function getArticleBySlug(slug: string) {
+  return mockArticles.find(a => a.slug === slug) || null;
+}
+
+export function getArticles(category?: string) {
+  let result = [...mockArticles];
+  if (category) result = result.filter(a => a.category === category);
+  return result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+export function getRelatedArticles(slug: string, limit = 3) {
+  const article = getArticleBySlug(slug);
+  if (!article) return [];
+  return mockArticles
+    .filter(a => a.slug !== slug && a.category === article.category)
+    .slice(0, limit)
+    .concat(
+      mockArticles.filter(a => a.slug !== slug && a.category !== article.category).slice(0, limit)
+    )
+    .slice(0, limit);
 }
