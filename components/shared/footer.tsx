@@ -101,8 +101,8 @@ export function Footer() {
               </li>
             </ul>
             <div className="mt-6 space-y-2 text-sm">
-              <Link href="#" className="block hover:text-orange-400 transition-colors">Uvjeti korištenja</Link>
-              <Link href="#" className="block hover:text-orange-400 transition-colors">Politika privatnosti</Link>
+              <Link href="/uvjeti" className="block hover:text-orange-400 transition-colors">Uvjeti korištenja</Link>
+              <Link href="/privatnost" className="block hover:text-orange-400 transition-colors">Politika privatnosti</Link>
             </div>
           </div>
         </div>

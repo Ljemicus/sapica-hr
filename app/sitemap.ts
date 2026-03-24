@@ -14,6 +14,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/zajednica',
     '/forum',
     '/izgubljeni',
+    '/privatnost',
+    '/uvjeti',
   ];
 
   return staticPages.map((route) => ({
