@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown } from 'lucide-react';
+import { Menu, X, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -87,6 +87,10 @@ export function Navbar() {
           <Link href="/zajednica" className="text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors flex items-center gap-1.5">
             <BookOpen className="h-4 w-4" />
             Blog
+          </Link>
+          <Link href="/forum" className="text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors flex items-center gap-1.5">
+            <MessageSquare className="h-4 w-4" />
+            Forum
           </Link>
           {!user && (
             <Link href="/registracija?role=sitter" className="text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors">
@@ -200,6 +204,10 @@ export function Navbar() {
               <Link href="/zajednica" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
                 <BookOpen className="h-5 w-5" />
                 Blog
+              </Link>
+              <Link href="/forum" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
+                <MessageSquare className="h-5 w-5" />
+                Forum
               </Link>
               {user ? (
                 <>

@@ -1,4 +1,4 @@
-import type { User, Pet, SitterProfile, Booking, Review, Message, Availability, ServiceType, Walk, PetUpdate, PetPassport, Groomer, Trainer, TrainingProgram, Article } from './types';
+import type { User, Pet, SitterProfile, Booking, Review, Message, Availability, ServiceType, Walk, PetUpdate, PetPassport, Groomer, Trainer, TrainingProgram, Article, ForumTopic, ForumComment, ForumCategorySlug } from './types';
 
 // ============================================================
 // USERS
@@ -1032,4 +1032,76 @@ export function getRelatedArticles(slug: string, limit = 3) {
       mockArticles.filter(a => a.slug !== slug && a.category !== article.category).slice(0, limit)
     )
     .slice(0, limit);
+}
+
+// ============================================================
+// FORUM
+// ============================================================
+
+export const mockForumTopics: ForumTopic[] = [
+  { id: 'ft-1', category_slug: 'pitanja', title: 'Koliko često trebam voditi psa veterinaru?', author_name: 'Marina K.', author_initial: 'M', author_gradient: 'from-blue-400 to-cyan-300', created_at: '2026-03-22T14:30:00Z', comment_count: 8, likes: 24, is_pinned: true, is_hot: true },
+  { id: 'ft-2', category_slug: 'savjeti', title: '5 trikova za učenje štenca da ne grize', author_name: 'Luka J.', author_initial: 'L', author_gradient: 'from-green-400 to-emerald-300', created_at: '2026-03-21T09:15:00Z', comment_count: 12, likes: 45, is_pinned: false, is_hot: true },
+  { id: 'ft-3', category_slug: 'price', title: 'Kako je Bella spasila moj dan — priča o udomljavanju', author_name: 'Ana H.', author_initial: 'A', author_gradient: 'from-pink-400 to-rose-300', created_at: '2026-03-20T18:00:00Z', comment_count: 15, likes: 67, is_pinned: false, is_hot: true },
+  { id: 'ft-4', category_slug: 'izgubljeni', title: '🚨 Izgubljen zlatni retriver u Maksimiru — pomoć!', author_name: 'Tomislav B.', author_initial: 'T', author_gradient: 'from-red-400 to-orange-300', created_at: '2026-03-23T08:00:00Z', comment_count: 22, likes: 38, is_pinned: true, is_hot: true },
+  { id: 'ft-5', category_slug: 'slobodna', title: 'Koji je vaš najdraži park za šetnju psa u Zagrebu?', author_name: 'Nina Š.', author_initial: 'N', author_gradient: 'from-purple-400 to-pink-300', created_at: '2026-03-19T11:30:00Z', comment_count: 19, likes: 31, is_pinned: false, is_hot: false },
+  { id: 'ft-6', category_slug: 'pitanja', title: 'Preporuka za hranu za mačke s osjetljivim želucem?', author_name: 'Petra K.', author_initial: 'P', author_gradient: 'from-amber-400 to-yellow-300', created_at: '2026-03-18T16:45:00Z', comment_count: 7, likes: 18, is_pinned: false, is_hot: false },
+  { id: 'ft-7', category_slug: 'savjeti', title: 'Kako pripremiti ljubimca za putovanje avionom', author_name: 'Filip M.', author_initial: 'F', author_gradient: 'from-indigo-400 to-blue-300', created_at: '2026-03-17T13:00:00Z', comment_count: 11, likes: 52, is_pinned: false, is_hot: true },
+  { id: 'ft-8', category_slug: 'price', title: 'Moj mačak i pas su postali najbolji prijatelji', author_name: 'Ivana B.', author_initial: 'I', author_gradient: 'from-teal-400 to-cyan-300', created_at: '2026-03-16T20:15:00Z', comment_count: 9, likes: 41, is_pinned: false, is_hot: false },
+  { id: 'ft-9', category_slug: 'pitanja', title: 'Je li normalno da pas jede travu?', author_name: 'Marko N.', author_initial: 'M', author_gradient: 'from-orange-400 to-amber-300', created_at: '2026-03-15T10:00:00Z', comment_count: 6, likes: 14, is_pinned: false, is_hot: false },
+  { id: 'ft-10', category_slug: 'izgubljeni', title: 'Nestala crna mačka u Splitu, Mertojak — molim pomoć', author_name: 'Ante P.', author_initial: 'A', author_gradient: 'from-rose-400 to-red-300', created_at: '2026-03-22T07:30:00Z', comment_count: 14, likes: 29, is_pinned: false, is_hot: false },
+  { id: 'ft-11', category_slug: 'savjeti', title: 'Najbolji načini za rashladiti psa tijekom ljeta', author_name: 'Maja P.', author_initial: 'M', author_gradient: 'from-sky-400 to-blue-300', created_at: '2026-03-14T15:30:00Z', comment_count: 8, likes: 36, is_pinned: false, is_hot: false },
+  { id: 'ft-12', category_slug: 'slobodna', title: 'Tko ide na Dog Walk event u Rijeci ovaj vikend?', author_name: 'Lucija V.', author_initial: 'L', author_gradient: 'from-violet-400 to-purple-300', created_at: '2026-03-21T12:00:00Z', comment_count: 5, likes: 22, is_pinned: false, is_hot: false },
+  { id: 'ft-13', category_slug: 'price', title: 'Priča o Rexu: od napuštenog štenca do terapijskog psa', author_name: 'Ivan K.', author_initial: 'I', author_gradient: 'from-emerald-400 to-green-300', created_at: '2026-03-13T09:00:00Z', comment_count: 20, likes: 89, is_pinned: false, is_hot: true },
+  { id: 'ft-14', category_slug: 'pitanja', title: 'Kada sterilizirati mačku — iskustva?', author_name: 'Katarina T.', author_initial: 'K', author_gradient: 'from-fuchsia-400 to-pink-300', created_at: '2026-03-12T14:00:00Z', comment_count: 10, likes: 16, is_pinned: false, is_hot: false },
+  { id: 'ft-15', category_slug: 'savjeti', title: 'DIY igračke za mačke od stvari koje imate doma', author_name: 'Nina Š.', author_initial: 'N', author_gradient: 'from-purple-400 to-pink-300', created_at: '2026-03-11T17:45:00Z', comment_count: 7, likes: 33, is_pinned: false, is_hot: false },
+];
+
+export const mockForumComments: ForumComment[] = [
+  // Comments for ft-1 (veterinar)
+  { id: 'fc-1', topic_id: 'ft-1', author_name: 'Ana H.', author_initial: 'A', author_gradient: 'from-pink-400 to-rose-300', content: 'Za odrasle pse preporučujem barem jednom godišnje, a za štence svaka 3-4 mjeseca dok ne završe s cijepljenjem.', created_at: '2026-03-22T15:00:00Z', likes: 12 },
+  { id: 'fc-2', topic_id: 'ft-1', author_name: 'Marko N.', author_initial: 'M', author_gradient: 'from-orange-400 to-amber-300', content: 'Moj veterinar kaže da stariji psi (7+ godina) trebaju ići svaka 6 mjeseci na pregled. Prevencija je ključna!', created_at: '2026-03-22T15:30:00Z', likes: 8 },
+  { id: 'fc-3', topic_id: 'ft-1', author_name: 'Petra K.', author_initial: 'P', author_gradient: 'from-amber-400 to-yellow-300', content: 'Slažem se s Markom. Naš pas je imao problem s bubrezima koji smo uhvatili rano baš zato što smo redovito išli na preglede.', created_at: '2026-03-22T16:15:00Z', likes: 5 },
+  // Comments for ft-2 (štenci grizu)
+  { id: 'fc-4', topic_id: 'ft-2', author_name: 'Marina K.', author_initial: 'M', author_gradient: 'from-blue-400 to-cyan-300', content: 'Odličan post! Mi smo koristili "zamijeni i preusmjeri" metodu — čim štene krene gristi ruku, damo mu igračku za žvakanje.', created_at: '2026-03-21T10:00:00Z', likes: 15 },
+  { id: 'fc-5', topic_id: 'ft-2', author_name: 'Filip M.', author_initial: 'F', author_gradient: 'from-indigo-400 to-blue-300', content: 'Strpljenje je ključno! Naš Buddy je trebao oko 2 mjeseca da prestane, ali sad je super.', created_at: '2026-03-21T11:30:00Z', likes: 9 },
+  // Comments for ft-3 (Bella udomljavanje)
+  { id: 'fc-6', topic_id: 'ft-3', author_name: 'Tomislav B.', author_initial: 'T', author_gradient: 'from-red-400 to-orange-300', content: 'Predivna priča! Udomljavanje je uvijek najbolji izbor. Naš Rex je isto udomljen i najsretniji je pas na svijetu.', created_at: '2026-03-20T19:00:00Z', likes: 18 },
+  { id: 'fc-7', topic_id: 'ft-3', author_name: 'Maja P.', author_initial: 'M', author_gradient: 'from-sky-400 to-blue-300', content: 'Rasplakala sam se čitajući ovo. Hvala što si podijelila! 🥹', created_at: '2026-03-20T19:30:00Z', likes: 22 },
+  { id: 'fc-8', topic_id: 'ft-3', author_name: 'Lucija V.', author_initial: 'L', author_gradient: 'from-violet-400 to-purple-300', content: 'Bella izgleda prekrasno na slikama! Sretna sam da je pronašla svoj dom.', created_at: '2026-03-20T20:00:00Z', likes: 11 },
+  // Comments for ft-4 (izgubljen retriver)
+  { id: 'fc-9', topic_id: 'ft-4', author_name: 'Nina Š.', author_initial: 'N', author_gradient: 'from-purple-400 to-pink-300', content: 'Podijelila sam na svim grupama! Nadam se da će se brzo pronaći. Jeste li obavijestili udruge za životinje?', created_at: '2026-03-23T08:30:00Z', likes: 14 },
+  { id: 'fc-10', topic_id: 'ft-4', author_name: 'Ivan K.', author_initial: 'I', author_gradient: 'from-emerald-400 to-green-300', content: 'Provjerite i Bundek, tamo često viđam pse koji su pobjegli iz Maksimira. Držim fige!', created_at: '2026-03-23T09:00:00Z', likes: 10 },
+  { id: 'fc-11', topic_id: 'ft-4', author_name: 'Katarina T.', author_initial: 'K', author_gradient: 'from-fuchsia-400 to-pink-300', content: 'UPDATE: Mislim da sam ga vidjela kod jezera u Maksimiru oko 7 ujutro! Ima li ogrlicu?', created_at: '2026-03-23T09:45:00Z', likes: 20 },
+  // Comments for ft-5 (parkovi Zagreb)
+  { id: 'fc-12', topic_id: 'ft-5', author_name: 'Filip M.', author_initial: 'F', author_gradient: 'from-indigo-400 to-blue-300', content: 'Bundek je savršen! Ima ograđeni dio za pse i jezero u blizini.', created_at: '2026-03-19T12:00:00Z', likes: 7 },
+  { id: 'fc-13', topic_id: 'ft-5', author_name: 'Maja P.', author_initial: 'M', author_gradient: 'from-sky-400 to-blue-300', content: 'Maksimir je klasik, ali Dotršćina je underrated — manje ljudi, više prostora za trčanje!', created_at: '2026-03-19T12:30:00Z', likes: 11 },
+  // Comments for ft-13 (Rex priča)
+  { id: 'fc-14', topic_id: 'ft-13', author_name: 'Ana H.', author_initial: 'A', author_gradient: 'from-pink-400 to-rose-300', content: 'Rex je dokaz da svaki pas zaslužuje drugu šansu. Nevjerojatna priča, hvala na dijeljenju!', created_at: '2026-03-13T10:00:00Z', likes: 25 },
+  { id: 'fc-15', topic_id: 'ft-13', author_name: 'Marina K.', author_initial: 'M', author_gradient: 'from-blue-400 to-cyan-300', content: 'Postoji li udruga koja organizira edukaciju za terapijske pse? Htjela bih isto probati s mojim Maxom.', created_at: '2026-03-13T11:00:00Z', likes: 8 },
+];
+
+export function getForumTopics(category?: ForumCategorySlug) {
+  let result = [...mockForumTopics];
+  if (category) result = result.filter(t => t.category_slug === category);
+  return result.sort((a, b) => {
+    if (a.is_pinned && !b.is_pinned) return -1;
+    if (!a.is_pinned && b.is_pinned) return 1;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+}
+
+export function getForumTopicById(id: string) {
+  return mockForumTopics.find(t => t.id === id);
+}
+
+export function getForumCommentsForTopic(topicId: string) {
+  return mockForumComments
+    .filter(c => c.topic_id === topicId)
+    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+}
+
+export function getTrendingTopics() {
+  return [...mockForumTopics]
+    .sort((a, b) => b.likes - a.likes)
+    .slice(0, 5);
 }

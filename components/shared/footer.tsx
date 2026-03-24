@@ -71,6 +71,7 @@ export function Footer() {
               <li><Link href="/njega" className="hover:text-orange-400 transition-colors">Grooming & Njega</Link></li>
               <li><Link href="/dresura" className="hover:text-orange-400 transition-colors">Dresura & Trening</Link></li>
               <li><Link href="/zajednica" className="hover:text-orange-400 transition-colors">Zajednica & Blog</Link></li>
+              <li><Link href="/forum" className="hover:text-orange-400 transition-colors">Forum</Link></li>
               <li><Link href="/registracija?role=sitter" className="hover:text-orange-400 transition-colors">Postani sitter</Link></li>
             </ul>
           </div>

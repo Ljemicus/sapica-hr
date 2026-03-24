@@ -409,7 +409,7 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Još više za vašeg ljubimca</h2>
             <p className="text-muted-foreground text-lg max-w-lg mx-auto">Osim čuvanja, nudimo grooming, dresuru i zajednicu ljubitelja životinja</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {[
               {
                 title: 'Grooming & Njega',
@@ -434,6 +434,14 @@ export default function HomePage() {
                 color: 'from-amber-500 to-orange-500',
                 href: '/zajednica',
                 stat: '8 članaka',
+              },
+              {
+                title: 'Forum zajednice',
+                description: 'Postavite pitanja, podijelite savjete ili pomozite pronaći izgubljene ljubimce. Viralna zajednica!',
+                icon: Users,
+                color: 'from-violet-500 to-purple-500',
+                href: '/forum',
+                stat: '15 tema',
               },
             ].map((item, i) => (
               <Link key={item.title} href={item.href}>
