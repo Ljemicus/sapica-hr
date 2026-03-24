@@ -15,11 +15,11 @@ export default function TabLayout() {
           borderTopColor: Colors.borderLight,
           borderTopWidth: 1,
           paddingBottom: 8,
-          paddingTop: 8,
-          height: 88,
+          paddingTop: 6,
+          height: 85,
         },
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: 10,
           fontWeight: '600',
         },
         headerStyle: { backgroundColor: Colors.white },
@@ -52,11 +52,30 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="blog"
+        options={{
+          title: 'Blog',
+          headerTitle: 'Savjeti za ljubimce',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="forum"
+        options={{
+          title: 'Forum',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="chatbubbles" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="messages"
         options={{
           title: 'Poruke',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubbles" size={size} color={color} />
+            <Ionicons name="mail" size={size} color={color} />
           ),
           tabBarBadge: 3,
           tabBarBadgeStyle: { backgroundColor: Colors.primary },
