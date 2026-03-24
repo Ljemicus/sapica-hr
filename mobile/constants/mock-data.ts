@@ -1,0 +1,248 @@
+import { Sitter, Conversation, LostPet, Booking, Review, Pet } from '../types';
+
+export const sitters: Sitter[] = [
+  {
+    id: '1',
+    name: 'Ana Horvat',
+    avatar: 'https://i.pravatar.cc/150?img=1',
+    rating: 4.9,
+    reviewCount: 127,
+    city: 'Zagreb',
+    services: ['Čuvanje', 'Šetnja', 'Dnevna briga'],
+    pricePerHour: 12,
+    description: 'Iskusna čuvarica s 5 godina iskustva. Obožavam pse i mačke! Imam vlastiti dvorište i uvijek se pobrinjem da se vaši ljubimci osjećaju kao kod kuće.',
+    verified: true,
+  },
+  {
+    id: '2',
+    name: 'Marko Babić',
+    avatar: 'https://i.pravatar.cc/150?img=3',
+    rating: 4.8,
+    reviewCount: 89,
+    city: 'Split',
+    services: ['Čuvanje', 'Dresura', 'Šetnja'],
+    pricePerHour: 15,
+    description: 'Profesionalni trener i čuvar. Specijaliziran za velike pasmine. Certificirani trener s pozitivnim pristupom.',
+    verified: true,
+  },
+  {
+    id: '3',
+    name: 'Ivana Kovač',
+    avatar: 'https://i.pravatar.cc/150?img=5',
+    rating: 4.7,
+    reviewCount: 64,
+    city: 'Rijeka',
+    services: ['Grooming', 'Čuvanje'],
+    pricePerHour: 18,
+    description: 'Profesionalna groomerica i ljubiteljica životinja. Nudim usluge njege i čuvanja u ugodnom okruženju.',
+    verified: true,
+  },
+  {
+    id: '4',
+    name: 'Luka Jurić',
+    avatar: 'https://i.pravatar.cc/150?img=8',
+    rating: 4.6,
+    reviewCount: 42,
+    city: 'Osijek',
+    services: ['Šetnja', 'Dnevna briga'],
+    pricePerHour: 10,
+    description: 'Student veterine koji obožava životinje. Dostupan svaki dan za šetnje i dnevnu brigu o vašim ljubimcima.',
+    verified: false,
+  },
+  {
+    id: '5',
+    name: 'Petra Novak',
+    avatar: 'https://i.pravatar.cc/150?img=9',
+    rating: 4.9,
+    reviewCount: 156,
+    city: 'Zagreb',
+    services: ['Čuvanje', 'Grooming', 'Dresura', 'Šetnja'],
+    pricePerHour: 20,
+    description: 'Veterinarska tehničarka s dugogodišnjim iskustvom. Pružam kompletnu uslugu brige o kućnim ljubimcima.',
+    verified: true,
+  },
+  {
+    id: '6',
+    name: 'Tomislav Matić',
+    avatar: 'https://i.pravatar.cc/150?img=12',
+    rating: 4.5,
+    reviewCount: 31,
+    city: 'Zadar',
+    services: ['Šetnja', 'Čuvanje'],
+    pricePerHour: 11,
+    description: 'Aktivni sportaš i ljubitelj prirode. Vaš pas će uživati u dugim šetnjama uz more.',
+    verified: false,
+  },
+];
+
+export const conversations: Conversation[] = [
+  {
+    id: '1',
+    participantName: 'Ana Horvat',
+    participantAvatar: 'https://i.pravatar.cc/150?img=1',
+    lastMessage: 'Super, vidimo se u subotu u 10h! 🐾',
+    lastMessageTime: '14:30',
+    unreadCount: 2,
+  },
+  {
+    id: '2',
+    participantName: 'Marko Babić',
+    participantAvatar: 'https://i.pravatar.cc/150?img=3',
+    lastMessage: 'Rex je bio super danas, poslat ću vam slike',
+    lastMessageTime: '12:15',
+    unreadCount: 0,
+  },
+  {
+    id: '3',
+    participantName: 'Ivana Kovač',
+    participantAvatar: 'https://i.pravatar.cc/150?img=5',
+    lastMessage: 'Mogu li doći po Bellu u petak?',
+    lastMessageTime: 'Jučer',
+    unreadCount: 1,
+  },
+  {
+    id: '4',
+    participantName: 'Petra Novak',
+    participantAvatar: 'https://i.pravatar.cc/150?img=9',
+    lastMessage: 'Hvala vam na povjerenju! ❤️',
+    lastMessageTime: 'Pon',
+    unreadCount: 0,
+  },
+];
+
+export const chatMessages = [
+  { id: '1', senderId: 'other', text: 'Bok! Zanima me čuvanje za vikend.', timestamp: '10:00', read: true },
+  { id: '2', senderId: 'me', text: 'Bok! Naravno, koji datumi vam odgovaraju?', timestamp: '10:05', read: true },
+  { id: '3', senderId: 'other', text: 'Subota i nedjelja, 15-16.3. Imam jednog labradora.', timestamp: '10:08', read: true },
+  { id: '4', senderId: 'me', text: 'Super, slobodna sam taj vikend! Koliko ima godina?', timestamp: '10:12', read: true },
+  { id: '5', senderId: 'other', text: '3 godine, jako je miran i socijaliziran 🐕', timestamp: '10:15', read: true },
+  { id: '6', senderId: 'me', text: 'Odlično! Cijena za vikend je 200 kn. Odgovara vam?', timestamp: '10:20', read: true },
+  { id: '7', senderId: 'other', text: 'Super, vidimo se u subotu u 10h! 🐾', timestamp: '14:30', read: false },
+];
+
+export const lostPets: LostPet[] = [
+  {
+    id: '1',
+    name: 'Rex',
+    type: 'Pas',
+    breed: 'Njemački ovčar',
+    image: 'https://placedog.net/400/300?id=1',
+    lastSeen: 'Maksimir, Zagreb',
+    lastSeenDate: '2026-03-22',
+    city: 'Zagreb',
+    description: 'Veliki njemački ovčar, crno-smeđi, ima ogrlicu s imenom. Vrlo prijazan.',
+    contactPhone: '+385 91 234 5678',
+    found: false,
+  },
+  {
+    id: '2',
+    name: 'Maca',
+    type: 'Mačka',
+    breed: 'Perzijska',
+    image: 'https://placekitten.com/400/300',
+    lastSeen: 'Spinut, Split',
+    lastSeenDate: '2026-03-20',
+    city: 'Split',
+    description: 'Bijela perzijska mačka, zelene oči, nedostaje od utorka.',
+    contactPhone: '+385 92 345 6789',
+    found: false,
+  },
+  {
+    id: '3',
+    name: 'Buddy',
+    type: 'Pas',
+    breed: 'Golden Retriever',
+    image: 'https://placedog.net/400/300?id=3',
+    lastSeen: 'Trsat, Rijeka',
+    lastSeenDate: '2026-03-21',
+    city: 'Rijeka',
+    description: 'Zlatni retriver, 5 godina, ima mikročip. Pobjegao iz dvorišta.',
+    contactPhone: '+385 98 765 4321',
+    found: false,
+  },
+];
+
+export const reviews: Review[] = [
+  {
+    id: '1',
+    userName: 'Maja Perić',
+    userAvatar: 'https://i.pravatar.cc/150?img=20',
+    rating: 5,
+    text: 'Fantastična čuvarica! Naš pas je bio presretan i jedva čekao sljedeći put. Topla preporuka!',
+    date: '2026-03-15',
+  },
+  {
+    id: '2',
+    userName: 'Ivan Šimić',
+    userAvatar: 'https://i.pravatar.cc/150?img=15',
+    rating: 5,
+    text: 'Profesionalna i pouzdana. Slala nam je slike tijekom dana. Odlična komunikacija.',
+    date: '2026-03-10',
+  },
+  {
+    id: '3',
+    userName: 'Katarina Blažević',
+    userAvatar: 'https://i.pravatar.cc/150?img=25',
+    rating: 4,
+    text: 'Vrlo zadovoljna uslugom. Mačka je bila mirna i sretna kad smo se vratili.',
+    date: '2026-03-05',
+  },
+];
+
+export const myPets: Pet[] = [
+  {
+    id: '1',
+    name: 'Luna',
+    type: 'pas',
+    breed: 'Labrador',
+    age: 3,
+    image: 'https://placedog.net/200/200?id=10',
+  },
+  {
+    id: '2',
+    name: 'Miki',
+    type: 'macka',
+    breed: 'Domaća',
+    age: 5,
+    image: 'https://placekitten.com/200/200',
+  },
+];
+
+export const myBookings: Booking[] = [
+  {
+    id: '1',
+    sitterId: '1',
+    sitterName: 'Ana Horvat',
+    service: 'Čuvanje',
+    startDate: '2026-03-28',
+    endDate: '2026-03-30',
+    status: 'confirmed',
+    totalPrice: 576,
+  },
+  {
+    id: '2',
+    sitterId: '3',
+    sitterName: 'Ivana Kovač',
+    service: 'Grooming',
+    startDate: '2026-03-25',
+    endDate: '2026-03-25',
+    status: 'completed',
+    totalPrice: 180,
+  },
+];
+
+export const categories = [
+  { id: '1', name: 'Sitteri', icon: 'heart' as const, color: '#f97316', bgColor: '#fff7ed' },
+  { id: '2', name: 'Grooming', icon: 'cut' as const, color: '#ec4899', bgColor: '#fdf2f8' },
+  { id: '3', name: 'Dresura', icon: 'school' as const, color: '#8b5cf6', bgColor: '#f5f3ff' },
+  { id: '4', name: 'Izgubljeni', icon: 'search' as const, color: '#ef4444', bgColor: '#fef2f2' },
+];
+
+export const services = [
+  { id: '1', name: 'Čuvanje kod kuće', price: 'od 12€/h' },
+  { id: '2', name: 'Šetnja', price: 'od 8€/h' },
+  { id: '3', name: 'Dnevna briga', price: 'od 25€/dan' },
+  { id: '4', name: 'Grooming', price: 'od 18€' },
+  { id: '5', name: 'Dresura', price: 'od 20€/h' },
+  { id: '6', name: 'Agility', price: 'od 15€/h' },
+];
