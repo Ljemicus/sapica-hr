@@ -69,12 +69,14 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
             </div>
             <CardContent className="p-6 -mt-16 relative">
               <div className="flex flex-col sm:flex-row gap-6">
-                <Avatar className="h-28 w-28 border-4 border-white shadow-lg ring-4 ring-white">
-                  <AvatarImage src={profile.user?.avatar_url || ''} alt={profile.user?.name} />
-                  <AvatarFallback className="bg-white text-gray-700 text-3xl font-bold">
-                    {profile.user?.name?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="avatar-gradient-border w-fit h-fit flex-shrink-0">
+                  <Avatar className="h-28 w-28 border-4 border-white shadow-lg">
+                    <AvatarImage src={profile.user?.avatar_url || ''} alt={profile.user?.name} />
+                    <AvatarFallback className="bg-white text-gray-700 text-3xl font-bold">
+                      {profile.user?.name?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
                 <div className="flex-1 pt-2 sm:pt-8">
                   <div className="flex items-start justify-between flex-wrap gap-2">
                     <div>
@@ -227,7 +229,7 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
             <CardContent className="p-6 space-y-5">
               <div className="text-center py-2">
                 <span className="text-4xl font-extrabold text-gradient">
-                  od {Math.min(...Object.values(profile.prices).filter((p): p is number => typeof p === 'number'))}&euro;
+                  od {Math.min(...Object.values(profile.prices).filter((p): p is number => typeof p === 'number' && p > 0))}&euro;
                 </span>
                 <span className="text-muted-foreground block text-sm mt-1">po usluzi</span>
               </div>

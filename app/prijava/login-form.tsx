@@ -77,7 +77,7 @@ export function LoginForm() {
                 key={demoUser.id}
                 onClick={() => handleLogin(demoUser.id)}
                 disabled={loading}
-                className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-100 hover:border-orange-300 hover:bg-orange-50/30 transition-all text-left group animate-fade-in-up delay-${(i + 1) * 100}`}
+                className={`w-full flex items-center gap-4 p-5 rounded-2xl border-2 border-gray-100 hover:border-orange-400 hover:bg-orange-50/40 hover:shadow-md hover:shadow-orange-100/50 transition-all duration-200 text-left group animate-fade-in-up delay-${(i + 1) * 100}`}
               >
                 <Avatar className="h-12 w-12 flex-shrink-0 ring-2 ring-white shadow-sm">
                   <AvatarFallback className={`bg-gradient-to-br ${demoUser.gradient} text-white font-semibold`}>

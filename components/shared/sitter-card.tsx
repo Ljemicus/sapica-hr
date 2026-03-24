@@ -25,7 +25,7 @@ export function SitterCard({ profile }: SitterCardProps) {
 
   return (
     <Link href={`/sitter/${profile.user_id}`}>
-      <Card className="group card-hover overflow-hidden cursor-pointer border-0 shadow-sm">
+      <Card className="group card-hover overflow-hidden cursor-pointer border-0 shadow-sm rounded-2xl">
         <CardContent className="p-0">
           <div className={`relative h-44 bg-gradient-to-br ${gradients[gradientIndex]} flex items-center justify-center`}>
             <div className="absolute inset-0 paw-pattern opacity-10" />
@@ -37,13 +37,13 @@ export function SitterCard({ profile }: SitterCardProps) {
             </Avatar>
             <div className="absolute top-3 right-3 flex gap-1.5">
               {profile.verified && (
-                <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90">
+                <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5">
                   <Shield className="h-3 w-3 mr-1" />
                   Verificiran
                 </Badge>
               )}
               {profile.superhost && (
-                <Badge className="bg-white/90 text-amber-600 text-xs shadow-sm hover:bg-white/90">
+                <Badge className="bg-white/90 text-amber-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5 font-semibold">
                   <Award className="h-3 w-3 mr-1" />
                   Superhost
                 </Badge>
@@ -83,7 +83,7 @@ export function SitterCard({ profile }: SitterCardProps) {
                 {profile.response_time || 'N/A'}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-orange-500">od {lowestPrice}&euro;</span>
+                <span className="text-xl font-extrabold text-orange-500">od {lowestPrice}&euro;</span>
                 <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-orange-400 group-hover:translate-x-1 transition-all" />
               </div>
             </div>

@@ -61,44 +61,46 @@ export default function HomePage() {
       {/* ── Hero Section ── */}
       <section className="relative overflow-hidden hero-gradient">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
-        <div className="absolute top-20 left-10 w-72 h-72 bg-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-amber-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float delay-300" />
-        <div className="container mx-auto px-4 py-24 md:py-36 relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <Badge className="mb-6 bg-orange-100 text-orange-700 hover:bg-orange-100 border-0 text-sm px-5 py-1.5 animate-fade-in-up shadow-sm">
+        <div className="absolute top-10 left-10 w-80 h-80 bg-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" />
+        <div className="absolute top-40 right-20 w-64 h-64 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-float delay-200" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-amber-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float delay-300" />
+        <div className="container mx-auto px-4 py-28 md:py-40 lg:py-48 relative">
+          <div className="max-w-4xl mx-auto text-center">
+            <Badge className="mb-8 bg-orange-100 text-orange-700 hover:bg-orange-100 border-0 text-sm px-6 py-2 animate-fade-in-up shadow-sm">
               <PawPrintIcon className="h-3.5 w-3.5 mr-1.5" />
               #1 Pet Sitting platforma u Hrvatskoj
             </Badge>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 animate-fade-in-up delay-100">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8 animate-fade-in-up delay-100">
               Tko čuva vašeg ljubimca{' '}
               <span className="text-gradient">dok ste na putu?</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto animate-fade-in-up delay-200 leading-relaxed">
+            <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto animate-fade-in-up delay-200 leading-relaxed">
               Pronađite pouzdane i verificirane čuvare ljubimaca u vašem gradu.
               Vaš ljubimac zaslužuje najbolju brigu — čak i kad niste tu.
             </p>
 
             {/* Search Bar */}
-            <div className="bg-white rounded-2xl shadow-xl shadow-orange-100/50 p-3 md:p-4 max-w-2xl mx-auto animate-fade-in-up delay-300 border border-orange-100/50">
-              <form action="/pretraga" className="flex flex-col md:flex-row gap-3">
+            <div className="bg-white rounded-full shadow-2xl shadow-orange-200/40 p-2.5 md:p-3 max-w-2xl mx-auto animate-fade-in-up delay-300 border border-orange-100/60">
+              <form action="/pretraga" className="flex flex-col md:flex-row gap-2">
                 <div className="flex-1 relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-orange-400" />
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-orange-400" />
                   <Input
                     name="city"
-                    placeholder="Grad (npr. Rijeka, Zagreb...)"
-                    className="pl-10 h-12 border-gray-200 focus:border-orange-300 focus:ring-orange-200"
+                    placeholder="Unesite grad (npr. Rijeka, Zagreb...)"
+                    className="pl-11 h-13 border-0 bg-transparent focus:ring-0 text-base placeholder:text-gray-400"
                   />
                 </div>
+                <div className="hidden md:block w-px bg-gray-200 my-2" />
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-orange-400" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-orange-400" />
                   <Input
                     name="service"
-                    placeholder="Usluga (smještaj, šetnja...)"
-                    className="pl-10 h-12 border-gray-200 focus:border-orange-300 focus:ring-orange-200"
+                    placeholder="Vrsta usluge (smještaj, šetnja...)"
+                    className="pl-11 h-13 border-0 bg-transparent focus:ring-0 text-base placeholder:text-gray-400"
                   />
                 </div>
                 <Link href="/pretraga">
-                  <Button size="lg" className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 h-12 px-8 btn-hover shadow-md shadow-orange-200">
+                  <Button size="lg" className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 h-13 px-10 rounded-full btn-hover shadow-lg shadow-orange-300/40 text-base font-semibold">
                     <Search className="h-4 w-4 mr-2" />
                     Pretraži
                   </Button>
@@ -106,16 +108,16 @@ export default function HomePage() {
               </form>
             </div>
 
-            <div className="flex items-center justify-center gap-6 md:gap-8 mt-10 text-sm text-muted-foreground animate-fade-in-up delay-400">
-              <div className="flex items-center gap-1.5">
+            <div className="flex items-center justify-center gap-6 md:gap-10 mt-12 text-sm text-muted-foreground animate-fade-in-up delay-400">
+              <div className="flex items-center gap-2">
                 <Shield className="h-4 w-4 text-green-500" />
                 <span>Verificirani sitteri</span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
                 <span>4.8 prosječna ocjena</span>
               </div>
-              <div className="hidden sm:flex items-center gap-1.5">
+              <div className="hidden sm:flex items-center gap-2">
                 <Heart className="h-4 w-4 text-red-400 fill-red-400" />
                 <span>500+ sretnih ljubimaca</span>
               </div>
@@ -181,22 +183,17 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Tri jednostavna koraka</h2>
             <p className="text-muted-foreground text-lg">Od pretrage do sretnog ljubimca</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
             {howItWorks.map((item, i) => (
-              <div key={item.step} className={`text-center animate-fade-in-up delay-${(i + 1) * 200}`}>
-                <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-orange-500 to-amber-400 text-white mb-6 shadow-xl shadow-orange-200/50">
-                  <item.icon className="h-8 w-8" />
-                  <span className="absolute -top-2 -right-2 w-8 h-8 bg-white text-orange-500 rounded-full text-sm font-bold flex items-center justify-center shadow-md border-2 border-orange-100">
-                    {item.step}
-                  </span>
+              <div key={item.step} className={`text-center relative animate-fade-in-up delay-${(i + 1) * 200}`}>
+                <div className="step-number text-8xl md:text-9xl font-extrabold text-orange-100/80 leading-none mb-4 select-none">
+                  {String(item.step).padStart(2, '0')}
                 </div>
-                {i < howItWorks.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 left-1/2 w-px h-px">
-                    {/* Connector line rendered via spacing */}
-                  </div>
-                )}
-                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+                <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-400 text-white mb-5 shadow-lg shadow-orange-200/50 -mt-12">
+                  <item.icon className="h-7 w-7" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{item.description}</p>
               </div>
             ))}
           </div>
@@ -221,9 +218,9 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredSitters.map((sitter, i) => (
               <Link key={sitter.id} href={`/sitter/${sitter.id}`}>
-                <Card className={`group card-hover cursor-pointer overflow-hidden border-0 shadow-sm animate-fade-in-up delay-${(i + 1) * 100}`}>
+                <Card className={`group card-hover cursor-pointer overflow-hidden border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${(i + 1) * 100}`}>
                   <CardContent className="p-0">
-                    <div className={`relative h-44 bg-gradient-to-br ${sitter.gradient} flex items-center justify-center`}>
+                    <div className={`relative h-48 bg-gradient-to-br ${sitter.gradient} flex items-center justify-center`}>
                       <div className="absolute inset-0 paw-pattern opacity-10" />
                       <Avatar className="h-22 w-22 border-4 border-white shadow-lg group-hover:scale-110 transition-transform duration-300">
                         <AvatarFallback className="bg-white/90 text-gray-700 text-2xl font-bold">
@@ -232,13 +229,13 @@ export default function HomePage() {
                       </Avatar>
                       <div className="absolute top-3 right-3 flex gap-1.5">
                         {sitter.verified && (
-                          <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90">
+                          <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5">
                             <Shield className="h-3 w-3 mr-1" />
                             Verificiran
                           </Badge>
                         )}
                         {sitter.superhost && (
-                          <Badge className="bg-white/90 text-amber-600 text-xs shadow-sm hover:bg-white/90">
+                          <Badge className="bg-white/90 text-amber-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5 font-semibold">
                             <Star className="h-3 w-3 mr-1 fill-amber-500" />
                             Superhost
                           </Badge>
@@ -292,13 +289,14 @@ export default function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {cities.map((city, i) => (
               <Link key={city.name} href={`/pretraga?city=${city.name}`}>
-                <Card className={`group card-hover cursor-pointer overflow-hidden border-0 shadow-sm animate-fade-in-up delay-${(i + 1) * 100}`}>
+                <Card className={`group card-hover cursor-pointer overflow-hidden border-0 shadow-md rounded-2xl animate-fade-in-up delay-${(i + 1) * 100}`}>
                   <CardContent className="p-0">
-                    <div className={`h-28 bg-gradient-to-br ${city.gradient} relative flex items-end p-4`}>
+                    <div className={`h-36 bg-gradient-to-br ${city.gradient} relative flex items-end p-5`}>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                       <div className="absolute inset-0 paw-pattern opacity-10" />
                       <div className="relative">
-                        <h3 className="text-white font-bold text-lg leading-none">{city.name}</h3>
-                        <p className="text-white/80 text-xs mt-1">{city.sitters} sittera</p>
+                        <h3 className="text-white font-bold text-xl leading-none drop-shadow-sm">{city.name}</h3>
+                        <p className="text-white/90 text-sm mt-1.5 font-medium">{city.sitters} sittera</p>
                       </div>
                     </div>
                   </CardContent>
@@ -318,25 +316,25 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Što kažu naši korisnici</h2>
             <p className="text-muted-foreground text-lg">Stvarna iskustva vlasnika ljubimaca</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {testimonials.map((t, i) => (
-              <Card key={i} className={`bg-white border-0 shadow-sm card-hover animate-fade-in-up delay-${(i + 1) * 200}`}>
-                <CardContent className="p-6 relative">
-                  <Quote className="h-8 w-8 text-orange-100 absolute top-4 right-4" />
-                  <div className="flex items-center gap-0.5 mb-4">
+              <Card key={i} className={`bg-white border-0 shadow-sm card-hover rounded-2xl animate-fade-in-up delay-${(i + 1) * 200}`}>
+                <CardContent className="p-8 relative">
+                  <Quote className="h-12 w-12 text-orange-100/80 absolute top-6 right-6" />
+                  <div className="flex items-center gap-0.5 mb-5">
                     {Array.from({ length: 5 }, (_, j) => (
-                      <Star key={j} className={`h-4 w-4 ${j < t.rating ? 'fill-amber-400 text-amber-400' : 'fill-gray-200 text-gray-200'}`} />
+                      <Star key={j} className={`h-5 w-5 ${j < t.rating ? 'fill-amber-400 text-amber-400' : 'fill-gray-200 text-gray-200'}`} />
                     ))}
                   </div>
-                  <p className="text-sm text-gray-600 mb-6 leading-relaxed">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-                    <Avatar className="h-10 w-10">
+                  <p className="text-gray-600 mb-8 leading-relaxed">&ldquo;{t.text}&rdquo;</p>
+                  <div className="flex items-center gap-3 pt-5 border-t border-gray-100">
+                    <Avatar className="h-11 w-11">
                       <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm font-medium">
                         {t.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="text-sm font-semibold">{t.name}</p>
+                      <p className="font-semibold">{t.name}</p>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <MapPin className="h-3 w-3" />
                         {t.city}
@@ -352,7 +350,7 @@ export default function HomePage() {
 
       {/* ── CTA for Sitters ── */}
       <section className="py-20 md:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-orange-500 to-amber-500" />
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-orange-500 to-amber-400" />
         <div className="absolute inset-0 paw-pattern opacity-[0.06]" />
         <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-y-1/2 -translate-x-1/2 opacity-[0.06]" />
         <div className="absolute bottom-0 right-0 w-72 h-72 bg-white rounded-full translate-y-1/2 translate-x-1/2 opacity-[0.06]" />
@@ -362,7 +360,7 @@ export default function HomePage() {
               <Heart className="h-3.5 w-3.5 mr-1.5 fill-white" />
               Pridruži se zajednici
             </Badge>
-            <h2 className="text-3xl md:text-5xl font-extrabold mb-6 text-white leading-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-8 text-white leading-tight">
               Volite životinje?<br />Zarađujte čuvajući ljubimce!
             </h2>
             <p className="text-lg text-white/80 mb-10 max-w-lg mx-auto leading-relaxed">

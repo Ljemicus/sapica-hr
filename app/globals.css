@@ -282,8 +282,8 @@
   @apply transition-all duration-300;
 }
 .card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.04);
 }
 
 /* Glass morphism */
@@ -307,10 +307,17 @@
 
 /* Gradient text */
 .text-gradient {
-  background: linear-gradient(135deg, #f97316 0%, #f59e0b 50%, #f97316 100%);
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 30%, #f59e0b 60%, #f97316 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Gradient border for avatars */
+.avatar-gradient-border {
+  background: linear-gradient(135deg, #f97316, #f59e0b, #fb923c);
+  padding: 3px;
+  border-radius: 9999px;
 }
 
 /* Navbar shrink transition */
@@ -374,7 +381,22 @@
 
 /* Hero gradient animation */
 .hero-gradient {
-  background: linear-gradient(135deg, #fff7ed 0%, #ffffff 25%, #fffbeb 50%, #ffffff 75%, #fff7ed 100%);
+  background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 20%, #fff1f2 40%, #ffffff 60%, #fffbeb 80%, #fff7ed 100%);
   background-size: 400% 400%;
-  animation: gradient-shift 8s ease infinite;
+  animation: gradient-shift 10s ease infinite;
+}
+
+/* Focus states for inputs */
+input:focus,
+select:focus,
+textarea:focus {
+  --tw-ring-color: rgba(249, 115, 22, 0.3);
+  outline: none;
+}
+
+/* Step number styling */
+.step-number {
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
 }

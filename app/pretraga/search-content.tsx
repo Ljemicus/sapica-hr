@@ -298,7 +298,7 @@ export function SearchContent({ sitters, initialParams }: SearchContentProps) {
       <div className="flex gap-8">
         {/* Desktop Sidebar */}
         <aside className="hidden md:block w-64 flex-shrink-0">
-          <Card className="p-5 sticky top-32 border-0 shadow-sm">
+          <Card className="p-5 sticky top-32 border-0 shadow-sm rounded-2xl">
             <h2 className="font-semibold mb-4 flex items-center gap-2 text-sm uppercase tracking-wider text-muted-foreground">
               <Filter className="h-4 w-4" />
               Filteri
@@ -328,7 +328,7 @@ export function SearchContent({ sitters, initialParams }: SearchContentProps) {
             <div className={`animate-fade-in ${
               viewMode === 'list'
                 ? 'space-y-4'
-                : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5'
+                : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
             }`}>
               {sitters.map((sitter) => (
                 <SitterCard key={sitter.user_id} profile={sitter} />
