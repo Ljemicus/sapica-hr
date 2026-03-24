@@ -52,10 +52,10 @@ export function Navbar() {
   const dashboardLink = user?.role === 'sitter' ? '/dashboard/sitter' : user?.role === 'admin' ? '/admin' : '/dashboard/vlasnik';
 
   return (
-    <header className={`sticky top-0 z-50 w-full navbar-shrink ${
+    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
       scrolled
-        ? 'glass-strong shadow-sm border-b border-gray-100/50 h-14'
-        : 'bg-white/80 backdrop-blur-sm border-b border-transparent h-16'
+        ? 'bg-white shadow-md border-b border-gray-100 h-14'
+        : 'bg-white border-b border-gray-100 h-16'
     }`}>
       <div className="container mx-auto flex items-center justify-between px-4 h-full">
         <Link href="/" className="flex items-center gap-2 font-bold text-xl group">
@@ -169,6 +169,21 @@ export function Navbar() {
         </div>
 
         {/* Mobile Nav */}
+        <div className="flex items-center gap-2 md:hidden">
+          {!loading && !user && (
+            <Link href="/prijava">
+              <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 h-8">
+                Prijava
+              </Button>
+            </Link>
+          )}
+          {user && (
+            <Link href="/poruke">
+              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-orange-50">
+                <MessageCircle className="h-4 w-4" />
+              </Button>
+            </Link>
+          )}
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger render={<Button variant="ghost" size="icon" />} className="md:hidden">
               <Menu className="h-5 w-5" />
@@ -237,6 +252,7 @@ export function Navbar() {
             </div>
           </SheetContent>
         </Sheet>
+        </div>
       </div>
     </header>
   );
