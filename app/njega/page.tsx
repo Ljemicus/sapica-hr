@@ -176,6 +176,9 @@ export default function GroomingPage() {
                 <GroomerCard key={groomer.id} groomer={groomer} index={i} />
               ))}
             </div>
+            <p className="col-span-full text-center text-sm text-muted-foreground italic py-2">
+              Cijene određuju pružatelji usluga na svojim profilima
+            </p>
             {groomers.length === 0 && (
               <div className="text-center py-20">
                 <Scissors className="h-12 w-12 mx-auto text-gray-300 mb-4" />
@@ -195,8 +198,6 @@ export default function GroomingPage() {
 
 function GroomerCard({ groomer, index }: { groomer: Groomer; index: number }) {
   const gradient = gradients[groomer.name.charCodeAt(0) % gradients.length];
-  const lowestPrice = Math.min(...Object.values(groomer.prices).filter(p => p > 0));
-
   return (
     <Card className={`group card-hover overflow-hidden cursor-pointer border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${((index % 3) + 1) * 100}`}>
       <CardContent className="p-0">
@@ -243,7 +244,7 @@ function GroomerCard({ groomer, index }: { groomer: Groomer; index: number }) {
             ))}
           </div>
           <div className="flex items-center justify-between pt-3 border-t">
-            <span className="text-xl font-extrabold text-orange-500">od {lowestPrice}&euro;</span>
+            <span className="text-sm text-muted-foreground">Cijene na profilu</span>
             <span className="text-xs text-muted-foreground flex items-center gap-1">
               Pogledaj profil <ChevronRight className="h-3 w-3" />
             </span>

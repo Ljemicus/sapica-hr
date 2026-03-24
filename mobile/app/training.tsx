@@ -32,7 +32,6 @@ export default function TrainingScreen() {
               </View>
               <View style={styles.programHeaderInfo}>
                 <Text style={styles.programName}>{program.name}</Text>
-                <Text style={styles.programPrice}>{program.price}</Text>
               </View>
             </View>
             <Text style={styles.programDesc}>{program.description}</Text>
@@ -43,6 +42,8 @@ export default function TrainingScreen() {
           </Card>
         ))}
       </View>
+
+      <Text style={styles.priceNote}>Cijene određuju pružatelji usluga na svojim profilima</Text>
 
       {/* Trainers */}
       <View style={styles.section}>
@@ -120,12 +121,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.text,
   },
-  programPrice: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: Colors.primary,
-    marginTop: 2,
-  },
   programDesc: {
     fontSize: 14,
     color: Colors.textSecondary,
@@ -135,6 +130,14 @@ const styles = StyleSheet.create({
   programMeta: {
     flexDirection: 'row',
     gap: 8,
+  },
+  priceNote: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    fontStyle: 'italic',
   },
   emptyText: {
     fontSize: 14,

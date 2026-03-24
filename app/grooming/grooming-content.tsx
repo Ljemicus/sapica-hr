@@ -181,7 +181,6 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
               {groomers.map((groomer, i) => {
                 const gradient = gradients[groomer.name.charCodeAt(0) % gradients.length];
-                const lowestPrice = Math.min(...Object.values(groomer.prices).filter(p => p > 0));
                 return (
                   <Link key={groomer.id} href={`/groomer/${groomer.id}`}>
                     <Card className={`group card-hover overflow-hidden cursor-pointer border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${(i + 1) * 100}`}>
@@ -232,7 +231,7 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
                               {GROOMER_SPECIALIZATION_LABELS[groomer.specialization]}
                             </Badge>
                             <div className="flex items-center gap-2">
-                              <span className="text-xl font-extrabold text-orange-500">od {lowestPrice}&euro;</span>
+                              <span className="text-sm text-muted-foreground">Cijene na profilu</span>
                               <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-orange-400 group-hover:translate-x-1 transition-all" />
                             </div>
                           </div>
@@ -244,6 +243,9 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
               })}
             </div>
           )}
+          <p className="col-span-full text-center text-sm text-muted-foreground italic py-4">
+            Cijene određuju pružatelji usluga na svojim profilima
+          </p>
         </div>
       </div>
     </div>

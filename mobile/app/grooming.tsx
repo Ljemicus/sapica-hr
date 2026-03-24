@@ -22,9 +22,9 @@ export default function GroomingScreen() {
         </Text>
       </View>
 
-      {/* Services / Cjenik */}
+      {/* Services */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Cjenik usluga</Text>
+        <Text style={styles.sectionTitle}>Naše usluge</Text>
         {groomingServices.map((service) => (
           <Card key={service.id} style={styles.serviceCard}>
             <View style={styles.serviceRow}>
@@ -36,10 +36,10 @@ export default function GroomingScreen() {
                 <Text style={styles.serviceDesc}>{service.description}</Text>
                 <Text style={styles.serviceDuration}>{service.duration}</Text>
               </View>
-              <Text style={styles.servicePrice}>{service.price}</Text>
             </View>
           </Card>
         ))}
+        <Text style={styles.priceNote}>💡 Cijene određuju individualni groomeri na svojim profilima</Text>
       </View>
 
       {/* Groomers */}
@@ -127,11 +127,12 @@ const styles = StyleSheet.create({
     color: Colors.textLight,
     marginTop: 2,
   },
-  servicePrice: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: Colors.primary,
-    marginLeft: 8,
+  priceNote: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    paddingVertical: 12,
+    fontStyle: 'italic',
   },
   emptyText: {
     fontSize: 14,

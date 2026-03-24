@@ -185,6 +185,9 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
               ))}
             </div>
           )}
+          <p className="text-center text-sm text-muted-foreground italic py-4">
+            Cijene određuju pružatelji usluga na svojim profilima
+          </p>
         </div>
       </div>
     </div>
@@ -240,7 +243,7 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
                   </span>
                 </div>
               </div>
-              <span className="text-2xl font-extrabold text-orange-500">{trainer.price_per_hour}&euro;/h</span>
+              <span className="text-sm text-muted-foreground">Cijene prema dogovoru</span>
             </div>
 
             <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{trainer.bio}</p>
@@ -299,7 +302,7 @@ function ProgramCard({ program }: { program: TrainingProgram }) {
             {TRAINING_TYPE_LABELS[program.type]}
           </Badge>
         </div>
-        <span className="text-lg font-bold text-orange-500">{program.price}&euro;</span>
+        <span className="text-sm text-muted-foreground">Cijena prema dogovoru</span>
       </div>
       <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{program.description}</p>
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
