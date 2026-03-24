@@ -127,6 +127,95 @@ export const STATUS_LABELS: Record<BookingStatus, string> = {
   'cancelled': 'Otkazano',
 };
 
+// ── Walk Tracking ──
+
+export type WalkStatus = 'u_tijeku' | 'zavrsena';
+
+export interface WalkCheckpoint {
+  time: string;
+  label: string;
+  emoji: string;
+  lat: number;
+  lng: number;
+}
+
+export interface Walk {
+  id: string;
+  sitter_id: string;
+  pet_id: string;
+  booking_id: string;
+  start_time: string;
+  end_time: string | null;
+  status: WalkStatus;
+  distance_km: number;
+  route: { lat: number; lng: number }[];
+  checkpoints: WalkCheckpoint[];
+}
+
+// ── Pet Updates ──
+
+export type UpdateType = 'photo' | 'video' | 'text';
+
+export interface PetUpdate {
+  id: string;
+  booking_id: string;
+  sitter_id: string;
+  type: UpdateType;
+  emoji: string;
+  caption: string;
+  created_at: string;
+}
+
+// ── Pet Passport ──
+
+export interface Vaccination {
+  name: string;
+  date: string;
+  vet: string;
+  next_date: string;
+}
+
+export interface Allergy {
+  name: string;
+  severity: 'blaga' | 'umjerena' | 'ozbiljna';
+  notes: string;
+}
+
+export interface Medication {
+  name: string;
+  dose: string;
+  schedule: string;
+  start_date: string;
+  end_date: string | null;
+}
+
+export interface VetInfo {
+  name: string;
+  phone: string;
+  address: string;
+  emergency: boolean;
+}
+
+export interface PetPassport {
+  pet_id: string;
+  vaccinations: Vaccination[];
+  allergies: Allergy[];
+  medications: Medication[];
+  vet_info: VetInfo;
+  notes: string;
+}
+
+export const WALK_STATUS_LABELS: Record<WalkStatus, string> = {
+  'u_tijeku': 'U tijeku',
+  'zavrsena': 'Završena',
+};
+
+export const ALLERGY_SEVERITY_LABELS: Record<string, string> = {
+  'blaga': 'Blaga',
+  'umjerena': 'Umjerena',
+  'ozbiljna': 'Ozbiljna',
+};
+
 export const CITIES = [
   'Zagreb',
   'Rijeka',

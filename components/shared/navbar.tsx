@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, MessageCircle, User, LogOut, Search } from 'lucide-react';
+import { Menu, X, MessageCircle, User, LogOut, Search, PawPrint, FileHeart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useUser } from '@/hooks/use-user';
 import { clearMockUserClient } from '@/lib/mock-auth-client';
+import { mockPets } from '@/lib/mock-data';
 
 function PawLogo({ className }: { className?: string }) {
   return (
@@ -110,6 +111,20 @@ export function Navbar() {
                       <MessageCircle className="mr-2 h-4 w-4" />
                       Poruke
                   </DropdownMenuItem>
+                  {user.role === 'owner' && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <div className="px-2 py-1.5">
+                        <p className="text-xs font-medium text-muted-foreground flex items-center gap-1"><PawPrint className="h-3 w-3" /> Moji ljubimci</p>
+                      </div>
+                      {mockPets.filter(p => p.owner_id === user.id).map(pet => (
+                        <DropdownMenuItem key={pet.id} render={<Link href={`/ljubimac/${pet.id}/karton`} />} className="cursor-pointer">
+                            <FileHeart className="mr-2 h-4 w-4" />
+                            {pet.name} — karton
+                        </DropdownMenuItem>
+                      ))}
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
                     <LogOut className="mr-2 h-4 w-4" />

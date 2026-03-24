@@ -1,4 +1,4 @@
-import type { User, Pet, SitterProfile, Booking, Review, Message, Availability, ServiceType } from './types';
+import type { User, Pet, SitterProfile, Booking, Review, Message, Availability, ServiceType, Walk, PetUpdate, PetPassport } from './types';
 
 // ============================================================
 // USERS
@@ -302,6 +302,366 @@ function generateAvailability(): Availability[] {
 export const mockAvailability: Availability[] = generateAvailability();
 
 // ============================================================
+// WALKS (GPS Tracking)
+// ============================================================
+
+export const mockWalks: Walk[] = [
+  {
+    id: 'walk1111-1111-1111-1111-111111111111',
+    sitter_id: '33333333-3333-3333-3333-333333333333',
+    pet_id: 'pet11111-1111-1111-1111-111111111111',
+    booking_id: 'book3333-3333-3333-3333-333333333333',
+    start_time: '2026-03-24T08:00:00Z',
+    end_time: null,
+    status: 'u_tijeku',
+    distance_km: 2.1,
+    route: [
+      { lat: 45.32710, lng: 14.44220 }, // Korzo - start
+      { lat: 45.32750, lng: 14.44100 },
+      { lat: 45.32800, lng: 14.43950 },
+      { lat: 45.32830, lng: 14.43800 },
+      { lat: 45.32780, lng: 14.43650 },
+      { lat: 45.32700, lng: 14.43500 },
+      { lat: 45.32650, lng: 14.43350 }, // Riva
+      { lat: 45.32600, lng: 14.43200 },
+      { lat: 45.32580, lng: 14.43050 },
+      { lat: 45.32620, lng: 14.42900 },
+      { lat: 45.32700, lng: 14.42800 },
+      { lat: 45.32800, lng: 14.42750 },
+      { lat: 45.32900, lng: 14.42800 }, // Brajda
+      { lat: 45.33000, lng: 14.42900 },
+      { lat: 45.33100, lng: 14.43050 },
+      { lat: 45.33200, lng: 14.43200 },
+      { lat: 45.33300, lng: 14.43400 },
+      { lat: 45.33400, lng: 14.43600 },
+      { lat: 45.33500, lng: 14.43800 },
+      { lat: 45.33600, lng: 14.44000 },
+      { lat: 45.33700, lng: 14.44200 },
+      { lat: 45.33800, lng: 14.44400 },
+      { lat: 45.33900, lng: 14.44600 },
+      { lat: 45.34000, lng: 14.44800 }, // prema Trsatu
+      { lat: 45.34100, lng: 14.45000 },
+    ],
+    checkpoints: [
+      { time: '2026-03-24T08:00:00Z', label: 'Početak šetnje - Korzo', emoji: '🚶', lat: 45.32710, lng: 14.44220 },
+      { time: '2026-03-24T08:15:00Z', label: 'Riva - odmor uz more', emoji: '🌊', lat: 45.32650, lng: 14.43350 },
+      { time: '2026-03-24T08:30:00Z', label: 'Park Brajda - igra', emoji: '🌳', lat: 45.32900, lng: 14.42800 },
+      { time: '2026-03-24T08:50:00Z', label: 'Uspon prema Trsatu', emoji: '⛰️', lat: 45.34100, lng: 14.45000 },
+    ],
+  },
+  {
+    id: 'walk2222-2222-2222-2222-222222222222',
+    sitter_id: '11111111-1111-1111-1111-111111111111',
+    pet_id: 'pet66666-6666-6666-6666-666666666666',
+    booking_id: 'bookffff-ffff-ffff-ffff-ffffffffffff',
+    start_time: '2026-03-24T07:30:00Z',
+    end_time: null,
+    status: 'u_tijeku',
+    distance_km: 1.5,
+    route: [
+      { lat: 45.32710, lng: 14.44220 },
+      { lat: 45.32680, lng: 14.44100 },
+      { lat: 45.32650, lng: 14.43950 },
+      { lat: 45.32620, lng: 14.43800 },
+      { lat: 45.32600, lng: 14.43650 },
+      { lat: 45.32580, lng: 14.43500 },
+      { lat: 45.32560, lng: 14.43350 },
+      { lat: 45.32550, lng: 14.43200 },
+      { lat: 45.32570, lng: 14.43050 },
+      { lat: 45.32600, lng: 14.42900 },
+      { lat: 45.32650, lng: 14.42800 },
+      { lat: 45.32700, lng: 14.42750 },
+      { lat: 45.32750, lng: 14.42700 },
+      { lat: 45.32800, lng: 14.42680 },
+      { lat: 45.32850, lng: 14.42700 },
+      { lat: 45.32900, lng: 14.42750 },
+      { lat: 45.32950, lng: 14.42800 },
+      { lat: 45.33000, lng: 14.42900 },
+      { lat: 45.33050, lng: 14.43050 },
+      { lat: 45.33100, lng: 14.43200 },
+    ],
+    checkpoints: [
+      { time: '2026-03-24T07:30:00Z', label: 'Početak - centar', emoji: '🚶', lat: 45.32710, lng: 14.44220 },
+      { time: '2026-03-24T07:45:00Z', label: 'Riva - šetnja uz obalu', emoji: '🌊', lat: 45.32580, lng: 14.43500 },
+      { time: '2026-03-24T08:00:00Z', label: 'Park - igra s loptom', emoji: '⚽', lat: 45.32800, lng: 14.42680 },
+    ],
+  },
+  {
+    id: 'walk3333-3333-3333-3333-333333333333',
+    sitter_id: '44444444-4444-4444-4444-444444444444',
+    pet_id: 'pet11111-1111-1111-1111-111111111111',
+    booking_id: 'book5555-5555-5555-5555-555555555555',
+    start_time: '2026-02-12T09:00:00Z',
+    end_time: '2026-02-12T09:45:00Z',
+    status: 'zavrsena',
+    distance_km: 3.2,
+    route: [
+      { lat: 45.33500, lng: 14.45500 }, // Trsat
+      { lat: 45.33400, lng: 14.45300 },
+      { lat: 45.33300, lng: 14.45100 },
+      { lat: 45.33200, lng: 14.44900 },
+      { lat: 45.33100, lng: 14.44700 },
+      { lat: 45.33000, lng: 14.44500 },
+      { lat: 45.32900, lng: 14.44300 },
+      { lat: 45.32800, lng: 14.44100 },
+      { lat: 45.32710, lng: 14.44220 }, // Korzo
+      { lat: 45.32650, lng: 14.43800 },
+      { lat: 45.32600, lng: 14.43500 },
+      { lat: 45.32550, lng: 14.43200 }, // Riva
+      { lat: 45.32500, lng: 14.42900 },
+      { lat: 45.32480, lng: 14.42600 },
+      { lat: 45.32500, lng: 14.42300 },
+      { lat: 45.32550, lng: 14.42100 },
+      { lat: 45.32600, lng: 14.41900 },
+      { lat: 45.32700, lng: 14.41800 },
+      { lat: 45.32800, lng: 14.41900 },
+      { lat: 45.32900, lng: 14.42100 },
+      { lat: 45.33000, lng: 14.42300 },
+      { lat: 45.33100, lng: 14.42500 },
+      { lat: 45.33200, lng: 14.42700 },
+      { lat: 45.33300, lng: 14.42900 },
+      { lat: 45.33400, lng: 14.43100 },
+    ],
+    checkpoints: [
+      { time: '2026-02-12T09:00:00Z', label: 'Početak - Trsat', emoji: '🏰', lat: 45.33500, lng: 14.45500 },
+      { time: '2026-02-12T09:10:00Z', label: 'Korzo - kratki odmor', emoji: '☕', lat: 45.32710, lng: 14.44220 },
+      { time: '2026-02-12T09:25:00Z', label: 'Plaža Sablićevo', emoji: '🏖️', lat: 45.32480, lng: 14.42600 },
+      { time: '2026-02-12T09:45:00Z', label: 'Kraj šetnje - Brajda', emoji: '🏁', lat: 45.33400, lng: 14.43100 },
+    ],
+  },
+  {
+    id: 'walk4444-4444-4444-4444-444444444444',
+    sitter_id: '11111111-1111-1111-1111-111111111111',
+    pet_id: 'pet11111-1111-1111-1111-111111111111',
+    booking_id: 'book1111-1111-1111-1111-111111111111',
+    start_time: '2026-03-03T16:00:00Z',
+    end_time: '2026-03-03T16:50:00Z',
+    status: 'zavrsena',
+    distance_km: 2.8,
+    route: [
+      { lat: 45.32710, lng: 14.44220 },
+      { lat: 45.32800, lng: 14.44100 },
+      { lat: 45.32900, lng: 14.43950 },
+      { lat: 45.33000, lng: 14.43800 },
+      { lat: 45.33100, lng: 14.43650 },
+      { lat: 45.33200, lng: 14.43500 },
+      { lat: 45.33300, lng: 14.43350 },
+      { lat: 45.33400, lng: 14.43200 },
+      { lat: 45.33500, lng: 14.43050 },
+      { lat: 45.33400, lng: 14.42900 },
+      { lat: 45.33300, lng: 14.42800 },
+      { lat: 45.33200, lng: 14.42700 },
+      { lat: 45.33100, lng: 14.42600 },
+      { lat: 45.33000, lng: 14.42500 },
+      { lat: 45.32900, lng: 14.42600 },
+      { lat: 45.32800, lng: 14.42700 },
+      { lat: 45.32750, lng: 14.42850 },
+      { lat: 45.32710, lng: 14.43000 },
+      { lat: 45.32700, lng: 14.43200 },
+      { lat: 45.32710, lng: 14.43400 },
+      { lat: 45.32710, lng: 14.43600 },
+      { lat: 45.32710, lng: 14.43800 },
+      { lat: 45.32710, lng: 14.44000 },
+      { lat: 45.32710, lng: 14.44220 },
+    ],
+    checkpoints: [
+      { time: '2026-03-03T16:00:00Z', label: 'Početak - Korzo', emoji: '🚶', lat: 45.32710, lng: 14.44220 },
+      { time: '2026-03-03T16:15:00Z', label: 'Park Mlaka', emoji: '🌳', lat: 45.33500, lng: 14.43050 },
+      { time: '2026-03-03T16:30:00Z', label: 'Igralište - trčanje', emoji: '🐕', lat: 45.33000, lng: 14.42500 },
+      { time: '2026-03-03T16:50:00Z', label: 'Povratak na Korzo', emoji: '🏁', lat: 45.32710, lng: 14.44220 },
+    ],
+  },
+  {
+    id: 'walk5555-5555-5555-5555-555555555555',
+    sitter_id: '33333333-3333-3333-3333-333333333333',
+    pet_id: 'pet33333-3333-3333-3333-333333333333',
+    booking_id: 'bookgg44-4444-4444-4444-444444444444',
+    start_time: '2026-03-18T10:00:00Z',
+    end_time: '2026-03-18T10:40:00Z',
+    status: 'zavrsena',
+    distance_km: 1.9,
+    route: [
+      { lat: 45.33100, lng: 14.45000 },
+      { lat: 45.33000, lng: 14.44800 },
+      { lat: 45.32900, lng: 14.44600 },
+      { lat: 45.32800, lng: 14.44400 },
+      { lat: 45.32710, lng: 14.44220 },
+      { lat: 45.32650, lng: 14.44050 },
+      { lat: 45.32600, lng: 14.43900 },
+      { lat: 45.32550, lng: 14.43750 },
+      { lat: 45.32500, lng: 14.43600 },
+      { lat: 45.32480, lng: 14.43450 },
+      { lat: 45.32500, lng: 14.43300 },
+      { lat: 45.32550, lng: 14.43150 },
+      { lat: 45.32600, lng: 14.43000 },
+      { lat: 45.32680, lng: 14.42900 },
+      { lat: 45.32750, lng: 14.42850 },
+      { lat: 45.32830, lng: 14.42900 },
+      { lat: 45.32900, lng: 14.43000 },
+      { lat: 45.32950, lng: 14.43150 },
+      { lat: 45.33000, lng: 14.43300 },
+      { lat: 45.33050, lng: 14.43500 },
+    ],
+    checkpoints: [
+      { time: '2026-03-18T10:00:00Z', label: 'Početak - Sušak', emoji: '🚶', lat: 45.33100, lng: 14.45000 },
+      { time: '2026-03-18T10:12:00Z', label: 'Korzo - prolaz', emoji: '🏙️', lat: 45.32710, lng: 14.44220 },
+      { time: '2026-03-18T10:25:00Z', label: 'Riva - voda za psa', emoji: '💧', lat: 45.32480, lng: 14.43450 },
+      { time: '2026-03-18T10:40:00Z', label: 'Kraj - Brajda', emoji: '🏁', lat: 45.33050, lng: 14.43500 },
+    ],
+  },
+];
+
+// ============================================================
+// PET UPDATES (Photo/Video Feed)
+// ============================================================
+
+export const mockUpdates: PetUpdate[] = [
+  // Updates for booking book1111 (Rex kod Ane, 1-6 Mar)
+  { id: 'upd01', booking_id: 'book1111-1111-1111-1111-111111111111', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'photo', emoji: '🐕', caption: 'Rex je stigao i već istražuje dvorište! Odmah je pronašao svoju omiljenu loptu.', created_at: '2026-03-01T09:00:00Z' },
+  { id: 'upd02', booking_id: 'book1111-1111-1111-1111-111111111111', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'photo', emoji: '🌳', caption: 'Jutarnja šetnja kroz park. Rex je uživao u svježem zraku!', created_at: '2026-03-01T14:00:00Z' },
+  { id: 'upd03', booking_id: 'book1111-1111-1111-1111-111111111111', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'text', emoji: '😴', caption: 'Rex upravo spava nakon duge šetnje. Pojeo je cijelu porciju i pije dovoljno vode.', created_at: '2026-03-01T20:00:00Z' },
+  { id: 'upd04', booking_id: 'book1111-1111-1111-1111-111111111111', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'photo', emoji: '🦴', caption: 'Jutarnji ritual - Rex i njegova omiljena kost za žvakanje.', created_at: '2026-03-02T08:30:00Z' },
+  { id: 'upd05', booking_id: 'book1111-1111-1111-1111-111111111111', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'video', emoji: '🏖️', caption: 'Šetnja uz Rivu! Rex obožava more, pogledajte kako trči po plaži! 🌊', created_at: '2026-03-02T15:00:00Z' },
+  { id: 'upd06', booking_id: 'book1111-1111-1111-1111-111111111111', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'photo', emoji: '🐕', caption: 'Popodnevni odmor u hladu. Rex voli ležati na trijemu.', created_at: '2026-03-03T13:00:00Z' },
+  { id: 'upd07', booking_id: 'book1111-1111-1111-1111-111111111111', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'text', emoji: '💊', caption: 'Rex je dobio svoju večernju porciju hrane bez piletine, kako ste naglasili. Sve je u redu!', created_at: '2026-03-03T19:00:00Z' },
+  { id: 'upd08', booking_id: 'book1111-1111-1111-1111-111111111111', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'photo', emoji: '🌳', caption: 'Igra u dvorištu s mojim psom Mikijem. Postali su najbolji prijatelji!', created_at: '2026-03-04T10:00:00Z' },
+  { id: 'upd09', booking_id: 'book1111-1111-1111-1111-111111111111', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'video', emoji: '🐕', caption: 'Rex zna sjediti na komandu! Vježbali smo malo danas.', created_at: '2026-03-04T16:00:00Z' },
+  { id: 'upd10', booking_id: 'book1111-1111-1111-1111-111111111111', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'photo', emoji: '😴', caption: 'Zadnja večer - Rex mirno spava. Sutra vas čeka sretan pas! ❤️', created_at: '2026-03-05T21:00:00Z' },
+  // Updates for booking book2222 (Luna kod Marka, 28 Mar - 2 Apr)
+  { id: 'upd11', booking_id: 'book2222-2222-2222-2222-222222222222', sitter_id: '22222222-2222-2222-2222-222222222222', type: 'photo', emoji: '🐕', caption: 'Luna je došla! Već se udomaćila i istražuje stan.', created_at: '2026-03-28T10:00:00Z' },
+  { id: 'upd12', booking_id: 'book2222-2222-2222-2222-222222222222', sitter_id: '22222222-2222-2222-2222-222222222222', type: 'photo', emoji: '🌳', caption: 'Šetnja centrom Rijeke. Luna je jako društvena, svi je žele pomaziti!', created_at: '2026-03-28T15:00:00Z' },
+  { id: 'upd13', booking_id: 'book2222-2222-2222-2222-222222222222', sitter_id: '22222222-2222-2222-2222-222222222222', type: 'text', emoji: '🍽️', caption: 'Luna je pojela sav obrok i pila puno vode. Sve je super!', created_at: '2026-03-28T19:30:00Z' },
+  { id: 'upd14', booking_id: 'book2222-2222-2222-2222-222222222222', sitter_id: '22222222-2222-2222-2222-222222222222', type: 'photo', emoji: '🦴', caption: 'Jutarnja igra s igračkom za vuču. Luna ima puno energije!', created_at: '2026-03-29T09:00:00Z' },
+  { id: 'upd15', booking_id: 'book2222-2222-2222-2222-222222222222', sitter_id: '22222222-2222-2222-2222-222222222222', type: 'video', emoji: '🏖️', caption: 'Luna na plaži! Obožava trčati po pijesku. 🐾', created_at: '2026-03-29T14:00:00Z' },
+  { id: 'upd16', booking_id: 'book2222-2222-2222-2222-222222222222', sitter_id: '22222222-2222-2222-2222-222222222222', type: 'photo', emoji: '😴', caption: 'Umorna nakon cijelog dana igre. Spava kao anđeo!', created_at: '2026-03-29T20:00:00Z' },
+  // Updates for booking bookffff (Coco kod Ane, 1 Apr)
+  { id: 'upd17', booking_id: 'bookffff-ffff-ffff-ffff-ffffffffffff', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'photo', emoji: '🐕', caption: 'Coco je stigla! Preslatko štene, odmah se počela igrati.', created_at: '2026-03-24T09:00:00Z' },
+  { id: 'upd18', booking_id: 'bookffff-ffff-ffff-ffff-ffffffffffff', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'video', emoji: '🌳', caption: 'Coco uči hodati na povodcu! Ide joj sve bolje i bolje.', created_at: '2026-03-24T11:00:00Z' },
+  { id: 'upd19', booking_id: 'bookffff-ffff-ffff-ffff-ffffffffffff', sitter_id: '11111111-1111-1111-1111-111111111111', type: 'photo', emoji: '😴', caption: 'Popodnevni drijemež nakon uzbudljivog jutra. 💤', created_at: '2026-03-24T14:00:00Z' },
+];
+
+// ============================================================
+// PET PASSPORTS (Health Records)
+// ============================================================
+
+export const mockPetPassports: PetPassport[] = [
+  {
+    pet_id: 'pet11111-1111-1111-1111-111111111111', // Rex
+    vaccinations: [
+      { name: 'Bjesnoća', date: '2025-09-15', vet: 'Dr. Marija Knežević', next_date: '2026-09-15' },
+      { name: 'Parvoviroza (DHPPi)', date: '2025-09-15', vet: 'Dr. Marija Knežević', next_date: '2026-09-15' },
+      { name: 'Leptospiroza', date: '2025-09-15', vet: 'Dr. Marija Knežević', next_date: '2026-03-15' },
+      { name: 'Dehelmintizacija', date: '2026-01-10', vet: 'Dr. Marija Knežević', next_date: '2026-04-10' },
+    ],
+    allergies: [
+      { name: 'Piletina', severity: 'ozbiljna', notes: 'Izaziva povraćanje i proljev. Strogo izbjegavati u hrani.' },
+      { name: 'Pelud trave', severity: 'blaga', notes: 'Kihanje u proljeće, ne zahtijeva lijekove.' },
+    ],
+    medications: [
+      { name: 'Apoquel', dose: '16mg', schedule: '1x dnevno ujutro', start_date: '2026-02-01', end_date: '2026-04-30' },
+    ],
+    vet_info: { name: 'Dr. Marija Knežević', phone: '+385 51 321 456', address: 'Veterinarska ambulanta Rijeka, Fiumara 12, 51000 Rijeka', emergency: true },
+    notes: 'Rex voli šetnje ujutro i navečer. Bojažljiv je prema drugim velikim psima. Obožava igru s loptom. Hrani se 2x dnevno — NIKADA piletina!',
+  },
+  {
+    pet_id: 'pet22222-2222-2222-2222-222222222222', // Mila (mačka)
+    vaccinations: [
+      { name: 'FeLV (Leukemija mačaka)', date: '2025-11-20', vet: 'Dr. Ivan Rupnik', next_date: '2026-11-20' },
+      { name: 'Bjesnoća', date: '2025-11-20', vet: 'Dr. Ivan Rupnik', next_date: '2026-11-20' },
+      { name: 'Panleukopenija', date: '2025-11-20', vet: 'Dr. Ivan Rupnik', next_date: '2026-11-20' },
+      { name: 'Dehelmintizacija', date: '2026-02-15', vet: 'Dr. Ivan Rupnik', next_date: '2026-05-15' },
+    ],
+    allergies: [],
+    medications: [],
+    vet_info: { name: 'Dr. Ivan Rupnik', phone: '+385 51 456 789', address: 'Veterinarska stanica Sušak, Strossmayerova 8, 51000 Rijeka', emergency: true },
+    notes: 'Mila je mirna mačka koja voli toplinu. Ne voli glasne zvukove. Hrani se premium hranom za perzijske mačke. Potrebno redovito četkanje dlake.',
+  },
+  {
+    pet_id: 'pet33333-3333-3333-3333-333333333333', // Luna (labrador)
+    vaccinations: [
+      { name: 'Bjesnoća', date: '2026-01-10', vet: 'Dr. Ana Petrović', next_date: '2027-01-10' },
+      { name: 'Parvoviroza (DHPPi)', date: '2026-01-10', vet: 'Dr. Ana Petrović', next_date: '2027-01-10' },
+      { name: 'Bordetella', date: '2026-01-10', vet: 'Dr. Ana Petrović', next_date: '2026-07-10' },
+      { name: 'Dehelmintizacija', date: '2026-03-01', vet: 'Dr. Ana Petrović', next_date: '2026-06-01' },
+    ],
+    allergies: [
+      { name: 'Kukuruz', severity: 'umjerena', notes: 'Izaziva svrbež kože. Koristiti hranu bez kukuruza.' },
+    ],
+    medications: [],
+    vet_info: { name: 'Dr. Ana Petrović', phone: '+385 1 234 5678', address: 'Veterinarska klinika Zagreb, Ilica 200, 10000 Zagreb', emergency: true },
+    notes: 'Luna je vesela i energična. Obožava vodu i plivanje. Treba puno fizičke aktivnosti. Hrana bez kukuruza obavezno!',
+  },
+  {
+    pet_id: 'pet44444-4444-4444-4444-444444444444', // Whiskers (mačka s dijabetesom)
+    vaccinations: [
+      { name: 'FeLV (Leukemija mačaka)', date: '2025-10-05', vet: 'Dr. Ana Petrović', next_date: '2026-10-05' },
+      { name: 'Bjesnoća', date: '2025-10-05', vet: 'Dr. Ana Petrović', next_date: '2026-10-05' },
+      { name: 'Kaliciviroza', date: '2025-10-05', vet: 'Dr. Ana Petrović', next_date: '2026-10-05' },
+    ],
+    allergies: [
+      { name: 'Mliječni proizvodi', severity: 'umjerena', notes: 'Uzrokuje probavne smetnje.' },
+    ],
+    medications: [
+      { name: 'Caninsulin (inzulin)', dose: '2 IU', schedule: '2x dnevno (ujutro i navečer, uz obrok)', start_date: '2025-06-01', end_date: null },
+      { name: 'Dijabetička hrana', dose: 'Prema uputama', schedule: '2x dnevno uz inzulin', start_date: '2025-06-01', end_date: null },
+    ],
+    vet_info: { name: 'Dr. Ana Petrović', phone: '+385 1 234 5678', address: 'Veterinarska klinika Zagreb, Ilica 200, 10000 Zagreb', emergency: true },
+    notes: 'VAŽNO: Whiskers ima dijabetes i MORA dobiti inzulin 2x dnevno! Pratiti razinu šećera. Ne davati hranu izvan rasporeda. Mirna mačka, voli biti u krilu.',
+  },
+  {
+    pet_id: 'pet55555-5555-5555-5555-555555555555', // Buddy (zlatni retriver)
+    vaccinations: [
+      { name: 'Bjesnoća', date: '2025-12-01', vet: 'Dr. Ana Petrović', next_date: '2026-12-01' },
+      { name: 'Parvoviroza (DHPPi)', date: '2025-12-01', vet: 'Dr. Ana Petrović', next_date: '2026-12-01' },
+      { name: 'Leptospiroza', date: '2025-12-01', vet: 'Dr. Ana Petrović', next_date: '2026-06-01' },
+    ],
+    allergies: [],
+    medications: [],
+    vet_info: { name: 'Dr. Ana Petrović', phone: '+385 1 234 5678', address: 'Veterinarska klinika Zagreb, Ilica 200, 10000 Zagreb', emergency: true },
+    notes: 'Buddy je izrazito društven pas. Odlično se slaže s drugim psima i djecom. Obožava igru s loptom i plivanje. Jede sve, paziti na količinu!',
+  },
+  {
+    pet_id: 'pet66666-6666-6666-6666-666666666666', // Coco (pudlica, štene)
+    vaccinations: [
+      { name: 'Parvoviroza (DHPPi) - 1. doza', date: '2025-12-15', vet: 'Dr. Marija Knežević', next_date: '2026-04-15' },
+      { name: 'Bjesnoća', date: '2026-02-01', vet: 'Dr. Marija Knežević', next_date: '2027-02-01' },
+    ],
+    allergies: [],
+    medications: [
+      { name: 'NexGard (antiparazitik)', dose: '11.3mg', schedule: '1x mjesečno', start_date: '2026-01-01', end_date: null },
+    ],
+    vet_info: { name: 'Dr. Marija Knežević', phone: '+385 51 321 456', address: 'Veterinarska ambulanta Rijeka, Fiumara 12, 51000 Rijeka', emergency: true },
+    notes: 'Coco je štene od 1 godinu. Još uči osnovne komande. Puno energije! Treba česte kratke šetnje. Hrani se hranom za štence 3x dnevno.',
+  },
+  {
+    pet_id: 'pet77777-7777-7777-7777-777777777777', // Felix (britanska kratkodlaka)
+    vaccinations: [
+      { name: 'FeLV (Leukemija mačaka)', date: '2025-08-15', vet: 'Dr. Ana Petrović', next_date: '2026-08-15' },
+      { name: 'Bjesnoća', date: '2025-08-15', vet: 'Dr. Ana Petrović', next_date: '2026-08-15' },
+      { name: 'Panleukopenija', date: '2025-08-15', vet: 'Dr. Ana Petrović', next_date: '2026-08-15' },
+    ],
+    allergies: [
+      { name: 'Gluten', severity: 'blaga', notes: 'Blagi probavni problemi. Koristiti bezglutensku hranu.' },
+    ],
+    medications: [],
+    vet_info: { name: 'Dr. Ana Petrović', phone: '+385 1 234 5678', address: 'Veterinarska klinika Zagreb, Ilica 200, 10000 Zagreb', emergency: true },
+    notes: 'Felix je nezavisan ali mazni mačak. Voli visoka mjesta. Potrebna mu je igračka za grebanje. Hrana bez glutena.',
+  },
+  {
+    pet_id: 'pet88888-8888-8888-8888-888888888888', // Žuja (papiga)
+    vaccinations: [
+      { name: 'Pregled zdravlja ptica', date: '2026-01-20', vet: 'Dr. Petra Vidović', next_date: '2026-07-20' },
+    ],
+    allergies: [],
+    medications: [
+      { name: 'Vitaminski dodatak za ptice', dose: '2 kapi', schedule: 'U vodu svaki dan', start_date: '2026-01-01', end_date: null },
+    ],
+    vet_info: { name: 'Dr. Petra Vidović', phone: '+385 51 789 012', address: 'Egzotična veterina Rijeka, Krešimirova 22, 51000 Rijeka', emergency: false },
+    notes: 'Žuja je papiga koja priča nekoliko riječi. Treba posebnu hranu za papige (sjemenke + voće). Ne izlagati propuhu! Kavez čistiti svaki dan.',
+  },
+];
+
+// ============================================================
 // HELPER FUNCTIONS
 // ============================================================
 
@@ -393,4 +753,30 @@ export function getMessagesForUser(userId: string) {
   return mockMessages
     .filter(m => m.sender_id === userId || m.receiver_id === userId)
     .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+}
+
+export function getWalkById(walkId: string) {
+  return mockWalks.find(w => w.id === walkId) || null;
+}
+
+export function getWalksForUser(userId: string) {
+  // Owner sees walks for their pets, sitter sees their walks
+  const userPetIds = mockPets.filter(p => p.owner_id === userId).map(p => p.id);
+  return mockWalks
+    .filter(w => w.sitter_id === userId || userPetIds.includes(w.pet_id))
+    .sort((a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime());
+}
+
+export function getActiveWalksForSitter(sitterId: string) {
+  return mockWalks.filter(w => w.sitter_id === sitterId && w.status === 'u_tijeku');
+}
+
+export function getUpdatesForBooking(bookingId: string) {
+  return mockUpdates
+    .filter(u => u.booking_id === bookingId)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+}
+
+export function getPetPassport(petId: string) {
+  return mockPetPassports.find(p => p.pet_id === petId) || null;
 }

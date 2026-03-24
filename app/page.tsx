@@ -348,6 +348,58 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Why Šapica Section ── */}
+      <section className="py-20 md:py-28 bg-gradient-to-b from-white to-orange-50/30 relative overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+        <div className="container mx-auto px-4 relative">
+          <div className="text-center mb-14">
+            <Badge variant="secondary" className="mb-4 text-orange-600 bg-orange-50 border-0">Zašto Šapica</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Što Šapica nudi više od ostalih</h2>
+            <p className="text-muted-foreground text-lg max-w-lg mx-auto">Napredne značajke za potpuni mir i kontrolu</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              {
+                title: 'GPS Tracking šetnji',
+                description: 'Pratite svog ljubimca u realnom vremenu dok je na šetnji. Vidite rutu, checkpointe i statistike šetnje.',
+                emoji: '📍',
+                color: 'from-green-500 to-emerald-500',
+                href: '/setnja/walk1111-1111-1111-1111-111111111111',
+              },
+              {
+                title: 'Foto ažuriranja',
+                description: 'Primajte redovita ažuriranja s fotografijama i videima od sittera. Instagram-style feed za vašeg ljubimca.',
+                emoji: '📸',
+                color: 'from-blue-500 to-cyan-500',
+                href: '/azuriranja/book1111-1111-1111-1111-111111111111',
+              },
+              {
+                title: 'Zdravstveni karton',
+                description: 'Digitalni pas-putovnica s cijepljenjima, alergijama, lijekovima i kontaktom veterinara. Uvijek pri ruci.',
+                emoji: '🏥',
+                color: 'from-purple-500 to-pink-500',
+                href: '/ljubimac/pet11111-1111-1111-1111-111111111111/karton',
+              },
+            ].map((feature, i) => (
+              <Link key={feature.title} href={feature.href}>
+                <Card className={`group card-hover cursor-pointer h-full border-0 shadow-sm rounded-2xl overflow-hidden animate-fade-in-up delay-${(i + 1) * 100}`}>
+                  <CardContent className="p-6 text-center">
+                    <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} text-white mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <span className="text-3xl">{feature.emoji}</span>
+                    </div>
+                    <h3 className="font-semibold text-lg mb-2 group-hover:text-orange-500 transition-colors">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                    <div className="mt-4 text-sm font-medium text-orange-500 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      Pogledaj demo <ArrowRight className="h-3 w-3" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA for Sitters ── */}
       <section className="py-20 md:py-28 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-orange-500 to-amber-400" />
