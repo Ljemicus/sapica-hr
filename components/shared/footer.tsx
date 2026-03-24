@@ -79,7 +79,7 @@ export function Footer() {
             <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Podrška</h3>
             <ul className="space-y-3 text-sm">
               <li><Link href="#" className="hover:text-orange-400 transition-colors">Česta pitanja</Link></li>
-              <li><Link href="#" className="hover:text-orange-400 transition-colors">Kontakt</Link></li>
+              <li><Link href="/kontakt" className="hover:text-orange-400 transition-colors">Kontakt</Link></li>
               <li><Link href="#" className="hover:text-orange-400 transition-colors">Sigurnost</Link></li>
               <li><Link href="#" className="hover:text-orange-400 transition-colors">Pravila zajednice</Link></li>
             </ul>
