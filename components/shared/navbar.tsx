@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare } from 'lucide-react';
+import { Menu, X, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -91,6 +91,11 @@ export function Navbar() {
           <Link href="/forum" className="text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors flex items-center gap-1.5">
             <MessageSquare className="h-4 w-4" />
             Forum
+          </Link>
+          <Link href="/izgubljeni" className="text-sm font-semibold text-red-500 hover:text-red-600 transition-colors flex items-center gap-1.5 relative">
+            <AlertTriangle className="h-4 w-4" />
+            Izgubljeni 🚨
+            <span className="absolute -top-1 -right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
           </Link>
           {!user && (
             <Link href="/registracija?role=sitter" className="text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors">
@@ -223,6 +228,10 @@ export function Navbar() {
               <Link href="/forum" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
                 <MessageSquare className="h-5 w-5" />
                 Forum
+              </Link>
+              <Link href="/izgubljeni" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-red-500 hover:text-red-600 font-semibold transition-colors">
+                <AlertTriangle className="h-5 w-5" />
+                Izgubljeni 🚨
               </Link>
               {user ? (
                 <>

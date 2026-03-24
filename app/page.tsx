@@ -10,6 +10,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
+import { getLostPets } from '@/lib/mock-data';
+import { LOST_PET_SPECIES_LABELS } from '@/lib/types';
 
 const featuredSitters = [
   { id: '11111111-1111-1111-1111-111111111111', name: 'Ana Horvat', city: 'Rijeka', rating: 4.9, reviews: 23, price: 25, bio: 'Obožavam životinje od malih nogu! Imam veliku kuću s dvorištem.', verified: true, superhost: true, initial: 'A', gradient: 'from-orange-400 to-amber-300' },
@@ -153,6 +155,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── Lost Pets Section ── */}
+      <LostPetsHomepageSection />
 
       {/* ── Services Section ── */}
       <section className="py-20 md:py-28 bg-white">
@@ -538,6 +543,66 @@ export default function HomePage() {
         </div>
       </section>
     </div>
+  );
+}
+
+function LostPetsHomepageSection() {
+  const lostPets = getLostPets({ status: 'lost' }).slice(0, 3);
+  if (lostPets.length === 0) return null;
+
+  return (
+    <section className="py-12 md:py-16 bg-gradient-to-b from-red-50 to-orange-50/50 relative overflow-hidden">
+      <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+      <div className="container mx-auto px-4 relative">
+        <div className="text-center mb-8">
+          <Badge className="mb-4 bg-red-100 text-red-700 hover:bg-red-100 border-0 text-sm px-4 py-1.5 animate-pulse">
+            🚨 Hitno — pomoć potrebna
+          </Badge>
+          <h2 className="text-3xl md:text-4xl font-extrabold mb-3 text-gray-900">Izgubljeni ljubimci</h2>
+          <p className="text-muted-foreground max-w-lg mx-auto text-lg">
+            Ovi ljubimci traže put kući. Svako dijeljenje pomaže!
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+          {lostPets.map((pet) => (
+            <Link key={pet.id} href={`/izgubljeni/${pet.id}`}>
+              <Card className="group border-2 border-red-200 hover:border-red-400 hover:shadow-xl transition-all duration-300 overflow-hidden h-full">
+                <div className="relative h-48 bg-gray-100">
+                  <Image src={pet.image_url} alt={pet.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <Badge className="absolute top-3 left-3 bg-red-500 text-white font-bold">
+                    🔴 Traži se
+                  </Badge>
+                  <div className="absolute bottom-3 left-3">
+                    <h3 className="text-xl font-bold text-white drop-shadow-lg">{pet.name}</h3>
+                    <p className="text-sm text-white/90 drop-shadow">{LOST_PET_SPECIES_LABELS[pet.species]} • {pet.breed}</p>
+                  </div>
+                </div>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                    <MapPin className="h-4 w-4 text-red-400" />
+                    <span className="font-medium">{pet.city}, {pet.neighborhood}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Calendar className="h-4 w-4" />
+                    <span>{new Date(pet.date_lost).toLocaleDateString('hr-HR', { day: 'numeric', month: 'long' })}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+        <div className="text-center">
+          <Link href="/izgubljeni">
+            <Button size="lg" className="bg-red-500 hover:bg-red-600 font-bold text-lg px-8 py-6 shadow-xl shadow-red-200/50">
+              <Heart className="h-5 w-5 mr-2" />
+              Pomozi pronaći — Pogledaj sve
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }
 

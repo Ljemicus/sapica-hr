@@ -389,6 +389,63 @@ export const FORUM_CATEGORY_LABELS: Record<ForumCategorySlug, string> = {
   'slobodna': 'Slobodna tema',
 };
 
+// ── Lost Pets ──
+
+export type LostPetStatus = 'lost' | 'found';
+export type LostPetSpecies = 'pas' | 'macka' | 'ostalo';
+
+export const LOST_PET_STATUS_LABELS: Record<LostPetStatus, string> = {
+  'lost': 'Još se traži',
+  'found': 'Pronađen!',
+};
+
+export const LOST_PET_SPECIES_LABELS: Record<LostPetSpecies, string> = {
+  'pas': 'Pas',
+  'macka': 'Mačka',
+  'ostalo': 'Ostalo',
+};
+
+export interface LostPetSighting {
+  id: string;
+  date: string;
+  location: string;
+  description: string;
+}
+
+export interface LostPetUpdate {
+  id: string;
+  date: string;
+  text: string;
+}
+
+export interface LostPet {
+  id: string;
+  name: string;
+  species: LostPetSpecies;
+  breed: string;
+  color: string;
+  sex: 'muško' | 'žensko';
+  image_url: string;
+  gallery: string[];
+  city: string;
+  neighborhood: string;
+  location_lat: number;
+  location_lng: number;
+  date_lost: string;
+  status: LostPetStatus;
+  description: string;
+  special_marks: string;
+  has_microchip: boolean;
+  has_collar: boolean;
+  contact_name: string;
+  contact_phone: string;
+  contact_email: string;
+  share_count: number;
+  updates: LostPetUpdate[];
+  sightings: LostPetSighting[];
+  created_at: string;
+}
+
 export const CITIES = [
   'Zagreb',
   'Rijeka',
