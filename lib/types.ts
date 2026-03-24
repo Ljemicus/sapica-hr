@@ -327,6 +327,8 @@ export interface ForumCategory {
   emoji: string;
   description: string;
   color: string;
+  topic_count: number;
+  post_count: number;
 }
 
 export interface ForumTopic {
@@ -337,10 +339,16 @@ export interface ForumTopic {
   author_initial: string;
   author_gradient: string;
   created_at: string;
+  views?: number;
+  reply_count?: number;
   comment_count: number;
   likes: number;
   is_pinned: boolean;
   is_hot: boolean;
+  is_solved?: boolean;
+  last_reply_at?: string;
+  last_reply_by?: string;
+  tags?: string[];
 }
 
 export interface ForumComment {
@@ -354,19 +362,30 @@ export interface ForumComment {
   likes: number;
 }
 
+export interface ForumPost {
+  id: string;
+  topic_id: string;
+  author_name: string;
+  author_initial: string;
+  content: string;
+  created_at: string;
+  likes: number;
+  is_best_answer: boolean;
+}
+
 export const FORUM_CATEGORIES: ForumCategory[] = [
-  { id: 'cat-1', slug: 'pitanja', name: 'Pitanja', emoji: '❓', description: 'Postavite pitanje zajednici', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-  { id: 'cat-2', slug: 'savjeti', name: 'Savjeti', emoji: '💡', description: 'Podijelite korisne savjete', color: 'bg-amber-50 text-amber-700 border-amber-200' },
-  { id: 'cat-3', slug: 'price', name: 'Priče', emoji: '📖', description: 'Priče o ljubimcima', color: 'bg-pink-50 text-pink-700 border-pink-200' },
-  { id: 'cat-4', slug: 'izgubljeni', name: 'Izgubljeni ljubimci', emoji: '🔍', description: 'Pomozite pronaći izgubljene ljubimce', color: 'bg-red-50 text-red-700 border-red-200' },
-  { id: 'cat-5', slug: 'slobodna', name: 'Slobodna tema', emoji: '💬', description: 'Sve ostalo', color: 'bg-green-50 text-green-700 border-green-200' },
+  { id: 'cat-1', slug: 'pitanja', name: 'Pitanja', emoji: '❓', description: 'Postavite pitanje zajednici', color: 'bg-blue-50 text-blue-700 border-blue-200', topic_count: 4, post_count: 12 },
+  { id: 'cat-2', slug: 'savjeti', name: 'Savjeti', emoji: '💡', description: 'Korisni savjeti i trikovi za ljubimce', color: 'bg-green-50 text-green-700 border-green-200', topic_count: 4, post_count: 15 },
+  { id: 'cat-3', slug: 'price', name: 'Priče', emoji: '📖', description: 'Vaše priče o ljubimcima', color: 'bg-pink-50 text-pink-700 border-pink-200', topic_count: 3, post_count: 10 },
+  { id: 'cat-4', slug: 'izgubljeni', name: 'Izgubljeni', emoji: '🚨', description: 'Izgubljeni i pronađeni ljubimci', color: 'bg-red-50 text-red-700 border-red-200', topic_count: 2, post_count: 6 },
+  { id: 'cat-5', slug: 'slobodna', name: 'Slobodna tema', emoji: '💬', description: 'Slobodne teme i rasprave', color: 'bg-amber-50 text-amber-700 border-amber-200', topic_count: 2, post_count: 5 },
 ];
 
 export const FORUM_CATEGORY_LABELS: Record<ForumCategorySlug, string> = {
   'pitanja': 'Pitanja',
   'savjeti': 'Savjeti',
   'price': 'Priče',
-  'izgubljeni': 'Izgubljeni ljubimci',
+  'izgubljeni': 'Izgubljeni',
   'slobodna': 'Slobodna tema',
 };
 

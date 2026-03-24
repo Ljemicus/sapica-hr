@@ -1,4 +1,4 @@
-import type { User, Pet, SitterProfile, Booking, Review, Message, Availability, ServiceType, Walk, PetUpdate, PetPassport, Groomer, Trainer, TrainingProgram, Article, ForumTopic, ForumComment, ForumCategorySlug } from './types';
+import type { User, Pet, SitterProfile, Booking, Review, Message, Availability, ServiceType, Walk, PetUpdate, PetPassport, Groomer, Trainer, TrainingProgram, Article, ForumTopic, ForumComment, ForumPost, ForumCategorySlug } from './types';
 
 // ============================================================
 // USERS
