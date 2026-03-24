@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle } from 'lucide-react';
+import { Menu, X, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -79,6 +79,19 @@ export function Navbar() {
               <DropdownMenuItem render={<Link href="/dresura" />} className="cursor-pointer">
                 <GraduationCap className="mr-2 h-4 w-4" />
                 Dresura
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem render={<Link href="/setnja/walk1111-1111-1111-1111-111111111111" />} className="cursor-pointer">
+                <MapPin className="mr-2 h-4 w-4" />
+                GPS Tracking šetnji
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/azuriranja/book1111-1111-1111-1111-111111111111" />} className="cursor-pointer">
+                <Camera className="mr-2 h-4 w-4" />
+                Foto ažuriranja
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/ljubimac/pet11111-1111-1111-1111-111111111111/karton" />} className="cursor-pointer">
+                <Heart className="mr-2 h-4 w-4" />
+                Zdravstveni karton
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -219,6 +232,20 @@ export function Navbar() {
                 <GraduationCap className="h-5 w-5" />
                 Dresura
               </Link>
+              <div className="border-t my-1" />
+              <Link href="/setnja/walk1111-1111-1111-1111-111111111111" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
+                <MapPin className="h-5 w-5" />
+                GPS Tracking šetnji
+              </Link>
+              <Link href="/azuriranja/book1111-1111-1111-1111-111111111111" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
+                <Camera className="h-5 w-5" />
+                Foto ažuriranja
+              </Link>
+              <Link href="/ljubimac/pet11111-1111-1111-1111-111111111111/karton" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
+                <Heart className="h-5 w-5" />
+                Zdravstveni karton
+              </Link>
+              <div className="border-t my-1" />
               <Link href="/zajednica" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
                 <BookOpen className="h-5 w-5" />
                 Blog
