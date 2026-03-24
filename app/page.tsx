@@ -43,12 +43,12 @@ const services = [
 ];
 
 const cities = [
-  { name: 'Zagreb', sitters: 180, gradient: 'from-blue-600 to-blue-400' },
-  { name: 'Rijeka', sitters: 95, gradient: 'from-cyan-600 to-cyan-400' },
-  { name: 'Split', sitters: 120, gradient: 'from-orange-600 to-amber-400' },
-  { name: 'Osijek', sitters: 45, gradient: 'from-green-600 to-emerald-400' },
-  { name: 'Pula', sitters: 55, gradient: 'from-purple-600 to-purple-400' },
-  { name: 'Zadar', sitters: 60, gradient: 'from-rose-600 to-rose-400' },
+  { name: 'Zagreb', sitters: 180, gradient: 'from-blue-600 to-blue-400', image: '/images/cities/zagreb.jpg' },
+  { name: 'Rijeka', sitters: 95, gradient: 'from-cyan-600 to-cyan-400', image: '/images/cities/rijeka.jpg' },
+  { name: 'Split', sitters: 120, gradient: 'from-orange-600 to-amber-400', image: '/images/cities/split.jpg' },
+  { name: 'Osijek', sitters: 45, gradient: 'from-green-600 to-emerald-400', image: '/images/cities/osijek.jpg' },
+  { name: 'Pula', sitters: 55, gradient: 'from-purple-600 to-purple-400', image: '/images/cities/pula.jpg' },
+  { name: 'Zadar', sitters: 60, gradient: 'from-rose-600 to-rose-400', image: '/images/cities/zadar.jpg' },
 ];
 
 const stats = [
@@ -318,9 +318,9 @@ export default function HomePage() {
               <Link key={city.name} href={`/pretraga?city=${city.name}`}>
                 <Card className={`group card-hover cursor-pointer overflow-hidden border-0 shadow-md rounded-2xl animate-fade-in-up delay-${(i + 1) * 100}`}>
                   <CardContent className="p-0">
-                    <div className={`h-36 bg-gradient-to-br ${city.gradient} relative flex items-end p-5`}>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                      <div className="absolute inset-0 paw-pattern opacity-10" />
+                    <div className="h-36 relative flex items-end p-5 overflow-hidden">
+                      <Image src={city.image} alt={city.name} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/10" />
                       <div className="relative">
                         <h3 className="text-white font-bold text-xl leading-none drop-shadow-sm">{city.name}</h3>
                         <p className="text-white/90 text-sm mt-1.5 font-medium">{city.sitters} sittera</p>
