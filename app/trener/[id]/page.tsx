@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getTrainerById, getTrainingProgramsForTrainer } from '@/lib/mock-data';
+import { getTrainerById, getTrainingProgramsForTrainer, getTrainerReviews } from '@/lib/mock-data';
 import { TrainerProfile } from './trainer-profile';
 
 interface TrainerPageProps {
@@ -16,10 +16,22 @@ export async function generateMetadata({ params }: TrainerPageProps): Promise<Me
   };
 }
 
+function generateMockAvailability(): boolean[] {
+  const seed = Date.now();
+  return Array.from({ length: 14 }, (_, i) => {
+    const hash = ((seed + i * 2654435761) >>> 0) % 100;
+    return hash < 60;
+  });
+}
+
 export default async function TrainerPage({ params }: TrainerPageProps) {
   const { id } = await params;
   const trainer = getTrainerById(id);
   if (!trainer) return notFound();
+
   const programs = getTrainingProgramsForTrainer(id);
-  return <TrainerProfile trainer={trainer} programs={programs} />;
+  const reviews = getTrainerReviews(id);
+  const availability = generateMockAvailability();
+
+  return <TrainerProfile trainer={trainer} programs={programs} reviews={reviews} availability={availability} />;
 }

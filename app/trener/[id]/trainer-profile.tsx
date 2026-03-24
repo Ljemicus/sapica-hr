@@ -1,15 +1,22 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { format } from 'date-fns';
+import { hr } from 'date-fns/locale';
 import {
-  Star, MapPin, Award, ChevronLeft, GraduationCap, Clock, Calendar
+  Star, MapPin, Award, ChevronLeft, GraduationCap, Clock, Calendar,
+  MessageCircle, CheckCircle2
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
 import { TRAINING_TYPE_LABELS, type Trainer, type TrainingProgram } from '@/lib/types';
+import type { TrainerReview } from '@/lib/mock-data';
 
 const gradients = [
   'from-blue-400 to-cyan-300',
@@ -18,7 +25,14 @@ const gradients = [
   'from-orange-400 to-amber-300',
 ];
 
-export function TrainerProfile({ trainer, programs }: { trainer: Trainer; programs: TrainingProgram[] }) {
+interface TrainerProfileProps {
+  trainer: Trainer;
+  programs: TrainingProgram[];
+  reviews: TrainerReview[];
+  availability: boolean[];
+}
+
+export function TrainerProfile({ trainer, programs, reviews, availability }: TrainerProfileProps) {
   const router = useRouter();
   const gradient = gradients[trainer.name.charCodeAt(0) % gradients.length];
 
@@ -30,8 +44,9 @@ export function TrainerProfile({ trainer, programs }: { trainer: Trainer; progra
       </Button>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Header */}
+          {/* Profile Header */}
           <Card className="overflow-hidden border-0 shadow-sm">
             <div className={`h-32 bg-gradient-to-br ${gradient} relative`}>
               <div className="absolute inset-0 paw-pattern opacity-10" />
@@ -69,15 +84,6 @@ export function TrainerProfile({ trainer, programs }: { trainer: Trainer; progra
                       <span className="font-semibold">{trainer.rating.toFixed(1)}</span>
                       <span className="text-sm text-amber-700/70">({trainer.reviews} recenzija)</span>
                     </div>
-                    {trainer.certificates.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {trainer.certificates.map((cert) => (
-                          <Badge key={cert} variant="secondary" className="text-xs bg-blue-50 text-blue-600 border-0">
-                            {cert}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -148,42 +154,66 @@ export function TrainerProfile({ trainer, programs }: { trainer: Trainer; progra
             </CardContent>
           </Card>
 
-          {/* Reviews placeholder */}
+          {/* Reviews */}
           <Card className="border-0 shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 Recenzije
-                <Badge variant="secondary" className="bg-orange-50 text-orange-600">{trainer.reviews}</Badge>
+                <Badge variant="secondary" className="bg-orange-50 text-orange-600">{reviews.length}</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {[
-                  { name: 'Ivan M.', rating: 5, text: 'Marko je nevjerojatan trener! Naš pas je za 8 tjedana naučio sve osnove. Preporučujem svima!' },
-                  { name: 'Petra S.', rating: 5, text: 'Konačno trener koji razumije da svaki pas uči drugačije. Strpljiv i profesionalan pristup.' },
-                  { name: 'Ana K.', rating: 4, text: 'Odličan program za štence. Naša mala Bella sada sluša na svaki poziv.' },
-                ].map((review, i) => (
-                  <div key={i} className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-9 w-9">
-                        <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-xs">
-                          {review.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm">{review.name}</span>
-                          <StarRating rating={review.rating} size="sm" />
+              {reviews.length === 0 ? (
+                <p className="text-muted-foreground text-center py-6">Još nema recenzija</p>
+              ) : (
+                <div className="space-y-5">
+                  {reviews.map((review, i) => (
+                    <div key={review.id} className="space-y-2">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-9 w-9">
+                          <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-xs">
+                            {review.author_initial}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm">{review.author_name}</span>
+                            <StarRating rating={review.rating} size="sm" />
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {format(new Date(review.created_at), 'd. MMMM yyyy.', { locale: hr })}
+                          </div>
                         </div>
                       </div>
+                      <p className="text-sm text-muted-foreground pl-12 leading-relaxed">{review.comment}</p>
+                      {i < reviews.length - 1 && <Separator className="mt-4" />}
                     </div>
-                    <p className="text-sm text-muted-foreground pl-12 leading-relaxed">{review.text}</p>
-                    {i < 2 && <div className="border-b border-gray-100 mt-4" />}
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
+
+          {/* Certificates */}
+          {trainer.certificates.length > 0 && (
+            <Card className="border-0 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-lg">Certifikati</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {trainer.certificates.map((cert) => (
+                    <div key={cert} className="flex items-center gap-3 p-3 rounded-xl border bg-white">
+                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-sm">
+                        <CheckCircle2 className="h-5 w-5 text-white" />
+                      </div>
+                      <span className="font-medium">{cert}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Sidebar */}
@@ -194,13 +224,61 @@ export function TrainerProfile({ trainer, programs }: { trainer: Trainer; progra
                 <span className="text-4xl font-extrabold text-gradient">{trainer.price_per_hour}&euro;</span>
                 <span className="text-muted-foreground block text-sm mt-1">po satu</span>
               </div>
-              <Button className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50" size="lg">
+
+              <Button
+                className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50"
+                size="lg"
+                onClick={() => toast.info('Uskoro!', { description: 'Online zakazivanje treninga dolazi uskoro.' })}
+              >
                 <GraduationCap className="h-4 w-4 mr-2" />
                 Zakaži trening
               </Button>
-              <Button variant="outline" className="w-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200" size="lg">
-                Kontaktiraj
-              </Button>
+              <Link href="/poruke">
+                <Button variant="outline" className="w-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200" size="lg">
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Kontaktiraj
+                </Button>
+              </Link>
+
+              <Separator />
+
+              {/* Availability Calendar Preview */}
+              <div>
+                <h3 className="font-medium text-sm mb-3 flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4 text-orange-500" />
+                  Dostupnost (sljedećih 14 dana)
+                </h3>
+                <div className="grid grid-cols-7 gap-1.5">
+                  {Array.from({ length: 14 }, (_, i) => {
+                    const date = new Date();
+                    date.setDate(date.getDate() + i);
+                    const isAvailable = availability[i];
+                    return (
+                      <div
+                        key={i}
+                        className={`aspect-square rounded-lg flex items-center justify-center text-xs font-medium transition-all ${
+                          isAvailable
+                            ? 'bg-green-100 text-green-700 shadow-sm'
+                            : 'bg-red-50 text-red-300'
+                        }`}
+                        title={`${format(date, 'd.M.')} — ${isAvailable ? 'Dostupan' : 'Nedostupan'}`}
+                      >
+                        {date.getDate()}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded bg-green-100 border border-green-200" />
+                    <span>Dostupan</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded bg-red-50 border border-red-100" />
+                    <span>Nedostupan</span>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

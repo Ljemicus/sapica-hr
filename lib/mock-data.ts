@@ -1439,3 +1439,84 @@ export function getLostPets(filters?: { city?: string; species?: string; status?
 export function getLostPetById(id: string) {
   return mockLostPets.find(p => p.id === id);
 }
+
+// ============================================================
+// GROOMER REVIEWS
+// ============================================================
+
+export interface GroomerReview {
+  id: string;
+  groomer_id: string;
+  author_name: string;
+  author_initial: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+}
+
+export const mockGroomerReviews: GroomerReview[] = [
+  // gr-1 Salon Šapica (5 recenzija)
+  { id: 'grev-1', groomer_id: 'gr-1', author_name: 'Marina Kovač', author_initial: 'M', rating: 5, comment: 'Izvrsna usluga! Moj zlatni retriver izgleda predivno nakon šišanja. Osoblje je nježno i profesionalno.', created_at: '2026-03-10T14:00:00Z' },
+  { id: 'grev-2', groomer_id: 'gr-1', author_name: 'Tomislav Barić', author_initial: 'T', rating: 5, comment: 'Najbolji salon u Zagrebu. Naš pudlica je uvijek savršeno ošišan. Koristimo ih već 2 godine.', created_at: '2026-02-28T10:00:00Z' },
+  { id: 'grev-3', groomer_id: 'gr-1', author_name: 'Ana Perković', author_initial: 'A', rating: 5, comment: 'Spa tretman je bio fantastičan! Moj malinoiz je izašao potpuno opušten i miriše predivno.', created_at: '2026-02-15T16:00:00Z' },
+  { id: 'grev-4', groomer_id: 'gr-1', author_name: 'Nikola Štefanec', author_initial: 'N', rating: 4, comment: 'Odlična kvaliteta ali ponekad treba čekati na termin. Preporučam rezervirati unaprijed.', created_at: '2026-01-20T11:00:00Z' },
+  { id: 'grev-5', groomer_id: 'gr-1', author_name: 'Ivana Bošnjak', author_initial: 'I', rating: 5, comment: 'Mačka mi se inače boji groominga ali ovdje su bili nevjerojatno strpljivi. Hvala!', created_at: '2026-01-05T09:00:00Z' },
+  // gr-2 Petra Grooming (3 recenzije)
+  { id: 'grev-6', groomer_id: 'gr-2', author_name: 'Davor Jelić', author_initial: 'D', rating: 5, comment: 'Mobilni servis je genijalan! Petra dolazi na kućnu adresu, pas se ne stresira od vožnje. Top usluga.', created_at: '2026-03-05T13:00:00Z' },
+  { id: 'grev-7', groomer_id: 'gr-2', author_name: 'Sanja Milić', author_initial: 'S', rating: 4, comment: 'Jako dobra usluga za cijenu. Jedino ne nudi spa tretmane, ali šišanje i kupanje su odlični.', created_at: '2026-02-10T15:00:00Z' },
+  { id: 'grev-8', groomer_id: 'gr-2', author_name: 'Krešimir Horvat', author_initial: 'K', rating: 5, comment: 'Naš husky je konačno lijepo ošišan! Petra zna raditi s većim pasminama. Svaka preporuka.', created_at: '2026-01-22T10:00:00Z' },
+  // gr-3 Mačji Raj (2 recenzije)
+  { id: 'grev-9', groomer_id: 'gr-3', author_name: 'Maja Vidović', author_initial: 'M', rating: 5, comment: 'Jedini salon gdje se moja mačka ne boji! Mirna atmosfera bez pasa je ključna. Preporučujem svim vlasnicima mačaka.', created_at: '2026-03-01T12:00:00Z' },
+  { id: 'grev-10', groomer_id: 'gr-3', author_name: 'Robert Blažević', author_initial: 'R', rating: 4, comment: 'Jako dobar salon za mačke. Cijene su malo više ali vrijedi za specijalnu njegu.', created_at: '2026-02-05T14:00:00Z' },
+  // gr-4 DogStyle Studio (2 recenzije)
+  { id: 'grev-11', groomer_id: 'gr-4', author_name: 'Lana Matić', author_initial: 'L', rating: 5, comment: 'Luksuzni tretman za našeg jorkšira! Aromaterapija i masaža — pas je bio potpuno opušten. Vrhunski!', created_at: '2026-03-12T11:00:00Z' },
+  { id: 'grev-12', groomer_id: 'gr-4', author_name: 'Petar Grgić', author_initial: 'P', rating: 5, comment: 'Premium usluga, premium rezultat. Naša francuska buldožica izgleda kao iz časopisa. Definitivno se vraćamo.', created_at: '2026-02-20T16:00:00Z' },
+  // gr-5 Grooming Pula (1 recenzija)
+  { id: 'grev-13', groomer_id: 'gr-5', author_name: 'Sandra Jurišić', author_initial: 'S', rating: 4, comment: 'Simpatičan obiteljski salon. Posebno cijenim popust za udomljene ljubimce. Usluga je solidna.', created_at: '2026-02-18T10:00:00Z' },
+  // gr-6 Bella Grooming (1 recenzija)
+  { id: 'grev-14', groomer_id: 'gr-6', author_name: 'Josip Pavlović', author_initial: 'J', rating: 5, comment: 'Naša pudlica je konačno dobila savršen šišanje. 8 godina iskustva se vidi! Profesionalno i brzo.', created_at: '2026-03-08T14:00:00Z' },
+  // gr-8 Šišaj Me (1 recenzija)
+  { id: 'grev-15', groomer_id: 'gr-8', author_name: 'Vedrana Tomašić', author_initial: 'V', rating: 5, comment: 'Specijalistkinja za huskije — konačno netko tko zna raditi s gustim krznom! Rezultat je fenomenalan.', created_at: '2026-01-30T13:00:00Z' },
+];
+
+export function getGroomerReviews(groomerId: string) {
+  return mockGroomerReviews.filter(r => r.groomer_id === groomerId);
+}
+
+// ============================================================
+// TRAINER REVIEWS
+// ============================================================
+
+export interface TrainerReview {
+  id: string;
+  trainer_id: string;
+  author_name: string;
+  author_initial: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+}
+
+export const mockTrainerReviews: TrainerReview[] = [
+  // tr-1 Marko Šimić (4 recenzije)
+  { id: 'trev-1', trainer_id: 'tr-1', author_name: 'Ivan Mandić', author_initial: 'I', rating: 5, comment: 'Marko je nevjerojatan trener! Naš pas je za 8 tjedana naučio sve osnove. Pozitivan pristup bez kažnjavanja daje rezultate.', created_at: '2026-03-15T10:00:00Z' },
+  { id: 'trev-2', trainer_id: 'tr-1', author_name: 'Petra Šimunović', author_initial: 'P', rating: 5, comment: 'Program korekcije agresije je spasio našeg psa. Marko je strpljiv i stručan. Preporučujem svima s problematičnim psima.', created_at: '2026-02-25T14:00:00Z' },
+  { id: 'trev-3', trainer_id: 'tr-1', author_name: 'Dario Herceg', author_initial: 'D', rating: 5, comment: 'Napredna poslušnost je bila izazovna ali Marko nas je vodio korak po korak. Pas sada sluša bez povodca!', created_at: '2026-02-01T11:00:00Z' },
+  { id: 'trev-4', trainer_id: 'tr-1', author_name: 'Mirna Babić', author_initial: 'M', rating: 4, comment: 'Grupni tečaj je odličan, samo bi volio manji broj pasa u grupi. Inače sve pohvale za metodu rada.', created_at: '2026-01-10T16:00:00Z' },
+  // tr-2 Ana Petrović (3 recenzije)
+  { id: 'trev-5', trainer_id: 'tr-2', author_name: 'Maja Knežević', author_initial: 'M', rating: 5, comment: 'Ana je fantastična s malim štencima. Naša Bella je za 6 tjedana postala poslušna i socijalizirana. Hvala!', created_at: '2026-03-10T09:00:00Z' },
+  { id: 'trev-6', trainer_id: 'tr-2', author_name: 'Goran Vuković', author_initial: 'G', rating: 5, comment: 'Puppy Start program je savršen za nove vlasnike. Naučili smo komunicirati sa psom na pravi način.', created_at: '2026-02-15T13:00:00Z' },
+  { id: 'trev-7', trainer_id: 'tr-2', author_name: 'Katarina Ružić', author_initial: 'K', rating: 4, comment: 'Dobra trenerica, jako nježna sa štencima. Jedino bih voljela duži program — 6 tjedana brzo prođe.', created_at: '2026-01-20T15:00:00Z' },
+  // tr-3 Ivan Delić (2 recenzije)
+  { id: 'trev-8', trainer_id: 'tr-3', author_name: 'Ante Jurić', author_initial: 'A', rating: 5, comment: 'Agility trening je promijenio život našem border collieju! Ivan je pravi profesionalac i natjecatelj.', created_at: '2026-03-05T10:00:00Z' },
+  { id: 'trev-9', trainer_id: 'tr-3', author_name: 'Lucija Bašić', author_initial: 'L', rating: 4, comment: 'Natjecateljski program je zahtjevan ali rezultati su vidljivi. Naš pas je osvojio 2. mjesto na regionalnom natjecanju!', created_at: '2026-02-08T12:00:00Z' },
+  // tr-4 Lana Horvat (2 recenzije)
+  { id: 'trev-10', trainer_id: 'tr-4', author_name: 'Filip Radman', author_initial: 'F', rating: 5, comment: 'Lana je riješila separacijsku anksioznost našeg psa za 6 tjedana. Profesionalan i empatičan pristup. Spasiteljica!', created_at: '2026-03-12T14:00:00Z' },
+  { id: 'trev-11', trainer_id: 'tr-4', author_name: 'Jelena Tomić', author_initial: 'J', rating: 5, comment: 'Program za reaktivne pse je bio ključan za našeg šarplaninca. Sada mirno prolazimo pored drugih pasa.', created_at: '2026-02-20T11:00:00Z' },
+  // tr-5 Tomislav Radić (1 recenzija)
+  { id: 'trev-12', trainer_id: 'tr-5', author_name: 'Branko Ilić', author_initial: 'B', rating: 4, comment: 'Solidan trener u Osijeku. Grupni tečaj je dobro organiziran, pas je napredovao u šetnji i poslušnosti.', created_at: '2026-01-25T10:00:00Z' },
+];
+
+export function getTrainerReviews(trainerId: string) {
+  return mockTrainerReviews.filter(r => r.trainer_id === trainerId);
+}

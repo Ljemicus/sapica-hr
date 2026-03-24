@@ -1,15 +1,22 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { format } from 'date-fns';
+import { hr } from 'date-fns/locale';
 import {
-  Star, MapPin, Shield, ChevronLeft, Scissors, Droplets, Sparkles
+  Star, MapPin, Shield, ChevronLeft, Scissors, Droplets, Sparkles,
+  Calendar, MessageCircle
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
 import { GROOMING_SERVICE_LABELS, GROOMER_SPECIALIZATION_LABELS, type Groomer, type GroomingServiceType } from '@/lib/types';
+import type { GroomerReview } from '@/lib/mock-data';
 
 const serviceIcons: Record<GroomingServiceType, React.ElementType> = {
   'sisanje': Scissors,
@@ -34,7 +41,13 @@ const gradients = [
   'from-teal-400 to-cyan-300',
 ];
 
-export function GroomerProfile({ groomer }: { groomer: Groomer }) {
+interface GroomerProfileProps {
+  groomer: Groomer;
+  reviews: GroomerReview[];
+  availability: boolean[];
+}
+
+export function GroomerProfile({ groomer, reviews, availability }: GroomerProfileProps) {
   const router = useRouter();
   const gradient = gradients[groomer.name.charCodeAt(0) % gradients.length];
   const lowestPrice = Math.min(...Object.values(groomer.prices).filter(p => p > 0));
@@ -47,8 +60,9 @@ export function GroomerProfile({ groomer }: { groomer: Groomer }) {
       </Button>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Header */}
+          {/* Profile Header */}
           <Card className="overflow-hidden border-0 shadow-sm">
             <div className={`h-32 bg-gradient-to-br ${gradient} relative`}>
               <div className="absolute inset-0 paw-pattern opacity-10" />
@@ -133,40 +147,43 @@ export function GroomerProfile({ groomer }: { groomer: Groomer }) {
             </CardContent>
           </Card>
 
-          {/* Reviews placeholder */}
+          {/* Reviews */}
           <Card className="border-0 shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 Recenzije
-                <Badge variant="secondary" className="bg-orange-50 text-orange-600">{groomer.reviews}</Badge>
+                <Badge variant="secondary" className="bg-orange-50 text-orange-600">{reviews.length}</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {[
-                  { name: 'Marina K.', rating: 5, text: 'Izvrsna usluga! Moj pas izgleda predivno nakon šišanja. Preporučujem svima!' },
-                  { name: 'Tomislav B.', rating: 5, text: 'Profesionalno i nježno. Mačka se uopće nije bojala. Definitivno se vraćamo.' },
-                  { name: 'Ana P.', rating: 4, text: 'Dobra usluga za pristupačnu cijenu. Jedino malo duže čekanje na termin.' },
-                ].map((review, i) => (
-                  <div key={i} className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-9 w-9">
-                        <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-xs">
-                          {review.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm">{review.name}</span>
-                          <StarRating rating={review.rating} size="sm" />
+              {reviews.length === 0 ? (
+                <p className="text-muted-foreground text-center py-6">Još nema recenzija</p>
+              ) : (
+                <div className="space-y-5">
+                  {reviews.map((review, i) => (
+                    <div key={review.id} className="space-y-2">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-9 w-9">
+                          <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-xs">
+                            {review.author_initial}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm">{review.author_name}</span>
+                            <StarRating rating={review.rating} size="sm" />
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {format(new Date(review.created_at), 'd. MMMM yyyy.', { locale: hr })}
+                          </div>
                         </div>
                       </div>
+                      <p className="text-sm text-muted-foreground pl-12 leading-relaxed">{review.comment}</p>
+                      {i < reviews.length - 1 && <Separator className="mt-4" />}
                     </div>
-                    <p className="text-sm text-muted-foreground pl-12 leading-relaxed">{review.text}</p>
-                    {i < 2 && <div className="border-b border-gray-100 mt-4" />}
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -179,13 +196,61 @@ export function GroomerProfile({ groomer }: { groomer: Groomer }) {
                 <span className="text-4xl font-extrabold text-gradient">od {lowestPrice}&euro;</span>
                 <span className="text-muted-foreground block text-sm mt-1">po usluzi</span>
               </div>
-              <Button className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50" size="lg">
+
+              <Button
+                className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50"
+                size="lg"
+                onClick={() => toast.info('Uskoro!', { description: 'Online zakazivanje termina dolazi uskoro.' })}
+              >
                 <Scissors className="h-4 w-4 mr-2" />
                 Zakaži termin
               </Button>
-              <Button variant="outline" className="w-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200" size="lg">
-                Kontaktiraj
-              </Button>
+              <Link href="/poruke">
+                <Button variant="outline" className="w-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200" size="lg">
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Kontaktiraj
+                </Button>
+              </Link>
+
+              <Separator />
+
+              {/* Availability Calendar Preview */}
+              <div>
+                <h3 className="font-medium text-sm mb-3 flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4 text-orange-500" />
+                  Dostupnost (sljedećih 14 dana)
+                </h3>
+                <div className="grid grid-cols-7 gap-1.5">
+                  {Array.from({ length: 14 }, (_, i) => {
+                    const date = new Date();
+                    date.setDate(date.getDate() + i);
+                    const isAvailable = availability[i];
+                    return (
+                      <div
+                        key={i}
+                        className={`aspect-square rounded-lg flex items-center justify-center text-xs font-medium transition-all ${
+                          isAvailable
+                            ? 'bg-green-100 text-green-700 shadow-sm'
+                            : 'bg-red-50 text-red-300'
+                        }`}
+                        title={`${format(date, 'd.M.')} — ${isAvailable ? 'Dostupan' : 'Nedostupan'}`}
+                      >
+                        {date.getDate()}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded bg-green-100 border border-green-200" />
+                    <span>Dostupan</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded bg-red-50 border border-red-100" />
+                    <span>Nedostupan</span>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
