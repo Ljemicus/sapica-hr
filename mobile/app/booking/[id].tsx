@@ -32,6 +32,9 @@ export default function BookingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [sitter, setSitter] = useState<Sitter | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedDates, setSelectedDates] = useState<string[]>([]);
+  const [selectedService, setSelectedService] = useState<string | null>(null);
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
     if (id) {
@@ -49,10 +52,6 @@ export default function BookingScreen() {
       </View>
     );
   }
-
-  const [selectedDates, setSelectedDates] = useState<string[]>([]);
-  const [selectedService, setSelectedService] = useState<string | null>(null);
-  const [step, setStep] = useState(0);
 
   const toggleDate = (date: string) => {
     setSelectedDates((prev) =>

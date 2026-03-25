@@ -93,7 +93,7 @@ export default function WalkTrackingScreen() {
             )}
           </View>
           <View style={styles.mapLabelContainer}>
-            <Text style={styles.mapLabel}>Park Maksimir, Zagreb</Text>
+            <Text style={styles.mapLabel}>Korzo, Rijeka</Text>
           </View>
         </View>
       </Card>
