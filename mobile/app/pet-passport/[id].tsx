@@ -1,16 +1,45 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Linking, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '../../components/ui/Card';
 import { Avatar } from '../../components/ui/Avatar';
 import { Badge } from '../../components/ui/Badge';
 import { Colors } from '../../constants/colors';
-import { petPassports } from '../../constants/mock-data';
+import { getPetPassport } from '../../lib/db';
+import { PetPassport } from '../../types';
 
 export default function PetPassportScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const passport = petPassports.find((p) => p.petId === id) || petPassports[0];
+  const [passport, setPassport] = useState<PetPassport | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      getPetPassport(id).then((data) => {
+        setPassport(data);
+        setLoading(false);
+      });
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+
+  if (!passport) {
+    return (
+      <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
+        <Ionicons name="document-text-outline" size={56} color={Colors.textLight} />
+        <Text style={{ fontSize: 18, fontWeight: '700', color: Colors.text, marginTop: 16 }}>Nema podataka</Text>
+        <Text style={{ fontSize: 14, color: Colors.textSecondary, marginTop: 8 }}>Zdravstveni karton nije pronađen</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

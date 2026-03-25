@@ -1,14 +1,25 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { SitterCard } from '../components/shared/SitterCard';
 import { Colors } from '../constants/colors';
-import { sitters, trainingPrograms } from '../constants/mock-data';
+import { getTrainingPrograms, getTrainers } from '../lib/db';
+import { TrainingProgram, Sitter } from '../types';
 
 export default function TrainingScreen() {
-  const trainers = sitters.filter((s) => s.services.includes('Dresura'));
+  const [trainingPrograms, setTrainingPrograms] = useState<TrainingProgram[]>([]);
+  const [trainers, setTrainers] = useState<Sitter[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([getTrainingPrograms(), getTrainers()]).then(([programs, trainersData]) => {
+      setTrainingPrograms(programs);
+      setTrainers(trainersData);
+      setLoading(false);
+    });
+  }, []);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

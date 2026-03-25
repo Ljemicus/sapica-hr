@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { mockBookings } from '@/lib/mock-data';
+import { updateBooking } from '@/lib/db';
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -14,11 +14,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
   }
 
-  const booking = mockBookings.find(b => b.id === id);
+  const booking = await updateBooking(id, { status });
   if (!booking) return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
-
-  // Mutate in-memory
-  (booking as { status: string }).status = status;
 
   return NextResponse.json(booking);
 }

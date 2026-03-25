@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getSitterProfile, getReviewsForSitter, getAvailabilityForSitter, getUserById } from '@/lib/mock-data';
+import { getSitter, getReviewsBySitter, getAvailability } from '@/lib/db';
 import { SitterProfileContent } from './sitter-profile-content';
 
 interface SitterPageProps {
@@ -9,24 +9,23 @@ interface SitterPageProps {
 
 export async function generateMetadata({ params }: SitterPageProps): Promise<Metadata> {
   const { id } = await params;
-  const user = getUserById(id);
+  const profile = await getSitter(id);
 
   return {
-    title: user ? `${user.name} — Sitter u ${user.city || 'Hrvatskoj'}` : 'Sitter profil',
-    description: user ? `Pogledajte profil sittera ${user.name}. Rezervirajte uslugu čuvanja ljubimaca.` : '',
+    title: profile ? `${profile.user.name} — Sitter u ${profile.user.city || 'Hrvatskoj'}` : 'Sitter profil',
+    description: profile ? `Pogledajte profil sittera ${profile.user.name}. Rezervirajte uslugu čuvanja ljubimaca.` : '',
   };
 }
 
 export default async function SitterPage({ params }: SitterPageProps) {
   const { id } = await params;
 
-  const profile = getSitterProfile(id);
+  const profile = await getSitter(id);
   if (!profile) return notFound();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const reviews = getReviewsForSitter(id) as any[];
-
-  const availability = getAvailabilityForSitter(id);
+  const reviews = await getReviewsBySitter(id) as any[];
+  const availability = await getAvailability(id);
 
   return (
     <SitterProfileContent

@@ -7,7 +7,20 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { FORUM_CATEGORIES, type ForumCategorySlug } from '@/lib/types';
-import { getForumTopicById, getForumCommentsForTopic, getForumTopics } from '@/lib/mock-data';
+import { getTopic, getPosts, getTopics } from '@/lib/db';
+
+const gradients = [
+  'from-orange-400 to-amber-300',
+  'from-blue-400 to-cyan-300',
+  'from-green-400 to-emerald-300',
+  'from-purple-400 to-pink-300',
+  'from-rose-400 to-orange-300',
+  'from-teal-400 to-cyan-300',
+];
+
+function getGradient(name: string) {
+  return gradients[name.charCodeAt(0) % gradients.length];
+}
 
 function timeAgo(dateStr: string) {
   const now = new Date('2026-03-24T12:00:00Z');
@@ -25,7 +38,7 @@ function timeAgo(dateStr: string) {
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const topic = getForumTopicById(id);
+  const topic = await getTopic(id);
   if (!topic) return { title: 'Post nije pronađen' };
   return {
     title: `${topic.title} — Forum`,
@@ -35,14 +48,15 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ForumTopicPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const topic = getForumTopicById(id);
+  const topic = await getTopic(id);
   if (!topic) notFound();
 
-  const comments = getForumCommentsForTopic(id);
+  const comments = await getPosts(id);
   const cat = FORUM_CATEGORIES.find(c => c.slug === topic.category_slug);
 
   // Related topics from same category
-  const related = getForumTopics(topic.category_slug)
+  const allCategoryTopics = await getTopics(topic.category_slug);
+  const related = allCategoryTopics
     .filter(t => t.id !== topic.id)
     .slice(0, 3);
 
@@ -124,7 +138,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
                 <CardContent className="p-5">
                   <div className="flex gap-3">
                     <Avatar className="h-9 w-9 flex-shrink-0">
-                      <AvatarFallback className={`bg-gradient-to-br ${comment.author_gradient} text-white text-sm font-medium`}>
+                      <AvatarFallback className={`bg-gradient-to-br ${getGradient(comment.author_name)} text-white text-sm font-medium`}>
                         {comment.author_initial}
                       </AvatarFallback>
                     </Avatar>

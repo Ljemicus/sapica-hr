@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { getUpdatesForBooking } from '@/lib/mock-data';
+import { getUpdatesByBooking } from '@/lib/db';
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ bookingId: string }> }
 ) {
   const { bookingId } = await params;
-  const updates = getUpdatesForBooking(bookingId);
+  const updates = await getUpdatesByBooking(bookingId);
   return NextResponse.json(updates);
 }

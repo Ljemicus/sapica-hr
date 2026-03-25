@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
-import { View, FlatList, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { ChatBubble } from '../../components/shared/ChatBubble';
 import { Colors } from '../../constants/colors';
-import { chatMessages } from '../../constants/mock-data';
+import { getMessages } from '../../lib/db';
+import { Message } from '../../types';
 
 export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState(chatMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      getMessages(id).then((data) => {
+        setMessages(data);
+        setLoading(false);
+      });
+    }
+  }, [id]);
 
   const sendMessage = () => {
     if (!message.trim()) return;

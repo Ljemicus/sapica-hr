@@ -1,5 +1,6 @@
 import { MessageSquare } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { getTopics, getTrendingTopics } from '@/lib/db';
 import { ForumContent } from './forum-content';
 
 export const metadata = {
@@ -7,7 +8,10 @@ export const metadata = {
   description: 'Pitanja, savjeti, priče i razgovori zajednice ljubitelja životinja. Pridružite se diskusiji!',
 };
 
-export default function ForumPage() {
+export default async function ForumPage() {
+  const topics = await getTopics();
+  const trending = await getTrendingTopics();
+
   return (
     <div>
       {/* Hero */}
@@ -31,7 +35,7 @@ export default function ForumPage() {
         </div>
       </section>
 
-      <ForumContent />
+      <ForumContent initialTopics={topics} initialTrending={trending} />
     </div>
   );
 }

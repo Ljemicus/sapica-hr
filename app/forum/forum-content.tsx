@@ -13,7 +13,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FORUM_CATEGORIES, FORUM_CATEGORY_LABELS, type ForumCategorySlug, type ForumTopic } from '@/lib/types';
-import { getForumTopics, getTrendingTopics } from '@/lib/mock-data';
 
 function timeAgo(dateStr: string) {
   const now = new Date('2026-03-24T12:00:00Z');
@@ -29,12 +28,19 @@ function timeAgo(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('hr-HR', { day: 'numeric', month: 'short' });
 }
 
-export function ForumContent() {
+interface ForumContentProps {
+  initialTopics: ForumTopic[];
+  initialTrending: ForumTopic[];
+}
+
+export function ForumContent({ initialTopics, initialTrending }: ForumContentProps) {
   const [activeCategory, setActiveCategory] = useState<ForumCategorySlug | 'sve'>('sve');
   const [searchQuery, setSearchQuery] = useState('');
 
   const topics = useMemo(() => {
-    let result = getForumTopics(activeCategory === 'sve' ? undefined : activeCategory);
+    let result = activeCategory === 'sve'
+      ? initialTopics
+      : initialTopics.filter(t => t.category_slug === activeCategory);
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(t =>
@@ -43,9 +49,9 @@ export function ForumContent() {
       );
     }
     return result;
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, searchQuery, initialTopics]);
 
-  const trending = getTrendingTopics();
+  const trending = initialTrending;
 
   const getCategoryInfo = (slug: ForumCategorySlug) =>
     FORUM_CATEGORIES.find(c => c.slug === slug);

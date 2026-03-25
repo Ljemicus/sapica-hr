@@ -1,14 +1,42 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Avatar } from '../components/ui/Avatar';
 import { Colors } from '../constants/colors';
-import { walkSession } from '../constants/mock-data';
+import { getWalkSession } from '../lib/db';
+import { WalkSession } from '../types';
 
 export default function WalkTrackingScreen() {
-  const session = walkSession;
+  const [session, setSession] = useState<WalkSession | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getWalkSession().then((data) => {
+      setSession(data);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+
+  if (!session) {
+    return (
+      <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
+        <Ionicons name="navigate-outline" size={56} color={Colors.textLight} />
+        <Text style={{ fontSize: 18, fontWeight: '700', color: Colors.text, marginTop: 16 }}>Nema podataka</Text>
+        <Text style={{ fontSize: 14, color: Colors.textSecondary, marginTop: 8 }}>Trenutno nema aktivnih šetnji</Text>
+      </View>
+    );
+  }
+
   const isActive = session.status === 'u_tijeku';
 
   return (

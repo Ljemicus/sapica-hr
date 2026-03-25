@@ -1,7 +1,8 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import { getSitterProfiles } from '@/lib/mock-data';
+import { getSitters } from '@/lib/db';
 import { SearchContent } from './search-content';
+import type { ServiceType } from '@/lib/types';
 
 export const metadata: Metadata = {
   title: 'Pretraži sittere',
@@ -22,13 +23,13 @@ interface SearchPageProps {
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
 
-  const sitters = getSitterProfiles({
+  const sitters = await getSitters({
     city: params.city,
-    service: params.service,
-    min_rating: params.min_rating,
-    min_price: params.min_price,
-    max_price: params.max_price,
-    sort: params.sort,
+    service: params.service as ServiceType | undefined,
+    min_rating: params.min_rating ? Number(params.min_rating) : undefined,
+    min_price: params.min_price ? Number(params.min_price) : undefined,
+    max_price: params.max_price ? Number(params.max_price) : undefined,
+    sort: params.sort as 'rating' | 'reviews' | 'price_asc' | 'price_desc' | undefined,
   });
 
   return (

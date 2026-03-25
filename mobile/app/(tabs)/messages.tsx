@@ -1,11 +1,30 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { MessagePreview } from '../../components/shared/MessagePreview';
 import { Colors } from '../../constants/colors';
-import { conversations } from '../../constants/mock-data';
+import { getConversations } from '../../lib/db';
+import { Conversation } from '../../types';
 
 export default function MessagesScreen() {
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getConversations().then((data) => {
+      setConversations(data);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.emptyState]}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {conversations.length > 0 ? (

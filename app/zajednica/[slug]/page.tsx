@@ -4,7 +4,7 @@ import { ArrowLeft, Clock, ChevronRight, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { getArticleBySlug, getRelatedArticles } from '@/lib/mock-data';
+import { getArticle, getRelatedArticles } from '@/lib/db';
 import { BLOG_CATEGORY_LABELS, BLOG_CATEGORY_EMOJI, type BlogCategory } from '@/lib/types';
 
 const categoryColors: Record<BlogCategory, string> = {
@@ -25,7 +25,7 @@ const categoryGradients: Record<BlogCategory, string> = {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticle(slug);
   if (!article) return { title: 'Članak nije pronađen' };
   return {
     title: article.title,
@@ -35,10 +35,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticle(slug);
   if (!article) notFound();
 
-  const related = getRelatedArticles(slug, 3);
+  const related = await getRelatedArticles(slug, 3);
 
   return (
     <div>

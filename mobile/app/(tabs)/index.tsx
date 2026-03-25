@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -16,10 +17,26 @@ import { Avatar } from '../../components/ui/Avatar';
 import { CategoryCard } from '../../components/shared/CategoryCard';
 import { SitterCard } from '../../components/shared/SitterCard';
 import { Colors } from '../../constants/colors';
-import { sitters, categories } from '../../constants/mock-data';
+import { getSitters } from '../../lib/db';
+import { Sitter } from '../../types';
+
+const categories = [
+  { id: '1', name: 'Sitteri', icon: 'heart' as const, color: '#f97316', bgColor: '#fff7ed' },
+  { id: '2', name: 'Grooming', icon: 'cut' as const, color: '#ec4899', bgColor: '#fdf2f8' },
+  { id: '3', name: 'Dresura', icon: 'school' as const, color: '#8b5cf6', bgColor: '#f5f3ff' },
+  { id: '4', name: 'Izgubljeni', icon: 'search' as const, color: '#ef4444', bgColor: '#fef2f2' },
+];
 
 export default function HomeScreen() {
-  const popularSitters = sitters.slice(0, 3);
+  const [popularSitters, setPopularSitters] = useState<Sitter[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getSitters().then((data) => {
+      setPopularSitters(data.slice(0, 3));
+      setLoading(false);
+    });
+  }, []);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

@@ -1,12 +1,22 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Platform, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { WebView } from 'react-native-webview';
 import { Input } from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
 import { SitterCard } from '../../components/shared/SitterCard';
 import { Colors } from '../../constants/colors';
-import { sitters, services } from '../../constants/mock-data';
+import { getSitters } from '../../lib/db';
+import { Sitter } from '../../types';
+
+const services = [
+  { id: '1', name: 'Čuvanje kod kuće', price: 'od 12€/h' },
+  { id: '2', name: 'Šetnja', price: 'od 8€/h' },
+  { id: '3', name: 'Dnevna briga', price: 'od 25€/dan' },
+  { id: '4', name: 'Grooming', price: 'od 18€' },
+  { id: '5', name: 'Dresura', price: 'od 20€/h' },
+  { id: '6', name: 'Agility', price: 'od 15€/h' },
+];
 
 const cities = ['Svi', 'Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar'];
 
@@ -20,7 +30,7 @@ const CITY_COORDS: Record<string, [number, number]> = {
 
 
 
-function MapSection({ sitters, selectedCity }: { sitters: typeof import('../../constants/mock-data').sitters; selectedCity: string }) {
+function MapSection({ sitters, selectedCity }: { sitters: Sitter[]; selectedCity: string }) {
   const mapHtml = useMemo(() => {
     const center = selectedCity !== 'Svi' && CITY_COORDS[selectedCity]
       ? CITY_COORDS[selectedCity]
@@ -73,10 +83,19 @@ ${markers}
 }
 
 export default function SearchScreen() {
+  const [sitters, setSitters] = useState<Sitter[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState('Svi');
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    getSitters().then((data) => {
+      setSitters(data);
+      setLoading(false);
+    });
+  }, []);
 
   const filteredSitters = sitters.filter((sitter) => {
     const matchesSearch =

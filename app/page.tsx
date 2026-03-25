@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { getLostPets } from '@/lib/mock-data';
+import { getLostPets } from '@/lib/db';
 import { LOST_PET_SPECIES_LABELS } from '@/lib/types';
 
 const featuredSitters = [
@@ -61,7 +61,7 @@ const stats = [
   { value: '50+', label: 'Gradova u Hrvatskoj', icon: MapPin },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
   return (
     <div>
       {/* ── Hero Section ── */}
@@ -559,8 +559,8 @@ export default function HomePage() {
   );
 }
 
-function LostPetsHomepageSection() {
-  const lostPets = getLostPets({ status: 'lost' }).slice(0, 3);
+async function LostPetsHomepageSection() {
+  const lostPets = (await getLostPets({ status: 'lost' })).slice(0, 3);
   if (lostPets.length === 0) return null;
 
   return (

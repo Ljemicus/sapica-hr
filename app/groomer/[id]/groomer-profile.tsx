@@ -16,7 +16,15 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
 import { GROOMING_SERVICE_LABELS, GROOMER_SPECIALIZATION_LABELS, type Groomer, type GroomingServiceType } from '@/lib/types';
-import type { GroomerReview } from '@/lib/mock-data';
+interface GroomerReview {
+  id: string;
+  groomer_id: string;
+  author_name: string;
+  author_initial: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+}
 
 const serviceIcons: Record<GroomingServiceType, React.ElementType> = {
   'sisanje': Scissors,

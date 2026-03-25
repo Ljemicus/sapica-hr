@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Avatar } from '../../components/ui/Avatar';
 import { Colors } from '../../constants/colors';
-import { sitters, services } from '../../constants/mock-data';
+import { getSitter } from '../../lib/db';
+import { Sitter } from '../../types';
+
+const services = [
+  { id: '1', name: 'Čuvanje kod kuće', price: 'od 12€/h' },
+  { id: '2', name: 'Šetnja', price: 'od 8€/h' },
+  { id: '3', name: 'Dnevna briga', price: 'od 25€/dan' },
+  { id: '4', name: 'Grooming', price: 'od 18€' },
+  { id: '5', name: 'Dresura', price: 'od 20€/h' },
+  { id: '6', name: 'Agility', price: 'od 15€/h' },
+];
 
 const availableDates = [
   { date: '25.03.', day: 'Uto' },
@@ -20,7 +30,25 @@ const availableDates = [
 
 export default function BookingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const sitter = sitters.find((s) => s.id === id) ?? sitters[0];
+  const [sitter, setSitter] = useState<Sitter | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      getSitter(id).then((data) => {
+        setSitter(data);
+        setLoading(false);
+      });
+    }
+  }, [id]);
+
+  if (loading || !sitter) {
+    return (
+      <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
 
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
   const [selectedService, setSelectedService] = useState<string | null>(null);

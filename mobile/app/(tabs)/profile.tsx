@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Avatar } from '../../components/ui/Avatar';
@@ -7,7 +7,8 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Colors } from '../../constants/colors';
-import { myPets, myBookings } from '../../constants/mock-data';
+import { getPets, getBookings } from '../../lib/db';
+import { Pet, Booking } from '../../types';
 
 function MenuRow({
   icon,
@@ -33,6 +34,18 @@ function MenuRow({
 }
 
 export default function ProfileScreen() {
+  const [myPets, setMyPets] = useState<Pet[]>([]);
+  const [myBookings, setMyBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([getPets(), getBookings()]).then(([pets, bookings]) => {
+      setMyPets(pets);
+      setMyBookings(bookings);
+      setLoading(false);
+    });
+  }, []);
+
   const statusColors: Record<string, { color: string; bg: string }> = {
     confirmed: { color: Colors.success, bg: '#ecfdf5' },
     completed: { color: Colors.info, bg: '#eff6ff' },

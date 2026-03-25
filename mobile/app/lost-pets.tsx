@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LostPetCard } from '../components/shared/LostPetCard';
 import { Button } from '../components/ui/Button';
 import { Colors } from '../constants/colors';
-import { lostPets } from '../constants/mock-data';
+import { getLostPets } from '../lib/db';
+import { LostPet } from '../types';
 
 export default function LostPetsScreen() {
+  const [lostPets, setLostPets] = useState<LostPet[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'dogs' | 'cats'>('all');
+
+  useEffect(() => {
+    getLostPets().then((data) => {
+      setLostPets(data);
+      setLoading(false);
+    });
+  }, []);
 
   const filteredPets = lostPets.filter((pet) => {
     if (filter === 'dogs') return pet.type === 'Pas';

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
-import { getGroomers } from '@/lib/mock-data';
+import { getGroomers } from '@/lib/db';
 import { GroomingContent } from './grooming-content';
+import type { GroomingServiceType } from '@/lib/types';
 
 export const metadata: Metadata = {
   title: 'Grooming — saloni za uljepšavanje ljubimaca',
@@ -13,7 +14,7 @@ interface GroomingPageProps {
 
 export default async function GroomingPage({ searchParams }: GroomingPageProps) {
   const params = await searchParams;
-  const groomers = getGroomers({ city: params.city, service: params.service });
+  const groomers = await getGroomers({ city: params.city, service: params.service as GroomingServiceType | undefined });
 
   return <GroomingContent groomers={groomers} initialParams={params} />;
 }

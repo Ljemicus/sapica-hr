@@ -1,15 +1,26 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { SitterCard } from '../components/shared/SitterCard';
 import { Colors } from '../constants/colors';
-import { sitters, groomingServices } from '../constants/mock-data';
+import { getGroomingServices, getGroomers } from '../lib/db';
+import { GroomingService, Sitter } from '../types';
 
 export default function GroomingScreen() {
-  const groomers = sitters.filter((s) => s.services.includes('Grooming'));
+  const [groomingServices, setGroomingServices] = useState<GroomingService[]>([]);
+  const [groomers, setGroomers] = useState<Sitter[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([getGroomingServices(), getGroomers()]).then(([services, groomersData]) => {
+      setGroomingServices(services);
+      setGroomers(groomersData);
+      setLoading(false);
+    });
+  }, []);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

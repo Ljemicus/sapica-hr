@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Clock, ChevronRight, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { getArticles } from '@/lib/mock-data';
+import { getArticles } from '@/lib/db';
 import { BLOG_CATEGORY_LABELS, BLOG_CATEGORY_EMOJI, type BlogCategory } from '@/lib/types';
 
 export const metadata = {
@@ -26,8 +26,8 @@ const categoryGradients: Record<BlogCategory, string> = {
   zabava: 'from-pink-500 to-rose-500',
 };
 
-export default function ZajednicaPage() {
-  const articles = getArticles();
+export default async function ZajednicaPage() {
+  const articles = await getArticles();
   const categories = Object.entries(BLOG_CATEGORY_LABELS) as [BlogCategory, string][];
   const featured = articles[0];
   const rest = articles.slice(1);
@@ -137,6 +137,13 @@ export default function ZajednicaPage() {
             </Link>
           ))}
         </div>
+
+        {articles.length === 0 && (
+          <div className="text-center py-16 text-muted-foreground">
+            <BookOpen className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <p className="text-lg font-medium">Nema podataka</p>
+          </div>
+        )}
       </div>
     </div>
   );

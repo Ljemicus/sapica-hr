@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getWalkById, getUserById, mockPets } from '@/lib/mock-data';
+import { getWalk, getUser, getPet } from '@/lib/db';
 import { WalkTracker } from './walk-tracker';
 
 export const metadata: Metadata = {
@@ -9,11 +9,11 @@ export const metadata: Metadata = {
 
 export default async function WalkPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const walk = getWalkById(id);
+  const walk = await getWalk(id);
   if (!walk) notFound();
 
-  const sitter = getUserById(walk.sitter_id);
-  const pet = mockPets.find(p => p.id === walk.pet_id);
+  const sitter = await getUser(walk.sitter_id);
+  const pet = await getPet(walk.pet_id);
 
   return (
     <WalkTracker

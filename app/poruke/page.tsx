@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
-import { getMessagesForUser, getUserById } from '@/lib/mock-data';
+import { getMessages, getUser } from '@/lib/db';
 import { MessagesContent } from './messages-content';
 
 export const metadata: Metadata = {
@@ -12,7 +12,7 @@ export default async function MessagesPage() {
   const user = await getAuthUser();
   if (!user) redirect('/prijava');
 
-  const messages = getMessagesForUser(user.id);
+  const messages = await getMessages(user.id);
 
   // Group messages by conversation partner
   const conversations = new Map<string, { partnerId: string; partnerName: string; partnerAvatar: string | null; messages: typeof messages; lastMessage: typeof messages[0] | null; unreadCount: number }>();
@@ -39,7 +39,7 @@ export default async function MessagesPage() {
 
   // Fill partner details
   for (const [partnerId, conv] of conversations) {
-    const partner = getUserById(partnerId);
+    const partner = await getUser(partnerId);
     if (partner) {
       conv.partnerName = partner.name;
       conv.partnerAvatar = partner.avatar_url;

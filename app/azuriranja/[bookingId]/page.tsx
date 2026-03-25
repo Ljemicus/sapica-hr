@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getUpdatesForBooking, getUserById, mockBookings, mockPets } from '@/lib/mock-data';
+import { getBooking, getUpdatesByBooking, getUser, getPet } from '@/lib/db';
 import { UpdatesFeed } from './updates-feed';
 
 export const metadata: Metadata = {
@@ -9,12 +9,12 @@ export const metadata: Metadata = {
 
 export default async function UpdatesPage({ params }: { params: Promise<{ bookingId: string }> }) {
   const { bookingId } = await params;
-  const booking = mockBookings.find(b => b.id === bookingId);
+  const booking = await getBooking(bookingId);
   if (!booking) notFound();
 
-  const updates = getUpdatesForBooking(bookingId);
-  const sitter = getUserById(booking.sitter_id);
-  const pet = mockPets.find(p => p.id === booking.pet_id);
+  const updates = await getUpdatesByBooking(bookingId);
+  const sitter = await getUser(booking.sitter_id);
+  const pet = await getPet(booking.pet_id);
 
   const startDate = booking.start_date;
   const endDate = booking.end_date;

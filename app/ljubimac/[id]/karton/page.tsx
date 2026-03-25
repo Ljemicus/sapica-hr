@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getPetPassport, mockPets } from '@/lib/mock-data';
+import { getPet, getPassport } from '@/lib/db';
 import { PetPassportView } from './pet-passport';
 
 export const metadata: Metadata = {
@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 
 export default async function PetPassportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const pet = mockPets.find(p => p.id === id);
+  const pet = await getPet(id);
   if (!pet) notFound();
 
-  const passport = getPetPassport(id);
+  const passport = await getPassport(id);
   if (!passport) notFound();
 
   return (

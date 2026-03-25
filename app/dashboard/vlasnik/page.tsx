@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
-import { getPetsForOwner, getBookingsForUser, getReviewsByUser, mockWalks, mockUsers, mockPets } from '@/lib/mock-data';
+import { getPetsByOwner, getBookings, getReviewsBySitter, getWalksForUser, getUser, getPet } from '@/lib/db';
 import { OwnerDashboardContent } from './owner-dashboard-content';
 
 export const metadata: Metadata = {
@@ -13,20 +13,35 @@ export default async function OwnerDashboardPage() {
   if (!user) redirect('/prijava');
   if (user.role !== 'owner') redirect('/');
 
-  const pets = getPetsForOwner(user.id);
+  const pets = await getPetsByOwner(user.id);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const bookings = getBookingsForUser(user.id, 'owner') as any[];
+  const bookings = await getBookings(user.id, 'owner') as any[];
 
-  const existingReviews = getReviewsByUser(user.id);
-  const reviewedBookingIds = existingReviews.map(r => r.booking_id);
+  // Get reviews the user has written (reviewer_id = user.id)
+  const { createClient } = await import('@/lib/supabase/server');
+  const supabase = await createClient();
+  const { data: existingReviews } = await supabase
+    .from('reviews')
+    .select('booking_id')
+    .eq('reviewer_id', user.id);
+  const reviewedBookingIds = (existingReviews || []).map(r => r.booking_id);
 
+  // Get active walks for owner's pets
   const ownerPetIds = pets.map(p => p.id);
+  const walks = await getWalksForUser(user.id);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const activeWalks = (mockWalks.filter(w => ownerPetIds.includes(w.pet_id) && w.status === 'u_tijeku') as any[]).map(w => ({
-    ...w,
-    sitterName: mockUsers.find(u => u.id === w.sitter_id)?.name || 'Nepoznato',
-    petName: mockPets.find(p => p.id === w.pet_id)?.name || 'Nepoznato',
-  }));
+  const activeWalks: any[] = [];
+  for (const w of walks) {
+    if (ownerPetIds.includes(w.pet_id) && w.status === 'u_tijeku') {
+      const sitterUser = await getUser(w.sitter_id);
+      const petData = await getPet(w.pet_id);
+      activeWalks.push({
+        ...w,
+        sitterName: sitterUser?.name || 'Nepoznato',
+        petName: petData?.name || 'Nepoznato',
+      });
+    }
+  }
 
   return (
     <OwnerDashboardContent

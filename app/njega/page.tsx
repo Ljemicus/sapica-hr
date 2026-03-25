@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Star, MapPin, Shield, Scissors, Droplets, SprayCan, Sparkles, ChevronRight, X, Filter, SlidersHorizontal,
@@ -17,7 +17,6 @@ import {
   CITIES,
   type GroomingServiceType, type Groomer,
 } from '@/lib/types';
-import { getGroomers } from '@/lib/mock-data';
 
 const serviceIcons: Record<GroomingServiceType, React.ElementType> = {
   sisanje: Scissors,
@@ -36,11 +35,34 @@ const gradients = [
   'from-green-400 to-emerald-300',
 ];
 
+interface NjegaPageProps {
+  groomers: Groomer[];
+}
+
 export default function GroomingPage() {
   const [city, setCity] = useState('');
   const [service, setService] = useState('');
+  const [groomers, setGroomers] = useState<Groomer[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const groomers = getGroomers({ city: city || undefined, service: service || undefined });
+  useEffect(() => {
+    async function fetchGroomers() {
+      try {
+        const params = new URLSearchParams();
+        if (city) params.set('city', city);
+        if (service) params.set('service', service);
+        const res = await fetch(`/api/groomers?${params.toString()}`);
+        if (res.ok) {
+          setGroomers(await res.json());
+        }
+      } catch {
+        setGroomers([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchGroomers();
+  }, [city, service]);
 
   const activeFilterCount = [city, service].filter(Boolean).length;
 

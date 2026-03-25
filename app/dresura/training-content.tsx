@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -15,7 +15,6 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { EmptyState } from '@/components/shared/empty-state';
 import { CITIES, TRAINING_TYPE_LABELS, type Trainer, type TrainingType, type TrainingProgram } from '@/lib/types';
-import { mockSitterProfiles, getTrainingProgramsForTrainer } from '@/lib/mock-data';
 
 const gradients = [
   'from-blue-400 to-cyan-300',
@@ -194,15 +193,20 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
   );
 }
 
-function isSitterTrainer(trainerName: string): boolean {
-  return mockSitterProfiles.some(s => s.user?.name === trainerName);
-}
-
 function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
   const [expanded, setExpanded] = useState(false);
+  const [programs, setPrograms] = useState<TrainingProgram[]>([]);
   const gradient = gradients[trainer.name.charCodeAt(0) % gradients.length];
-  const programs = getTrainingProgramsForTrainer(trainer.id);
-  const isPremium = isSitterTrainer(trainer.name);
+  const isPremium = trainer.certified;
+
+  useEffect(() => {
+    if (expanded && programs.length === 0) {
+      fetch(`/api/trainers/${trainer.id}/programs`)
+        .then(r => r.ok ? r.json() : [])
+        .then(setPrograms)
+        .catch(() => setPrograms([]));
+    }
+  }, [expanded, trainer.id, programs.length]);
 
   return (
     <Card className={`group overflow-hidden border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${((index % 3) + 1) * 100}`}>

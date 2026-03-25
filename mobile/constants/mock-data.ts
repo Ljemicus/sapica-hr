@@ -1,3 +1,4 @@
+// DEPRECATED — This file is no longer used. All data now comes from Supabase via lib/db/.
 import { Sitter, Conversation, LostPet, Booking, Review, Pet, WalkSession, PhotoUpdate, PetPassport, GroomingService, TrainingProgram } from '../types';
 
 export const sitters: Sitter[] = [

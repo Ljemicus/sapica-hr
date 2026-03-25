@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { GraduationCap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { getTrainers } from '@/lib/mock-data';
+import { getTrainers } from '@/lib/db';
 import { TrainingContent } from './training-content';
+import type { TrainingType } from '@/lib/types';
 
 export const metadata: Metadata = {
   title: 'Dresura — treneri pasa',
@@ -15,7 +16,7 @@ interface DresuraPageProps {
 
 export default async function DresuraPage({ searchParams }: DresuraPageProps) {
   const params = await searchParams;
-  const trainers = getTrainers({ city: params.city, type: params.type });
+  const trainers = await getTrainers({ city: params.city, type: params.type as TrainingType | undefined });
 
   return (
     <div>

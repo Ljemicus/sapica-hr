@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Avatar } from '../../components/ui/Avatar';
@@ -7,11 +7,32 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Colors } from '../../constants/colors';
-import { sitters, reviews } from '../../constants/mock-data';
+import { getSitter, getSitterReviews } from '../../lib/db';
+import { Sitter, Review } from '../../types';
 
 export default function SitterProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const sitter = sitters.find((s) => s.id === id) ?? sitters[0];
+  const [sitter, setSitter] = useState<Sitter | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      Promise.all([getSitter(id), getSitterReviews(id)]).then(([sitterData, reviewsData]) => {
+        setSitter(sitterData);
+        setReviews(reviewsData);
+        setLoading(false);
+      });
+    }
+  }, [id]);
+
+  if (loading || !sitter) {
+    return (
+      <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

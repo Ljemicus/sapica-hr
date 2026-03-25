@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Avatar } from '../components/ui/Avatar';
 import { Colors } from '../constants/colors';
-import { photoUpdates } from '../constants/mock-data';
+import { getPhotoUpdates } from '../lib/db';
+import { PhotoUpdate } from '../types';
 
 export default function PhotoUpdatesScreen() {
-  const [photos, setPhotos] = useState(photoUpdates);
+  const [photos, setPhotos] = useState<PhotoUpdate[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getPhotoUpdates().then((data) => {
+      setPhotos(data);
+      setLoading(false);
+    });
+  }, []);
 
   const toggleLike = (id: string) => {
     setPhotos((prev) =>
@@ -14,12 +23,28 @@ export default function PhotoUpdatesScreen() {
     );
   };
 
+  if (loading) {
+    return (
+      <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
         <Ionicons name="camera" size={20} color={Colors.primary} />
         <Text style={styles.headerText}>Ažuriranja od sittera</Text>
       </View>
+
+      {photos.length === 0 && (
+        <View style={{ alignItems: 'center', paddingVertical: 60 }}>
+          <Ionicons name="camera-outline" size={56} color={Colors.textLight} />
+          <Text style={{ fontSize: 18, fontWeight: '700', color: Colors.text, marginTop: 16 }}>Nema podataka</Text>
+          <Text style={{ fontSize: 14, color: Colors.textSecondary, marginTop: 8 }}>Još nema foto ažuriranja</Text>
+        </View>
+      )}
 
       {photos.map((photo) => (
         <View key={photo.id} style={styles.photoCard}>

@@ -16,7 +16,15 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
 import { TRAINING_TYPE_LABELS, type Trainer, type TrainingProgram } from '@/lib/types';
-import type { TrainerReview } from '@/lib/mock-data';
+interface TrainerReview {
+  id: string;
+  trainer_id: string;
+  author_name: string;
+  author_initial: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+}
 
 const gradients = [
   'from-blue-400 to-cyan-300',
