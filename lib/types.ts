@@ -2,6 +2,27 @@ export type UserRole = 'owner' | 'sitter' | 'admin';
 export type Species = 'dog' | 'cat' | 'other';
 export type ServiceType = 'boarding' | 'walking' | 'house-sitting' | 'drop-in' | 'daycare';
 export type BookingStatus = 'pending' | 'accepted' | 'rejected' | 'completed' | 'cancelled';
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
+
+export interface Payment {
+  id: string;
+  booking_id: string;
+  stripe_payment_intent_id: string;
+  stripe_session_id: string | null;
+  amount: number;
+  platform_fee: number;
+  currency: string;
+  status: PaymentStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
+  'pending': 'Na čekanju',
+  'paid': 'Plaćeno',
+  'failed': 'Neuspjelo',
+  'refunded': 'Vraćeno',
+};
 
 export interface User {
   id: string;

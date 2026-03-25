@@ -1,0 +1,160 @@
+'use client';
+
+import { use, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { SERVICE_LABELS } from '@/lib/types';
+import type { Booking } from '@/lib/types';
+import { PLATFORMA_FEE, formatCurrency } from '@/lib/payment';
+
+type BookingWithDetails = Booking;
+
+export default function CheckoutPage({
+  params,
+}: {
+  params: Promise<{ bookingId: string }>;
+}) {
+  const { bookingId } = use(params);
+  const router = useRouter();
+  const [booking, setBooking] = useState<BookingWithDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [paying, setPaying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchBooking() {
+      try {
+        const res = await fetch('/api/bookings');
+        if (!res.ok) throw new Error('Greška pri dohvaćanju rezervacije');
+        const bookings: BookingWithDetails[] = await res.json();
+        const found = bookings.find((b) => b.id === bookingId);
+        if (!found) throw new Error('Rezervacija nije pronađena');
+        setBooking(found);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Nepoznata greška');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchBooking();
+  }, [bookingId]);
+
+  async function handlePay() {
+    if (!booking) return;
+    setPaying(true);
+    try {
+      const res = await fetch('/api/payments/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId: booking.id,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Greška pri kreiranju sesije plaćanja');
+      const { url } = data;
+      window.location.href = url;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Greška pri plaćanju');
+      setPaying(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="text-muted-foreground">Učitavanje...</div>
+      </div>
+    );
+  }
+
+  if (error || !booking) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+        <p className="text-destructive">{error ?? 'Rezervacija nije pronađena'}</p>
+        <Button variant="outline" onClick={() => router.back()}>
+          Natrag
+        </Button>
+      </div>
+    );
+  }
+
+  const totalCents = Math.round(booking.total_price * 100);
+  const platformFeeCents = Math.round(totalCents * PLATFORMA_FEE);
+  const sitterPayoutCents = totalCents - platformFeeCents;
+
+  return (
+    <div className="mx-auto max-w-lg px-4 py-12">
+      <h1 className="mb-6 text-2xl font-bold">Plaćanje</h1>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Detalji rezervacije</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Usluga</span>
+            <Badge variant="secondary">
+              {SERVICE_LABELS[booking.service_type] ?? booking.service_type}
+            </Badge>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Datum</span>
+            <span>
+              {new Date(booking.start_date).toLocaleDateString('hr-HR')} –{' '}
+              {new Date(booking.end_date).toLocaleDateString('hr-HR')}
+            </span>
+          </div>
+          {booking.sitter?.name && (
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Čuvar</span>
+              <span>{booking.sitter.name}</span>
+            </div>
+          )}
+          {booking.pet?.name && (
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Ljubimac</span>
+              <span>{booking.pet.name}</span>
+            </div>
+          )}
+
+          <Separator />
+
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Ukupno</span>
+            <span className="font-semibold">{formatCurrency(totalCents)}</span>
+          </div>
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Naknada platforme (15%)</span>
+            <span>{formatCurrency(platformFeeCents)}</span>
+          </div>
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Čuvar prima (85%)</span>
+            <span>{formatCurrency(sitterPayoutCents)}</span>
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col gap-3">
+          <Button
+            className="w-full"
+            size="lg"
+            onClick={handlePay}
+            disabled={paying}
+          >
+            {paying ? 'Obrada...' : `Plati ${formatCurrency(totalCents)}`}
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => router.push(`/checkout/${bookingId}/cancel`)}
+          >
+            Odustani
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}
