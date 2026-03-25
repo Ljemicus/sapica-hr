@@ -468,6 +468,71 @@ export interface LostPet {
   created_at: string;
 }
 
+// ── Shop / Webshop ──
+
+export type ProductCategory = 'hrana' | 'igracke' | 'povodci' | 'krevetici' | 'posude' | 'njega' | 'odjeca' | 'grickalice';
+
+export const PRODUCT_CATEGORY_LABELS: Record<ProductCategory, string> = {
+  hrana: 'Hrana',
+  igracke: 'Igračke',
+  povodci: 'Povodci',
+  krevetici: 'Krevetići',
+  posude: 'Posude',
+  njega: 'Njega',
+  odjeca: 'Odjeća',
+  grickalice: 'Grickalice',
+};
+
+export const PRODUCT_CATEGORY_EMOJI: Record<ProductCategory, string> = {
+  hrana: '🍖',
+  igracke: '🎾',
+  povodci: '🦮',
+  krevetici: '🛏️',
+  posude: '🥣',
+  njega: '🧴',
+  odjeca: '👕',
+  grickalice: '🦴',
+};
+
+export interface ProductVariant {
+  label: string;
+  value: string;
+  priceModifier?: number;
+}
+
+export interface Product {
+  id: string;
+  slug: string;
+  name: string;
+  category: ProductCategory;
+  price: number;
+  originalPrice?: number;
+  description: string;
+  emoji: string;
+  brand: string;
+  rating: number;
+  reviewCount: number;
+  inStock: boolean;
+  variants: ProductVariant[];
+  specs: Record<string, string>;
+}
+
+export interface CartItem {
+  product: Product;
+  quantity: number;
+  selectedVariant?: string;
+}
+
+export interface ProductReview {
+  id: string;
+  productId: string;
+  authorName: string;
+  authorInitial: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
+
 export const CITIES = [
   'Zagreb',
   'Rijeka',

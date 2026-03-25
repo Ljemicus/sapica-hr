@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart } from 'lucide-react';
+import { Menu, X, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart, ShoppingBag, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/auth-context';
+import { useCart } from '@/lib/cart-context';
 
 function PawLogo({ className }: { className?: string }) {
   return (
@@ -30,6 +31,7 @@ function PawLogo({ className }: { className?: string }) {
 
 export function Navbar() {
   const { user, loading, signOut } = useAuth();
+  const { getItemCount } = useCart();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -94,6 +96,10 @@ export function Navbar() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Link href="/shop" className="text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors flex items-center gap-1.5">
+            <ShoppingBag className="h-4 w-4" />
+            Shop
+          </Link>
           <Link href="/zajednica" className="text-sm font-medium text-gray-600 hover:text-orange-500 transition-colors flex items-center gap-1.5">
             <BookOpen className="h-4 w-4" />
             Blog
@@ -115,6 +121,16 @@ export function Navbar() {
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
+          <Link href="/shop/kosarica">
+            <Button variant="ghost" size="icon" className="relative hover:bg-orange-50 hover:text-orange-500">
+              <ShoppingCart className="h-5 w-5" />
+              {getItemCount() > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center">
+                  {getItemCount() > 99 ? '99+' : getItemCount()}
+                </span>
+              )}
+            </Button>
+          </Link>
           {loading ? (
             <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
           ) : user ? (
@@ -183,6 +199,16 @@ export function Navbar() {
 
         {/* Mobile Nav */}
         <div className="flex items-center gap-2 md:hidden">
+          <Link href="/shop/kosarica">
+            <Button variant="ghost" size="icon" className="relative h-8 w-8 hover:bg-orange-50">
+              <ShoppingCart className="h-4 w-4" />
+              {getItemCount() > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-orange-500 text-white text-[8px] font-bold flex items-center justify-center">
+                  {getItemCount() > 99 ? '99+' : getItemCount()}
+                </span>
+              )}
+            </Button>
+          </Link>
           {!loading && !user && (
             <Link href="/prijava">
               <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 h-8">
@@ -243,6 +269,10 @@ export function Navbar() {
                 Zdravstveni karton
               </Link>
               <div className="border-t my-1" />
+              <Link href="/shop" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
+                <ShoppingBag className="h-5 w-5" />
+                Shop
+              </Link>
               <Link href="/zajednica" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 text-gray-700 hover:text-orange-500 transition-colors">
                 <BookOpen className="h-5 w-5" />
                 Blog

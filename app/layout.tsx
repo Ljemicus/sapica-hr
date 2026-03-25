@@ -7,6 +7,7 @@ import { Footer } from '@/components/shared/footer';
 import { ScrollToTop } from '@/components/shared/scroll-to-top';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/contexts/auth-context';
+import { CartProvider } from '@/lib/cart-context';
 import { PushNotificationPrompt } from '@/components/shared/push-notification';
 import { ChatWidget } from '@/components/shared/chat-widget';
 
@@ -83,6 +84,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col font-sans">
         <AuthProvider>
+          <CartProvider>
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />
@@ -90,6 +92,7 @@ export default function RootLayout({
           <PushNotificationPrompt />
           <Toaster position="top-right" richColors />
           <ChatWidget />
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>
