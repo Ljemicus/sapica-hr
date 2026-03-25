@@ -8,6 +8,7 @@ import { ScrollToTop } from '@/components/shared/scroll-to-top';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/contexts/auth-context';
 import { PushNotificationPrompt } from '@/components/shared/push-notification';
+import { ChatWidget } from '@/components/shared/chat-widget';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -88,6 +89,7 @@ export default function RootLayout({
           <ScrollToTop />
           <PushNotificationPrompt />
           <Toaster position="top-right" richColors />
+          <ChatWidget />
         </AuthProvider>
       </body>
     </html>

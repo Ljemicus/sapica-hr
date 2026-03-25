@@ -4,7 +4,6 @@
     "slug": "sapica",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "sapica",
     "splash": {
@@ -22,7 +21,8 @@
     },
     "plugins": [
       "expo-router",
-      "expo-asset"
+      "expo-asset",
+      "expo-font"
     ]
   }
 }

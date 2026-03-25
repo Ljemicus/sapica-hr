@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { WebView } from 'react-native-webview';
 import { Input } from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
 import { SitterCard } from '../../components/shared/SitterCard';
@@ -8,6 +9,68 @@ import { Colors } from '../../constants/colors';
 import { sitters, services } from '../../constants/mock-data';
 
 const cities = ['Svi', 'Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar'];
+
+const CITY_COORDS: Record<string, [number, number]> = {
+  'Zagreb': [45.815, 15.982],
+  'Split': [43.508, 16.440],
+  'Rijeka': [45.327, 14.442],
+  'Osijek': [45.554, 18.695],
+  'Zadar': [44.119, 15.232],
+};
+
+
+
+function MapSection({ sitters, selectedCity }: { sitters: typeof import('../../constants/mock-data').sitters; selectedCity: string }) {
+  const mapHtml = useMemo(() => {
+    const center = selectedCity !== 'Svi' && CITY_COORDS[selectedCity]
+      ? CITY_COORDS[selectedCity]
+      : [44.5, 16.0];
+    const zoom = selectedCity !== 'Svi' ? 12 : 7;
+
+    const markers = sitters.map((s) => {
+      const cityCoord = CITY_COORDS[s.city] || [45.815, 15.982];
+      const lat = cityCoord[0] + (Math.random() - 0.5) * 0.02;
+      const lng = cityCoord[1] + (Math.random() - 0.5) * 0.02;
+      return `L.marker([${lat},${lng}]).addTo(map).bindPopup('<b>${s.name}</b><br>⭐ ${s.rating} · ${s.city}');`;
+    }).join('\n');
+
+    return `<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>html,body,#map{margin:0;padding:0;width:100%;height:100%}</style>
+</head><body>
+<div id="map"></div>
+<script>
+var map=L.map('map').setView([${center[0]},${center[1]}],${zoom});
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);
+${markers}
+</script></body></html>`;
+  }, [sitters, selectedCity]);
+
+  if (Platform.OS === 'web') {
+    return (
+      <View style={styles.mapContainer}>
+        <View style={styles.mapPlaceholder}>
+          <Ionicons name="map-outline" size={32} color={Colors.primary} />
+          <Text style={styles.mapPlaceholderText}>🐾 {sitters.length} pružatelja</Text>
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.mapContainer}>
+      <WebView
+        source={{ html: mapHtml }}
+        style={styles.mapWebView}
+        scrollEnabled={false}
+        javaScriptEnabled={true}
+      />
+    </View>
+  );
+}
 
 export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -103,6 +166,9 @@ export default function SearchScreen() {
         </View>
       )}
 
+      {/* Map via WebView + Leaflet */}
+      <MapSection sitters={filteredSitters} selectedCity={selectedCity} />
+
       {/* Results */}
       <ScrollView style={styles.results} showsVerticalScrollIndicator={false}>
         <Text style={styles.resultsCount}>
@@ -187,10 +253,33 @@ const styles = StyleSheet.create({
   filterChipTextActive: {
     color: Colors.white,
   },
+  mapContainer: {
+    height: 180,
+    marginHorizontal: 16,
+    marginTop: 12,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  mapWebView: {
+    flex: 1,
+    borderRadius: 16,
+  },
+  mapPlaceholder: {
+    flex: 1,
+    backgroundColor: Colors.backgroundSecondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  mapPlaceholderText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.text,
+  },
   results: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 12,
   },
   resultsCount: {
     fontSize: 14,

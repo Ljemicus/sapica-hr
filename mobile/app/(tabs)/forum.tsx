@@ -13,12 +13,11 @@ import { Card } from '../../components/ui/Card';
 import { Avatar } from '../../components/ui/Avatar';
 
 const CATEGORIES = [
-  { key: 'sve', label: 'Sve', emoji: '💬', color: Colors.primary },
-  { key: 'pitanja', label: 'Pitanja', emoji: '❓', color: '#3b82f6' },
-  { key: 'savjeti', label: 'Savjeti', emoji: '💡', color: '#10b981' },
-  { key: 'price', label: 'Priče', emoji: '❤️', color: '#ec4899' },
-  { key: 'izgubljeni', label: 'Izgubljeni', emoji: '🚨', color: '#ef4444' },
-  { key: 'slobodna', label: 'Slobodna', emoji: '🗣️', color: '#8b5cf6' },
+  { key: 'sve', label: 'Sve', emoji: '💬' },
+  { key: 'pitanja', label: 'Pitanja', emoji: '❓' },
+  { key: 'savjeti', label: 'Savjeti', emoji: '💡' },
+  { key: 'price', label: 'Priče', emoji: '❤️' },
+  { key: 'izgubljeni', label: 'SOS', emoji: '🚨' },
 ];
 
 const TOPICS = [
@@ -26,6 +25,7 @@ const TOPICS = [
     id: 'ft-1',
     category: 'pitanja',
     title: 'Koliko često trebam voditi psa veterinaru?',
+    excerpt: 'Redoviti pregledi su ključ prevencije. Evo što preporučuju veterinari.',
     author: 'Marina K.',
     initial: 'M',
     timeAgo: 'prije 2 dana',
@@ -38,6 +38,7 @@ const TOPICS = [
     id: 'ft-2',
     category: 'savjeti',
     title: '5 trikova za učenje štenca da ne grize',
+    excerpt: 'Jednostavne metode koje funkcioniraju od prvog dana.',
     author: 'Luka J.',
     initial: 'L',
     timeAgo: 'prije 3 dana',
@@ -50,6 +51,7 @@ const TOPICS = [
     id: 'ft-3',
     category: 'price',
     title: 'Kako je Bella spasila moj dan — priča o udomljavanju',
+    excerpt: 'Nisam znala da mi treba pas dok se Bella nije pojavila u mom životu.',
     author: 'Ana H.',
     initial: 'A',
     timeAgo: 'prije 4 dana',
@@ -61,7 +63,8 @@ const TOPICS = [
   {
     id: 'ft-4',
     category: 'izgubljeni',
-    title: '🚨 Izgubljen zlatni retriver u Maksimiru — pomoć!',
+    title: '🚨 Izgubljen zlatni retriver u Maksimiru',
+    excerpt: 'Molim pomoć! Nestao je jučer oko 17h kod jezera.',
     author: 'Tomislav B.',
     initial: 'T',
     timeAgo: 'jučer',
@@ -72,20 +75,9 @@ const TOPICS = [
   },
   {
     id: 'ft-5',
-    category: 'slobodna',
-    title: 'Koji je vaš najdraži park za šetnju psa u Zagrebu?',
-    author: 'Nina Š.',
-    initial: 'N',
-    timeAgo: 'prije 5 dana',
-    comments: 19,
-    likes: 31,
-    pinned: false,
-    hot: false,
-  },
-  {
-    id: 'ft-6',
     category: 'pitanja',
     title: 'Preporuka za hranu za mačke s osjetljivim želucem?',
+    excerpt: 'Probali smo sve iz dućana, ništa ne pomaže. Ima tko savjet?',
     author: 'Petra K.',
     initial: 'P',
     timeAgo: 'prije 6 dana',
@@ -95,9 +87,10 @@ const TOPICS = [
     hot: false,
   },
   {
-    id: 'ft-7',
+    id: 'ft-6',
     category: 'savjeti',
     title: 'Kako pripremiti ljubimca za putovanje avionom',
+    excerpt: 'Sve što trebate znati — od dokumentacije do transportera.',
     author: 'Filip M.',
     initial: 'F',
     timeAgo: 'prije tjedan',
@@ -105,18 +98,6 @@ const TOPICS = [
     likes: 52,
     pinned: false,
     hot: true,
-  },
-  {
-    id: 'ft-8',
-    category: 'price',
-    title: 'Moj mačak i pas su postali najbolji prijatelji',
-    author: 'Ivana B.',
-    initial: 'I',
-    timeAgo: 'prije tjedan',
-    comments: 9,
-    likes: 41,
-    pinned: false,
-    hot: false,
   },
 ];
 
@@ -127,32 +108,18 @@ export default function ForumScreen() {
     ? TOPICS
     : TOPICS.filter(t => t.category === activeCategory);
 
-  // Pinned first, then by likes
   const sorted = [...filtered].sort((a, b) => {
     if (a.pinned && !b.pinned) return -1;
     if (!a.pinned && b.pinned) return 1;
     return b.likes - a.likes;
   });
 
-  return (
-    <View style={styles.container}>
-      {/* New post button */}
-      <View style={styles.newPostRow}>
-        <TouchableOpacity
-          style={styles.newPostBtn}
-          onPress={() => Alert.alert('Nova tema', 'Ova funkcionalnost dolazi uskoro!')}
-        >
-          <Ionicons name="create-outline" size={18} color={Colors.white} />
-          <Text style={styles.newPostText}>Nova tema</Text>
-        </TouchableOpacity>
-        <View style={styles.statsRow}>
-          <Text style={styles.statText}>{TOPICS.length} tema</Text>
-          <Text style={styles.statDot}>·</Text>
-          <Text style={styles.statText}>{TOPICS.reduce((s, t) => s + t.comments, 0)} komentara</Text>
-        </View>
-      </View>
+  const featured = sorted[0];
+  const rest = sorted.slice(1);
 
-      {/* Category pills */}
+  return (
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {/* Category pills — same style as blog */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -163,7 +130,7 @@ export default function ForumScreen() {
             key={cat.key}
             style={[
               styles.categoryPill,
-              activeCategory === cat.key && { backgroundColor: cat.color },
+              activeCategory === cat.key && styles.categoryPillActive,
             ]}
             onPress={() => setActiveCategory(cat.key)}
           >
@@ -180,48 +147,75 @@ export default function ForumScreen() {
         ))}
       </ScrollView>
 
-      {/* Topics list */}
-      <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
-        {sorted.map(topic => {
+      {/* Featured topic — blog style */}
+      {featured && (
+        <View style={styles.featuredContainer}>
+          <View style={styles.featuredInner}>
+            <View style={styles.featuredBadgeRow}>
+              {featured.pinned && (
+                <View style={styles.featuredBadge}>
+                  <Text style={styles.featuredBadgeText}>📌 Prikvačeno</Text>
+                </View>
+              )}
+              {featured.hot && (
+                <View style={[styles.featuredBadge, { backgroundColor: '#ef4444' }]}>
+                  <Text style={styles.featuredBadgeText}>🔥 Popularno</Text>
+                </View>
+              )}
+            </View>
+            <Text style={styles.featuredTitle}>{featured.title}</Text>
+            <Text style={styles.featuredExcerpt}>{featured.excerpt}</Text>
+            <View style={styles.featuredMeta}>
+              <Text style={styles.featuredAuthor}>{featured.author}</Text>
+              <Text style={styles.featuredDot}>·</Text>
+              <Text style={styles.featuredDate}>{featured.timeAgo}</Text>
+              <Text style={styles.featuredDot}>·</Text>
+              <Ionicons name="chatbubble-outline" size={12} color="rgba(255,255,255,0.7)" />
+              <Text style={styles.featuredDate}>{featured.comments}</Text>
+              <Ionicons name="heart-outline" size={12} color="rgba(255,255,255,0.7)" />
+              <Text style={styles.featuredDate}>{featured.likes}</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* New post button */}
+      <View style={styles.listHeader}>
+        <Text style={styles.sectionTitle}>Rasprave</Text>
+        <TouchableOpacity
+          style={styles.newPostBtn}
+          onPress={() => Alert.alert('Nova tema', 'Ova funkcionalnost dolazi uskoro!')}
+        >
+          <Ionicons name="create-outline" size={14} color={Colors.white} />
+          <Text style={styles.newPostText}>Nova tema</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Topic list — blog card style */}
+      <View style={styles.listSection}>
+        {rest.map(topic => {
           const cat = CATEGORIES.find(c => c.key === topic.category);
           return (
             <Card key={topic.id} style={styles.topicCard}>
-              <View style={styles.topicHeader}>
-                <Avatar name={topic.author} size={36} />
-                <View style={styles.topicAuthorInfo}>
-                  <Text style={styles.topicAuthor}>{topic.author}</Text>
-                  <Text style={styles.topicTime}>{topic.timeAgo}</Text>
-                </View>
-                <View style={styles.topicBadges}>
-                  {topic.pinned && (
-                    <View style={[styles.badge, { backgroundColor: '#fef3c7' }]}>
-                      <Text style={styles.badgeText}>📌</Text>
-                    </View>
-                  )}
-                  {topic.hot && (
-                    <View style={[styles.badge, { backgroundColor: '#fee2e2' }]}>
-                      <Text style={styles.badgeText}>🔥</Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-
-              <Text style={styles.topicTitle}>{topic.title}</Text>
-
-              <View style={styles.topicFooter}>
-                <View style={[styles.topicCatBadge, { backgroundColor: (cat?.color || Colors.primary) + '18' }]}>
-                  <Text style={[styles.topicCatText, { color: cat?.color || Colors.primary }]}>
-                    {cat?.emoji} {cat?.label}
-                  </Text>
-                </View>
-                <View style={styles.topicStats}>
-                  <View style={styles.topicStat}>
-                    <Ionicons name="chatbubble-outline" size={14} color={Colors.textLight} />
-                    <Text style={styles.topicStatText}>{topic.comments}</Text>
+              <View style={styles.topicRow}>
+                <Avatar name={topic.author} size={44} />
+                <View style={styles.topicContent}>
+                  <View style={styles.topicCatRow}>
+                    <Text style={styles.topicCatLabel}>
+                      {cat?.emoji} {cat?.label}
+                    </Text>
+                    {topic.hot && <Text style={styles.hotBadge}>🔥</Text>}
                   </View>
-                  <View style={styles.topicStat}>
-                    <Ionicons name="heart-outline" size={14} color={Colors.textLight} />
-                    <Text style={styles.topicStatText}>{topic.likes}</Text>
+                  <Text style={styles.topicTitle} numberOfLines={2}>
+                    {topic.title}
+                  </Text>
+                  <View style={styles.topicMeta}>
+                    <Ionicons name="person-outline" size={12} color={Colors.textLight} />
+                    <Text style={styles.topicMetaText}>{topic.author}</Text>
+                    <Ionicons name="chatbubble-outline" size={12} color={Colors.textLight} />
+                    <Text style={styles.topicMetaText}>{topic.comments}</Text>
+                    <Ionicons name="heart-outline" size={12} color={Colors.textLight} />
+                    <Text style={styles.topicMetaText}>{topic.likes}</Text>
                   </View>
                 </View>
               </View>
@@ -236,10 +230,10 @@ export default function ForumScreen() {
             <Text style={styles.emptySubtitle}>Budi prvi koji će pokrenuti raspravu!</Text>
           </View>
         )}
+      </View>
 
-        <View style={{ height: 32 }} />
-      </ScrollView>
-    </View>
+      <View style={{ height: 32 }} />
+    </ScrollView>
   );
 }
 
@@ -248,57 +242,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  newPostRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: Colors.backgroundWarm,
-  },
-  newPostBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-  },
-  newPostText: {
-    color: Colors.white,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  statsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  statText: {
-    fontSize: 12,
-    color: Colors.textLight,
-  },
-  statDot: {
-    color: Colors.textLight,
-  },
   categories: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     gap: 8,
   },
   categoryPill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: Colors.backgroundSecondary,
     marginRight: 8,
   },
+  categoryPillActive: {
+    backgroundColor: Colors.primary,
+  },
   categoryEmoji: {
-    fontSize: 13,
+    fontSize: 14,
   },
   categoryLabel: {
     fontSize: 13,
@@ -308,78 +271,132 @@ const styles = StyleSheet.create({
   categoryLabelActive: {
     color: Colors.white,
   },
-  list: {
-    flex: 1,
-    paddingHorizontal: 16,
+  featuredContainer: {
+    marginHorizontal: 16,
+    borderRadius: 20,
+    overflow: 'hidden',
+    backgroundColor: Colors.text,
+    marginBottom: 20,
   },
-  topicCard: {
+  featuredInner: {
+    padding: 20,
+  },
+  featuredBadgeRow: {
+    flexDirection: 'row',
+    gap: 8,
     marginBottom: 10,
-    padding: 14,
   },
-  topicHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  topicAuthorInfo: {
-    flex: 1,
-    marginLeft: 10,
-  },
-  topicAuthor: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: Colors.text,
-  },
-  topicTime: {
-    fontSize: 12,
-    color: Colors.textLight,
-  },
-  topicBadges: {
-    flexDirection: 'row',
-    gap: 4,
-  },
-  badge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  badgeText: {
-    fontSize: 12,
-  },
-  topicTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: Colors.text,
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  topicFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  topicCatBadge: {
+  featuredBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: Colors.primary,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
   },
-  topicCatText: {
+  featuredBadgeText: {
+    color: Colors.white,
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  featuredTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: Colors.white,
+    marginBottom: 6,
+  },
+  featuredExcerpt: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.8)',
+    lineHeight: 18,
+    marginBottom: 10,
+  },
+  featuredMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  featuredAuthor: {
     fontSize: 12,
     fontWeight: '600',
+    color: 'rgba(255,255,255,0.9)',
   },
-  topicStats: {
+  featuredDot: {
+    color: 'rgba(255,255,255,0.5)',
+  },
+  featuredDate: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.7)',
+  },
+  listHeader: {
     flexDirection: 'row',
-    gap: 14,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 14,
   },
-  topicStat: {
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: Colors.text,
+  },
+  newPostBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 16,
+  },
+  newPostText: {
+    color: Colors.white,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  listSection: {
+    paddingHorizontal: 16,
+  },
+  topicCard: {
+    marginBottom: 12,
+    padding: 12,
+  },
+  topicRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  topicContent: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  topicCatRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  topicCatLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: Colors.primary,
+  },
+  hotBadge: {
+    fontSize: 11,
+  },
+  topicTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: Colors.text,
+    lineHeight: 20,
+    marginVertical: 4,
+  },
+  topicMeta: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
-  topicStatText: {
-    fontSize: 13,
+  topicMetaText: {
+    fontSize: 11,
     color: Colors.textLight,
-    fontWeight: '600',
+    marginRight: 6,
   },
   emptyState: {
     alignItems: 'center',

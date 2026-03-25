@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Avatar } from '../../components/ui/Avatar';
@@ -56,7 +56,7 @@ export default function ProfileScreen() {
         <Text style={styles.userEmail}>korisnik@email.com</Text>
         <Button
           title="Uredi profil"
-          onPress={() => {}}
+          onPress={() => Alert.alert('Uredi profil', 'Uređivanje profila dolazi uskoro!')}
           variant="outline"
           size="sm"
           style={styles.editButton}
@@ -122,11 +122,11 @@ export default function ProfileScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Postavke</Text>
         <Card variant="outlined" style={styles.menuCard}>
-          <MenuRow icon="notifications-outline" label="Obavijesti" onPress={() => {}} />
-          <MenuRow icon="card-outline" label="Način plaćanja" onPress={() => {}} />
-          <MenuRow icon="shield-checkmark-outline" label="Privatnost" onPress={() => {}} />
-          <MenuRow icon="help-circle-outline" label="Pomoć" onPress={() => {}} />
-          <MenuRow icon="star-outline" label="Ocijeni aplikaciju" onPress={() => {}} />
+          <MenuRow icon="notifications-outline" label="Obavijesti" onPress={() => Alert.alert('Obavijesti', 'Postavke obavijesti dolaze uskoro!')} />
+          <MenuRow icon="card-outline" label="Način plaćanja" onPress={() => Alert.alert('Plaćanje', 'Postavke plaćanja dolaze uskoro!')} />
+          <MenuRow icon="shield-checkmark-outline" label="Privatnost" onPress={() => Alert.alert('Privatnost', 'Postavke privatnosti dolaze uskoro!')} />
+          <MenuRow icon="help-circle-outline" label="Pomoć" onPress={() => Alert.alert('Pomoć', 'Kontaktirajte nas na info@sapica.hr')} />
+          <MenuRow icon="star-outline" label="Ocijeni aplikaciju" onPress={() => Alert.alert('Hvala! ⭐', 'Ocjenjivanje dolazi kad app bude na App Storeu!')} />
           <MenuRow
             icon="paw-outline"
             label="Postani sitter"
