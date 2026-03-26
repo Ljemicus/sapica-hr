@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, MessageCircle, Heart, Pin, Flame, Plus, TrendingUp, Clock } from 'lucide-react';
+import { Search, MessageCircle, Heart, Pin, Flame, Plus, TrendingUp, Clock, ImagePlus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ImageUpload } from '@/components/shared/image-upload';
 import { FORUM_CATEGORIES, FORUM_CATEGORY_LABELS, type ForumCategorySlug, type ForumTopic } from '@/lib/types';
 
 function timeAgo(dateStr: string) {
@@ -101,6 +102,12 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
               <div>
                 <Label htmlFor="post-content">Sadržaj</Label>
                 <Textarea id="post-content" placeholder="Napišite svoj post..." className="mt-1.5 min-h-[120px]" />
+              </div>
+              <div>
+                <Label>Slika (opcionalno)</Label>
+                <div className="mt-1.5">
+                  <ImageUpload variant="dropzone" maxFiles={3} />
+                </div>
               </div>
               <Button className="w-full bg-orange-500 hover:bg-orange-600">
                 Objavi post

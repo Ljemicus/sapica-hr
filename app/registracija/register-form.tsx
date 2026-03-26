@@ -9,6 +9,7 @@ import { Eye, EyeOff, Mail, User, MapPin, Dog, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ImageUpload } from '@/components/shared/image-upload';
 import { createClient } from '@/lib/supabase/client';
 import { registerSchema, type RegisterInput } from '@/lib/validations';
 import { CITIES } from '@/lib/types';
@@ -29,6 +30,7 @@ function PawLogo({ className }: { className?: string }) {
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const defaultRole = searchParams.get('role') as 'owner' | 'sitter' | null;
@@ -197,6 +199,16 @@ export function RegisterForm() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 animate-fade-in-up delay-200">
+            {/* Avatar upload */}
+            <div className="flex justify-center mb-2">
+              <ImageUpload
+                variant="avatar"
+                fallbackText={watch('name')?.charAt(0)?.toUpperCase() || '?'}
+                onUploadComplete={(urls) => setAvatarUrl(urls[0] || null)}
+              />
+            </div>
+            <p className="text-center text-xs text-muted-foreground -mt-2 mb-2">Dodajte profilnu sliku (opcionalno)</p>
+
             <div className="space-y-2">
               <Label htmlFor="name">Ime i prezime</Label>
               <div className="relative">

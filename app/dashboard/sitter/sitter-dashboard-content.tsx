@@ -18,6 +18,7 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { EmptyState } from '@/components/shared/empty-state';
 import { StarRating } from '@/components/shared/star-rating';
+import { ImageUpload } from '@/components/shared/image-upload';
 import { createClient } from '@/lib/supabase/client';
 import { STATUS_LABELS, SERVICE_LABELS, CITIES, type User as UserType, type SitterProfile, type Booking, type Review, type Availability, type BookingStatus, type ServiceType } from '@/lib/types';
 import { toast } from 'sonner';
@@ -496,6 +497,15 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
             <DialogDescription>Ažurirajte svoj sitter profil</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
+            <div className="flex justify-center">
+              <ImageUpload
+                variant="avatar"
+                currentImageUrl={user.avatar_url}
+                fallbackText={user.name?.charAt(0) || '?'}
+                onUploadComplete={() => {}}
+              />
+            </div>
+            <p className="text-center text-xs text-muted-foreground -mt-2">Profilna fotografija</p>
             <div className="space-y-2">
               <Label>Bio *</Label>
               <Textarea value={profileForm.bio} onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })} placeholder="Opišite se i svoje iskustvo s ljubimcima..." rows={4} className="focus:border-orange-300" />

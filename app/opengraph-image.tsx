@@ -10,7 +10,7 @@ export default async function Image() {
     (
       <div
         style={{
-          background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%)',
+          background: 'linear-gradient(135deg, #f97316 0%, #ea580c 50%, #f59e0b 100%)',
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -21,7 +21,7 @@ export default async function Image() {
         }}
       >
         {/* Paw icon */}
-        <svg width="120" height="120" viewBox="0 0 100 100" fill="#f97316">
+        <svg width="120" height="120" viewBox="0 0 100 100" fill="white">
           <ellipse cx="50" cy="62" rx="14" ry="16" />
           <ellipse cx="30" cy="38" rx="8" ry="11" />
           <ellipse cx="70" cy="38" rx="8" ry="11" />
@@ -33,7 +33,7 @@ export default async function Image() {
           style={{
             fontSize: 72,
             fontWeight: 800,
-            color: '#f97316',
+            color: 'white',
             marginTop: 20,
             letterSpacing: '-0.02em',
           }}
@@ -44,7 +44,7 @@ export default async function Image() {
         <div
           style={{
             fontSize: 28,
-            color: '#78716c',
+            color: 'rgba(255, 255, 255, 0.85)',
             marginTop: 12,
             textAlign: 'center',
             maxWidth: 700,
@@ -59,7 +59,7 @@ export default async function Image() {
             gap: 40,
             marginTop: 40,
             fontSize: 18,
-            color: '#a8a29e',
+            color: 'rgba(255, 255, 255, 0.6)',
           }}
         >
           <span>500+ sittera</span>

@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { EmptyState } from '@/components/shared/empty-state';
 import { StarRating } from '@/components/shared/star-rating';
+import { ImageUpload } from '@/components/shared/image-upload';
 import { createClient } from '@/lib/supabase/client';
 import { STATUS_LABELS, SPECIES_LABELS, SERVICE_LABELS, type User, type Pet, type Booking, type BookingStatus, type ServiceType, type Species, type Walk } from '@/lib/types';
 import { toast } from 'sonner';
@@ -411,6 +412,10 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
             <div className="space-y-2">
               <Label>Posebne potrebe</Label>
               <Textarea value={petForm.special_needs} onChange={(e) => setPetForm({ ...petForm, special_needs: e.target.value })} placeholder="Alergije, lijekovi, posebne navike..." className="focus:border-orange-300" />
+            </div>
+            <div className="space-y-2">
+              <Label>Fotografija ljubimca</Label>
+              <ImageUpload variant="square" onUploadComplete={() => {}} />
             </div>
             <Button onClick={savePet} className="w-full bg-orange-500 hover:bg-orange-600 btn-hover" disabled={loading}>
               {loading ? 'Spremanje...' : editingPet ? 'Spremi promjene' : 'Dodaj ljubimca'}

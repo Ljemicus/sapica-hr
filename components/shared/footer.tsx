@@ -108,8 +108,12 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-          <p>&copy; {new Date().getFullYear()} Šapica. Sva prava pridržana.</p>
-          <p className="text-xs">Napravljeno s ❤️ u Hrvatskoj</p>
+          <p>&copy; 2026 Šapica d.o.o. Sva prava pridržana.</p>
+          <div className="flex items-center gap-4 text-xs">
+            <Link href="/privatnost" className="hover:text-orange-400 transition-colors">Privatnost</Link>
+            <Link href="/uvjeti" className="hover:text-orange-400 transition-colors">Uvjeti</Link>
+            <Link href="/kontakt" className="hover:text-orange-400 transition-colors">Kontakt</Link>
+          </div>
         </div>
       </div>
     </footer>

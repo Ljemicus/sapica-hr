@@ -10,6 +10,8 @@ import { AuthProvider } from '@/contexts/auth-context';
 import { CartProvider } from '@/lib/cart-context';
 import { PushNotificationPrompt } from '@/components/shared/push-notification';
 import { ChatWidget } from '@/components/shared/chat-widget';
+import { CookieConsent } from '@/components/shared/cookie-consent';
+import { NotificationPrompt } from '@/components/shared/notification-prompt';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -81,6 +83,33 @@ export default function RootLayout({
           src="https://plausible.io/js/script.js"
           strategy="afterInteractive"
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'Šapica',
+              alternateName: 'Sapica d.o.o.',
+              url: 'https://sapica.vercel.app',
+              logo: 'https://sapica.vercel.app/opengraph-image',
+              description: 'Hrvatski marketplace za čuvanje kućnih ljubimaca. Pronađite pouzdane sittere u vašem gradu.',
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: 'Zagreb',
+                addressCountry: 'HR',
+              },
+              contactPoint: {
+                '@type': 'ContactPoint',
+                email: 'info@sapica.hr',
+                telephone: '+385-1-234-5678',
+                contactType: 'customer service',
+                availableLanguage: 'Croatian',
+              },
+              sameAs: [],
+            }),
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col font-sans">
         <AuthProvider>
@@ -90,8 +119,10 @@ export default function RootLayout({
           <Footer />
           <ScrollToTop />
           <PushNotificationPrompt />
+          <NotificationPrompt />
           <Toaster position="top-right" richColors />
           <ChatWidget />
+          <CookieConsent />
           </CartProvider>
         </AuthProvider>
       </body>

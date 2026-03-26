@@ -172,19 +172,50 @@ export default function UvjetiPage() {
             </div>
           </section>
 
-          {/* 8. Plaćanje */}
+          {/* 8. Plaćanje i provizije */}
           <section>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
                 <CreditCard className="h-5 w-5 text-orange-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">8. Financijski uvjeti</h2>
+              <h2 className="text-2xl font-bold text-gray-900">8. Plaćanje i provizije</h2>
             </div>
-            <p className="text-gray-600 leading-relaxed">
-              Registracija i osnovno korištenje platforme je besplatno. Plaćanje usluga (čuvanje, njega, dresura)
-              dogovara se izravno između vlasnika i pružatelja usluge. Šapica trenutno ne posreduje u financijskim
-              transakcijama između korisnika.
+            <div className="space-y-3 text-gray-600 leading-relaxed">
+              <p>
+                Registracija i osnovno korištenje platforme je besplatno. Plaćanje usluga vrši se sigurno
+                putem Stripe platnog sustava.
+              </p>
+              <p>
+                Šapica naplaćuje <strong>proviziju od 15%</strong> na svaku uspješno obavljenu rezervaciju.
+                Provizija se automatski odbija od ukupnog iznosa prije isplate sitteru/pružatelju usluge.
+              </p>
+              <p>
+                <strong>Otkazivanje i povrat:</strong> Vlasnik može otkazati rezervaciju do 24 sata prije
+                početka usluge uz potpuni povrat novca. Otkazivanja unutar 24 sata podliježu nakandi od 50%.
+                Ako sitter otkaže, vlasnik uvijek dobiva potpuni povrat.
+              </p>
+            </div>
+          </section>
+
+          {/* 8a. Zabranjena ponašanja */}
+          <section>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <Ban className="h-5 w-5 text-red-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">8a. Zabranjena ponašanja</h2>
+            </div>
+            <p className="text-gray-600 leading-relaxed mb-3">
+              Sljedeća ponašanja su strogo zabranjena i mogu rezultirati trajnom suspenzijom računa:
             </p>
+            <ul className="space-y-2 text-gray-600">
+              <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Zlostavljanje, zanemarivanje ili neadekvatna briga o ljubimcima</li>
+              <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Lažno predstavljanje, korištenje tuđih identiteta ili lažnih referenci</li>
+              <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Pokušaj izbjegavanja plaćanja putem platforme (dogovaranje &quot;ispod stola&quot;)</li>
+              <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Uznemiravanje, prijetnje ili diskriminacija drugih korisnika</li>
+              <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Korištenje platforme za ilegalne aktivnosti</li>
+              <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Spam, phishing ili distribucija malicioznog sadržaja</li>
+            </ul>
           </section>
 
           {/* 9. Gašenje računa */}

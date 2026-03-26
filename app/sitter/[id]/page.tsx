@@ -27,11 +27,32 @@ export default async function SitterPage({ params }: SitterPageProps) {
   const reviews = await getReviewsBySitter(id) as any[];
   const availability = await getAvailability(id);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: `${profile.user.name} — Pet Sitter`,
+    description: profile.bio || `Profesionalni čuvar ljubimaca u ${profile.user.city || 'Hrvatskoj'}`,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: profile.user.city || 'Zagreb',
+      addressCountry: 'HR',
+    },
+    aggregateRating: profile.rating_avg ? {
+      '@type': 'AggregateRating',
+      ratingValue: profile.rating_avg,
+      reviewCount: profile.review_count,
+    } : undefined,
+    priceRange: '€€',
+  };
+
   return (
-    <SitterProfileContent
-      profile={profile}
-      reviews={reviews}
-      availability={availability}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <SitterProfileContent
+        profile={profile}
+        reviews={reviews}
+        availability={availability}
+      />
+    </>
   );
 }

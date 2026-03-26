@@ -205,6 +205,26 @@ export default function KontaktPage() {
             </Card>
           </div>
         </div>
+        {/* FAQ sekcija */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Česta pitanja</h2>
+          <div className="space-y-4 max-w-3xl mx-auto">
+            {[
+              { q: 'Kako se registrirati kao sitter?', a: 'Kliknite "Registracija" i odaberite opciju "Sitter". Ispunite profil, dodajte opis iskustva i postavite cijene za usluge koje nudite.' },
+              { q: 'Je li korištenje platforme besplatno?', a: 'Da, registracija i pretraživanje su potpuno besplatni. Šapica naplaćuje proviziju od 15% samo na uspješno obavljene rezervacije.' },
+              { q: 'Kako funkcionira plaćanje?', a: 'Plaćanje se vrši sigurno putem Stripe-a. Novac se zadržava dok vlasnik ne potvrdi da je usluga uspješno obavljena.' },
+              { q: 'Što ako sitter otkaže rezervaciju?', a: 'U slučaju otkazivanja, vlasnik dobiva potpuni povrat novca. Ponovljena otkazivanja mogu rezultirati suspenzijom sitterovog računa.' },
+              { q: 'Kako mogu kontaktirati korisničku podršku?', a: 'Pošaljite nam poruku putem forme iznad, email na info@sapica.hr ili pozovite +385 1 234 5678 radnim danima od 9 do 17h.' },
+            ].map((faq, i) => (
+              <Card key={i} className="border-0 shadow-sm">
+                <CardContent className="p-5">
+                  <h3 className="font-semibold text-sm text-gray-900 mb-1">{faq.q}</h3>
+                  <p className="text-sm text-gray-600">{faq.a}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

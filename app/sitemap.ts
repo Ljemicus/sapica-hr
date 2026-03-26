@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { mockSitterProfiles, mockGroomers, mockTrainers, mockProducts, mockArticles, mockForumTopics } from '@/lib/mock-data';
 
 const BASE_URL = 'https://sapica.vercel.app';
 
@@ -16,12 +17,72 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/izgubljeni',
     '/privatnost',
     '/uvjeti',
+    '/shop',
+    '/grooming',
   ];
 
-  return staticPages.map((route) => ({
+  const staticEntries: MetadataRoute.Sitemap = staticPages.map((route) => ({
     url: `${BASE_URL}${route}`,
     lastModified: new Date(),
     changeFrequency: route === '' ? 'daily' : 'weekly',
     priority: route === '' ? 1 : 0.8,
   }));
+
+  // Sitteri
+  const sitterEntries: MetadataRoute.Sitemap = mockSitterProfiles.map((s) => ({
+    url: `${BASE_URL}/sitter/${s.user_id}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  // Groomeri
+  const groomerEntries: MetadataRoute.Sitemap = mockGroomers.map((g) => ({
+    url: `${BASE_URL}/groomer/${g.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  // Treneri
+  const trainerEntries: MetadataRoute.Sitemap = mockTrainers.map((t) => ({
+    url: `${BASE_URL}/trener/${t.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  // Shop proizvodi
+  const productEntries: MetadataRoute.Sitemap = mockProducts.map((p) => ({
+    url: `${BASE_URL}/shop/${p.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: 0.6,
+  }));
+
+  // Blog
+  const blogEntries: MetadataRoute.Sitemap = mockArticles.map((a) => ({
+    url: `${BASE_URL}/blog/${a.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.5,
+  }));
+
+  // Forum topics
+  const forumEntries: MetadataRoute.Sitemap = mockForumTopics.map((t) => ({
+    url: `${BASE_URL}/forum/${t.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: 0.5,
+  }));
+
+  return [
+    ...staticEntries,
+    ...sitterEntries,
+    ...groomerEntries,
+    ...trainerEntries,
+    ...productEntries,
+    ...blogEntries,
+    ...forumEntries,
+  ];
 }

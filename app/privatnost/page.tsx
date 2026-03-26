@@ -30,12 +30,16 @@ export default function PrivatnostPage() {
           {/* 1. Voditelj obrade */}
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Voditelj obrade podataka</h2>
-            <p className="text-gray-600 leading-relaxed">
-              Voditelj obrade vaših osobnih podataka je Šapica, dostupna na adresi{' '}
+            <p className="text-gray-600 leading-relaxed mb-3">
+              Voditelj obrade vaših osobnih podataka je Šapica d.o.o., sa sjedištem u Zagrebu, Hrvatska,
+              dostupna na adresi{' '}
               <a href="https://sapica.vercel.app" className="text-orange-600 hover:underline">sapica.vercel.app</a>.
-              Za sva pitanja vezana uz zaštitu podataka možete nas kontaktirati na{' '}
-              <a href="mailto:info@sapica.hr" className="text-orange-600 hover:underline">info@sapica.hr</a>.
             </p>
+            <div className="bg-orange-50 rounded-xl p-4 text-sm text-gray-600">
+              <p className="font-semibold text-gray-900 mb-1">Službenik za zaštitu podataka (DPO)</p>
+              <p>Email: <a href="mailto:dpo@sapica.hr" className="text-orange-600 hover:underline">dpo@sapica.hr</a></p>
+              <p>Adresa: Šapica d.o.o., Ilica 1, 10000 Zagreb, Hrvatska</p>
+            </div>
           </section>
 
           {/* 2. Koje podatke prikupljamo */}
@@ -48,7 +52,8 @@ export default function PrivatnostPage() {
               {[
                 { title: 'Podaci o računu', desc: 'Ime i prezime, e-mail adresa, grad, broj telefona — podatci koje unosite prilikom registracije.' },
                 { title: 'Autentikacija', desc: 'Koristimo Supabase za autentikaciju. Možete se registrirati putem e-maila i lozinke ili Google OAuth prijave.' },
-                { title: 'Fotografije', desc: 'Fotografije ljubimaca i profilne fotografije pohranjuju se u Supabase Storage.' },
+                { title: 'Fotografije', desc: 'Fotografije ljubimaca, profilne fotografije i slike na forumu pohranjuju se u Supabase Storage.' },
+                { title: 'Lokacija', desc: 'Grad i približna lokacija koriste se za povezivanje s čuvarima u vašoj blizini.' },
                 { title: 'Podaci o korištenju', desc: 'Koristimo Plausible Analytics koji ne koristi kolačiće i ne prikuplja osobne podatke posjetitelja.' },
               ].map((item) => (
                 <Card key={item.title} className="border-0 shadow-sm">
@@ -144,11 +149,18 @@ export default function PrivatnostPage() {
           {/* 8. Čuvanje podataka */}
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">8. Razdoblje čuvanja podataka</h2>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 leading-relaxed mb-3">
               Vaše osobne podatke čuvamo dok je vaš račun aktivan. Nakon brisanja računa,
               vaši podaci bit će trajno izbrisani u roku od 30 dana, osim ako zakonske obveze
               zahtijevaju dulje čuvanje određenih podataka.
             </p>
+            <ul className="space-y-2 text-gray-600 text-sm">
+              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Korisnički profil: dok je račun aktivan + 30 dana</li>
+              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Poruke: 1 godina nakon slanja</li>
+              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Financijski podaci: 5 godina (zakonska obveza)</li>
+              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Fotografije: brišu se zajedno s profilom ili na zahtjev</li>
+              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Analitički podaci: anonimizirani, bez vremenskog ograničenja</li>
+            </ul>
           </section>
 
           {/* 9. Maloljetnici */}

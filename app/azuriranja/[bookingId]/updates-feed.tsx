@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import { ImageUpload } from '@/components/shared/image-upload';
 import type { PetUpdate } from '@/lib/types';
 
 interface Props {
@@ -136,6 +137,7 @@ export function UpdatesFeed({ updates, sitterName, petName, currentDay, totalDay
                 rows={3}
                 className="focus:border-orange-300"
               />
+              <ImageUpload variant="dropzone" maxFiles={3} />
               <div className="flex gap-2">
                 <Button
                   className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover"
