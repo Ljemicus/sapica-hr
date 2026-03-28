@@ -8,7 +8,6 @@ export async function getConversations(userId: string): Promise<Message[]> {
     const all = mockGetMessages(userId);
     const seen = new Set<string>();
     const conversations: Message[] = [];
-    // Sort by newest first, then pick latest message per conversation partner
     const sorted = [...all].sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
@@ -23,14 +22,12 @@ export async function getConversations(userId: string): Promise<Message[]> {
   }
   try {
     const supabase = await createClient();
-    // Get all messages for user, ordered by newest first
     const { data, error } = await supabase
       .from('messages')
       .select('*, sender:users!sender_id(*)')
       .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
       .order('created_at', { ascending: false });
     if (error || !data) return [];
-    // Deduplicate by conversation partner
     const seen = new Set<string>();
     const conversations: Message[] = [];
     for (const msg of data as Message[]) {
@@ -108,11 +105,29 @@ export async function sendMessage(
     const { data, error } = await supabase
       .from('messages')
       .insert(messageData)
-      .select()
+      .select('*, sender:users!sender_id(*)')
       .single();
     if (error || !data) return null;
     return data as Message;
   } catch {
     return null;
+  }
+}
+
+export async function markAsRead(
+  userId: string,
+  partnerId: string
+): Promise<void> {
+  if (!isSupabaseConfigured()) return;
+  try {
+    const supabase = await createClient();
+    await supabase
+      .from('messages')
+      .update({ read: true })
+      .eq('sender_id', partnerId)
+      .eq('receiver_id', userId)
+      .eq('read', false);
+  } catch {
+    // silently fail
   }
 }

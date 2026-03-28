@@ -4,7 +4,15 @@ import { useState, useRef, useCallback } from 'react';
 import { Upload, X, Loader2, ImagePlus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { mockUpload, createPreviewUrl, validateFile, type UploadResult } from '@/lib/upload';
+import {
+  uploadAvatar,
+  uploadPetPhoto,
+  uploadMessageAttachment,
+  mockUpload,
+  createPreviewUrl,
+  validateFile,
+  type UploadResult,
+} from '@/lib/upload';
 
 interface UploadedFile {
   id: string;
@@ -15,6 +23,8 @@ interface UploadedFile {
   result?: UploadResult;
 }
 
+type UploadBucket = 'avatars' | 'pet-photos' | 'messages' | 'generic';
+
 interface ImageUploadProps {
   onUploadComplete?: (urls: string[]) => void;
   maxFiles?: number;
@@ -22,6 +32,23 @@ interface ImageUploadProps {
   currentImageUrl?: string | null;
   fallbackText?: string;
   className?: string;
+  /** Bucket za upload — određuje koju funkciju koristiti */
+  bucket?: UploadBucket;
+  /** ID entiteta (userId za avatare, petId za pet-photos, userId za messages) */
+  entityId?: string;
+}
+
+async function performUpload(file: File, bucket: UploadBucket, entityId: string): Promise<UploadResult> {
+  switch (bucket) {
+    case 'avatars':
+      return uploadAvatar(entityId, file);
+    case 'pet-photos':
+      return uploadPetPhoto(entityId, file);
+    case 'messages':
+      return uploadMessageAttachment(entityId, file);
+    default:
+      return mockUpload(file, bucket);
+  }
 }
 
 export function ImageUpload({
@@ -31,6 +58,8 @@ export function ImageUpload({
   currentImageUrl,
   fallbackText = '?',
   className = '',
+  bucket = 'generic',
+  entityId = 'anonymous',
 }: ImageUploadProps) {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -68,7 +97,7 @@ export function ImageUpload({
 
       setFiles((prev) => [...prev, uploadedFile]);
 
-      // Mock progress animation
+      // Progress animation
       const progressInterval = setInterval(() => {
         setFiles((prev) =>
           prev.map((f) =>
@@ -80,13 +109,21 @@ export function ImageUpload({
       }, 200);
 
       try {
-        const result = await mockUpload(file);
+        const result = await performUpload(file, bucket, entityId);
         clearInterval(progressInterval);
-        setFiles((prev) =>
-          prev.map((f) =>
-            f.id === id ? { ...f, progress: 100, status: 'done', result } : f
-          )
-        );
+        setFiles((prev) => {
+          const updated = prev.map((f) =>
+            f.id === id ? { ...f, progress: 100, status: 'done' as const, result } : f
+          );
+          // Notify parent with real URLs
+          if (onUploadComplete) {
+            const urls = updated
+              .filter((f) => f.status === 'done' && f.result)
+              .map((f) => f.result!.url);
+            setTimeout(() => onUploadComplete(urls), 0);
+          }
+          return updated;
+        });
       } catch {
         clearInterval(progressInterval);
         setFiles((prev) =>
@@ -97,24 +134,21 @@ export function ImageUpload({
         toast.error(`Greška pri uploadu: ${file.name}`);
       }
     }
-  }, [files.length, maxFiles]);
-
-  // Notify parent whenever files change
-  const notifyParent = useCallback(() => {
-    if (!onUploadComplete) return;
-    const urls = files
-      .filter((f) => f.status === 'done' && f.result)
-      .map((f) => f.previewUrl);
-    onUploadComplete(urls);
-  }, [files, onUploadComplete]);
+  }, [files.length, maxFiles, bucket, entityId, onUploadComplete]);
 
   const removeFile = (id: string) => {
     setFiles((prev) => {
       const file = prev.find((f) => f.id === id);
       if (file) URL.revokeObjectURL(file.previewUrl);
-      return prev.filter((f) => f.id !== id);
+      const updated = prev.filter((f) => f.id !== id);
+      if (onUploadComplete) {
+        const urls = updated
+          .filter((f) => f.status === 'done' && f.result)
+          .map((f) => f.result!.url);
+        setTimeout(() => onUploadComplete(urls), 0);
+      }
+      return updated;
     });
-    setTimeout(notifyParent, 0);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -157,11 +191,11 @@ export function ImageUpload({
     }, 200);
 
     try {
-      await mockUpload(file, 'avatars');
+      const result = await performUpload(file, bucket === 'generic' ? 'avatars' : bucket, entityId);
       clearInterval(interval);
       setAvatarProgress(100);
       toast.success('Slika postavljena!');
-      onUploadComplete?.([previewUrl]);
+      onUploadComplete?.([result.url]);
     } catch {
       clearInterval(interval);
       toast.error('Greška pri uploadu');

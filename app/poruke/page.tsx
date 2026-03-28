@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
-import { getMessages, getUser } from '@/lib/db';
+import { getConversations, getConversation } from '@/lib/db';
+import { getUser } from '@/lib/db';
 import { MessagesContent } from './messages-content';
 
 export const metadata: Metadata = {
@@ -12,41 +13,38 @@ export default async function MessagesPage() {
   const user = await getAuthUser();
   if (!user) redirect('/prijava');
 
-  const messages = await getMessages(user.id);
+  const convSummaries = await getConversations(user.id);
 
-  // Group messages by conversation partner
-  const conversations = new Map<string, { partnerId: string; partnerName: string; partnerAvatar: string | null; messages: typeof messages; lastMessage: typeof messages[0] | null; unreadCount: number }>();
+  // Build conversation objects with partner details and messages
+  const conversationMap = new Map<string, {
+    partnerId: string;
+    partnerName: string;
+    partnerAvatar: string | null;
+    messages: typeof convSummaries;
+    lastMessage: typeof convSummaries[0] | null;
+    unreadCount: number;
+  }>();
 
-  messages.forEach((msg) => {
+  for (const msg of convSummaries) {
     const partnerId = msg.sender_id === user.id ? msg.receiver_id : msg.sender_id;
-    if (!conversations.has(partnerId)) {
-      conversations.set(partnerId, {
-        partnerId,
-        partnerName: '',
-        partnerAvatar: null,
-        messages: [],
-        lastMessage: null,
-        unreadCount: 0,
-      });
-    }
-    const conv = conversations.get(partnerId)!;
-    conv.messages.push(msg);
-    conv.lastMessage = msg;
-    if (!msg.read && msg.receiver_id === user.id) {
-      conv.unreadCount++;
-    }
-  });
+    if (!conversationMap.has(partnerId)) {
+      // Fetch full conversation between user and partner
+      const fullMessages = await getConversation(user.id, partnerId);
+      const unreadCount = fullMessages.filter(m => !m.read && m.receiver_id === user.id).length;
+      const partner = await getUser(partnerId);
 
-  // Fill partner details
-  for (const [partnerId, conv] of conversations) {
-    const partner = await getUser(partnerId);
-    if (partner) {
-      conv.partnerName = partner.name;
-      conv.partnerAvatar = partner.avatar_url;
+      conversationMap.set(partnerId, {
+        partnerId,
+        partnerName: partner?.name || 'Korisnik',
+        partnerAvatar: partner?.avatar_url || null,
+        messages: fullMessages,
+        lastMessage: msg,
+        unreadCount,
+      });
     }
   }
 
-  const sortedConversations = Array.from(conversations.values())
+  const sortedConversations = Array.from(conversationMap.values())
     .sort((a, b) => {
       const aTime = a.lastMessage ? new Date(a.lastMessage.created_at).getTime() : 0;
       const bTime = b.lastMessage ? new Date(b.lastMessage.created_at).getTime() : 0;
