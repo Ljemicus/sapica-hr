@@ -67,13 +67,23 @@ export async function getPosts(topicId: string): Promise<(ForumPost | ForumComme
   }
   try {
     const supabase = await createClient();
+    // Try forum_comments first (migration 008), fallback to forum_posts (migration 002)
     const { data, error } = await supabase
-      .from('forum_posts')
+      .from('forum_comments')
       .select('*')
       .eq('topic_id', topicId)
       .order('created_at', { ascending: true });
-    if (error || !data) return mockGetComments(topicId);
-    return data as ForumPost[];
+    if (error || !data) {
+      // Fallback to forum_posts table if forum_comments doesn't exist
+      const { data: posts, error: postsError } = await supabase
+        .from('forum_posts')
+        .select('*')
+        .eq('topic_id', topicId)
+        .order('created_at', { ascending: true });
+      if (postsError || !posts) return mockGetComments(topicId);
+      return posts as ForumPost[];
+    }
+    return data as ForumComment[];
   } catch {
     return mockGetComments(topicId);
   }

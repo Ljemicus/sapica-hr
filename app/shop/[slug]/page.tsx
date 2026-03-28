@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import { getProductBySlug } from '@/lib/mock-data';
+import { getProductBySlug } from '@/lib/db';
 import { ProductDetail } from './product-detail';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return { title: 'Proizvod nije pronađen' };
   return {
     title: `${product.name} — ${product.brand}`,
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
   const jsonLd = {

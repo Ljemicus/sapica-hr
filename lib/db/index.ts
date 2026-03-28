@@ -14,3 +14,4 @@ export { getTrainers, getTrainer, getPrograms, getTrainerReviews } from './train
 export { getArticles, getArticle, getRelatedArticles } from './blog';
 export { getCategories, getTopics, getTopic, getPosts, getTrendingTopics } from './forum';
 export { getLostPets, getLostPet } from './lost-pets';
+export { getProducts, getProductBySlug, getProductReviews, getRelatedProducts } from './products';
