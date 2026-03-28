@@ -247,7 +247,7 @@ export default function UvjetiPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-4">10. Intelektualno vlasništvo</h2>
             <p className="text-gray-600 leading-relaxed">
               Sav sadržaj platforme PetPark (logotipi, dizajn, tekst, grafike) zaštićen je autorskim pravima
-              i vlasništvo je Šapice. Nije dopušteno kopiranje, distribucija ili komercijalna upotreba
+              i vlasništvo je PetParka. Nije dopušteno kopiranje, distribucija ili komercijalna upotreba
               sadržaja bez prethodnog pisanog odobrenja.
             </p>
           </section>

@@ -918,7 +918,7 @@ Skratite dlaku između prstiju jer se u njoj nakuplja led i stvara bolne grudice
 
 Prvo, čitajte recenzije. Iskustva drugih vlasnika su najbolji pokazatelj kvalitete. Obratite pažnju na komentare o komunikaciji, fotke koje sitter šalje i kako se nosi s nepredviđenim situacijama.
 
-Verificirani sitteri na Šapici prošli su provjeru identiteta i pozadine. To je prvi filter, ali ne i jedini. Organizirajte upoznavanje — kemija između sittera i vašeg ljubimca je ključna.
+Verificirani sitteri na PetParku prošli su provjeru identiteta i pozadine. To je prvi filter, ali ne i jedini. Organizirajte upoznavanje — kemija između sittera i vašeg ljubimca je ključna.
 
 Pitajte o iskustvu s vašom pasminom. Nije isto čuvati čivavu i njemačkog ovčara. Dobar sitter zna razlike i prilagođava pristup. Pitajte i o hitnim situacijama — ima li plan, zna li put do veterinara?
 
@@ -1004,7 +1004,7 @@ Nokti se šišaju svaka 2-3 tjedna. Koristite giljotina ili škare za nokte. Re�
 
 Uši čistite jednom tjedno vatenim štapićem i otopinom za čišćenje ušiju. Nikad ne gurajte duboko u ušni kanal. Crvene, smrdljive ili ljepljive uši su znak infekcije — posjetite veterinara.
 
-Za profesionalno šišanje, trimanje i spa tretmane prepustite posao stručnjacima. Pogledajte naše groomere na Šapici i pronađite savršeni salon u vašem gradu!`,
+Za profesionalno šišanje, trimanje i spa tretmane prepustite posao stručnjacima. Pogledajte naše groomere na PetParku i pronađite savršeni salon u vašem gradu!`,
     author: 'Salon PetPark',
     date: '2026-03-15',
     category: 'zdravlje',

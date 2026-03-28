@@ -93,7 +93,7 @@ export function RegisterForm() {
         <div className="absolute top-10 -right-10 w-40 h-40 bg-white rounded-full opacity-10" />
         <div className="relative text-center text-white p-12 max-w-md">
           <PawLogo className="h-16 w-16 mx-auto mb-6 opacity-90" />
-          <h2 className="text-3xl font-bold mb-4">Pridružite se Šapici!</h2>
+          <h2 className="text-3xl font-bold mb-4">Pridružite se PetParku!</h2>
           <p className="text-white/80 text-lg leading-relaxed">
             {selectedRole === 'sitter'
               ? 'Zarađujte radeći ono što volite — čuvajte ljubimce u svom gradu i postanite dio naše zajednice.'

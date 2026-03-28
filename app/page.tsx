@@ -23,8 +23,8 @@ const featuredSitters = [
 ];
 
 const testimonials = [
-  { name: 'Marina K.', city: 'Rijeka', text: 'Ana je bila nevjerojatna s našim Rexom! Slala nam je fotke svaki dan i Rex se vratio sretan. Definitivno koristimo Šapicu opet!', rating: 5 },
-  { name: 'Tomislav B.', city: 'Zagreb', text: 'Filip je spasio naš godišnji odmor! Buddy je bio u sigurnim rukama i uživao je u velikom vrtu. Hvala Šapici na ovoj usluzi!', rating: 5 },
+  { name: 'Marina K.', city: 'Rijeka', text: 'Ana je bila nevjerojatna s našim Rexom! Slala nam je fotke svaki dan i Rex se vratio sretan. Definitivno koristimo PetPark opet!', rating: 5 },
+  { name: 'Tomislav B.', city: 'Zagreb', text: 'Filip je spasio naš godišnji odmor! Buddy je bio u sigurnim rukama i uživao je u velikom vrtu. Hvala PetParku na ovoj usluzi!', rating: 5 },
   { name: 'Nina Š.', city: 'Zagreb', text: 'Kao vlasnica mačke s dijabetesom, teško je naći nekoga tko zna dati inzulin. Marko je bio profesionalan i Whiskers je bio savršeno zbrinut.', rating: 5 },
 ];
 
@@ -154,10 +154,10 @@ export default async function HomePage() {
                 { href: '/izgubljeni', emoji: '🚨', label: 'Izgubljeni', color: 'from-red-50 to-rose-50 hover:from-red-100 hover:to-rose-100' },
                 { href: '/forum', emoji: '💬', label: 'Forum', color: 'from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100' },
                 { href: '/zajednica', emoji: '📝', label: 'Blog', color: 'from-purple-50 to-violet-50 hover:from-purple-100 hover:to-violet-100' },
-                { href: '/shop', emoji: '🛍️', label: 'Shop', color: 'from-amber-50 to-yellow-50 hover:from-amber-100 hover:to-yellow-100' },
+                { href: '/ljubimac/pet11111-1111-1111-1111-111111111111/karton', emoji: '🏥', label: 'Putovnica', color: 'from-teal-50 to-cyan-50 hover:from-teal-100 hover:to-cyan-100' },
               ].map((item, i) => (
                 <Link
-                  key={item.href}
+                  key={`${item.href}-${i}`}
                   href={item.href}
                   className={`flex flex-col items-center gap-2 p-4 rounded-xl bg-gradient-to-br ${item.color} transition-all duration-200 hover:shadow-md hover:scale-[1.02] group animate-fade-in-up`}
                 >

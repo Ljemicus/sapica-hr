@@ -84,7 +84,7 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['postati sitter', 'biti sitter', 'ponuditi usluge', 'čuvar', 'cuvar', 'kako biti čuvar'],
-    response: 'Želiš čuvati ljubimce? Super! 🎉\n\n1️⃣ Registriraj se na Šapici\n2️⃣ Kreiraj sitter profil\n3️⃣ Postavi svoje cijene i dostupnost\n4️⃣ Dodaj opis i slike\n\nI čekaj prve bookinge! Što bolji profil, više upita. 📸',
+    response: 'Želiš čuvati ljubimce? Super! 🎉\n\n1️⃣ Registriraj se na PetParku\n2️⃣ Kreiraj sitter profil\n3️⃣ Postavi svoje cijene i dostupnost\n4️⃣ Dodaj opis i slike\n\nI čekaj prve bookinge! Što bolji profil, više upita. 📸',
     category: 'registration',
   },
   {
@@ -106,7 +106,7 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['grooming', 'njega', 'šišanje', 'sisanje', 'kupanje', 'groomer'],
-    response: 'Grooming usluge su dostupne na Šapici! ✂️ Pogledaj sekciju "Njega" na stranici za:\n\n• Šišanje i stiliziranje\n• Kupanje i njegu dlake\n• Rezanje noktiju\n• Čišćenje ušiju\n\n👉 petpark.vercel.app/njega',
+    response: 'Grooming usluge su dostupne na PetParku! ✂️ Pogledaj sekciju "Njega" na stranici za:\n\n• Šišanje i stiliziranje\n• Kupanje i njegu dlake\n• Rezanje noktiju\n• Čišćenje ušiju\n\n👉 petpark.vercel.app/njega',
     category: 'services',
   },
   {
@@ -179,7 +179,7 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['prijedlog', 'sugestija', 'ideja', 'feature', 'poboljšanje', 'poboljsanje', 'dodati'],
-    response: 'Volimo prijedloge! 💡 Javi nam svoju ideju na info@petpark.hr ili ovdje u chatu. Svaki feedback nam pomaže napraviti Šapicu boljom za sve! 🐾',
+    response: 'Volimo prijedloge! 💡 Javi nam svoju ideju na info@petpark.hr ili ovdje u chatu. Svaki feedback nam pomaže napraviti PetPark boljim za sve! 🐾',
     category: 'contact',
   },
 
@@ -196,7 +196,7 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['bok', 'hej', 'hello', 'hi', 'pozdrav', 'cao', 'zdravo', 'dobro jutro', 'dobar dan'],
-    response: 'Bok! 👋🐾 Kako ti mogu pomoći? Pitaj me bilo što o Šapici!',
+    response: 'Bok! 👋🐾 Kako ti mogu pomoći? Pitaj me bilo što o PetParku!',
     category: 'general',
   },
 ];
