@@ -379,13 +379,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Why Šapica Section ── */}
+      {/* ── Why PetPark Section ── */}
       <section className="py-20 md:py-28 bg-gradient-to-b from-white to-orange-50/30 relative overflow-hidden">
         <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
         <div className="container mx-auto px-4 relative">
           <div className="text-center mb-14">
-            <Badge variant="secondary" className="mb-4 text-orange-600 bg-orange-50 border-0">Zašto Šapica</Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Što Šapica nudi više od ostalih</h2>
+            <Badge variant="secondary" className="mb-4 text-orange-600 bg-orange-50 border-0">Zašto PetPark</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Što PetPark nudi više od ostalih</h2>
             <p className="text-muted-foreground text-lg max-w-lg mx-auto">Napredne značajke za potpuni mir i kontrolu</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">

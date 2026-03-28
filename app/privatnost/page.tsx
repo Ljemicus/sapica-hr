@@ -3,8 +3,8 @@ import { Shield, Mail, Lock, Eye, Trash2, Download, PenLine } from 'lucide-react
 import { Card, CardContent } from '@/components/ui/card';
 
 export const metadata: Metadata = {
-  title: 'Politika privatnosti | Šapica',
-  description: 'Politika privatnosti platforme Šapica. Saznajte kako prikupljamo, koristimo i štitimo vaše osobne podatke.',
+  title: 'Politika privatnosti | PetPark',
+  description: 'Politika privatnosti platforme PetPark. Saznajte kako prikupljamo, koristimo i štitimo vaše osobne podatke.',
 };
 
 export default function PrivatnostPage() {
@@ -31,14 +31,14 @@ export default function PrivatnostPage() {
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Voditelj obrade podataka</h2>
             <p className="text-gray-600 leading-relaxed mb-3">
-              Voditelj obrade vaših osobnih podataka je Šapica d.o.o., sa sjedištem u Zagrebu, Hrvatska,
+              Voditelj obrade vaših osobnih podataka je PetPark d.o.o., sa sjedištem u Zagrebu, Hrvatska,
               dostupna na adresi{' '}
-              <a href="https://sapica.vercel.app" className="text-orange-600 hover:underline">sapica.vercel.app</a>.
+              <a href="https://petpark.vercel.app" className="text-orange-600 hover:underline">petpark.vercel.app</a>.
             </p>
             <div className="bg-orange-50 rounded-xl p-4 text-sm text-gray-600">
               <p className="font-semibold text-gray-900 mb-1">Službenik za zaštitu podataka (DPO)</p>
-              <p>Email: <a href="mailto:dpo@sapica.hr" className="text-orange-600 hover:underline">dpo@sapica.hr</a></p>
-              <p>Adresa: Šapica d.o.o., Ilica 1, 10000 Zagreb, Hrvatska</p>
+              <p>Email: <a href="mailto:dpo@petpark.hr" className="text-orange-600 hover:underline">dpo@petpark.hr</a></p>
+              <p>Adresa: PetPark d.o.o., Ilica 1, 10000 Zagreb, Hrvatska</p>
             </div>
           </section>
 
@@ -131,7 +131,7 @@ export default function PrivatnostPage() {
             </div>
             <p className="text-gray-600 mt-4">
               Za ostvarivanje bilo kojeg od navedenih prava, kontaktirajte nas na{' '}
-              <a href="mailto:info@sapica.hr" className="text-orange-600 hover:underline">info@sapica.hr</a>.
+              <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline">info@petpark.hr</a>.
               Na vaš zahtjev odgovorit ćemo u roku od 30 dana.
             </p>
           </section>
@@ -193,7 +193,7 @@ export default function PrivatnostPage() {
                 <h2 className="text-xl font-bold text-gray-900 mb-2">Imate pitanja?</h2>
                 <p className="text-gray-600">
                   Za sva pitanja vezana uz zaštitu vaših osobnih podataka, obratite nam se na{' '}
-                  <a href="mailto:info@sapica.hr" className="text-orange-600 hover:underline font-medium">info@sapica.hr</a>.
+                  <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline font-medium">info@petpark.hr</a>.
                 </p>
               </div>
             </div>

@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Nemate pristup.' }, { status: 401 });
   }
 
-  const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://sapica.vercel.app';
+  const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.vercel.app';
 
   let body: { bookingId: string };
   try {
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
       amountInCents,
       booking.currency || 'EUR',
       sitterProfile.stripe_account_id,
-      `Šapica — ${serviceName}`,
+      `PetPark — ${serviceName}`,
       origin
     );
 

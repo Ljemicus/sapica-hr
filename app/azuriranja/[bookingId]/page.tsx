@@ -4,7 +4,7 @@ import { getBooking, getUpdatesByBooking, getUser, getPet } from '@/lib/db';
 import { UpdatesFeed } from './updates-feed';
 
 export const metadata: Metadata = {
-  title: 'Ažuriranja — Šapica',
+  title: 'Ažuriranja — PetPark',
 };
 
 export default async function UpdatesPage({ params }: { params: Promise<{ bookingId: string }> }) {

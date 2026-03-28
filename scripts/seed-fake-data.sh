@@ -1,5 +1,5 @@
 #!/bin/bash
-# Seed Šapica database with realistic fake data
+# Seed PetPark database with realistic fake data
 set -e
 
 cd "$(dirname "$0")/.."
@@ -23,7 +23,7 @@ post() {
   fi
 }
 
-echo "🐾 Seeding Šapica database..."
+echo "🐾 Seeding PetPark database..."
 
 # ── OWNERS (5 vlasnika) ──
 echo ""

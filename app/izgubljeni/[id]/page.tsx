@@ -71,7 +71,7 @@ export async function generateMetadata({ params }: LostPetPageProps): Promise<Me
     title,
     description,
     openGraph: {
-      title: `${title} — Šapica`,
+      title: `${title} — PetPark`,
       description,
       type: 'article',
       images: pet.image_url ? [

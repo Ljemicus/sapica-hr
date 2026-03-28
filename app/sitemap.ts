@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { mockSitterProfiles, mockGroomers, mockTrainers, mockProducts, mockArticles, mockForumTopics } from '@/lib/mock-data';
 
-const BASE_URL = 'https://sapica.vercel.app';
+const BASE_URL = 'https://petpark.vercel.app';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = [

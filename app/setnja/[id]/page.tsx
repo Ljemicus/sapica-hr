@@ -4,7 +4,7 @@ import { getWalk, getUser, getPet } from '@/lib/db';
 import { WalkTracker } from './walk-tracker';
 
 export const metadata: Metadata = {
-  title: 'GPS Tracking šetnje — Šapica',
+  title: 'GPS Tracking šetnje — PetPark',
 };
 
 export default async function WalkPage({ params }: { params: Promise<{ id: string }> }) {

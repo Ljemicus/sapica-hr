@@ -233,7 +233,7 @@ export function ShopContent() {
       <section className="bg-gradient-to-br from-orange-500 via-orange-400 to-amber-400 text-white py-12 md:py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-3xl md:text-5xl font-bold mb-3 animate-fade-in-up">
-            Šapica Shop — Sve za vašeg ljubimca 🛍️
+            PetPark Shop — Sve za vašeg ljubimca 🛍️
           </h1>
           <p className="text-orange-100 text-lg max-w-xl mx-auto mb-6 animate-fade-in-up delay-100">
             Pronađite najbolje proizvode za svog ljubimca — od hrane do igračaka, sve na jednom mjestu.

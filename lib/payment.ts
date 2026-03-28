@@ -56,7 +56,7 @@ export async function createCheckoutSession(
   const stripe = getStripe();
   const platformFee = Math.round(amount * PLATFORMA_FEE);
 
-  const baseUrl = origin || process.env.NEXT_PUBLIC_APP_URL || 'https://sapica.vercel.app';
+  const baseUrl = origin || process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.vercel.app';
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
@@ -65,7 +65,7 @@ export async function createCheckoutSession(
         price_data: {
           currency: currency.toLowerCase(),
           product_data: {
-            name: serviceName || 'Šapica — Usluga za ljubimce',
+            name: serviceName || 'PetPark — Usluga za ljubimce',
             description: `Rezervacija #${bookingId.slice(0, 8)}`,
           },
           unit_amount: amount,
@@ -111,11 +111,11 @@ export async function createConnectAccount(
     },
     business_type: 'individual',
     metadata: {
-      sapica_user_id: sitterData.id,
+      petpark_user_id: sitterData.id,
     },
   });
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sapica.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.vercel.app';
 
   const accountLink = await stripe.accountLinks.create({
     account: account.id,
@@ -134,7 +134,7 @@ export async function createAccountLink(
   stripeAccountId: string
 ): Promise<string> {
   const stripe = getStripe();
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sapica.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.vercel.app';
 
   const accountLink = await stripe.accountLinks.create({
     account: stripeAccountId,

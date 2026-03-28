@@ -3,8 +3,8 @@ import { FileText, Mail, AlertTriangle, Users, ShieldCheck, BookOpen, Ban, Credi
 import { Card, CardContent } from '@/components/ui/card';
 
 export const metadata: Metadata = {
-  title: 'Uvjeti korištenja | Šapica',
-  description: 'Uvjeti korištenja platforme Šapica. Pravila i odgovornosti korisnika, čuvara ljubimaca i vlasnika.',
+  title: 'Uvjeti korištenja | PetPark',
+  description: 'Uvjeti korištenja platforme PetPark. Pravila i odgovornosti korisnika, čuvara ljubimaca i vlasnika.',
 };
 
 export default function UvjetiPage() {
@@ -18,7 +18,7 @@ export default function UvjetiPage() {
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Uvjeti korištenja</h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Korištenjem platforme Šapica prihvaćate ove uvjete. Molimo vas da ih pažljivo pročitate.
+            Korištenjem platforme PetPark prihvaćate ove uvjete. Molimo vas da ih pažljivo pročitate.
           </p>
           <p className="text-sm text-gray-400 mt-4">Posljednje ažuriranje: 24. ožujka 2026.</p>
         </div>
@@ -31,7 +31,7 @@ export default function UvjetiPage() {
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Opći uvjeti</h2>
             <p className="text-gray-600 leading-relaxed">
-              Šapica (<a href="https://sapica.vercel.app" className="text-orange-600 hover:underline">sapica.vercel.app</a>)
+              PetPark (<a href="https://petpark.vercel.app" className="text-orange-600 hover:underline">petpark.vercel.app</a>)
               je online platforma koja povezuje vlasnike ljubimaca s čuvarima (sitterima), groomerima i trenerima.
               Korištenjem naše platforme pristajete na ove uvjete korištenja. Ako se ne slažete s ovim uvjetima,
               molimo vas da ne koristite platformu.
@@ -101,7 +101,7 @@ export default function UvjetiPage() {
             <div className="space-y-3 text-gray-600 leading-relaxed">
               <p>
                 Rezervacije se dogovaraju izravno između vlasnika i sittera putem platforme.
-                Šapica služi kao posrednik koji omogućuje povezivanje korisnika.
+                PetPark služi kao posrednik koji omogućuje povezivanje korisnika.
               </p>
               <p>
                 Cijene usluga određuje sitter u svom profilu. Konačna cijena i uvjeti dogovaraju se
@@ -157,7 +157,7 @@ export default function UvjetiPage() {
             </div>
             <div className="space-y-3 text-gray-600 leading-relaxed">
               <p>
-                Šapica je platforma koja povezuje vlasnike ljubimaca i pružatelje usluga.
+                PetPark je platforma koja povezuje vlasnike ljubimaca i pružatelje usluga.
                 Ne pružamo usluge čuvanja, njege ili dresure ljubimaca izravno.
               </p>
               <p>
@@ -186,7 +186,7 @@ export default function UvjetiPage() {
                 putem Stripe platnog sustava.
               </p>
               <p>
-                Šapica naplaćuje <strong>proviziju od 15%</strong> na svaku uspješno obavljenu rezervaciju.
+                PetPark naplaćuje <strong>proviziju od 15%</strong> na svaku uspješno obavljenu rezervaciju.
                 Provizija se automatski odbija od ukupnog iznosa prije isplate sitteru/pružatelju usluge.
               </p>
               <p>
@@ -229,7 +229,7 @@ export default function UvjetiPage() {
             <div className="space-y-3 text-gray-600 leading-relaxed">
               <p>
                 Možete u bilo kojem trenutku zatvoriti svoj korisnički račun kontaktiranjem korisničke podrške
-                na <a href="mailto:info@sapica.hr" className="text-orange-600 hover:underline">info@sapica.hr</a>.
+                na <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline">info@petpark.hr</a>.
               </p>
               <p>Zadržavamo pravo suspendirati ili trajno ukinuti korisnički račun u slučaju:</p>
               <ul className="space-y-2 ml-4">
@@ -246,7 +246,7 @@ export default function UvjetiPage() {
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">10. Intelektualno vlasništvo</h2>
             <p className="text-gray-600 leading-relaxed">
-              Sav sadržaj platforme Šapica (logotipi, dizajn, tekst, grafike) zaštićen je autorskim pravima
+              Sav sadržaj platforme PetPark (logotipi, dizajn, tekst, grafike) zaštićen je autorskim pravima
               i vlasništvo je Šapice. Nije dopušteno kopiranje, distribucija ili komercijalna upotreba
               sadržaja bez prethodnog pisanog odobrenja.
             </p>
@@ -282,7 +282,7 @@ export default function UvjetiPage() {
                 <h2 className="text-xl font-bold text-gray-900 mb-2">Trebate pojašnjenje?</h2>
                 <p className="text-gray-600">
                   Za sva pitanja vezana uz ove uvjete korištenja, obratite nam se na{' '}
-                  <a href="mailto:info@sapica.hr" className="text-orange-600 hover:underline font-medium">info@sapica.hr</a>.
+                  <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline font-medium">info@petpark.hr</a>.
                 </p>
               </div>
             </div>

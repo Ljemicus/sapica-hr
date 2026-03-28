@@ -59,7 +59,7 @@ export function Navbar() {
       <div className="container mx-auto flex items-center justify-between px-4 h-full">
         <Link href="/" className="flex items-center gap-2 font-bold text-xl group">
           <PawLogo className="h-7 w-7 text-orange-500 group-hover:scale-110 transition-transform" />
-          <span className="text-orange-500 tracking-tight">Šapica</span>
+          <span className="text-orange-500 tracking-tight">PetPark</span>
         </Link>
 
         {/* Desktop Nav */}

@@ -1,4 +1,4 @@
-// Šapica AI Customer Support - Knowledge Base
+// PetPark AI Customer Support - Knowledge Base
 // Pure client-side, zero cost
 
 export interface KBEntry {
@@ -43,16 +43,16 @@ export function findBestMatch(input: string): string {
     return bestMatch.response;
   }
 
-  return 'Hmm, nisam siguran/na da razumijem. 🤔 Možeš li preformulirati pitanje? Ili nas kontaktiraj na info@sapica.hr!';
+  return 'Hmm, nisam siguran/na da razumijem. 🤔 Možeš li preformulirati pitanje? Ili nas kontaktiraj na info@petpark.hr!';
 }
 
-export const WELCOME_MESSAGE = 'Bok! 🐾 Ja sam Šapica asistent. Kako ti mogu pomoći?\n\nMogu ti pomoći s:\n• Registracijom i prijavom\n• Pretraživanjem sittera\n• Bookingom i plaćanjem\n• Groomingom i dresurom\n• Forumom i zajednicom';
+export const WELCOME_MESSAGE = 'Bok! 🐾 Ja sam PetPark asistent. Kako ti mogu pomoći?\n\nMogu ti pomoći s:\n• Registracijom i prijavom\n• Pretraživanjem sittera\n• Bookingom i plaćanjem\n• Groomingom i dresurom\n• Forumom i zajednicom';
 
 export const knowledgeBase: KBEntry[] = [
   // === OPĆENITO ===
   {
-    keywords: ['što je šapica', 'sto je sapica', 'šapica', 'o čemu', 'o cemu', 'što je ovo', 'sto je ovo'],
-    response: 'Šapica je hrvatski marketplace za ljubimce! 🐾 Povezujemo vlasnike ljubimaca s pouzdanim čuvarima (sitterima), grooming salonima i trenerima za dresuru. Besplatno pretraži, pronađi savršenog čuvara i bookaj — sve na jednom mjestu.',
+    keywords: ['što je petpark', 'sto je petpark', 'petpark', 'o čemu', 'o cemu', 'što je ovo', 'sto je ovo'],
+    response: 'PetPark je hrvatski marketplace za ljubimce! 🐾 Povezujemo vlasnike ljubimaca s pouzdanim čuvarima (sitterima), grooming salonima i trenerima za dresuru. Besplatno pretraži, pronađi savršenog čuvara i bookaj — sve na jednom mjestu.',
     category: 'general',
   },
   {
@@ -67,19 +67,19 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['grad', 'gradovi', 'lokacija', 'gdje', 'rijeka', 'zagreb', 'split', 'osijek', 'pula', 'zadar'],
-    response: 'Šapica pokriva cijelu Hrvatsku! 🇭🇷 Trenutno imamo najviše sittera u: Rijeci, Zagrebu, Splitu, Osijeku, Puli i Zadru. Ali radimo na širenju — novi sitteri se prijavljuju svaki dan!',
+    response: 'PetPark pokriva cijelu Hrvatsku! 🇭🇷 Trenutno imamo najviše sittera u: Rijeci, Zagrebu, Splitu, Osijeku, Puli i Zadru. Ali radimo na širenju — novi sitteri se prijavljuju svaki dan!',
     category: 'general',
   },
 
   // === REGISTRACIJA ===
   {
     keywords: ['registracija', 'registrirati', 'signup', 'sign up', 'napraviti račun', 'napraviti racun', 'otvoriti račun'],
-    response: 'Registracija je brza i besplatna! ✨\n\n• **Email + lozinka** — klasični način\n• **Google prijava** — jedan klik i gotovo\n\nIdi na sapica.vercel.app i klikni "Prijava" u gornjem desnom kutu.',
+    response: 'Registracija je brza i besplatna! ✨\n\n• **Email + lozinka** — klasični način\n• **Google prijava** — jedan klik i gotovo\n\nIdi na petpark.vercel.app i klikni "Prijava" u gornjem desnom kutu.',
     category: 'registration',
   },
   {
     keywords: ['prijaviti', 'prijava', 'login', 'ulogirati', 'ne mogu se prijaviti', 'ne radi prijava'],
-    response: 'Za prijavu koristi email + lozinku ili Google račun. Ako imaš problema:\n\n• Provjeri je li email točan\n• Pokušaj resetirati lozinku\n• Probaj Google prijavu\n\nAko i dalje ne radi, javi nam se na info@sapica.hr i riješimo to! 💪',
+    response: 'Za prijavu koristi email + lozinku ili Google račun. Ako imaš problema:\n\n• Provjeri je li email točan\n• Pokušaj resetirati lozinku\n• Probaj Google prijavu\n\nAko i dalje ne radi, javi nam se na info@petpark.hr i riješimo to! 💪',
     category: 'registration',
   },
   {
@@ -89,7 +89,7 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['obrisati račun', 'brisanje', 'izbrisati', 'deaktivirati', 'ukinuti račun'],
-    response: 'Za brisanje računa kontaktiraj nas na info@sapica.hr i sredimo to u najkraćem roku. 📧',
+    response: 'Za brisanje računa kontaktiraj nas na info@petpark.hr i sredimo to u najkraćem roku. 📧',
     category: 'registration',
   },
   {
@@ -106,12 +106,12 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['grooming', 'njega', 'šišanje', 'sisanje', 'kupanje', 'groomer'],
-    response: 'Grooming usluge su dostupne na Šapici! ✂️ Pogledaj sekciju "Njega" na stranici za:\n\n• Šišanje i stiliziranje\n• Kupanje i njegu dlake\n• Rezanje noktiju\n• Čišćenje ušiju\n\n👉 sapica.vercel.app/njega',
+    response: 'Grooming usluge su dostupne na Šapici! ✂️ Pogledaj sekciju "Njega" na stranici za:\n\n• Šišanje i stiliziranje\n• Kupanje i njegu dlake\n• Rezanje noktiju\n• Čišćenje ušiju\n\n👉 petpark.vercel.app/njega',
     category: 'services',
   },
   {
     keywords: ['dresura', 'trening', 'trener', 'obuka', 'školovanje psa', 'skolovanje', 'agility'],
-    response: 'Dresura i trening pasa! 🎓 U sekciji "Dresura" možeš pronaći:\n\n• Individualne trenere\n• Grupne obuke\n• Agility trening\n• Socijalizaciju\n\n👉 sapica.vercel.app/dresura',
+    response: 'Dresura i trening pasa! 🎓 U sekciji "Dresura" možeš pronaći:\n\n• Individualne trenere\n• Grupne obuke\n• Agility trening\n• Socijalizaciju\n\n👉 petpark.vercel.app/dresura',
     category: 'services',
   },
   {
@@ -128,7 +128,7 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['otkazati', 'otkazivanje', 'cancel', 'ne mogu doći', 'ne mogu doci'],
-    response: 'Booking se može otkazati prije početka usluge. Svaki sitter ima svoja pravila otkazivanja na profilu. Za hitne situacije, kontaktiraj sittera direktno ili nam piši na info@sapica.hr 📞',
+    response: 'Booking se može otkazati prije početka usluge. Svaki sitter ima svoja pravila otkazivanja na profilu. Za hitne situacije, kontaktiraj sittera direktno ili nam piši na info@petpark.hr 📞',
     category: 'booking',
   },
   {
@@ -157,36 +157,36 @@ export const knowledgeBase: KBEntry[] = [
   // === FORUM ===
   {
     keywords: ['forum', 'zajednica', 'community', 'pitanje', 'savjet', 'priča', 'objava'],
-    response: 'Naš forum je super za ljubitelje životinja! 💬\n\n• 💡 **Pitanja** — pitaj što te zanima\n• 📝 **Savjeti** — dijeli iskustva\n• ❤️ **Priče** — slatke i smiješne priče o ljubimcima\n• 🔍 **Izgubljeni ljubimci** — pomozi pronaći izgubljene životinje\n\n👉 sapica.vercel.app/forum',
+    response: 'Naš forum je super za ljubitelje životinja! 💬\n\n• 💡 **Pitanja** — pitaj što te zanima\n• 📝 **Savjeti** — dijeli iskustva\n• ❤️ **Priče** — slatke i smiješne priče o ljubimcima\n• 🔍 **Izgubljeni ljubimci** — pomozi pronaći izgubljene životinje\n\n👉 petpark.vercel.app/forum',
     category: 'forum',
   },
   {
     keywords: ['izgubljen', 'izgubljena', 'nestao', 'nestala', 'tražim', 'trazim', 'pronađen'],
-    response: 'Oh ne! 😟 Ako je tvoj ljubimac nestao, objavi na našem forumu u kategoriji "Izgubljeni ljubimci" — zajednica pomogne! 🔍\n\n👉 sapica.vercel.app/forum\n\nDodaj sliku, lokaciju i kontakt. Držimo fige! 🤞🐾',
+    response: 'Oh ne! 😟 Ako je tvoj ljubimac nestao, objavi na našem forumu u kategoriji "Izgubljeni ljubimci" — zajednica pomogne! 🔍\n\n👉 petpark.vercel.app/forum\n\nDodaj sliku, lokaciju i kontakt. Držimo fige! 🤞🐾',
     category: 'forum',
   },
 
   // === KONTAKT / PROBLEMI ===
   {
     keywords: ['kontakt', 'email', 'mail', 'javiti', 'pomoć', 'pomoc', 'support', 'podrška', 'podrska'],
-    response: 'Možeš nas kontaktirati na:\n\n📧 **info@sapica.hr**\n💬 Discord #customer-support\n\nOdgovaramo u najkraćem mogućem roku! 🚀',
+    response: 'Možeš nas kontaktirati na:\n\n📧 **info@petpark.hr**\n💬 Discord #customer-support\n\nOdgovaramo u najkraćem mogućem roku! 🚀',
     category: 'contact',
   },
   {
     keywords: ['bug', 'greška', 'greska', 'ne radi', 'error', 'problem', 'kvari', 'crashira'],
-    response: 'Ups, sorry za problem! 🔧 Javi nam detalje:\n\n• Što se točno dogodilo?\n• Na kojem uređaju/browseru?\n• Ako možeš, pošalji screenshot\n\n📧 info@sapica.hr ili ovdje u chatu — pogledamo odmah!',
+    response: 'Ups, sorry za problem! 🔧 Javi nam detalje:\n\n• Što se točno dogodilo?\n• Na kojem uređaju/browseru?\n• Ako možeš, pošalji screenshot\n\n📧 info@petpark.hr ili ovdje u chatu — pogledamo odmah!',
     category: 'contact',
   },
   {
     keywords: ['prijedlog', 'sugestija', 'ideja', 'feature', 'poboljšanje', 'poboljsanje', 'dodati'],
-    response: 'Volimo prijedloge! 💡 Javi nam svoju ideju na info@sapica.hr ili ovdje u chatu. Svaki feedback nam pomaže napraviti Šapicu boljom za sve! 🐾',
+    response: 'Volimo prijedloge! 💡 Javi nam svoju ideju na info@petpark.hr ili ovdje u chatu. Svaki feedback nam pomaže napraviti Šapicu boljom za sve! 🐾',
     category: 'contact',
   },
 
   // === APP ===
   {
     keywords: ['aplikacija', 'app', 'mobitel', 'telefon', 'android', 'iphone', 'ios', 'instalirati'],
-    response: 'Šapica radi kao web app! 📱 Možeš je instalirati na mobitel:\n\n**Android:** Otvori sapica.vercel.app u Chromeu → "Dodaj na početni zaslon"\n**iPhone:** Otvori u Safariju → Dijeli → "Dodaj na početni zaslon"\n\nRadi kao prava aplikacija! 🚀',
+    response: 'PetPark radi kao web app! 📱 Možeš je instalirati na mobitel:\n\n**Android:** Otvori petpark.vercel.app u Chromeu → "Dodaj na početni zaslon"\n**iPhone:** Otvori u Safariju → Dijeli → "Dodaj na početni zaslon"\n\nRadi kao prava aplikacija! 🚀',
     category: 'app',
   },
   {

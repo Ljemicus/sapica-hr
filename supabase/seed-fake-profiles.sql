@@ -1,5 +1,5 @@
 -- ============================================================
--- SEED: Fake profiles for Šapica demo
+-- SEED: Fake profiles for PetPark demo
 -- Run this in Supabase SQL Editor (Dashboard → SQL Editor)
 -- ============================================================
 

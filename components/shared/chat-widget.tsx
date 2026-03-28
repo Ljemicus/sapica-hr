@@ -100,7 +100,7 @@ export function ChatWidget() {
             <div className="flex items-center gap-2">
               <span className="text-lg">🐾</span>
               <div>
-                <h3 className="font-semibold text-sm">Šapica Podrška</h3>
+                <h3 className="font-semibold text-sm">PetPark Podrška</h3>
                 <p className="text-[11px] text-orange-100">Uvijek tu za tebe i tvog ljubimca</p>
               </div>
             </div>

@@ -46,7 +46,7 @@ export function Footer() {
           <div>
             <Link href="/" className="flex items-center gap-2 font-bold text-xl text-white mb-4 group">
               <PawLogo className="h-7 w-7 text-orange-400 group-hover:scale-110 transition-transform" />
-              <span className="text-orange-400">Šapica</span>
+              <span className="text-orange-400">PetPark</span>
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed mb-6">
               Povežite se s pouzdanim čuvarima ljubimaca u vašem gradu.
@@ -65,7 +65,7 @@ export function Footer() {
             </div>
           </div>
           <div>
-            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Šapica</h3>
+            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">PetPark</h3>
             <ul className="space-y-3 text-sm">
               <li><Link href="/pretraga" className="hover:text-orange-400 transition-colors">Pretraži sittere</Link></li>
               <li><Link href="/njega" className="hover:text-orange-400 transition-colors">Grooming & Njega</Link></li>
@@ -90,7 +90,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-orange-400 flex-shrink-0" />
-                <span>info@sapica.hr</span>
+                <span>info@petpark.hr</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-orange-400 flex-shrink-0" />
@@ -108,7 +108,7 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-          <p>&copy; 2026 Šapica d.o.o. Sva prava pridržana.</p>
+          <p>&copy; 2026 PetPark d.o.o. Sva prava pridržana.</p>
           <div className="flex items-center gap-4 text-xs">
             <Link href="/privatnost" className="hover:text-orange-400 transition-colors">Privatnost</Link>
             <Link href="/uvjeti" className="hover:text-orange-400 transition-colors">Uvjeti</Link>

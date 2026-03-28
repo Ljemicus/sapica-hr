@@ -20,7 +20,7 @@ INSERT INTO public.users (id, email, name, role, avatar_url, phone, city) VALUES
 ('88888888-8888-8888-8888-888888888888', 'ivan@demo.hr', 'Ivan Knežević', 'sitter', '/images/sitters/ivan.jpg', '+385 98 901 2345', 'Zagreb'),
 ('99999999-9999-9999-9999-999999999999', 'tomislav@demo.hr', 'Tomislav Bašić', 'owner', '/images/owners/tomislav.jpg', '+385 91 012 3456', 'Rijeka'),
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'nina@demo.hr', 'Nina Šimunović', 'owner', '/images/owners/nina.jpg', '+385 92 123 4567', 'Zagreb'),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'admin@sapica.hr', 'Admin Šapica', 'admin', NULL, NULL, 'Zagreb'),
+('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'admin@petpark.hr', 'Admin PetPark', 'admin', NULL, NULL, 'Zagreb'),
 ('00111111-1111-1111-1111-111111111111', 'katarina@demo.hr', 'Katarina Tomić', 'sitter', NULL, '+385 91 111 2233', 'Osijek'),
 ('00222222-2222-2222-2222-222222222222', 'ante@demo.hr', 'Ante Pavlović', 'sitter', NULL, '+385 92 222 3344', 'Split'),
 ('00333333-3333-3333-3333-333333333333', 'lucija@demo.hr', 'Lucija Vuković', 'sitter', NULL, '+385 93 333 4455', 'Pula'),
@@ -219,7 +219,7 @@ INSERT INTO public.products (id, slug, name, category, price, original_price, de
 -- ════════════════════════════════════════════════════════
 
 INSERT INTO public.groomers (id, name, city, services, prices, rating, review_count, bio, verified, specialization) VALUES
-('01000001-0001-0001-0001-000000000001', 'Salon Šapica Glam', 'Zagreb', '["sisanje","kupanje","trimanje","nokti","spa"]'::jsonb, '{"sisanje":35,"kupanje":25,"trimanje":40,"nokti":10,"spa":60}'::jsonb, 4.9, 47, 'Najmoderniji salon za uljepšavanje ljubimaca u Zagrebu. 10 godina iskustva s svim pasminama.', true, 'oba'),
+('01000001-0001-0001-0001-000000000001', 'Salon PetPark Glam', 'Zagreb', '["sisanje","kupanje","trimanje","nokti","spa"]'::jsonb, '{"sisanje":35,"kupanje":25,"trimanje":40,"nokti":10,"spa":60}'::jsonb, 4.9, 47, 'Najmoderniji salon za uljepšavanje ljubimaca u Zagrebu. 10 godina iskustva s svim pasminama.', true, 'oba'),
 ('01000001-0001-0001-0001-000000000002', 'PetStyle Rijeka', 'Rijeka', '["sisanje","kupanje","trimanje","nokti"]'::jsonb, '{"sisanje":30,"kupanje":20,"trimanje":35,"nokti":8}'::jsonb, 4.7, 32, 'Profesionalni grooming salon u srcu Rijeke. Koristimo samo prirodnu kozmetiku.', true, 'psi'),
 ('01000001-0001-0001-0001-000000000003', 'Mačji Raj', 'Zagreb', '["kupanje","trimanje","nokti","spa"]'::jsonb, '{"kupanje":30,"trimanje":45,"nokti":12,"spa":55}'::jsonb, 4.8, 23, 'Specijalizirani salon za mačke. Tiha atmosfera i nježan pristup vašoj maci.', true, 'macke'),
 ('01000001-0001-0001-0001-000000000004', 'Grooming Studio Split', 'Split', '["sisanje","kupanje","trimanje","nokti"]'::jsonb, '{"sisanje":28,"kupanje":18,"trimanje":32,"nokti":8}'::jsonb, 4.6, 19, 'Moderni studio za njegu pasa i mačaka u Splitu. Specijalizirani za show grooming.', true, 'oba'),

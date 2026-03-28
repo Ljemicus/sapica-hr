@@ -13,7 +13,7 @@ export function NotificationPrompt() {
 
   useEffect(() => {
     if (!user) return;
-    const dismissed = localStorage.getItem('sapica-notif-dismissed');
+    const dismissed = localStorage.getItem('petpark-notif-dismissed');
     if (dismissed) return;
 
     const timer = setTimeout(() => setShow(true), 5000);
@@ -26,7 +26,7 @@ export function NotificationPrompt() {
       if (permission === 'granted') {
         await mockSubscribe();
         toast.success('Obavijesti su uključene! Primit ćete obavijesti o novim porukama.');
-        localStorage.setItem('sapica-notif-dismissed', 'true');
+        localStorage.setItem('petpark-notif-dismissed', 'true');
       } else {
         toast.info('Obavijesti su onemogućene u pregledniku.');
       }
@@ -37,7 +37,7 @@ export function NotificationPrompt() {
   };
 
   const handleDismiss = () => {
-    localStorage.setItem('sapica-notif-dismissed', 'true');
+    localStorage.setItem('petpark-notif-dismissed', 'true');
     setShow(false);
   };
 

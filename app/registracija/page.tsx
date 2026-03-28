@@ -4,7 +4,7 @@ import { RegisterForm } from './register-form';
 
 export const metadata: Metadata = {
   title: 'Registracija',
-  description: 'Kreirajte svoj Šapica račun',
+  description: 'Kreirajte svoj PetPark račun',
 };
 
 export default function RegisterPage() {

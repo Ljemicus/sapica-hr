@@ -22,7 +22,7 @@ export const mockUsers: User[] = [
   { id: '99999999-9999-9999-9999-999999999999', email: 'tomislav@demo.hr', name: 'Tomislav Bašić', role: 'owner', avatar_url: null, phone: '+385 91 012 3456', city: 'Rijeka', created_at: '2025-06-01T10:00:00Z' },
   { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', email: 'nina@demo.hr', name: 'Nina Šimunović', role: 'owner', avatar_url: null, phone: '+385 92 123 4567', city: 'Zagreb', created_at: '2025-07-15T10:00:00Z' },
   // ADMIN
-  { id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', email: 'admin@sapica.hr', name: 'Admin Šapica', role: 'admin', avatar_url: null, phone: null, city: 'Zagreb', created_at: '2025-01-01T10:00:00Z' },
+  { id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', email: 'admin@petpark.hr', name: 'Admin PetPark', role: 'admin', avatar_url: null, phone: null, city: 'Zagreb', created_at: '2025-01-01T10:00:00Z' },
 ];
 
 // ============================================================
@@ -786,7 +786,7 @@ export function getPetPassport(petId: string) {
 // ============================================================
 
 export const mockGroomers: Groomer[] = [
-  { id: 'gr-1', name: 'Salon Šapica', city: 'Zagreb', services: ['sisanje', 'kupanje', 'trimanje', 'nokti', 'spa'], prices: { sisanje: 35, kupanje: 25, trimanje: 40, nokti: 15, spa: 60 }, rating: 4.9, reviews: 42, bio: 'Premium grooming salon u centru Zagreba. Specijalizirani smo za sve pasmine pasa i mačaka. Koristimo isključivo profesionalnu kozmetiku.', verified: true, specialization: 'oba' },
+  { id: 'gr-1', name: 'Salon PetPark', city: 'Zagreb', services: ['sisanje', 'kupanje', 'trimanje', 'nokti', 'spa'], prices: { sisanje: 35, kupanje: 25, trimanje: 40, nokti: 15, spa: 60 }, rating: 4.9, reviews: 42, bio: 'Premium grooming salon u centru Zagreba. Specijalizirani smo za sve pasmine pasa i mačaka. Koristimo isključivo profesionalnu kozmetiku.', verified: true, specialization: 'oba' },
   { id: 'gr-2', name: 'Petra Grooming', city: 'Rijeka', services: ['sisanje', 'kupanje', 'trimanje'], prices: { sisanje: 30, kupanje: 20, trimanje: 35, nokti: 0, spa: 0 }, rating: 4.8, reviews: 28, bio: 'Mobilan grooming servis u Rijeci. Dolazim na vašu adresu s kompletnom opremom. Nježan pristup svakom ljubimcu.', verified: true, specialization: 'psi' },
   { id: 'gr-3', name: 'Mačji Raj', city: 'Split', services: ['kupanje', 'trimanje', 'nokti'], prices: { sisanje: 0, kupanje: 30, trimanje: 35, nokti: 12, spa: 0 }, rating: 4.7, reviews: 19, bio: 'Jedini specijalizirani salon za mačke u Splitu. Mirno okruženje bez pasa, prilagođeno osjetljivim mačkama.', verified: true, specialization: 'macke' },
   { id: 'gr-4', name: 'DogStyle Studio', city: 'Zagreb', services: ['sisanje', 'kupanje', 'spa'], prices: { sisanje: 40, kupanje: 30, trimanje: 0, nokti: 0, spa: 70 }, rating: 4.9, reviews: 56, bio: 'Luksuzni spa tretmani za pse. Aromaterapija, masaža i premium njega. Vaš ljubimac zaslužuje najbolje!', verified: true, specialization: 'psi' },
@@ -1005,7 +1005,7 @@ Nokti se šišaju svaka 2-3 tjedna. Koristite giljotina ili škare za nokte. Re�
 Uši čistite jednom tjedno vatenim štapićem i otopinom za čišćenje ušiju. Nikad ne gurajte duboko u ušni kanal. Crvene, smrdljive ili ljepljive uši su znak infekcije — posjetite veterinara.
 
 Za profesionalno šišanje, trimanje i spa tretmane prepustite posao stručnjacima. Pogledajte naše groomere na Šapici i pronađite savršeni salon u vašem gradu!`,
-    author: 'Salon Šapica',
+    author: 'Salon PetPark',
     date: '2026-03-15',
     category: 'zdravlje',
     emoji: '✂️',
@@ -1455,7 +1455,7 @@ export interface GroomerReview {
 }
 
 export const mockGroomerReviews: GroomerReview[] = [
-  // gr-1 Salon Šapica (5 recenzija)
+  // gr-1 Salon PetPark (5 recenzija)
   { id: 'grev-1', groomer_id: 'gr-1', author_name: 'Marina Kovač', author_initial: 'M', rating: 5, comment: 'Izvrsna usluga! Moj zlatni retriver izgleda predivno nakon šišanja. Osoblje je nježno i profesionalno.', created_at: '2026-03-10T14:00:00Z' },
   { id: 'grev-2', groomer_id: 'gr-1', author_name: 'Tomislav Barić', author_initial: 'T', rating: 5, comment: 'Najbolji salon u Zagrebu. Naš pudlica je uvijek savršeno ošišan. Koristimo ih već 2 godine.', created_at: '2026-02-28T10:00:00Z' },
   { id: 'grev-3', groomer_id: 'gr-1', author_name: 'Ana Perković', author_initial: 'A', rating: 5, comment: 'Spa tretman je bio fantastičan! Moj malinoiz je izašao potpuno opušten i miriše predivno.', created_at: '2026-02-15T16:00:00Z' },

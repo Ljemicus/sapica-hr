@@ -19,32 +19,32 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://sapica.vercel.app'),
+  metadataBase: new URL('https://petpark.vercel.app'),
   title: {
-    default: 'Šapica — Pronađite čuvara za svog ljubimca',
-    template: '%s | Šapica',
+    default: 'PetPark — Pronađite čuvara za svog ljubimca',
+    template: '%s | PetPark',
   },
-  description: 'Šapica je hrvatski marketplace za čuvanje kućnih ljubimaca. Pronađite pouzdane sittere u vašem gradu ili zaradite čuvajući ljubimce. Čuvanje, šetanje, grooming i dresura.',
+  description: 'PetPark je hrvatski marketplace za čuvanje kućnih ljubimaca. Pronađite pouzdane sittere u vašem gradu ili zaradite čuvajući ljubimce. Čuvanje, šetanje, grooming i dresura.',
   keywords: [
     'pet sitting', 'čuvanje ljubimaca', 'šetanje pasa', 'grooming', 'dresura pasa',
     'čuvar za pse', 'čuvar za mačke', 'pet sitter Hrvatska',
     'Zagreb', 'Split', 'Rijeka', 'Osijek', 'Pula', 'Zadar',
   ],
-  authors: [{ name: 'Šapica' }],
-  creator: 'Šapica',
-  publisher: 'Šapica',
+  authors: [{ name: 'PetPark' }],
+  creator: 'PetPark',
+  publisher: 'PetPark',
   formatDetection: { telephone: true, email: true },
   openGraph: {
-    title: 'Šapica — Pronađite čuvara za svog ljubimca',
+    title: 'PetPark — Pronađite čuvara za svog ljubimca',
     description: 'Povežite se s pouzdanim čuvarima ljubimaca u vašem gradu. 500+ sittera, 50+ gradova u Hrvatskoj.',
     type: 'website',
     locale: 'hr_HR',
-    url: 'https://sapica.vercel.app',
-    siteName: 'Šapica',
+    url: 'https://petpark.vercel.app',
+    siteName: 'PetPark',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Šapica — Pronađite čuvara za svog ljubimca',
+    title: 'PetPark — Pronađite čuvara za svog ljubimca',
     description: 'Povežite se s pouzdanim čuvarima ljubimaca u vašem gradu. 500+ sittera, 50+ gradova u Hrvatskoj.',
   },
   robots: {
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
   },
-  alternates: { canonical: 'https://sapica.vercel.app' },
+  alternates: { canonical: 'https://petpark.vercel.app' },
   icons: {
     icon: [
       {
@@ -75,11 +75,11 @@ export default function RootLayout({
         <meta name="theme-color" content="#f97316" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Šapica" />
+        <meta name="apple-mobile-web-app-title" content="PetPark" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <Script
           defer
-          data-domain="sapica.vercel.app"
+          data-domain="petpark.vercel.app"
           src="https://plausible.io/js/script.js"
           strategy="afterInteractive"
         />
@@ -89,10 +89,10 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'Organization',
-              name: 'Šapica',
-              alternateName: 'Sapica d.o.o.',
-              url: 'https://sapica.vercel.app',
-              logo: 'https://sapica.vercel.app/opengraph-image',
+              name: 'PetPark',
+              alternateName: 'PetPark d.o.o.',
+              url: 'https://petpark.vercel.app',
+              logo: 'https://petpark.vercel.app/opengraph-image',
               description: 'Hrvatski marketplace za čuvanje kućnih ljubimaca. Pronađite pouzdane sittere u vašem gradu.',
               address: {
                 '@type': 'PostalAddress',
@@ -101,7 +101,7 @@ export default function RootLayout({
               },
               contactPoint: {
                 '@type': 'ContactPoint',
-                email: 'info@sapica.hr',
+                email: 'info@petpark.hr',
                 telephone: '+385-1-234-5678',
                 contactType: 'customer service',
                 availableLanguage: 'Croatian',

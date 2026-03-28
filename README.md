@@ -1,6 +1,6 @@
-# 🐾 Šapica — Hrvatski Pet Sitting Marketplace
+# 🐾 PetPark — Hrvatski Pet Sitting Marketplace
 
-Šapica je moderna web aplikacija za pronalaženje pouzdanih čuvara kućnih ljubimaca u Hrvatskoj. Slična Rover.com platformi, prilagođena hrvatskom tržištu.
+PetPark je moderna web aplikacija za pronalaženje pouzdanih čuvara kućnih ljubimaca u Hrvatskoj. Slična Rover.com platformi, prilagođena hrvatskom tržištu.
 
 ## ✨ Značajke
 
@@ -38,7 +38,7 @@
 
 ```bash
 git clone <repo-url>
-cd sapica
+cd petpark
 npm install
 ```
 

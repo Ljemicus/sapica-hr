@@ -4,7 +4,7 @@ import { getPet, getPassport } from '@/lib/db';
 import { PetPassportView } from './pet-passport';
 
 export const metadata: Metadata = {
-  title: 'Zdravstveni karton — Šapica',
+  title: 'Zdravstveni karton — PetPark',
 };
 
 export default async function PetPassportPage({ params }: { params: Promise<{ id: string }> }) {

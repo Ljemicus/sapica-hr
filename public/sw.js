@@ -1,4 +1,4 @@
-// Šapica Service Worker for Push Notifications
+// PetPark Service Worker for Push Notifications
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -10,7 +10,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('push', (event) => {
   const defaultData = {
-    title: 'Šapica',
+    title: 'PetPark',
     body: 'Imate novu obavijest!',
     icon: '/icons/icon-192.png',
     badge: '/icons/icon-192.png',

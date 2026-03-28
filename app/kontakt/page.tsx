@@ -86,7 +86,7 @@ export default function KontaktPage() {
                 </div>
                 <div>
                   <p className="font-medium text-sm text-gray-900">Email</p>
-                  <p className="text-sm text-gray-500">info@sapica.hr</p>
+                  <p className="text-sm text-gray-500">info@petpark.hr</p>
                 </div>
               </CardContent>
             </Card>
@@ -211,10 +211,10 @@ export default function KontaktPage() {
           <div className="space-y-4 max-w-3xl mx-auto">
             {[
               { q: 'Kako se registrirati kao sitter?', a: 'Kliknite "Registracija" i odaberite opciju "Sitter". Ispunite profil, dodajte opis iskustva i postavite cijene za usluge koje nudite.' },
-              { q: 'Je li korištenje platforme besplatno?', a: 'Da, registracija i pretraživanje su potpuno besplatni. Šapica naplaćuje proviziju od 15% samo na uspješno obavljene rezervacije.' },
+              { q: 'Je li korištenje platforme besplatno?', a: 'Da, registracija i pretraživanje su potpuno besplatni. PetPark naplaćuje proviziju od 15% samo na uspješno obavljene rezervacije.' },
               { q: 'Kako funkcionira plaćanje?', a: 'Plaćanje se vrši sigurno putem Stripe-a. Novac se zadržava dok vlasnik ne potvrdi da je usluga uspješno obavljena.' },
               { q: 'Što ako sitter otkaže rezervaciju?', a: 'U slučaju otkazivanja, vlasnik dobiva potpuni povrat novca. Ponovljena otkazivanja mogu rezultirati suspenzijom sitterovog računa.' },
-              { q: 'Kako mogu kontaktirati korisničku podršku?', a: 'Pošaljite nam poruku putem forme iznad, email na info@sapica.hr ili pozovite +385 1 234 5678 radnim danima od 9 do 17h.' },
+              { q: 'Kako mogu kontaktirati korisničku podršku?', a: 'Pošaljite nam poruku putem forme iznad, email na info@petpark.hr ili pozovite +385 1 234 5678 radnim danima od 9 do 17h.' },
             ].map((faq, i) => (
               <Card key={i} className="border-0 shadow-sm">
                 <CardContent className="p-5">

@@ -1,5 +1,5 @@
 -- ════════════════════════════════════════════════════════
--- Šapica — Payment infrastructure (Stripe Connect)
+-- PetPark — Payment infrastructure (Stripe Connect)
 -- ════════════════════════════════════════════════════════
 
 -- Add Stripe fields to sitter_profiles

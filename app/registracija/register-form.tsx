@@ -118,7 +118,7 @@ export function RegisterForm() {
           <div className="text-center mb-8 animate-fade-in-up">
             <PawLogo className="h-12 w-12 text-orange-500 mx-auto mb-4 lg:hidden" />
             <h1 className="text-3xl font-bold">Registracija</h1>
-            <p className="text-muted-foreground mt-2">Kreirajte svoj Šapica račun</p>
+            <p className="text-muted-foreground mt-2">Kreirajte svoj PetPark račun</p>
           </div>
 
           {/* Role Selection */}

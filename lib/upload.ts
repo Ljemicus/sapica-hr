@@ -63,7 +63,7 @@ export async function uploadPetPhoto(petId: string, file: File): Promise<UploadR
  * Dohvati javni URL za datoteku u bucketu.
  */
 export function getPublicUrl(bucket: string, path: string): string {
-  if (!isSupabaseReady()) return `https://sapica-storage.supabase.co/storage/v1/object/public/${bucket}/${path}`;
+  if (!isSupabaseReady()) return `https://petpark-storage.supabase.co/storage/v1/object/public/${bucket}/${path}`;
   const supabase = createClient();
   const { data } = supabase.storage.from(bucket).getPublicUrl(path);
   return data.publicUrl;
@@ -116,7 +116,7 @@ export async function mockUpload(
   const ext = file.name.split('.').pop() || 'jpg';
   const id = Math.random().toString(36).substring(2, 10);
   const fakePath = `${bucket}/${id}.${ext}`;
-  const fakeUrl = `https://sapica-storage.supabase.co/storage/v1/object/public/${fakePath}`;
+  const fakeUrl = `https://petpark-storage.supabase.co/storage/v1/object/public/${fakePath}`;
 
   return {
     url: fakeUrl,

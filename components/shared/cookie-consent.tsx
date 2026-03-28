@@ -11,7 +11,7 @@ export function CookieConsent() {
   const [analytics, setAnalytics] = useState(true);
 
   useEffect(() => {
-    const consent = localStorage.getItem('sapica-cookie-consent');
+    const consent = localStorage.getItem('petpark-cookie-consent');
     if (!consent) {
       const timer = setTimeout(() => setShow(true), 1500);
       return () => clearTimeout(timer);
@@ -19,12 +19,12 @@ export function CookieConsent() {
   }, []);
 
   const accept = () => {
-    localStorage.setItem('sapica-cookie-consent', JSON.stringify({ essential: true, analytics: true, date: new Date().toISOString() }));
+    localStorage.setItem('petpark-cookie-consent', JSON.stringify({ essential: true, analytics: true, date: new Date().toISOString() }));
     setShow(false);
   };
 
   const saveSettings = () => {
-    localStorage.setItem('sapica-cookie-consent', JSON.stringify({ essential: true, analytics, date: new Date().toISOString() }));
+    localStorage.setItem('petpark-cookie-consent', JSON.stringify({ essential: true, analytics, date: new Date().toISOString() }));
     setShow(false);
     setShowSettings(false);
   };

@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/dashboard/', '/admin/', '/poruke/'],
     },
-    sitemap: 'https://sapica.vercel.app/sitemap.xml',
+    sitemap: 'https://petpark.vercel.app/sitemap.xml',
   };
 }
