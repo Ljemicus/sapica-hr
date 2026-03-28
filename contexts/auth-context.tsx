@@ -3,7 +3,14 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
+import { getMockUserIdClient, clearMockUserClient } from '@/lib/mock-auth-client';
 import type { User } from '@/lib/types';
+
+function isSupabaseConfiguredClient(): boolean {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  return !!(url && url.length > 0 && !url.includes('placeholder') && key && key.length > 0 && !key.includes('placeholder'));
+}
 
 interface AuthContextType {
   user: User | null;
@@ -37,7 +44,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (data) return data as User;
 
-    // Fallback: construct from auth metadata if profile not in DB yet
     const meta = authUser.user_metadata;
     return {
       id: authUser.id,
@@ -52,7 +58,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase]);
 
   useEffect(() => {
-    // Get initial session
+    if (!isSupabaseConfiguredClient()) {
+      // Mock auth mode: čitaj user iz cookie-a
+      loadMockUser();
+      return;
+    }
+
+    // Supabase auth mode
     supabase.auth.getSession().then(async ({ data: { session: s } }) => {
       setSession(s);
       setSupabaseUser(s?.user ?? null);
@@ -63,7 +75,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
-    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, s) => {
         setSession(s);
@@ -81,8 +92,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, [supabase, fetchUserProfile]);
 
+  async function loadMockUser() {
+    const mockUserId = getMockUserIdClient();
+    if (mockUserId) {
+      // Fetch mock user data from API
+      try {
+        const res = await fetch(`/api/auth/me`);
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+        }
+      } catch {
+        // Ignore - user stays null
+      }
+    }
+    setLoading(false);
+  }
+
   const signOut = useCallback(async () => {
-    await supabase.auth.signOut();
+    if (isSupabaseConfiguredClient()) {
+      await supabase.auth.signOut();
+    } else {
+      clearMockUserClient();
+    }
     setUser(null);
     setSupabaseUser(null);
     setSession(null);

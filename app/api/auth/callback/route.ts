@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { isSupabaseConfigured } from '@/lib/db/helpers';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
   const next = searchParams.get('next') || '/';
 
+  if (!isSupabaseConfigured()) {
+    return NextResponse.redirect(`${origin}${next}`);
+  }
+
   if (code) {
+    const { createServerClient } = await import('@supabase/ssr');
+    const { cookies } = await import('next/headers');
     const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -29,7 +34,6 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && data.user) {
-      // Ensure user profile exists in public.users
       const { data: existing } = await supabase
         .from('users')
         .select('id')
@@ -52,6 +56,5 @@ export async function GET(request: Request) {
     }
   }
 
-  // If something went wrong, redirect to login with error
   return NextResponse.redirect(`${origin}/prijava`);
 }

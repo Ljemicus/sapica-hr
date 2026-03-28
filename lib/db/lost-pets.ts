@@ -1,4 +1,9 @@
 import { createClient } from '@/lib/supabase/server';
+import { isSupabaseConfigured } from './helpers';
+import {
+  getLostPets as mockGetLostPets,
+  getLostPetById as mockGetLostPet,
+} from '@/lib/mock-data';
 import type { LostPet, LostPetSpecies, LostPetStatus } from '@/lib/types';
 
 interface LostPetFilters {
@@ -8,6 +13,9 @@ interface LostPetFilters {
 }
 
 export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> {
+  if (!isSupabaseConfigured()) {
+    return mockGetLostPets(filters);
+  }
   try {
     const supabase = await createClient();
     let query = supabase
@@ -26,14 +34,17 @@ export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> 
     }
 
     const { data, error } = await query;
-    if (error || !data) return [];
+    if (error || !data) return mockGetLostPets(filters);
     return data as LostPet[];
   } catch {
-    return [];
+    return mockGetLostPets(filters);
   }
 }
 
 export async function getLostPet(id: string): Promise<LostPet | null> {
+  if (!isSupabaseConfigured()) {
+    return mockGetLostPet(id) ?? null;
+  }
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -41,9 +52,9 @@ export async function getLostPet(id: string): Promise<LostPet | null> {
       .select('*')
       .eq('id', id)
       .single();
-    if (error || !data) return null;
+    if (error || !data) return mockGetLostPet(id) ?? null;
     return data as LostPet;
   } catch {
-    return null;
+    return mockGetLostPet(id) ?? null;
   }
 }

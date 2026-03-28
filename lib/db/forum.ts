@@ -1,9 +1,17 @@
 import { createClient } from '@/lib/supabase/server';
+import { isSupabaseConfigured } from './helpers';
+import {
+  getForumTopics as mockGetTopics,
+  getForumTopicById as mockGetTopic,
+  getForumCommentsForTopic as mockGetComments,
+  getTrendingTopics as mockGetTrending,
+} from '@/lib/mock-data';
 import type {
   ForumCategory,
   ForumCategorySlug,
   ForumTopic,
   ForumPost,
+  ForumComment,
 } from '@/lib/types';
 import { FORUM_CATEGORIES as CATEGORIES } from '@/lib/types';
 
@@ -12,6 +20,9 @@ export async function getCategories(): Promise<ForumCategory[]> {
 }
 
 export async function getTopics(category?: ForumCategorySlug): Promise<ForumTopic[]> {
+  if (!isSupabaseConfigured()) {
+    return mockGetTopics(category);
+  }
   try {
     const supabase = await createClient();
     let query = supabase
@@ -25,14 +36,17 @@ export async function getTopics(category?: ForumCategorySlug): Promise<ForumTopi
     }
 
     const { data, error } = await query;
-    if (error || !data) return [];
+    if (error || !data) return mockGetTopics(category);
     return data as ForumTopic[];
   } catch {
-    return [];
+    return mockGetTopics(category);
   }
 }
 
 export async function getTopic(id: string): Promise<ForumTopic | null> {
+  if (!isSupabaseConfigured()) {
+    return mockGetTopic(id) ?? null;
+  }
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -40,14 +54,17 @@ export async function getTopic(id: string): Promise<ForumTopic | null> {
       .select('*')
       .eq('id', id)
       .single();
-    if (error || !data) return null;
+    if (error || !data) return mockGetTopic(id) ?? null;
     return data as ForumTopic;
   } catch {
-    return null;
+    return mockGetTopic(id) ?? null;
   }
 }
 
-export async function getPosts(topicId: string): Promise<ForumPost[]> {
+export async function getPosts(topicId: string): Promise<(ForumPost | ForumComment)[]> {
+  if (!isSupabaseConfigured()) {
+    return mockGetComments(topicId);
+  }
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -55,14 +72,17 @@ export async function getPosts(topicId: string): Promise<ForumPost[]> {
       .select('*')
       .eq('topic_id', topicId)
       .order('created_at', { ascending: true });
-    if (error || !data) return [];
+    if (error || !data) return mockGetComments(topicId);
     return data as ForumPost[];
   } catch {
-    return [];
+    return mockGetComments(topicId);
   }
 }
 
 export async function getTrendingTopics(): Promise<ForumTopic[]> {
+  if (!isSupabaseConfigured()) {
+    return mockGetTrending();
+  }
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -70,9 +90,9 @@ export async function getTrendingTopics(): Promise<ForumTopic[]> {
       .select('*')
       .order('likes', { ascending: false })
       .limit(5);
-    if (error || !data) return [];
+    if (error || !data) return mockGetTrending();
     return data as ForumTopic[];
   } catch {
-    return [];
+    return mockGetTrending();
   }
 }

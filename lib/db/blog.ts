@@ -1,7 +1,16 @@
 import { createClient } from '@/lib/supabase/server';
+import { isSupabaseConfigured } from './helpers';
+import {
+  getArticles as mockGetArticles,
+  getArticleBySlug as mockGetArticle,
+  getRelatedArticles as mockGetRelated,
+} from '@/lib/mock-data';
 import type { Article, BlogCategory } from '@/lib/types';
 
 export async function getArticles(category?: BlogCategory): Promise<Article[]> {
+  if (!isSupabaseConfigured()) {
+    return mockGetArticles(category);
+  }
   try {
     const supabase = await createClient();
     let query = supabase.from('articles').select('*').order('date', { ascending: false });
@@ -11,14 +20,17 @@ export async function getArticles(category?: BlogCategory): Promise<Article[]> {
     }
 
     const { data, error } = await query;
-    if (error || !data) return [];
+    if (error || !data) return mockGetArticles(category);
     return data as Article[];
   } catch {
-    return [];
+    return mockGetArticles(category);
   }
 }
 
 export async function getArticle(slug: string): Promise<Article | null> {
+  if (!isSupabaseConfigured()) {
+    return mockGetArticle(slug) ?? null;
+  }
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -26,10 +38,10 @@ export async function getArticle(slug: string): Promise<Article | null> {
       .select('*')
       .eq('slug', slug)
       .single();
-    if (error || !data) return null;
+    if (error || !data) return mockGetArticle(slug) ?? null;
     return data as Article;
   } catch {
-    return null;
+    return mockGetArticle(slug) ?? null;
   }
 }
 
@@ -37,19 +49,20 @@ export async function getRelatedArticles(
   slug: string,
   limit: number = 3
 ): Promise<Article[]> {
+  if (!isSupabaseConfigured()) {
+    return mockGetRelated(slug, limit);
+  }
   try {
     const supabase = await createClient();
 
-    // First get the current article to find its category
     const { data: current, error: currentError } = await supabase
       .from('articles')
       .select('category')
       .eq('slug', slug)
       .single();
 
-    if (currentError || !current) return [];
+    if (currentError || !current) return mockGetRelated(slug, limit);
 
-    // Get articles in same category first
     const { data: sameCat, error: sameCatError } = await supabase
       .from('articles')
       .select('*')
@@ -60,7 +73,6 @@ export async function getRelatedArticles(
 
     const related = (sameCatError || !sameCat ? [] : sameCat) as Article[];
 
-    // If not enough, fill with other articles
     if (related.length < limit) {
       const excludeSlugs = [slug, ...related.map((a) => a.slug)];
       const { data: others, error: othersError } = await supabase
@@ -77,6 +89,6 @@ export async function getRelatedArticles(
 
     return related;
   } catch {
-    return [];
+    return mockGetRelated(slug, limit);
   }
 }

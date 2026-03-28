@@ -1,18 +1,31 @@
 import { createClient } from '@/lib/supabase/server';
+import { isSupabaseConfigured } from './helpers';
+import {
+  getWalkById as mockGetWalk,
+  getWalksForUser as mockGetWalksForUser,
+  getActiveWalksForSitter as mockGetActiveWalks,
+  mockWalks,
+} from '@/lib/mock-data';
 import type { Walk } from '@/lib/types';
 
 export async function getWalk(id: string): Promise<Walk | null> {
+  if (!isSupabaseConfigured()) {
+    return mockGetWalk(id) ?? null;
+  }
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('walks').select('*').eq('id', id).single();
-    if (error || !data) return null;
+    if (error || !data) return mockGetWalk(id) ?? null;
     return data as Walk;
   } catch {
-    return null;
+    return mockGetWalk(id) ?? null;
   }
 }
 
 export async function getWalksByBooking(bookingId: string): Promise<Walk[]> {
+  if (!isSupabaseConfigured()) {
+    return mockWalks.filter((w) => w.booking_id === bookingId);
+  }
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -20,25 +33,26 @@ export async function getWalksByBooking(bookingId: string): Promise<Walk[]> {
       .select('*')
       .eq('booking_id', bookingId)
       .order('start_time', { ascending: false });
-    if (error || !data) return [];
+    if (error || !data) return mockWalks.filter((w) => w.booking_id === bookingId);
     return data as Walk[];
   } catch {
-    return [];
+    return mockWalks.filter((w) => w.booking_id === bookingId);
   }
 }
 
 export async function getWalksForUser(userId: string): Promise<Walk[]> {
+  if (!isSupabaseConfigured()) {
+    return mockGetWalksForUser(userId);
+  }
   try {
     const supabase = await createClient();
 
-    // Get walks where user is the sitter
     const { data: sitterWalks, error: sitterError } = await supabase
       .from('walks')
       .select('*')
       .eq('sitter_id', userId)
       .order('start_time', { ascending: false });
 
-    // Get user's pet IDs to find walks involving their pets
     const { data: pets } = await supabase
       .from('pets')
       .select('id')
@@ -60,7 +74,6 @@ export async function getWalksForUser(userId: string): Promise<Walk[]> {
 
     const allWalks = [...(sitterError || !sitterWalks ? [] : (sitterWalks as Walk[])), ...ownerWalks];
 
-    // Deduplicate by id
     const seen = new Set<string>();
     return allWalks.filter((w) => {
       if (seen.has(w.id)) return false;
@@ -68,11 +81,14 @@ export async function getWalksForUser(userId: string): Promise<Walk[]> {
       return true;
     });
   } catch {
-    return [];
+    return mockGetWalksForUser(userId);
   }
 }
 
 export async function getActiveWalksForSitter(sitterId: string): Promise<Walk[]> {
+  if (!isSupabaseConfigured()) {
+    return mockGetActiveWalks(sitterId);
+  }
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -81,9 +97,9 @@ export async function getActiveWalksForSitter(sitterId: string): Promise<Walk[]>
       .eq('sitter_id', sitterId)
       .eq('status', 'u_tijeku')
       .order('start_time', { ascending: false });
-    if (error || !data) return [];
+    if (error || !data) return mockGetActiveWalks(sitterId);
     return data as Walk[];
   } catch {
-    return [];
+    return mockGetActiveWalks(sitterId);
   }
 }

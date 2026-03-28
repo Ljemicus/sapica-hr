@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
-import { getPetsByOwner, getBookings, getReviewsBySitter, getWalksForUser, getUser, getPet } from '@/lib/db';
+import { getPetsByOwner, getBookings, getReviewedBookingIds, getWalksForUser, getUser, getPet } from '@/lib/db';
 import { OwnerDashboardContent } from './owner-dashboard-content';
 
 export const metadata: Metadata = {
@@ -17,14 +17,7 @@ export default async function OwnerDashboardPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const bookings = await getBookings(user.id, 'owner') as any[];
 
-  // Get reviews the user has written (reviewer_id = user.id)
-  const { createClient } = await import('@/lib/supabase/server');
-  const supabase = await createClient();
-  const { data: existingReviews } = await supabase
-    .from('reviews')
-    .select('booking_id')
-    .eq('reviewer_id', user.id);
-  const reviewedBookingIds = (existingReviews || []).map(r => r.booking_id);
+  const reviewedBookingIds = await getReviewedBookingIds(user.id);
 
   // Get active walks for owner's pets
   const ownerPetIds = pets.map(p => p.id);

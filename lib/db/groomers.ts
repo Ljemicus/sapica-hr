@@ -1,4 +1,11 @@
 import { createClient } from '@/lib/supabase/server';
+import { isSupabaseConfigured } from './helpers';
+import {
+  mockGroomers,
+  getGroomerById as mockGetGroomer,
+  getGroomers as mockGetGroomers,
+  getGroomerReviews as mockGetGroomerReviews,
+} from '@/lib/mock-data';
 import type { Groomer, GroomingServiceType } from '@/lib/types';
 
 interface GroomerFilters {
@@ -17,6 +24,9 @@ interface GroomerReview {
 }
 
 export async function getGroomers(filters?: GroomerFilters): Promise<Groomer[]> {
+  if (!isSupabaseConfigured()) {
+    return mockGetGroomers(filters ? { city: filters.city, service: filters.service } : undefined);
+  }
   try {
     const supabase = await createClient();
     let query = supabase.from('groomers').select('*');
@@ -26,38 +36,42 @@ export async function getGroomers(filters?: GroomerFilters): Promise<Groomer[]> 
     }
 
     const { data, error } = await query;
-    if (error || !data) return [];
+    if (error || !data) return mockGetGroomers(filters ? { city: filters.city, service: filters.service } : undefined);
 
     let results = data as Groomer[];
 
-    // Filter JSONB services in JS
     if (filters?.service) {
       results = results.filter(
         (g) => Array.isArray(g.services) && g.services.includes(filters.service!)
       );
     }
 
-    // Sort by rating descending
     results.sort((a, b) => b.rating - a.rating);
-
     return results;
   } catch {
-    return [];
+    return mockGetGroomers(filters ? { city: filters.city, service: filters.service } : undefined);
   }
 }
 
 export async function getGroomer(id: string): Promise<Groomer | null> {
+  if (!isSupabaseConfigured()) {
+    return mockGetGroomer(id) ?? null;
+  }
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('groomers').select('*').eq('id', id).single();
-    if (error || !data) return null;
+    if (error || !data) return mockGetGroomer(id) ?? null;
     return data as Groomer;
   } catch {
-    return null;
+    return mockGetGroomer(id) ?? null;
   }
 }
 
 export async function getGroomerReviews(groomerId: string): Promise<GroomerReview[]> {
+  if (!isSupabaseConfigured()) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return mockGetGroomerReviews(groomerId) as any[];
+  }
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -65,9 +79,13 @@ export async function getGroomerReviews(groomerId: string): Promise<GroomerRevie
       .select('*')
       .eq('groomer_id', groomerId)
       .order('created_at', { ascending: false });
-    if (error || !data) return [];
+    if (error || !data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return mockGetGroomerReviews(groomerId) as any[];
+    }
     return data as GroomerReview[];
   } catch {
-    return [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return mockGetGroomerReviews(groomerId) as any[];
   }
 }

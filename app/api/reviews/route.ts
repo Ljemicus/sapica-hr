@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getReviews, getReviewsBySitter, getBooking } from '@/lib/db';
+import { getReviews, getReviewsBySitter, getBooking, createReview } from '@/lib/db';
 import { reviewSchema } from '@/lib/validations';
-import { createClient } from '@/lib/supabase/server';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -30,19 +29,14 @@ export async function POST(request: Request) {
   if (booking.status !== 'completed') return NextResponse.json({ error: 'Booking not completed' }, { status: 400 });
   if (booking.owner_id !== user.id) return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
 
-  const supabase = await createClient();
-  const { data: review, error } = await supabase
-    .from('reviews')
-    .insert({
-      booking_id: parsed.data.booking_id,
-      reviewer_id: user.id,
-      reviewee_id: booking.sitter_id,
-      rating: parsed.data.rating,
-      comment: parsed.data.comment,
-    })
-    .select('*, reviewer:users!reviewer_id(*)')
-    .single();
+  const review = await createReview({
+    booking_id: parsed.data.booking_id,
+    reviewer_id: user.id,
+    reviewee_id: booking.sitter_id,
+    rating: parsed.data.rating,
+    comment: parsed.data.comment,
+  });
 
-  if (error || !review) return NextResponse.json({ error: 'Failed to create review' }, { status: 500 });
+  if (!review) return NextResponse.json({ error: 'Failed to create review' }, { status: 500 });
   return NextResponse.json(review, { status: 201 });
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { isSupabaseConfigured } from '@/lib/db/helpers';
+import { mockUsers } from '@/lib/mock-data';
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -9,6 +10,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
   }
 
+  if (!isSupabaseConfigured()) {
+    // Mock auth: pronađi usera po emailu
+    const mockUser = mockUsers.find((u) => u.email === email);
+    if (!mockUser) {
+      return NextResponse.json({ error: 'Korisnik nije pronađen' }, { status: 401 });
+    }
+    const response = NextResponse.json({ user: mockUser });
+    response.cookies.set('mock_user_id', mockUser.id, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30,
+      sameSite: 'lax',
+    });
+    return response;
+  }
+
+  const { createClient } = await import('@/lib/supabase/server');
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 

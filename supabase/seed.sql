@@ -17,7 +17,11 @@ INSERT INTO public.users (id, email, name, role, avatar_url, phone, city) VALUES
 ('88888888-8888-8888-8888-888888888888', 'ivan@demo.hr', 'Ivan Knežević', 'sitter', '/images/sitters/ivan.jpg', '+385 98 901 2345', 'Zagreb'),
 ('99999999-9999-9999-9999-999999999999', 'tomislav@demo.hr', 'Tomislav Bašić', 'owner', '/images/owners/tomislav.jpg', '+385 91 012 3456', 'Rijeka'),
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'nina@demo.hr', 'Nina Šimunović', 'owner', '/images/owners/nina.jpg', '+385 92 123 4567', 'Zagreb'),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'admin@sapica.hr', 'Admin Šapica', 'admin', NULL, NULL, 'Zagreb');
+('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'admin@sapica.hr', 'Admin Šapica', 'admin', NULL, NULL, 'Zagreb'),
+('cc111111-1111-1111-1111-111111111111', 'katarina@demo.hr', 'Katarina Tomić', 'sitter', NULL, '+385 91 111 2233', 'Osijek'),
+('cc222222-2222-2222-2222-222222222222', 'ante@demo.hr', 'Ante Pavlović', 'sitter', NULL, '+385 92 222 3344', 'Split'),
+('cc333333-3333-3333-3333-333333333333', 'lucija@demo.hr', 'Lucija Vuković', 'sitter', NULL, '+385 93 333 4455', 'Pula'),
+('cc444444-4444-4444-4444-444444444444', 'matej@demo.hr', 'Matej Šarić', 'sitter', NULL, '+385 94 444 5566', 'Zadar');
 
 -- Sitter Profiles
 INSERT INTO public.sitter_profiles (user_id, bio, experience_years, services, prices, verified, superhost, response_time, rating_avg, review_count, location_lat, location_lng, city, photos) VALUES
@@ -75,7 +79,35 @@ INSERT INTO public.sitter_profiles (user_id, bio, experience_years, services, pr
  6, '["boarding", "house-sitting", "drop-in"]'::jsonb,
  '{"boarding": 32, "house-sitting": 38, "drop-in": 16}'::jsonb,
  true, true, 'unutar 1 sata', 4.9, 27, 45.8100, 15.9700, 'Zagreb',
- '["/images/gallery/ivan1.jpg"]'::jsonb);
+ '["/images/gallery/ivan1.jpg"]'::jsonb),
+
+('cc111111-1111-1111-1111-111111111111',
+ 'Odrasla sam na farmi i obožavam sve životinje. U Osijeku imam kuću s velikim dvorištem. Posebno sam iskusna s velikim pasminama pasa i egzotičnim kućnim ljubimcima.',
+ 4, '["boarding", "walking", "daycare", "drop-in"]'::jsonb,
+ '{"boarding": 20, "walking": 7, "daycare": 15, "drop-in": 10}'::jsonb,
+ true, false, 'unutar 1 sata', 4.7, 14, 45.5550, 18.6955, 'Osijek',
+ '[]'::jsonb),
+
+('cc222222-2222-2222-2222-222222222222',
+ 'Bivši policijski trener pasa, sada u mirovini. Živim u kući blizu Marjana, savršeno za dugačke šetnje. Iskusan s agresivnim i plašljivim psima.',
+ 10, '["boarding", "walking", "house-sitting"]'::jsonb,
+ '{"boarding": 30, "walking": 12, "house-sitting": 35}'::jsonb,
+ true, true, 'unutar 30 minuta', 4.9, 35, 43.5147, 16.4435, 'Split',
+ '[]'::jsonb),
+
+('cc333333-3333-3333-3333-333333333333',
+ 'Studentica veterine na 4. godini. Živim u Puli blizu Arene s malim ali ugodnim stanom. Specijalizirana za mačke i male pse. Nudim i osnovnu njegu (kupanje, četkanje).',
+ 3, '["drop-in", "daycare", "house-sitting"]'::jsonb,
+ '{"drop-in": 10, "daycare": 16, "house-sitting": 28}'::jsonb,
+ true, false, 'unutar 2 sata', 4.6, 11, 44.8666, 13.8496, 'Pula',
+ '[]'::jsonb),
+
+('cc444444-4444-4444-4444-444444444444',
+ 'Radim kao fotograf pa imam fleksibilan raspored. Obožavam pse i imam tri vlastita. Kuća s dvorištem u mirnom dijelu Zadra, 5 minuta od plaže.',
+ 2, '["boarding", "walking", "daycare"]'::jsonb,
+ '{"boarding": 24, "walking": 9, "daycare": 17}'::jsonb,
+ true, false, 'unutar 1 sata', 4.5, 9, 44.1194, 15.2314, 'Zadar',
+ '[]'::jsonb);
 
 -- Pets
 INSERT INTO public.pets (id, owner_id, name, species, breed, age, weight, special_needs, photo_url) VALUES

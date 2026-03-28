@@ -1,8 +1,9 @@
+export { isSupabaseConfigured } from './helpers';
 export { getUser, getUsers, getUsersByRole } from './users';
-export { getPets, getPetsByOwner, getPet } from './pets';
+export { getPets, getPetsByOwner, getPet, createPet } from './pets';
 export { getSitters, getSitter } from './sitters';
-export { getBookings, getBooking, createBooking, updateBooking } from './bookings';
-export { getReviews, getReviewsBySitter } from './reviews';
+export { getBookings, getAllBookings, getBooking, createBooking, updateBooking } from './bookings';
+export { getReviews, getReviewsBySitter, getReviewedBookingIds, createReview } from './reviews';
 export { getMessages, getConversation, sendMessage } from './messages';
 export { getAvailability, setAvailability } from './availability';
 export { getWalk, getWalksByBooking, getWalksForUser, getActiveWalksForSitter } from './walks';
