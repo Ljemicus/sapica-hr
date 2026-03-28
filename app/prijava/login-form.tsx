@@ -88,7 +88,13 @@ export function LoginForm() {
           <div className="space-y-3 animate-fade-in-up delay-100">
             <button
               type="button"
-              onClick={() => toast.info('Apple Sign In će biti dostupan uskoro!')}
+              onClick={async () => {
+                const { error } = await supabase.auth.signInWithOAuth({
+                  provider: 'apple',
+                  options: { redirectTo: `${window.location.origin}/auth/callback` }
+                });
+                if (error) toast.error(error.message);
+              }}
               className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl bg-black text-white font-medium hover:bg-gray-800 transition-colors"
               disabled={loading}
             >
