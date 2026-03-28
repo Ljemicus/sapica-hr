@@ -31,6 +31,30 @@ export async function getUsers(): Promise<User[]> {
   }
 }
 
+export async function updateUserProfile(
+  id: string,
+  updates: Partial<Omit<User, 'id' | 'created_at'>>
+): Promise<User | null> {
+  if (!isSupabaseConfigured()) {
+    const user = getUserById(id);
+    if (!user) return null;
+    return { ...user, ...updates };
+  }
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error || !data) return null;
+    return data as User;
+  } catch {
+    return null;
+  }
+}
+
 export async function getUsersByRole(role: string): Promise<User[]> {
   if (!isSupabaseConfigured()) {
     return mockUsers.filter((u) => u.role === role);

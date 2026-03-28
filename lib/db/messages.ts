@@ -3,6 +3,49 @@ import { isSupabaseConfigured } from './helpers';
 import { getMessagesForUser as mockGetMessages } from '@/lib/mock-data';
 import type { Message } from '@/lib/types';
 
+export async function getConversations(userId: string): Promise<Message[]> {
+  if (!isSupabaseConfigured()) {
+    const all = mockGetMessages(userId);
+    const seen = new Set<string>();
+    const conversations: Message[] = [];
+    // Sort by newest first, then pick latest message per conversation partner
+    const sorted = [...all].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    for (const msg of sorted) {
+      const partnerId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
+      if (!seen.has(partnerId)) {
+        seen.add(partnerId);
+        conversations.push(msg);
+      }
+    }
+    return conversations;
+  }
+  try {
+    const supabase = await createClient();
+    // Get all messages for user, ordered by newest first
+    const { data, error } = await supabase
+      .from('messages')
+      .select('*, sender:users!sender_id(*)')
+      .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
+      .order('created_at', { ascending: false });
+    if (error || !data) return [];
+    // Deduplicate by conversation partner
+    const seen = new Set<string>();
+    const conversations: Message[] = [];
+    for (const msg of data as Message[]) {
+      const partnerId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
+      if (!seen.has(partnerId)) {
+        seen.add(partnerId);
+        conversations.push(msg);
+      }
+    }
+    return conversations;
+  } catch {
+    return [];
+  }
+}
+
 export async function getMessages(userId: string): Promise<Message[]> {
   if (!isSupabaseConfigured()) {
     return mockGetMessages(userId);

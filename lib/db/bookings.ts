@@ -86,6 +86,13 @@ export async function createBooking(
   }
 }
 
+export async function updateBookingStatus(
+  id: string,
+  status: Booking['status']
+): Promise<Booking | null> {
+  return updateBooking(id, { status });
+}
+
 export async function updateBooking(
   id: string,
   updates: Partial<Omit<Booking, 'id' | 'created_at' | 'owner' | 'sitter' | 'pet' | 'sitter_profile'>>

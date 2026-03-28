@@ -121,3 +121,8 @@ export async function getSitter(
     return getSitterProfile(userId) ?? null;
   }
 }
+
+/** Alias for getSitter */
+export const getSitterById = getSitter;
+/** Alias for getSitter */
+export const getSitterProfileById = getSitter;
