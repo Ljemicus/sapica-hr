@@ -8,7 +8,7 @@ VALUES (
   true,
   5242880, -- 5MB
   ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-);
+) ON CONFLICT (id) DO NOTHING;
 
 -- Create pet-photos bucket
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -18,7 +18,7 @@ VALUES (
   true,
   5242880, -- 5MB
   ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-);
+) ON CONFLICT (id) DO NOTHING;
 
 -- RLS Policies for avatars bucket
 -- Everyone can view avatars
