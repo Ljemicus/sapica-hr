@@ -1,5 +1,5 @@
 -- Support tickets table for contact form
-CREATE TABLE public.support_tickets (
+CREATE TABLE IF NOT EXISTS public.support_tickets (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   email TEXT NOT NULL,
@@ -24,5 +24,5 @@ CREATE POLICY "Users can view own tickets"
   USING (auth.uid() = user_id);
 
 -- Index
-CREATE INDEX idx_support_tickets_status ON public.support_tickets(status);
-CREATE INDEX idx_support_tickets_email ON public.support_tickets(email);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON public.support_tickets(status);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_email ON public.support_tickets(email);

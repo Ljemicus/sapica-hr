@@ -1,3 +1,6 @@
+-- Temporarily disable FK checks for seeding
+SET session_replication_role = replica;
+
 -- Note: In production, users are created via Supabase Auth.
 -- This seed data is for development/demo purposes.
 -- Run after creating test users via the Supabase dashboard or auth API.
@@ -111,44 +114,44 @@ INSERT INTO public.sitter_profiles (user_id, bio, experience_years, services, pr
 
 -- Pets
 INSERT INTO public.pets (id, owner_id, name, species, breed, age, weight, special_needs, photo_url) VALUES
-('pet11111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', 'Rex', 'dog', 'Njemački ovčar', 5, 35.0, 'Treba redovitu šetnju, alergičan na piletinu', '/images/pets/rex.jpg'),
-('pet22222-2222-2222-2222-222222222222', '99999999-9999-9999-9999-999999999999', 'Mila', 'cat', 'Perzijska', 3, 4.5, NULL, '/images/pets/mila.jpg'),
-('pet33333-3333-3333-3333-333333333333', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Luna', 'dog', 'Labrador', 2, 28.0, NULL, '/images/pets/luna.jpg'),
-('pet44444-4444-4444-4444-444444444444', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Whiskers', 'cat', 'Domaća kratkodlaka', 7, 5.0, 'Dijabetes - treba inzulin 2x dnevno', '/images/pets/whiskers.jpg'),
-('pet55555-5555-5555-5555-555555555555', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Buddy', 'dog', 'Zlatni retriver', 4, 32.0, NULL, '/images/pets/buddy.jpg');
+('ae011111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', 'Rex', 'dog', 'Njemački ovčar', 5, 35.0, 'Treba redovitu šetnju, alergičan na piletinu', '/images/pets/rex.jpg'),
+('ae022222-2222-2222-2222-222222222222', '99999999-9999-9999-9999-999999999999', 'Mila', 'cat', 'Perzijska', 3, 4.5, NULL, '/images/pets/mila.jpg'),
+('ae033333-3333-3333-3333-333333333333', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Luna', 'dog', 'Labrador', 2, 28.0, NULL, '/images/pets/luna.jpg'),
+('ae044444-4444-4444-4444-444444444444', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Whiskers', 'cat', 'Domaća kratkodlaka', 7, 5.0, 'Dijabetes - treba inzulin 2x dnevno', '/images/pets/whiskers.jpg'),
+('ae055555-5555-5555-5555-555555555555', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Buddy', 'dog', 'Zlatni retriver', 4, 32.0, NULL, '/images/pets/buddy.jpg');
 
 -- Bookings
 INSERT INTO public.bookings (id, owner_id, sitter_id, pet_id, service_type, start_date, end_date, status, total_price, note) VALUES
-('book1111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'pet11111-1111-1111-1111-111111111111', 'boarding', '2026-03-20', '2026-03-25', 'completed', 125.00, 'Rex voli šetnje ujutro'),
-('book2222-2222-2222-2222-222222222222', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '22222222-2222-2222-2222-222222222222', 'pet33333-3333-3333-3333-333333333333', 'boarding', '2026-03-28', '2026-04-02', 'accepted', 150.00, NULL),
-('book3333-3333-3333-3333-333333333333', '99999999-9999-9999-9999-999999999999', '33333333-3333-3333-3333-333333333333', 'pet11111-1111-1111-1111-111111111111', 'walking', '2026-03-22', '2026-03-22', 'completed', 8.00, NULL),
-('book4444-4444-4444-4444-444444444444', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '66666666-6666-6666-6666-666666666666', 'pet55555-5555-5555-5555-555555555555', 'daycare', '2026-04-01', '2026-04-01', 'pending', 20.00, 'Buddy se dobro slaže s drugim psima');
+('b0001111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'ae011111-1111-1111-1111-111111111111', 'boarding', '2026-03-20', '2026-03-25', 'completed', 125.00, 'Rex voli šetnje ujutro'),
+('b0002222-2222-2222-2222-222222222222', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '22222222-2222-2222-2222-222222222222', 'ae033333-3333-3333-3333-333333333333', 'boarding', '2026-03-28', '2026-04-02', 'accepted', 150.00, NULL),
+('b0003333-3333-3333-3333-333333333333', '99999999-9999-9999-9999-999999999999', '33333333-3333-3333-3333-333333333333', 'ae011111-1111-1111-1111-111111111111', 'walking', '2026-03-22', '2026-03-22', 'completed', 8.00, NULL),
+('b0004444-4444-4444-4444-444444444444', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '66666666-6666-6666-6666-666666666666', 'ae055555-5555-5555-5555-555555555555', 'daycare', '2026-04-01', '2026-04-01', 'pending', 20.00, 'Buddy se dobro slaže s drugim psima');
 
 -- Reviews
 INSERT INTO public.reviews (booking_id, reviewer_id, reviewee_id, rating, comment) VALUES
-('book1111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 5, 'Ana je fantastična! Rex se vratio sretan i zadovoljan. Dvorište je savršeno za njega. Definitivno ćemo se vratiti!'),
-('book3333-3333-3333-3333-333333333333', '99999999-9999-9999-9999-999999999999', '33333333-3333-3333-3333-333333333333', 5, 'Ivana je odlična šetačica! Rex je bio umoran i sretan nakon šetnje. Preporučujem svima!');
+('b0001111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 5, 'Ana je fantastična! Rex se vratio sretan i zadovoljan. Dvorište je savršeno za njega. Definitivno ćemo se vratiti!'),
+('b0003333-3333-3333-3333-333333333333', '99999999-9999-9999-9999-999999999999', '33333333-3333-3333-3333-333333333333', 5, 'Ivana je odlična šetačica! Rex je bio umoran i sretan nakon šetnje. Preporučujem svima!');
 
 -- Add more reviews with generated booking IDs for completeness
 INSERT INTO public.bookings (id, owner_id, sitter_id, pet_id, service_type, start_date, end_date, status, total_price) VALUES
-('book5555-5555-5555-5555-555555555555', '99999999-9999-9999-9999-999999999999', '44444444-4444-4444-4444-444444444444', 'pet11111-1111-1111-1111-111111111111', 'boarding', '2026-02-10', '2026-02-15', 'completed', 110.00),
-('book6666-6666-6666-6666-666666666666', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '44444444-4444-4444-4444-444444444444', 'pet33333-3333-3333-3333-333333333333', 'walking', '2026-02-20', '2026-02-20', 'completed', 8.00),
-('book7777-7777-7777-7777-777777777777', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 'pet55555-5555-5555-5555-555555555555', 'daycare', '2026-01-15', '2026-01-15', 'completed', 20.00),
-('book8888-8888-8888-8888-888888888888', '99999999-9999-9999-9999-999999999999', '66666666-6666-6666-6666-666666666666', 'pet22222-2222-2222-2222-222222222222', 'house-sitting', '2026-01-20', '2026-01-25', 'completed', 160.00),
-('book9999-9999-9999-9999-999999999999', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '22222222-2222-2222-2222-222222222222', 'pet44444-4444-4444-4444-444444444444', 'drop-in', '2026-02-01', '2026-02-01', 'completed', 15.00),
-('bookaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '99999999-9999-9999-9999-999999999999', '88888888-8888-8888-8888-888888888888', 'pet11111-1111-1111-1111-111111111111', 'boarding', '2026-02-05', '2026-02-10', 'completed', 160.00),
-('bookbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '55555555-5555-5555-5555-555555555555', 'pet33333-3333-3333-3333-333333333333', 'walking', '2026-03-01', '2026-03-01', 'completed', 12.00),
-('bookcccc-cccc-cccc-cccc-cccccccccccc', '99999999-9999-9999-9999-999999999999', '77777777-7777-7777-7777-777777777777', 'pet22222-2222-2222-2222-222222222222', 'drop-in', '2026-03-05', '2026-03-05', 'completed', 14.00);
+('b0005555-5555-5555-5555-555555555555', '99999999-9999-9999-9999-999999999999', '44444444-4444-4444-4444-444444444444', 'ae011111-1111-1111-1111-111111111111', 'boarding', '2026-02-10', '2026-02-15', 'completed', 110.00),
+('b0006666-6666-6666-6666-666666666666', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '44444444-4444-4444-4444-444444444444', 'ae033333-3333-3333-3333-333333333333', 'walking', '2026-02-20', '2026-02-20', 'completed', 8.00),
+('b0007777-7777-7777-7777-777777777777', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 'ae055555-5555-5555-5555-555555555555', 'daycare', '2026-01-15', '2026-01-15', 'completed', 20.00),
+('b0008888-8888-8888-8888-888888888888', '99999999-9999-9999-9999-999999999999', '66666666-6666-6666-6666-666666666666', 'ae022222-2222-2222-2222-222222222222', 'house-sitting', '2026-01-20', '2026-01-25', 'completed', 160.00),
+('b0009999-9999-9999-9999-999999999999', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '22222222-2222-2222-2222-222222222222', 'ae044444-4444-4444-4444-444444444444', 'drop-in', '2026-02-01', '2026-02-01', 'completed', 15.00),
+('b00caaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '99999999-9999-9999-9999-999999999999', '88888888-8888-8888-8888-888888888888', 'ae011111-1111-1111-1111-111111111111', 'boarding', '2026-02-05', '2026-02-10', 'completed', 160.00),
+('b00cbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '55555555-5555-5555-5555-555555555555', 'ae033333-3333-3333-3333-333333333333', 'walking', '2026-03-01', '2026-03-01', 'completed', 12.00),
+('b00ccccc-cccc-cccc-cccc-cccccccccccc', '99999999-9999-9999-9999-999999999999', '77777777-7777-7777-7777-777777777777', 'ae022222-2222-2222-2222-222222222222', 'drop-in', '2026-03-05', '2026-03-05', 'completed', 14.00);
 
 INSERT INTO public.reviews (booking_id, reviewer_id, reviewee_id, rating, comment) VALUES
-('book5555-5555-5555-5555-555555555555', '99999999-9999-9999-9999-999999999999', '44444444-4444-4444-4444-444444444444', 4, 'Luka je odličan! Kuća na Trsatu je savršena za Rex-a. Jedini minus je što je malo daleko od centra.'),
-('book6666-6666-6666-6666-666666666666', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '44444444-4444-4444-4444-444444444444', 5, 'Luna je obožavala šetnju s Lukom! Vrlo pažljiv i iskusan.'),
-('book7777-7777-7777-7777-777777777777', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 5, 'Buddy se odlično proveo kod Ane. Slali su nam fotke cijeli dan!'),
-('book8888-8888-8888-8888-888888888888', '99999999-9999-9999-9999-999999999999', '66666666-6666-6666-6666-666666666666', 5, 'Filip je savršen čuvar! Mila je bila u odličnim rukama. Kuća je čista i sigurna.'),
-('book9999-9999-9999-9999-999999999999', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '22222222-2222-2222-2222-222222222222', 4, 'Marko je bio vrlo profesionalan. Whiskers je dobio lijekove na vrijeme. Preporučujem!'),
-('bookaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '99999999-9999-9999-9999-999999999999', '88888888-8888-8888-8888-888888888888', 5, 'Ivan je nevjerojatan! Rex s posebnim potrebama zahtijeva puno pažnje i Ivan je bio savršen.'),
-('bookbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '55555555-5555-5555-5555-555555555555', 4, 'Petra je odlična šetačica. Luna je bila sretna. Jedino bi mogla slati više fotki.'),
-('bookcccc-cccc-cccc-cccc-cccccccccccc', '99999999-9999-9999-9999-999999999999', '77777777-7777-7777-7777-777777777777', 4, 'Maja je bila super za Milu! Stan je u dobrom kvartu blizu parka.');
+('b0005555-5555-5555-5555-555555555555', '99999999-9999-9999-9999-999999999999', '44444444-4444-4444-4444-444444444444', 4, 'Luka je odličan! Kuća na Trsatu je savršena za Rex-a. Jedini minus je što je malo daleko od centra.'),
+('b0006666-6666-6666-6666-666666666666', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '44444444-4444-4444-4444-444444444444', 5, 'Luna je obožavala šetnju s Lukom! Vrlo pažljiv i iskusan.'),
+('b0007777-7777-7777-7777-777777777777', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 5, 'Buddy se odlično proveo kod Ane. Slali su nam fotke cijeli dan!'),
+('b0008888-8888-8888-8888-888888888888', '99999999-9999-9999-9999-999999999999', '66666666-6666-6666-6666-666666666666', 5, 'Filip je savršen čuvar! Mila je bila u odličnim rukama. Kuća je čista i sigurna.'),
+('b0009999-9999-9999-9999-999999999999', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '22222222-2222-2222-2222-222222222222', 4, 'Marko je bio vrlo profesionalan. Whiskers je dobio lijekove na vrijeme. Preporučujem!'),
+('b00caaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '99999999-9999-9999-9999-999999999999', '88888888-8888-8888-8888-888888888888', 5, 'Ivan je nevjerojatan! Rex s posebnim potrebama zahtijeva puno pažnje i Ivan je bio savršen.'),
+('b00cbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '55555555-5555-5555-5555-555555555555', 4, 'Petra je odlična šetačica. Luna je bila sretna. Jedino bi mogla slati više fotki.'),
+('b00ccccc-cccc-cccc-cccc-cccccccccccc', '99999999-9999-9999-9999-999999999999', '77777777-7777-7777-7777-777777777777', 4, 'Maja je bila super za Milu! Stan je u dobrom kvartu blizu parka.');
 
 -- Availability (next 30 days for sitters)
 INSERT INTO public.availability (sitter_id, date, available)
@@ -179,7 +182,11 @@ FROM generate_series(CURRENT_DATE, CURRENT_DATE + INTERVAL '30 days', '1 day') d
 
 -- Messages
 INSERT INTO public.messages (sender_id, receiver_id, booking_id, content, read, created_at) VALUES
-('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'book1111-1111-1111-1111-111111111111', 'Bok Ana! Zanima me mogu li dovesti Rex-a sljedeći tjedan?', true, NOW() - INTERVAL '5 days'),
-('11111111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', 'book1111-1111-1111-1111-111111111111', 'Bok Tomislave! Naravno, rado ću čuvati Rex-a. Koji datumi vam odgovaraju?', true, NOW() - INTERVAL '5 days' + INTERVAL '30 minutes'),
-('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'book1111-1111-1111-1111-111111111111', 'Od 20. do 25. ožujka. Ima li mjesta?', true, NOW() - INTERVAL '4 days'),
-('11111111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', 'book1111-1111-1111-1111-111111111111', 'Savršeno, ti datumi mi odgovaraju! Samo napravite rezervaciju kroz aplikaciju. 🐾', true, NOW() - INTERVAL '4 days' + INTERVAL '1 hour');
+('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'b0001111-1111-1111-1111-111111111111', 'Bok Ana! Zanima me mogu li dovesti Rex-a sljedeći tjedan?', true, NOW() - INTERVAL '5 days'),
+('11111111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', 'b0001111-1111-1111-1111-111111111111', 'Bok Tomislave! Naravno, rado ću čuvati Rex-a. Koji datumi vam odgovaraju?', true, NOW() - INTERVAL '5 days' + INTERVAL '30 minutes'),
+('99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', 'b0001111-1111-1111-1111-111111111111', 'Od 20. do 25. ožujka. Ima li mjesta?', true, NOW() - INTERVAL '4 days'),
+('11111111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', 'b0001111-1111-1111-1111-111111111111', 'Savršeno, ti datumi mi odgovaraju! Samo napravite rezervaciju kroz aplikaciju. 🐾', true, NOW() - INTERVAL '4 days' + INTERVAL '1 hour');
+
+
+-- Re-enable FK checks
+SET session_replication_role = DEFAULT;

@@ -1,5 +1,5 @@
 -- Push notification subscriptions
-CREATE TABLE public.push_subscriptions (
+CREATE TABLE IF NOT EXISTS public.push_subscriptions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
   endpoint TEXT NOT NULL UNIQUE,
@@ -25,4 +25,4 @@ CREATE POLICY "Users can delete own subscriptions"
   USING (auth.uid() = user_id);
 
 -- Index
-CREATE INDEX idx_push_subscriptions_user ON public.push_subscriptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user ON public.push_subscriptions(user_id);
