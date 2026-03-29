@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
 import {
-  mockGroomers,
   getGroomerById as mockGetGroomer,
   getGroomers as mockGetGroomers,
   getGroomerReviews as mockGetGroomerReviews,

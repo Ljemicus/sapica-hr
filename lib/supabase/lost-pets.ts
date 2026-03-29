@@ -1,5 +1,5 @@
 import { createClient } from './client';
-import type { LostPet, LostPetSighting } from '@/lib/types';
+import type { LostPet } from '@/lib/types';
 
 const supabase = createClient();
 
@@ -63,7 +63,6 @@ export async function fetchLostPets(filters?: {
   const { data, error } = await query;
 
   if (error) {
-    console.error('Error fetching lost pets:', error);
     return [];
   }
 
@@ -78,7 +77,6 @@ export async function fetchLostPetById(id: string): Promise<LostPet | null> {
     .single();
 
   if (error || !data) {
-    console.error('Error fetching lost pet:', error);
     return null;
   }
 
@@ -140,7 +138,6 @@ export async function uploadLostPetImage(
     .upload(fileName, file);
 
   if (error) {
-    console.error('Error uploading image:', error);
     return null;
   }
 

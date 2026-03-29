@@ -53,7 +53,6 @@ export default function KontaktPage() {
       toast.success('Vaša poruka je uspješno poslana! Odgovorit ćemo vam u najkraćem mogućem roku.');
       setFormData({ name: user?.name || '', email: user?.email || '', subject: '', message: '' });
     } catch (error) {
-      console.error('Error submitting ticket:', error);
       toast.error('Greška pri slanju poruke. Pokušajte ponovo.');
     } finally {
       setLoading(false);

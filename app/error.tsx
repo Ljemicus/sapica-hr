@@ -1,0 +1,40 @@
+'use client';
+
+import { useEffect } from 'react';
+import Link from 'next/link';
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    // Optionally log to an error reporting service
+  }, [error]);
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
+      <div className="text-6xl mb-4">😿</div>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">Nešto je pošlo po krivu</h1>
+      <p className="text-gray-500 mb-6 text-center max-w-md">
+        Došlo je do neočekivane greške. Pokušajte ponovo ili se vratite na početnu stranicu.
+      </p>
+      <div className="flex items-center gap-3">
+        <button
+          onClick={reset}
+          className="px-5 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-medium transition-colors"
+        >
+          Pokušaj ponovo
+        </button>
+        <Link
+          href="/"
+          className="px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition-colors"
+        >
+          Početna
+        </Link>
+      </div>
+    </div>
+  );
+}

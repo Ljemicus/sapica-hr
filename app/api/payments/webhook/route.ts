@@ -12,7 +12,6 @@ export async function POST(request: Request) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
   if (!webhookSecret || webhookSecret.includes('REPLACE')) {
-    console.error('[Webhook] STRIPE_WEBHOOK_SECRET not configured');
     return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
   }
 
@@ -27,7 +26,7 @@ export async function POST(request: Request) {
   try {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err) {
-    console.error('[Webhook] Signature verification failed:', err);
+    console.error('[Webhook] Signature verification failed');
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
@@ -70,14 +69,11 @@ export async function POST(request: Request) {
           status: 'succeeded',
         });
 
-        console.log(`[Webhook] Booking ${bookingId} marked as paid (€${(amountTotal / 100).toFixed(2)})`);
-      }
+        }
       break;
     }
 
     case 'payment_intent.succeeded': {
-      const pi = event.data.object as Stripe.PaymentIntent;
-      console.log(`[Webhook] PaymentIntent ${pi.id} succeeded (€${(pi.amount / 100).toFixed(2)})`);
       break;
     }
 
@@ -90,8 +86,6 @@ export async function POST(request: Request) {
           .from('bookings')
           .update({ payment_status: 'failed' })
           .eq('id', bookingId);
-
-        console.log(`[Webhook] Payment failed for booking ${bookingId}`);
       }
       break;
     }
@@ -107,8 +101,6 @@ export async function POST(request: Request) {
           payout_enabled: account.payouts_enabled || false,
         })
         .eq('stripe_account_id', account.id);
-
-      console.log(`[Webhook] Account ${account.id} updated — charges: ${account.charges_enabled}, payouts: ${account.payouts_enabled}`);
       break;
     }
 
@@ -119,7 +111,7 @@ export async function POST(request: Request) {
     }
 
     default:
-      console.log(`[Webhook] Unhandled event type: ${event.type}`);
+      break;
   }
 
   return NextResponse.json({ received: true });

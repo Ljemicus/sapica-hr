@@ -20,7 +20,6 @@ export function stripDiacritics(text: string): string {
 
 export function findBestMatch(input: string): string {
   const normalized = stripDiacritics(input.trim());
-  const words = normalized.split(/\s+/);
 
   let bestMatch: KBEntry | null = null;
   let bestScore = 0;

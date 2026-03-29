@@ -81,8 +81,7 @@ export function PushNotificationPrompt() {
       if (!response.ok) throw new Error('Failed to save subscription');
 
       toast.success('Obavijesti su uključene!');
-    } catch (error) {
-      console.error('Push subscription error:', error);
+    } catch {
       toast.error('Greška pri uključivanju obavijesti.');
     } finally {
       setSubscribing(false);

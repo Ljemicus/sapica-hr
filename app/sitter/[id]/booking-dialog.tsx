@@ -39,7 +39,7 @@ export function BookingDialog({ open, onOpenChange, profile, userId }: BookingDi
   const selectedService = watch('service_type');
   const startDate = watch('start_date');
   const endDate = watch('end_date');
-  const selectedPet = watch('pet_id');
+
 
   useEffect(() => {
     const fetchPets = async () => {

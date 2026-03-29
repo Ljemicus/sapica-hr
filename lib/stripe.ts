@@ -9,7 +9,7 @@ export function getStripe(): Stripe {
 
   const secretKey = process.env.STRIPE_SECRET_KEY;
   if (!secretKey || secretKey.includes('REPLACE')) {
-    console.warn('[Stripe] STRIPE_SECRET_KEY is not configured. Payments will fail.');
+    // Stripe secret key not configured — payments will fail
   }
 
   _stripe = new Stripe(secretKey || 'sk_test_placeholder', {
@@ -30,7 +30,6 @@ export function getStripeClient(): Promise<StripeClient | null> {
   if (!stripePromise) {
     const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
     if (!publishableKey || publishableKey.includes('REPLACE')) {
-      console.warn('[Stripe] NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not configured.');
       return Promise.resolve(null);
     }
     stripePromise = loadStripe(publishableKey);
