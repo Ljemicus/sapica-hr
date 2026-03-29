@@ -2,6 +2,8 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { getSitters, getGroomers, getTrainers } from '@/lib/db';
 import { SearchContent } from './search-content';
+import { Breadcrumbs } from '@/components/shared/breadcrumbs';
+import { ServiceJsonLd } from '@/components/seo/json-ld';
 import type { ServiceType, GroomingServiceType, TrainingType } from '@/lib/types';
 import type { UnifiedProvider, ProviderCategory } from './types';
 
@@ -14,6 +16,9 @@ export const metadata: Metadata = {
     description: 'Pronađite pouzdane sittere, groomere i trenere za vašeg ljubimca u Hrvatskoj.',
     url: 'https://petpark.hr/pretraga',
     type: 'website',
+  },
+  alternates: {
+    canonical: 'https://petpark.hr/pretraga',
   },
 };
 
@@ -130,8 +135,18 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   providers.sort((a, b) => b.rating - a.rating);
 
   return (
-    <Suspense fallback={<div className="container mx-auto px-4 py-8">Učitavanje...</div>}>
-      <SearchContent providers={providers} initialParams={params} />
-    </Suspense>
+    <>
+      <ServiceJsonLd
+        name="Čuvanje ljubimaca"
+        description="Pronađite pouzdane sittere, groomere i trenere za vašeg ljubimca u Hrvatskoj."
+        url="https://petpark.hr/pretraga"
+        serviceType="Pet Sitting"
+        areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
+      />
+      <Breadcrumbs items={[{ label: 'Pretraga', href: '/pretraga' }]} />
+      <Suspense fallback={<div className="container mx-auto px-4 py-8">Učitavanje...</div>}>
+        <SearchContent providers={providers} initialParams={params} />
+      </Suspense>
+    </>
   );
 }

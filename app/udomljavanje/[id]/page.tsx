@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAdoptionPetById, getShelterById, SPECIES_LABEL } from '@/lib/mock-adoption-data';
 import { AdoptionDetailContent } from './adoption-detail-content';
+import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -29,5 +30,13 @@ export default async function AdoptionDetailPage({ params }: Props) {
   const pet = getAdoptionPetById(id);
   if (!pet) notFound();
 
-  return <AdoptionDetailContent petId={id} />;
+  return (
+    <>
+      <Breadcrumbs items={[
+        { label: 'Udomljavanje', href: '/udomljavanje' },
+        { label: pet.name, href: `/udomljavanje/${id}` },
+      ]} />
+      <AdoptionDetailContent petId={id} />
+    </>
+  );
 }

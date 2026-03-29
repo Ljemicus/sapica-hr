@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { FORUM_CATEGORIES } from '@/lib/types';
 import { getTopic, getPosts, getTopics } from '@/lib/db';
+import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
 const gradients = [
   'from-orange-400 to-amber-300',
@@ -62,6 +63,11 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
 
   return (
     <div>
+      <Breadcrumbs items={[
+        { label: 'Forum', href: '/forum' },
+        ...(cat ? [{ label: cat.name, href: `/forum?category=${topic.category_slug}` }] : []),
+        { label: topic.title, href: `/forum/${id}` },
+      ]} />
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-pink-50">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />

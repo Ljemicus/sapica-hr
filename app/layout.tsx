@@ -10,7 +10,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/contexts/auth-context';
 import { CartProvider } from '@/lib/cart-context';
 import { LanguageProvider } from '@/lib/i18n';
-import { WebsiteJsonLd } from '@/components/seo/json-ld';
+import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { PushNotificationPrompt } from '@/components/shared/push-notification';
 import { CookieConsent } from '@/components/shared/cookie-consent';
 import { NotificationPrompt } from '@/components/shared/notification-prompt';
@@ -19,12 +19,14 @@ import { FloatingChat } from '@/components/shared/floating-chat';
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-sans',
+  display: 'swap',
 });
 
 const nunito = Nunito({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-heading',
   weight: ['400', '600', '700', '800', '900'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -111,6 +113,7 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
         <WebsiteJsonLd />
+        <SiteNavigationJsonLd />
       </head>
       <body className="min-h-full flex flex-col font-sans">
         <AuthProvider>

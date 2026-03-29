@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getGroomer, getGroomerReviews } from '@/lib/db';
 import { GroomerProfile } from './groomer-profile';
+import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
 interface GroomerPageProps {
   params: Promise<{ id: string }>;
@@ -32,5 +33,13 @@ export default async function GroomerPage({ params }: GroomerPageProps) {
   const reviews = await getGroomerReviews(id);
   const availability = generateMockAvailability();
 
-  return <GroomerProfile groomer={groomer} reviews={reviews} availability={availability} />;
+  return (
+    <>
+      <Breadcrumbs items={[
+        { label: 'Grooming', href: '/njega' },
+        { label: groomer.name, href: `/groomer/${id}` },
+      ]} />
+      <GroomerProfile groomer={groomer} reviews={reviews} availability={availability} />
+    </>
+  );
 }

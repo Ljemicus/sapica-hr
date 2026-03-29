@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getSitter, getReviewsBySitter, getAvailability } from '@/lib/db';
 import { SitterProfileContent } from './sitter-profile-content';
+import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
 interface SitterPageProps {
   params: Promise<{ id: string }>;
@@ -48,6 +49,10 @@ export default async function SitterPage({ params }: SitterPageProps) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <Breadcrumbs items={[
+        { label: 'Pretraga sittera', href: '/pretraga' },
+        { label: profile.user.name, href: `/sitter/${id}` },
+      ]} />
       <SitterProfileContent
         profile={profile}
         reviews={reviews}

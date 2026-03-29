@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
-import { GraduationCap } from 'lucide-react';
+import Link from 'next/link';
+import { GraduationCap, Scissors, Search, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { getTrainers } from '@/lib/db';
 import { TrainingContent } from './training-content';
+import { Breadcrumbs } from '@/components/shared/breadcrumbs';
+import { ServiceJsonLd } from '@/components/seo/json-ld';
 import type { TrainingType } from '@/lib/types';
 
 export const metadata: Metadata = {
@@ -14,6 +17,9 @@ export const metadata: Metadata = {
     description: 'Pronađite certificirane trenere pasa za školovanje, agility i korekciju ponašanja.',
     url: 'https://petpark.hr/dresura',
     type: 'website',
+  },
+  alternates: {
+    canonical: 'https://petpark.hr/dresura',
   },
 };
 
@@ -27,6 +33,14 @@ export default async function DresuraPage({ searchParams }: DresuraPageProps) {
 
   return (
     <div>
+      <ServiceJsonLd
+        name="Školovanje pasa"
+        description="Pronađite certificirane trenere pasa za školovanje, agility, korekciju ponašanja i rad sa štencima."
+        url="https://petpark.hr/dresura"
+        serviceType="Dog Training"
+        areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
+      />
+      <Breadcrumbs items={[{ label: 'Školovanje pasa', href: '/dresura' }]} />
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-indigo-950/20 dark:via-background dark:to-teal-950/20">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
@@ -75,6 +89,39 @@ export default async function DresuraPage({ searchParams }: DresuraPageProps) {
       </section>
 
       <TrainingContent trainers={trainers} initialParams={params} />
+
+      {/* Cross-links to related services */}
+      <section className="py-10 md:py-14 bg-warm-section">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-center mb-8 font-[var(--font-heading)]">Istražite druge usluge</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            <Link href="/pretraga" className="group">
+              <div className="flex items-center gap-4 p-5 rounded-2xl border border-border/50 bg-background hover:border-orange-300 hover:shadow-md transition-all">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 text-orange-500">
+                  <Search className="h-6 w-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-sm group-hover:text-orange-500 transition-colors">Čuvanje ljubimaca</h3>
+                  <p className="text-xs text-muted-foreground">Pouzdani sitteri u vašem gradu</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-orange-500 transition-colors" />
+              </div>
+            </Link>
+            <Link href="/njega" className="group">
+              <div className="flex items-center gap-4 p-5 rounded-2xl border border-border/50 bg-background hover:border-pink-300 hover:shadow-md transition-all">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-pink-100 dark:bg-pink-900/30 text-pink-500">
+                  <Scissors className="h-6 w-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-sm group-hover:text-pink-500 transition-colors">Grooming saloni</h3>
+                  <p className="text-xs text-muted-foreground">Šišanje, kupanje i njega</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-pink-500 transition-colors" />
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

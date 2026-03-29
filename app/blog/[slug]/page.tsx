@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getArticle, getRelatedArticles } from '@/lib/db';
 import { ArticleContent } from './article-content';
+import { Breadcrumbs } from '@/components/shared/breadcrumbs';
+import { BLOG_CATEGORY_LABELS } from '@/lib/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -30,6 +32,9 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       card: 'summary_large_image',
       title: article.title,
       description: article.excerpt,
+    },
+    alternates: {
+      canonical: `${BASE_URL}/blog/${slug}`,
     },
   };
 }
@@ -67,6 +72,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <Breadcrumbs items={[
+        { label: 'Blog', href: '/blog' },
+        { label: BLOG_CATEGORY_LABELS[article.category], href: `/blog?category=${article.category}` },
+        { label: article.title, href: `/blog/${slug}` },
+      ]} />
       <ArticleContent article={article} relatedArticles={related} />
     </>
   );

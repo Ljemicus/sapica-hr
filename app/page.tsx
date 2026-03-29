@@ -229,7 +229,7 @@ export default async function HomePage() {
                     <h3 className="font-bold text-base md:text-lg mb-1 group-hover:text-orange-500 transition-colors font-[var(--font-heading)]">{service.title}</h3>
                     <p className="text-xs md:text-sm text-muted-foreground mb-3">{service.description}</p>
                     <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-3">
-                      <Image src={service.image} alt={service.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <Image src={service.image} alt={service.title} fill loading="lazy" className="object-cover group-hover:scale-105 transition-transform duration-300" />
                     </div>
                     <p className="text-sm font-bold text-orange-500">{service.price}</p>
                   </CardContent>
@@ -358,7 +358,7 @@ export default async function HomePage() {
                 <Card className={`group card-hover cursor-pointer overflow-hidden border-0 shadow-md rounded-2xl animate-fade-in-up delay-${Math.min((i + 1) * 100, 700)}`}>
                   <CardContent className="p-0">
                     <div className="h-32 md:h-36 relative flex items-end p-4 overflow-hidden">
-                      <Image src={city.image} alt={city.name} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <Image src={city.image} alt={city.name} fill loading="lazy" className="object-cover group-hover:scale-110 transition-transform duration-500" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/5" />
                       <div className="relative">
                         <h3 className="text-white font-extrabold text-lg leading-none drop-shadow-sm font-[var(--font-heading)]">{city.name}</h3>
@@ -554,7 +554,7 @@ export default async function HomePage() {
                     <h3 className="font-bold text-lg mb-2 group-hover:text-orange-500 transition-colors font-[var(--font-heading)]">{item.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed mb-4">{item.description}</p>
                     <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-4">
-                      <Image src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <Image src={item.image} alt={item.title} fill loading="lazy" className="object-cover group-hover:scale-105 transition-transform duration-300" />
                     </div>
                     <Badge variant="secondary" className="bg-accent text-muted-foreground rounded-full">{item.stat}</Badge>
                     <div className="mt-3 text-sm font-semibold text-teal-600 dark:text-teal-400 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -734,7 +734,7 @@ async function LostPetsHomepageSection() {
             <Link key={pet.id} href={`/izgubljeni/${pet.id}`}>
               <Card className="group border-2 border-red-200 dark:border-red-800/50 hover:border-red-400 dark:hover:border-red-600 hover:shadow-xl transition-all duration-300 overflow-hidden h-full rounded-2xl">
                 <div className="relative h-44 md:h-48 bg-muted">
-                  <Image src={pet.image_url} alt={pet.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src={pet.image_url} alt={pet.name} fill loading="lazy" className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                   <Badge className="absolute top-3 left-3 bg-red-500 text-white font-bold rounded-full">
                     Traži se

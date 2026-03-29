@@ -209,3 +209,86 @@ export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
     />
   );
 }
+
+export function SiteNavigationJsonLd() {
+  const navItems = [
+    { name: 'Čuvanje ljubimaca', url: 'https://petpark.hr/pretraga' },
+    { name: 'Grooming', url: 'https://petpark.hr/njega' },
+    { name: 'Školovanje pasa', url: 'https://petpark.hr/dresura' },
+    { name: 'Veterinari', url: 'https://petpark.hr/veterinari' },
+    { name: 'Pet Shop', url: 'https://petpark.hr/shop' },
+    { name: 'Blog', url: 'https://petpark.hr/zajednica' },
+    { name: 'Forum', url: 'https://petpark.hr/forum' },
+    { name: 'Udomljavanje', url: 'https://petpark.hr/udomljavanje' },
+    { name: 'Izgubljeni ljubimci', url: 'https://petpark.hr/izgubljeni' },
+    { name: 'Dog-Friendly', url: 'https://petpark.hr/dog-friendly' },
+  ];
+
+  return (
+    <JsonLdScript
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'SiteNavigationElement',
+        name: navItems.map((item) => item.name),
+        url: navItems.map((item) => item.url),
+      }}
+    />
+  );
+}
+
+interface ServiceJsonLdProps {
+  name: string;
+  description: string;
+  url: string;
+  serviceType: string;
+  areaServed?: string[];
+}
+
+export function ServiceJsonLd({ name, description, url, serviceType, areaServed }: ServiceJsonLdProps) {
+  return (
+    <JsonLdScript
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        name,
+        description,
+        url,
+        serviceType,
+        provider: { '@id': 'https://petpark.hr/#organization' },
+        ...(areaServed && {
+          areaServed: areaServed.map((city) => ({
+            '@type': 'City',
+            name: city,
+          })),
+        }),
+      }}
+    />
+  );
+}
+
+interface AggregateRatingJsonLdProps {
+  name: string;
+  ratingValue: number;
+  reviewCount: number;
+  url: string;
+}
+
+export function AggregateRatingJsonLd({ name, ratingValue, reviewCount, url }: AggregateRatingJsonLdProps) {
+  return (
+    <JsonLdScript
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'LocalBusiness',
+        name,
+        url,
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue,
+          reviewCount,
+          bestRating: 5,
+          worstRating: 1,
+        },
+      }}
+    />
+  );
+}

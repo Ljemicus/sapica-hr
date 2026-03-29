@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getProductBySlug } from '@/lib/db';
 import { ProductDetail } from './product-detail';
 import { notFound } from 'next/navigation';
+import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -40,6 +41,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <Breadcrumbs items={[
+        { label: 'Shop', href: '/shop' },
+        { label: product.name, href: `/shop/${slug}` },
+      ]} />
       <ProductDetail slug={slug} />
     </>
   );

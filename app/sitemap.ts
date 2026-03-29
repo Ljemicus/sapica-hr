@@ -29,6 +29,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/udomljavanje',
     '/dog-friendly',
     '/blog',
+    '/cuvanje-pasa-zagreb',
+    '/cuvanje-pasa-split',
+    '/cuvanje-pasa-rijeka',
+    '/grooming-zagreb',
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((route) => ({
