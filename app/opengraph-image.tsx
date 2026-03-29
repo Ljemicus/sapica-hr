@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'PetPark — Pronađite čuvara za svog ljubimca';
+export const alt = 'PetPark — Sve za ljubimce na jednom mjestu';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -50,21 +50,24 @@ export default async function Image() {
             maxWidth: 700,
           }}
         >
-          Pronađite pouzdane čuvare ljubimaca u vašem gradu
+          Sve za ljubimce na jednom mjestu
         </div>
 
         <div
           style={{
             display: 'flex',
-            gap: 40,
+            gap: 30,
             marginTop: 40,
-            fontSize: 18,
-            color: 'rgba(255, 255, 255, 0.6)',
+            fontSize: 16,
+            color: 'rgba(255, 255, 255, 0.7)',
           }}
         >
-          <span>500+ sittera</span>
-          <span>50+ gradova</span>
-          <span>4.8 ocjena</span>
+          <span>Čuvanje</span>
+          <span>Grooming</span>
+          <span>Školovanje</span>
+          <span>Veterinari</span>
+          <span>Shop</span>
+          <span>Udomljavanje</span>
         </div>
       </div>
     ),

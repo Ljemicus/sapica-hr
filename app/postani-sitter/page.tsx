@@ -6,8 +6,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 export const metadata: Metadata = {
-  title: 'Postani Sitter — Zarađuj čuvajući ljubimce | PetPark',
+  title: 'Postani pet sitter — zarađuj čuvajući ljubimce',
   description: 'Pridruži se PetPark zajednici sittera. Zarađuj fleksibilno, upoznaj ljubimce i budi dio najveće platforme za čuvanje životinja u Hrvatskoj.',
+  keywords: ['postani sitter', 'posao čuvanje pasa', 'zarada čuvanje ljubimaca', 'pet sitter posao'],
+  openGraph: {
+    title: 'Postani pet sitter — zarađuj čuvajući ljubimce | PetPark',
+    description: 'Pridruži se PetPark zajednici sittera. Zarađuj fleksibilno čuvajući ljubimce.',
+    url: 'https://petpark.hr/postani-sitter',
+    type: 'website',
+  },
 };
 
 const BENEFITS = [

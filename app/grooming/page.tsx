@@ -5,7 +5,14 @@ import type { GroomingServiceType } from '@/lib/types';
 
 export const metadata: Metadata = {
   title: 'Grooming — saloni za uljepšavanje ljubimaca',
-  description: 'Pronađite profesionalne groomere za šišanje, kupanje, trimanje i njegu noktiju vašeg ljubimca.',
+  description: 'Pronađite profesionalne groomere za šišanje, kupanje, trimanje i njegu noktiju vašeg ljubimca u Hrvatskoj.',
+  keywords: ['grooming', 'groomer', 'šišanje pasa', 'kupanje pasa', 'salon za pse'],
+  openGraph: {
+    title: 'Grooming — saloni za uljepšavanje ljubimaca | PetPark',
+    description: 'Pronađite profesionalne groomere za šišanje, kupanje i njegu vašeg ljubimca.',
+    url: 'https://petpark.hr/grooming',
+    type: 'website',
+  },
 };
 
 interface GroomingPageProps {

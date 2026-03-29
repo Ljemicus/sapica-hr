@@ -5,7 +5,14 @@ import type { BlogCategory } from '@/lib/types';
 
 export const metadata: Metadata = {
   title: 'Blog — savjeti za vlasnike ljubimaca',
-  description: 'Korisni članci i savjeti o zdravlju, prehrani, školovanju pasa i putovanju s ljubimcima.',
+  description: 'Korisni članci i savjeti o zdravlju, prehrani, školovanju pasa i putovanju s ljubimcima. Stručni sadržaj za sve vlasnike.',
+  keywords: ['blog ljubimci', 'savjeti za pse', 'savjeti za mačke', 'zdravlje ljubimaca', 'prehrana pasa'],
+  openGraph: {
+    title: 'Blog — savjeti za vlasnike ljubimaca | PetPark',
+    description: 'Korisni članci i savjeti o zdravlju, prehrani, školovanju pasa i putovanju s ljubimcima.',
+    url: 'https://petpark.hr/blog',
+    type: 'website',
+  },
 };
 
 interface BlogPageProps {

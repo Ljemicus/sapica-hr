@@ -25,8 +25,13 @@ export function WebsiteJsonLd() {
             name: 'PetPark',
             alternateName: 'PetPark d.o.o.',
             url: 'https://petpark.hr',
-            logo: 'https://petpark.hr/opengraph-image',
-            description: 'Hrvatski marketplace za čuvanje kućnih ljubimaca. Pronađite pouzdane sittere u vašem gradu.',
+            logo: {
+              '@type': 'ImageObject',
+              url: 'https://petpark.hr/opengraph-image',
+              width: 1200,
+              height: 630,
+            },
+            description: 'Hrvatska super-aplikacija za ljubimce. Čuvanje, grooming, školovanje, veterinari, shop, udomljavanje i zajednica — sve na jednom mjestu.',
             address: {
               '@type': 'PostalAddress',
               addressLocality: 'Rijeka',
@@ -45,12 +50,18 @@ export function WebsiteJsonLd() {
                 closes: '20:00',
               },
             },
+            sameAs: [
+              'https://www.instagram.com/petpark.hr',
+              'https://www.facebook.com/petpark.hr',
+            ],
           },
           {
             '@type': 'WebSite',
             '@id': 'https://petpark.hr/#website',
             url: 'https://petpark.hr',
             name: 'PetPark',
+            description: 'Sve za ljubimce na jednom mjestu',
+            inLanguage: 'hr',
             publisher: { '@id': 'https://petpark.hr/#organization' },
             potentialAction: {
               '@type': 'SearchAction',
@@ -59,6 +70,24 @@ export function WebsiteJsonLd() {
             },
           },
         ],
+      }}
+    />
+  );
+}
+
+export function ItemListJsonLd({ items }: { items: { name: string; url: string; description: string }[] }) {
+  return (
+    <JsonLdScript
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        itemListElement: items.map((item, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: item.name,
+          url: item.url,
+          description: item.description,
+        })),
       }}
     />
   );

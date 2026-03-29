@@ -22,8 +22,15 @@ const allFaqs = [
 ];
 
 export const metadata: Metadata = {
-  title: 'Često postavljana pitanja (FAQ) | PetPark',
+  title: 'Često postavljena pitanja',
   description: 'Pronađite odgovore na najčešća pitanja o PetPark platformi — rezervacije, plaćanje, sigurnost, čuvanje ljubimaca i više.',
+  keywords: ['FAQ', 'pitanja', 'pomoć', 'PetPark pitanja', 'kako funkcionira PetPark'],
+  openGraph: {
+    title: 'Često postavljena pitanja | PetPark',
+    description: 'Odgovori na najčešća pitanja o PetPark platformi — rezervacije, plaćanje, sigurnost i više.',
+    url: 'https://petpark.hr/faq',
+    type: 'website',
+  },
 };
 
 export default function FaqPage() {

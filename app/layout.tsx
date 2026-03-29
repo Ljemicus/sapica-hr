@@ -30,13 +30,14 @@ const nunito = Nunito({
 export const metadata: Metadata = {
   metadataBase: new URL('https://petpark.hr'),
   title: {
-    default: 'PetPark — Pronađite čuvara za svog ljubimca',
+    default: 'PetPark — Sve za ljubimce na jednom mjestu',
     template: '%s | PetPark',
   },
-  description: 'PetPark je hrvatski marketplace za čuvanje kućnih ljubimaca. Pronađite pouzdane sittere u vašem gradu ili zaradite čuvajući ljubimce. Čuvanje, šetanje, grooming i školovanje pasa.',
+  description: 'PetPark je hrvatska super-aplikacija za ljubimce. Čuvanje, grooming, školovanje pasa, veterinari, shop, udomljavanje, dog-friendly lokacije i još više — sve na jednom mjestu.',
   keywords: [
     'pet sitting', 'čuvanje ljubimaca', 'šetanje pasa', 'grooming', 'školovanje pasa',
-    'čuvar za pse', 'čuvar za mačke', 'pet sitter Hrvatska',
+    'čuvar za pse', 'čuvar za mačke', 'pet sitter Hrvatska', 'veterinar', 'pet shop',
+    'udomljavanje pasa', 'dog-friendly', 'izgubljeni ljubimci',
     'Zagreb', 'Split', 'Rijeka', 'Osijek', 'Pula', 'Zadar',
   ],
   authors: [{ name: 'PetPark' }],
@@ -44,24 +45,36 @@ export const metadata: Metadata = {
   publisher: 'PetPark',
   formatDetection: { telephone: true, email: true },
   openGraph: {
-    title: 'PetPark — Pronađite čuvara za svog ljubimca',
-    description: 'Povežite se s pouzdanim čuvarima ljubimaca u vašem gradu. 500+ sittera, 50+ gradova u Hrvatskoj.',
+    title: 'PetPark — Sve za ljubimce na jednom mjestu',
+    description: 'Čuvanje, grooming, školovanje, veterinari, shop, udomljavanje i zajednica ljubitelja životinja — sve u jednoj aplikaciji.',
     type: 'website',
     locale: 'hr_HR',
     url: 'https://petpark.hr',
     siteName: 'PetPark',
+    images: [{
+      url: '/opengraph-image',
+      width: 1200,
+      height: 630,
+      alt: 'PetPark — Sve za ljubimce na jednom mjestu',
+    }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'PetPark — Pronađite čuvara za svog ljubimca',
-    description: 'Povežite se s pouzdanim čuvarima ljubimaca u vašem gradu. 500+ sittera, 50+ gradova u Hrvatskoj.',
+    title: 'PetPark — Sve za ljubimce na jednom mjestu',
+    description: 'Čuvanje, grooming, školovanje, veterinari, shop, udomljavanje i zajednica ljubitelja životinja — sve u jednoj aplikaciji.',
+    images: ['/opengraph-image'],
   },
   robots: {
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
   },
-  alternates: { canonical: 'https://petpark.hr' },
+  alternates: {
+    canonical: 'https://petpark.hr',
+    languages: {
+      'hr': 'https://petpark.hr',
+    },
+  },
   icons: {
     icon: [
       { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
@@ -84,6 +97,9 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#f97316" />
+        <link rel="preconnect" href="https://hmtlcgjcxhjecsbmmxol.supabase.co" />
+        <link rel="dns-prefetch" href="https://hmtlcgjcxhjecsbmmxol.supabase.co" />
+        <link rel="dns-prefetch" href="https://plausible.io" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="PetPark" />

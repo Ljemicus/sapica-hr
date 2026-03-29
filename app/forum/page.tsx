@@ -1,11 +1,19 @@
+import type { Metadata } from 'next';
 import { MessageSquare } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { getTopics, getTrendingTopics } from '@/lib/db';
 import { ForumContent } from './forum-content';
 
-export const metadata = {
-  title: 'Forum — Zajednica ljubitelja životinja',
-  description: 'Pitanja, savjeti, priče i razgovori zajednice ljubitelja životinja. Pridružite se diskusiji!',
+export const metadata: Metadata = {
+  title: 'Forum za ljubitelje životinja',
+  description: 'Pitanja, savjeti, priče i razgovori zajednice ljubitelja životinja. Pridružite se diskusiji na PetPark forumu!',
+  keywords: ['forum ljubimci', 'pitanja o psima', 'savjeti za mačke', 'zajednica ljubitelja životinja'],
+  openGraph: {
+    title: 'Forum za ljubitelje životinja | PetPark',
+    description: 'Pitanja, savjeti i razgovori zajednice ljubitelja životinja. Pridružite se!',
+    url: 'https://petpark.hr/forum',
+    type: 'website',
+  },
 };
 
 export default async function ForumPage() {

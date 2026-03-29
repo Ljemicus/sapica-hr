@@ -6,8 +6,15 @@ import type { ServiceType, GroomingServiceType, TrainingType } from '@/lib/types
 import type { UnifiedProvider, ProviderCategory } from './types';
 
 export const metadata: Metadata = {
-  title: 'Pretraži sve pružatelje usluga',
+  title: 'Pronađite pet sittera u vašem gradu',
   description: 'Pronađite pouzdane sittere, groomere i trenere za vašeg ljubimca. Filtrirajte po kategoriji, gradu, cijeni i ocjeni.',
+  keywords: ['pet sitter', 'groomer', 'trener pasa', 'pretraga', 'čuvanje ljubimaca'],
+  openGraph: {
+    title: 'Pronađite pet sittera u vašem gradu | PetPark',
+    description: 'Pronađite pouzdane sittere, groomere i trenere za vašeg ljubimca u Hrvatskoj.',
+    url: 'https://petpark.hr/pretraga',
+    type: 'website',
+  },
 };
 
 interface SearchPageProps {

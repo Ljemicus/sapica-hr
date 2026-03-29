@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -6,6 +7,18 @@ import {
   ArrowRight, Quote, Scissors, GraduationCap, BookOpen,
   PawPrint,
 } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'PetPark — Sve za ljubimce na jednom mjestu',
+  description: 'Čuvanje, grooming, školovanje pasa, veterinari, pet shop, udomljavanje, dog-friendly lokacije i zajednica ljubitelja životinja — sve na jednom mjestu u Hrvatskoj.',
+  keywords: ['pet sitting hrvatska', 'čuvanje ljubimaca', 'grooming', 'školovanje pasa', 'veterinar', 'pet shop', 'udomljavanje', 'dog-friendly'],
+  openGraph: {
+    title: 'PetPark — Sve za ljubimce na jednom mjestu',
+    description: 'Čuvanje, grooming, školovanje, veterinari, shop, udomljavanje i zajednica — sve u jednoj aplikaciji.',
+    url: 'https://petpark.hr',
+    type: 'website',
+  },
+};
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +27,18 @@ import { Input } from '@/components/ui/input';
 import { getLostPets } from '@/lib/db';
 import { LOST_PET_SPECIES_LABELS } from '@/lib/types';
 import { NewsletterSignup } from '@/components/shared/newsletter-signup';
+import { ItemListJsonLd } from '@/components/seo/json-ld';
+
+const homepageServices = [
+  { name: 'Čuvanje ljubimaca', url: 'https://petpark.hr/pretraga', description: 'Pronađite pouzdane sittere u vašem gradu' },
+  { name: 'Grooming', url: 'https://petpark.hr/njega', description: 'Profesionalni saloni za uljepšavanje ljubimaca' },
+  { name: 'Školovanje pasa', url: 'https://petpark.hr/dresura', description: 'Certificirani treneri i programi za pse' },
+  { name: 'Veterinari', url: 'https://petpark.hr/veterinari', description: 'Veterinarske ordinacije u vašem gradu' },
+  { name: 'Pet Shop', url: 'https://petpark.hr/shop', description: 'Hrana, igračke i oprema za ljubimce' },
+  { name: 'Udomljavanje', url: 'https://petpark.hr/udomljavanje', description: 'Psi i mačke koji traže dom' },
+  { name: 'Dog-Friendly lokacije', url: 'https://petpark.hr/dog-friendly', description: 'Kafići, restorani i plaže za pse' },
+  { name: 'Izgubljeni ljubimci', url: 'https://petpark.hr/izgubljeni', description: 'Prijavite ili pronađite izgubljenog ljubimca' },
+];
 
 const featuredSitters = [
   { id: '11111111-1111-1111-1111-111111111111', name: 'Ana Horvat', city: 'Rijeka', rating: 4.9, reviews: 23, price: 25, bio: 'Obožavam životinje od malih nogu! Imam veliku kuću s dvorištem.', verified: true, superhost: true, initial: 'A', gradient: 'from-orange-400 to-amber-300' },
@@ -77,6 +102,7 @@ const cities = [
 export default async function HomePage() {
   return (
     <div>
+      <ItemListJsonLd items={homepageServices} />
       {/* ── Hero Section ── */}
       <section className="relative overflow-hidden hero-gradient" aria-label="Hero">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
