@@ -2,13 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Scissors, MessageSquare, User } from 'lucide-react';
+import { Home, Search, BookOpen, MessageSquare, User } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 
 const navItems = [
   { href: '/', icon: Home, label: 'Početna' },
   { href: '/pretraga', icon: Search, label: 'Pretraži' },
-  { href: '/njega', icon: Scissors, label: 'Njega' },
+  { href: '/blog', icon: BookOpen, label: 'Blog' },
   { href: '/forum', icon: MessageSquare, label: 'Forum' },
 ];
 
