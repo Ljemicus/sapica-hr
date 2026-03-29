@@ -65,7 +65,7 @@ export function Navbar() {
       <div className="container mx-auto flex items-center justify-between px-4 h-full">
         <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl group" aria-label="PetPark početna">
           <div className="relative">
-            <PawLogo className="h-8 w-8 text-orange-500 group-hover:scale-110 transition-transform duration-200" />
+            <PawLogo className="h-10 w-10 text-orange-500 group-hover:scale-110 transition-transform duration-200" />
           </div>
           <span className="font-[var(--font-heading)] tracking-tight">
             <span className="text-orange-500">Pet</span><span className="text-teal-600 dark:text-teal-400">Park</span>
@@ -242,7 +242,7 @@ export function Navbar() {
                   </div>
                 ) : (
                   <div className="flex items-center gap-2.5">
-                    <PawLogo className="h-7 w-7 text-orange-500" />
+                    <PawLogo className="h-9 w-9 text-orange-500" />
                     <span className="font-extrabold text-lg">
                       <span className="text-orange-500">Pet</span><span className="text-teal-600 dark:text-teal-400">Park</span>
                     </span>
