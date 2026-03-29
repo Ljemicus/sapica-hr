@@ -131,7 +131,7 @@ export default function RootLayout({
           <PushNotificationPrompt />
           <NotificationPrompt />
           <Toaster position="top-right" richColors />
-          <ChatWidget />
+
           <CookieConsent />
           </CartProvider>
         </AuthProvider>
