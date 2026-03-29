@@ -77,6 +77,9 @@ export function Navbar() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1" aria-label="Glavna navigacija">
+          <Link href="/o-nama" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-accent">
+            O nama
+          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger render={<button />} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-accent">
               {t('nav.services')} <ChevronDown className="h-3.5 w-3.5" />
