@@ -1053,30 +1053,24 @@ DIY igračke su često najzanimljivije. Kartonska kutija, papirna vrećica, kugl
   {
     slug: 'proljece-i-tvoj-ljubimac-10-opasnosti',
     title: 'Proljeće i tvoj ljubimac: 10 opasnosti koje ne očekuješ',
-    excerpt: 'Od otrovnih biljaka u vrtu do krpelja — evo na što paziti kad dođe toplije vrijeme.',
-    body: `Proljeće je divno doba godine — ali za vlasnike ljubimaca donosi i skrivene opasnosti. Evo 10 stvari na koje morate paziti.
+    excerpt: 'Oleander u vrtu, krpelji na Kvarneru, čokoladna jaja na stolu — proljeće je minsko polje za ljubimce.',
+    body: `Prošlog travnja, moja susjeda u Opatiji zvala me u panici. Njen zlatni retriver Bongo pojeo je par latica oleandra iz vrta. Dva sata kasnije bili su na hitnoj u Rijeci. Bongo se oporavio — ali moglo je završiti puno gore.
 
-1. Otrovne biljke u vrtu. Oleander, ljiljan, azaleja i tulipani su smrtonosno otrovni za pse i mačke. Ako imate ove biljke u vrtu, ogradite ih ili zamijenite sigurnim alternativama. Ljiljani su posebno opasni za mačke — čak i kontakt s peludom može uzrokovati zatajenje bubrega.
+Proljeće u Hrvatskoj je prelijepo. Ali za vlasnike ljubimaca, to je i sezona u kojoj se opasnosti skrivaju tamo gdje ih najmanje očekujete.
 
-2. Krpelji i buhe. Sezona kreće već u ožujku, posebno u Primorju i Dalmaciji. Redovita zaštita antiparazitikom je obavezna. Provjeravajte ljubimca nakon svake šetnje — posebno uši, vrat i područje između prstiju.
+Oleander raste u svakom drugom vrtu na obali. Ljiljan stoji u vazi na prozoru. Oboje su smrtonosno otrovni — oleander za pse, ljiljan za mačke. Kod ljiljana je situacija posebno zastrašujuća: čak i pelud koji mačka olizne sa šape može izazvati zatajenje bubrega. Ako imate mačku, ljiljani ne smiju biti u kući. Točka.
 
-3. Gnojiva i pesticidi. Ako tretirate vrt ili travnjak, držite ljubimca podalje najmanje 48 sati. Mnogi pesticidi su toksični za pse čak i u malim količinama. Organski vrt je najsigurnija opcija.
+Krpelji na Kvarneru i u Istri kreću već krajem veljače. U unutrašnjosti malo kasnije, ali do travnja su svugdje. Problem nije samo nelagoda — krpelji prenose babeziozu i lajmsku bolest. Antiparazitik nije opcija, nego obaveza. A nakon svake šetnje po travi ili šumi, pregledajte psa: uši, vrat, prepone, između prstiju. Krpelj se zakači za 15 minuta, ali bolest prenosi tek nakon 24-48 sati — tako da imate vremena ako ste pažljivi.
 
-4. Proljetne alergije. Da, i psi mogu imati sezonske alergije! Simptomi uključuju češanje, crvenilo kože, kihanje i suzne oči. Ako primijetite ove znakove, posjetite veterinara.
+Uskršnja čokoladna jaja. Djeca ih ostavljaju posvuda, a psi imaju nos od 10 kilometara. Teobromin u čokoladi je za pse otrov — tamna čokolada je najgora. Pas od 10 kila koji pojede 50 grama tamne čokolade može završiti na infuziji. Slatkiše držite visoko, a omote bacajte u zatvorenu kantu.
 
-5. Otvoreni prozori. Mačke su poznate po sindromu visokog pada. S dolaskom toplijeg vremena, otvaramo prozore — ali mačka koja jurca za leptirom može pasti. Mrežice za prozore su obavezne.
+Otvoreni prozori su ubojica mačaka. Svaki veterinar u Hrvatskoj ima priče o "sindromu visokog kata" — mačke koje padnu kroz otvoreni prozor jureći leptira ili pticu. Mrežice koštaju 20-30 eura po prozoru. Život vaše mačke nema cijenu.
 
-6. Čokolada i uskršnji slatkiši. Uskrs je u proljeće, a čokoladna jaja su svugdje. Čokolada je toksična za pse — teobromin može uzrokovati povraćanje, proljev, pa čak i srčane probleme. Držite slatkiše van dosega.
+Proljetne alergije pogađaju i životinje. Ako vaš pas se češe više nego inače, ima crvenu kožu ili suzne oči — nije mašta, nego alergija. Trava, pelud, ambrozija. Veterinar može prepisati antihistaminike, a vi možete pomoći tako da psa operete nakon šetnje po visokoj travi.
 
-7. Pčele i ose. Psi vole loviti kukce, ali ubod pčele može uzrokovati alergijsku reakciju. Ako primijetite oticanje njuške ili otežano disanje, hitno kod veterinara.
+Još dvije stvari koje ljudi zaborave: antifriz iz garaže (sladak okus, smrtonosno otrovan — čak i par kapi) i dehidracija na prvim toplijim izletima. Nosite vodu i sklopivu posudu. Uvijek.
 
-8. Antifrizi. Proljetno čišćenje garaže može značiti prolijevanje antifriza. Ima sladak okus koji privlači pse, ali je iznimno otrovan. Čak i mala količina može biti smrtonosna.
-
-9. Napuštena gnijezda i životinje. Vaš pas može naći ptičje gnijezdo ili mladunče divlje životinje. Naučite ga naredbu "ostavi" da izbjegnete probleme.
-
-10. Dehidracija na izletima. S prvim toplijim danima idemo na dulje šetnje, ali zaboravljamo na vodu. Uvijek nosite sklopivu posudu i svježu vodu — posebno za kratkonosne pasmine koje se brže pregreju.
-
-Prevencija je ključ. Uživajte u proljeću sa svojim ljubimcem, ali budite svjesni ovih rizika!`,
+Proljeće je za uživanje. Ali malo opreza čini razliku između lijepog dana i noćne more na hitnoj.`,
     author: 'Dr. Maja Kovač',
     date: '2026-03-28',
     category: 'zdravlje',
@@ -1086,30 +1080,37 @@ Prevencija je ključ. Uživajte u proljeću sa svojim ljubimcem, ali budite svje
     slug: 'personalizirana-prehrana-za-pse',
     title: 'Personalizirana prehrana za pse — budućnost ili hype?',
     excerpt: 'Sirova vs. suha hrana, brendovi u Hrvatskoj i koliko zapravo košta kvalitetna prehrana.',
-    body: `Industrija hrane za kućne ljubimce eksplodirala je u zadnjih par godina. Svuda čitamo o "personaliziranoj prehrani", biome testiranju i premium brendovima. Ali koliko toga zapravo ima smisla za vašeg psa?
+    body: `Kad odete u pet shop po hranu za psa, dočeka vas zid od 200 pakiranja. Svako obećava da je "premium", "natural", "holistic". Marketing mašinerija radi prekovremeno. A vi stojite s praznom vrećom u ruci i pitate se — koliko od ovog je stvarno bitno?
 
-Sirova vs. suha hrana — vječna rasprava. Zagovornici sirove prehrane (BARF dijeta) tvrde da je prirodnija i zdravija. Veterinari upozoravaju na rizike od bakterija (Salmonella, E. coli) i nebalansiranih obroka. Istina je negdje u sredini — sirova hrana može biti odlična, ali zahtijeva znanje i pripremu.
+Odgovor je: manje nego što mislite, ali više nego što bi htjeli.
 
-Što kažu hrvatski veterinari? Većina preporučuje kvalitetnu suhu hranu kao bazu, uz povremene dodatke svježeg mesa, povrća i voća. "Najvažnije je konzistentnost i kvaliteta sastojaka, ne trendy etiketa na pakiranju," kaže dr. Ivan Marić iz veterinarske ambulante u Rijeci.
+Krenimo od sirove hrane jer je to tema broj jedan u svim Facebook grupama za vlasnike pasa u Hrvatskoj. BARF dijeta — kosti, sirovo meso, povrće. Zagovornici tvrde da su psi "vukovi" i da im treba sirova hrana. Veterinari kažu: psi NISU vukovi. Živimo zajedno 15.000 godina i njihov probavni sustav se promijenio. Sirova hrana MOŽE biti odlična — ali zahtijeva da znate točno što radite. Nebalansirani obroci rade više štete nego najjeftinija granulirana hrana.
 
-Brendovi dostupni u Hrvatskoj:
-- Farmina N&D — talijanski premium brand, dostupan u većini pet shopova. Grain-free opcije.
-- Josera — njemački brand, odličan omjer cijene i kvalitete. Posebno popularan za velike pse.
-- Brit Care — češki brand s dobrim cijenama. Hypoallergenic linija za osjetljive pse.
-- Acana & Orijen — kanadski premium. Skuplji, ali jedan od najboljih sastava na tržištu.
-- Taste of the Wild — američki grain-free. Popularan među vlasnicima aktivnih pasa.
+Ako nemate vremena vagati kalcij i fosfor u svakom obroku, kvalitetna suha hrana je potpuno OK izbor.
 
-Koliko zapravo košta kvalitetna prehrana? Za psa od 20kg:
-- Ekonomska hrana (Chappi, Pedigree): 150-200€ godišnje
-- Srednji rang (Brit, Josera): 300-450€ godišnje
-- Premium (Farmina, Acana): 500-700€ godišnje
-- Ultra premium / sirova: 800-1200€ godišnje
+Ali koja? Evo stvarnog stanja u Hrvatskoj:
 
-Razlika u cijeni se često vrati kroz manje posjete veterinaru. Kvalitetna prehrana znači zdraviju kožu, bolju probavu i više energije.
+Farmina N&D je talijanski brend koji se zadnjih par godina probio na naše tržište. Grain-free linija ima odličan sastav — meso na prvom mjestu, bundeva, borovnica. Cijena je viša, ali znate što kupujete.
 
-Najčešće alergije kod pasa u našoj regiji: piletina (iznenađujuće česta!), pšenica, kukuruz i soja. Ako vaš pas ima probleme s kožom ili probavom, razmislite o eliminacijskoj dijeti pod nadzorom veterinara.
+Josera iz Njemačke je možda najbolji omjer cijene i kvalitete koji možete naći. Posebno SensiPlus za osjetljive pse. Paket od 15 kila košta oko 60 eura — za 4 mjeseca hrane za srednjeg psa, to je fer.
 
-Naš savjet: Ne nasjedajte na marketing. Čitajte sastav, ne etiketu. Prva 3 sastojka trebaju biti meso, ne žitarice. I razgovarajte sa svojim veterinarom — on poznaje vašeg psa.`,
+Brit Care iz Češke je underdog koji zaslužuje pažnju. Hypoallergenic linija spašava pse s alergijama. Cijena? Niža od Farmine, a sastav je solidan.
+
+Acana i Orijen su "Rolls-Royce" pseće hrane. Kanadski, skoro savršen sastav. Ali 80+ eura za 11 kila — nije za svačiji budžet.
+
+Hajdemo na brojke. Pas od 20 kila, godišnji trošak hrane:
+
+Chappi/Pedigree s polica Konzuma: oko 180 eura. Jeftino, ali pogledajte sastav — žitarice na prvom mjestu, "mesni nusproizvodi" (ne želite znati što je to).
+
+Brit/Josera: oko 350 eura. Meso na prvom mjestu, bez umjetnih boja. Dobar izbor.
+
+Farmina/Acana: oko 600 eura. Premium, ali ne morate uzeti najveći paket odjednom.
+
+Zanimljiv podatak: veterinari kažu da psi na kvalitetnijoj hrani dolaze na pregled rjeđe. Manje problema s kožom, boljom probavom, manje plinova (da, i to je indikator). Ta razlika od 200 eura godišnje se često vrati u ušteđenim veterinarskim računima.
+
+Jedna stvar koju nitko ne govori: najčešća alergija na hranu kod pasa u Hrvatskoj je — piletina. Da, upravo ta piletina koja je u 80% hrana. Ako vaš pas se stalno češe, a niste našli uzrok — probajte hranu na bazi ribe ili janjetine. Možda je rješenje tako jednostavno.
+
+Pravilo palca za čitanje deklaracije: prva tri sastojka čine 80% hrane. Ako su to kukuruz, pšenica i "životinjsko brašno" — stavite natrag na policu. Ako je meso (ne "mesni nusproizvodi") na prvom mjestu — idete u dobrom smjeru.`,
     author: 'Tomislav Barić',
     date: '2026-03-26',
     category: 'prehrana',
@@ -1119,7 +1120,7 @@ Naš savjet: Ne nasjedajte na marketing. Čitajte sastav, ne etiketu. Prva 3 sas
     slug: 'checklist-prvi-put-kod-sittera',
     title: 'Prvi put ostavljaš ljubimca s pet sitterom? Evo kompletni checklist',
     excerpt: 'Sve što trebate pripremiti prije prvog bookinga — od dokumentacije do omiljene igračke.',
-    body: `Ostavljanje ljubimca kod sittera prvi put je stresno — za vas, ne za njega. Uz ovaj checklist, bit ćete potpuno spremni.
+    body: `Zvoni vam telefon, taksi je za 20 minuta, a vi još provjeravate jeste li spakirali sve za psa. Ovo vam se neće dogoditi ako pročitate sljedeće.
 
 PRIJE BOOKINGA:
 
@@ -1186,7 +1187,9 @@ Pas će biti lud od sreće — to je normalno! Dajte mu 15-20 minuta za ponovnu 
     slug: 'pametne-igracke-za-pse-koje-stvarno-rade',
     title: 'Pametne igračke za pse — koje stvarno rade?',
     excerpt: 'Testirali smo puzzle feedere, interaktivne lopte i automatske bacače. Evo rezultata.',
-    body: `Pametne igračke za pse su hit — ali koje zapravo rade, a koje su bacanje novaca? Isprobali smo najpopularnije opcije dostupne u Hrvatskoj.
+    body: `Moj pas je uništio 3 "neuništive" igračke u jednom tjednu. Plišani dinosaur — 4 minute. Gumena kost s Amazona — dan i pol. "Vojni" frisbee — čak 3 dana, ali krajnji rezultat je bio isti: plastični konfeti po cijelom stanu.
+
+Onda sam počeo istraživati. Evo što sam naučio nakon godine dana testiranja.
 
 PUZZLE FEEDERI — ⭐⭐⭐⭐⭐
 
@@ -1242,45 +1245,25 @@ Pro tip: zamrznite Kong s mješavinom bananre, kikiriki maslaca i hrane za pse. 
     slug: 'kako-prepoznati-dobrog-veterinara',
     title: 'Kako prepoznati dobrog veterinara — 7 znakova kvalitete',
     excerpt: 'Ne trebate biti stručnjak da prepoznate kvalitetnu veterinarsku skrb. Evo na što obratiti pažnju.',
-    body: `Izbor veterinara je jedna od najvažnijih odluka koju ćete donijeti za svog ljubimca. Evo 7 znakova da ste na pravom mjestu.
+    body: `Prijateljica me pitala za preporuku veterinara u Rijeci. Rekao sam joj da ode kod dr. Marića. "Zašto baš njega?" pitala je. Razmislio sam. I shvatio da znam točno zašto — jer radi sve ono što loši veterinari ne rade.
 
-1. SLUŠAJU VAS I VAŠEG LJUBIMCA
+Evo po čemu ćete i vi prepoznati razliku.
 
-Dobar veterinar ne žuri kroz pregled. Pita vas pitanja o ponašanju, apetitu, navikama. Promatra životinju prije nego je dotakne. Ako veterinar počne pregledavati psa dok vi još pričate simptome — to je crvena zastava.
+Dobar veterinar ne dira vašeg psa prvih 30 sekundi. Promatra ga. Gleda kako hoda, kako diše, kako reagira na okruženje. Tek onda priđe — polako, s poslasticom u ruci. Ako veterinar zgrabi vašeg psa čim uđete, bez da ga pusti da se prilagodi — to vam govori dosta o pristupu.
 
-2. OBJAŠNJAVAJU RAZUMLJIVIM JEZIKOM
+Slušanje. Zvuči banalno, ali zamislite: opisujete simptome, a veterinar već tipka na kompjuteru. Ili još gore — prekida vas. Dobar veterinar vas sluša do kraja, zapisuje, i onda pita dodatna pitanja. "Kad ste to prvi put primijetili? Je li gore ujutro ili navečer? Jede li normalno?" Detalji spašavaju živote.
 
-Ako nakon pregleda ne razumijete što je dijagnoza i plan liječenja, nešto ne valja. Dobar veterinar koristi jednostavne riječi, crta dijagrame, pokazuje na modelu. Ne boji se pitanja — dapače, ohrabruje ih.
+Opcije umjesto ultimatuma. "Vaš pas treba operaciju, košta 800 eura" — ovo NIJE kako komunicira dobar veterinar. Ovako je bolje: "Imamo dvije opcije. Konzervativni pristup s lijekovima — jeftiniji, ali sporiji, uspješnost oko 60%. Ili operacija — skuplja, ali rješava problem trajno. Evo prednosti i mane obje opcije. Što vam odgovara?"
 
-3. DAJU OPCIJE, NE ULTIMATUME
+Cijene u Hrvatskoj, da znate što očekivati: redoviti pregled 25-50 eura. Vakcinacija 30-60. Sterilizacija psa 150-300 (ovisi o veličini — štenad jeftinije, doga skuplje). Mačke 80-150. Čipiranje 30-50. Rendgen 40-80. Ako su cijene značajno iznad ili ispod ovog raspona — pitajte zašto.
 
-"Možemo ići s opcijom A koja je jeftinija ali sporija, ili opcijom B koja je skuplja ali brža. Evo prednosti i mane svake." Ovako komunicira dobar veterinar. Ako čujete samo "morate napraviti ovo i to će koštati X" bez alternativa — potražite drugo mišljenje.
+Čistoća nije luksuz, nego minimum. Obratite pažnju na čekaonicu. Miriše li po dezinfekciji ili po mokraći? Stolovi su čisti ili puni dlaka od prethodnog pacijenta? Male stvari govore puno. Bonus bodovi za ordinacije koje imaju odvojenu čekaonicu za mačke — jer mačka koja čeka u prostoriji punoj pasa koja laju prolazi kroz pakao.
 
-4. ORDINACIJA JE ČISTA I ORGANIZIRANA
+Hitna dostupnost. Postavite ovo pitanje na prvom posjetu: "Što ako se nešto dogodi u 3 ujutro?" Ako odgovor nije jasan — imate problem. Dobre ordinacije imaju ili dežurni broj ili jasnu uputu na najbližu hitnu službu.
 
-Zvuči očito, ali obratite pažnju. Čista čekaonica, dezinficirani stolovi, uredno složeni lijekovi. Odvojeni prostori za pse i mačke (ili barem odvojeni termini) su znak da brinu o stresu životinja.
+I konačno — vaš ljubimac vam govori sve. Ako svaki put drhti, povlači se, cvili — nešto nije u redu. Možda je prethodno iskustvo bilo traumatično. Možda je pristup pregrubo. Fear-free veterina postaje standard u svijetu, a polako dolazi i kod nas. To znači: poslastice na pregledu, nježan pristup, bez forsiranja, sedacija kad je potrebna umjesto "držanja na silu".
 
-5. TRANSPARENTNI S CIJENAMA
-
-Prije bilo kakvog postupka trebate znati cijenu. Dobar veterinar daje procjenu troškova unaprijed i upozorava ako se nešto promijeni. Nema iznenađenja na računu.
-
-Orijentacijske cijene u Hrvatskoj:
-- Redoviti pregled: 25-50€
-- Vakcinacija: 30-60€
-- Sterilizacija psa: 150-300€ (ovisno o veličini)
-- Sterilizacija mačke: 80-150€
-- Čipiranje: 30-50€
-- Rendgen: 40-80€
-
-6. DOSTUPNI U HITNIM SLUČAJEVIMA
-
-Pitajte unaprijed: "Što radim ako se nešto dogodi u 3 ujutro?" Dobra ordinacija ima dežurni broj ili surađuje s hitnom veterinarskom službom. Na PetParku imamo stranicu /hitno s kontaktima hitnih veterinara po gradovima.
-
-7. LJUBIMAC SE OSJEĆA UGODNO
-
-Ovo je najvažnije. Ako vaš pas svaki put drhti od straha u čekaonici, a veterinar ne poduzima ništa da ga smiri — razmislite o promjeni. Fear-free pristup postaje standard — uključuje poslastice, polako upoznavanje i nježan pristup.
-
-BONUS: Pitajte druge vlasnike. Na PetPark forumu (/forum) možete pitati za preporuke u svom gradu. Osobno iskustvo je najvrjednija informacija.`,
+Vaš pas ne može birati veterinara. Ali vi možete. Birajte pametno.`,
     author: 'Dr. Maja Kovač',
     date: '2026-03-20',
     category: 'zdravlje',
