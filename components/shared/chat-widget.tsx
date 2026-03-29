@@ -83,7 +83,7 @@ export function ChatWidget() {
       {!isOpen && (
         <button
           onClick={handleOpen}
-          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-all hover:bg-orange-600 hover:scale-110 active:scale-95"
+          className="fixed bottom-6 left-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-all hover:bg-orange-600 hover:scale-110 active:scale-95"
           aria-label="Otvori chat"
         >
           <MessageCircle className="h-6 w-6" />
@@ -92,7 +92,7 @@ export function ChatWidget() {
 
       {/* Chat window */}
       {isOpen && (
-        <div className="fixed bottom-4 right-4 z-50 flex w-[calc(100vw-2rem)] max-w-[400px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl sm:bottom-6 sm:right-6 animate-in slide-in-from-bottom-4 fade-in duration-200"
+        <div className="fixed bottom-4 left-4 z-50 flex w-[calc(100vw-2rem)] max-w-[400px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl sm:bottom-6 sm:left-6 animate-in slide-in-from-bottom-4 fade-in duration-200"
           style={{ height: 'min(500px, calc(100vh - 6rem))' }}
         >
           {/* Header */}
