@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { mockUsers } from '@/lib/mock-data';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: Request) {
+  const ip = request.headers.get('x-forwarded-for') || 'unknown';
+  if (!rateLimit(`login:${ip}`, 5, 60000)) {
+    return NextResponse.json({ error: 'Previše pokušaja.' }, { status: 429 });
+  }
+
   const body = await request.json();
   const { email, password } = body;
 

@@ -6,6 +6,9 @@ export function createClient() {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     // Return a mock client during build time
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === '') {
+      console.warn('⚠️ Supabase URL not configured — using mock mode');
+    }
     return createBrowserClient(
       'https://placeholder.supabase.co',
       'placeholder-anon-key'
