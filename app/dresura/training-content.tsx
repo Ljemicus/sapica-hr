@@ -104,7 +104,7 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="sticky top-14 z-30 -mx-4 px-4 py-4 bg-white/95 backdrop-blur-sm border-b border-gray-100 mb-6 -mt-2">
+      <div className="sticky top-14 z-30 -mx-4 px-4 py-4 glass-strong border-b border-border/50 mb-6 -mt-2">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -298,7 +298,7 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
 
 function ProgramCard({ program }: { program: TrainingProgram }) {
   return (
-    <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+    <div className="p-4 bg-accent rounded-xl border border-border/50">
       <div className="flex items-start justify-between mb-2">
         <div>
           <h4 className="font-semibold text-sm">{program.name}</h4>

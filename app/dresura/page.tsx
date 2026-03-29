@@ -21,22 +21,48 @@ export default async function DresuraPage({ searchParams }: DresuraPageProps) {
   return (
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-green-50">
+      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-indigo-950/20 dark:via-background dark:to-teal-950/20">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
-        <div className="container mx-auto px-4 py-16 md:py-24 relative">
+        <div className="container mx-auto px-4 py-14 md:py-20 relative">
           <div className="max-w-3xl mx-auto text-center">
-            <Badge className="mb-6 bg-indigo-100 text-indigo-700 hover:bg-indigo-100 border-0 text-sm px-5 py-2 animate-fade-in-up">
+            <Badge className="mb-5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 border-0 text-sm px-5 py-2 animate-fade-in-up rounded-full font-semibold">
               <GraduationCap className="h-3.5 w-3.5 mr-1.5" />
               Dresura i trening
             </Badge>
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 animate-fade-in-up delay-100">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-5 animate-fade-in-up delay-100 font-[var(--font-heading)]">
               Profesionalna{' '}
               <span className="text-gradient">dresura pasa</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in-up delay-200 leading-relaxed">
+            <p className="text-base md:text-lg text-muted-foreground mb-6 animate-fade-in-up delay-200 leading-relaxed max-w-xl mx-auto">
               Od osnove poslušnosti do agility-ja — pronađite certificirane trenere
               koji koriste pozitivan pristup dresuri.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Video Testimonials Placeholder */}
+      <section className="py-10 md:py-14 bg-warm-section">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <Badge variant="secondary" className="mb-3 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 border-0 rounded-full font-semibold">Testimonijali</Badge>
+            <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)]">Što kažu vlasnici</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 max-w-4xl mx-auto">
+            {[
+              { name: 'Marko & Rex', desc: 'Agility trening transformirao je Rexovo ponašanje!', color: 'from-indigo-200 to-blue-100 dark:from-indigo-900/40 dark:to-blue-900/30' },
+              { name: 'Ana & Luna', desc: 'Luna je naučila osnove u samo 4 tjedna.', color: 'from-emerald-200 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/30' },
+              { name: 'Petra & Buddy', desc: 'Profesionalan pristup i puno strpljenja.', color: 'from-amber-200 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/30' },
+            ].map((item) => (
+              <div key={item.name} className={`rounded-2xl bg-gradient-to-br ${item.color} p-6 md:p-8 text-center`}>
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/60 dark:bg-white/10 mx-auto mb-3 flex items-center justify-center">
+                  <GraduationCap className="h-8 w-8 md:h-10 md:w-10 text-indigo-500 dark:text-indigo-400" />
+                </div>
+                <p className="font-bold text-sm md:text-base font-[var(--font-heading)]">{item.name}</p>
+                <p className="text-xs text-muted-foreground mt-1 italic">&ldquo;{item.desc}&rdquo;</p>
+                <p className="text-xs text-muted-foreground mt-2">Video uskoro</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

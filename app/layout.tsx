@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import { Inter } from 'next/font/google';
+import { Inter, Nunito } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/shared/navbar';
 import { Footer } from '@/components/shared/footer';
+import { BottomNav } from '@/components/shared/bottom-nav';
 import { ScrollToTop } from '@/components/shared/scroll-to-top';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/contexts/auth-context';
@@ -16,6 +17,12 @@ import { NotificationPrompt } from '@/components/shared/notification-prompt';
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-sans',
+});
+
+const nunito = Nunito({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-heading',
+  weight: ['400', '600', '700', '800', '900'],
 });
 
 export const metadata: Metadata = {
@@ -69,7 +76,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="hr" className={`${inter.variable} h-full antialiased`}>
+    <html lang="hr" className={`${inter.variable} ${nunito.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#f97316" />
@@ -115,8 +122,9 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
           <Navbar />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 pb-16 md:pb-0">{children}</main>
           <Footer />
+          <BottomNav />
           <ScrollToTop />
           <PushNotificationPrompt />
           <NotificationPrompt />

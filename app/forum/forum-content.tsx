@@ -58,20 +58,20 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
     FORUM_CATEGORIES.find(c => c.slug === slug);
 
   return (
-    <div className="container mx-auto px-4 py-10">
+    <div className="container mx-auto px-4 py-8 md:py-10">
       {/* Search + New Post */}
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
           <Input
             placeholder="Pretraži postove..."
-            className="pl-10 rounded-xl border-gray-200 focus-visible:ring-orange-500"
+            className="pl-10 rounded-xl border-border focus-visible:ring-orange-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         <Dialog>
-          <DialogTrigger render={<Button className="bg-orange-500 hover:bg-orange-600 shadow-md shadow-orange-200/50 btn-hover rounded-xl" />}>
+          <DialogTrigger render={<Button className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 shadow-md shadow-orange-200/50 dark:shadow-orange-900/30 btn-hover rounded-xl font-semibold" />}>
             <Plus className="h-4 w-4 mr-2" />
             Novi post
           </DialogTrigger>
@@ -109,7 +109,7 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
                   <ImageUpload variant="dropzone" maxFiles={3} />
                 </div>
               </div>
-              <Button className="w-full bg-orange-500 hover:bg-orange-600">
+              <Button className="w-full bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 rounded-xl font-semibold">
                 Objavi post
               </Button>
             </div>
@@ -183,7 +183,7 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
                           {topic.title}
                         </h3>
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          <span className="font-medium text-gray-600">{topic.author_name}</span>
+                          <span className="font-medium text-foreground/80">{topic.author_name}</span>
                           <span className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {timeAgo(topic.created_at)}
@@ -220,7 +220,7 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
                   return (
                     <Link key={topic.id} href={`/forum/${topic.id}`} className="block group">
                       <div className="flex items-start gap-3">
-                        <span className="text-lg font-bold text-gray-200 flex-shrink-0 w-6 text-right">{i + 1}</span>
+                        <span className="text-lg font-bold text-muted-foreground/30 flex-shrink-0 w-6 text-right">{i + 1}</span>
                         <div className="min-w-0">
                           <p className="text-sm font-medium line-clamp-2 group-hover:text-orange-500 transition-colors">
                             {topic.title}
@@ -252,7 +252,7 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
                   <button
                     key={cat.slug}
                     onClick={() => setActiveCategory(cat.slug)}
-                    className="flex items-center gap-3 w-full p-2.5 rounded-xl hover:bg-gray-50 transition-colors text-left"
+                    className="flex items-center gap-3 w-full p-2.5 rounded-xl hover:bg-accent transition-colors text-left"
                   >
                     <span className="text-xl">{cat.emoji}</span>
                     <div className="flex-1 min-w-0">

@@ -39,27 +39,29 @@ function TwitterIcon({ className }: { className?: string }) {
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 mt-auto relative overflow-hidden">
+    <footer className="bg-gray-900 dark:bg-gray-950 text-gray-300 mt-auto relative overflow-hidden hidden md:block">
       <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
       <div className="container mx-auto px-4 py-14 relative">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           <div>
-            <Link href="/" className="flex items-center gap-2 font-bold text-xl text-white mb-4 group">
+            <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl text-white mb-4 group">
               <PawLogo className="h-7 w-7 text-orange-400 group-hover:scale-110 transition-transform" />
-              <span className="text-orange-400">PetPark</span>
+              <span>
+                <span className="text-orange-400">Pet</span><span className="text-teal-400">Park</span>
+              </span>
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed mb-6">
               Povežite se s pouzdanim čuvarima ljubimaca u vašem gradu.
               Vaš ljubimac zaslužuje najbolju brigu.
             </p>
             <div className="flex items-center gap-3">
-              <a href="#" className="w-9 h-9 rounded-full bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-colors" aria-label="Facebook">
+              <a href="#" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Facebook">
                 <FacebookIcon className="h-4 w-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-colors" aria-label="Instagram">
+              <a href="#" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Instagram">
                 <InstagramIcon className="h-4 w-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-colors" aria-label="Twitter">
+              <a href="#" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Twitter">
                 <TwitterIcon className="h-4 w-4" />
               </a>
             </div>
@@ -73,7 +75,7 @@ export function Footer() {
               <li><Link href="/zajednica" className="hover:text-orange-400 transition-colors">Zajednica & Blog</Link></li>
               <li><Link href="/forum" className="hover:text-orange-400 transition-colors">Forum</Link></li>
               <li><Link href="/shop" className="hover:text-orange-400 transition-colors">Shop</Link></li>
-              <li><Link href="/registracija?role=sitter" className="hover:text-orange-400 transition-colors">Postani sitter</Link></li>
+              <li><Link href="/registracija?role=sitter" className="hover:text-teal-400 transition-colors">Postani sitter</Link></li>
             </ul>
           </div>
           <div>
@@ -93,7 +95,7 @@ export function Footer() {
                 <span>info@petpark.hr</span>
               </li>
               <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-orange-400 flex-shrink-0" />
+                <Phone className="h-4 w-4 text-teal-400 flex-shrink-0" />
                 <span>+385 1 234 5678</span>
               </li>
               <li className="flex items-start gap-2">

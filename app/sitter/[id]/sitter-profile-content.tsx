@@ -49,12 +49,12 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
   const availableDates = new Set(availability.map((a) => a.date));
 
   const gradient = profile.user?.name
-    ? ['from-orange-400 to-amber-300', 'from-blue-400 to-cyan-300', 'from-purple-400 to-pink-300', 'from-green-400 to-emerald-300'][profile.user.name.charCodeAt(0) % 4]
+    ? ['from-orange-400 to-amber-300', 'from-teal-400 to-cyan-300', 'from-purple-400 to-pink-300', 'from-emerald-400 to-teal-300'][profile.user.name.charCodeAt(0) % 4]
     : 'from-orange-400 to-amber-300';
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <Button variant="ghost" onClick={() => router.back()} className="mb-4 -ml-2 hover:bg-orange-50 hover:text-orange-600">
+      <Button variant="ghost" onClick={() => router.back()} className="mb-4 -ml-2 hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:text-orange-600">
         <ChevronLeft className="h-4 w-4 mr-1" />
         Natrag
       </Button>
@@ -88,13 +88,13 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
                     </div>
                     <div className="flex gap-2">
                       {profile.verified && (
-                        <Badge className="bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-50 animate-fade-in">
+                        <Badge className="bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800 hover:bg-teal-50 dark:hover:bg-teal-950/30 animate-fade-in">
                           <Shield className="h-3 w-3 mr-1" />
                           Verificiran
                         </Badge>
                       )}
                       {profile.superhost && (
-                        <Badge className="bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-50 animate-fade-in delay-100">
+                        <Badge className="bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 hover:bg-amber-50 dark:hover:bg-amber-950/30 animate-fade-in delay-100">
                           <Award className="h-3 w-3 mr-1" />
                           Superhost
                         </Badge>
@@ -245,7 +245,7 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
                     Rezerviraj
                   </Button>
                   <Link href={`/poruke?to=${profile.user_id}`}>
-                    <Button variant="outline" className="w-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200" size="lg">
+                    <Button variant="outline" className="w-full hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:text-orange-600 hover:border-orange-200" size="lg">
                       <MessageCircle className="h-4 w-4 mr-2" />
                       Kontaktiraj
                     </Button>
