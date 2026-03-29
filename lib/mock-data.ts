@@ -1010,6 +1010,46 @@ Za profesionalno šišanje, trimanje i spa tretmane prepustite posao stručnjaci
     category: 'zdravlje',
     emoji: '✂️',
   },
+  {
+    slug: 'najpopularnije-pasmine-u-hrvatskoj',
+    title: 'Najpopularnije pasmine pasa u Hrvatskoj 2026.',
+    excerpt: 'Otkrijte koje su pasmine najtraženije u hrvatskim domovima i zašto.',
+    body: `Hrvatska ima sve veću zajednicu ljubitelja pasa, a neke pasmine su posebno popularne. Evo pregleda najpopularnijih pasmina u 2026.
+
+Labrador retriver ostaje na vrhu popularnosti. Prijateljski, prilagodljiv i odličan s djecom — idealan obiteljski pas. Labradorci su aktivni i trebaju puno vježbe, što je savršeno za hrvatske vlasnike koji vole prirodu.
+
+Zlatni retriver dijeli sličnu popularnost. Inteligentni, nježni i lako se treniraju. Savršeni su za obitelji s djecom i odlični su terapijski psi.
+
+Francuski buldog je najtraženija mala pasmina. Prilagodljivi su za stanove u gradu, ne trebaju mnogo vježbe i nevjerojatno su šarmantni. Pazite samo na temperaturu ljeti.
+
+Njemački ovčar je klasični izbor za one koji traže zaštitnika i prijatelja. Inteligentni, odani i svestrani — od pratnje do sportova.
+
+Dalmatinski pas ima posebno mjesto u hrvatskim srcima. Porijeklom iz Dalmacije, ovi psi su energični, ljubazni i savršeni za aktivne vlasnike.`,
+    author: 'Nina Šimunović',
+    date: '2026-03-20',
+    category: 'psi',
+    emoji: '🐕',
+  },
+  {
+    slug: 'igre-za-macke-u-stanu',
+    title: 'Najbolje igre za mačke u stanu',
+    excerpt: 'Kako zabaviti mačku u zatvorenom prostoru i spriječiti dosadu.',
+    body: `Mačke koje žive u stanu trebaju mentalnu i fizičku stimulaciju da bi bile sretne. Evo najboljih načina za zabavu vaše mačke.
+
+Laser pointer je klasik koji nikad ne razočara. Većina mačaka će ludo trčati za crvenom točkicom. Važno je završiti igru s fizičkom nagradom — dajte mački poslasticu na kraju da ne bude frustrirana.
+
+Puzzle feederi pretvaraju obrok u avanturu. Mačke su prirodni lovci i uživaju u izazovu pronalaženja hrane. Možete kupiti gotove ili napraviti vlastite od kartonskih kutija.
+
+Prozorska sjedalica daje mački "televizor" — promatranje ptica i prolaznika. Postavite hranilicu za ptice blizu prozora za dodatnu zabavu.
+
+Tunel za mačke pruža savršeno skrovište i mjesto za igru. Većina mačaka obožava provlačenje i skrivanje u tunelima.
+
+DIY igračke su često najzanimljivije. Kartonska kutija, papirna vrećica, kuglica od aluminijske folije — jednostavne stvari često su najzabavnije. Izbjegavajte male predmete koje mačka može progutati.`,
+    author: 'Lana Horvat',
+    date: '2026-03-18',
+    category: 'macke',
+    emoji: '🐈',
+  },
 ];
 
 export function getArticleBySlug(slug: string) {

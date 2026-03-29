@@ -11,6 +11,8 @@ export const metadata = {
 };
 
 const categoryColors: Record<BlogCategory, string> = {
+  psi: 'bg-orange-50 text-orange-700 border-orange-200',
+  macke: 'bg-purple-50 text-purple-700 border-purple-200',
   zdravlje: 'bg-green-50 text-green-700 border-green-200',
   prehrana: 'bg-amber-50 text-amber-700 border-amber-200',
   dresura: 'bg-indigo-50 text-indigo-700 border-indigo-200',
@@ -19,6 +21,8 @@ const categoryColors: Record<BlogCategory, string> = {
 };
 
 const categoryGradients: Record<BlogCategory, string> = {
+  psi: 'from-orange-500 to-amber-500',
+  macke: 'from-purple-500 to-pink-500',
   zdravlje: 'from-green-500 to-emerald-500',
   prehrana: 'from-amber-500 to-orange-500',
   dresura: 'from-indigo-500 to-blue-500',

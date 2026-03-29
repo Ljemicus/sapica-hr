@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import {
   ArrowLeft, Printer, Syringe, AlertTriangle, Pill,
-  Stethoscope, FileText, Phone, MapPin, QrCode
+  Stethoscope, FileText, Phone, MapPin, QrCode, Share2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -55,13 +55,20 @@ export function PetPassportView({ pet, passport }: Props) {
             </div>
           </div>
         </div>
-        <Button
-          variant="outline"
-          className="hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 print:hidden"
-          onClick={() => window.print()}
-        >
-          <Printer className="h-4 w-4 mr-1" /> Ispis
-        </Button>
+        <div className="flex gap-2 print:hidden">
+          <Link href={`/ljubimac/${pet.id}/kartica`}>
+            <Button variant="outline" className="hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200">
+              <Share2 className="h-4 w-4 mr-1" /> Kartica
+            </Button>
+          </Link>
+          <Button
+            variant="outline"
+            className="hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200"
+            onClick={() => window.print()}
+          >
+            <Printer className="h-4 w-4 mr-1" /> Ispis
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-6">

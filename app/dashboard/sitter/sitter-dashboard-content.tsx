@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isToday, addMonths, subMonths } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Edit, Calendar, Star, DollarSign, ClipboardList, CheckCircle, XCircle, ChevronLeft, ChevronRight, User, TrendingUp } from 'lucide-react';
+import { Edit, Calendar, Star, DollarSign, ClipboardList, CheckCircle, XCircle, ChevronLeft, ChevronRight, User, TrendingUp, BarChart3, Eye, MessageSquare, Lightbulb, Camera, ImagePlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -157,9 +157,10 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
       </div>
 
       <Tabs defaultValue="bookings" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5 h-12">
+        <TabsList className="grid w-full grid-cols-6 h-12">
           <TabsTrigger value="bookings" className="text-xs sm:text-sm gap-1 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><ClipboardList className="h-4 w-4 hidden sm:block" /> Rezervacije</TabsTrigger>
           <TabsTrigger value="calendar" className="text-xs sm:text-sm gap-1 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><Calendar className="h-4 w-4 hidden sm:block" /> Kalendar</TabsTrigger>
+          <TabsTrigger value="analytics" className="text-xs sm:text-sm gap-1 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><BarChart3 className="h-4 w-4 hidden sm:block" /> Analitika</TabsTrigger>
           <TabsTrigger value="profile" className="text-xs sm:text-sm gap-1 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><User className="h-4 w-4 hidden sm:block" /> Profil</TabsTrigger>
           <TabsTrigger value="reviews" className="text-xs sm:text-sm gap-1 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><Star className="h-4 w-4 hidden sm:block" /> Recenzije</TabsTrigger>
           <TabsTrigger value="earnings" className="text-xs sm:text-sm gap-1 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><DollarSign className="h-4 w-4 hidden sm:block" /> Zarada</TabsTrigger>
@@ -334,6 +335,112 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
                   <div className="w-4 h-4 rounded-md border-2 border-orange-500" /> Danas
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ANALYTICS TAB */}
+        <TabsContent value="analytics" className="space-y-6 animate-fade-in">
+          {/* Analytics Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: 'Pregledi profila', value: 47, subtitle: 'ovaj tjedan', icon: Eye, color: 'from-blue-500 to-cyan-500' },
+              { label: 'Upiti', value: 12, subtitle: 'ovaj mjesec', icon: MessageSquare, color: 'from-purple-500 to-pink-500' },
+              { label: 'Ukupne rezervacije', value: completedBookings.length + pendingBookings.length + upcomingBookings.length, subtitle: 'sve', icon: Calendar, color: 'from-green-500 to-emerald-500' },
+              { label: 'Prosječna ocjena', value: profile?.rating_avg?.toFixed(1) || '0.0', subtitle: `${profile?.review_count || 0} recenzija`, icon: Star, color: 'from-amber-500 to-orange-500' },
+            ].map((stat, i) => (
+              <Card key={stat.label} className={`border-0 shadow-sm animate-fade-in-up delay-${(i + 1) * 100}`}>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-sm flex-shrink-0`}>
+                      <stat.icon className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold">{stat.value}</p>
+                      <p className="text-xs text-muted-foreground">{stat.label}</p>
+                      <p className="text-[10px] text-muted-foreground/60">{stat.subtitle}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Motivational text */}
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20">
+            <CardContent className="p-5">
+              <p className="text-sm font-medium text-orange-800 dark:text-orange-300">
+                🔥 Tvoj profil je pregledan <span className="font-bold">47 puta</span> ovaj tjedan — to je 15% više nego prošli tjedan!
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Bookings per month bar chart */}
+          <Card className="border-0 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                  <BarChart3 className="h-4 w-4 text-white" />
+                </div>
+                Rezervacije po mjesecima
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {(() => {
+                const bookingsPerMonth: { month: string; count: number }[] = [];
+                for (let i = 5; i >= 0; i--) {
+                  const d = new Date();
+                  d.setMonth(d.getMonth() - i);
+                  const monthStr = format(d, 'MMM', { locale: hr });
+                  const count = bookings.filter(b => {
+                    const bd = new Date(b.start_date);
+                    return bd.getMonth() === d.getMonth() && bd.getFullYear() === d.getFullYear();
+                  }).length;
+                  bookingsPerMonth.push({ month: monthStr, count });
+                }
+                const maxCount = Math.max(...bookingsPerMonth.map(e => e.count), 1);
+                return (
+                  <div className="flex items-end justify-between gap-3 h-40">
+                    {bookingsPerMonth.map((data, i) => (
+                      <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                        <span className="text-xs font-medium text-muted-foreground">{data.count > 0 ? data.count : ''}</span>
+                        <div className="w-full relative" style={{ height: '100px' }}>
+                          <div
+                            className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-500 to-cyan-400 rounded-t-lg transition-all duration-500"
+                            style={{ height: `${maxCount > 0 ? (data.count / maxCount) * 100 : 0}%`, minHeight: data.count > 0 ? '4px' : '0' }}
+                          />
+                        </div>
+                        <span className="text-xs text-muted-foreground capitalize">{data.month}</span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+
+          {/* Tips Section */}
+          <Card className="border-0 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                  <Lightbulb className="h-4 w-4 text-white" />
+                </div>
+                Savjeti za poboljšanje profila
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {[
+                { icon: ImagePlus, text: 'Dodaj još slika da povećaš preglede profila', color: 'text-blue-500' },
+                { icon: Camera, text: 'Profili sa 5+ slika dobivaju 3x više upita', color: 'text-purple-500' },
+                { icon: MessageSquare, text: 'Odgovaraj na upite unutar 1h za bolji ranking', color: 'text-green-500' },
+                { icon: Star, text: 'Zamoli zadovoljne klijente da ostave recenziju', color: 'text-amber-500' },
+              ].map((tip, i) => (
+                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50">
+                  <tip.icon className={`h-5 w-5 ${tip.color} flex-shrink-0`} />
+                  <p className="text-sm">{tip.text}</p>
+                </div>
+              ))}
             </CardContent>
           </Card>
         </TabsContent>

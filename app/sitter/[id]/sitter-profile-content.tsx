@@ -17,6 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
 import { SERVICE_LABELS, type SitterProfile, type User, type Review, type Availability, type ServiceType } from '@/lib/types';
 import { useUser } from '@/hooks/use-user';
+import { AvailabilityCalendar } from '@/components/shared/availability-calendar';
 import { BookingDialog } from './booking-dialog';
 
 const serviceIcons: Record<ServiceType, React.ElementType> = {
@@ -178,6 +179,9 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
               </div>
             </CardContent>
           </Card>
+
+          {/* Availability Calendar */}
+          <AvailabilityCalendar availableDates={availableDates} />
 
           {/* Reviews */}
           <Card className="border-0 shadow-sm">

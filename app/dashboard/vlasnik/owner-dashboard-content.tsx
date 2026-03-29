@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import Link from 'next/link';
-import { Plus, PawPrint, Calendar, Star, Trash2, Edit, Dog, Cat, HelpCircle, ArrowRight, Clock, MapPin, FileHeart } from 'lucide-react';
+import { Plus, PawPrint, Calendar, Star, Trash2, Edit, Dog, Cat, HelpCircle, ArrowRight, Clock, MapPin, FileHeart, CalendarCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -164,6 +164,11 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
         <a href="/pretraga">
           <Button variant="outline" className="hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200">
             Pretraži sittere <ArrowRight className="h-4 w-4 ml-1" />
+          </Button>
+        </a>
+        <a href="/dashboard/vlasnik/rezervacije">
+          <Button variant="outline" className="hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200">
+            <CalendarCheck className="h-4 w-4 mr-1" /> Rezervacije
           </Button>
         </a>
       </div>

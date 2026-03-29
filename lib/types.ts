@@ -310,9 +310,11 @@ export interface TrainingProgram {
 
 // ── Blog ──
 
-export type BlogCategory = 'zdravlje' | 'prehrana' | 'dresura' | 'putovanje' | 'zabava';
+export type BlogCategory = 'zdravlje' | 'prehrana' | 'dresura' | 'putovanje' | 'zabava' | 'psi' | 'macke';
 
 export const BLOG_CATEGORY_LABELS: Record<BlogCategory, string> = {
+  'psi': 'Psi',
+  'macke': 'Mačke',
   'zdravlje': 'Zdravlje',
   'prehrana': 'Prehrana',
   'dresura': 'Školovanje pasa',
@@ -321,6 +323,8 @@ export const BLOG_CATEGORY_LABELS: Record<BlogCategory, string> = {
 };
 
 export const BLOG_CATEGORY_EMOJI: Record<BlogCategory, string> = {
+  'psi': '🐕',
+  'macke': '🐈',
   'zdravlje': '🏥',
   'prehrana': '🥗',
   'dresura': '🎓',
