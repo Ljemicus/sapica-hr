@@ -12,6 +12,7 @@ import { CartProvider } from '@/lib/cart-context';
 import { PushNotificationPrompt } from '@/components/shared/push-notification';
 import { CookieConsent } from '@/components/shared/cookie-consent';
 import { NotificationPrompt } from '@/components/shared/notification-prompt';
+import { FloatingChat } from '@/components/shared/floating-chat';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -131,6 +132,7 @@ export default function RootLayout({
           <NotificationPrompt />
           <Toaster position="top-right" richColors />
 
+          <FloatingChat />
           <CookieConsent />
           </CartProvider>
         </AuthProvider>
