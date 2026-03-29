@@ -593,6 +593,41 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Dog-Friendly CTA ── */}
+      <section className="py-12 md:py-16 relative overflow-hidden" aria-label="Dog-Friendly lokacije">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/10" />
+        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
+        <div className="container mx-auto px-4 relative">
+          <div className="max-w-4xl mx-auto">
+            <Card className="border-0 shadow-xl rounded-2xl overflow-hidden bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 text-white">
+              <CardContent className="p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
+                <div className="flex-1 text-center md:text-left">
+                  <Badge className="mb-4 bg-white/20 text-white hover:bg-white/20 border-0 text-sm px-4 py-1.5 rounded-full font-semibold">
+                    Novo na PetParku
+                  </Badge>
+                  <h2 className="text-2xl md:text-3xl font-extrabold mb-3 font-[var(--font-heading)]">
+                    Dog-Friendly Lokacije
+                  </h2>
+                  <p className="text-white/80 mb-6 max-w-md">
+                    Pronađite kafiće, restorane, plaže i parkove koji dobrodošlicom primaju vašeg ljubimca. 35+ lokacija u 7 gradova!
+                  </p>
+                  <Link href="/dog-friendly">
+                    <Button size="lg" className="bg-white text-teal-700 hover:bg-teal-50 font-bold rounded-xl shadow-lg">
+                      <Dog className="h-5 w-5 mr-2" />
+                      Istraži lokacije
+                      <ArrowRight className="h-5 w-5 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
+                <div className="text-6xl md:text-8xl opacity-80">
+                  🐕
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA for Sitters ── */}
       <section className="py-16 md:py-24 relative overflow-hidden" aria-label="Poziv za sittere">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-orange-500 to-teal-500" />

@@ -27,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/veterinari',
     '/omiljeni',
     '/udomljavanje',
+    '/dog-friendly',
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((route) => ({
