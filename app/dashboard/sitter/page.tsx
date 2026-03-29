@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
-import { getSitter, getBookings, getReviewsBySitter, getAvailability } from '@/lib/db';
+import { getSitter, getBookings, getReviewsBySitter, getAvailability, getRecentUpdatesBySitter } from '@/lib/db';
 import { SitterDashboardContent } from './sitter-dashboard-content';
 
 export const metadata: Metadata = {
@@ -19,6 +19,7 @@ export default async function SitterDashboardPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const reviews = await getReviewsBySitter(user.id) as any[];
   const availability = await getAvailability(user.id);
+  const recentUpdates = await getRecentUpdatesBySitter(user.id);
 
   return (
     <SitterDashboardContent
@@ -27,6 +28,7 @@ export default async function SitterDashboardPage() {
       bookings={bookings}
       reviews={reviews}
       availability={availability}
+      recentUpdates={recentUpdates}
     />
   );
 }

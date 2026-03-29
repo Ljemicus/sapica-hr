@@ -705,6 +705,102 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
         </TabsContent>
       </Tabs>
 
+      {/* Send Update Dialog */}
+      <Dialog open={showUpdateDialog} onOpenChange={setShowUpdateDialog}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Pošalji ažuriranje</DialogTitle>
+            <DialogDescription>Vlasnik će biti obaviješten o ažuriranju</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            {/* Type Selector */}
+            <div className="space-y-2">
+              <Label>Vrsta ažuriranja</Label>
+              <div className="flex gap-2">
+                {([
+                  { type: 'photo' as UpdateType, label: 'Fotografija', icon: Image },
+                  { type: 'text' as UpdateType, label: 'Tekst', icon: MessageSquare },
+                  { type: 'video' as UpdateType, label: 'Video', icon: Camera, disabled: true },
+                ]).map(({ type, label, icon: Icon, disabled }) => (
+                  <button
+                    key={type}
+                    onClick={() => !disabled && setUpdateType(type)}
+                    disabled={disabled}
+                    className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
+                      updateType === type
+                        ? 'bg-orange-500 text-white'
+                        : disabled
+                        ? 'bg-gray-50 text-gray-300 cursor-not-allowed'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                    {disabled && <span className="text-[10px]">(uskoro)</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Emoji Picker */}
+            <div className="space-y-2">
+              <Label>Emoji</Label>
+              <div className="flex gap-2 flex-wrap">
+                {EMOJI_OPTIONS.map(e => (
+                  <button
+                    key={e}
+                    onClick={() => setUpdateEmoji(e)}
+                    className={`text-2xl p-1.5 rounded-lg transition-colors ${
+                      updateEmoji === e ? 'bg-orange-100 ring-2 ring-orange-300' : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    {e}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Caption */}
+            <div className="space-y-2">
+              <Label>Opis *</Label>
+              <Textarea
+                value={updateCaption}
+                onChange={(e) => setUpdateCaption(e.target.value)}
+                placeholder="Opišite što se trenutno događa..."
+                rows={3}
+                className="focus:border-orange-300"
+              />
+            </div>
+
+            {/* Photo Upload */}
+            {updateType === 'photo' && (
+              <div className="space-y-2">
+                <Label>Fotografija</Label>
+                <ImageUpload
+                  variant="dropzone"
+                  maxFiles={1}
+                  bucket="pet-photos"
+                  entityId={user.id}
+                  onUploadComplete={(urls) => setUpdatePhotoUrls(urls)}
+                />
+              </div>
+            )}
+
+            <Button
+              className="w-full bg-orange-500 hover:bg-orange-600 btn-hover"
+              onClick={sendUpdate}
+              disabled={!updateCaption.trim() || sendingUpdate}
+            >
+              {sendingUpdate ? 'Slanje...' : (
+                <>
+                  <Send className="h-4 w-4 mr-2" /> Pošalji
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Profile Edit Dialog */}
       <Dialog open={showProfileDialog} onOpenChange={setShowProfileDialog}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
