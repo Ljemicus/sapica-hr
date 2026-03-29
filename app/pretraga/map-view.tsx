@@ -3,7 +3,8 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import type { SitterProfile, User } from '@/lib/types';
+import type { UnifiedProvider } from './types';
+import { CATEGORY_LABELS, CATEGORY_EMOJI } from './types';
 
 // Fix Leaflet default icons
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
@@ -13,11 +14,17 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
+const MARKER_COLORS: Record<string, string> = {
+  sitter: '#F97316',
+  grooming: '#EC4899',
+  dresura: '#6366F1',
+};
+
 interface MapViewProps {
-  sitters: (SitterProfile & { user: User })[];
+  providers: UnifiedProvider[];
 }
 
-export default function MapView({ sitters }: MapViewProps) {
+export default function MapView({ providers }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
 
@@ -32,29 +39,31 @@ export default function MapView({ sitters }: MapViewProps) {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map);
 
-    // Custom orange marker icon
-    const orangeIcon = L.divIcon({
-      className: 'custom-marker',
-      html: `<div style="background-color: #F97316; width: 32px; height: 32px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-      popupAnchor: [0, -32],
-    });
-
     const bounds: L.LatLngExpression[] = [];
 
-    sitters.forEach((sitter) => {
-      if (sitter.location_lat && sitter.location_lng) {
-        const latLng: L.LatLngExpression = [sitter.location_lat, sitter.location_lng];
+    providers.forEach((provider) => {
+      if (provider.locationLat && provider.locationLng) {
+        const latLng: L.LatLngExpression = [provider.locationLat, provider.locationLng];
         bounds.push(latLng);
 
-        const marker = L.marker(latLng, { icon: orangeIcon }).addTo(map);
+        const color = MARKER_COLORS[provider.category] || '#F97316';
+        const icon = L.divIcon({
+          className: 'custom-marker',
+          html: `<div style="background-color: ${color}; width: 32px; height: 32px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>`,
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+          popupAnchor: [0, -32],
+        });
+
+        const categoryLabel = `${CATEGORY_EMOJI[provider.category]} ${CATEGORY_LABELS[provider.category]}`;
+        const marker = L.marker(latLng, { icon }).addTo(map);
         marker.bindPopup(`
           <div style="min-width: 180px; font-family: system-ui;">
-            <strong style="font-size: 14px;">${sitter.user?.name || 'Sitter'}</strong>
-            <div style="color: #666; font-size: 12px; margin: 4px 0;">📍 ${sitter.city || ''}</div>
-            <div style="color: #F97316; font-size: 12px;">⭐ ${sitter.rating_avg.toFixed(1)} (${sitter.review_count} recenzija)</div>
-            <a href="/sitter/${sitter.user_id}" style="display: inline-block; margin-top: 8px; padding: 4px 12px; background: #F97316; color: white; border-radius: 6px; text-decoration: none; font-size: 12px;">
+            <div style="font-size: 10px; color: #888; margin-bottom: 4px;">${categoryLabel}</div>
+            <strong style="font-size: 14px;">${provider.name}</strong>
+            <div style="color: #666; font-size: 12px; margin: 4px 0;">${provider.city || ''}</div>
+            <div style="color: #F97316; font-size: 12px;">${provider.rating.toFixed(1)} (${provider.reviews} recenzija)</div>
+            <a href="${provider.profileUrl}" style="display: inline-block; margin-top: 8px; padding: 4px 12px; background: ${color}; color: white; border-radius: 6px; text-decoration: none; font-size: 12px;">
               Pogledaj profil
             </a>
           </div>
@@ -72,7 +81,7 @@ export default function MapView({ sitters }: MapViewProps) {
       map.remove();
       mapInstanceRef.current = null;
     };
-  }, [sitters]);
+  }, [providers]);
 
   return <div ref={mapRef} className="h-full w-full" />;
 }
