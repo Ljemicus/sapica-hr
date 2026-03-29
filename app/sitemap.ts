@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { mockSitterProfiles, mockGroomers, mockTrainers, mockProducts, mockArticles, mockForumTopics } from '@/lib/mock-data';
+import { mockAdoptionPets } from '@/lib/mock-adoption-data';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -22,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/faq',
     '/veterinari',
     '/omiljeni',
+    '/udomljavanje',
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((route) => ({
@@ -79,6 +81,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
+  // Adoption pets
+  const adoptionEntries: MetadataRoute.Sitemap = mockAdoptionPets.map((p) => ({
+    url: `${BASE_URL}/udomljavanje/${p.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
   return [
     ...staticEntries,
     ...sitterEntries,
@@ -87,5 +97,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...productEntries,
     ...blogEntries,
     ...forumEntries,
+    ...adoptionEntries,
   ];
 }

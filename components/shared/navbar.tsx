@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart, ShoppingBag, ShoppingCart, Sparkles, Stethoscope, Siren } from 'lucide-react';
+import { Menu, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart, ShoppingBag, ShoppingCart, Sparkles, Stethoscope, Siren, HeartHandshake } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -128,6 +128,10 @@ export function Navbar() {
           <Link href="/forum" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent">
             <MessageSquare className="h-4 w-4" />
             {t('nav.forum')}
+          </Link>
+          <Link href="/udomljavanje" className="text-sm font-semibold text-pink-500 hover:text-pink-600 dark:text-pink-400 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-pink-50 dark:hover:bg-pink-950/20">
+            <HeartHandshake className="h-4 w-4" />
+            Udomljavanje
           </Link>
           <Link href="/izgubljeni" className="text-sm font-semibold text-red-500 hover:text-red-600 dark:text-red-400 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 relative">
             <AlertTriangle className="h-4 w-4" />
@@ -341,6 +345,10 @@ export function Navbar() {
                 <Link href="/forum" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <MessageSquare className="h-5 w-5 text-teal-500" />
                   {t('nav.forum')}
+                </Link>
+                <Link href="/udomljavanje" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-950/20 font-semibold transition-colors">
+                  <HeartHandshake className="h-5 w-5" />
+                  Udomljavanje
                 </Link>
                 <Link href="/izgubljeni" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold transition-colors">
                   <AlertTriangle className="h-5 w-5" />

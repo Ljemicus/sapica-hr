@@ -545,6 +545,54 @@ export default async function HomePage() {
       {/* ── Newsletter ── */}
       <NewsletterSignup />
 
+      {/* ── Adoption CTA ── */}
+      <section className="py-12 md:py-16 bg-gradient-to-b from-purple-50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/10 relative overflow-hidden" aria-label="Udomljavanje">
+        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+        <div className="container mx-auto px-4 relative">
+          <div className="max-w-4xl mx-auto">
+            <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+              <CardContent className="p-0">
+                <div className="grid grid-cols-1 md:grid-cols-2">
+                  <div className="bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 p-8 md:p-10 flex flex-col justify-center text-white relative">
+                    <div className="absolute inset-0 paw-pattern opacity-[0.06]" />
+                    <div className="relative">
+                      <span className="text-5xl mb-4 block">🏠</span>
+                      <h2 className="text-2xl md:text-3xl font-extrabold mb-3 font-[var(--font-heading)]">Udomite ljubimca</h2>
+                      <p className="text-purple-100 leading-relaxed">
+                        Dajte dom onima koji to najviše zaslužuju. Pregledajte pse, mačke i male ljubimce iz azila diljem Hrvatske.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="p-8 md:p-10 flex flex-col justify-center">
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">🐕</span>
+                        <span className="text-sm text-muted-foreground">Psi raznih pasmina i dobi</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">🐈</span>
+                        <span className="text-sm text-muted-foreground">Mačke koje traže topli dom</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">🐰</span>
+                        <span className="text-sm text-muted-foreground">Mali ljubimci — kunići i više</span>
+                      </div>
+                    </div>
+                    <Link href="/udomljavanje">
+                      <Button size="lg" className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg">
+                        <Heart className="h-5 w-5 mr-2 fill-white" />
+                        Pregledaj ljubimce
+                        <ArrowRight className="h-5 w-5 ml-2" />
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA for Sitters ── */}
       <section className="py-16 md:py-24 relative overflow-hidden" aria-label="Poziv za sittere">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-orange-500 to-teal-500" />
