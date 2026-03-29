@@ -1050,6 +1050,242 @@ DIY igračke su često najzanimljivije. Kartonska kutija, papirna vrećica, kugl
     category: 'macke',
     emoji: '🐈',
   },
+  {
+    slug: 'proljece-i-tvoj-ljubimac-10-opasnosti',
+    title: 'Proljeće i tvoj ljubimac: 10 opasnosti koje ne očekuješ',
+    excerpt: 'Od otrovnih biljaka u vrtu do krpelja — evo na što paziti kad dođe toplije vrijeme.',
+    body: `Proljeće je divno doba godine — ali za vlasnike ljubimaca donosi i skrivene opasnosti. Evo 10 stvari na koje morate paziti.
+
+1. Otrovne biljke u vrtu. Oleander, ljiljan, azaleja i tulipani su smrtonosno otrovni za pse i mačke. Ako imate ove biljke u vrtu, ogradite ih ili zamijenite sigurnim alternativama. Ljiljani su posebno opasni za mačke — čak i kontakt s peludom može uzrokovati zatajenje bubrega.
+
+2. Krpelji i buhe. Sezona kreće već u ožujku, posebno u Primorju i Dalmaciji. Redovita zaštita antiparazitikom je obavezna. Provjeravajte ljubimca nakon svake šetnje — posebno uši, vrat i područje između prstiju.
+
+3. Gnojiva i pesticidi. Ako tretirate vrt ili travnjak, držite ljubimca podalje najmanje 48 sati. Mnogi pesticidi su toksični za pse čak i u malim količinama. Organski vrt je najsigurnija opcija.
+
+4. Proljetne alergije. Da, i psi mogu imati sezonske alergije! Simptomi uključuju češanje, crvenilo kože, kihanje i suzne oči. Ako primijetite ove znakove, posjetite veterinara.
+
+5. Otvoreni prozori. Mačke su poznate po sindromu visokog pada. S dolaskom toplijeg vremena, otvaramo prozore — ali mačka koja jurca za leptirom može pasti. Mrežice za prozore su obavezne.
+
+6. Čokolada i uskršnji slatkiši. Uskrs je u proljeće, a čokoladna jaja su svugdje. Čokolada je toksična za pse — teobromin može uzrokovati povraćanje, proljev, pa čak i srčane probleme. Držite slatkiše van dosega.
+
+7. Pčele i ose. Psi vole loviti kukce, ali ubod pčele može uzrokovati alergijsku reakciju. Ako primijetite oticanje njuške ili otežano disanje, hitno kod veterinara.
+
+8. Antifrizi. Proljetno čišćenje garaže može značiti prolijevanje antifriza. Ima sladak okus koji privlači pse, ali je iznimno otrovan. Čak i mala količina može biti smrtonosna.
+
+9. Napuštena gnijezda i životinje. Vaš pas može naći ptičje gnijezdo ili mladunče divlje životinje. Naučite ga naredbu "ostavi" da izbjegnete probleme.
+
+10. Dehidracija na izletima. S prvim toplijim danima idemo na dulje šetnje, ali zaboravljamo na vodu. Uvijek nosite sklopivu posudu i svježu vodu — posebno za kratkonosne pasmine koje se brže pregreju.
+
+Prevencija je ključ. Uživajte u proljeću sa svojim ljubimcem, ali budite svjesni ovih rizika!`,
+    author: 'Dr. Maja Kovač',
+    date: '2026-03-28',
+    category: 'zdravlje',
+    emoji: '🌸',
+  },
+  {
+    slug: 'personalizirana-prehrana-za-pse',
+    title: 'Personalizirana prehrana za pse — budućnost ili hype?',
+    excerpt: 'Sirova vs. suha hrana, brendovi u Hrvatskoj i koliko zapravo košta kvalitetna prehrana.',
+    body: `Industrija hrane za kućne ljubimce eksplodirala je u zadnjih par godina. Svuda čitamo o "personaliziranoj prehrani", biome testiranju i premium brendovima. Ali koliko toga zapravo ima smisla za vašeg psa?
+
+Sirova vs. suha hrana — vječna rasprava. Zagovornici sirove prehrane (BARF dijeta) tvrde da je prirodnija i zdravija. Veterinari upozoravaju na rizike od bakterija (Salmonella, E. coli) i nebalansiranih obroka. Istina je negdje u sredini — sirova hrana može biti odlična, ali zahtijeva znanje i pripremu.
+
+Što kažu hrvatski veterinari? Većina preporučuje kvalitetnu suhu hranu kao bazu, uz povremene dodatke svježeg mesa, povrća i voća. "Najvažnije je konzistentnost i kvaliteta sastojaka, ne trendy etiketa na pakiranju," kaže dr. Ivan Marić iz veterinarske ambulante u Rijeci.
+
+Brendovi dostupni u Hrvatskoj:
+- Farmina N&D — talijanski premium brand, dostupan u većini pet shopova. Grain-free opcije.
+- Josera — njemački brand, odličan omjer cijene i kvalitete. Posebno popularan za velike pse.
+- Brit Care — češki brand s dobrim cijenama. Hypoallergenic linija za osjetljive pse.
+- Acana & Orijen — kanadski premium. Skuplji, ali jedan od najboljih sastava na tržištu.
+- Taste of the Wild — američki grain-free. Popularan među vlasnicima aktivnih pasa.
+
+Koliko zapravo košta kvalitetna prehrana? Za psa od 20kg:
+- Ekonomska hrana (Chappi, Pedigree): 150-200€ godišnje
+- Srednji rang (Brit, Josera): 300-450€ godišnje
+- Premium (Farmina, Acana): 500-700€ godišnje
+- Ultra premium / sirova: 800-1200€ godišnje
+
+Razlika u cijeni se često vrati kroz manje posjete veterinaru. Kvalitetna prehrana znači zdraviju kožu, bolju probavu i više energije.
+
+Najčešće alergije kod pasa u našoj regiji: piletina (iznenađujuće česta!), pšenica, kukuruz i soja. Ako vaš pas ima probleme s kožom ili probavom, razmislite o eliminacijskoj dijeti pod nadzorom veterinara.
+
+Naš savjet: Ne nasjedajte na marketing. Čitajte sastav, ne etiketu. Prva 3 sastojka trebaju biti meso, ne žitarice. I razgovarajte sa svojim veterinarom — on poznaje vašeg psa.`,
+    author: 'Tomislav Barić',
+    date: '2026-03-26',
+    category: 'prehrana',
+    emoji: '🥩',
+  },
+  {
+    slug: 'checklist-prvi-put-kod-sittera',
+    title: 'Prvi put ostavljaš ljubimca s pet sitterom? Evo kompletni checklist',
+    excerpt: 'Sve što trebate pripremiti prije prvog bookinga — od dokumentacije do omiljene igračke.',
+    body: `Ostavljanje ljubimca kod sittera prvi put je stresno — za vas, ne za njega. Uz ovaj checklist, bit ćete potpuno spremni.
+
+PRIJE BOOKINGA:
+
+✅ Provjerite sitterov profil na PetParku — recenzije, verificiranost, iskustvo
+✅ Organizirajte kratko upoznavanje (15-20 min) — neka se pas i sitter upoznaju na neutralnom terenu
+✅ Obratite pažnju na kemiju — ako je pas opušten i veselo maše repom, dobar znak!
+
+5 crvenih zastava kod sittera:
+- Nema nijednu recenziju i ne želi upoznavanje unaprijed
+- Ne pita vas ništa o ljubimcu (alergije, navike, lijekovi)
+- Kuća/stan ne izgleda sigurno za životinju
+- Ne želi slati ažuriranja i slike tijekom čuvanja
+- Cijena je značajno niža od prosjeka (jeftino = sumnjivo)
+
+ŠTO PRIPREMITI — TORBA ZA LJUBIMCA:
+
+📋 Dokumentacija:
+- Kopija cijepnog kartona
+- Lista alergija i lijekova (ako ima)
+- Kontakt vašeg veterinara
+- Vaš broj telefona i broj hitne kontakt osobe
+
+🍽️ Hrana i voda:
+- Hrana koju inače jede (dovoljno za cijeli period + 1 dan viška)
+- Poslastice za nagrađivanje
+- Poznata posuda (miris doma smiruje)
+
+🧸 Comfort items:
+- Omiljenu igračku
+- Dekicu ili jastuk koji miriše na dom
+- Povodac i am koji pas nosi
+
+📝 Pisane upute:
+- Raspored hranjenja (kad i koliko)
+- Raspored šetnji
+- Navike (spava li u krevetu? Boji se grmljavine? Voli se igrati s drugim psima?)
+- Što voli, a što ne (npr. ne voli kad mu se dira rep)
+
+SEPARACIJSKA ANKSIOZNOST — KAKO PRIPREMITI PSA:
+
+Mnogi psi osjete stres kad ih vlasnik ostavi. Evo kako to ublažiti:
+
+1. Počnite s kratkim odvojenjima tjedan prije — ostavite psa kod prijatelja na sat vremena
+2. Ne pravite veliku dramu od odlaska — mirno se pozdravite i odite
+3. Ostavite majicu koja miriše na vas — poznat miris smiruje
+4. Zamolite sittera da prvih sat vremena bude posebno pažljiv — igra, šetnja, poslastice
+
+NAKON ŠTO ODETE:
+
+Dajte psu vremena da se prilagodi. Većina pasa se opusti unutar 2-3 sata. Na PetParku možete pratiti ljubimca putem:
+- 📸 Foto ažuriranja — sitter šalje slike i poruke
+- 🗺️ GPS tracking šetnji — vidite rutu i trajanje u realnom vremenu
+- 💬 Chat s sitterom — pitajte što god vas zanima
+
+KAD SE VRATITE:
+
+Pas će biti lud od sreće — to je normalno! Dajte mu 15-20 minuta za ponovnu povezivanje. I ne zaboravite ostaviti recenziju sitteru — pomaže budućim vlasnicima da donesu pravu odluku.`,
+    author: 'Ana Petrović',
+    date: '2026-03-24',
+    category: 'psi',
+    emoji: '📋',
+  },
+  {
+    slug: 'pametne-igracke-za-pse-koje-stvarno-rade',
+    title: 'Pametne igračke za pse — koje stvarno rade?',
+    excerpt: 'Testirali smo puzzle feedere, interaktivne lopte i automatske bacače. Evo rezultata.',
+    body: `Pametne igračke za pse su hit — ali koje zapravo rade, a koje su bacanje novaca? Isprobali smo najpopularnije opcije dostupne u Hrvatskoj.
+
+PUZZLE FEEDERI — ⭐⭐⭐⭐⭐
+
+Nina Ottosson slagalice su kralj kategorije. Tri razine težine — od početnika do naprednog. Pas mora pomicati klizače, otvarati pretince i okretati dijelove da dođe do hrane. Naš testni pas (border collie) riješio je razinu 1 za 30 sekundi, ali razina 3 ga je zabavila dobrih 15 minuta.
+
+Cijena u HR: 18-25€ (dostupno u većim pet shopovima i online)
+Za koga: sve pasmine, posebno pametne (border collie, pudla, labrador)
+Trajnost: 4/5 — plastika je čvrsta, ali agresivni žvakači mogu oštetiti
+
+KONG CLASSIC — ⭐⭐⭐⭐⭐
+
+Nije "pametna" u high-tech smislu, ali je genijalna u svojoj jednostavnosti. Napunite kikiriki maslacem, zamrznite preko noći, i imate igračku koja zabavlja psa 30+ minuta. Odskače nepredvidivo, izdržljiva je i potpuno sigurna.
+
+Cijena u HR: 12-16€
+Za koga: apsolutno sve pse
+Trajnost: 5/5 — gotovo neuništiva
+
+LICKI MAT — ⭐⭐⭐⭐
+
+Silikonska podloga s teksturom na koju namažete hranu. Lizanje aktivira endorfine i smiruje anksioznog psa. Savršeno za vrijeme grmljavine ili kad ostaje sam. Može se zamrznuti za dulje trajanje.
+
+Cijena u HR: 8-12€
+Za koga: anksiozni psi, psi koji jedu prebrzo
+Trajnost: 4/5 — periva u perilici posuđa
+
+AUTOMATSKI BACAČ LOPTICA — ⭐⭐⭐
+
+iFetch i slični uređaji automatski bacaju loptice. Zvuči odlično, ali u praksi — većina pasa ne nauči sama ubacivati lopticu natrag. Trebate nekoliko tjedana treninga. Kad nauče, genijalno je.
+
+Cijena u HR: 45-80€
+Za koga: aktivni psi koji obožavaju fetch
+Trajnost: 3/5 — mehanički dijelovi se troše
+
+SLOW FEEDER POSUDA — ⭐⭐⭐⭐
+
+Posuda s labirintom usporava jedenje do 10 puta. Jednostavno ali učinkovito. Posebno korisno za pse koji gutaju hranu bez žvakanja — smanjuje rizik od nadimanja.
+
+Cijena u HR: 12-18€
+Za koga: svi psi koji jedu prebrzo
+Trajnost: 4/5
+
+NAŠ ZAKLJUČAK:
+
+Ne trebate skupe gadgete. Kong + puzzle feeder + licky mat = komplet od 40€ koji će vašeg psa zabavljati mjesecima. Ključ je rotacija — ne dajte sve odjednom, mijenjajte igračke svaki dan da ostanu zanimljive.
+
+Pro tip: zamrznite Kong s mješavinom bananre, kikiriki maslaca i hrane za pse. Jeftino, zdravo i zabavlja psa dulje od bilo koje skuplje igračke na tržištu.`,
+    author: 'Filip Matić',
+    date: '2026-03-22',
+    category: 'psi',
+    emoji: '🧩',
+  },
+  {
+    slug: 'kako-prepoznati-dobrog-veterinara',
+    title: 'Kako prepoznati dobrog veterinara — 7 znakova kvalitete',
+    excerpt: 'Ne trebate biti stručnjak da prepoznate kvalitetnu veterinarsku skrb. Evo na što obratiti pažnju.',
+    body: `Izbor veterinara je jedna od najvažnijih odluka koju ćete donijeti za svog ljubimca. Evo 7 znakova da ste na pravom mjestu.
+
+1. SLUŠAJU VAS I VAŠEG LJUBIMCA
+
+Dobar veterinar ne žuri kroz pregled. Pita vas pitanja o ponašanju, apetitu, navikama. Promatra životinju prije nego je dotakne. Ako veterinar počne pregledavati psa dok vi još pričate simptome — to je crvena zastava.
+
+2. OBJAŠNJAVAJU RAZUMLJIVIM JEZIKOM
+
+Ako nakon pregleda ne razumijete što je dijagnoza i plan liječenja, nešto ne valja. Dobar veterinar koristi jednostavne riječi, crta dijagrame, pokazuje na modelu. Ne boji se pitanja — dapače, ohrabruje ih.
+
+3. DAJU OPCIJE, NE ULTIMATUME
+
+"Možemo ići s opcijom A koja je jeftinija ali sporija, ili opcijom B koja je skuplja ali brža. Evo prednosti i mane svake." Ovako komunicira dobar veterinar. Ako čujete samo "morate napraviti ovo i to će koštati X" bez alternativa — potražite drugo mišljenje.
+
+4. ORDINACIJA JE ČISTA I ORGANIZIRANA
+
+Zvuči očito, ali obratite pažnju. Čista čekaonica, dezinficirani stolovi, uredno složeni lijekovi. Odvojeni prostori za pse i mačke (ili barem odvojeni termini) su znak da brinu o stresu životinja.
+
+5. TRANSPARENTNI S CIJENAMA
+
+Prije bilo kakvog postupka trebate znati cijenu. Dobar veterinar daje procjenu troškova unaprijed i upozorava ako se nešto promijeni. Nema iznenađenja na računu.
+
+Orijentacijske cijene u Hrvatskoj:
+- Redoviti pregled: 25-50€
+- Vakcinacija: 30-60€
+- Sterilizacija psa: 150-300€ (ovisno o veličini)
+- Sterilizacija mačke: 80-150€
+- Čipiranje: 30-50€
+- Rendgen: 40-80€
+
+6. DOSTUPNI U HITNIM SLUČAJEVIMA
+
+Pitajte unaprijed: "Što radim ako se nešto dogodi u 3 ujutro?" Dobra ordinacija ima dežurni broj ili surađuje s hitnom veterinarskom službom. Na PetParku imamo stranicu /hitno s kontaktima hitnih veterinara po gradovima.
+
+7. LJUBIMAC SE OSJEĆA UGODNO
+
+Ovo je najvažnije. Ako vaš pas svaki put drhti od straha u čekaonici, a veterinar ne poduzima ništa da ga smiri — razmislite o promjeni. Fear-free pristup postaje standard — uključuje poslastice, polako upoznavanje i nježan pristup.
+
+BONUS: Pitajte druge vlasnike. Na PetPark forumu (/forum) možete pitati za preporuke u svom gradu. Osobno iskustvo je najvrjednija informacija.`,
+    author: 'Dr. Maja Kovač',
+    date: '2026-03-20',
+    category: 'zdravlje',
+    emoji: '🏥',
+  },
 ];
 
 export function getArticleBySlug(slug: string) {
