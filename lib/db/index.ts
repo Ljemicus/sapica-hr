@@ -8,6 +8,8 @@ export { getConversations, getMessages, getConversation, sendMessage } from './m
 export { getAvailability, setAvailability } from './availability';
 export { getWalk, getWalksByBooking, getWalksForUser, getActiveWalksForSitter } from './walks';
 export { getUpdates, getUpdatesByBooking } from './pet-updates';
+export { createWalk, updateWalk } from './walk-actions';
+export { createPetUpdate, getRecentUpdatesBySitter } from './update-actions';
 export { getPassport, updatePassport } from './pet-passport';
 export { getGroomers, getGroomer, getGroomerReviews } from './groomers';
 export { getTrainers, getTrainer, getPrograms, getTrainerReviews } from './trainers';

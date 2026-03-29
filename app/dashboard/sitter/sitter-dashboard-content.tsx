@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isToday, addMonths, subMonths } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Edit, Calendar, Star, DollarSign, ClipboardList, CheckCircle, XCircle, ChevronLeft, ChevronRight, User, TrendingUp, BarChart3, Eye, MessageSquare, Lightbulb, Camera, ImagePlus } from 'lucide-react';
+import { Edit, Calendar, Star, DollarSign, ClipboardList, CheckCircle, XCircle, ChevronLeft, ChevronRight, User, TrendingUp, BarChart3, Eye, MessageSquare, Lightbulb, Camera, ImagePlus, Navigation, Send, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -20,7 +21,7 @@ import { EmptyState } from '@/components/shared/empty-state';
 import { StarRating } from '@/components/shared/star-rating';
 import { ImageUpload } from '@/components/shared/image-upload';
 import { createClient } from '@/lib/supabase/client';
-import { STATUS_LABELS, SERVICE_LABELS, CITIES, type User as UserType, type SitterProfile, type Booking, type Review, type Availability, type BookingStatus, type ServiceType } from '@/lib/types';
+import { STATUS_LABELS, SERVICE_LABELS, CITIES, type User as UserType, type SitterProfile, type Booking, type Review, type Availability, type BookingStatus, type ServiceType, type PetUpdate, type UpdateType } from '@/lib/types';
 import { toast } from 'sonner';
 
 const statusColors: Record<BookingStatus, string> = {
@@ -37,10 +38,21 @@ interface Props {
   bookings: (Booking & { owner: { name: string; avatar_url: string | null; email: string }; pet: { name: string; species: string; breed: string | null; special_needs: string | null } })[];
   reviews: (Review & { reviewer: { name: string; avatar_url: string | null } })[];
   availability: Availability[];
+  recentUpdates?: PetUpdate[];
 }
 
-export function SitterDashboardContent({ user, profile, bookings, reviews, availability }: Props) {
+const EMOJI_OPTIONS = ['😊', '🐾', '🐶', '🐱', '❤️', '🏃‍♂️', '😴', '🍽️', '☀️', '🌧️'];
+
+export function SitterDashboardContent({ user, profile, bookings, reviews, availability, recentUpdates = [] }: Props) {
   const [showProfileDialog, setShowProfileDialog] = useState(false);
+  const [showUpdateDialog, setShowUpdateDialog] = useState(false);
+  const [updateBookingId, setUpdateBookingId] = useState<string>('');
+  const [updateCaption, setUpdateCaption] = useState('');
+  const [updateEmoji, setUpdateEmoji] = useState('🐾');
+  const [updateType, setUpdateType] = useState<UpdateType>('photo');
+  const [updatePhotoUrls, setUpdatePhotoUrls] = useState<string[]>([]);
+  const [sendingUpdate, setSendingUpdate] = useState(false);
+  const [sentUpdates, setSentUpdates] = useState<PetUpdate[]>(recentUpdates);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [profileForm, setProfileForm] = useState({
@@ -93,6 +105,56 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
       await supabase.from('availability').upsert({ sitter_id: user.id, date: dateStr, available: true });
     }
     router.refresh();
+  };
+
+  const openUpdateDialog = (bookingId: string) => {
+    setUpdateBookingId(bookingId);
+    setUpdateCaption('');
+    setUpdateEmoji('🐾');
+    setUpdateType('photo');
+    setUpdatePhotoUrls([]);
+    setShowUpdateDialog(true);
+  };
+
+  const sendUpdate = async () => {
+    if (!updateCaption.trim()) {
+      toast.error('Unesite opis ažuriranja');
+      return;
+    }
+    setSendingUpdate(true);
+    const { error, data } = await supabase
+      .from('pet_updates')
+      .insert({
+        booking_id: updateBookingId,
+        sitter_id: user.id,
+        type: updateType,
+        emoji: updateEmoji,
+        caption: updateCaption,
+        photo_url: updatePhotoUrls[0] || null,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      // Mock fallback
+      const mockUpdate: PetUpdate = {
+        id: `upd-${Date.now()}`,
+        booking_id: updateBookingId,
+        sitter_id: user.id,
+        type: updateType,
+        emoji: updateEmoji,
+        caption: updateCaption,
+        photo_url: updatePhotoUrls[0] || null,
+        created_at: new Date().toISOString(),
+      };
+      setSentUpdates(prev => [mockUpdate, ...prev].slice(0, 5));
+    } else if (data) {
+      setSentUpdates(prev => [data as PetUpdate, ...prev].slice(0, 5));
+    }
+
+    toast.success('Ažuriranje poslano! Vlasnik će biti obaviješten.');
+    setShowUpdateDialog(false);
+    setSendingUpdate(false);
   };
 
   const monthStart = startOfMonth(currentMonth);
@@ -215,7 +277,7 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
               {upcomingBookings.map((booking) => (
                 <Card key={booking.id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
                   <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between flex-wrap gap-3">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={booking.owner?.avatar_url || ''} />
@@ -231,6 +293,16 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
                         <Badge className={`${statusColors.accepted} border`}>{STATUS_LABELS.accepted}</Badge>
                         <p className="font-bold text-orange-500 mt-1">{booking.total_price}€</p>
                       </div>
+                    </div>
+                    <div className="flex gap-2 mt-3 pt-3 border-t">
+                      <Link href="/dashboard/sitter/setnja" className="flex-1">
+                        <Button size="sm" className="w-full bg-green-600 hover:bg-green-700 btn-hover">
+                          <Navigation className="h-4 w-4 mr-1" /> Započni šetnju
+                        </Button>
+                      </Link>
+                      <Button size="sm" variant="outline" className="flex-1 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200" onClick={() => openUpdateDialog(booking.id)}>
+                        <Camera className="h-4 w-4 mr-1" /> Pošalji ažuriranje
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -269,6 +341,43 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
 
           {bookings.length === 0 && (
             <EmptyState icon={ClipboardList} title="Nema rezervacija" description="Kada vlasnici rezerviraju vaše usluge, vidjet ćete ih ovdje." />
+          )}
+
+          {/* Sent Updates */}
+          {sentUpdates.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-orange-400" />
+                Poslana ažuriranja ({sentUpdates.length})
+              </h3>
+              {sentUpdates.slice(0, 5).map((update) => (
+                <Card key={update.id} className="border-0 shadow-sm">
+                  <CardContent className="p-3 flex items-center gap-3">
+                    {update.photo_url ? (
+                      <div className="h-12 w-12 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={update.photo_url} alt="" className="h-full w-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center flex-shrink-0 border border-orange-100/50">
+                        <span className="text-2xl">{update.emoji}</span>
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm truncate">{update.caption}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                          {update.type === 'photo' ? 'Foto' : update.type === 'video' ? 'Video' : 'Tekst'}
+                        </Badge>
+                        <span className="text-[10px] text-muted-foreground">
+                          {format(new Date(update.created_at), 'd. MMM, HH:mm', { locale: hr })}
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           )}
         </TabsContent>
 

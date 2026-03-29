@@ -68,8 +68,7 @@ export default function AboutPage() {
                 praktički ne postoje. Ili ne znaš za njih.
               </p>
               <p className="text-lg animate-fade-in-up delay-100">
-                Osnovali smo PetPark u <strong className="text-foreground">Rijeci</strong> jer
-                smo to sami trebali. Platforma koja povezuje vlasnike s pouzdanim čuvarima u
+                Osnovali smo PetPark jer smo to sami trebali. Platforma koja povezuje vlasnike s pouzdanim čuvarima u
                 njihovom gradu. Ne agencija, ne posrednik —{' '}
                 <strong className="text-foreground">zajednica ljudi koji vole životinje</strong>.
               </p>

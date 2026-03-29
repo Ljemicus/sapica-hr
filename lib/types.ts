@@ -186,6 +186,7 @@ export interface PetUpdate {
   type: UpdateType;
   emoji: string;
   caption: string;
+  photo_url: string | null;
   created_at: string;
 }
 
