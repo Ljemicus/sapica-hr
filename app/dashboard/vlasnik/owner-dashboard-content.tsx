@@ -58,27 +58,27 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
   const [reviewBooking, setReviewBooking] = useState<Props['bookings'][0] | null>(null);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
-  const [petForm, setPetForm] = useState({ name: '', species: 'dog' as Species, breed: '', age: '', weight: '', special_needs: '' });
+  const [petForm, setPetForm] = useState({ name: '', species: 'dog' as Species, breed: '', age: '', weight: '', special_needs: '', photo_url: '' });
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
   const openAddPet = () => {
     setEditingPet(null);
-    setPetForm({ name: '', species: 'dog', breed: '', age: '', weight: '', special_needs: '' });
+    setPetForm({ name: '', species: 'dog', breed: '', age: '', weight: '', special_needs: '', photo_url: '' });
     setShowPetDialog(true);
   };
 
   const openEditPet = (pet: Pet) => {
     setEditingPet(pet);
-    setPetForm({ name: pet.name, species: pet.species, breed: pet.breed || '', age: pet.age?.toString() || '', weight: pet.weight?.toString() || '', special_needs: pet.special_needs || '' });
+    setPetForm({ name: pet.name, species: pet.species, breed: pet.breed || '', age: pet.age?.toString() || '', weight: pet.weight?.toString() || '', special_needs: pet.special_needs || '', photo_url: (pet as unknown as Record<string, unknown>).photo_url as string || '' });
     setShowPetDialog(true);
   };
 
   const savePet = async () => {
     if (!petForm.name) { toast.error('Unesite ime ljubimca'); return; }
     setLoading(true);
-    const data = { name: petForm.name, species: petForm.species, breed: petForm.breed || null, age: petForm.age ? parseInt(petForm.age) : null, weight: petForm.weight ? parseFloat(petForm.weight) : null, special_needs: petForm.special_needs || null, owner_id: user.id };
+    const data = { name: petForm.name, species: petForm.species, breed: petForm.breed || null, age: petForm.age ? parseInt(petForm.age) : null, weight: petForm.weight ? parseFloat(petForm.weight) : null, special_needs: petForm.special_needs || null, photo_url: petForm.photo_url || null, owner_id: user.id };
 
     if (editingPet) {
       const { error } = await supabase.from('pets').update(data).eq('id', editingPet.id);
@@ -419,7 +419,7 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
             </div>
             <div className="space-y-2">
               <Label>Fotografija ljubimca</Label>
-              <ImageUpload variant="square" onUploadComplete={() => {}} />
+              <ImageUpload variant="square" bucket="pet-photos" entityId={editingPet?.id || 'new'} onUploadComplete={(urls) => { if (urls[0]) setPetForm(prev => ({ ...prev, photo_url: urls[0] })); }} />
             </div>
             <Button onClick={savePet} className="w-full bg-orange-500 hover:bg-orange-600 btn-hover" disabled={loading}>
               {loading ? 'Spremanje...' : editingPet ? 'Spremi promjene' : 'Dodaj ljubimca'}
