@@ -241,14 +241,14 @@ export const ALLERGY_SEVERITY_LABELS: Record<string, string> = {
 
 // ── Grooming ──
 
-export type GroomingServiceType = 'sisanje' | 'kupanje' | 'trimanje' | 'nokti' | 'spa';
+export type GroomingServiceType = 'sisanje' | 'kupanje' | 'trimanje' | 'nokti' | 'cetkanje';
 
 export const GROOMING_SERVICE_LABELS: Record<GroomingServiceType, string> = {
   'sisanje': 'Šišanje',
   'kupanje': 'Kupanje',
   'trimanje': 'Trimanje',
   'nokti': 'Nokti',
-  'spa': 'Spa',
+  'cetkanje': 'Četkanje',
 };
 
 export type GroomerSpecialization = 'psi' | 'macke' | 'oba';

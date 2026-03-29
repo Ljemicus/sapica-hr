@@ -112,7 +112,7 @@ export default function GroomingPage() {
               <span className="text-gradient">salon za njegu</span>
             </h1>
             <p className="text-base md:text-lg text-muted-foreground mb-6 animate-fade-in-up delay-200 leading-relaxed max-w-xl mx-auto">
-              Od šišanja do spa tretmana — pronađite verificirane groomere u vašem gradu.
+              Od šišanja do kupanja — pronađite verificirane groomere u vašem gradu.
               Vaš ljubimac zaslužuje premium njegu.
             </p>
           </div>
@@ -131,7 +131,7 @@ export default function GroomingPage() {
               { label: 'Šišanje', color: 'from-pink-200 to-rose-100 dark:from-pink-900/40 dark:to-rose-900/30' },
               { label: 'Kupanje', color: 'from-blue-200 to-cyan-100 dark:from-blue-900/40 dark:to-cyan-900/30' },
               { label: 'Trimanje', color: 'from-amber-200 to-yellow-100 dark:from-amber-900/40 dark:to-yellow-900/30' },
-              { label: 'Spa', color: 'from-purple-200 to-violet-100 dark:from-purple-900/40 dark:to-violet-900/30' },
+              { label: 'Nokti', color: 'from-purple-200 to-violet-100 dark:from-purple-900/40 dark:to-violet-900/30' },
             ].map((item) => (
               <Card key={item.label} className={`overflow-hidden border-0 shadow-sm rounded-2xl bg-gradient-to-br ${item.color}`}>
                 <CardContent className="p-6 md:p-8 text-center">
@@ -158,7 +158,7 @@ export default function GroomingPage() {
             {[
               { name: 'Osnovno kupanje', price: 'od 20€', desc: 'Kupanje, sušenje i četkanje', icon: Droplets, color: 'from-blue-500 to-cyan-500' },
               { name: 'Šišanje + kupanje', price: 'od 35€', desc: 'Kompletna njega s modeliranjem', icon: Scissors, color: 'from-pink-500 to-rose-500', popular: true },
-              { name: 'Spa paket', price: 'od 50€', desc: 'Premium tretman s masažom i aromaterapijom', icon: Sparkles, color: 'from-purple-500 to-violet-500' },
+              { name: 'Rezanje noktiju', price: 'od 10€', desc: 'Sigurno skraćivanje noktiju', icon: Sparkles, color: 'from-purple-500 to-violet-500' },
             ].map((item) => (
               <Card key={item.name} className={`overflow-hidden border-0 shadow-sm rounded-2xl card-hover relative ${item.popular ? 'ring-2 ring-orange-400 dark:ring-orange-600' : ''}`}>
                 {item.popular && (

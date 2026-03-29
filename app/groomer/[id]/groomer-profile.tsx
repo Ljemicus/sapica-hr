@@ -31,7 +31,7 @@ const serviceIcons: Record<GroomingServiceType, React.ElementType> = {
   'kupanje': Droplets,
   'trimanje': Scissors,
   'nokti': Scissors,
-  'spa': Sparkles,
+  'cetkanje': Sparkles,
 };
 
 const serviceColors: Record<GroomingServiceType, string> = {
@@ -39,7 +39,7 @@ const serviceColors: Record<GroomingServiceType, string> = {
   'kupanje': 'from-blue-500 to-cyan-500',
   'trimanje': 'from-purple-500 to-pink-500',
   'nokti': 'from-orange-500 to-amber-500',
-  'spa': 'from-teal-500 to-emerald-500',
+  'cetkanje': 'from-teal-500 to-emerald-500',
 };
 
 const gradients = [

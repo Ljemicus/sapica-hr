@@ -5,7 +5,7 @@ import type { GroomingServiceType } from '@/lib/types';
 
 export const metadata: Metadata = {
   title: 'Grooming — saloni za uljepšavanje ljubimaca',
-  description: 'Pronađite profesionalne groomere za šišanje, kupanje, trimanje i spa tretmane vašeg ljubimca.',
+  description: 'Pronađite profesionalne groomere za šišanje, kupanje, trimanje i njegu noktiju vašeg ljubimca.',
 };
 
 interface GroomingPageProps {
