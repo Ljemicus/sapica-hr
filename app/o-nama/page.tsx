@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
   title: 'O nama — Naša priča | PetPark',
-  description: 'PetPark je nastao u Rijeci iz jednostavnog problema — kad trebaš nekome ostaviti ljubimca, a nemaš kome. Povezujemo vlasnike s pouzdanim čuvarima u njihovom gradu.',
+  description: 'PetPark je nastao iz jednostavnog problema — vlasnici ljubimaca u Hrvatskoj nisu imali sve na jednom mjestu. Čuvanje, grooming, školovanje, veterinari, shop, udomljavanje — sad imaju.',
 };
 
 const VALUES = [
@@ -68,9 +68,10 @@ export default function AboutPage() {
                 praktički ne postoje. Ili ne znaš za njih.
               </p>
               <p className="text-lg animate-fade-in-up delay-100">
-                Osnovali smo PetPark jer smo to sami trebali. Platforma koja povezuje vlasnike s pouzdanim čuvarima u
-                njihovom gradu. Ne agencija, ne posrednik —{' '}
-                <strong className="text-foreground">zajednica ljudi koji vole životinje</strong>.
+                Osnovali smo PetPark jer smo to sami trebali. Platforma gdje vlasnici ljubimaca mogu naći
+                sve na jednom mjestu — čuvanje, grooming, školovanje, veterinare, shop, udomljavanje,
+                dog-friendly lokacije i zajednicu koja razumije. Ne agencija, ne posrednik —{' '}
+                <strong className="text-foreground">ekosustav za ljude koji vole životinje</strong>.
               </p>
 
               <Card className="border-0 shadow-md rounded-2xl bg-gradient-to-r from-orange-50 to-teal-50 dark:from-orange-950/20 dark:to-teal-950/20 my-10 animate-fade-in-up delay-200">
@@ -86,7 +87,7 @@ export default function AboutPage() {
 
               <p className="text-lg animate-fade-in-up delay-300">
                 U Hrvatskoj živi preko <strong className="text-foreground">800.000 pasa</strong> —
-                a digitalna infrastruktura za čuvanje? Gotovo nikakva. Izvan Zagreba praktički
+                a platforma koja sve to objedinjuje? Nije postojala. Izvan Zagreba praktički
                 ništa ne postoji. Mi to mijenjamo.
               </p>
               <p className="text-lg animate-fade-in-up delay-400">
@@ -112,7 +113,7 @@ export default function AboutPage() {
           <p className="text-lg text-muted-foreground leading-relaxed mb-8 animate-fade-in-up delay-200">
             Od Rijeke smo krenuli, ali cilj nam je cijela Hrvatska.
             Svaki grad, svako susjedstvo, svaki ljubimac. Rastemo jer
-            zajednica raste s nama — svaki novi sitter, svaki zadovoljni vlasnik,
+            zajednica raste s nama — svaki novi korisnik, svaki udomljeni ljubimac,
             svaka sretna šapa je dokaz da ovo funkcionira.
           </p>
         </div>
