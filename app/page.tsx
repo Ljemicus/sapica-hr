@@ -373,8 +373,8 @@ export default async function HomePage() {
             </div>
             <div className="w-px h-6 bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
-              <span className="text-lg font-bold">200+</span>
-              <span className="text-muted-foreground text-sm">aktivnih sittera</span>
+              <span className="text-lg font-bold">6+</span>
+              <span className="text-muted-foreground text-sm">gradova</span>
             </div>
           </div>
 
