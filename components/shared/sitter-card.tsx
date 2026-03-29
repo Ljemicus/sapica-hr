@@ -3,6 +3,7 @@ import { Star, MapPin, Clock, Shield, Award, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { FavoriteButton } from '@/components/shared/favorite-button';
 import type { SitterProfile } from '@/lib/types';
 import { SERVICE_LABELS as serviceLabels } from '@/lib/types';
 
@@ -35,6 +36,9 @@ export function SitterCard({ profile }: SitterCardProps) {
                 {profile.user?.name?.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
+            <div className="absolute top-3 left-3">
+              <FavoriteButton sitterId={profile.user_id} />
+            </div>
             <div className="absolute top-3 right-3 flex gap-1.5">
               {profile.verified && (
                 <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5">

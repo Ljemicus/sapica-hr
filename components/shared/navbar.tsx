@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart, ShoppingBag, ShoppingCart, Sparkles } from 'lucide-react';
+import { Menu, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart, ShoppingBag, ShoppingCart, Sparkles, Stethoscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -90,6 +90,10 @@ export function Navbar() {
               <DropdownMenuItem render={<Link href="/dresura" />} className="cursor-pointer rounded-lg">
                 <GraduationCap className="mr-2 h-4 w-4 text-indigo-500" />
                 Dresura
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/veterinari" />} className="cursor-pointer rounded-lg">
+                <Stethoscope className="mr-2 h-4 w-4 text-emerald-500" />
+                Veterinari
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem render={<Link href="/setnja/walk1111-1111-1111-1111-111111111111" />} className="cursor-pointer rounded-lg">
@@ -179,6 +183,10 @@ export function Navbar() {
                   <DropdownMenuItem render={<Link href="/poruke" />} className="cursor-pointer rounded-lg">
                       <MessageCircle className="mr-2 h-4 w-4" />
                       Poruke
+                  </DropdownMenuItem>
+                  <DropdownMenuItem render={<Link href="/omiljeni" />} className="cursor-pointer rounded-lg">
+                      <Heart className="mr-2 h-4 w-4 text-rose-500" />
+                      Omiljeni
                   </DropdownMenuItem>
                   {user.role === 'owner' && (
                     <>
@@ -284,6 +292,10 @@ export function Navbar() {
                   <GraduationCap className="h-5 w-5 text-indigo-500" />
                   Dresura
                 </Link>
+                <Link href="/veterinari" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
+                  <Stethoscope className="h-5 w-5 text-emerald-500" />
+                  Veterinari
+                </Link>
 
                 <div className="border-t border-border/50 my-3" />
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Značajke</p>
@@ -330,6 +342,10 @@ export function Navbar() {
                     <Link href="/poruke" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                       <MessageCircle className="h-5 w-5 text-blue-500" />
                       Poruke
+                    </Link>
+                    <Link href="/omiljeni" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
+                      <Heart className="h-5 w-5 text-rose-500" />
+                      Omiljeni
                     </Link>
                     {user.role !== 'sitter' && (
                       <Link href="/postani-sitter" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/20 font-semibold transition-colors">

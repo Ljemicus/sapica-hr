@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { MapPin, Mail } from 'lucide-react';
+import { NewsletterSignup } from '@/components/shared/newsletter-signup';
 
 function PawLogo({ className }: { className?: string }) {
   return (
@@ -39,6 +40,10 @@ function TwitterIcon({ className }: { className?: string }) {
 
 export function Footer() {
   return (
+    <>
+    <div className="hidden md:block">
+      <NewsletterSignup />
+    </div>
     <footer className="bg-gray-900 dark:bg-gray-950 text-gray-300 mt-auto relative overflow-hidden hidden md:block">
       <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
       <div className="container mx-auto px-4 py-14 relative">
@@ -75,13 +80,14 @@ export function Footer() {
               <li><Link href="/zajednica" className="hover:text-orange-400 transition-colors">Zajednica & Blog</Link></li>
               <li><Link href="/forum" className="hover:text-orange-400 transition-colors">Forum</Link></li>
               <li><Link href="/shop" className="hover:text-orange-400 transition-colors">Shop</Link></li>
+              <li><Link href="/veterinari" className="hover:text-orange-400 transition-colors">Veterinari</Link></li>
               <li><Link href="/registracija?role=sitter" className="hover:text-teal-400 transition-colors">Postani sitter</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Podrška</h3>
             <ul className="space-y-3 text-sm">
-              <li><Link href="#" className="hover:text-orange-400 transition-colors">Česta pitanja</Link></li>
+              <li><Link href="/faq" className="hover:text-orange-400 transition-colors">Česta pitanja</Link></li>
               <li><Link href="/kontakt" className="hover:text-orange-400 transition-colors">Kontakt</Link></li>
               <li><Link href="#" className="hover:text-orange-400 transition-colors">Sigurnost</Link></li>
               <li><Link href="#" className="hover:text-orange-400 transition-colors">Pravila zajednice</Link></li>
@@ -115,5 +121,6 @@ export function Footer() {
         </div>
       </div>
     </footer>
+    </>
   );
 }

@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { getLostPets } from '@/lib/db';
 import { LOST_PET_SPECIES_LABELS } from '@/lib/types';
+import { NewsletterSignup } from '@/components/shared/newsletter-signup';
 
 const featuredSitters = [
   { id: '11111111-1111-1111-1111-111111111111', name: 'Ana Horvat', city: 'Rijeka', rating: 4.9, reviews: 23, price: 25, bio: 'Obožavam životinje od malih nogu! Imam veliku kuću s dvorištem.', verified: true, superhost: true, initial: 'A', gradient: 'from-orange-400 to-amber-300' },
@@ -500,6 +501,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── Newsletter ── */}
+      <NewsletterSignup />
 
       {/* ── CTA for Sitters ── */}
       <section className="py-16 md:py-24 relative overflow-hidden" aria-label="Poziv za sittere">

@@ -19,6 +19,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/uvjeti',
     '/shop',
     '/grooming',
+    '/faq',
+    '/veterinari',
+    '/omiljeni',
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((route) => ({
