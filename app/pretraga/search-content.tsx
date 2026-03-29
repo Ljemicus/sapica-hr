@@ -146,18 +146,22 @@ export function SearchContent({ sitters, initialParams }: SearchContentProps) {
         <Label className="text-sm font-medium mb-2 block">Raspon cijena (€)</Label>
         <div className="flex gap-2">
           <Input
-            type="number"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
             placeholder="Min"
             value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
+            onChange={(e) => setMinPrice(e.target.value.replace(/[^0-9]/g, ''))}
             className="w-full focus:border-orange-300"
           />
           <span className="self-center text-muted-foreground">—</span>
           <Input
-            type="number"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
             placeholder="Max"
             value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
+            onChange={(e) => setMaxPrice(e.target.value.replace(/[^0-9]/g, ''))}
             className="w-full focus:border-orange-300"
           />
         </div>
