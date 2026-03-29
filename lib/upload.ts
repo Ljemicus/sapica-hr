@@ -1,5 +1,19 @@
 import { createClient } from '@/lib/supabase/client';
 
+async function uploadViaAPI(file: File, bucket: string, folder: string): Promise<UploadResult> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('bucket', bucket);
+  formData.append('folder', folder);
+
+  const res = await fetch('/api/upload', { method: 'POST', body: formData });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({ error: 'Upload failed' }));
+    throw new Error(data.error || 'Upload greška');
+  }
+  return res.json();
+}
+
 export interface UploadResult {
   url: string;
   fileName: string;
@@ -20,20 +34,7 @@ function isSupabaseReady(): boolean {
 export async function uploadAvatar(userId: string, file: File): Promise<UploadResult> {
   if (!isSupabaseReady()) return mockUpload(file, 'avatars');
 
-  const supabase = createClient();
-  const ext = file.name.split('.').pop() || 'jpg';
-  const path = `${userId}/${Date.now()}.${ext}`;
-
-  const { error } = await supabase.storage.from('avatars').upload(path, file, {
-    cacheControl: '3600',
-    upsert: true,
-  });
-
-  if (error) throw new Error(`Upload greška: ${error.message}`);
-
-  const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
-
-  return { url: urlData.publicUrl, fileName: file.name, size: file.size };
+  return uploadViaAPI(file, 'avatars', userId);
 }
 
 /**
@@ -43,20 +44,7 @@ export async function uploadAvatar(userId: string, file: File): Promise<UploadRe
 export async function uploadPetPhoto(petId: string, file: File): Promise<UploadResult> {
   if (!isSupabaseReady()) return mockUpload(file, 'pet-photos');
 
-  const supabase = createClient();
-  const ext = file.name.split('.').pop() || 'jpg';
-  const path = `${petId}/${Date.now()}.${ext}`;
-
-  const { error } = await supabase.storage.from('pet-photos').upload(path, file, {
-    cacheControl: '3600',
-    upsert: true,
-  });
-
-  if (error) throw new Error(`Upload greška: ${error.message}`);
-
-  const { data: urlData } = supabase.storage.from('pet-photos').getPublicUrl(path);
-
-  return { url: urlData.publicUrl, fileName: file.name, size: file.size };
+  return uploadViaAPI(file, 'pet-photos', petId);
 }
 
 /**
@@ -85,20 +73,7 @@ export async function deleteFile(bucket: string, path: string): Promise<void> {
 export async function uploadMessageAttachment(userId: string, file: File): Promise<UploadResult> {
   if (!isSupabaseReady()) return mockUpload(file, 'pet-photos');
 
-  const supabase = createClient();
-  const ext = file.name.split('.').pop() || 'jpg';
-  const path = `messages/${userId}/${Date.now()}.${ext}`;
-
-  const { error } = await supabase.storage.from('pet-photos').upload(path, file, {
-    cacheControl: '3600',
-    upsert: true,
-  });
-
-  if (error) throw new Error(`Upload greška: ${error.message}`);
-
-  const { data: urlData } = supabase.storage.from('pet-photos').getPublicUrl(path);
-
-  return { url: urlData.publicUrl, fileName: file.name, size: file.size };
+  return uploadViaAPI(file, 'pet-photos', `messages/${userId}`);
 }
 
 /**
