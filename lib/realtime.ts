@@ -7,7 +7,9 @@ export interface MockMessage {
   id: string;
   sender_id: string;
   receiver_id: string;
+  booking_id: string | null;
   content: string;
+  image_url: string | null;
   created_at: string;
   read: boolean;
 }
@@ -66,8 +68,10 @@ class RealtimeManager {
         id: `mock-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         sender_id: partnerId,
         receiver_id: receiverId,
+        booking_id: null,
         content:
           MOCK_RESPONSES[Math.floor(Math.random() * MOCK_RESPONSES.length)],
+        image_url: null,
         created_at: new Date().toISOString(),
         read: false,
       };

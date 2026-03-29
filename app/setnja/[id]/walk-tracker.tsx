@@ -46,6 +46,7 @@ export function WalkTracker({ walk, sitterName, petName, petSpecies }: Props) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -70,9 +71,10 @@ export function WalkTracker({ walk, sitterName, petName, petSpecies }: Props) {
   const currentPos = walk.route[currentPointIndex];
   const center = walk.route[Math.floor(walk.route.length / 2)];
 
+  const [nowMs] = useState<number>(() => Date.now());
   const durationMinutes = walk.end_time
     ? Math.round((new Date(walk.end_time).getTime() - new Date(walk.start_time).getTime()) / 60000)
-    : Math.round((Date.now() - new Date(walk.start_time).getTime()) / 60000);
+    : Math.round((nowMs - new Date(walk.start_time).getTime()) / 60000);
   const avgSpeed = walk.distance_km > 0 && durationMinutes > 0
     ? ((walk.distance_km / durationMinutes) * 60).toFixed(1)
     : '0.0';

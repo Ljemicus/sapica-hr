@@ -22,10 +22,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    let parsed: CartItem[] = [];
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setItems(JSON.parse(stored));
+      if (stored) parsed = JSON.parse(stored) as CartItem[];
     } catch {}
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setItems(parsed);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoaded(true);
   }, []);
 

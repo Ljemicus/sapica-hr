@@ -18,8 +18,9 @@ export default async function UpdatesPage({ params }: { params: Promise<{ bookin
 
   const startDate = booking.start_date;
   const endDate = booking.end_date;
+  const now = new Date().getTime();
   const totalDays = Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)));
-  const currentDay = Math.min(totalDays, Math.max(1, Math.ceil((Date.now() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24))));
+  const currentDay = Math.min(totalDays, Math.max(1, Math.ceil((now - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24))));
 
   return (
     <UpdatesFeed

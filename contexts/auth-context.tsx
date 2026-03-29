@@ -57,10 +57,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [supabase]);
 
+  const loadMockUser = useCallback(async () => {
+    const mockUserId = getMockUserIdClient();
+    if (mockUserId) {
+      // Fetch mock user data from API
+      try {
+        const res = await fetch(`/api/auth/me`);
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+        }
+      } catch {
+        // Ignore - user stays null
+      }
+    }
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
     if (!isSupabaseConfiguredClient()) {
       // Mock auth mode: čitaj user iz cookie-a
-      loadMockUser();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      loadMockUser().then(() => {}).catch(() => {});
       return;
     }
 
@@ -90,24 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     return () => subscription.unsubscribe();
-  }, [supabase, fetchUserProfile]);
-
-  async function loadMockUser() {
-    const mockUserId = getMockUserIdClient();
-    if (mockUserId) {
-      // Fetch mock user data from API
-      try {
-        const res = await fetch(`/api/auth/me`);
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data.user);
-        }
-      } catch {
-        // Ignore - user stays null
-      }
-    }
-    setLoading(false);
-  }
+  }, [supabase, fetchUserProfile, loadMockUser]);
 
   const signOut = useCallback(async () => {
     if (isSupabaseConfiguredClient()) {

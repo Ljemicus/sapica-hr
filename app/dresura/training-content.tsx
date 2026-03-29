@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  Star, MapPin, Award, Shield, ArrowRight, X, Filter, SlidersHorizontal, GraduationCap, Clock, Users, ChevronDown, ChevronUp,
+  Star, MapPin, Award, Shield, X, Filter, SlidersHorizontal, GraduationCap, Clock, Users, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -24,6 +23,70 @@ const gradients = [
   'from-teal-400 to-cyan-300',
   'from-rose-400 to-orange-300',
 ];
+
+interface FilterPanelProps {
+  city: string;
+  type: string;
+  activeFilterCount: number;
+  onCityChange: (city: string) => void;
+  onTypeChange: (type: string) => void;
+  onApply: () => void;
+  onClear: () => void;
+}
+
+function FilterPanel({ city, type, activeFilterCount, onCityChange, onTypeChange, onApply, onClear }: FilterPanelProps) {
+  return (
+    <div className="space-y-6">
+      <div>
+        <Label className="text-sm font-medium mb-2 block">Grad</Label>
+        <select
+          value={city}
+          onChange={(e) => onCityChange(e.target.value)}
+          className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
+        >
+          <option value="">Svi gradovi</option>
+          {CITIES.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <Label className="text-sm font-medium mb-2 block">Vrsta treninga</Label>
+        <div className="space-y-2">
+          {(Object.entries(TRAINING_TYPE_LABELS) as [TrainingType, string][]).map(([key, label]) => (
+            <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
+              <input
+                type="radio"
+                name="training-type"
+                value={key}
+                checked={type === key}
+                onChange={(e) => onTypeChange(e.target.value)}
+                className="accent-orange-500 w-4 h-4"
+              />
+              <span className="text-sm group-hover:text-orange-600 transition-colors">{label}</span>
+            </label>
+          ))}
+          {type && (
+            <button onClick={() => onTypeChange('')} className="text-xs text-orange-500 hover:underline mt-1">
+              Poništi odabir
+            </button>
+          )}
+        </div>
+      </div>
+      <Separator />
+      <div className="flex gap-2">
+        <Button onClick={onApply} className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover">
+          Primijeni filtere
+        </Button>
+        {activeFilterCount > 0 && (
+          <Button variant="outline" onClick={onClear} className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 interface TrainingContentProps {
   trainers: Trainer[];
@@ -49,58 +112,6 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
   };
 
   const activeFilterCount = [city, type].filter(Boolean).length;
-
-  const FilterPanel = () => (
-    <div className="space-y-6">
-      <div>
-        <Label className="text-sm font-medium mb-2 block">Grad</Label>
-        <select
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
-        >
-          <option value="">Svi gradovi</option>
-          {CITIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <Label className="text-sm font-medium mb-2 block">Vrsta treninga</Label>
-        <div className="space-y-2">
-          {(Object.entries(TRAINING_TYPE_LABELS) as [TrainingType, string][]).map(([key, label]) => (
-            <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
-              <input
-                type="radio"
-                name="training-type"
-                value={key}
-                checked={type === key}
-                onChange={(e) => setType(e.target.value)}
-                className="accent-orange-500 w-4 h-4"
-              />
-              <span className="text-sm group-hover:text-orange-600 transition-colors">{label}</span>
-            </label>
-          ))}
-          {type && (
-            <button onClick={() => setType('')} className="text-xs text-orange-500 hover:underline mt-1">
-              Poništi odabir
-            </button>
-          )}
-        </div>
-      </div>
-      <Separator />
-      <div className="flex gap-2">
-        <Button onClick={applyFilters} className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover">
-          Primijeni filtere
-        </Button>
-        {activeFilterCount > 0 && (
-          <Button variant="outline" onClick={clearFilters} className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-    </div>
-  );
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -128,7 +139,7 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] overflow-y-auto">
               <SheetTitle className="mb-4">Filteri</SheetTitle>
-              <FilterPanel />
+              <FilterPanel city={city} type={type} activeFilterCount={activeFilterCount} onCityChange={setCity} onTypeChange={setType} onApply={applyFilters} onClear={clearFilters} />
             </SheetContent>
           </Sheet>
         </div>
@@ -161,7 +172,7 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
               <Filter className="h-4 w-4" />
               Filteri
             </h2>
-            <FilterPanel />
+            <FilterPanel city={city} type={type} activeFilterCount={activeFilterCount} onCityChange={setCity} onTypeChange={setType} onApply={applyFilters} onClear={clearFilters} />
           </Card>
         </aside>
 

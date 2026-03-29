@@ -25,6 +25,70 @@ const gradients = [
   'from-green-400 to-emerald-300',
 ];
 
+interface GroomingFilterPanelProps {
+  city: string;
+  service: string;
+  activeFilterCount: number;
+  onCityChange: (city: string) => void;
+  onServiceChange: (service: string) => void;
+  onApply: () => void;
+  onClear: () => void;
+}
+
+function GroomingFilterPanel({ city, service, activeFilterCount, onCityChange, onServiceChange, onApply, onClear }: GroomingFilterPanelProps) {
+  return (
+    <div className="space-y-6">
+      <div>
+        <Label className="text-sm font-medium mb-2 block">Grad</Label>
+        <select
+          value={city}
+          onChange={(e) => onCityChange(e.target.value)}
+          className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
+        >
+          <option value="">Svi gradovi</option>
+          {CITIES.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <Label className="text-sm font-medium mb-2 block">Vrsta usluge</Label>
+        <div className="space-y-2">
+          {(Object.entries(GROOMING_SERVICE_LABELS) as [GroomingServiceType, string][]).map(([key, label]) => (
+            <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
+              <input
+                type="radio"
+                name="grooming-service"
+                value={key}
+                checked={service === key}
+                onChange={(e) => onServiceChange(e.target.value)}
+                className="accent-orange-500 w-4 h-4"
+              />
+              <span className="text-sm group-hover:text-orange-600 transition-colors">{label}</span>
+            </label>
+          ))}
+          {service && (
+            <button onClick={() => onServiceChange('')} className="text-xs text-orange-500 hover:underline mt-1">
+              Poništi odabir
+            </button>
+          )}
+        </div>
+      </div>
+      <Separator />
+      <div className="flex gap-2">
+        <Button onClick={onApply} className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover">
+          Primijeni filtere
+        </Button>
+        {activeFilterCount > 0 && (
+          <Button variant="outline" onClick={onClear} className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 interface GroomingContentProps {
   groomers: Groomer[];
   initialParams: { city?: string; service?: string };
@@ -49,58 +113,6 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
   };
 
   const activeFilterCount = [city, service].filter(Boolean).length;
-
-  const FilterPanel = () => (
-    <div className="space-y-6">
-      <div>
-        <Label className="text-sm font-medium mb-2 block">Grad</Label>
-        <select
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
-        >
-          <option value="">Svi gradovi</option>
-          {CITIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <Label className="text-sm font-medium mb-2 block">Vrsta usluge</Label>
-        <div className="space-y-2">
-          {(Object.entries(GROOMING_SERVICE_LABELS) as [GroomingServiceType, string][]).map(([key, label]) => (
-            <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
-              <input
-                type="radio"
-                name="grooming-service"
-                value={key}
-                checked={service === key}
-                onChange={(e) => setService(e.target.value)}
-                className="accent-orange-500 w-4 h-4"
-              />
-              <span className="text-sm group-hover:text-orange-600 transition-colors">{label}</span>
-            </label>
-          ))}
-          {service && (
-            <button onClick={() => setService('')} className="text-xs text-orange-500 hover:underline mt-1">
-              Poništi odabir
-            </button>
-          )}
-        </div>
-      </div>
-      <Separator />
-      <div className="flex gap-2">
-        <Button onClick={applyFilters} className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover">
-          Primijeni filtere
-        </Button>
-        {activeFilterCount > 0 && (
-          <Button variant="outline" onClick={clearFilters} className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-    </div>
-  );
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -128,7 +140,7 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] overflow-y-auto">
               <SheetTitle className="mb-4">Filteri</SheetTitle>
-              <FilterPanel />
+              <GroomingFilterPanel city={city} service={service} activeFilterCount={activeFilterCount} onCityChange={setCity} onServiceChange={setService} onApply={applyFilters} onClear={clearFilters} />
             </SheetContent>
           </Sheet>
         </div>
@@ -161,7 +173,7 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
               <Filter className="h-4 w-4" />
               Filteri
             </h2>
-            <FilterPanel />
+            <GroomingFilterPanel city={city} service={service} activeFilterCount={activeFilterCount} onCityChange={setCity} onServiceChange={setService} onApply={applyFilters} onClear={clearFilters} />
           </Card>
         </aside>
 

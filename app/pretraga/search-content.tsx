@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { Filter, MapIcon, Grid, LayoutList, SlidersHorizontal, X, Search as SearchIcon, MapPin } from 'lucide-react';
+import { Filter, MapIcon, Grid, LayoutList, SlidersHorizontal, X, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -68,6 +68,123 @@ function SitterSkeleton() {
   );
 }
 
+interface SearchFilterPanelProps {
+  city: string;
+  service: string;
+  minPrice: string;
+  maxPrice: string;
+  minRating: string;
+  activeFilterCount: number;
+  onCityChange: (v: string) => void;
+  onServiceChange: (v: string) => void;
+  onMinPriceChange: (v: string) => void;
+  onMaxPriceChange: (v: string) => void;
+  onMinRatingChange: (v: string) => void;
+  onApply: () => void;
+  onClear: () => void;
+}
+
+function SearchFilterPanel({
+  city, service, minPrice, maxPrice, minRating, activeFilterCount,
+  onCityChange, onServiceChange, onMinPriceChange, onMaxPriceChange, onMinRatingChange,
+  onApply, onClear,
+}: SearchFilterPanelProps) {
+  return (
+    <div className="space-y-6">
+      <div>
+        <Label className="text-sm font-medium mb-2 block">Grad</Label>
+        <select
+          value={city}
+          onChange={(e) => onCityChange(e.target.value)}
+          className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
+        >
+          <option value="">Svi gradovi</option>
+          {CITIES.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <Label className="text-sm font-medium mb-2 block">Vrsta usluge</Label>
+        <div className="space-y-2">
+          {(Object.entries(SERVICE_LABELS) as [ServiceType, string][]).map(([key, label]) => (
+            <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
+              <input
+                type="radio"
+                name="service"
+                value={key}
+                checked={service === key}
+                onChange={(e) => onServiceChange(e.target.value)}
+                className="accent-orange-500 w-4 h-4"
+              />
+              <span className="text-sm group-hover:text-orange-600 transition-colors">{label}</span>
+            </label>
+          ))}
+          {service && (
+            <button onClick={() => onServiceChange('')} className="text-xs text-orange-500 hover:underline mt-1">
+              Poništi odabir
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div>
+        <Label className="text-sm font-medium mb-2 block">Raspon cijena (€)</Label>
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="Min"
+            value={minPrice}
+            onChange={(e) => onMinPriceChange(e.target.value.replace(/[^0-9]/g, ''))}
+            className="w-full focus:border-orange-300"
+          />
+          <span className="self-center text-muted-foreground">—</span>
+          <Input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="Max"
+            value={maxPrice}
+            onChange={(e) => onMaxPriceChange(e.target.value.replace(/[^0-9]/g, ''))}
+            className="w-full focus:border-orange-300"
+          />
+        </div>
+      </div>
+
+      <div>
+        <Label className="text-sm font-medium mb-2 block">Minimalna ocjena</Label>
+        <select
+          value={minRating}
+          onChange={(e) => onMinRatingChange(e.target.value)}
+          className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
+        >
+          <option value="">Sve ocjene</option>
+          <option value="4.5">4.5+</option>
+          <option value="4">4.0+</option>
+          <option value="3.5">3.5+</option>
+          <option value="3">3.0+</option>
+        </select>
+      </div>
+
+      <Separator />
+
+      <div className="flex gap-2">
+        <Button onClick={onApply} className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover">
+          Primijeni filtere
+        </Button>
+        {activeFilterCount > 0 && (
+          <Button variant="outline" onClick={onClear} className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function SearchContent({ sitters, initialParams }: SearchContentProps) {
   const router = useRouter();
   const [showMap, setShowMap] = useState(false);
@@ -102,101 +219,6 @@ export function SearchContent({ sitters, initialParams }: SearchContentProps) {
 
   const activeFilterCount = [city, service, minPrice, maxPrice, minRating].filter(Boolean).length;
 
-  const FilterPanel = () => (
-    <div className="space-y-6">
-      <div>
-        <Label className="text-sm font-medium mb-2 block">Grad</Label>
-        <select
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
-        >
-          <option value="">Svi gradovi</option>
-          {CITIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <Label className="text-sm font-medium mb-2 block">Vrsta usluge</Label>
-        <div className="space-y-2">
-          {(Object.entries(SERVICE_LABELS) as [ServiceType, string][]).map(([key, label]) => (
-            <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
-              <input
-                type="radio"
-                name="service"
-                value={key}
-                checked={service === key}
-                onChange={(e) => setService(e.target.value)}
-                className="accent-orange-500 w-4 h-4"
-              />
-              <span className="text-sm group-hover:text-orange-600 transition-colors">{label}</span>
-            </label>
-          ))}
-          {service && (
-            <button onClick={() => setService('')} className="text-xs text-orange-500 hover:underline mt-1">
-              Poništi odabir
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div>
-        <Label className="text-sm font-medium mb-2 block">Raspon cijena (€)</Label>
-        <div className="flex gap-2">
-          <Input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            placeholder="Min"
-            value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value.replace(/[^0-9]/g, ''))}
-            className="w-full focus:border-orange-300"
-          />
-          <span className="self-center text-muted-foreground">—</span>
-          <Input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            placeholder="Max"
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value.replace(/[^0-9]/g, ''))}
-            className="w-full focus:border-orange-300"
-          />
-        </div>
-      </div>
-
-      <div>
-        <Label className="text-sm font-medium mb-2 block">Minimalna ocjena</Label>
-        <select
-          value={minRating}
-          onChange={(e) => setMinRating(e.target.value)}
-          className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
-        >
-          <option value="">Sve ocjene</option>
-          <option value="4.5">4.5+</option>
-          <option value="4">4.0+</option>
-          <option value="3.5">3.5+</option>
-          <option value="3">3.0+</option>
-        </select>
-      </div>
-
-      <Separator />
-
-      <div className="flex gap-2">
-        <Button onClick={applyFilters} className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover">
-          Primijeni filtere
-        </Button>
-        {activeFilterCount > 0 && (
-          <Button variant="outline" onClick={clearFilters} className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-    </div>
-  );
-
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Sticky Search Header */}
@@ -223,7 +245,13 @@ export function SearchContent({ sitters, initialParams }: SearchContentProps) {
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] overflow-y-auto">
                 <SheetTitle className="mb-4">Filteri</SheetTitle>
-                <FilterPanel />
+                <SearchFilterPanel
+                  city={city} service={service} minPrice={minPrice} maxPrice={maxPrice} minRating={minRating}
+                  activeFilterCount={activeFilterCount}
+                  onCityChange={setCity} onServiceChange={setService} onMinPriceChange={setMinPrice}
+                  onMaxPriceChange={setMaxPrice} onMinRatingChange={setMinRating}
+                  onApply={applyFilters} onClear={clearFilters}
+                />
               </SheetContent>
             </Sheet>
 
@@ -307,7 +335,13 @@ export function SearchContent({ sitters, initialParams }: SearchContentProps) {
               <Filter className="h-4 w-4" />
               Filteri
             </h2>
-            <FilterPanel />
+            <SearchFilterPanel
+              city={city} service={service} minPrice={minPrice} maxPrice={maxPrice} minRating={minRating}
+              activeFilterCount={activeFilterCount}
+              onCityChange={setCity} onServiceChange={setService} onMinPriceChange={setMinPrice}
+              onMaxPriceChange={setMaxPrice} onMinRatingChange={setMinRating}
+              onApply={applyFilters} onClear={clearFilters}
+            />
           </Card>
         </aside>
 
@@ -344,3 +378,6 @@ export function SearchContent({ sitters, initialParams }: SearchContentProps) {
     </div>
   );
 }
+
+// Prevent unused import warning for SitterSkeleton - keep for potential future use
+export { SitterSkeleton };

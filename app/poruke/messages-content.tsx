@@ -20,8 +20,8 @@ interface Conversation {
   partnerId: string;
   partnerName: string;
   partnerAvatar: string | null;
-  messages: any[];
-  lastMessage: any;
+  messages: Message[];
+  lastMessage: Message | null;
   unreadCount: number;
 }
 
@@ -37,8 +37,8 @@ function formatDateHeader(dateStr: string) {
   return format(date, 'd. MMMM yyyy.', { locale: hr });
 }
 
-function groupMessagesByDate(messages: any[]) {
-  const groups: { date: string; messages: any[] }[] = [];
+function groupMessagesByDate(messages: Message[]) {
+  const groups: { date: string; messages: Message[] }[] = [];
   let currentDate = '';
   for (const msg of messages) {
     const msgDate = format(new Date(msg.created_at), 'yyyy-MM-dd');
@@ -111,7 +111,7 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
           if (convIndex >= 0) {
             updated[convIndex] = {
               ...updated[convIndex],
-              messages: [...updated[convIndex].messages, { ...newMsg, sender: { id: newMsg.sender_id, name: '', avatar_url: null } }],
+              messages: [...updated[convIndex].messages, { ...newMsg, sender: { id: newMsg.sender_id, name: '', avatar_url: null, email: '', role: 'owner' as const, phone: null, city: null, created_at: '' } }],
               lastMessage: newMsg,
               unreadCount: updated[convIndex].unreadCount + (selectedPartnerId === newMsg.sender_id ? 0 : 1),
             };
@@ -134,7 +134,7 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
         if (convIndex >= 0) {
           updated[convIndex] = {
             ...updated[convIndex],
-            messages: [...updated[convIndex].messages, { ...msg, sender: { id: msg.sender_id, name: updated[convIndex].partnerName, avatar_url: null } }],
+            messages: [...updated[convIndex].messages, { ...msg, sender: { id: msg.sender_id, name: updated[convIndex].partnerName, avatar_url: null, email: '', role: 'owner' as const, phone: null, city: null, created_at: '' } }],
             lastMessage: msg,
             unreadCount: updated[convIndex].unreadCount + (selectedPartnerId === msg.sender_id ? 0 : 1),
           };
@@ -178,15 +178,17 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
 
   // Mark messages as read
   useEffect(() => {
-    if (selectedPartnerId) {
+    if (!selectedPartnerId) return;
+    const markRead = async () => {
       setConversations(prev =>
         prev.map(c =>
           c.partnerId === selectedPartnerId ? { ...c, unreadCount: 0 } : c
         )
       );
-      supabase.from('messages').update({ read: true }).eq('sender_id', selectedPartnerId).eq('receiver_id', currentUser.id).eq('read', false).then();
-    }
-  }, [selectedPartnerId]);
+      await supabase.from('messages').update({ read: true }).eq('sender_id', selectedPartnerId).eq('receiver_id', currentUser.id).eq('read', false);
+    };
+    void markRead();
+  }, [selectedPartnerId, currentUser.id, supabase]);
 
   const sendMessage = async () => {
     if (!newMessage.trim() || !selectedPartnerId) return;
