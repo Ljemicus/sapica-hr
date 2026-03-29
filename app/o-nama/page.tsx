@@ -172,7 +172,7 @@ export default function AboutPage() {
               PetPark nije samo app. 🐾
             </h2>
             <p className="text-white/85 text-lg mb-8 max-w-xl mx-auto">
-              To je mjesto gdje se ljudi koji vole životinje pronalaze. I pomažu jedni drugima.
+              To je mjesto gdje se ljudi koji vole životinje pronalaze i pomažu jedni drugima
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/pretraga">
