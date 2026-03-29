@@ -41,7 +41,7 @@ const mainCards = [
   { href: '/dresura', emoji: '🎓', title: 'Dresura', description: 'Profesionalna obuka i trening', bg: 'from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/20', hover: 'hover:shadow-indigo-200/40 dark:hover:shadow-indigo-900/20', border: 'border-indigo-100 dark:border-indigo-900/30' },
   { href: '/forum', emoji: '💬', title: 'Forum', description: 'Zajednica ljubitelja životinja', bg: 'from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/20', hover: 'hover:shadow-teal-200/40 dark:hover:shadow-teal-900/20', border: 'border-teal-100 dark:border-teal-900/30' },
   { href: '/zajednica', emoji: '📝', title: 'Blog', description: 'Savjeti, vodiči i priče', bg: 'from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/20', hover: 'hover:shadow-purple-200/40 dark:hover:shadow-purple-900/20', border: 'border-purple-100 dark:border-purple-900/30' },
-  { href: '/prijava', emoji: '🔑', title: 'Prijava', description: 'Pristupite svom računu', bg: 'from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/20', hover: 'hover:shadow-amber-200/40 dark:hover:shadow-amber-900/20', border: 'border-amber-100 dark:border-amber-900/30' },
+  { href: '/shop', emoji: '🛒', title: 'Webshop', description: 'Sve za vašeg ljubimca', bg: 'from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/20', hover: 'hover:shadow-amber-200/40 dark:hover:shadow-amber-900/20', border: 'border-amber-100 dark:border-amber-900/30' },
 ];
 
 const services = [
