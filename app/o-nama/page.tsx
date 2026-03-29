@@ -100,6 +100,23 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Values */}
+      <section className="container mx-auto px-4 py-16 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {VALUES.map((v, i) => (
+            <Card key={i} className={`border-0 shadow-sm rounded-2xl card-hover animate-fade-in-up delay-${(i + 1) * 100}`}>
+              <CardContent className="p-6 text-center">
+                <div className={`inline-flex p-3 rounded-xl ${v.bg} mb-4`}>
+                  <v.icon className={`h-6 w-6 ${v.color}`} />
+                </div>
+                <h3 className="text-lg font-bold mb-2">{v.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{v.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
       {/* Origin */}
       <section className="container mx-auto px-4 py-16 md:py-20">
         <div className="max-w-3xl mx-auto text-center">
