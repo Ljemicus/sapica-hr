@@ -74,7 +74,7 @@ export const knowledgeBase: KBEntry[] = [
   // === REGISTRACIJA ===
   {
     keywords: ['registracija', 'registrirati', 'signup', 'sign up', 'napraviti račun', 'napraviti racun', 'otvoriti račun'],
-    response: 'Registracija je brza i besplatna! ✨\n\n• **Email + lozinka** — klasični način\n• **Google prijava** — jedan klik i gotovo\n\nIdi na petpark.vercel.app i klikni "Prijava" u gornjem desnom kutu.',
+    response: 'Registracija je brza i besplatna! ✨\n\n• **Email + lozinka** — klasični način\n• **Google prijava** — jedan klik i gotovo\n\nIdi na petpark.hr i klikni "Prijava" u gornjem desnom kutu.',
     category: 'registration',
   },
   {
@@ -106,12 +106,12 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['grooming', 'njega', 'šišanje', 'sisanje', 'kupanje', 'groomer'],
-    response: 'Grooming usluge su dostupne na PetParku! ✂️ Pogledaj sekciju "Njega" na stranici za:\n\n• Šišanje i stiliziranje\n• Kupanje i njegu dlake\n• Rezanje noktiju\n• Čišćenje ušiju\n\n👉 petpark.vercel.app/njega',
+    response: 'Grooming usluge su dostupne na PetParku! ✂️ Pogledaj sekciju "Njega" na stranici za:\n\n• Šišanje i stiliziranje\n• Kupanje i njegu dlake\n• Rezanje noktiju\n• Čišćenje ušiju\n\n👉 petpark.hr/njega',
     category: 'services',
   },
   {
     keywords: ['dresura', 'trening', 'trener', 'obuka', 'školovanje psa', 'skolovanje', 'agility'],
-    response: 'Dresura i trening pasa! 🎓 U sekciji "Dresura" možeš pronaći:\n\n• Individualne trenere\n• Grupne obuke\n• Agility trening\n• Socijalizaciju\n\n👉 petpark.vercel.app/dresura',
+    response: 'Dresura i trening pasa! 🎓 U sekciji "Dresura" možeš pronaći:\n\n• Individualne trenere\n• Grupne obuke\n• Agility trening\n• Socijalizaciju\n\n👉 petpark.hr/dresura',
     category: 'services',
   },
   {
@@ -157,12 +157,12 @@ export const knowledgeBase: KBEntry[] = [
   // === FORUM ===
   {
     keywords: ['forum', 'zajednica', 'community', 'pitanje', 'savjet', 'priča', 'objava'],
-    response: 'Naš forum je super za ljubitelje životinja! 💬\n\n• 💡 **Pitanja** — pitaj što te zanima\n• 📝 **Savjeti** — dijeli iskustva\n• ❤️ **Priče** — slatke i smiješne priče o ljubimcima\n• 🔍 **Izgubljeni ljubimci** — pomozi pronaći izgubljene životinje\n\n👉 petpark.vercel.app/forum',
+    response: 'Naš forum je super za ljubitelje životinja! 💬\n\n• 💡 **Pitanja** — pitaj što te zanima\n• 📝 **Savjeti** — dijeli iskustva\n• ❤️ **Priče** — slatke i smiješne priče o ljubimcima\n• 🔍 **Izgubljeni ljubimci** — pomozi pronaći izgubljene životinje\n\n👉 petpark.hr/forum',
     category: 'forum',
   },
   {
     keywords: ['izgubljen', 'izgubljena', 'nestao', 'nestala', 'tražim', 'trazim', 'pronađen'],
-    response: 'Oh ne! 😟 Ako je tvoj ljubimac nestao, objavi na našem forumu u kategoriji "Izgubljeni ljubimci" — zajednica pomogne! 🔍\n\n👉 petpark.vercel.app/forum\n\nDodaj sliku, lokaciju i kontakt. Držimo fige! 🤞🐾',
+    response: 'Oh ne! 😟 Ako je tvoj ljubimac nestao, objavi na našem forumu u kategoriji "Izgubljeni ljubimci" — zajednica pomogne! 🔍\n\n👉 petpark.hr/forum\n\nDodaj sliku, lokaciju i kontakt. Držimo fige! 🤞🐾',
     category: 'forum',
   },
 
@@ -186,7 +186,7 @@ export const knowledgeBase: KBEntry[] = [
   // === APP ===
   {
     keywords: ['aplikacija', 'app', 'mobitel', 'telefon', 'android', 'iphone', 'ios', 'instalirati'],
-    response: 'PetPark radi kao web app! 📱 Možeš je instalirati na mobitel:\n\n**Android:** Otvori petpark.vercel.app u Chromeu → "Dodaj na početni zaslon"\n**iPhone:** Otvori u Safariju → Dijeli → "Dodaj na početni zaslon"\n\nRadi kao prava aplikacija! 🚀',
+    response: 'PetPark radi kao web app! 📱 Možeš je instalirati na mobitel:\n\n**Android:** Otvori petpark.hr u Chromeu → "Dodaj na početni zaslon"\n**iPhone:** Otvori u Safariju → Dijeli → "Dodaj na početni zaslon"\n\nRadi kao prava aplikacija! 🚀',
     category: 'app',
   },
   {

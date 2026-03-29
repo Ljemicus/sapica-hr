@@ -31,7 +31,7 @@ export default function UvjetiPage() {
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Opći uvjeti</h2>
             <p className="text-gray-600 leading-relaxed">
-              PetPark (<a href="https://petpark.vercel.app" className="text-orange-600 hover:underline">petpark.vercel.app</a>)
+              PetPark (<a href="https://petpark.hr" className="text-orange-600 hover:underline">petpark.hr</a>)
               je online platforma koja povezuje vlasnike ljubimaca s čuvarima (sitterima), groomerima i trenerima.
               Korištenjem naše platforme pristajete na ove uvjete korištenja. Ako se ne slažete s ovim uvjetima,
               molimo vas da ne koristite platformu.

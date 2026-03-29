@@ -33,7 +33,7 @@ export default function PrivatnostPage() {
             <p className="text-gray-600 leading-relaxed mb-3">
               Voditelj obrade vaših osobnih podataka je PetPark d.o.o., sa sjedištem u Zagrebu, Hrvatska,
               dostupna na adresi{' '}
-              <a href="https://petpark.vercel.app" className="text-orange-600 hover:underline">petpark.vercel.app</a>.
+              <a href="https://petpark.hr" className="text-orange-600 hover:underline">petpark.hr</a>.
             </p>
             <div className="bg-orange-50 rounded-xl p-4 text-sm text-gray-600">
               <p className="font-semibold text-gray-900 mb-1">Službenik za zaštitu podataka (DPO)</p>

@@ -26,7 +26,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://petpark.vercel.app'),
+  metadataBase: new URL('https://petpark.hr'),
   title: {
     default: 'PetPark — Pronađite čuvara za svog ljubimca',
     template: '%s | PetPark',
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     description: 'Povežite se s pouzdanim čuvarima ljubimaca u vašem gradu. 500+ sittera, 50+ gradova u Hrvatskoj.',
     type: 'website',
     locale: 'hr_HR',
-    url: 'https://petpark.vercel.app',
+    url: 'https://petpark.hr',
     siteName: 'PetPark',
   },
   twitter: {
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
   },
-  alternates: { canonical: 'https://petpark.vercel.app' },
+  alternates: { canonical: 'https://petpark.hr' },
   icons: {
     icon: [
       { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
@@ -88,7 +88,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <Script
           defer
-          data-domain="petpark.vercel.app"
+          data-domain="petpark.hr"
           src="https://plausible.io/js/script.js"
           strategy="afterInteractive"
         />
@@ -100,8 +100,8 @@ export default function RootLayout({
               '@type': 'Organization',
               name: 'PetPark',
               alternateName: 'PetPark d.o.o.',
-              url: 'https://petpark.vercel.app',
-              logo: 'https://petpark.vercel.app/opengraph-image',
+              url: 'https://petpark.hr',
+              logo: 'https://petpark.hr/opengraph-image',
               description: 'Hrvatski marketplace za čuvanje kućnih ljubimaca. Pronađite pouzdane sittere u vašem gradu.',
               address: {
                 '@type': 'PostalAddress',

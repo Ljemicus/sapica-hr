@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/dashboard/', '/admin/', '/poruke/'],
     },
-    sitemap: 'https://petpark.vercel.app/sitemap.xml',
+    sitemap: `${process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr'}/sitemap.xml`,
   };
 }

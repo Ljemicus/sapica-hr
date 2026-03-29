@@ -56,7 +56,7 @@ export async function createCheckoutSession(
   const stripe = getStripe();
   const platformFee = Math.round(amount * PLATFORMA_FEE);
 
-  const baseUrl = origin || process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.vercel.app';
+  const baseUrl = origin || process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
@@ -115,7 +115,7 @@ export async function createConnectAccount(
     },
   });
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
   const accountLink = await stripe.accountLinks.create({
     account: account.id,
@@ -134,7 +134,7 @@ export async function createAccountLink(
   stripeAccountId: string
 ): Promise<string> {
   const stripe = getStripe();
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
   const accountLink = await stripe.accountLinks.create({
     account: stripeAccountId,
