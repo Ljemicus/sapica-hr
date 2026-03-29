@@ -34,12 +34,6 @@ const VALUES = [
   },
 ];
 
-const STATS = [
-  { value: '6+', label: 'gradova', icon: MapPin },
-  { value: '47', label: 'stranica na platformi', icon: Search },
-  { value: '∞', label: 'ljubavi prema životinjama', icon: Heart },
-];
-
 export default function AboutPage() {
   return (
     <div>
