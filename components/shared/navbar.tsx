@@ -124,7 +124,7 @@ export function Navbar() {
             <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
           </Link>
           {!user && (
-            <Link href="/registracija?role=sitter" className="text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 transition-colors px-3 py-2 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-950/20">
+            <Link href="/postani-sitter" className="text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 transition-colors px-3 py-2 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-950/20">
               Postani sitter
             </Link>
           )}
@@ -195,7 +195,7 @@ export function Navbar() {
                   {user.role !== 'sitter' && (
                     <>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem render={<Link href="/registracija?role=sitter" />} className="cursor-pointer rounded-lg text-teal-600 dark:text-teal-400 font-medium">
+                      <DropdownMenuItem render={<Link href="/postani-sitter" />} className="cursor-pointer rounded-lg text-teal-600 dark:text-teal-400 font-medium">
                         <Sparkles className="mr-2 h-4 w-4" />
                         Postani sitter
                       </DropdownMenuItem>
@@ -332,7 +332,7 @@ export function Navbar() {
                       Poruke
                     </Link>
                     {user.role !== 'sitter' && (
-                      <Link href="/registracija?role=sitter" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/20 font-semibold transition-colors">
+                      <Link href="/postani-sitter" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/20 font-semibold transition-colors">
                         <Sparkles className="h-5 w-5" />
                         Postani sitter
                       </Link>
