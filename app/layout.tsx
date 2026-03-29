@@ -10,7 +10,6 @@ import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/contexts/auth-context';
 import { CartProvider } from '@/lib/cart-context';
 import { PushNotificationPrompt } from '@/components/shared/push-notification';
-import { ChatWidget } from '@/components/shared/chat-widget';
 import { CookieConsent } from '@/components/shared/cookie-consent';
 import { NotificationPrompt } from '@/components/shared/notification-prompt';
 
