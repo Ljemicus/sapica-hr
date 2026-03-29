@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, MessageCircle, Heart, Pin, Flame, Plus, TrendingUp, Clock } from 'lucide-react';
+import { Search, MessageCircle, Heart, Pin, Flame, Plus, TrendingUp, Clock, AlertTriangle, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -59,6 +59,27 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-10">
+      {/* Lost Pets Banner — prominent CTA */}
+      <Link href="/izgubljeni" className="block mb-8 group">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-500 to-orange-500 dark:from-red-600 dark:to-orange-600 p-5 md:p-6 text-white shadow-lg shadow-red-200/40 dark:shadow-red-900/30 hover:shadow-xl hover:shadow-red-200/50 dark:hover:shadow-red-900/40 transition-all">
+          <div className="absolute top-0 right-0 w-32 h-32 md:w-48 md:h-48 opacity-10">
+            <AlertTriangle className="w-full h-full" />
+          </div>
+          <div className="flex items-center gap-4 relative">
+            <div className="flex-shrink-0 bg-white/20 rounded-xl p-3">
+              <AlertTriangle className="h-7 w-7 md:h-8 md:w-8" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg md:text-xl font-bold mb-1">🔍 Izgubljeni ljubimci</h3>
+              <p className="text-sm md:text-base text-white/85">
+                Prijavite ili pronađite izgubljenog ljubimca. Mapa, dojave i obavijesti — uskoro još više!
+              </p>
+            </div>
+            <ArrowRight className="h-6 w-6 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </div>
+      </Link>
+
       {/* Search + New Post */}
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
         <div className="relative flex-1">
