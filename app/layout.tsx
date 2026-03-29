@@ -114,6 +114,12 @@ export default function RootLayout({
                 telephone: '+385915676202',
                 contactType: 'customer service',
                 availableLanguage: 'Croatian',
+                hoursAvailable: {
+                  '@type': 'OpeningHoursSpecification',
+                  dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                  opens: '08:00',
+                  closes: '20:00',
+                },
               },
               sameAs: [],
             }),
