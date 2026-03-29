@@ -30,6 +30,15 @@ const testimonials = [
   { name: 'Nina Š.', city: 'Zagreb', text: 'Kao vlasnica mačke s dijabetesom, teško je naći nekoga tko zna dati inzulin. Marko je bio profesionalan i Whiskers je bio savršeno zbrinut.', rating: 5 },
 ];
 
+const reviewCards = [
+  { name: 'Marina K.', city: 'Rijeka', text: 'Pronašli smo savršenu čuvaricu za našeg Maxa! Ana je slala fotke svaki dan i Max se vratio sretan kao nikad.', rating: 5, initial: 'M', gradient: 'from-orange-400 to-rose-400', petType: 'dog' as const },
+  { name: 'Luka P.', city: 'Zagreb', text: 'Najbolji posao ikad - zarađujem radeći ono što volim! PetPark mi je omogućio fleksibilan raspored i divne klijente.', rating: 5, initial: 'L', gradient: 'from-teal-400 to-cyan-400', petType: 'dog' as const, isSitter: true },
+  { name: 'Nina Š.', city: 'Split', text: 'Mačka Mila je prvi put bila sama i bilo me strah. Ali sitterica je bila predivna i slala ažuriranja svakih par sati!', rating: 5, initial: 'N', gradient: 'from-purple-400 to-pink-400', petType: 'cat' as const },
+  { name: 'Tomislav B.', city: 'Osijek', text: 'Filip je spasio naš godišnji odmor! Buddy je uživao u velikom vrtu. GPS tracking šetnji nam je dao potpuni mir.', rating: 5, initial: 'T', gradient: 'from-blue-400 to-indigo-400', petType: 'dog' as const },
+  { name: 'Ana M.', city: 'Pula', text: 'Kao sitterica na PetParku zarađujem 600€ mjesečno. Fleksibilno, zabavno i upoznajem divne ljubimce svaki dan!', rating: 5, initial: 'A', gradient: 'from-emerald-400 to-teal-400', petType: 'cat' as const, isSitter: true },
+  { name: 'Petra V.', city: 'Zadar', text: 'Treći put koristimo PetPark i svaki put je iskustvo savršeno. Verificirani sitteri daju nam potpuno povjerenje.', rating: 5, initial: 'P', gradient: 'from-amber-400 to-orange-400', petType: 'dog' as const },
+];
+
 const howItWorks = [
   { step: 1, title: 'Pretražite sittere', description: 'Unesite svoj grad i datume, pregledajte profile verificiranih sittera i pročitajte recenzije drugih vlasnika.', icon: Search, color: 'from-orange-500 to-amber-400' },
   { step: 2, title: 'Rezervirajte termin', description: 'Kontaktirajte sittera, dogovorite detalje i rezervirajte uslugu online. Plaćanje je sigurno i jednostavno.', icon: Calendar, color: 'from-teal-500 to-emerald-400' },
@@ -39,7 +48,7 @@ const howItWorks = [
 const mainCards = [
   { href: '/pretraga', emoji: '🐾', title: 'Sitteri', description: 'Pouzdani čuvari u vašem gradu', bg: 'from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/20', hover: 'hover:shadow-orange-200/40 dark:hover:shadow-orange-900/20', border: 'border-orange-100 dark:border-orange-900/30' },
   { href: '/njega', emoji: '✂️', title: 'Grooming', description: 'Šišanje, kupanje i spa tretmani', bg: 'from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-950/20', hover: 'hover:shadow-pink-200/40 dark:hover:shadow-pink-900/20', border: 'border-pink-100 dark:border-pink-900/30' },
-  { href: '/dresura', emoji: '🎓', title: 'Dresura', description: 'Profesionalna obuka i trening', bg: 'from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/20', hover: 'hover:shadow-indigo-200/40 dark:hover:shadow-indigo-900/20', border: 'border-indigo-100 dark:border-indigo-900/30' },
+  { href: '/dresura', emoji: '🎓', title: 'Školovanje pasa', description: 'Profesionalna obuka i trening', bg: 'from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/20', hover: 'hover:shadow-indigo-200/40 dark:hover:shadow-indigo-900/20', border: 'border-indigo-100 dark:border-indigo-900/30' },
   { href: '/forum', emoji: '💬', title: 'Forum', description: 'Zajednica ljubitelja životinja', bg: 'from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/20', hover: 'hover:shadow-teal-200/40 dark:hover:shadow-teal-900/20', border: 'border-teal-100 dark:border-teal-900/30' },
   { href: '/zajednica', emoji: '📝', title: 'Blog', description: 'Savjeti, vodiči i priče', bg: 'from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/20', hover: 'hover:shadow-purple-200/40 dark:hover:shadow-purple-900/20', border: 'border-purple-100 dark:border-purple-900/30' },
   { href: '/shop', emoji: '🛒', title: 'Webshop', description: 'Sve za vašeg ljubimca', bg: 'from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/20', hover: 'hover:shadow-amber-200/40 dark:hover:shadow-amber-900/20', border: 'border-amber-100 dark:border-amber-900/30' },
@@ -53,7 +62,7 @@ const services = [
   { type: 'daycare' as const, title: 'Dnevna briga', description: 'Cjelodnevna briga kod sittera', icon: Sun, price: 'od 18€/dan', color: 'from-rose-500 to-orange-500', image: '/images/services/07-hero-puppy.jpg' },
   { type: 'grooming' as const, title: 'Grooming', description: 'Kupanje, šišanje i njega dlake', icon: Scissors, price: 'od 25€', color: 'from-pink-500 to-fuchsia-500', image: '/images/services/08-macka.jpg' },
   { type: 'agility' as const, title: 'Agility trening', description: 'Sportski trening za aktivne pse', icon: GraduationCap, price: 'od 15€/sat', color: 'from-yellow-500 to-orange-500', image: '/images/services/04-setanje-pasa.jpg' },
-  { type: 'training' as const, title: 'Dresura', description: 'Profesionalna obuka i socijalizacija', icon: BookOpen, price: 'od 20€/sat', color: 'from-teal-500 to-emerald-500', image: '/images/services/06-community.jpg' },
+  { type: 'training' as const, title: 'Školovanje pasa', description: 'Profesionalna obuka i socijalizacija', icon: BookOpen, price: 'od 20€/sat', color: 'from-teal-500 to-emerald-500', image: '/images/services/06-community.jpg' },
 ];
 
 const cities = [
@@ -338,39 +347,70 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
+      {/* ── Reviews / Social Proof ── */}
       <section className="py-16 md:py-24 relative overflow-hidden" aria-label="Recenzije">
         <div className="absolute top-0 right-0 w-96 h-96 bg-orange-50 dark:bg-orange-950/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl opacity-50" />
         <div className="container mx-auto px-4 relative">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <Badge variant="secondary" className="mb-4 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-semibold">Recenzije</Badge>
             <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Što kažu naši korisnici</h2>
-            <p className="text-muted-foreground text-lg">Stvarna iskustva vlasnika ljubimaca</p>
+            <p className="text-muted-foreground text-lg">Stvarna iskustva vlasnika ljubimaca i sittera</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {testimonials.map((t, i) => (
-              <Card key={i} className={`border-0 shadow-sm card-hover rounded-2xl animate-fade-in-up delay-${(i + 1) * 200}`}>
-                <CardContent className="p-6 md:p-8 relative">
-                  <Quote className="h-10 w-10 text-orange-100 dark:text-orange-900/40 absolute top-5 right-5" />
-                  <div className="flex items-center gap-0.5 mb-4">
+
+          {/* Stats Bar */}
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 mb-12 animate-fade-in-up">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-0.5">
+                <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+              </div>
+              <span className="text-lg font-bold">4.9</span>
+              <span className="text-muted-foreground text-sm">prosječna ocjena</span>
+            </div>
+            <div className="w-px h-6 bg-border hidden sm:block" />
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-bold">500+</span>
+              <span className="text-muted-foreground text-sm">ljubimaca čuvano</span>
+            </div>
+            <div className="w-px h-6 bg-border hidden sm:block" />
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-bold">50+</span>
+              <span className="text-muted-foreground text-sm">pet sittera</span>
+            </div>
+          </div>
+
+          {/* Review Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
+            {reviewCards.map((review, i) => (
+              <Card key={i} className={`border-0 shadow-sm card-hover rounded-2xl animate-fade-in-up delay-${Math.min((i + 1) * 100, 700)}`}>
+                <CardContent className="p-6 relative">
+                  <Quote className="h-8 w-8 text-orange-100 dark:text-orange-900/40 absolute top-4 right-4" />
+                  <div className="flex items-center gap-0.5 mb-3">
                     {Array.from({ length: 5 }, (_, j) => (
-                      <Star key={j} className={`h-4 w-4 ${j < t.rating ? 'fill-amber-400 text-amber-400' : 'fill-muted text-muted'}`} />
+                      <Star key={j} className={`h-3.5 w-3.5 ${j < review.rating ? 'fill-amber-400 text-amber-400' : 'fill-muted text-muted'}`} />
                     ))}
                   </div>
-                  <p className="text-muted-foreground mb-6 leading-relaxed text-sm md:text-base">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-border/50">
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-gradient-to-br from-orange-400 to-teal-400 text-white text-sm font-bold">
-                        {t.name.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-semibold text-sm">{t.name}</p>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <MapPin className="h-3 w-3" />
-                        {t.city}
+                  <p className="text-muted-foreground mb-5 leading-relaxed text-sm">&ldquo;{review.text}&rdquo;</p>
+                  <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback className={`bg-gradient-to-br ${review.gradient} text-white text-sm font-bold`}>
+                          {review.initial}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-semibold text-sm">{review.name}</p>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <MapPin className="h-3 w-3" />
+                          {review.city}
+                          {review.isSitter && (
+                            <Badge className="ml-1 bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 text-[10px] px-1.5 py-0 h-4 hover:bg-teal-50 border-0">
+                              Sitter
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </div>
+                    <span className="text-xl">{review.petType === 'cat' ? '🐱' : '🐶'}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -438,7 +478,7 @@ export default async function HomePage() {
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-semibold">Istraži više</Badge>
             <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Još više za vašeg ljubimca</h2>
-            <p className="text-muted-foreground text-lg max-w-lg mx-auto">Osim čuvanja, nudimo grooming, dresuru i zajednicu ljubitelja životinja</p>
+            <p className="text-muted-foreground text-lg max-w-lg mx-auto">Osim čuvanja, nudimo grooming, školovanje pasa i zajednicu ljubitelja životinja</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
             {[
@@ -452,7 +492,7 @@ export default async function HomePage() {
                 image: '/images/services/02-grooming.jpg',
               },
               {
-                title: 'Dresura & Trening',
+                title: 'Školovanje pasa & Trening',
                 description: 'Certificirani treneri za osnovnu poslušnost, agility, korekciju ponašanja i rad sa štencima.',
                 icon: GraduationCap,
                 color: 'from-indigo-500 to-blue-500',
@@ -462,7 +502,7 @@ export default async function HomePage() {
               },
               {
                 title: 'Zajednica & Blog',
-                description: 'Savjeti, vodiči i priče za vlasnike ljubimaca. Zdravlje, prehrana, dresura i putovanja.',
+                description: 'Savjeti, vodiči i priče za vlasnike ljubimaca. Zdravlje, prehrana, školovanje pasa i putovanja.',
                 icon: BookOpen,
                 color: 'from-amber-500 to-orange-500',
                 href: '/zajednica',

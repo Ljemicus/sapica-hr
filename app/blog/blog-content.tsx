@@ -23,7 +23,7 @@ export function BlogContent({ articles, initialCategory }: BlogContentProps) {
         <Badge variant="secondary" className="mb-4 text-orange-600 bg-orange-50 border-0">Blog</Badge>
         <h1 className="text-3xl md:text-4xl font-bold mb-4">Savjeti za vlasnike ljubimaca</h1>
         <p className="text-muted-foreground text-lg max-w-lg mx-auto">
-          Korisni članci o zdravlju, prehrani, dresuri i svemu što vaš ljubimac treba
+          Korisni članci o zdravlju, prehrani, školovanju pasa i svemu što vaš ljubimac treba
         </p>
       </div>
 

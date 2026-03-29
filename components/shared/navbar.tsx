@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/auth-context';
 import { useCart } from '@/lib/cart-context';
+import { useLanguage } from '@/lib/i18n';
+import { LanguageSwitcher } from '@/components/shared/language-switcher';
 
 function PawLogo({ className }: { className?: string }) {
   return (
@@ -35,6 +37,7 @@ function PawLogo({ className }: { className?: string }) {
 export function Navbar() {
   const { user, loading, signOut } = useAuth();
   const { getItemCount } = useCart();
+  const { t } = useLanguage();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -76,72 +79,73 @@ export function Navbar() {
         <nav className="hidden md:flex items-center gap-1" aria-label="Glavna navigacija">
           <DropdownMenu>
             <DropdownMenuTrigger render={<button />} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-accent">
-              Usluge <ChevronDown className="h-3.5 w-3.5" />
+              {t('nav.services')} <ChevronDown className="h-3.5 w-3.5" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-52 rounded-xl">
               <DropdownMenuItem render={<Link href="/pretraga" />} className="cursor-pointer rounded-lg">
                 <Search className="mr-2 h-4 w-4 text-orange-500" />
-                Sitteri
+                {t('nav.sitters')}
               </DropdownMenuItem>
               <DropdownMenuItem render={<Link href="/njega" />} className="cursor-pointer rounded-lg">
                 <Scissors className="mr-2 h-4 w-4 text-pink-500" />
-                Grooming
+                {t('nav.grooming')}
               </DropdownMenuItem>
               <DropdownMenuItem render={<Link href="/dresura" />} className="cursor-pointer rounded-lg">
                 <GraduationCap className="mr-2 h-4 w-4 text-indigo-500" />
-                Dresura
+                {t('nav.training')}
               </DropdownMenuItem>
               <DropdownMenuItem render={<Link href="/veterinari" />} className="cursor-pointer rounded-lg">
                 <Stethoscope className="mr-2 h-4 w-4 text-emerald-500" />
-                Veterinari
+                {t('nav.veterinarians')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem render={<Link href="/setnja/walk1111-1111-1111-1111-111111111111" />} className="cursor-pointer rounded-lg">
                 <MapPin className="mr-2 h-4 w-4 text-emerald-500" />
-                GPS Tracking šetnji
+                {t('nav.gps_tracking')}
               </DropdownMenuItem>
               <DropdownMenuItem render={<Link href="/azuriranja/book1111-1111-1111-1111-111111111111" />} className="cursor-pointer rounded-lg">
                 <Camera className="mr-2 h-4 w-4 text-blue-500" />
-                Foto ažuriranja
+                {t('nav.photo_updates')}
               </DropdownMenuItem>
               <DropdownMenuItem render={<Link href="/ljubimac/pet11111-1111-1111-1111-111111111111/karton" />} className="cursor-pointer rounded-lg">
                 <Heart className="mr-2 h-4 w-4 text-rose-500" />
-                Zdravstveni karton
+                {t('nav.health_card')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <Link href="/shop" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent">
             <ShoppingBag className="h-4 w-4" />
-            Shop
+            {t('nav.shop')}
           </Link>
           <Link href="/zajednica" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent">
             <BookOpen className="h-4 w-4" />
-            Blog
+            {t('nav.blog')}
           </Link>
           <Link href="/forum" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent">
             <MessageSquare className="h-4 w-4" />
-            Forum
+            {t('nav.forum')}
           </Link>
           <Link href="/izgubljeni" className="text-sm font-semibold text-red-500 hover:text-red-600 dark:text-red-400 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 relative">
             <AlertTriangle className="h-4 w-4" />
-            Izgubljeni
+            {t('nav.lost')}
             <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
           </Link>
           {!user && (
             <Link href="/postani-sitter" className="text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 transition-colors px-3 py-2 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-950/20">
-              Postani sitter
+              {t('nav.become_sitter')}
             </Link>
           )}
         </nav>
 
         <div className="hidden md:flex items-center gap-2">
+          <LanguageSwitcher />
           <Link href="/kontakt">
-            <Button variant="ghost" size="icon" className="hover:bg-accent rounded-xl" aria-label="Pomoć">
+            <Button variant="ghost" size="icon" className="hover:bg-accent rounded-xl" aria-label={t('common.help')}>
               <MessageCircle className="h-5 w-5 text-orange-500" />
             </Button>
           </Link>
           <Link href="/shop/kosarica">
-            <Button variant="ghost" size="icon" className="relative hover:bg-accent rounded-xl" aria-label="Košarica">
+            <Button variant="ghost" size="icon" className="relative hover:bg-accent rounded-xl" aria-label={t('common.cart')}>
               <ShoppingCart className="h-5 w-5" />
               {getItemCount() > 0 && (
                 <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center">
@@ -155,7 +159,7 @@ export function Navbar() {
           ) : user ? (
             <div className="flex items-center gap-1">
               <Link href="/poruke">
-                <Button variant="ghost" size="icon" className="relative hover:bg-accent rounded-xl" aria-label="Poruke">
+                <Button variant="ghost" size="icon" className="relative hover:bg-accent rounded-xl" aria-label={t('nav.messages')}>
                   <MessageCircle className="h-5 w-5" />
                 </Button>
               </Link>
@@ -178,25 +182,25 @@ export function Navbar() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem render={<Link href={dashboardLink} />} className="cursor-pointer rounded-lg">
                       <User className="mr-2 h-4 w-4" />
-                      Nadzorna ploča
+                      {t('nav.dashboard')}
                   </DropdownMenuItem>
                   <DropdownMenuItem render={<Link href="/poruke" />} className="cursor-pointer rounded-lg">
                       <MessageCircle className="mr-2 h-4 w-4" />
-                      Poruke
+                      {t('nav.messages')}
                   </DropdownMenuItem>
                   <DropdownMenuItem render={<Link href="/omiljeni" />} className="cursor-pointer rounded-lg">
                       <Heart className="mr-2 h-4 w-4 text-rose-500" />
-                      Omiljeni
+                      {t('nav.favorites')}
                   </DropdownMenuItem>
                   {user.role === 'owner' && (
                     <>
                       <DropdownMenuSeparator />
                       <div className="px-2 py-1.5">
-                        <p className="text-xs font-medium text-muted-foreground flex items-center gap-1"><PawPrint className="h-3 w-3" /> Moji ljubimci</p>
+                        <p className="text-xs font-medium text-muted-foreground flex items-center gap-1"><PawPrint className="h-3 w-3" /> {t('nav.my_pets')}</p>
                       </div>
                       <DropdownMenuItem render={<Link href="/dashboard/vlasnik" />} className="cursor-pointer rounded-lg">
                           <FileHeart className="mr-2 h-4 w-4" />
-                          Pogledaj ljubimce
+                          {t('nav.view_pets')}
                       </DropdownMenuItem>
                     </>
                   )}
@@ -205,14 +209,14 @@ export function Navbar() {
                       <DropdownMenuSeparator />
                       <DropdownMenuItem render={<Link href="/postani-sitter" />} className="cursor-pointer rounded-lg text-teal-600 dark:text-teal-400 font-medium">
                         <Sparkles className="mr-2 h-4 w-4" />
-                        Postani sitter
+                        {t('nav.become_sitter')}
                       </DropdownMenuItem>
                     </>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 dark:text-red-400 rounded-lg">
                     <LogOut className="mr-2 h-4 w-4" />
-                    Odjavi se
+                    {t('nav.logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -220,10 +224,10 @@ export function Navbar() {
           ) : (
             <div className="flex items-center gap-2">
               <Link href="/prijava">
-                <Button variant="ghost" size="sm" className="hover:bg-accent rounded-lg">Prijava</Button>
+                <Button variant="ghost" size="sm" className="hover:bg-accent rounded-lg">{t('nav.login')}</Button>
               </Link>
               <Link href="/registracija">
-                <Button size="sm" className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 shadow-md shadow-orange-200/50 dark:shadow-orange-900/30 btn-hover rounded-lg font-semibold">Registracija</Button>
+                <Button size="sm" className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 shadow-md shadow-orange-200/50 dark:shadow-orange-900/30 btn-hover rounded-lg font-semibold">{t('nav.register')}</Button>
               </Link>
             </div>
           )}
@@ -232,12 +236,12 @@ export function Navbar() {
         {/* Mobile Nav — hamburger + sheet */}
         <div className="flex items-center gap-1.5 md:hidden">
           <Link href="/kontakt">
-            <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-accent rounded-xl" aria-label="Pomoć">
+            <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-accent rounded-xl" aria-label={t('common.help')}>
               <MessageCircle className="h-4.5 w-4.5 text-orange-500" />
             </Button>
           </Link>
           <Link href="/shop/kosarica">
-            <Button variant="ghost" size="icon" className="relative h-9 w-9 hover:bg-accent rounded-xl" aria-label="Košarica">
+            <Button variant="ghost" size="icon" className="relative h-9 w-9 hover:bg-accent rounded-xl" aria-label={t('common.cart')}>
               <ShoppingCart className="h-4.5 w-4.5" />
               {getItemCount() > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-orange-500 text-white text-[8px] font-bold flex items-center justify-center">
@@ -262,73 +266,77 @@ export function Navbar() {
                         {user.name?.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
+                    <div className="flex-1">
                       <p className="font-semibold">{user.name}</p>
                       <p className="text-sm text-muted-foreground">{user.email}</p>
                     </div>
+                    <LanguageSwitcher />
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2.5">
-                    <PawLogo className="h-9 w-9 text-orange-500" />
-                    <span className="font-extrabold text-lg">
-                      <span className="text-orange-500">Pet</span><span className="text-teal-600 dark:text-teal-400">Park</span>
-                    </span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <PawLogo className="h-9 w-9 text-orange-500" />
+                      <span className="font-extrabold text-lg">
+                        <span className="text-orange-500">Pet</span><span className="text-teal-600 dark:text-teal-400">Park</span>
+                      </span>
+                    </div>
+                    <LanguageSwitcher />
                   </div>
                 )}
               </div>
 
               {/* Sheet links */}
               <div className="flex-1 overflow-y-auto p-4 space-y-1">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Usluge</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">{t('nav.services')}</p>
                 <Link href="/pretraga" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <Search className="h-5 w-5 text-orange-500" />
-                  Pretraži sittere
+                  {t('nav.sitters')}
                 </Link>
                 <Link href="/njega" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <Scissors className="h-5 w-5 text-pink-500" />
-                  Grooming
+                  {t('nav.grooming')}
                 </Link>
                 <Link href="/dresura" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <GraduationCap className="h-5 w-5 text-indigo-500" />
-                  Dresura
+                  {t('nav.training')}
                 </Link>
                 <Link href="/veterinari" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <Stethoscope className="h-5 w-5 text-emerald-500" />
-                  Veterinari
+                  {t('nav.veterinarians')}
                 </Link>
 
                 <div className="border-t border-border/50 my-3" />
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Značajke</p>
                 <Link href="/setnja/walk1111-1111-1111-1111-111111111111" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <MapPin className="h-5 w-5 text-emerald-500" />
-                  GPS Tracking šetnji
+                  {t('nav.gps_tracking')}
                 </Link>
                 <Link href="/azuriranja/book1111-1111-1111-1111-111111111111" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <Camera className="h-5 w-5 text-blue-500" />
-                  Foto ažuriranja
+                  {t('nav.photo_updates')}
                 </Link>
                 <Link href="/ljubimac/pet11111-1111-1111-1111-111111111111/karton" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <Heart className="h-5 w-5 text-rose-500" />
-                  Zdravstveni karton
+                  {t('nav.health_card')}
                 </Link>
 
                 <div className="border-t border-border/50 my-3" />
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Zajednica</p>
                 <Link href="/shop" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <ShoppingBag className="h-5 w-5 text-amber-500" />
-                  Shop
+                  {t('nav.shop')}
                 </Link>
                 <Link href="/zajednica" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <BookOpen className="h-5 w-5 text-purple-500" />
-                  Blog
+                  {t('nav.blog')}
                 </Link>
                 <Link href="/forum" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <MessageSquare className="h-5 w-5 text-teal-500" />
-                  Forum
+                  {t('nav.forum')}
                 </Link>
                 <Link href="/izgubljeni" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold transition-colors">
                   <AlertTriangle className="h-5 w-5" />
-                  Izgubljeni ljubimci
+                  {t('nav.lost')}
                 </Link>
 
                 {user && (
@@ -337,25 +345,25 @@ export function Navbar() {
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Račun</p>
                     <Link href={dashboardLink} onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                       <User className="h-5 w-5 text-orange-500" />
-                      Nadzorna ploča
+                      {t('nav.dashboard')}
                     </Link>
                     <Link href="/poruke" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                       <MessageCircle className="h-5 w-5 text-blue-500" />
-                      Poruke
+                      {t('nav.messages')}
                     </Link>
                     <Link href="/omiljeni" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                       <Heart className="h-5 w-5 text-rose-500" />
-                      Omiljeni
+                      {t('nav.favorites')}
                     </Link>
                     {user.role !== 'sitter' && (
                       <Link href="/postani-sitter" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/20 font-semibold transition-colors">
                         <Sparkles className="h-5 w-5" />
-                        Postani sitter
+                        {t('nav.become_sitter')}
                       </Link>
                     )}
                     <button onClick={() => { handleLogout(); setOpen(false); }} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors w-full text-left">
                       <LogOut className="h-5 w-5" />
-                      Odjavi se
+                      {t('nav.logout')}
                     </button>
                   </>
                 )}
@@ -365,10 +373,10 @@ export function Navbar() {
               {!user && (
                 <div className="p-4 border-t border-border/50 space-y-2">
                   <Link href="/prijava" onClick={() => setOpen(false)}>
-                    <Button variant="outline" className="w-full rounded-xl">Prijava</Button>
+                    <Button variant="outline" className="w-full rounded-xl">{t('nav.login')}</Button>
                   </Link>
                   <Link href="/registracija" onClick={() => setOpen(false)}>
-                    <Button className="w-full bg-orange-500 hover:bg-orange-600 rounded-xl font-semibold">Registracija</Button>
+                    <Button className="w-full bg-orange-500 hover:bg-orange-600 rounded-xl font-semibold">{t('nav.register')}</Button>
                   </Link>
                 </div>
               )}

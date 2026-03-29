@@ -5,7 +5,7 @@ import type { BlogCategory } from '@/lib/types';
 
 export const metadata: Metadata = {
   title: 'Blog — savjeti za vlasnike ljubimaca',
-  description: 'Korisni članci i savjeti o zdravlju, prehrani, dresuri i putovanju s ljubimcima.',
+  description: 'Korisni članci i savjeti o zdravlju, prehrani, školovanju pasa i putovanju s ljubimcima.',
 };
 
 interface BlogPageProps {

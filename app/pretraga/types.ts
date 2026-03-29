@@ -24,7 +24,7 @@ export interface UnifiedProvider {
 export const CATEGORY_LABELS: Record<ProviderCategory, string> = {
   sitter: 'Sitteri',
   grooming: 'Grooming',
-  dresura: 'Dresura',
+  dresura: 'Školovanje pasa',
 };
 
 export const CATEGORY_EMOJI: Record<ProviderCategory, string> = {

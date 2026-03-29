@@ -1,4 +1,5 @@
 export type UserRole = 'owner' | 'sitter' | 'admin';
+export type VerificationLevel = 'basic' | 'verified' | 'premium';
 export type Species = 'dog' | 'cat' | 'other';
 export type ServiceType = 'boarding' | 'walking' | 'house-sitting' | 'drop-in' | 'daycare';
 export type BookingStatus = 'pending' | 'accepted' | 'rejected' | 'completed' | 'cancelled';
@@ -64,6 +65,7 @@ export interface SitterProfile {
   city: string | null;
   photos: string[];
   created_at: string;
+  verified_level?: VerificationLevel;
   user?: User;
 }
 
@@ -270,13 +272,13 @@ export interface Groomer {
   specialization: GroomerSpecialization;
 }
 
-// ── Training / Dresura ──
+// ── Training / Školovanje pasa ──
 
 export type TrainingType = 'osnovna' | 'napredna' | 'agility' | 'ponasanje' | 'stenci';
 
 export const TRAINING_TYPE_LABELS: Record<TrainingType, string> = {
   'osnovna': 'Osnovna poslušnost',
-  'napredna': 'Napredna dresura',
+  'napredna': 'Napredni trening',
   'agility': 'Agility',
   'ponasanje': 'Korekcija ponašanja',
   'stenci': 'Štenci',
@@ -313,7 +315,7 @@ export type BlogCategory = 'zdravlje' | 'prehrana' | 'dresura' | 'putovanje' | '
 export const BLOG_CATEGORY_LABELS: Record<BlogCategory, string> = {
   'zdravlje': 'Zdravlje',
   'prehrana': 'Prehrana',
-  'dresura': 'Dresura',
+  'dresura': 'Školovanje pasa',
   'putovanje': 'Putovanje',
   'zabava': 'Zabava',
 };

@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getArticle, getRelatedArticles } from '@/lib/db';
 import { BLOG_CATEGORY_LABELS, BLOG_CATEGORY_EMOJI, type BlogCategory } from '@/lib/types';
+import { ArticleJsonLd } from '@/components/seo/json-ld';
 
 const categoryColors: Record<BlogCategory, string> = {
   zdravlje: 'bg-green-50 text-green-700 border-green-200',
@@ -23,6 +24,8 @@ const categoryGradients: Record<BlogCategory, string> = {
   zabava: 'from-pink-500 to-rose-500',
 };
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const article = await getArticle(slug);
@@ -30,6 +33,21 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: article.title,
     description: article.excerpt,
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      type: 'article',
+      url: `${BASE_URL}/zajednica/${slug}`,
+      siteName: 'PetPark',
+      locale: 'hr_HR',
+      publishedTime: article.date,
+      authors: [article.author],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.excerpt,
+    },
   };
 }
 
@@ -42,6 +60,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   return (
     <div>
+      <ArticleJsonLd article={article} />
       {/* Hero */}
       <section className={`relative overflow-hidden bg-gradient-to-br ${categoryGradients[article.category]} py-16 md:py-24`}>
         <div className="absolute inset-0 paw-pattern opacity-10" />

@@ -6,8 +6,8 @@ import { TrainingContent } from './training-content';
 import type { TrainingType } from '@/lib/types';
 
 export const metadata: Metadata = {
-  title: 'Dresura — treneri pasa',
-  description: 'Pronađite certificirane trenere pasa za dresuru, agility, korekciju ponašanja i rad sa štencima.',
+  title: 'Školovanje pasa — treneri pasa',
+  description: 'Pronađite certificirane trenere pasa za školovanje, agility, korekciju ponašanja i rad sa štencima.',
 };
 
 interface DresuraPageProps {
@@ -27,15 +27,15 @@ export default async function DresuraPage({ searchParams }: DresuraPageProps) {
           <div className="max-w-3xl mx-auto text-center">
             <Badge className="mb-5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 border-0 text-sm px-5 py-2 animate-fade-in-up rounded-full font-semibold">
               <GraduationCap className="h-3.5 w-3.5 mr-1.5" />
-              Dresura i trening
+              Školovanje pasa i trening
             </Badge>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-5 animate-fade-in-up delay-100 font-[var(--font-heading)]">
               Profesionalna{' '}
-              <span className="text-gradient">dresura pasa</span>
+              <span className="text-gradient">školovanje pasa</span>
             </h1>
             <p className="text-base md:text-lg text-muted-foreground mb-6 animate-fade-in-up delay-200 leading-relaxed max-w-xl mx-auto">
               Od osnove poslušnosti do agility-ja — pronađite certificirane trenere
-              koji koriste pozitivan pristup dresuri.
+              koji koriste pozitivan pristup školovanju pasa.
             </p>
           </div>
         </div>

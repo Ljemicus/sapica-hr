@@ -51,14 +51,14 @@ const CATEGORY_TABS: { key: ProviderCategory | 'all'; label: string; emoji: stri
   { key: 'all', label: 'Sve', emoji: '🔍' },
   { key: 'sitter', label: 'Sitteri', emoji: '🐾' },
   { key: 'grooming', label: 'Grooming', emoji: '✂️' },
-  { key: 'dresura', label: 'Dresura', emoji: '🎓' },
+  { key: 'dresura', label: 'Školovanje pasa', emoji: '🎓' },
 ];
 
 const TITLE_MAP: Record<string, string> = {
   all: 'Pretraži sve',
   sitter: 'Pretraži sittere',
   grooming: 'Pretraži groomere',
-  dresura: 'Pretraži trenere',
+  dresura: 'Pretraži trenere za školovanje pasa',
 };
 
 function getServiceLabel(service: string, category?: ProviderCategory): string {

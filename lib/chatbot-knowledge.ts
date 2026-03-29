@@ -45,13 +45,13 @@ export function findBestMatch(input: string): string {
   return 'Hmm, nisam siguran/na da razumijem. 🤔 Možeš li preformulirati pitanje? Ili nas kontaktiraj na petparkhr@gmail.com!';
 }
 
-export const WELCOME_MESSAGE = 'Bok! 🐾 Ja sam PetPark asistent. Kako ti mogu pomoći?\n\nMogu ti pomoći s:\n• Registracijom i prijavom\n• Pretraživanjem sittera\n• Bookingom i plaćanjem\n• Groomingom i dresurom\n• Forumom i zajednicom';
+export const WELCOME_MESSAGE = 'Bok! 🐾 Ja sam PetPark asistent. Kako ti mogu pomoći?\n\nMogu ti pomoći s:\n• Registracijom i prijavom\n• Pretraživanjem sittera\n• Bookingom i plaćanjem\n• Groomingom i školovanjem pasa\n• Forumom i zajednicom';
 
 export const knowledgeBase: KBEntry[] = [
   // === OPĆENITO ===
   {
     keywords: ['što je petpark', 'sto je petpark', 'petpark', 'o čemu', 'o cemu', 'što je ovo', 'sto je ovo'],
-    response: 'PetPark je hrvatski marketplace za ljubimce! 🐾 Povezujemo vlasnike ljubimaca s pouzdanim čuvarima (sitterima), grooming salonima i trenerima za dresuru. Besplatno pretraži, pronađi savršenog čuvara i bookaj — sve na jednom mjestu.',
+    response: 'PetPark je hrvatski marketplace za ljubimce! 🐾 Povezujemo vlasnike ljubimaca s pouzdanim čuvarima (sitterima), grooming salonima i trenerima za školovanje pasa. Besplatno pretraži, pronađi savršenog čuvara i bookaj — sve na jednom mjestu.',
     category: 'general',
   },
   {
@@ -109,8 +109,8 @@ export const knowledgeBase: KBEntry[] = [
     category: 'services',
   },
   {
-    keywords: ['dresura', 'trening', 'trener', 'obuka', 'školovanje psa', 'skolovanje', 'agility'],
-    response: 'Dresura i trening pasa! 🎓 U sekciji "Dresura" možeš pronaći:\n\n• Individualne trenere\n• Grupne obuke\n• Agility trening\n• Socijalizaciju\n\n👉 petpark.hr/dresura',
+    keywords: ['dresura', 'trening', 'trener', 'obuka', 'školovanje psa', 'skolovanje', 'agility', 'školovanje pasa'],
+    response: 'Školovanje pasa i trening! 🎓 U sekciji "Školovanje pasa" možeš pronaći:\n\n• Individualne trenere\n• Grupne obuke\n• Agility trening\n• Socijalizaciju\n\n👉 petpark.hr/dresura',
     category: 'services',
   },
   {

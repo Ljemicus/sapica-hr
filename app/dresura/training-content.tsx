@@ -120,7 +120,7 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <GraduationCap className="h-6 w-6 text-orange-500" />
-              Dresura
+              Školovanje pasa
             </h1>
             <p className="text-muted-foreground text-sm">
               {trainers.length} {trainers.length === 1 ? 'trener pronađen' : 'trenera pronađeno'}

@@ -9,6 +9,8 @@ import { ScrollToTop } from '@/components/shared/scroll-to-top';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/contexts/auth-context';
 import { CartProvider } from '@/lib/cart-context';
+import { LanguageProvider } from '@/lib/i18n';
+import { WebsiteJsonLd } from '@/components/seo/json-ld';
 import { PushNotificationPrompt } from '@/components/shared/push-notification';
 import { CookieConsent } from '@/components/shared/cookie-consent';
 import { NotificationPrompt } from '@/components/shared/notification-prompt';
@@ -92,42 +94,11 @@ export default function RootLayout({
           src="https://plausible.io/js/script.js"
           strategy="afterInteractive"
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Organization',
-              name: 'PetPark',
-              alternateName: 'PetPark d.o.o.',
-              url: 'https://petpark.hr',
-              logo: 'https://petpark.hr/opengraph-image',
-              description: 'Hrvatski marketplace za čuvanje kućnih ljubimaca. Pronađite pouzdane sittere u vašem gradu.',
-              address: {
-                '@type': 'PostalAddress',
-                addressLocality: 'Rijeka',
-                addressCountry: 'HR',
-              },
-              contactPoint: {
-                '@type': 'ContactPoint',
-                email: 'petparkhr@gmail.com',
-                telephone: '+385915676202',
-                contactType: 'customer service',
-                availableLanguage: 'Croatian',
-                hoursAvailable: {
-                  '@type': 'OpeningHoursSpecification',
-                  dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-                  opens: '08:00',
-                  closes: '20:00',
-                },
-              },
-              sameAs: [],
-            }),
-          }}
-        />
+        <WebsiteJsonLd />
       </head>
       <body className="min-h-full flex flex-col font-sans">
         <AuthProvider>
+          <LanguageProvider>
           <CartProvider>
           <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-orange-500 focus:text-white focus:rounded-lg">Preskoči na sadržaj</a>
           <Navbar />
@@ -142,6 +113,7 @@ export default function RootLayout({
           <FloatingChat />
           <CookieConsent />
           </CartProvider>
+          </LanguageProvider>
         </AuthProvider>
       </body>
     </html>

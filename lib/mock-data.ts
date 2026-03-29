@@ -812,7 +812,7 @@ export function getGroomers(filters?: { city?: string; service?: string }) {
 // ============================================================
 
 export const mockTrainers: Trainer[] = [
-  { id: 'tr-1', name: 'Marko Šimić', city: 'Zagreb', specializations: ['osnovna', 'napredna', 'ponasanje'], price_per_hour: 50, certificates: ['KIF certifikat', 'FCI licenca'], rating: 4.9, reviews: 38, bio: 'Profesionalni trener pasa s 12 godina iskustva. Radim individualno i u grupama. Pozitivan pristup dresuri — bez kažnjavanja.', certified: true },
+  { id: 'tr-1', name: 'Marko Šimić', city: 'Zagreb', specializations: ['osnovna', 'napredna', 'ponasanje'], price_per_hour: 50, certificates: ['KIF certifikat', 'FCI licenca'], rating: 4.9, reviews: 38, bio: 'Profesionalni trener pasa s 12 godina iskustva. Radim individualno i u grupama. Pozitivan pristup školovanju pasa — bez kažnjavanja.', certified: true },
   { id: 'tr-2', name: 'Ana Petrović', city: 'Zagreb', specializations: ['stenci', 'osnovna'], price_per_hour: 40, certificates: ['KIF certifikat'], rating: 4.8, reviews: 25, bio: 'Specijalizirana za rad sa štencima i prvu socijalizaciju. Pomažem novim vlasnicima da postave temelje dobrog ponašanja od prvog dana.', certified: true },
   { id: 'tr-3', name: 'Ivan Delić', city: 'Split', specializations: ['agility', 'napredna'], price_per_hour: 45, certificates: ['FCI licenca', 'Agility sudac'], rating: 4.7, reviews: 20, bio: 'Natjecatelj i trener agility-ja. Vodim agility grupu u Splitu. Savršeno za aktivne pse koji trebaju mentalni i fizički izazov.', certified: true },
   { id: 'tr-4', name: 'Lana Horvat', city: 'Rijeka', specializations: ['ponasanje', 'osnovna', 'stenci'], price_per_hour: 45, certificates: ['KIF certifikat', 'Canine Behaviour Diploma'], rating: 4.9, reviews: 31, bio: 'Bihevioristica s fokusom na problematično ponašanje — agresija, strah, separacijska anksioznost. Holistički pristup koji uključuje cijelu obitelj.', certified: true },
@@ -830,7 +830,7 @@ export const mockTrainingPrograms: TrainingProgram[] = [
   { id: 'tp-7', trainer_id: 'tr-3', name: 'Agility natjecateljski', type: 'agility', duration_weeks: 12, sessions: 24, price: 700, description: 'Za pse koji žele na natjecanja. Intenzivni trening brzine, preciznosti i poslušnosti na stazi.' },
   { id: 'tp-8', trainer_id: 'tr-4', name: 'Separacijska anksioznost', type: 'ponasanje', duration_weeks: 6, sessions: 6, price: 350, description: 'Program za pse koji pate kad vlasnik ode. Postupna desenzitizacija i izgradnja samopouzdanja.' },
   { id: 'tp-9', trainer_id: 'tr-4', name: 'Reaktivni psi', type: 'ponasanje', duration_weeks: 8, sessions: 8, price: 420, description: 'Za pse koji reagiraju na druge pse ili ljude. Rad na smirenosti, preusmjeravanju i pozitivnim asocijacijama.' },
-  { id: 'tp-10', trainer_id: 'tr-5', name: 'Osnovna dresura Osijek', type: 'osnovna', duration_weeks: 8, sessions: 16, price: 320, description: 'Grupni tečaj u Osijeku. Maksimalno 5 pasa. Šetnja, poslušnost, socijalizacija u gradskim uvjetima.' },
+  { id: 'tp-10', trainer_id: 'tr-5', name: 'Osnovno školovanje pasa Osijek', type: 'osnovna', duration_weeks: 8, sessions: 16, price: 320, description: 'Grupni tečaj u Osijeku. Maksimalno 5 pasa. Šetnja, poslušnost, socijalizacija u gradskim uvjetima.' },
   { id: 'tp-11', trainer_id: 'tr-6', name: 'Clicker trening', type: 'osnovna', duration_weeks: 4, sessions: 8, price: 220, description: 'Naučite komunicirati sa psom pomoću clickera. Brze i zabavne sesije prilagođene svakom psu.' },
 ];
 
