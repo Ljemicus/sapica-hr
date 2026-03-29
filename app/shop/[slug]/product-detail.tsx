@@ -6,7 +6,6 @@ import { Star, ShoppingCart, Minus, Plus, ChevronRight, ArrowLeft } from 'lucide
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 import { getProductBySlug, getProductReviews, getRelatedProducts } from '@/lib/mock-data';

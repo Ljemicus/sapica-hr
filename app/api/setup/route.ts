@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS public.lost_pet_sightings (
 );
 `;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- seed data kept for reference/future use
 const SEED_SQL = `
 INSERT INTO public.lost_pets (id, name, species, breed, color, gender, description, special_marks, last_seen_location, last_seen_city, last_seen_date, contact_name, contact_phone, contact_email, has_microchip, has_collar, status, images, lat, lng, share_count) VALUES
 ('a1b2c3d4-1111-4000-8000-000000000001', 'Rex', 'pas', 'Njemački ovčar', 'Crno-smeđi', 'muško', 'Rex je pobjegao iz dvorišta tijekom oluje. Vrlo je prijazan ali može biti plašljiv s nepoznatim ljudima. Reagira na ime.', 'Ožiljak na lijevom uhu, crna mrlja na leđima', 'Maksimir', 'Zagreb', '2026-03-20', 'Marko Horvat', '+385 91 234 5678', 'marko.horvat@email.hr', true, true, 'lost', ARRAY['https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=800'], 45.8281, 16.0121, 47),

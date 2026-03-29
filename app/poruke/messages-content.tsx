@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { format, isToday, isYesterday } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Send, ArrowLeft, MessageCircle, CheckCheck, Bell } from 'lucide-react';
+import { Send, ArrowLeft, MessageCircle, CheckCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -98,6 +98,7 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
       };
       fetchPartner();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- conversations/supabase are stable refs, adding them causes infinite re-render
   }, [toParam]);
 
   // Supabase real-time subscription
@@ -121,6 +122,7 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- supabase is a stable client ref
   }, [currentUser.id, selectedPartnerId]);
 
   // Mock realtime — typing + auto-reply
@@ -195,7 +197,7 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
     setSending(true);
     const content = newMessage.trim();
     const msg = { sender_id: currentUser.id, receiver_id: selectedPartnerId, content, read: false };
-    const { data, error } = await supabase.from('messages').insert(msg).select().single();
+    const { data } = await supabase.from('messages').insert(msg).select().single();
 
     const mockId = `local-${Date.now()}`;
     const localMsg = data || { id: mockId, ...msg, created_at: new Date().toISOString() };

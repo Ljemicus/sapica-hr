@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import {
-  Star, MapPin, Shield, Scissors, Droplets, SprayCan, Sparkles, ChevronRight, X, Filter, SlidersHorizontal,
+  Star, MapPin, Shield, Scissors, Droplets, Sparkles, ChevronRight, X, Filter, SlidersHorizontal,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -17,14 +16,6 @@ import {
   CITIES,
   type GroomingServiceType, type Groomer,
 } from '@/lib/types';
-
-const serviceIcons: Record<GroomingServiceType, React.ElementType> = {
-  sisanje: Scissors,
-  kupanje: Droplets,
-  trimanje: SprayCan,
-  nokti: Sparkles,
-  spa: Sparkles,
-};
 
 const gradients = [
   'from-pink-400 to-rose-300',

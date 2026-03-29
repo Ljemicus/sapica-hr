@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import Link from 'next/link';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { SitterProfile, User } from '@/lib/types';

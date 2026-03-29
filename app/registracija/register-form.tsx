@@ -30,7 +30,7 @@ function PawLogo({ className }: { className?: string }) {
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [, setAvatarUrl] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const defaultRole = searchParams.get('role') as 'owner' | 'sitter' | null;

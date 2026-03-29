@@ -29,7 +29,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } catch {}
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setItems(parsed);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoaded(true);
   }, []);
 

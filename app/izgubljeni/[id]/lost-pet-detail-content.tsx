@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, AlertTriangle, Clock, User, MessageCircle, Tag, Shield, Loader2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

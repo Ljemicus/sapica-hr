@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, MessageCircle, Heart, Pin, Flame, Plus, TrendingUp, Clock, ImagePlus } from 'lucide-react';
+import { Search, MessageCircle, Heart, Pin, Flame, Plus, TrendingUp, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ImageUpload } from '@/components/shared/image-upload';
-import { FORUM_CATEGORIES, FORUM_CATEGORY_LABELS, type ForumCategorySlug, type ForumTopic } from '@/lib/types';
+import { FORUM_CATEGORIES, type ForumCategorySlug, type ForumTopic } from '@/lib/types';
 
 function timeAgo(dateStr: string) {
   const now = new Date('2026-03-24T12:00:00Z');

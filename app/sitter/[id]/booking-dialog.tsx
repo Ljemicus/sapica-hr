@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CalendarDays, PawPrint, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, CheckCircle2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -29,7 +29,7 @@ export function BookingDialog({ open, onOpenChange, profile, userId }: BookingDi
   const router = useRouter();
   const supabase = createClient();
 
-  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<BookingInput>({
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<BookingInput>({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
       sitter_id: profile.user_id,
@@ -47,6 +47,7 @@ export function BookingDialog({ open, onOpenChange, profile, userId }: BookingDi
       setPets(data || []);
     };
     fetchPets();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- supabase is a stable client ref
   }, [userId]);
 
   const calculatePrice = () => {

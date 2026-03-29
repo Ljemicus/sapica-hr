@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
-import { FORUM_CATEGORIES, type ForumCategorySlug } from '@/lib/types';
+import { FORUM_CATEGORIES } from '@/lib/types';
 import { getTopic, getPosts, getTopics } from '@/lib/db';
 
 const gradients = [

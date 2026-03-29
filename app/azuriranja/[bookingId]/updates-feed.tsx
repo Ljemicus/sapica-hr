@@ -6,10 +6,10 @@ import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import { Heart, Filter, ArrowLeft, Camera, Send, Image, Video, FileText, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
+
 import { ImageUpload } from '@/components/shared/image-upload';
 import type { PetUpdate } from '@/lib/types';
 
@@ -35,7 +35,7 @@ const typeLabels: Record<string, string> = {
   text: 'Tekst',
 };
 
-export function UpdatesFeed({ updates, sitterName, petName, currentDay, totalDays, sitterId }: Props) {
+export function UpdatesFeed({ updates, sitterName, petName, currentDay, totalDays }: Props) {
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [filterDay, setFilterDay] = useState<string>('all');
   const [showSitterForm, setShowSitterForm] = useState(false);

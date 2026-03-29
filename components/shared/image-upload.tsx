@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import { Upload, X, Loader2, ImagePlus, Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import {
   uploadAvatar,
@@ -216,9 +216,9 @@ export function ImageUpload({
           className="hidden"
         />
         <div className="relative group cursor-pointer" onClick={() => inputRef.current?.click()}>
-          <div className="h-24 w-24 rounded-full ring-2 ring-orange-100 overflow-hidden bg-gradient-to-br from-orange-400 to-amber-300 flex items-center justify-center">
+          <div className="relative h-24 w-24 rounded-full ring-2 ring-orange-100 overflow-hidden bg-gradient-to-br from-orange-400 to-amber-300 flex items-center justify-center">
             {avatarPreview ? (
-              <img src={avatarPreview} alt="Avatar" className="h-full w-full object-cover" />
+              <Image src={avatarPreview} alt="Avatar" fill className="object-cover" unoptimized />
             ) : (
               <span className="text-white text-2xl font-bold">{fallbackText}</span>
             )}
@@ -260,7 +260,7 @@ export function ImageUpload({
         >
           {avatarPreview ? (
             <div className="relative w-full h-full">
-              <img src={avatarPreview} alt="Slika" className="w-full h-full object-cover" />
+              <Image src={avatarPreview} alt="Slika" fill className="object-cover" unoptimized />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <ImagePlus className="h-6 w-6 text-white" />
               </div>
@@ -314,10 +314,12 @@ export function ImageUpload({
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
           {files.map((f) => (
             <div key={f.id} className="relative group rounded-lg overflow-hidden bg-gray-100 aspect-square">
-              <img
+              <Image
                 src={f.previewUrl}
                 alt={f.file.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                unoptimized
               />
 
               {/* Progress overlay */}

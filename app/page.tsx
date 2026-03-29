@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  Search, Shield, Star, Heart, Clock, MapPin, ChevronRight,
-  Home, Dog, House, Eye, Sun, Users, Calendar, CheckCircle2,
-  ArrowRight, Quote, Scissors, GraduationCap, BookOpen, Sparkles,
+  Search, Shield, Star, Heart, MapPin, ChevronRight,
+  Home, Dog, House, Eye, Sun, Users, Calendar,
+  ArrowRight, Quote, Scissors, GraduationCap, BookOpen,
   PawPrint,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -64,13 +64,6 @@ const cities = [
   { name: 'Zadar', sitters: 60, image: '/images/cities/zadar.jpg' },
 ];
 
-const stats = [
-  { value: '500+', label: 'Verificiranih sittera', icon: Users },
-  { value: '2.000+', label: 'Uspješnih rezervacija', icon: Calendar },
-  { value: '4.8', label: 'Prosječna ocjena', icon: Star },
-  { value: '50+', label: 'Gradova u Hrvatskoj', icon: MapPin },
-];
-
 export default async function HomePage() {
   return (
     <div>
@@ -97,10 +90,13 @@ export default async function HomePage() {
 
             {/* Hero Image */}
             <div className="mb-8 animate-fade-in-up delay-200 max-w-2xl mx-auto">
-              <img
+              <Image
                 src="/hero-pets.jpg"
                 alt="Sretni psi i mačke zajedno"
+                width={672}
+                height={240}
                 className="w-full h-44 md:h-60 lg:h-68 object-cover rounded-3xl shadow-xl shadow-orange-200/30 dark:shadow-orange-900/20 border-4 border-white/80 dark:border-white/10"
+                priority
               />
             </div>
 
@@ -158,7 +154,7 @@ export default async function HomePage() {
       <section className="py-4 relative z-10" aria-label="Brzi pristup">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 -mt-8 md:-mt-12">
-            {mainCards.map((card, i) => (
+            {mainCards.map((card) => (
               <Link key={card.href} href={card.href}>
                 <Card className={`group card-hover cursor-pointer h-full border ${card.border} shadow-sm ${card.hover} hover:shadow-lg rounded-2xl overflow-hidden animate-fade-in-up bg-gradient-to-br ${card.bg}`}>
                   <CardContent className="p-5 md:p-6 text-center flex flex-col items-center gap-2">
