@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { MapPin, Mail, Phone } from 'lucide-react';
+import { MapPin, Mail } from 'lucide-react';
 
 function PawLogo({ className }: { className?: string }) {
   return (
@@ -92,11 +92,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-orange-400 flex-shrink-0" />
-                <span>info@petpark.hr</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-teal-400 flex-shrink-0" />
-                <span>+385 1 234 5678</span>
+                <span>petparkhr@gmail.com</span>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 text-orange-400 flex-shrink-0 mt-0.5" />

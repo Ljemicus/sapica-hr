@@ -42,7 +42,7 @@ export function findBestMatch(input: string): string {
     return bestMatch.response;
   }
 
-  return 'Hmm, nisam siguran/na da razumijem. 🤔 Možeš li preformulirati pitanje? Ili nas kontaktiraj na info@petpark.hr!';
+  return 'Hmm, nisam siguran/na da razumijem. 🤔 Možeš li preformulirati pitanje? Ili nas kontaktiraj na petparkhr@gmail.com!';
 }
 
 export const WELCOME_MESSAGE = 'Bok! 🐾 Ja sam PetPark asistent. Kako ti mogu pomoći?\n\nMogu ti pomoći s:\n• Registracijom i prijavom\n• Pretraživanjem sittera\n• Bookingom i plaćanjem\n• Groomingom i dresurom\n• Forumom i zajednicom';
@@ -78,7 +78,7 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['prijaviti', 'prijava', 'login', 'ulogirati', 'ne mogu se prijaviti', 'ne radi prijava'],
-    response: 'Za prijavu koristi email + lozinku ili Google račun. Ako imaš problema:\n\n• Provjeri je li email točan\n• Pokušaj resetirati lozinku\n• Probaj Google prijavu\n\nAko i dalje ne radi, javi nam se na info@petpark.hr i riješimo to! 💪',
+    response: 'Za prijavu koristi email + lozinku ili Google račun. Ako imaš problema:\n\n• Provjeri je li email točan\n• Pokušaj resetirati lozinku\n• Probaj Google prijavu\n\nAko i dalje ne radi, javi nam se na petparkhr@gmail.com i riješimo to! 💪',
     category: 'registration',
   },
   {
@@ -88,7 +88,7 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['obrisati račun', 'brisanje', 'izbrisati', 'deaktivirati', 'ukinuti račun'],
-    response: 'Za brisanje računa kontaktiraj nas na info@petpark.hr i sredimo to u najkraćem roku. 📧',
+    response: 'Za brisanje računa kontaktiraj nas na petparkhr@gmail.com i sredimo to u najkraćem roku. 📧',
     category: 'registration',
   },
   {
@@ -127,7 +127,7 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['otkazati', 'otkazivanje', 'cancel', 'ne mogu doći', 'ne mogu doci'],
-    response: 'Booking se može otkazati prije početka usluge. Svaki sitter ima svoja pravila otkazivanja na profilu. Za hitne situacije, kontaktiraj sittera direktno ili nam piši na info@petpark.hr 📞',
+    response: 'Booking se može otkazati prije početka usluge. Svaki sitter ima svoja pravila otkazivanja na profilu. Za hitne situacije, kontaktiraj sittera direktno ili nam piši na petparkhr@gmail.com 📞',
     category: 'booking',
   },
   {
@@ -168,17 +168,17 @@ export const knowledgeBase: KBEntry[] = [
   // === KONTAKT / PROBLEMI ===
   {
     keywords: ['kontakt', 'email', 'mail', 'javiti', 'pomoć', 'pomoc', 'support', 'podrška', 'podrska'],
-    response: 'Možeš nas kontaktirati na:\n\n📧 **info@petpark.hr**\n💬 Discord #customer-support\n\nOdgovaramo u najkraćem mogućem roku! 🚀',
+    response: 'Možeš nas kontaktirati na:\n\n📧 **petparkhr@gmail.com**\n💬 Discord #customer-support\n\nOdgovaramo u najkraćem mogućem roku! 🚀',
     category: 'contact',
   },
   {
     keywords: ['bug', 'greška', 'greska', 'ne radi', 'error', 'problem', 'kvari', 'crashira'],
-    response: 'Ups, sorry za problem! 🔧 Javi nam detalje:\n\n• Što se točno dogodilo?\n• Na kojem uređaju/browseru?\n• Ako možeš, pošalji screenshot\n\n📧 info@petpark.hr ili ovdje u chatu — pogledamo odmah!',
+    response: 'Ups, sorry za problem! 🔧 Javi nam detalje:\n\n• Što se točno dogodilo?\n• Na kojem uređaju/browseru?\n• Ako možeš, pošalji screenshot\n\n📧 petparkhr@gmail.com ili ovdje u chatu — pogledamo odmah!',
     category: 'contact',
   },
   {
     keywords: ['prijedlog', 'sugestija', 'ideja', 'feature', 'poboljšanje', 'poboljsanje', 'dodati'],
-    response: 'Volimo prijedloge! 💡 Javi nam svoju ideju na info@petpark.hr ili ovdje u chatu. Svaki feedback nam pomaže napraviti PetPark boljim za sve! 🐾',
+    response: 'Volimo prijedloge! 💡 Javi nam svoju ideju na petparkhr@gmail.com ili ovdje u chatu. Svaki feedback nam pomaže napraviti PetPark boljim za sve! 🐾',
     category: 'contact',
   },
 

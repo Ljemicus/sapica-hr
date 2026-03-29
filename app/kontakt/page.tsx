@@ -85,19 +85,19 @@ export default function KontaktPage() {
                 </div>
                 <div>
                   <p className="font-medium text-sm text-gray-900">Email</p>
-                  <p className="text-sm text-gray-500">info@petpark.hr</p>
+                  <p className="text-sm text-gray-500">petparkhr@gmail.com</p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-sm">
+            <Card className="border-0 shadow-sm opacity-60">
               <CardContent className="flex items-start gap-3 p-5">
-                <div className="h-10 w-10 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-                  <Phone className="h-5 w-5 text-orange-600" />
+                <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                  <Phone className="h-5 w-5 text-gray-400" />
                 </div>
                 <div>
                   <p className="font-medium text-sm text-gray-900">Telefon</p>
-                  <p className="text-sm text-gray-500">+385 1 234 5678</p>
+                  <p className="text-sm text-gray-400 italic">Uskoro dostupan</p>
                 </div>
               </CardContent>
             </Card>
@@ -213,7 +213,7 @@ export default function KontaktPage() {
               { q: 'Je li korištenje platforme besplatno?', a: 'Da, registracija i pretraživanje su potpuno besplatni. PetPark naplaćuje proviziju od 15% samo na uspješno obavljene rezervacije.' },
               { q: 'Kako funkcionira plaćanje?', a: 'Plaćanje se vrši sigurno putem Stripe-a. Novac se zadržava dok vlasnik ne potvrdi da je usluga uspješno obavljena.' },
               { q: 'Što ako sitter otkaže rezervaciju?', a: 'U slučaju otkazivanja, vlasnik dobiva potpuni povrat novca. Ponovljena otkazivanja mogu rezultirati suspenzijom sitterovog računa.' },
-              { q: 'Kako mogu kontaktirati korisničku podršku?', a: 'Pošaljite nam poruku putem forme iznad, email na info@petpark.hr ili pozovite +385 1 234 5678 radnim danima od 9 do 17h.' },
+              { q: 'Kako mogu kontaktirati korisničku podršku?', a: 'Pošaljite nam poruku putem forme iznad ili email na petparkhr@gmail.com radnim danima od 9 do 17h.' },
             ].map((faq, i) => (
               <Card key={i} className="border-0 shadow-sm">
                 <CardContent className="p-5">

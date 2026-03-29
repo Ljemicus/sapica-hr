@@ -110,8 +110,7 @@ export default function RootLayout({
               },
               contactPoint: {
                 '@type': 'ContactPoint',
-                email: 'info@petpark.hr',
-                telephone: '+385-1-234-5678',
+                email: 'petparkhr@gmail.com',
                 contactType: 'customer service',
                 availableLanguage: 'Croatian',
               },
