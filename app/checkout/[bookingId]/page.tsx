@@ -129,7 +129,7 @@ export default function CheckoutPage({
             <span className="font-semibold">{formatCurrency(totalCents)}</span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Naknada platforme (15%)</span>
+            <span className="text-muted-foreground">Naknada platforme (10%)</span>
             <span>{formatCurrency(platformFeeCents)}</span>
           </div>
           <div className="flex items-center justify-between text-sm">

@@ -14,7 +14,7 @@ const allFaqs = [
   { q: 'Kako funkcionira verifikacija?', a: 'Provjeravamo identitet, iskustvo sa životinjama i reference. Verificirani sitteri dobivaju plavu oznaku na profilu.' },
   { q: 'Koliko mogu zaraditi?', a: 'Ovisi o lokaciji, uslugama i cijenama. Aktivni sitteri zarađuju 300-800€ mjesečno. Vi postavljate vlastite cijene.' },
   { q: 'Koji načini plaćanja su dostupni?', a: 'Kartično plaćanje (Visa, Mastercard), Apple Pay, Google Pay. Sve transakcije su sigurne i enkriptirane.' },
-  { q: 'Kolika je provizija PetParka?', a: 'PetPark naplaćuje 15% provizije na svaku rezervaciju. Registracija i korištenje platforme su potpuno besplatni.' },
+  { q: 'Kolika je provizija PetParka?', a: 'PetPark naplaćuje 10% provizije na svaku rezervaciju. Registracija i korištenje platforme su potpuno besplatni.' },
   { q: 'Kako PetPark osigurava sigurnost ljubimaca?', a: 'Svi sitteri prolaze verifikaciju, imamo sustav recenzija, osiguranje i podršku 7/7. GPS tracking šetnji za dodatni mir.' },
   { q: 'Jesu li moji podaci sigurni?', a: 'Koristimo SSL enkripciju, ne dijelimo podatke s trećim stranama i pridržavamo se GDPR propisa.' },
   { q: 'U kojim gradovima je PetPark dostupan?', a: 'Trenutno smo dostupni u Zagrebu, Rijeci, Splitu, Osijeku, Zadru, Puli, Dubrovniku, Karlovcu, Varaždinu i Šibeniku. Širimo se!' },

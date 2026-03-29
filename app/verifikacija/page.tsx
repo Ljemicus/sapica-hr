@@ -62,7 +62,7 @@ const tiers = [
       'Najviši rang u pretrazi',
       'Istaknuti profil na naslovnici',
       'Ekskluzivne promocije',
-      'Niža provizija (10% umjesto 15%)',
+      'Niža provizija (8% umjesto 10%)',
       'Personalizirani marketing',
     ],
     requirements: [

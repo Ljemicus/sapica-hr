@@ -186,7 +186,7 @@ export default function UvjetiPage() {
                 putem Stripe platnog sustava.
               </p>
               <p>
-                PetPark naplaćuje <strong>proviziju od 15%</strong> na svaku uspješno obavljenu rezervaciju.
+                PetPark naplaćuje <strong>proviziju od 10%</strong> na svaku uspješno obavljenu rezervaciju.
                 Provizija se automatski odbija od ukupnog iznosa prije isplate sitteru/pružatelju usluge.
               </p>
               <p>

@@ -72,7 +72,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
     },
     {
       q: 'Kolika je provizija PetParka?',
-      a: 'PetPark naplaćuje 15% provizije na svaku rezervaciju. Registracija i korištenje platforme su potpuno besplatni.',
+      a: 'PetPark naplaćuje 10% provizije na svaku rezervaciju. Registracija i korištenje platforme su potpuno besplatni.',
     },
     {
       q: 'Mogu li dobiti povrat novca?',

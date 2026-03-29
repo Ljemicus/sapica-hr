@@ -3,7 +3,7 @@
 
 import { getStripe } from './stripe';
 
-export const PLATFORMA_FEE = 0.15; // 15% platform fee
+export const PLATFORMA_FEE = 0.10; // 10% platform fee
 
 // ── Types ──
 
