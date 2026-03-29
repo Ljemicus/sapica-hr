@@ -62,10 +62,12 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://petpark.vercel.app' },
   icons: {
     icon: [
-      {
-        url: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><ellipse cx="50" cy="62" rx="14" ry="16" fill="%23f97316"/><ellipse cx="30" cy="38" rx="8" ry="11" fill="%23f97316"/><ellipse cx="70" cy="38" rx="8" ry="11" fill="%23f97316"/><ellipse cx="20" cy="56" rx="7" ry="10" fill="%23f97316"/><ellipse cx="80" cy="56" rx="7" ry="10" fill="%23f97316"/></svg>',
-        type: 'image/svg+xml',
-      },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
   },
 };
@@ -83,7 +85,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="PetPark" />
-        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <Script
           defer
           data-domain="petpark.vercel.app"
