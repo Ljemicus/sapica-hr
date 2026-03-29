@@ -97,7 +97,7 @@ export default function KontaktPage() {
                 </div>
                 <div>
                   <p className="font-medium text-sm text-gray-900">Telefon</p>
-                  <p className="text-sm text-gray-400 italic">Uskoro dostupan</p>
+                  <p className="text-sm text-gray-500">+385 91 567 6202</p>
                 </div>
               </CardContent>
             </Card>
@@ -109,7 +109,7 @@ export default function KontaktPage() {
                 </div>
                 <div>
                   <p className="font-medium text-sm text-gray-900">Adresa</p>
-                  <p className="text-sm text-gray-500">Zagreb, Hrvatska</p>
+                  <p className="text-sm text-gray-500">Rijeka, Hrvatska</p>
                 </div>
               </CardContent>
             </Card>

@@ -105,12 +105,13 @@ export default function RootLayout({
               description: 'Hrvatski marketplace za čuvanje kućnih ljubimaca. Pronađite pouzdane sittere u vašem gradu.',
               address: {
                 '@type': 'PostalAddress',
-                addressLocality: 'Zagreb',
+                addressLocality: 'Rijeka',
                 addressCountry: 'HR',
               },
               contactPoint: {
                 '@type': 'ContactPoint',
                 email: 'petparkhr@gmail.com',
+                telephone: '+385915676202',
                 contactType: 'customer service',
                 availableLanguage: 'Croatian',
               },
