@@ -109,12 +109,6 @@ export default function AboutPage() {
       {/* What drives us */}
       <section className="bg-gradient-to-b from-teal-50/50 to-transparent dark:from-teal-950/10 dark:to-transparent py-16 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 font-[var(--font-heading)]">
-              Što nas <span className="text-gradient">pokreće</span>
-            </h2>
-          </div>
-
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto mb-16">
             {STATS.map((stat, i) => (
