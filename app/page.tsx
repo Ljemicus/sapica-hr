@@ -369,12 +369,12 @@ export default async function HomePage() {
             <div className="w-px h-6 bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold">500+</span>
-              <span className="text-muted-foreground text-sm">ljubimaca čuvano</span>
+              <span className="text-muted-foreground text-sm">rezervacija</span>
             </div>
             <div className="w-px h-6 bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
-              <span className="text-lg font-bold">50+</span>
-              <span className="text-muted-foreground text-sm">pet sittera</span>
+              <span className="text-lg font-bold">200+</span>
+              <span className="text-muted-foreground text-sm">aktivnih sittera</span>
             </div>
           </div>
 

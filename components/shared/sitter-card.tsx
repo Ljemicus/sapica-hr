@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { FavoriteButton } from '@/components/shared/favorite-button';
 import type { SitterProfile } from '@/lib/types';
 import { SERVICE_LABELS as serviceLabels } from '@/lib/types';
+import { VerificationBadge } from '@/components/shared/verification-badge';
 
 const gradients = [
   'from-orange-400 to-amber-300',
@@ -57,8 +58,9 @@ export function SitterCard({ profile }: SitterCardProps) {
           <div className="p-5 space-y-3">
             <div>
               <div className="flex items-center justify-between mb-1">
-                <h3 className="font-semibold text-lg group-hover:text-orange-500 transition-colors">
+                <h3 className="font-semibold text-lg group-hover:text-orange-500 transition-colors flex items-center gap-1.5">
                   {profile.user?.name}
+                  <VerificationBadge level={profile.verified_level || (profile.verified ? 'verified' : 'basic')} />
                 </h3>
                 <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-full">
                   <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />

@@ -33,9 +33,9 @@ export const metadata: Metadata = {
     default: 'PetPark — Pronađite čuvara za svog ljubimca',
     template: '%s | PetPark',
   },
-  description: 'PetPark je hrvatski marketplace za čuvanje kućnih ljubimaca. Pronađite pouzdane sittere u vašem gradu ili zaradite čuvajući ljubimce. Čuvanje, šetanje, grooming i dresura.',
+  description: 'PetPark je hrvatski marketplace za čuvanje kućnih ljubimaca. Pronađite pouzdane sittere u vašem gradu ili zaradite čuvajući ljubimce. Čuvanje, šetanje, grooming i školovanje pasa.',
   keywords: [
-    'pet sitting', 'čuvanje ljubimaca', 'šetanje pasa', 'grooming', 'dresura pasa',
+    'pet sitting', 'čuvanje ljubimaca', 'šetanje pasa', 'grooming', 'školovanje pasa',
     'čuvar za pse', 'čuvar za mačke', 'pet sitter Hrvatska',
     'Zagreb', 'Split', 'Rijeka', 'Osijek', 'Pula', 'Zadar',
   ],
