@@ -7,7 +7,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const user = await getAuthUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const body = await request.json();
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
   const { status } = body;
 
   if (!['accepted', 'rejected', 'completed', 'cancelled'].includes(status)) {

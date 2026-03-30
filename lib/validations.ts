@@ -24,6 +24,7 @@ export const petSchema = z.object({
   age: z.coerce.number().min(0).max(30).optional(),
   weight: z.coerce.number().min(0).max(200).optional(),
   special_needs: z.string().optional(),
+  photo_url: z.string().url().optional(),
 });
 
 export const sitterProfileSchema = z.object({

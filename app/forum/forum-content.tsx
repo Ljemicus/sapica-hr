@@ -14,9 +14,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ImageUpload } from '@/components/shared/image-upload';
 import { FORUM_CATEGORIES, type ForumCategorySlug, type ForumTopic } from '@/lib/types';
+import { toast } from 'sonner';
 
 function timeAgo(dateStr: string) {
-  const now = new Date('2026-03-24T12:00:00Z');
+  const now = new Date();
   const date = new Date(dateStr);
   const diff = now.getTime() - date.getTime();
   const minutes = Math.floor(diff / 60000);
@@ -27,6 +28,66 @@ function timeAgo(dateStr: string) {
   if (days === 1) return 'jučer';
   if (days < 7) return `prije ${days} dana`;
   return new Date(dateStr).toLocaleDateString('hr-HR', { day: 'numeric', month: 'short' });
+}
+
+function NewPostForm() {
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState<string | null>('');
+  const [content, setContent] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = () => {
+    if (!title.trim() || !category || !content.trim()) {
+      toast.error('Molimo ispunite sva obavezna polja.');
+      return;
+    }
+    setSubmitting(true);
+    // Simulated — no backend endpoint yet
+    setTimeout(() => {
+      toast.success('Post je objavljen!');
+      setTitle('');
+      setCategory('');
+      setContent('');
+      setSubmitting(false);
+    }, 600);
+  };
+
+  return (
+    <div className="space-y-4 mt-4">
+      <div>
+        <Label htmlFor="post-title">Naslov</Label>
+        <Input id="post-title" placeholder="Unesite naslov posta..." className="mt-1.5" value={title} onChange={(e) => setTitle(e.target.value)} />
+      </div>
+      <div>
+        <Label htmlFor="post-category">Kategorija</Label>
+        <Select value={category} onValueChange={setCategory}>
+          <SelectTrigger className="mt-1.5">
+            <SelectValue placeholder="Odaberite kategoriju" />
+          </SelectTrigger>
+          <SelectContent>
+            {FORUM_CATEGORIES.map(cat => (
+              <SelectItem key={cat.slug} value={cat.slug}>
+                {cat.emoji} {cat.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <Label htmlFor="post-content">Sadržaj</Label>
+        <Textarea id="post-content" placeholder="Napišite svoj post..." className="mt-1.5 min-h-[120px]" value={content} onChange={(e) => setContent(e.target.value)} />
+      </div>
+      <div>
+        <Label>Slika (opcionalno)</Label>
+        <div className="mt-1.5">
+          <ImageUpload variant="dropzone" maxFiles={3} />
+        </div>
+      </div>
+      <Button onClick={handleSubmit} disabled={submitting} className="w-full bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 rounded-xl font-semibold">
+        {submitting ? 'Objavljujem...' : 'Objavi post'}
+      </Button>
+    </div>
+  );
 }
 
 interface ForumContentProps {
@@ -100,40 +161,7 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
             <DialogHeader>
               <DialogTitle>Novi post</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 mt-4">
-              <div>
-                <Label htmlFor="post-title">Naslov</Label>
-                <Input id="post-title" placeholder="Unesite naslov posta..." className="mt-1.5" />
-              </div>
-              <div>
-                <Label htmlFor="post-category">Kategorija</Label>
-                <Select>
-                  <SelectTrigger className="mt-1.5">
-                    <SelectValue placeholder="Odaberite kategoriju" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {FORUM_CATEGORIES.map(cat => (
-                      <SelectItem key={cat.slug} value={cat.slug}>
-                        {cat.emoji} {cat.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="post-content">Sadržaj</Label>
-                <Textarea id="post-content" placeholder="Napišite svoj post..." className="mt-1.5 min-h-[120px]" />
-              </div>
-              <div>
-                <Label>Slika (opcionalno)</Label>
-                <div className="mt-1.5">
-                  <ImageUpload variant="dropzone" maxFiles={3} />
-                </div>
-              </div>
-              <Button className="w-full bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 rounded-xl font-semibold">
-                Objavi post
-              </Button>
-            </div>
+            <NewPostForm />
           </DialogContent>
         </Dialog>
       </div>

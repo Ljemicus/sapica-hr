@@ -30,7 +30,7 @@ function PawLogo({ className }: { className?: string }) {
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [, setAvatarUrl] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const defaultRole = searchParams.get('role') as 'owner' | 'sitter' | null;
@@ -51,7 +51,7 @@ export function RegisterForm() {
     });
     if (authError) { toast.error(authError.message); setLoading(false); return; }
     if (authData.user) {
-      const { error: profileError } = await supabase.from('users').insert({ id: authData.user.id, email: data.email, name: data.name, role: data.role, city: data.city });
+      const { error: profileError } = await supabase.from('users').insert({ id: authData.user.id, email: data.email, name: data.name, role: data.role, city: data.city, avatar_url: avatarUrl });
       if (profileError) { toast.error('Greška pri kreiranju profila'); setLoading(false); return; }
       if (data.role === 'sitter') {
         await supabase.from('sitter_profiles').insert({ user_id: authData.user.id, city: data.city });

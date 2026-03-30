@@ -60,13 +60,13 @@ export function Footer() {
               Vaš ljubimac zaslužuje najbolju brigu.
             </p>
             <div className="flex items-center gap-3">
-              <a href="#" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Facebook">
+              <a href="https://facebook.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Facebook">
                 <FacebookIcon className="h-4 w-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Instagram">
+              <a href="https://instagram.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Instagram">
                 <InstagramIcon className="h-4 w-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Twitter">
+              <a href="https://x.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Twitter">
                 <TwitterIcon className="h-4 w-4" />
               </a>
             </div>
@@ -92,8 +92,8 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li><Link href="/faq" className="hover:text-orange-400 transition-colors">Česta pitanja</Link></li>
               <li><Link href="/kontakt" className="hover:text-orange-400 transition-colors">Kontakt</Link></li>
-              <li><Link href="#" className="hover:text-orange-400 transition-colors">Sigurnost</Link></li>
-              <li><Link href="#" className="hover:text-orange-400 transition-colors">Pravila zajednice</Link></li>
+              <li><Link href="/uvjeti" className="hover:text-orange-400 transition-colors">Sigurnost</Link></li>
+              <li><Link href="/uvjeti" className="hover:text-orange-400 transition-colors">Pravila zajednice</Link></li>
             </ul>
           </div>
           <div>

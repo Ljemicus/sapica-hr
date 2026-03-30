@@ -13,20 +13,25 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions) {
     return { success: true, dev: true };
   }
 
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ from: FROM_EMAIL, to, subject, html }),
-  });
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ from: FROM_EMAIL, to, subject, html }),
+    });
 
-  if (!res.ok) {
-    const error = await res.text();
-    console.error('[Email Error]', error);
-    return { success: false, error };
+    if (!res.ok) {
+      const error = await res.text();
+      console.error('[Email Error]', error);
+      return { success: false, error };
+    }
+
+    return { success: true, data: await res.json() };
+  } catch (err) {
+    console.error('[Email Error]', err);
+    return { success: false, error: 'Failed to send email' };
   }
-
-  return { success: true, data: await res.json() };
 }

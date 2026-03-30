@@ -37,7 +37,7 @@ export default function PostavkePage() {
       <div className="max-w-3xl mx-auto space-y-8">
         {/* Back link */}
         <Link
-          href="/dashboard"
+          href="/dashboard/vlasnik"
           className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
         >
           &larr; Natrag na nadzornu ploču

@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, MessageCircle, Heart, Clock, Pin, Flame, Send } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Heart, Clock, Pin, Flame } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Textarea } from '@/components/ui/textarea';
 import { FORUM_CATEGORIES } from '@/lib/types';
 import { getTopic, getPosts, getTopics } from '@/lib/db';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
+import { CommentForm } from './comment-form';
 
 const gradients = [
   'from-orange-400 to-amber-300',
@@ -24,7 +24,7 @@ function getGradient(name: string) {
 }
 
 function timeAgo(dateStr: string) {
-  const now = new Date('2026-03-24T12:00:00Z');
+  const now = new Date();
   const date = new Date(dateStr);
   const diff = now.getTime() - date.getTime();
   const minutes = Math.floor(diff / 60000);
@@ -173,14 +173,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
           {/* Reply form */}
           <Card className="border-0 shadow-sm rounded-2xl">
             <CardContent className="p-5">
-              <h3 className="font-semibold text-sm mb-3">Dodaj komentar</h3>
-              <Textarea placeholder="Napišite svoj komentar..." className="min-h-[80px] mb-3 rounded-xl" />
-              <div className="flex justify-end">
-                <Button className="bg-orange-500 hover:bg-orange-600 rounded-xl">
-                  <Send className="h-4 w-4 mr-2" />
-                  Objavi
-                </Button>
-              </div>
+              <CommentForm />
             </CardContent>
           </Card>
 

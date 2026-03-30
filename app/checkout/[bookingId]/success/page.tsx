@@ -31,7 +31,7 @@ export default function CheckoutSuccessPage({
         </CardContent>
         <CardFooter className="flex flex-col gap-3 pb-8">
           <Link
-            href="/dashboard"
+            href="/dashboard/vlasnik"
             className={cn(buttonVariants({ variant: 'default' }), 'w-full')}
           >
             Povratak na dashboard

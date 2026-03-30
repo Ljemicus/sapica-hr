@@ -27,7 +27,22 @@ export async function getConversations(userId: string): Promise<Message[]> {
       .select('*, sender:users!sender_id(*)')
       .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
       .order('created_at', { ascending: false });
-    if (error || !data) return [];
+    if (error || !data) {
+      const all = mockGetMessages(userId);
+      const seen = new Set<string>();
+      const conversations: Message[] = [];
+      const sorted = [...all].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+      for (const msg of sorted) {
+        const partnerId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
+        if (!seen.has(partnerId)) {
+          seen.add(partnerId);
+          conversations.push(msg);
+        }
+      }
+      return conversations;
+    }
     const seen = new Set<string>();
     const conversations: Message[] = [];
     for (const msg of data as Message[]) {
@@ -39,7 +54,20 @@ export async function getConversations(userId: string): Promise<Message[]> {
     }
     return conversations;
   } catch {
-    return [];
+    const all = mockGetMessages(userId);
+    const seen = new Set<string>();
+    const conversations: Message[] = [];
+    const sorted = [...all].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    for (const msg of sorted) {
+      const partnerId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
+      if (!seen.has(partnerId)) {
+        seen.add(partnerId);
+        conversations.push(msg);
+      }
+    }
+    return conversations;
   }
 }
 
@@ -82,10 +110,22 @@ export async function getConversation(
         `and(sender_id.eq.${userId1},receiver_id.eq.${userId2}),and(sender_id.eq.${userId2},receiver_id.eq.${userId1})`
       )
       .order('created_at', { ascending: true });
-    if (error || !data) return [];
+    if (error || !data) {
+      const all = mockGetMessages(userId1);
+      return all.filter(
+        (m) =>
+          (m.sender_id === userId1 && m.receiver_id === userId2) ||
+          (m.sender_id === userId2 && m.receiver_id === userId1)
+      );
+    }
     return data as Message[];
   } catch {
-    return [];
+    const all = mockGetMessages(userId1);
+    return all.filter(
+      (m) =>
+        (m.sender_id === userId1 && m.receiver_id === userId2) ||
+        (m.sender_id === userId2 && m.receiver_id === userId1)
+    );
   }
 }
 

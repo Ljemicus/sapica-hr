@@ -34,7 +34,7 @@ export default function CheckoutCancelPage({
             Pokušaj ponovo
           </Link>
           <Link
-            href="/dashboard"
+            href="/dashboard/vlasnik"
             className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
           >
             Povratak na dashboard

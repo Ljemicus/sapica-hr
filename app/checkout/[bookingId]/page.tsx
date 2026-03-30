@@ -133,7 +133,7 @@ export default function CheckoutPage({
             <span>{formatCurrency(platformFeeCents)}</span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Čuvar prima (85%)</span>
+            <span className="text-muted-foreground">Čuvar prima (90%)</span>
             <span>{formatCurrency(sitterPayoutCents)}</span>
           </div>
         </CardContent>
@@ -149,7 +149,7 @@ export default function CheckoutPage({
           <Button
             variant="ghost"
             className="w-full"
-            onClick={() => router.push(`/checkout/${bookingId}/cancel`)}
+            onClick={() => router.back()}
           >
             Odustani
           </Button>
