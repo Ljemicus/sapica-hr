@@ -306,6 +306,7 @@ export default function GroomingPage() {
 function GroomerCard({ groomer, index }: { groomer: Groomer; index: number }) {
   const gradient = gradients[groomer.name.charCodeAt(0) % gradients.length];
   return (
+    <Link href={`/groomer/${groomer.id}`}>
     <Card className={`group card-hover overflow-hidden cursor-pointer border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${((index % 3) + 1) * 100}`}>
       <CardContent className="p-0">
         <div className={`relative h-36 md:h-40 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
@@ -359,5 +360,6 @@ function GroomerCard({ groomer, index }: { groomer: Groomer; index: number }) {
         </div>
       </CardContent>
     </Card>
+    </Link>
   );
 }

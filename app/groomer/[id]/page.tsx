@@ -24,26 +24,39 @@ export default async function GroomerPage({ params }: GroomerPageProps) {
 
   const reviews = await getGroomerReviews(id);
 
-  // Query real availability from Supabase, convert to boolean[] for next 14 days
+  // Query real availability from Supabase, convert to Set<string>
   const availabilityRecords = await getAvailability(id);
   const availableDates = new Set(
     availabilityRecords.filter(a => a.available).map(a => a.date)
   );
-  const today = new Date();
-  const availability = Array.from({ length: 14 }, (_, i) => {
-    const d = new Date(today);
-    d.setDate(d.getDate() + i);
-    const dateStr = d.toISOString().split('T')[0];
-    return availableDates.has(dateStr);
-  });
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: `${groomer.name} — Pet Grooming`,
+    description: groomer.bio || `Profesionalni grooming salon u ${groomer.city}`,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: groomer.city,
+      addressCountry: 'HR',
+    },
+    aggregateRating: groomer.rating ? {
+      '@type': 'AggregateRating',
+      ratingValue: groomer.rating,
+      reviewCount: groomer.reviews,
+    } : undefined,
+    priceRange: '€€',
+    serviceType: 'Pet Grooming',
+  };
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Breadcrumbs items={[
         { label: 'Grooming', href: '/njega' },
         { label: groomer.name, href: `/groomer/${id}` },
       ]} />
-      <GroomerProfile groomer={groomer} reviews={reviews} availability={availability} />
+      <GroomerProfile groomer={groomer} reviews={reviews} availableDates={availableDates} />
     </>
   );
 }

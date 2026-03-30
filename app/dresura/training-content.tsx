@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   Star, MapPin, Award, Shield, X, Filter, SlidersHorizontal, GraduationCap, Clock, Users, ChevronDown, ChevronUp,
@@ -300,6 +301,12 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
                 )}
               </div>
             )}
+
+            <div className="pt-3 mt-3 border-t border-border/50">
+              <Link href={`/trener/${trainer.id}`} className="text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors flex items-center gap-1">
+                Pogledaj profil <ChevronDown className="h-3 w-3 rotate-[-90deg]" />
+              </Link>
+            </div>
           </div>
         </div>
       </CardContent>

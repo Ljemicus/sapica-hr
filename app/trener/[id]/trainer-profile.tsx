@@ -1,12 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import {
   Star, MapPin, Award, ChevronLeft, GraduationCap, Clock, Calendar,
-  MessageCircle, CheckCircle2
+  MessageCircle, CheckCircle2, Share2, Check
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,11 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
+import { AvailabilityCalendar } from '@/components/shared/availability-calendar';
 import { TRAINING_TYPE_LABELS, type Trainer, type TrainingProgram } from '@/lib/types';
+import { useUser } from '@/hooks/use-user';
+import { TrainerBookingDialog } from './booking-dialog';
+
 interface TrainerReview {
   id: string;
   trainer_id: string;
@@ -37,19 +42,40 @@ interface TrainerProfileProps {
   trainer: Trainer;
   programs: TrainingProgram[];
   reviews: TrainerReview[];
-  availability: boolean[];
+  availableDates: Set<string>;
 }
 
-export function TrainerProfile({ trainer, programs, reviews, availability }: TrainerProfileProps) {
+export function TrainerProfile({ trainer, programs, reviews, availableDates }: TrainerProfileProps) {
+  const { user } = useUser();
   const router = useRouter();
+  const [showBooking, setShowBooking] = useState(false);
+  const [copied, setCopied] = useState(false);
   const gradient = gradients[trainer.name.charCodeAt(0) % gradients.length];
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      toast.success('Link kopiran!');
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error('Nije moguće kopirati link');
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <Button variant="ghost" onClick={() => router.back()} className="mb-4 -ml-2 hover:bg-orange-50 hover:text-orange-600">
-        <ChevronLeft className="h-4 w-4 mr-1" />
-        Natrag
-      </Button>
+      <div className="flex items-center justify-between mb-4">
+        <Button variant="ghost" onClick={() => router.back()} className="-ml-2 hover:bg-orange-50 hover:text-orange-600">
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          Natrag
+        </Button>
+        <Button variant="ghost" size="sm" onClick={handleShare} className="hover:bg-orange-50 hover:text-orange-600">
+          {copied ? <Check className="h-4 w-4 mr-1" /> : <Share2 className="h-4 w-4 mr-1" />}
+          {copied ? 'Kopirano!' : 'Podijeli'}
+        </Button>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
@@ -162,6 +188,9 @@ export function TrainerProfile({ trainer, programs, reviews, availability }: Tra
             </CardContent>
           </Card>
 
+          {/* Availability Calendar */}
+          <AvailabilityCalendar availableDates={availableDates} />
+
           {/* Reviews */}
           <Card className="border-0 shadow-sm">
             <CardHeader>
@@ -233,20 +262,30 @@ export function TrainerProfile({ trainer, programs, reviews, availability }: Tra
                 <span className="text-muted-foreground block text-sm mt-1">po satu</span>
               </div>
 
-              <Button
-                className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50"
-                size="lg"
-                onClick={() => toast.info('Uskoro!', { description: 'Online zakazivanje treninga dolazi uskoro.' })}
-              >
-                <GraduationCap className="h-4 w-4 mr-2" />
-                Zakaži trening
-              </Button>
-              <Link href="/poruke">
-                <Button variant="outline" className="w-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200" size="lg">
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Kontaktiraj
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <Button
+                    className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50"
+                    size="lg"
+                    onClick={() => setShowBooking(true)}
+                  >
+                    <GraduationCap className="h-4 w-4 mr-2" />
+                    Zakaži trening
+                  </Button>
+                  <Link href={`/poruke?trainer=${trainer.id}`}>
+                    <Button variant="outline" className="w-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200" size="lg">
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      Kontaktiraj
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <Link href={`/prijava?redirect=/trener/${trainer.id}`}>
+                  <Button className="w-full bg-orange-500 hover:bg-orange-600 btn-hover" size="lg">
+                    Prijavi se za zakazivanje
+                  </Button>
+                </Link>
+              )}
 
               <Separator />
 
@@ -260,7 +299,8 @@ export function TrainerProfile({ trainer, programs, reviews, availability }: Tra
                   {Array.from({ length: 14 }, (_, i) => {
                     const date = new Date();
                     date.setDate(date.getDate() + i);
-                    const isAvailable = availability[i];
+                    const dateStr = date.toISOString().split('T')[0];
+                    const isAvailable = availableDates.has(dateStr);
                     return (
                       <div
                         key={i}
@@ -291,6 +331,15 @@ export function TrainerProfile({ trainer, programs, reviews, availability }: Tra
           </Card>
         </div>
       </div>
+
+      {showBooking && (
+        <TrainerBookingDialog
+          open={showBooking}
+          onOpenChange={setShowBooking}
+          trainer={trainer}
+          programs={programs}
+        />
+      )}
     </div>
   );
 }
