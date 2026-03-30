@@ -15,12 +15,13 @@ import { toast } from 'sonner';
 
 function PawLogo({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 28 28" fill="currentColor">
-      <ellipse cx="14" cy="17.5" rx="4" ry="4.8" />
-      <ellipse cx="8.5" cy="10.5" rx="2.3" ry="3.2" />
-      <ellipse cx="19.5" cy="10.5" rx="2.3" ry="3.2" />
-      <ellipse cx="5.5" cy="16" rx="2" ry="2.8" />
-      <ellipse cx="22.5" cy="16" rx="2" ry="2.8" />
+    <svg className={className} viewBox="0 0 512 512" fill="none">
+      <path d="M256 390 C 150 310 90 230 130 170 C 170 110 230 130 256 180 C 282 130 342 110 382 170 C 422 230 362 310 256 390Z" fill="#FFB347"/>
+      <ellipse cx="256" cy="290" rx="40" ry="35" fill="#14b8a6"/>
+      <ellipse cx="225" cy="245" rx="16" ry="20" fill="#14b8a6" transform="rotate(-15 225 245)"/>
+      <ellipse cx="256" cy="235" rx="15" ry="18" fill="#14b8a6"/>
+      <ellipse cx="287" cy="242" rx="15" ry="18" fill="#14b8a6" transform="rotate(10 287 242)"/>
+      <ellipse cx="305" cy="262" rx="14" ry="17" fill="#14b8a6" transform="rotate(25 305 262)"/>
     </svg>
   );
 }
@@ -196,7 +197,7 @@ export function LoginForm() {
           <div className="mt-10 grid grid-cols-3 gap-6">
             <div>
               <p className="text-2xl font-bold">500+</p>
-              <p className="text-sm text-white/70">Sittera</p>
+              <p className="text-sm text-white/70">Pružatelja usluga</p>
             </div>
             <div>
               <p className="text-2xl font-bold">2000+</p>

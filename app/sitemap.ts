@@ -6,6 +6,7 @@ import { getProducts } from '@/lib/db/products';
 import { getArticles } from '@/lib/db/blog';
 import { getTopics } from '@/lib/db/forum';
 import { getLostPets } from '@/lib/db/lost-pets';
+import { MOCK_BREEDERS } from '@/lib/mock-breeders';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -33,6 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/omiljeni',
     '/udomljavanje',
     '/dog-friendly',
+    '/uzgajivacnice',
     '/blog',
     '/cuvanje-pasa-zagreb',
     '/cuvanje-pasa-split',
@@ -107,6 +109,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  const breederEntries: MetadataRoute.Sitemap = MOCK_BREEDERS.map((b) => ({
+    url: `${BASE_URL}/uzgajivacnice/${b.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
   return [
     ...staticEntries,
     ...sitterEntries,
@@ -116,5 +125,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...blogEntries,
     ...forumEntries,
     ...lostPetEntries,
+    ...breederEntries,
   ];
 }

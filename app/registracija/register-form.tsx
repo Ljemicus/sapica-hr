@@ -17,12 +17,13 @@ import { toast } from 'sonner';
 
 function PawLogo({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 28 28" fill="currentColor">
-      <ellipse cx="14" cy="17.5" rx="4" ry="4.8" />
-      <ellipse cx="8.5" cy="10.5" rx="2.3" ry="3.2" />
-      <ellipse cx="19.5" cy="10.5" rx="2.3" ry="3.2" />
-      <ellipse cx="5.5" cy="16" rx="2" ry="2.8" />
-      <ellipse cx="22.5" cy="16" rx="2" ry="2.8" />
+    <svg className={className} viewBox="0 0 512 512" fill="none">
+      <path d="M256 390 C 150 310 90 230 130 170 C 170 110 230 130 256 180 C 282 130 342 110 382 170 C 422 230 362 310 256 390Z" fill="#FFB347"/>
+      <ellipse cx="256" cy="290" rx="40" ry="35" fill="#14b8a6"/>
+      <ellipse cx="225" cy="245" rx="16" ry="20" fill="#14b8a6" transform="rotate(-15 225 245)"/>
+      <ellipse cx="256" cy="235" rx="15" ry="18" fill="#14b8a6"/>
+      <ellipse cx="287" cy="242" rx="15" ry="18" fill="#14b8a6" transform="rotate(10 287 242)"/>
+      <ellipse cx="305" cy="262" rx="14" ry="17" fill="#14b8a6" transform="rotate(25 305 262)"/>
     </svg>
   );
 }
@@ -96,8 +97,8 @@ export function RegisterForm() {
           <h2 className="text-3xl font-bold mb-4">Pridružite se PetParku!</h2>
           <p className="text-white/80 text-lg leading-relaxed">
             {selectedRole === 'sitter'
-              ? 'Zarađujte radeći ono što volite — čuvajte ljubimce u svom gradu i postanite dio naše zajednice.'
-              : 'Pronađite pouzdane čuvare za vašeg ljubimca i putujte bez brige.'}
+              ? 'Zarađujte radeći ono što volite — pružajte usluge u svom gradu i postanite dio naše zajednice.'
+              : 'Pronađite sve za vašeg ljubimca na jednom mjestu — čuvanje, njega, školovanje i više.'}
           </p>
           <div className="mt-10 flex items-center justify-center gap-8">
             <div className="text-center">
@@ -148,8 +149,8 @@ export function RegisterForm() {
                 }`}
               >
                 <Heart className={`h-8 w-8 mx-auto mb-2 ${selectedRole === 'sitter' ? 'text-orange-500' : 'text-gray-400'}`} />
-                <p className="font-semibold text-sm">Sitter</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Želim čuvati</p>
+                <p className="font-semibold text-sm">Pružatelj usluga</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Želim pružati usluge</p>
               </button>
             </div>
             {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}

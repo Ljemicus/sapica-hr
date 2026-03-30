@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart, ShoppingBag, ShoppingCart, Sparkles, Stethoscope, Siren, HeartHandshake, Dog } from 'lucide-react';
+import { Menu, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart, ShoppingBag, ShoppingCart, Sparkles, Stethoscope, Siren, HeartHandshake, Dog, Baby } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -104,6 +104,10 @@ export function Navbar() {
               <DropdownMenuItem render={<Link href="/hitno" />} className="cursor-pointer rounded-lg text-red-600 dark:text-red-400 font-medium">
                 <Siren className="mr-2 h-4 w-4 text-red-500" />
                 Hitna pomoć
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/uzgajivacnice" />} className="cursor-pointer rounded-lg">
+                <Baby className="mr-2 h-4 w-4 text-amber-500" />
+                Uzgajivačnice
               </DropdownMenuItem>
               <DropdownMenuItem render={<Link href="/dog-friendly" />} className="cursor-pointer rounded-lg">
                 <Dog className="mr-2 h-4 w-4 text-green-500" />
@@ -329,6 +333,10 @@ export function Navbar() {
                   Hitna pomoć
                 </Link>
 
+                <Link href="/uzgajivacnice" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
+                  <Baby className="h-5 w-5 text-amber-500" />
+                  Uzgajivačnice
+                </Link>
                 <Link href="/dog-friendly" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/20 font-medium transition-colors">
                   <Dog className="h-5 w-5" />
                   Dog-Friendly

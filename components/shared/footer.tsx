@@ -4,12 +4,13 @@ import { NewsletterSignup } from '@/components/shared/newsletter-signup';
 
 function PawLogo({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 28 28" fill="currentColor">
-      <ellipse cx="14" cy="17.5" rx="4" ry="4.8" />
-      <ellipse cx="8.5" cy="10.5" rx="2.3" ry="3.2" />
-      <ellipse cx="19.5" cy="10.5" rx="2.3" ry="3.2" />
-      <ellipse cx="5.5" cy="16" rx="2" ry="2.8" />
-      <ellipse cx="22.5" cy="16" rx="2" ry="2.8" />
+    <svg className={className} viewBox="0 0 512 512" fill="none">
+      <path d="M256 390 C 150 310 90 230 130 170 C 170 110 230 130 256 180 C 282 130 342 110 382 170 C 422 230 362 310 256 390Z" fill="#FFB347"/>
+      <ellipse cx="256" cy="290" rx="40" ry="35" fill="#14b8a6"/>
+      <ellipse cx="225" cy="245" rx="16" ry="20" fill="#14b8a6" transform="rotate(-15 225 245)"/>
+      <ellipse cx="256" cy="235" rx="15" ry="18" fill="#14b8a6"/>
+      <ellipse cx="287" cy="242" rx="15" ry="18" fill="#14b8a6" transform="rotate(10 287 242)"/>
+      <ellipse cx="305" cy="262" rx="14" ry="17" fill="#14b8a6" transform="rotate(25 305 262)"/>
     </svg>
   );
 }
@@ -81,6 +82,7 @@ export function Footer() {
               <li><Link href="/forum" className="hover:text-orange-400 transition-colors">Forum</Link></li>
               <li><Link href="/shop" className="hover:text-orange-400 transition-colors">Shop</Link></li>
               <li><Link href="/veterinari" className="hover:text-orange-400 transition-colors">Veterinari</Link></li>
+              <li><Link href="/uzgajivacnice" className="hover:text-orange-400 transition-colors">Uzgajivačnice</Link></li>
               <li><Link href="/dog-friendly" className="hover:text-green-400 transition-colors">Dog-Friendly lokacije</Link></li>
               <li><Link href="/udomljavanje" className="hover:text-pink-400 transition-colors">Udomljavanje</Link></li>
               <li><Link href="/hitno" className="hover:text-red-400 transition-colors font-medium">🚨 Hitna pomoć</Link></li>
