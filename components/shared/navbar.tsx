@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart, ShoppingBag, ShoppingCart, Sparkles, Stethoscope, Siren, HeartHandshake, Dog, Baby } from 'lucide-react';
+import { Menu, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart, ShoppingBag, ShoppingCart, Sparkles, Stethoscope, Siren, HeartHandshake, Dog, Baby, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -148,6 +148,10 @@ export function Navbar() {
             <PawPrint className="h-4 w-4" />
             Uzgajivači
           </Link>
+          <a href="https://www.hks.hr" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent">
+            <Shield className="h-4 w-4 text-blue-500" />
+            HKS
+          </a>
           <Link href="/izgubljeni" className="text-sm font-semibold text-red-500 hover:text-red-600 dark:text-red-400 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 relative">
             <AlertTriangle className="h-4 w-4" />
             {t('nav.lost')}
