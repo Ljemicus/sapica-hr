@@ -163,7 +163,7 @@ export function RegisterForm() {
               onClick={async () => {
                 const { error } = await supabase.auth.signInWithOAuth({
                   provider: 'apple',
-                  options: { redirectTo: `${window.location.origin}/auth/callback` }
+                  options: { redirectTo: `${window.location.origin}/api/auth/callback?next=/dashboard/vlasnik` }
                 });
                 if (error) toast.error(error.message);
               }}
