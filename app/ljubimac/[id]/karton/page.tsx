@@ -13,9 +13,18 @@ export default async function PetPassportPage({ params }: { params: Promise<{ id
   if (!pet) notFound();
 
   const passport = await getPassport(id);
-  if (!passport) notFound();
+
+  // If no passport exists yet, create an empty one for display
+  const emptyPassport = {
+    pet_id: id,
+    vaccinations: [],
+    allergies: [],
+    medications: [],
+    vet_info: { name: '', phone: '', address: '', emergency: false },
+    notes: '',
+  };
 
   return (
-    <PetPassportView pet={pet} passport={passport} />
+    <PetPassportView pet={pet} passport={passport || emptyPassport} />
   );
 }
