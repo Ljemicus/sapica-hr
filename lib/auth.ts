@@ -1,16 +1,13 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
-import { getUserById } from '@/lib/mock-data';
 import type { User } from '@/lib/types';
 
 /**
- * Server-side: get the currently authenticated user.
- * - Ako je Supabase konfiguriran → koristi Supabase Auth
- * - Ako nije → koristi mock auth (cookie-based demo login)
+ * Server-side: get the currently authenticated user via Supabase Auth.
  */
 export async function getAuthUser(): Promise<User | null> {
   if (!isSupabaseConfigured()) {
-    return getMockAuthUser();
+    return null;
   }
 
   try {
@@ -40,21 +37,6 @@ export async function getAuthUser(): Promise<User | null> {
       city: meta?.city || null,
       created_at: authUser.created_at,
     };
-  } catch {
-    return getMockAuthUser();
-  }
-}
-
-/**
- * Mock auth: čita user ID iz cookie-a mock_user_id
- */
-async function getMockAuthUser(): Promise<User | null> {
-  try {
-    const { cookies } = await import('next/headers');
-    const cookieStore = await cookies();
-    const mockUserId = cookieStore.get('mock_user_id')?.value;
-    if (!mockUserId) return null;
-    return getUserById(mockUserId) ?? null;
   } catch {
     return null;
   }

@@ -8,7 +8,6 @@ import {
   uploadAvatar,
   uploadPetPhoto,
   uploadMessageAttachment,
-  mockUpload,
   createPreviewUrl,
   validateFile,
   type UploadResult,
@@ -47,7 +46,13 @@ async function performUpload(file: File, bucket: UploadBucket, entityId: string)
     case 'messages':
       return uploadMessageAttachment(entityId, file);
     default:
-      return mockUpload(file, bucket);
+      // TODO: Create a dedicated Supabase Storage bucket for generic uploads
+      // For now, return a local blob URL as preview
+      return {
+        url: URL.createObjectURL(file),
+        fileName: file.name,
+        size: file.size,
+      };
   }
 }
 

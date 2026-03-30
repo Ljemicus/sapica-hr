@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
-import { getMockUserIdClient, clearMockUserClient } from '@/lib/mock-auth-client';
 import type { User } from '@/lib/types';
 
 function isSupabaseConfiguredClient(): boolean {
@@ -57,28 +56,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [supabase]);
 
-  const loadMockUser = useCallback(async () => {
-    const mockUserId = getMockUserIdClient();
-    if (mockUserId) {
-      // Fetch mock user data from API
-      try {
-        const res = await fetch(`/api/auth/me`);
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data.user);
-        }
-      } catch {
-        // Ignore - user stays null
-      }
-    }
-    setLoading(false);
-  }, []);
-
   useEffect(() => {
     if (!isSupabaseConfiguredClient()) {
-      // Mock auth mode: čitaj user iz cookie-a
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      loadMockUser().then(() => {}).catch(() => {});
+      // No Supabase configured — user stays null
+      Promise.resolve().then(() => setLoading(false));
       return;
     }
 
@@ -110,13 +91,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     return () => subscription.unsubscribe();
-  }, [supabase, fetchUserProfile, loadMockUser]);
+  }, [supabase, fetchUserProfile]);
 
   const signOut = useCallback(async () => {
     if (isSupabaseConfiguredClient()) {
       await supabase.auth.signOut();
-    } else {
-      clearMockUserClient();
     }
     setUser(null);
     setSupabaseUser(null);

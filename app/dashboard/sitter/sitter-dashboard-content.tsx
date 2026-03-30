@@ -136,18 +136,9 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
       .single();
 
     if (error) {
-      // Mock fallback
-      const mockUpdate: PetUpdate = {
-        id: `upd-fallback-${updateBookingId}`,
-        booking_id: updateBookingId,
-        sitter_id: user.id,
-        type: updateType,
-        emoji: updateEmoji,
-        caption: updateCaption,
-        photo_url: updatePhotoUrls[0] || null,
-        created_at: new Date().toISOString(),
-      };
-      setSentUpdates(prev => [mockUpdate, ...prev].slice(0, 5));
+      toast.error('Greška pri slanju ažuriranja');
+      setSendingUpdate(false);
+      return;
     } else if (data) {
       setSentUpdates(prev => [data as PetUpdate, ...prev].slice(0, 5));
     }

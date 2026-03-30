@@ -1,18 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Share2, Printer, Phone, AlertTriangle, Dog, Cat, HelpCircle, Heart, Weight, Calendar, Cpu } from 'lucide-react';
+import { ArrowLeft, Share2, Printer, Phone, AlertTriangle, Dog, Cat, HelpCircle, Heart, Weight, Calendar, Cpu, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { createClient } from '@/lib/supabase/client';
 
 interface PetCardContentProps {
   petId: string;
 }
 
-const mockPets: Record<string, {
+interface PetCardData {
   name: string;
   species: 'dog' | 'cat' | 'other';
   breed: string;
@@ -25,37 +26,7 @@ const mockPets: Record<string, {
   vetPhone: string;
   allergies: string[];
   specialNeeds: string;
-}> = {
-  'pet11111-1111-1111-1111-111111111111': {
-    name: 'Rex',
-    species: 'dog',
-    breed: 'Njemački ovčar',
-    age: 4,
-    weight: 32,
-    microchip: '191000000123456',
-    ownerName: 'Ivan Horvat',
-    ownerPhone: '+385 91 234 5678',
-    vetName: 'Dr. Marija Kovač',
-    vetPhone: '+385 1 4567 890',
-    allergies: ['Piletina', 'Pelud trave'],
-    specialNeeds: 'Uzima Apoquel 16mg dnevno za alergije. Ne trpi glasne zvukove.',
-  },
-};
-
-const defaultPet = {
-  name: 'Buddy',
-  species: 'dog' as const,
-  breed: 'Labrador retriver',
-  age: 3,
-  weight: 28,
-  microchip: '191000000654321',
-  ownerName: 'Ana Novak',
-  ownerPhone: '+385 98 765 4321',
-  vetName: 'Dr. Petar Marić',
-  vetPhone: '+385 1 2345 678',
-  allergies: ['Govedina'],
-  specialNeeds: 'Potrebna redovita šetnja, minimum 2x dnevno.',
-};
+}
 
 const speciesEmoji: Record<string, string> = { dog: '🐕', cat: '🐈', other: '🐰' };
 const speciesLabel: Record<string, string> = { dog: 'Pas', cat: 'Mačka', other: 'Ostalo' };
@@ -68,9 +39,48 @@ const SpeciesIcon: Record<string, React.ElementType> = { dog: Dog, cat: Cat, oth
 
 export function PetCardContent({ petId }: PetCardContentProps) {
   const [copied, setCopied] = useState(false);
-  const pet = mockPets[petId] || defaultPet;
-  const Icon = SpeciesIcon[pet.species];
-  const gradient = speciesGradient[pet.species];
+  const [pet, setPet] = useState<PetCardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    async function fetchPet() {
+      try {
+        const supabase = createClient();
+        const { data: petData, error: petError } = await supabase
+          .from('pets')
+          .select('*, owner:users!owner_id(name, phone)')
+          .eq('id', petId)
+          .single();
+
+        if (petError || !petData) {
+          setError(true);
+          setLoading(false);
+          return;
+        }
+
+        setPet({
+          name: petData.name,
+          species: petData.species || 'dog',
+          breed: petData.breed || 'Nepoznata pasmina',
+          age: petData.age || 0,
+          weight: petData.weight || 0,
+          microchip: petData.microchip || 'Nije uneseno',
+          ownerName: petData.owner?.name || 'Nepoznato',
+          ownerPhone: petData.owner?.phone || '',
+          vetName: petData.vet_name || 'Nije uneseno',
+          vetPhone: petData.vet_phone || '',
+          allergies: petData.allergies || [],
+          specialNeeds: petData.special_needs || '',
+        });
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPet();
+  }, [petId]);
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -83,6 +93,26 @@ export function PetCardContent({ petId }: PetCardContentProps) {
       toast.error('Nije moguće kopirati link');
     }
   };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-xl flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+      </div>
+    );
+  }
+
+  if (error || !pet) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-xl text-center">
+        <p className="text-muted-foreground">Ljubimac nije pronađen.</p>
+        <Link href="/" className="text-orange-500 hover:underline mt-2 inline-block">Povratak</Link>
+      </div>
+    );
+  }
+
+  const Icon = SpeciesIcon[pet.species] || HelpCircle;
+  const gradient = speciesGradient[pet.species] || speciesGradient.other;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-xl print:max-w-none print:p-0">
@@ -150,16 +180,20 @@ export function PetCardContent({ petId }: PetCardContentProps) {
                 <div className="p-4 rounded-xl border bg-white dark:bg-gray-900/50 space-y-1">
                   <p className="text-xs text-muted-foreground">Vlasnik</p>
                   <p className="font-medium text-sm">{pet.ownerName}</p>
-                  <a href={`tel:${pet.ownerPhone}`} className="text-sm text-orange-500 hover:text-orange-600 flex items-center gap-1">
-                    <Phone className="h-3.5 w-3.5" /> {pet.ownerPhone}
-                  </a>
+                  {pet.ownerPhone && (
+                    <a href={`tel:${pet.ownerPhone}`} className="text-sm text-orange-500 hover:text-orange-600 flex items-center gap-1">
+                      <Phone className="h-3.5 w-3.5" /> {pet.ownerPhone}
+                    </a>
+                  )}
                 </div>
                 <div className="p-4 rounded-xl border bg-white dark:bg-gray-900/50 space-y-1">
                   <p className="text-xs text-muted-foreground">Veterinar</p>
                   <p className="font-medium text-sm">{pet.vetName}</p>
-                  <a href={`tel:${pet.vetPhone}`} className="text-sm text-orange-500 hover:text-orange-600 flex items-center gap-1">
-                    <Phone className="h-3.5 w-3.5" /> {pet.vetPhone}
-                  </a>
+                  {pet.vetPhone && (
+                    <a href={`tel:${pet.vetPhone}`} className="text-sm text-orange-500 hover:text-orange-600 flex items-center gap-1">
+                      <Phone className="h-3.5 w-3.5" /> {pet.vetPhone}
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
-import { mockUsers } from '@/lib/mock-data';
 import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: Request) {
@@ -22,20 +21,7 @@ export async function POST(request: Request) {
   }
 
   if (!isSupabaseConfigured()) {
-    // Mock auth: pronađi usera po emailu
-    const mockUser = mockUsers.find((u) => u.email === email);
-    if (!mockUser) {
-      return NextResponse.json({ error: 'Korisnik nije pronađen' }, { status: 401 });
-    }
-    const response = NextResponse.json({ user: mockUser });
-    response.cookies.set('mock_user_id', mockUser.id, {
-      path: '/',
-      maxAge: 60 * 60 * 24 * 30,
-      sameSite: 'lax',
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-    });
-    return response;
+    return NextResponse.json({ error: 'Autentifikacija nije dostupna. Supabase nije konfiguriran.' }, { status: 503 });
   }
 
   const { createClient } = await import('@/lib/supabase/server');

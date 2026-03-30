@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getTrainer, getPrograms, getTrainerReviews } from '@/lib/db';
+import { getTrainer, getPrograms, getTrainerReviews, getAvailability } from '@/lib/db';
 import { TrainerProfile } from './trainer-profile';
 
 interface TrainerPageProps {
@@ -16,14 +16,6 @@ export async function generateMetadata({ params }: TrainerPageProps): Promise<Me
   };
 }
 
-function generateMockAvailability(): boolean[] {
-  const seed = Date.now();
-  return Array.from({ length: 14 }, (_, i) => {
-    const hash = ((seed + i * 2654435761) >>> 0) % 100;
-    return hash < 60;
-  });
-}
-
 export default async function TrainerPage({ params }: TrainerPageProps) {
   const { id } = await params;
   const trainer = await getTrainer(id);
@@ -31,7 +23,19 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
 
   const programs = await getPrograms(id);
   const reviews = await getTrainerReviews(id);
-  const availability = generateMockAvailability();
+
+  // Query real availability from Supabase, convert to boolean[] for next 14 days
+  const availabilityRecords = await getAvailability(id);
+  const availableDates = new Set(
+    availabilityRecords.filter(a => a.available).map(a => a.date)
+  );
+  const today = new Date();
+  const availability = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(d.getDate() + i);
+    const dateStr = d.toISOString().split('T')[0];
+    return availableDates.has(dateStr);
+  });
 
   return <TrainerProfile trainer={trainer} programs={programs} reviews={reviews} availability={availability} />;
 }

@@ -3,9 +3,7 @@ import { isSupabaseConfigured } from '@/lib/db/helpers';
 
 export async function POST() {
   if (!isSupabaseConfigured()) {
-    const response = NextResponse.json({ success: true });
-    response.cookies.set('mock_user_id', '', { path: '/', maxAge: 0 });
-    return response;
+    return NextResponse.json({ error: 'Supabase nije konfiguriran.' }, { status: 503 });
   }
 
   const { createClient } = await import('@/lib/supabase/server');

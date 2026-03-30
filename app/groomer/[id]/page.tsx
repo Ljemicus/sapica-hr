@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getGroomer, getGroomerReviews } from '@/lib/db';
+import { getGroomer, getGroomerReviews, getAvailability } from '@/lib/db';
 import { GroomerProfile } from './groomer-profile';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
@@ -17,21 +17,25 @@ export async function generateMetadata({ params }: GroomerPageProps): Promise<Me
   };
 }
 
-function generateMockAvailability(): boolean[] {
-  const seed = Date.now();
-  return Array.from({ length: 14 }, (_, i) => {
-    const hash = ((seed + i * 2654435761) >>> 0) % 100;
-    return hash < 65;
-  });
-}
-
 export default async function GroomerPage({ params }: GroomerPageProps) {
   const { id } = await params;
   const groomer = await getGroomer(id);
   if (!groomer) return notFound();
 
   const reviews = await getGroomerReviews(id);
-  const availability = generateMockAvailability();
+
+  // Query real availability from Supabase, convert to boolean[] for next 14 days
+  const availabilityRecords = await getAvailability(id);
+  const availableDates = new Set(
+    availabilityRecords.filter(a => a.available).map(a => a.date)
+  );
+  const today = new Date();
+  const availability = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(d.getDate() + i);
+    const dateStr = d.toISOString().split('T')[0];
+    return availableDates.has(dateStr);
+  });
 
   return (
     <>
