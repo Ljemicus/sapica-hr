@@ -161,13 +161,9 @@ export function Navbar() {
                 <Shield className="mr-2 h-4 w-4 text-blue-500" />
                 Naslovnica HKS
               </DropdownMenuItem>
-              <DropdownMenuItem render={<a href="https://www.hks.hr/hr/registar-uzgajivaca" target="_blank" rel="noopener noreferrer" />} className="cursor-pointer rounded-lg">
-                <PawPrint className="mr-2 h-4 w-4 text-amber-500" />
-                Registar uzgajivača
-              </DropdownMenuItem>
-              <DropdownMenuItem render={<a href="https://www.hks.hr/hr/rodovnice" target="_blank" rel="noopener noreferrer" />} className="cursor-pointer rounded-lg">
+              <DropdownMenuItem render={<a href="https://program.hks.hr/login" target="_blank" rel="noopener noreferrer" />} className="cursor-pointer rounded-lg">
                 <FileHeart className="mr-2 h-4 w-4 text-purple-500" />
-                Rodovnice
+                HKS online program
               </DropdownMenuItem>
               <DropdownMenuItem render={<a href="https://www.hks.hr/hr/top-dog-2026" target="_blank" rel="noopener noreferrer" />} className="cursor-pointer rounded-lg">
                 <Star className="mr-2 h-4 w-4 text-amber-400" />
