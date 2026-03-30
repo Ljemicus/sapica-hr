@@ -59,8 +59,16 @@ export async function getGroomer(id: string): Promise<Groomer | null> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('groomers').select('*').eq('id', id).single();
-    if (error || !data) return mockGetGroomer(id) ?? null;
-    return data as Groomer;
+    if (!error && data) return data as Groomer;
+
+    // Legacy fallback: some old links may use numeric indexes (1,2,3...) instead of UUIDs.
+    if (/^\d+$/.test(id)) {
+      const { data: list } = await supabase.from('groomers').select('*').order('name');
+      const index = Number(id) - 1;
+      if (list && list[index]) return list[index] as Groomer;
+    }
+
+    return mockGetGroomer(id) ?? null;
   } catch {
     return mockGetGroomer(id) ?? null;
   }
