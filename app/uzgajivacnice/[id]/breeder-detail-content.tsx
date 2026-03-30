@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import {
   Star, MapPin, Shield, Award, Phone, Mail, Clock, Baby, ChevronRight,
-  Image as ImageIcon, MessageSquare, Send,
+  Image as ImageIcon, MessageSquare, Send, Share2, ArrowLeft, Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -28,12 +28,42 @@ interface BreederDetailContentProps {
 }
 
 export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetailContentProps) {
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  const handleShareLink = async () => {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch {
+      // fallback — ignored
+    }
+  };
+
   return (
     <div>
       {/* Header */}
       <section className={`relative overflow-hidden bg-gradient-to-br ${breeder.gradient}`}>
         <div className="absolute inset-0 paw-pattern opacity-10" />
         <div className="container mx-auto px-4 py-12 md:py-16 relative">
+          {/* Back + Share row */}
+          <div className="flex items-center justify-between mb-6">
+            <Link
+              href="/uzgajivacnice"
+              className="flex items-center gap-1.5 text-sm text-white/80 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Svi uzgajivači
+            </Link>
+            <button
+              onClick={handleShareLink}
+              className="flex items-center gap-1.5 text-sm text-white/80 hover:text-white transition-colors bg-white/20 rounded-full px-3 py-1.5"
+            >
+              {linkCopied ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
+              {linkCopied ? 'Kopirano!' : 'Kopiraj link'}
+            </button>
+          </div>
           <div className="flex flex-col md:flex-row items-center gap-6">
             <Avatar className="h-28 w-28 border-4 border-white shadow-lg">
               <AvatarFallback className="bg-white/90 text-gray-700 text-4xl font-bold">
@@ -180,6 +210,7 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
                   { name: 'Marko T.', rating: 5, text: 'Odličan uzgajivač! Naš štene je zdrav i dobro socijaliziran. Preporučujem svima.' },
                   { name: 'Ana K.', rating: 5, text: 'Profesionalan pristup, odgovaraju na sva pitanja i pružaju podršku i nakon kupnje.' },
                   { name: 'Ivan M.', rating: 4, text: 'Dobra komunikacija i zdravi ljubimci. Cijena je korektna za kvalitetu.' },
+                  { name: 'Petra S.', rating: 5, text: 'Uzgajivač s kojim smo odmah osjetili povjerenje. Štene je stiglo sa svim papirima i u odličnom zdravstvenom stanju.' },
                 ].map((review) => (
                   <div key={review.name} className="py-4 border-b border-border/50 last:border-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -342,6 +373,16 @@ function ContactFormDialog({ breeder }: { breeder: Breeder }) {
             <div>
               <Label htmlFor="contact-message" className="text-sm">Poruka</Label>
               <Textarea id="contact-message" required rows={3} className="mt-1 rounded-lg" placeholder="Napišite vaš upit..." />
+            </div>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <input type="checkbox" className="rounded border-input accent-orange-500" />
+                Imam iskustva s pasminom
+              </label>
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <input type="checkbox" className="rounded border-input accent-orange-500" />
+                Imam vrt/dvorište
+              </label>
             </div>
             <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 btn-hover rounded-xl font-semibold">
               <Send className="h-4 w-4 mr-2" />

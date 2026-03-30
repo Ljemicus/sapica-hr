@@ -50,7 +50,7 @@ export default async function UzgajivacnicePage({ searchParams }: UzgajivacniceP
               Uzgajivači
             </Badge>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-5 animate-fade-in-up delay-100 font-[var(--font-heading)]">
-              🐾{' '}
+              🐾 Pronađite{' '}
               <span className="text-gradient">uzgajivače</span>
             </h1>
             <p className="text-base md:text-lg text-muted-foreground mb-6 animate-fade-in-up delay-200 leading-relaxed max-w-xl mx-auto">
