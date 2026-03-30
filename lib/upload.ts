@@ -6,12 +6,17 @@ async function uploadViaAPI(file: File, bucket: string, folder: string): Promise
   formData.append('bucket', bucket);
   formData.append('folder', folder);
 
-  const res = await fetch('/api/upload', { method: 'POST', body: formData });
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({ error: 'Upload failed' }));
-    throw new Error(data.error || 'Upload greška');
+  try {
+    const res = await fetch('/api/upload', { method: 'POST', body: formData });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({ error: `Upload failed (${res.status})` }));
+      throw new Error(data.error || `Upload greška (${res.status})`);
+    }
+    return res.json();
+  } catch (err) {
+    if (err instanceof Error) throw err;
+    throw new Error('Upload greška: mrežna greška');
   }
-  return res.json();
 }
 
 export interface UploadResult {
@@ -32,8 +37,6 @@ function isSupabaseReady(): boolean {
  * Fallback na mock kad nema Supabase.
  */
 export async function uploadAvatar(userId: string, file: File): Promise<UploadResult> {
-  if (!isSupabaseReady()) return mockUpload(file, 'avatars');
-
   return uploadViaAPI(file, 'avatars', userId);
 }
 
@@ -42,8 +45,6 @@ export async function uploadAvatar(userId: string, file: File): Promise<UploadRe
  * Fallback na mock kad nema Supabase.
  */
 export async function uploadPetPhoto(petId: string, file: File): Promise<UploadResult> {
-  if (!isSupabaseReady()) return mockUpload(file, 'pet-photos');
-
   return uploadViaAPI(file, 'pet-photos', petId);
 }
 
@@ -71,8 +72,6 @@ export async function deleteFile(bucket: string, path: string): Promise<void> {
  * Upload attachment za poruke (koristi 'pet-photos' bucket za slike u chatu).
  */
 export async function uploadMessageAttachment(userId: string, file: File): Promise<UploadResult> {
-  if (!isSupabaseReady()) return mockUpload(file, 'pet-photos');
-
   return uploadViaAPI(file, 'pet-photos', `messages/${userId}`);
 }
 
