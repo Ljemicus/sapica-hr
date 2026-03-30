@@ -35,7 +35,7 @@ function NewPostForm() {
   const [category, setCategory] = useState<string | null>('');
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [, setUploadedImages] = useState<string[]>([]);
 
   const handleSubmit = () => {
     if (!title.trim() || !category || !content.trim()) {

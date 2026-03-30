@@ -41,7 +41,7 @@ export function UpdatesFeed({ updates, bookingId, sitterName, petName, currentDa
   const [showSitterForm, setShowSitterForm] = useState(false);
   const [newCaption, setNewCaption] = useState('');
   const [newEmoji, setNewEmoji] = useState('🐕');
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [, setUploadedImages] = useState<string[]>([]);
 
   const toggleLike = (id: string) => {
     setLikedIds(prev => {

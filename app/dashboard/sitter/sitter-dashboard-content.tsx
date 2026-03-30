@@ -807,7 +807,7 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
                 entityId={user.id}
                 currentImageUrl={user.avatar_url}
                 fallbackText={user.name?.charAt(0) || '?'}
-                onUploadComplete={(urls) => { /* TODO: update user avatar_url in DB */ }}
+                onUploadComplete={() => { /* TODO: update user avatar_url in DB */ }}
               />
             </div>
             <p className="text-center text-xs text-muted-foreground -mt-2">Profilna fotografija</p>
