@@ -82,7 +82,7 @@ export function LoginForm() {
           <div className="text-center mb-8 animate-fade-in-up">
             <PawLogo className="h-12 w-12 text-orange-500 mx-auto mb-4" />
             <h1 className="text-3xl font-bold">Prijava</h1>
-            <p className="text-muted-foreground mt-2">Prijavite se na svoj PetPark račun</p>
+            <p className="text-muted-foreground mt-2">Prijavite se na svoj <span className="text-orange-500">Pet</span><span className="text-teal-600">Park</span> račun</p>
           </div>
 
           {/* Social Login */}
