@@ -12,7 +12,7 @@ async function getLostPetFromDb(id: string): Promise<LostPet | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('lost_pets')
-    .select('*, lost_pet_sightings(*)')
+    .select('*')
     .eq('id', id)
     .single();
 
@@ -25,14 +25,14 @@ async function getLostPetFromDb(id: string): Promise<LostPet | null> {
     species: data.species,
     breed: data.breed || '',
     color: data.color,
-    sex: data.gender || 'muško',
-    image_url: (data.images || [])[0] || '/images/placeholder-pet.jpg',
-    gallery: data.images || [],
-    city: data.last_seen_city,
-    neighborhood: data.last_seen_location || '',
-    location_lat: Number(data.lat) || 45.815,
-    location_lng: Number(data.lng) || 15.982,
-    date_lost: data.last_seen_date,
+    sex: data.sex || 'muško',
+    image_url: data.image_url || '/images/placeholder-pet.jpg',
+    gallery: data.gallery || [],
+    city: data.city,
+    neighborhood: data.neighborhood || '',
+    location_lat: Number(data.location_lat) || 45.815,
+    location_lng: Number(data.location_lng) || 15.982,
+    date_lost: data.date_lost,
     status: data.status,
     description: data.description || '',
     special_marks: data.special_marks || '',
@@ -42,13 +42,8 @@ async function getLostPetFromDb(id: string): Promise<LostPet | null> {
     contact_phone: data.contact_phone || '',
     contact_email: data.contact_email || '',
     share_count: data.share_count || 0,
-    updates: [],
-    sightings: (data.lost_pet_sightings || []).map((s: Record<string, unknown>) => ({
-      id: s.id as string,
-      date: s.created_at as string,
-      location: s.location as string,
-      description: (s.description as string) || '',
-    })),
+    updates: data.updates || [],
+    sightings: data.sightings || [],
     created_at: data.created_at,
   };
 }

@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { ShareButtons } from '../share-buttons';
 import type { LostPet } from '@/lib/types';
 import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS } from '@/lib/types';
-import { insertSighting } from '@/lib/supabase/lost-pets';
+import { addSighting } from '@/lib/supabase/lost-pets';
 import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'sonner';
 
@@ -47,9 +47,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
     e.preventDefault();
     setSubmittingSighting(true);
 
-    const { error } = await insertSighting({
-      lost_pet_id: pet.id,
-      user_id: user?.id,
+    const { error } = await addSighting(pet.id, {
       location: sightingLocation,
       description: sightingDescription,
     });

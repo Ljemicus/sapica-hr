@@ -3,7 +3,7 @@ import type { LostPet } from '@/lib/types';
 
 const supabase = createClient();
 
-// Map DB row to LostPet type
+// Map DB row (Schema A — migration 002) to LostPet type
 function mapDbToLostPet(row: Record<string, unknown>): LostPet {
   return {
     id: row.id as string,
@@ -12,14 +12,14 @@ function mapDbToLostPet(row: Record<string, unknown>): LostPet {
     species: row.species as LostPet['species'],
     breed: (row.breed as string) || '',
     color: row.color as string,
-    sex: (row.gender as 'muško' | 'žensko') || 'muško',
-    image_url: ((row.images as string[]) || [])[0] || '/images/placeholder-pet.jpg',
-    gallery: (row.images as string[]) || [],
-    city: row.last_seen_city as string,
-    neighborhood: (row.last_seen_location as string) || '',
-    location_lat: Number(row.lat) || 45.815,
-    location_lng: Number(row.lng) || 15.982,
-    date_lost: row.last_seen_date as string,
+    sex: (row.sex as 'muško' | 'žensko') || 'muško',
+    image_url: (row.image_url as string) || '/images/placeholder-pet.jpg',
+    gallery: (row.gallery as string[]) || [],
+    city: row.city as string,
+    neighborhood: (row.neighborhood as string) || '',
+    location_lat: Number(row.location_lat) || 45.815,
+    location_lng: Number(row.location_lng) || 15.982,
+    date_lost: row.date_lost as string,
     status: row.status as LostPet['status'],
     description: (row.description as string) || '',
     special_marks: (row.special_marks as string) || '',
@@ -29,13 +29,8 @@ function mapDbToLostPet(row: Record<string, unknown>): LostPet {
     contact_phone: (row.contact_phone as string) || '',
     contact_email: (row.contact_email as string) || '',
     share_count: (row.share_count as number) || 0,
-    updates: [],
-    sightings: ((row.lost_pet_sightings as Record<string, unknown>[]) || []).map(s => ({
-      id: s.id as string,
-      date: s.created_at as string,
-      location: s.location as string,
-      description: (s.description as string) || '',
-    })),
+    updates: (row.updates as LostPet['updates']) || [],
+    sightings: (row.sightings as LostPet['sightings']) || [],
     created_at: row.created_at as string,
   };
 }
@@ -47,11 +42,11 @@ export async function fetchLostPets(filters?: {
 }): Promise<LostPet[]> {
   let query = supabase
     .from('lost_pets')
-    .select('*, lost_pet_sightings(*)')
+    .select('*')
     .order('created_at', { ascending: false });
 
   if (filters?.city) {
-    query = query.eq('last_seen_city', filters.city);
+    query = query.eq('city', filters.city);
   }
   if (filters?.species) {
     query = query.eq('species', filters.species);
@@ -72,7 +67,7 @@ export async function fetchLostPets(filters?: {
 export async function fetchLostPetById(id: string): Promise<LostPet | null> {
   const { data, error } = await supabase
     .from('lost_pets')
-    .select('*, lost_pet_sightings(*)')
+    .select('*')
     .eq('id', id)
     .single();
 
@@ -89,20 +84,21 @@ export async function insertLostPet(pet: {
   species: string;
   breed?: string;
   color: string;
-  gender?: string;
+  sex?: string;
   description?: string;
   special_marks?: string;
-  last_seen_location?: string;
-  last_seen_city: string;
-  last_seen_date: string;
+  neighborhood?: string;
+  city: string;
+  date_lost: string;
   contact_name: string;
   contact_phone: string;
   contact_email?: string;
   has_microchip?: boolean;
   has_collar?: boolean;
-  images?: string[];
-  lat?: number;
-  lng?: number;
+  image_url?: string;
+  gallery?: string[];
+  location_lat?: number;
+  location_lng?: number;
 }): Promise<{ data: Record<string, unknown> | null; error: unknown }> {
   const { data, error } = await supabase
     .from('lost_pets')
@@ -113,15 +109,31 @@ export async function insertLostPet(pet: {
   return { data, error };
 }
 
-export async function insertSighting(sighting: {
-  lost_pet_id: string;
-  user_id?: string;
-  location: string;
-  description?: string;
-}): Promise<{ error: unknown }> {
+export async function addSighting(
+  petId: string,
+  sighting: { location: string; description?: string }
+): Promise<{ error: unknown }> {
+  // Sightings are stored as JSONB array in the lost_pets row
+  const { data: pet, error: fetchError } = await supabase
+    .from('lost_pets')
+    .select('sightings')
+    .eq('id', petId)
+    .single();
+
+  if (fetchError || !pet) return { error: fetchError };
+
+  const currentSightings = (pet.sightings as Record<string, unknown>[]) || [];
+  const newSighting = {
+    id: crypto.randomUUID(),
+    date: new Date().toISOString(),
+    location: sighting.location,
+    description: sighting.description || '',
+  };
+
   const { error } = await supabase
-    .from('lost_pet_sightings')
-    .insert(sighting);
+    .from('lost_pets')
+    .update({ sightings: [...currentSightings, newSighting] })
+    .eq('id', petId);
 
   return { error };
 }

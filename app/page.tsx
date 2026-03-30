@@ -25,6 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { getLostPets } from '@/lib/db';
+import { getSitters } from '@/lib/db';
 import { LOST_PET_SPECIES_LABELS } from '@/lib/types';
 import { NewsletterSignup } from '@/components/shared/newsletter-signup';
 import { ItemListJsonLd } from '@/components/seo/json-ld';
@@ -40,13 +41,14 @@ const homepageServices = [
   { name: 'Izgubljeni ljubimci', url: 'https://petpark.hr/izgubljeni', description: 'Prijavite ili pronađite izgubljenog ljubimca' },
 ];
 
-const featuredSitters = [
-  { id: '11111111-1111-1111-1111-111111111111', name: 'Ana Horvat', city: 'Rijeka', rating: 4.9, reviews: 23, price: 25, bio: 'Obožavam životinje od malih nogu! Imam veliku kuću s dvorištem.', verified: true, superhost: true, initial: 'A', gradient: 'from-orange-400 to-amber-300' },
-  { id: '44444444-4444-4444-4444-444444444444', name: 'Luka Jurić', city: 'Rijeka', rating: 4.6, reviews: 31, price: 22, bio: 'Umirovljeni vatrogasac s velikom kućom na Trsatu.', verified: true, superhost: true, initial: 'L', gradient: 'from-teal-400 to-cyan-300' },
-  { id: '88888888-8888-8888-8888-888888888888', name: 'Ivan Knežević', city: 'Zagreb', rating: 4.9, reviews: 27, price: 32, bio: 'Iskusni čuvar s fokusom na ljubimce s posebnim potrebama.', verified: true, superhost: true, initial: 'I', gradient: 'from-purple-400 to-pink-300' },
-  { id: '33333333-3333-3333-3333-333333333333', name: 'Ivana Babić', city: 'Rijeka', rating: 4.8, reviews: 19, price: 8, bio: 'Studentica biologije i velika ljubiteljica životinja.', verified: true, superhost: false, initial: 'I', gradient: 'from-emerald-400 to-teal-300' },
-  { id: '66666666-6666-6666-6666-666666666666', name: 'Filip Matić', city: 'Zagreb', rating: 4.8, reviews: 18, price: 27, bio: 'Živim u kući s velikim vrtom i dva vlastita psa.', verified: true, superhost: false, initial: 'F', gradient: 'from-rose-400 to-orange-300' },
-  { id: '22222222-2222-2222-2222-222222222222', name: 'Marko Novak', city: 'Rijeka', rating: 4.7, reviews: 15, price: 30, bio: 'Veterinarski tehničar s iskustvom u brizi o životinjama.', verified: true, superhost: false, initial: 'M', gradient: 'from-sky-400 to-blue-300' },
+// Gradient palette for sitter cards
+const SITTER_GRADIENTS = [
+  'from-orange-400 to-amber-300',
+  'from-teal-400 to-cyan-300',
+  'from-purple-400 to-pink-300',
+  'from-emerald-400 to-teal-300',
+  'from-rose-400 to-orange-300',
+  'from-sky-400 to-blue-300',
 ];
 
 const testimonials = [
@@ -100,6 +102,23 @@ const cities = [
 ];
 
 export default async function HomePage() {
+  // Fetch top-rated sitters from Supabase
+  const allSitters = await getSitters({ sort: 'rating' });
+  const topSitters = allSitters.slice(0, 6);
+  const featuredSitters = topSitters.map((s, i) => ({
+    id: s.user_id,
+    name: s.user?.name || 'Sitter',
+    city: s.city || '',
+    rating: s.rating_avg,
+    reviews: s.review_count,
+    price: Math.min(...Object.values(s.prices || {}).filter(Boolean) as number[]) || 20,
+    bio: s.bio || '',
+    verified: s.verified,
+    superhost: s.superhost,
+    initial: (s.user?.name || 'S').charAt(0),
+    gradient: SITTER_GRADIENTS[i % SITTER_GRADIENTS.length],
+  }));
+
   return (
     <div>
       <ItemListJsonLd items={homepageServices} />

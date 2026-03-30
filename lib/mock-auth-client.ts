@@ -1,4 +1,6 @@
 // Client-side ONLY mock auth — no next/headers import
+// LEGACY: Only used as fallback when Supabase is NOT configured (!isSupabaseConfiguredClient()).
+// Imported by contexts/auth-context.tsx. Safe to remove once mock auth is fully retired.
 
 const MOCK_AUTH_COOKIE = 'mock_user_id';
 

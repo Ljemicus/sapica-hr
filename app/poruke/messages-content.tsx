@@ -13,7 +13,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { EmptyState } from '@/components/shared/empty-state';
 import { createClient } from '@/lib/supabase/client';
 import { getRealtimeManager } from '@/lib/realtime';
-import { toast } from 'sonner';
 import type { User, Message } from '@/lib/types';
 
 interface Conversation {
@@ -125,41 +124,10 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
   // eslint-disable-next-line react-hooks/exhaustive-deps -- supabase is a stable client ref
   }, [currentUser.id, selectedPartnerId]);
 
-  // Mock realtime — typing + auto-reply
+  // Realtime — subscribe for incoming messages via Supabase Realtime
   useEffect(() => {
     const rt = getRealtimeManager();
-
-    const unsubMsg = rt.onMessage((msg) => {
-      setConversations(prev => {
-        const updated = [...prev];
-        const convIndex = updated.findIndex(c => c.partnerId === msg.sender_id);
-        if (convIndex >= 0) {
-          updated[convIndex] = {
-            ...updated[convIndex],
-            messages: [...updated[convIndex].messages, { ...msg, sender: { id: msg.sender_id, name: updated[convIndex].partnerName, avatar_url: null, email: '', role: 'owner' as const, phone: null, city: null, created_at: '' } }],
-            lastMessage: msg,
-            unreadCount: updated[convIndex].unreadCount + (selectedPartnerId === msg.sender_id ? 0 : 1),
-          };
-        }
-        return updated;
-      });
-
-      // Toast za novu poruku ako nije trenutni razgovor
-      if (msg.sender_id !== selectedPartnerId) {
-        const conv = conversations.find(c => c.partnerId === msg.sender_id);
-        toast.info(`Nova poruka od ${conv?.partnerName || 'korisnik'}`, {
-          icon: '🔔',
-          description: msg.content.substring(0, 50),
-        });
-      }
-
-      // Mark as read after 2s for mock
-      setTimeout(() => {
-        setReadMessages(prev => new Set(prev).add(msg.id));
-      }, 2000);
-
-      scrollToBottom();
-    });
+    rt.subscribe(currentUser.id);
 
     const unsubTyping = rt.onTyping(({ partnerId, isTyping }) => {
       setTypingPartners(prev => {
@@ -170,8 +138,8 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
       });
     });
 
-    return () => { unsubMsg(); unsubTyping(); };
-  }, [selectedPartnerId, scrollToBottom, conversations]);
+    return () => { rt.destroy(); unsubTyping(); };
+  }, [currentUser.id]);
 
   // Auto-scroll
   useEffect(() => {
@@ -217,14 +185,10 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
     setNewMessage('');
     setSending(false);
 
-    // Mark own messages as read after 3s (mock 'pročitano')
+    // Mark own messages as read after 3s
     setTimeout(() => {
       setReadMessages(prev => new Set(prev).add(localMsg.id));
     }, 3000);
-
-    // Simuliraj odgovor od mock sittera nakon 3-5s
-    const rt = getRealtimeManager();
-    rt.simulateIncomingMessage(selectedPartnerId, currentUser.id);
   };
 
   const messageGroups = selectedConversation ? groupMessagesByDate(selectedConversation.messages) : [];

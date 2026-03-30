@@ -1,36 +1,19 @@
-// Mock realtime sustav s EventEmitter patternom — simulira WebSocket
+// Supabase Realtime wrapper for messages
+// Replaces the old mock EventEmitter-based implementation.
+// Uses Supabase Realtime channels for actual message delivery.
 
-type MessageHandler = (message: MockMessage) => void;
+import { createClient } from '@/lib/supabase/client';
+import type { Message } from '@/lib/types';
+
+type MessageHandler = (message: Message) => void;
 type TypingHandler = (data: { partnerId: string; isTyping: boolean }) => void;
-
-export interface MockMessage {
-  id: string;
-  sender_id: string;
-  receiver_id: string;
-  booking_id: string | null;
-  content: string;
-  image_url: string | null;
-  created_at: string;
-  read: boolean;
-}
-
-const MOCK_RESPONSES = [
-  'Naravno, to mogu napraviti! 🐾',
-  'Super, veselim se! Vaš ljubimac je u dobrim rukama.',
-  'Hvala na poruci! Javim vam se uskoro s detaljima.',
-  'Može, dogovoreno! 😊',
-  'Imam iskustva s tom pasminom, bit će odlično!',
-  'Da, slobodna sam taj termin. Pošaljite mi više detalja.',
-  'Upravo sam s vašim ljubimcem, sve je super! 🐶',
-  'Naravno! Imate li još kakvih pitanja?',
-  'Zvuči odlično, jedva čekam upoznati vašeg ljubimca!',
-  'Poslat ću vam fotke čim budem mogla. 📸',
-];
 
 class RealtimeManager {
   private messageHandlers: Set<MessageHandler> = new Set();
   private typingHandlers: Set<TypingHandler> = new Set();
-  private typingTimeouts: Map<string, ReturnType<typeof setTimeout>> = new Map();
+  private channel: ReturnType<ReturnType<typeof createClient>['channel']> | null = null;
+  private supabase = createClient();
+  private subscribedUserId: string | null = null;
 
   onMessage(handler: MessageHandler): () => void {
     this.messageHandlers.add(handler);
@@ -43,72 +26,56 @@ class RealtimeManager {
   }
 
   /**
-   * Simulira dolaznu poruku od partnera nakon 3-5 sekundi.
-   * Prvo šalje typing indicator, pa poruku.
+   * Subscribe to real-time message inserts for a given user.
+   * Call this once when the messages page mounts.
    */
-  simulateIncomingMessage(partnerId: string, receiverId: string): void {
-    // Typing indicator — počinje nakon 1s
-    const typingDelay = 1000;
-    const messageDelay = 3000 + Math.random() * 2000; // 3-5s
+  subscribe(userId: string): void {
+    if (this.subscribedUserId === userId && this.channel) return;
+    this.unsubscribe();
+    this.subscribedUserId = userId;
 
-    setTimeout(() => {
-      this.typingHandlers.forEach((h) =>
-        h({ partnerId, isTyping: true })
-      );
-    }, typingDelay);
-
-    // Poruka stiže nakon 3-5s
-    setTimeout(() => {
-      // Prestani typing
-      this.typingHandlers.forEach((h) =>
-        h({ partnerId, isTyping: false })
-      );
-
-      const msg: MockMessage = {
-        id: `mock-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-        sender_id: partnerId,
-        receiver_id: receiverId,
-        booking_id: null,
-        content:
-          MOCK_RESPONSES[Math.floor(Math.random() * MOCK_RESPONSES.length)],
-        image_url: null,
-        created_at: new Date().toISOString(),
-        read: false,
-      };
-
-      this.messageHandlers.forEach((h) => h(msg));
-    }, messageDelay);
+    this.channel = this.supabase
+      .channel(`messages:${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${userId}`,
+        },
+        (payload) => {
+          const newMsg = payload.new as Message;
+          this.messageHandlers.forEach((h) => h(newMsg));
+        }
+      )
+      .subscribe();
   }
 
-  /** Simulira typing indicator za određeno trajanje */
-  simulateTyping(partnerId: string, durationMs: number = 2000): void {
-    // Očisti prethodni timeout
-    const existing = this.typingTimeouts.get(partnerId);
-    if (existing) clearTimeout(existing);
+  unsubscribe(): void {
+    if (this.channel) {
+      this.supabase.removeChannel(this.channel);
+      this.channel = null;
+      this.subscribedUserId = null;
+    }
+  }
 
-    this.typingHandlers.forEach((h) =>
-      h({ partnerId, isTyping: true })
-    );
-
-    const timeout = setTimeout(() => {
-      this.typingHandlers.forEach((h) =>
-        h({ partnerId, isTyping: false })
-      );
-      this.typingTimeouts.delete(partnerId);
-    }, durationMs);
-
-    this.typingTimeouts.set(partnerId, timeout);
+  /**
+   * Set typing state for a partner (local UI only — no server broadcast).
+   * Components can call this to show/hide typing indicator.
+   */
+  setTyping(partnerId: string, isTyping: boolean): void {
+    this.typingHandlers.forEach((h) => h({ partnerId, isTyping }));
   }
 
   destroy(): void {
+    this.unsubscribe();
     this.messageHandlers.clear();
     this.typingHandlers.clear();
-    this.typingTimeouts.forEach((t) => clearTimeout(t));
-    this.typingTimeouts.clear();
   }
 }
 
-// Singleton instanca
+// Singleton instance
 let instance: RealtimeManager | null = null;
 
 export function getRealtimeManager(): RealtimeManager {
