@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isToday, addMonths, subMonths } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isToday, addMonths, subMonths, isBefore } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,9 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface AvailabilityCalendarProps {
   availableDates: Set<string>;
+  selectedDate?: string;
+  onSelectDate?: (date: string) => void;
 }
 
-export function AvailabilityCalendar({ availableDates }: AvailabilityCalendarProps) {
+export function AvailabilityCalendar({ availableDates, selectedDate, onSelectDate }: AvailabilityCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const { days, startDay } = useMemo(() => {
@@ -60,18 +62,26 @@ export function AvailabilityCalendar({ availableDates }: AvailabilityCalendarPro
             const dateStr = format(day, 'yyyy-MM-dd');
             const isAvailable = availableDates.has(dateStr);
             const today = isToday(day);
+            const isPast = isBefore(day, new Date()) && !today;
+            const isSelected = selectedDate === dateStr;
+            const clickable = Boolean(onSelectDate) && isAvailable && !isPast;
             return (
-              <div
+              <button
+                type="button"
                 key={dateStr}
+                disabled={!clickable}
+                onClick={() => clickable && onSelectDate?.(dateStr)}
                 className={`aspect-square rounded-xl flex items-center justify-center text-sm font-medium transition-all ${
-                  isAvailable
-                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                    : 'bg-red-50 text-red-300 dark:bg-red-950/20 dark:text-red-400/50'
-                } ${today ? 'ring-2 ring-orange-500 ring-offset-2' : ''}`}
+                  isSelected
+                    ? 'bg-orange-500 text-white shadow-md'
+                    : isAvailable
+                      ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                      : 'bg-red-50 text-red-300 dark:bg-red-950/20 dark:text-red-400/50'
+                } ${today ? 'ring-2 ring-orange-500 ring-offset-2' : ''} ${clickable ? 'cursor-pointer hover:scale-[1.03]' : ''}`}
                 title={`${format(day, 'd. MMMM', { locale: hr })} — ${isAvailable ? 'Dostupno' : 'Zauzeto'}`}
               >
                 {day.getDate()}
-              </div>
+              </button>
             );
           })}
         </div>

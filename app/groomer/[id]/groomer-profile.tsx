@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import {
   Star, MapPin, Shield, ChevronLeft, Scissors, Droplets, Sparkles,
-  Calendar, MessageCircle, Share2, Check
+  Calendar, MessageCircle, Share2, Check, Clock
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -17,7 +17,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
 import { AvailabilityCalendar } from '@/components/shared/availability-calendar';
-import { GROOMING_SERVICE_LABELS, GROOMER_SPECIALIZATION_LABELS, type Groomer, type GroomingServiceType } from '@/lib/types';
+import { GROOMING_SERVICE_LABELS, GROOMER_SPECIALIZATION_LABELS, type Groomer, type GroomingServiceType, type GroomerAvailabilitySlot } from '@/lib/types';
 import { useUser } from '@/hooks/use-user';
 import { GroomerBookingDialog } from './booking-dialog';
 
@@ -65,8 +65,28 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
   const router = useRouter();
   const [showBooking, setShowBooking] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [availabilitySlots, setAvailabilitySlots] = useState<GroomerAvailabilitySlot[]>([]);
+  const [availabilityLoading, setAvailabilityLoading] = useState(false);
+  const [preselectedSlot, setPreselectedSlot] = useState<GroomerAvailabilitySlot | null>(null);
   const gradient = gradients[groomer.name.charCodeAt(0) % gradients.length];
   const lowestPrice = Math.min(...Object.values(groomer.prices).filter(p => p > 0));
+
+  useEffect(() => {
+    const fromDate = new Date().toISOString().split('T')[0];
+    const toDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 60).toISOString().split('T')[0];
+    setAvailabilityLoading(true);
+    fetch(`/api/groomer-availability?groomer_id=${groomer.id}&from_date=${fromDate}&to_date=${toDate}`)
+      .then((r) => r.json())
+      .then((data) => setAvailabilitySlots(Array.isArray(data) ? data : []))
+      .catch(() => setAvailabilitySlots([]))
+      .finally(() => setAvailabilityLoading(false));
+  }, [groomer.id]);
+
+  const selectedDateSlots = useMemo(
+    () => availabilitySlots.filter((slot) => slot.date === selectedDate),
+    [availabilitySlots, selectedDate]
+  );
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -182,7 +202,55 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
           </Card>
 
           {/* Availability Calendar */}
-          <AvailabilityCalendar availableDates={availableDates} />
+          <AvailabilityCalendar
+            availableDates={availableDates}
+            selectedDate={selectedDate}
+            onSelectDate={setSelectedDate}
+          />
+
+          <Card className="border-0 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Clock className="h-5 w-5 text-orange-500" />
+                Slobodni termini
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {availabilityLoading ? (
+                <p className="text-sm text-muted-foreground">Učitavam termine...</p>
+              ) : !selectedDate ? (
+                <p className="text-sm text-muted-foreground">Klikni na zeleni datum iznad da vidiš slobodne sate.</p>
+              ) : selectedDateSlots.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Nema slobodnih termina za odabrani datum.</p>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-sm font-medium">
+                    {format(new Date(selectedDate + 'T00:00:00'), 'd. MMMM yyyy.', { locale: hr })}
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {selectedDateSlots.map((slot) => (
+                      <button
+                        key={slot.id}
+                        type="button"
+                        className="rounded-xl border bg-white p-3 text-left hover:border-orange-300 hover:bg-orange-50 transition-all"
+                        onClick={() => {
+                          setPreselectedSlot(slot);
+                          setShowBooking(true);
+                        }}
+                      >
+                        <div className="font-semibold text-sm text-orange-600">
+                          {slot.start_time.slice(0, 5)}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          do {slot.end_time.slice(0, 5)}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Reviews */}
           <Card className="border-0 shadow-sm">
@@ -307,8 +375,13 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
       {showBooking && (
         <GroomerBookingDialog
           open={showBooking}
-          onOpenChange={setShowBooking}
+          onOpenChange={(open) => {
+            setShowBooking(open);
+            if (!open) setPreselectedSlot(null);
+          }}
           groomer={groomer}
+          initialDate={selectedDate || undefined}
+          initialSlot={preselectedSlot}
         />
       )}
     </div>

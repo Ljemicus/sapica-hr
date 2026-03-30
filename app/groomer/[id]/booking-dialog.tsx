@@ -19,9 +19,11 @@ interface GroomerBookingDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   groomer: Groomer;
+  initialDate?: string;
+  initialSlot?: GroomerAvailabilitySlot | null;
 }
 
-export function GroomerBookingDialog({ open, onOpenChange, groomer }: GroomerBookingDialogProps) {
+export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate, initialSlot }: GroomerBookingDialogProps) {
   const [step, setStep] = useState(1);
   const [service, setService] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
@@ -49,6 +51,19 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer }: GroomerBoo
       .catch(() => setSlots([]))
       .finally(() => setLoading(false));
   }, [open, groomer.id]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (initialDate) {
+      setSelectedDate(initialDate);
+      setStep(service ? 2 : 1);
+    }
+    if (initialSlot) {
+      setSelectedDate(initialSlot.date);
+      setSelectedSlot(initialSlot);
+      setStep(service ? 3 : 1);
+    }
+  }, [open, initialDate, initialSlot, service]);
 
   // Available dates set
   const availableDates = useMemo(() => new Set(slots.map((s) => s.date)), [slots]);
