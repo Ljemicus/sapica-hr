@@ -63,19 +63,20 @@ export function BookingDialog({ open, onOpenChange, profile, userId }: BookingDi
     setLoading(true);
     const totalPrice = calculatePrice();
 
-    const { error } = await supabase.from('bookings').insert({
-      owner_id: userId,
-      sitter_id: data.sitter_id,
-      pet_id: data.pet_id,
-      service_type: data.service_type,
-      start_date: data.start_date,
-      end_date: data.end_date,
-      total_price: totalPrice,
-      note: data.note || null,
-      status: 'pending',
+    const response = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sitter_id: data.sitter_id,
+        pet_id: data.pet_id,
+        service_type: data.service_type,
+        start_date: data.start_date,
+        end_date: data.end_date,
+        note: data.note || null,
+      }),
     });
 
-    if (error) {
+    if (!response.ok) {
       toast.error('Greška pri kreiranju rezervacije');
       setLoading(false);
       return;

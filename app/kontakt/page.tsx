@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'sonner';
 
@@ -39,21 +38,21 @@ export default function KontaktPage() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
-      const { error } = await supabase.from('support_tickets').insert({
-        name: formData.name,
-        email: formData.email,
-        subject: formData.subject,
-        message: formData.message,
-        user_id: user?.id || null,
+      const response = await fetch('/api/support', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, website: '' }),
       });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(payload.error || 'Greška pri slanju poruke');
+      }
 
       toast.success('Vaša poruka je uspješno poslana! Odgovorit ćemo vam u najkraćem mogućem roku.');
       setFormData({ name: user?.name || '', email: user?.email || '', subject: '', message: '' });
-    } catch {
-      toast.error('Greška pri slanju poruke. Pokušajte ponovo.');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Greška pri slanju poruke. Pokušajte ponovo.');
     } finally {
       setLoading(false);
     }
@@ -167,6 +166,11 @@ export default function KontaktPage() {
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                       ))}
                     </select>
+                  </div>
+
+                  <div className="hidden" aria-hidden="true">
+                    <Label htmlFor="website">Website</Label>
+                    <Input id="website" tabIndex={-1} autoComplete="off" value="" onChange={() => {}} />
                   </div>
 
                   <div className="space-y-2">

@@ -103,8 +103,12 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
 
   const cancelBooking = async (bookingId: string) => {
     if (!confirm('Jeste li sigurni da želite otkazati ovu rezervaciju?')) return;
-    const { error } = await supabase.from('bookings').update({ status: 'cancelled' }).eq('id', bookingId);
-    if (error) toast.error('Greška pri otkazivanju');
+    const response = await fetch(`/api/bookings/${bookingId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'cancelled' }),
+    });
+    if (!response.ok) toast.error('Greška pri otkazivanju');
     else { toast.success('Rezervacija otkazana'); router.refresh(); }
   };
 
