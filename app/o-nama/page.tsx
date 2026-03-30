@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Heart, MapPin, Users, PawPrint, Shield, MessageSquare, Search } from 'lucide-react';
+import { Heart, MapPin, Users, PawPrint, Shield, Search } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';

@@ -51,11 +51,6 @@ const SITTER_GRADIENTS = [
   'from-sky-400 to-blue-300',
 ];
 
-const testimonials = [
-  { name: 'Marina K.', city: 'Rijeka', text: 'Ana je bila nevjerojatna s našim Rexom! Slala nam je fotke svaki dan i Rex se vratio sretan. Definitivno koristimo PetPark opet!', rating: 5 },
-  { name: 'Tomislav B.', city: 'Zagreb', text: 'Filip je spasio naš godišnji odmor! Buddy je bio u sigurnim rukama i uživao je u velikom vrtu. Hvala PetParku na ovoj usluzi!', rating: 5 },
-  { name: 'Nina Š.', city: 'Zagreb', text: 'Kao vlasnica mačke s dijabetesom, teško je naći nekoga tko zna dati inzulin. Marko je bio profesionalan i Whiskers je bio savršeno zbrinut.', rating: 5 },
-];
 
 const reviewCards = [
   { name: 'Marina K.', city: 'Rijeka', text: 'Pronašli smo savršenu čuvaricu za našeg Maxa! Ana je slala fotke svaki dan i Max se vratio sretan kao nikad.', rating: 5, initial: 'M', gradient: 'from-orange-400 to-rose-400', petType: 'dog' as const },

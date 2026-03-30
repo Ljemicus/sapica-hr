@@ -38,10 +38,9 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import {
   type DogFriendlyLocation,
-  mockDogFriendlyLocations,
   CATEGORY_LABELS,
   CITY_LIST,
-} from '@/lib/mock-dog-friendly';
+} from '@/lib/db/dog-friendly';
 import { toast } from 'sonner';
 
 const CATEGORY_ICONS: Record<DogFriendlyLocation['category'], React.ReactNode> = {
@@ -71,7 +70,7 @@ const ALL_CATEGORIES: DogFriendlyLocation['category'][] = [
   'shop',
 ];
 
-export function DogFriendlyContent() {
+export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocation[] }) {
   const [search, setSearch] = useState('');
   const [selectedCity, setSelectedCity] = useState<string>('Sve');
   const [selectedCategory, setSelectedCategory] = useState<string>('Sve');
@@ -86,7 +85,7 @@ export function DogFriendlyContent() {
   });
 
   const filteredLocations = useMemo(() => {
-    return mockDogFriendlyLocations.filter((loc) => {
+    return locations.filter((loc) => {
       if (selectedCity !== 'Sve' && loc.city !== selectedCity) return false;
       if (selectedCategory !== 'Sve' && loc.category !== selectedCategory) return false;
       if (search.trim()) {
@@ -101,7 +100,7 @@ export function DogFriendlyContent() {
       }
       return true;
     });
-  }, [search, selectedCity, selectedCategory]);
+  }, [locations, search, selectedCity, selectedCategory]);
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) => {
@@ -144,8 +143,8 @@ export function DogFriendlyContent() {
     '@type': 'ItemList',
     name: 'Dog-Friendly Lokacije u Hrvatskoj',
     description: 'Kompletni vodič za dog-friendly lokacije u Hrvatskoj',
-    numberOfItems: mockDogFriendlyLocations.length,
-    itemListElement: mockDogFriendlyLocations.map((loc, index) => ({
+    numberOfItems: locations.length,
+    itemListElement: locations.map((loc, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       item: {
@@ -480,7 +479,7 @@ export function DogFriendlyContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {CITY_LIST.map((city) => {
-              const cityLocations = mockDogFriendlyLocations.filter((l) => l.city === city);
+              const cityLocations = locations.filter((l) => l.city === city);
               const categories = [...new Set(cityLocations.map((l) => l.category))];
               return (
                 <Card key={city} className="rounded-2xl border-0 shadow-sm card-hover">

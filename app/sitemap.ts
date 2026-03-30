@@ -1,10 +1,15 @@
 import type { MetadataRoute } from 'next';
-import { mockSitterProfiles, mockGroomers, mockTrainers, mockProducts, mockArticles, mockForumTopics } from '@/lib/mock-data';
-import { mockAdoptionPets } from '@/lib/mock-adoption-data';
+import { getSitters } from '@/lib/db/sitters';
+import { getGroomers } from '@/lib/db/groomers';
+import { getTrainers } from '@/lib/db/trainers';
+import { getProducts } from '@/lib/db/products';
+import { getArticles } from '@/lib/db/blog';
+import { getTopics } from '@/lib/db/forum';
+import { getLostPets } from '@/lib/db/lost-pets';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [
     '',
     '/pretraga',
@@ -42,60 +47,64 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route === '' ? 1 : 0.8,
   }));
 
-  // Sitteri
-  const sitterEntries: MetadataRoute.Sitemap = mockSitterProfiles.map((s) => ({
+  // Fetch all dynamic data in parallel
+  const [sitters, groomers, trainers, products, articles, topics, lostPets] = await Promise.all([
+    getSitters().catch(() => []),
+    getGroomers().catch(() => []),
+    getTrainers().catch(() => []),
+    getProducts().catch(() => []),
+    getArticles().catch(() => []),
+    getTopics().catch(() => []),
+    getLostPets().catch(() => []),
+  ]);
+
+  const sitterEntries: MetadataRoute.Sitemap = sitters.map((s) => ({
     url: `${BASE_URL}/sitter/${s.user_id}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }));
 
-  // Groomeri
-  const groomerEntries: MetadataRoute.Sitemap = mockGroomers.map((g) => ({
+  const groomerEntries: MetadataRoute.Sitemap = groomers.map((g) => ({
     url: `${BASE_URL}/groomer/${g.id}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }));
 
-  // Treneri
-  const trainerEntries: MetadataRoute.Sitemap = mockTrainers.map((t) => ({
+  const trainerEntries: MetadataRoute.Sitemap = trainers.map((t) => ({
     url: `${BASE_URL}/trener/${t.id}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }));
 
-  // Shop proizvodi
-  const productEntries: MetadataRoute.Sitemap = mockProducts.map((p) => ({
+  const productEntries: MetadataRoute.Sitemap = products.map((p) => ({
     url: `${BASE_URL}/shop/${p.slug}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
     priority: 0.6,
   }));
 
-  // Blog
-  const blogEntries: MetadataRoute.Sitemap = mockArticles.map((a) => ({
+  const blogEntries: MetadataRoute.Sitemap = articles.map((a) => ({
     url: `${BASE_URL}/blog/${a.slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.5,
   }));
 
-  // Forum topics
-  const forumEntries: MetadataRoute.Sitemap = mockForumTopics.map((t) => ({
+  const forumEntries: MetadataRoute.Sitemap = topics.map((t) => ({
     url: `${BASE_URL}/forum/${t.id}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
     priority: 0.5,
   }));
 
-  // Adoption pets
-  const adoptionEntries: MetadataRoute.Sitemap = mockAdoptionPets.map((p) => ({
-    url: `${BASE_URL}/udomljavanje/${p.id}`,
+  const lostPetEntries: MetadataRoute.Sitemap = lostPets.map((p) => ({
+    url: `${BASE_URL}/izgubljeni/${p.id}`,
     lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
+    changeFrequency: 'daily' as const,
+    priority: 0.6,
   }));
 
   return [
@@ -106,6 +115,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...productEntries,
     ...blogEntries,
     ...forumEntries,
-    ...adoptionEntries,
+    ...lostPetEntries,
   ];
 }

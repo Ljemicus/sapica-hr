@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Calendar, User, ChevronLeft, Share2, Check, ArrowRight, Clock, BookOpen, ExternalLink } from 'lucide-react';
+import { Calendar, User, ChevronLeft, Share2, Check, ArrowRight, Clock, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

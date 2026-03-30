@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       fileName: file.name,
       size: file.size,
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
   }
 }

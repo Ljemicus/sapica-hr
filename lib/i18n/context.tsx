@@ -20,6 +20,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY) as Language | null;
     if (stored && translations[stored]) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrating from localStorage on mount
       setLanguageState(stored);
     }
   }, []);

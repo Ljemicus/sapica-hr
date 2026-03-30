@@ -15,7 +15,6 @@ import { ShareButtons } from '../share-buttons';
 import type { LostPet } from '@/lib/types';
 import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS } from '@/lib/types';
 import { addSighting } from '@/lib/supabase/lost-pets';
-import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'sonner';
 
 const MapComponent = dynamic(() => import('./map-component'), { ssr: false });
@@ -41,7 +40,6 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const [sightingDescription, setSightingDescription] = useState('');
   const [submittingSighting, setSubmittingSighting] = useState(false);
   const [localSightings, setLocalSightings] = useState(pet.sightings);
-  const { user } = useAuth();
 
   const handleSightingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getAdoptionPets } from '@/lib/db/adoption';
 import { AdoptionContent } from './adoption-content';
 
 export const metadata: Metadata = {
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AdoptionPage() {
-  return <AdoptionContent />;
+export default async function AdoptionPage() {
+  const pets = await getAdoptionPets();
+  return <AdoptionContent pets={pets} />;
 }

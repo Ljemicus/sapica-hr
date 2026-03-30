@@ -8,20 +8,19 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from 'sonner';
-import { getProductBySlug, getProductReviews, getRelatedProducts } from '@/lib/mock-data';
-import { PRODUCT_CATEGORY_LABELS, PRODUCT_CATEGORY_EMOJI } from '@/lib/types';
+import { PRODUCT_CATEGORY_LABELS, PRODUCT_CATEGORY_EMOJI, type Product, type ProductReview } from '@/lib/types';
 import { useCart } from '@/lib/cart-context';
 
-export function ProductDetail({ slug }: { slug: string }) {
-  const product = getProductBySlug(slug);
+interface ProductDetailProps {
+  product: Product;
+  reviews: ProductReview[];
+  related: Product[];
+}
+
+export function ProductDetail({ product, reviews, related }: ProductDetailProps) {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(product?.variants[0]?.value ?? '');
-
-  if (!product) return null;
-
-  const reviews = getProductReviews(product.id);
-  const related = getRelatedProducts(product.id);
 
   const handleAddToCart = () => {
     addToCart(product, quantity, selectedVariant || undefined);

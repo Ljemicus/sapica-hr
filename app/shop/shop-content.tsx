@@ -9,12 +9,12 @@ import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
-import { mockProducts } from '@/lib/mock-data';
+// Products passed as props from server component
 import { PRODUCT_CATEGORY_LABELS, PRODUCT_CATEGORY_EMOJI, type ProductCategory, type Product } from '@/lib/types';
 import { useCart } from '@/lib/cart-context';
 
 const CATEGORIES = Object.keys(PRODUCT_CATEGORY_LABELS) as ProductCategory[];
-const BRANDS = [...new Set(mockProducts.map(p => p.brand))].sort();
+
 type SortOption = 'popular' | 'price-asc' | 'price-desc' | 'new' | 'rating';
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'popular', label: 'Popularnost' },
@@ -24,11 +24,7 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'new', label: 'Novo' },
 ];
 
-function getCategoryCount(cat: ProductCategory) {
-  return mockProducts.filter(p => p.category === cat).length;
-}
 
-const featuredProducts = mockProducts.filter(p => p.reviewCount > 70).slice(0, 8);
 
 function ProductCard({ product }: { product: Product }) {
   const { addToCart } = useCart();
@@ -75,6 +71,8 @@ function FilterSidebar({
   priceMax, setPriceMax,
   sort, setSort,
   onReset,
+  brands,
+  getCategoryCount,
 }: {
   selectedCategory: ProductCategory | null; setSelectedCategory: (c: ProductCategory | null) => void;
   selectedBrand: string | null; setSelectedBrand: (b: string | null) => void;
@@ -82,6 +80,8 @@ function FilterSidebar({
   priceMax: string; setPriceMax: (v: string) => void;
   sort: SortOption; setSort: (s: SortOption) => void;
   onReset: () => void;
+  brands: string[];
+  getCategoryCount: (cat: ProductCategory) => number;
 }) {
   return (
     <div className="space-y-6">
@@ -136,7 +136,7 @@ function FilterSidebar({
       <div>
         <Label className="text-sm font-medium mb-2 block">Brand</Label>
         <div className="space-y-1.5 max-h-48 overflow-y-auto">
-          {BRANDS.map(brand => (
+          {brands.map(brand => (
             <button
               key={brand}
               onClick={() => setSelectedBrand(selectedBrand === brand ? null : brand)}
@@ -172,7 +172,13 @@ function FilterSidebar({
   );
 }
 
-export function ShopContent() {
+export function ShopContent({ products }: { products: Product[] }) {
+  const BRANDS = useMemo(() => [...new Set(products.map(p => p.brand))].sort(), [products]);
+  const featuredProducts = useMemo(() => products.filter(p => p.reviewCount > 70).slice(0, 8), [products]);
+
+  function getCategoryCount(cat: ProductCategory) {
+    return products.filter(p => p.category === cat).length;
+  }
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [priceMin, setPriceMin] = useState('');
@@ -192,29 +198,29 @@ export function ShopContent() {
   };
 
   const filteredProducts = useMemo(() => {
-    let products = [...mockProducts];
+    let result = [...products];
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      products = products.filter(p =>
+      result = result.filter(p =>
         p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
       );
     }
-    if (selectedCategory) products = products.filter(p => p.category === selectedCategory);
-    if (selectedBrand) products = products.filter(p => p.brand === selectedBrand);
-    if (priceMin) products = products.filter(p => p.price >= Number(priceMin));
-    if (priceMax) products = products.filter(p => p.price <= Number(priceMax));
+    if (selectedCategory) result = result.filter(p => p.category === selectedCategory);
+    if (selectedBrand) result = result.filter(p => p.brand === selectedBrand);
+    if (priceMin) result = result.filter(p => p.price >= Number(priceMin));
+    if (priceMax) result = result.filter(p => p.price <= Number(priceMax));
 
     switch (sort) {
-      case 'price-asc': products.sort((a, b) => a.price - b.price); break;
-      case 'price-desc': products.sort((a, b) => b.price - a.price); break;
-      case 'rating': products.sort((a, b) => b.rating - a.rating); break;
-      case 'new': products.sort((a, b) => b.id.localeCompare(a.id)); break;
-      default: products.sort((a, b) => b.reviewCount - a.reviewCount);
+      case 'price-asc': result.sort((a, b) => a.price - b.price); break;
+      case 'price-desc': result.sort((a, b) => b.price - a.price); break;
+      case 'rating': result.sort((a, b) => b.rating - a.rating); break;
+      case 'new': result.sort((a, b) => b.id.localeCompare(a.id)); break;
+      default: result.sort((a, b) => b.reviewCount - a.reviewCount);
     }
 
-    return products;
-  }, [selectedCategory, selectedBrand, priceMin, priceMax, sort, searchQuery]);
+    return result;
+  }, [products, selectedCategory, selectedBrand, priceMin, priceMax, sort, searchQuery]);
 
   const activeFilterCount = [selectedCategory, selectedBrand, priceMin, priceMax].filter(Boolean).length;
 
@@ -225,6 +231,8 @@ export function ShopContent() {
     priceMax, setPriceMax,
     sort, setSort,
     onReset: resetFilters,
+    brands: BRANDS,
+    getCategoryCount,
   };
 
   return (

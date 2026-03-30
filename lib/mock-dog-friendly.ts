@@ -1,3 +1,4 @@
+/** @deprecated Fallback data — use lib/db/dog-friendly.ts instead. */
 export interface DogFriendlyLocation {
   id: string;
   name: string;

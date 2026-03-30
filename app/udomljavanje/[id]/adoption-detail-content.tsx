@@ -25,7 +25,7 @@ import {
   SPECIES_LABEL,
   GENDER_LABEL,
   SIZE_LABEL,
-} from '@/lib/mock-adoption-data';
+} from '@/lib/db/adoption';
 
 interface Props {
   petId: string;

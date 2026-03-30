@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { MapPin, ArrowRight, Star, Shield, Clock, Heart, PawPrint, TreePine, Users } from 'lucide-react';
+import { MapPin, ArrowRight, Star, Shield, Clock, Heart, TreePine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -248,7 +248,7 @@ export default function CuvanjePasaZagreb() {
                 Važno je znati da Zagreb ima pravila o držanju pasa na javnim površinama. Psi moraju biti na
                 povodcu u parkovima i na ulici, osim na posebno označenim površinama za slobodno puštanje.
                 Obavezno je skupljanje za psom — vaš sitter će to naravno znati, ali dobro je i vama biti
-                upoznatim s pravilima. Zagreb ima i nekoliko posebno označenih "dog parkova" s ogradama
+                upoznatim s pravilima. Zagreb ima i nekoliko posebno označenih &quot;dog parkova&quot; s ogradama
                 gdje psi mogu slobodno trčati, uključujući onaj na Jarunu i u parku Mladenaca.
               </p>
               <p>

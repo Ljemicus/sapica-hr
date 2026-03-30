@@ -138,7 +138,7 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
     if (error) {
       // Mock fallback
       const mockUpdate: PetUpdate = {
-        id: `upd-${Date.now()}`,
+        id: `upd-fallback-${updateBookingId}`,
         booking_id: updateBookingId,
         sitter_id: user.id,
         type: updateType,

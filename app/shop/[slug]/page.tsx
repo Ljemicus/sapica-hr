@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getProductBySlug } from '@/lib/db';
+import { getProductBySlug, getProductReviews, getRelatedProducts } from '@/lib/db';
 import { ProductDetail } from './product-detail';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
@@ -45,7 +45,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         { label: 'Shop', href: '/shop' },
         { label: product.name, href: `/shop/${slug}` },
       ]} />
-      <ProductDetail slug={slug} />
+      <ProductDetail product={product} reviews={await getProductReviews(product.id)} related={await getRelatedProducts(product.id)} />
     </>
   );
 }

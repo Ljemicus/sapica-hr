@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getDogFriendlyLocations } from '@/lib/db/dog-friendly';
 import { DogFriendlyContent } from './dog-friendly-content';
 
 export const metadata: Metadata = {
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DogFriendlyPage() {
-  return <DogFriendlyContent />;
+export default async function DogFriendlyPage() {
+  const locations = await getDogFriendlyLocations();
+  return <DogFriendlyContent locations={locations} />;
 }

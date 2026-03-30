@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAdoptionPetById, getShelterById, SPECIES_LABEL } from '@/lib/mock-adoption-data';
+import { getAdoptionPet, getShelterById, SPECIES_LABEL } from '@/lib/db/adoption';
 import { AdoptionDetailContent } from './adoption-detail-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
@@ -10,7 +10,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const pet = getAdoptionPetById(id);
+  const pet = await getAdoptionPet(id);
   if (!pet) return { title: 'Ljubimac nije pronađen' };
   const shelter = getShelterById(pet.shelter_id);
 
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AdoptionDetailPage({ params }: Props) {
   const { id } = await params;
-  const pet = getAdoptionPetById(id);
+  const pet = await getAdoptionPet(id);
   if (!pet) notFound();
 
   return (

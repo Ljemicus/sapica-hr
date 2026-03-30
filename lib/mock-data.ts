@@ -1,3 +1,8 @@
+/**
+ * @deprecated This file provides fallback data for lib/db/ functions.
+ * Do NOT import directly from app/ pages — use lib/db/ instead.
+ * Will be removed once all Supabase tables are fully populated.
+ */
 import type { User, Pet, SitterProfile, Booking, Review, Message, Availability, ServiceType, Walk, PetUpdate, PetPassport, Groomer, Trainer, TrainingProgram, Article, ForumTopic, ForumComment, ForumCategorySlug, LostPet } from './types';
 
 // ============================================================

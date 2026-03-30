@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { MapPin, ArrowRight, Star, Shield, Clock, Heart, Mountain, TreePine, Anchor } from 'lucide-react';
+import { MapPin, ArrowRight, Star, Shield, Clock, Heart, Mountain, Anchor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

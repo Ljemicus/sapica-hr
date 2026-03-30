@@ -1,3 +1,4 @@
+/** @deprecated Fallback data — use lib/db/adoption.ts instead. */
 export interface AdoptionPet {
   id: string;
   name: string;

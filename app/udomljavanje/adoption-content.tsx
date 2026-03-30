@@ -5,19 +5,17 @@ import Link from 'next/link';
 import { Heart, MapPin, Filter, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { useAdoptionFavorites } from '@/hooks/use-adoption-favorites';
 import {
-  mockAdoptionPets,
   getShelterById,
   formatAge,
   getAgeCategory,
   SPECIES_EMOJI,
-  SPECIES_LABEL,
   GENDER_LABEL,
   SIZE_LABEL,
-} from '@/lib/mock-adoption-data';
+  type AdoptionPet,
+} from '@/lib/db/adoption';
 import { CITIES } from '@/lib/types';
 
 const speciesFilters = [
@@ -48,7 +46,7 @@ const genderFilters = [
   { value: 'female', label: 'Ženski' },
 ];
 
-export function AdoptionContent() {
+export function AdoptionContent({ pets }: { pets: AdoptionPet[] }) {
   const [speciesFilter, setSpeciesFilter] = useState('all');
   const [cityFilter, setCityFilter] = useState<string | null>('all');
   const [sizeFilter, setSizeFilter] = useState<string | null>('all');
@@ -57,7 +55,7 @@ export function AdoptionContent() {
   const { toggleFavorite, isFavorite } = useAdoptionFavorites();
 
   const filtered = useMemo(() => {
-    return mockAdoptionPets.filter((pet) => {
+    return pets.filter((pet) => {
       if (speciesFilter !== 'all' && pet.species !== speciesFilter) return false;
       if (cityFilter && cityFilter !== 'all' && pet.city !== cityFilter) return false;
       if (sizeFilter && sizeFilter !== 'all' && pet.size !== sizeFilter) return false;
@@ -65,7 +63,7 @@ export function AdoptionContent() {
       if (ageFilter && ageFilter !== 'all' && getAgeCategory(pet.age_months) !== ageFilter) return false;
       return true;
     });
-  }, [speciesFilter, cityFilter, sizeFilter, ageFilter, genderFilter]);
+  }, [pets, speciesFilter, cityFilter, sizeFilter, ageFilter, genderFilter]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50/50 via-white to-pink-50/30 dark:from-purple-950/10 dark:via-background dark:to-pink-950/10">
@@ -76,7 +74,7 @@ export function AdoptionContent() {
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6 text-sm font-medium">
               <Heart className="h-4 w-4 fill-white" />
-              {mockAdoptionPets.length} ljubimaca čeka dom
+              {pets.length} ljubimaca čeka dom
             </div>
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 font-[var(--font-heading)]">
               🏠 Udomite ljubimca

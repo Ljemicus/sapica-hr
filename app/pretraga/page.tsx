@@ -4,7 +4,7 @@ import { getSitters, getGroomers, getTrainers } from '@/lib/db';
 import { SearchContent } from './search-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { ServiceJsonLd } from '@/components/seo/json-ld';
-import type { ServiceType, GroomingServiceType, TrainingType } from '@/lib/types';
+import type { ServiceType } from '@/lib/types';
 import type { UnifiedProvider, ProviderCategory } from './types';
 
 export const metadata: Metadata = {
