@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart, ShoppingBag, ShoppingCart, Sparkles, Stethoscope, Siren, HeartHandshake, Dog, Baby, Shield } from 'lucide-react';
+import { Menu, MessageCircle, User, LogOut, Search, PawPrint, FileHeart, Scissors, GraduationCap, BookOpen, ChevronDown, MessageSquare, AlertTriangle, MapPin, Camera, Heart, ShoppingBag, ShoppingCart, Sparkles, Stethoscope, Siren, HeartHandshake, Dog, Baby, Shield, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -148,10 +148,46 @@ export function Navbar() {
             <PawPrint className="h-4 w-4" />
             Uzgajivači
           </Link>
-          <a href="https://www.hks.hr" target="_blank" rel="noopener noreferrer" title="Hrvatski kinološki savez" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent">
-            <Shield className="h-4 w-4 text-blue-500" />
-            HKS
-          </a>
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<button />} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-accent">
+              <Shield className="h-4 w-4 text-blue-500 mr-1" /> HKS <ChevronDown className="h-3.5 w-3.5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56 rounded-xl">
+              <div className="px-3 py-2">
+                <p className="text-xs font-semibold text-muted-foreground">Hrvatski kinološki savez</p>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem render={<a href="https://www.hks.hr/hr/" target="_blank" rel="noopener noreferrer" />} className="cursor-pointer rounded-lg">
+                <Shield className="mr-2 h-4 w-4 text-blue-500" />
+                Naslovnica HKS
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<a href="https://www.hks.hr/hr/registar-uzgajivaca" target="_blank" rel="noopener noreferrer" />} className="cursor-pointer rounded-lg">
+                <PawPrint className="mr-2 h-4 w-4 text-amber-500" />
+                Registar uzgajivača
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<a href="https://www.hks.hr/hr/rodovnice" target="_blank" rel="noopener noreferrer" />} className="cursor-pointer rounded-lg">
+                <FileHeart className="mr-2 h-4 w-4 text-purple-500" />
+                Rodovnice
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<a href="https://www.hks.hr/hr/top-dog-2026" target="_blank" rel="noopener noreferrer" />} className="cursor-pointer rounded-lg">
+                <Star className="mr-2 h-4 w-4 text-amber-400" />
+                Top Dog 2026
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem render={<a href="https://www.hks.hr/hr/dalmatia-dog-shows-2026-2" target="_blank" rel="noopener noreferrer" />} className="cursor-pointer rounded-lg">
+                <MapPin className="mr-2 h-4 w-4 text-teal-500" />
+                Dalmatia Shows 2026
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<a href="https://www.hks.hr/hr/varazdin-dog-shows-2026-2" target="_blank" rel="noopener noreferrer" />} className="cursor-pointer rounded-lg">
+                <MapPin className="mr-2 h-4 w-4 text-teal-500" />
+                Varaždin Shows 2026
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<a href="https://www.hks.hr/hr/umag-dog-shows-2026-2" target="_blank" rel="noopener noreferrer" />} className="cursor-pointer rounded-lg">
+                <MapPin className="mr-2 h-4 w-4 text-teal-500" />
+                Umag Shows 2026
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Link href="/izgubljeni" className="text-sm font-semibold text-red-500 hover:text-red-600 dark:text-red-400 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 relative">
             <AlertTriangle className="h-4 w-4" />
             {t('nav.lost')}
