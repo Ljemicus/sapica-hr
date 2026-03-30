@@ -148,7 +148,7 @@ export function Navbar() {
             <PawPrint className="h-4 w-4" />
             Uzgajivači
           </Link>
-          <a href="https://www.hks.hr" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent">
+          <a href="https://www.hks.hr" target="_blank" rel="noopener noreferrer" title="Hrvatski kinološki savez" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent">
             <Shield className="h-4 w-4 text-blue-500" />
             HKS
           </a>
