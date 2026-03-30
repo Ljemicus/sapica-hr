@@ -12,6 +12,8 @@ export { createWalk, updateWalk } from './walk-actions';
 export { createPetUpdate, getRecentUpdatesBySitter } from './update-actions';
 export { getPassport, updatePassport } from './pet-passport';
 export { getGroomers, getGroomer, getGroomerReviews } from './groomers';
+export { getGroomerAvailability, getGroomerAvailableDates, setGroomerAvailability, deleteGroomerAvailability } from './groomer-availability';
+export { createGroomerBooking, getGroomerBookings, getUserGroomerBookings, updateGroomerBookingStatus, cancelGroomerBooking } from './groomer-bookings';
 export { getTrainers, getTrainer, getPrograms, getTrainerReviews } from './trainers';
 export { getArticles, getArticle, getRelatedArticles } from './blog';
 export { getCategories, getTopics, getTopic, getPosts, getTrendingTopics } from './forum';

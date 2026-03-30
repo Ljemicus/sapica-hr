@@ -271,6 +271,59 @@ export interface Groomer {
   bio: string;
   verified: boolean;
   specialization: GroomerSpecialization;
+  user_id?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  working_hours?: Record<string, { start: string; end: string }>;
+}
+
+// ── Groomer Booking ──
+
+export type GroomerBookingStatus = 'pending' | 'confirmed' | 'rejected' | 'completed' | 'cancelled';
+
+export const GROOMER_BOOKING_STATUS_LABELS: Record<GroomerBookingStatus, string> = {
+  'pending': 'Na čekanju',
+  'confirmed': 'Potvrđeno',
+  'rejected': 'Odbijeno',
+  'completed': 'Završeno',
+  'cancelled': 'Otkazano',
+};
+
+export const GROOMER_BOOKING_STATUS_COLORS: Record<GroomerBookingStatus, string> = {
+  'pending': 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  'confirmed': 'bg-green-100 text-green-700 border-green-200',
+  'rejected': 'bg-red-100 text-red-700 border-red-200',
+  'completed': 'bg-blue-100 text-blue-700 border-blue-200',
+  'cancelled': 'bg-gray-100 text-gray-500 border-gray-200',
+};
+
+export interface GroomerAvailabilitySlot {
+  id: string;
+  groomer_id: string;
+  date: string;
+  start_time: string;
+  end_time: string;
+  slot_duration_minutes: number;
+  is_available: boolean;
+}
+
+export interface GroomerBooking {
+  id: string;
+  groomer_id: string;
+  user_id: string;
+  service: GroomingServiceType;
+  date: string;
+  start_time: string;
+  end_time: string;
+  price: number;
+  status: GroomerBookingStatus;
+  pet_name: string | null;
+  pet_type: string | null;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+  groomer?: Groomer;
 }
 
 // ── Training / Školovanje pasa ──

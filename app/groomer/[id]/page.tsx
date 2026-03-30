@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getGroomer, getGroomerReviews, getAvailability } from '@/lib/db';
+import { getGroomer, getGroomerReviews, getGroomerAvailableDates } from '@/lib/db';
 import { GroomerProfile } from './groomer-profile';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
@@ -24,11 +24,9 @@ export default async function GroomerPage({ params }: GroomerPageProps) {
 
   const reviews = await getGroomerReviews(id);
 
-  // Query real availability from Supabase, convert to Set<string>
-  const availabilityRecords = await getAvailability(id);
-  const availableDates = new Set(
-    availabilityRecords.filter(a => a.available).map(a => a.date)
-  );
+  // Query groomer-specific availability slots
+  const availableDatesList = await getGroomerAvailableDates(id);
+  const availableDates = new Set(availableDatesList);
 
   const jsonLd = {
     '@context': 'https://schema.org',

@@ -1,0 +1,57 @@
+import { NextResponse } from 'next/server';
+import { getAuthUser } from '@/lib/auth';
+import { createGroomerBooking, getUserGroomerBookings } from '@/lib/db';
+
+export async function GET() {
+  const user = await getAuthUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const bookings = await getUserGroomerBookings(user.id);
+  return NextResponse.json(bookings);
+}
+
+export async function POST(request: Request) {
+  const user = await getAuthUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json();
+    const { groomer_id, service, date, start_time, end_time, price, pet_name, pet_type, note } = body;
+
+    if (!groomer_id || !service || !date || !start_time || !end_time || !price) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    const booking = await createGroomerBooking({
+      groomer_id,
+      user_id: user.id,
+      service,
+      date,
+      start_time,
+      end_time,
+      price,
+      status: 'pending',
+      pet_name: pet_name || null,
+      pet_type: pet_type || null,
+      note: note || null,
+    });
+
+    if (!booking) {
+      return NextResponse.json(
+        { error: 'Termin je zauzet. Odaberite drugi termin.' },
+        { status: 409 }
+      );
+    }
+
+    return NextResponse.json(booking, { status: 201 });
+  } catch {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+  }
+}
