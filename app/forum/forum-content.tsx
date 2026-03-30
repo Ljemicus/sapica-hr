@@ -35,6 +35,7 @@ function NewPostForm() {
   const [category, setCategory] = useState<string | null>('');
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
   const handleSubmit = () => {
     if (!title.trim() || !category || !content.trim()) {
@@ -80,7 +81,7 @@ function NewPostForm() {
       <div>
         <Label>Slika (opcionalno)</Label>
         <div className="mt-1.5">
-          <ImageUpload variant="dropzone" maxFiles={3} />
+          <ImageUpload variant="dropzone" maxFiles={3} bucket="pet-photos" entityId="forum" onUploadComplete={(urls) => setUploadedImages(urls)} />
         </div>
       </div>
       <Button onClick={handleSubmit} disabled={submitting} className="w-full bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 rounded-xl font-semibold">

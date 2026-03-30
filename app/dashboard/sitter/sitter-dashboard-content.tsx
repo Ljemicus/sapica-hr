@@ -803,9 +803,11 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
             <div className="flex justify-center">
               <ImageUpload
                 variant="avatar"
+                bucket="avatars"
+                entityId={user.id}
                 currentImageUrl={user.avatar_url}
                 fallbackText={user.name?.charAt(0) || '?'}
-                onUploadComplete={() => {}}
+                onUploadComplete={(urls) => { /* TODO: update user avatar_url in DB */ }}
               />
             </div>
             <p className="text-center text-xs text-muted-foreground -mt-2">Profilna fotografija</p>

@@ -209,6 +209,8 @@ export function RegisterForm() {
             <div className="flex justify-center mb-2">
               <ImageUpload
                 variant="avatar"
+                bucket="avatars"
+                entityId="registration"
                 fallbackText={watch('name')?.charAt(0)?.toUpperCase() || '?'}
                 onUploadComplete={(urls) => setAvatarUrl(urls[0] || null)}
               />

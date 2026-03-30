@@ -35,12 +35,13 @@ const typeLabels: Record<string, string> = {
   text: 'Tekst',
 };
 
-export function UpdatesFeed({ updates, sitterName, petName, currentDay, totalDays }: Props) {
+export function UpdatesFeed({ updates, bookingId, sitterName, petName, currentDay, totalDays }: Props) {
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [filterDay, setFilterDay] = useState<string>('all');
   const [showSitterForm, setShowSitterForm] = useState(false);
   const [newCaption, setNewCaption] = useState('');
   const [newEmoji, setNewEmoji] = useState('🐕');
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
   const toggleLike = (id: string) => {
     setLikedIds(prev => {
@@ -137,7 +138,7 @@ export function UpdatesFeed({ updates, sitterName, petName, currentDay, totalDay
                 rows={3}
                 className="focus:border-orange-300"
               />
-              <ImageUpload variant="dropzone" maxFiles={3} />
+              <ImageUpload variant="dropzone" maxFiles={3} bucket="pet-photos" entityId={`updates/${bookingId}`} onUploadComplete={(urls) => setUploadedImages(urls)} />
               <div className="flex gap-2">
                 <Button
                   className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover"
