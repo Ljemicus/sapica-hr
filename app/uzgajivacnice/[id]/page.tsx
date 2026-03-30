@@ -12,8 +12,8 @@ export async function generateMetadata({ params }: BreederPageProps): Promise<Me
   const { id } = await params;
   const breeder = getBreeder(id);
   return {
-    title: breeder ? `${breeder.name} — Uzgajivačnica u ${breeder.city}` : 'Uzgajivačnica profil',
-    description: breeder ? `Pogledajte profil uzgajivačnice ${breeder.name} u ${breeder.city}. ${breeder.breeds.join(', ')}.` : '',
+    title: breeder ? `${breeder.name} — Uzgajivač u ${breeder.city}` : 'Uzgajivač profil',
+    description: breeder ? `Pogledajte profil uzgajivača ${breeder.name} u ${breeder.city}. ${breeder.breeds.join(', ')}.` : '',
   };
 }
 
@@ -50,7 +50,7 @@ export default async function BreederPage({ params }: BreederPageProps) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Breadcrumbs items={[
-        { label: 'Uzgajivačnice', href: '/uzgajivacnice' },
+        { label: 'Uzgajivači', href: '/uzgajivacnice' },
         { label: breeder.name, href: `/uzgajivacnice/${id}` },
       ]} />
       <BreederDetailContent breeder={breeder} relatedBreeders={related} />

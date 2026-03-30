@@ -177,7 +177,7 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
                 </div>
                 {/* Mock reviews */}
                 {[
-                  { name: 'Marko T.', rating: 5, text: 'Odlična uzgajivačnica! Naš štene je zdrav i dobro socijaliziran. Preporučujem svima.' },
+                  { name: 'Marko T.', rating: 5, text: 'Odličan uzgajivač! Naš štene je zdrav i dobro socijaliziran. Preporučujem svima.' },
                   { name: 'Ana K.', rating: 5, text: 'Profesionalan pristup, odgovaraju na sva pitanja i pružaju podršku i nakon kupnje.' },
                   { name: 'Ivan M.', rating: 4, text: 'Dobra komunikacija i zdravi ljubimci. Cijena je korektna za kvalitetu.' },
                 ].map((review) => (

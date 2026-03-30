@@ -79,10 +79,10 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
             <div>
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <Baby className="h-5 w-5 text-amber-500" />
-                Uzgajivačnice
+                Uzgajivači
               </h2>
               <p className="text-muted-foreground text-sm">
-                {breeders.length} {breeders.length === 1 ? 'uzgajivačnica pronađena' : 'uzgajivačnica pronađeno'}
+                {breeders.length} {breeders.length === 1 ? 'uzgajivač pronađen' : 'uzgajivača pronađeno'}
                 {city && ` u gradu ${city}`}
                 {totalLitters > 0 && ` · ${totalLitters} dostupnih legala`}
               </p>
@@ -150,7 +150,7 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
       {breeders.length === 0 ? (
         <EmptyState
           icon={Baby}
-          title="Nema pronađenih uzgajivačnica"
+          title="Nema pronađenih uzgajivača"
           description="Pokušajte promijeniti filtere ili pretražiti drugu pasminu."
           action={
             <Button

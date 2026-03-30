@@ -82,7 +82,7 @@ export function Footer() {
               <li><Link href="/forum" className="hover:text-orange-400 transition-colors">Forum</Link></li>
               <li><Link href="/shop" className="hover:text-orange-400 transition-colors">Shop</Link></li>
               <li><Link href="/veterinari" className="hover:text-orange-400 transition-colors">Veterinari</Link></li>
-              <li><Link href="/uzgajivacnice" className="hover:text-orange-400 transition-colors">Uzgajivačnice</Link></li>
+              <li><Link href="/uzgajivacnice" className="hover:text-orange-400 transition-colors">Uzgajivači</Link></li>
               <li><Link href="/dog-friendly" className="hover:text-green-400 transition-colors">Dog-Friendly lokacije</Link></li>
               <li><Link href="/udomljavanje" className="hover:text-pink-400 transition-colors">Udomljavanje</Link></li>
               <li><Link href="/hitno" className="hover:text-red-400 transition-colors font-medium">🚨 Hitna pomoć</Link></li>
