@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useId } from 'react';
 import Image from 'next/image';
 import { Upload, X, Loader2, ImagePlus, Check } from 'lucide-react';
 import { toast } from 'sonner';
@@ -72,6 +72,7 @@ export function ImageUpload({
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarProgress, setAvatarProgress] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const inputId = useId();
 
   const processFiles = useCallback(async (fileList: FileList | File[]) => {
     const newFiles: File[] = Array.from(fileList);
@@ -214,13 +215,14 @@ export function ImageUpload({
     return (
       <div className={`relative inline-block ${className}`}>
         <input
+          id={inputId}
           ref={inputRef}
           type="file"
           accept="image/jpeg,image/png,image/webp"
           onChange={handleInputChange}
           className="hidden"
         />
-        <div className="relative group cursor-pointer" onClick={() => inputRef.current?.click()}>
+        <label htmlFor={inputId} className="relative group cursor-pointer block">
           <div className="relative h-24 w-24 rounded-full ring-2 ring-orange-100 overflow-hidden bg-gradient-to-br from-orange-400 to-amber-300 flex items-center justify-center">
             {avatarPreview ? (
               <Image src={avatarPreview} alt="Avatar" fill className="object-cover" unoptimized />
@@ -243,7 +245,7 @@ export function ImageUpload({
               />
             </div>
           )}
-        </div>
+        </label>
       </div>
     );
   }
@@ -253,15 +255,16 @@ export function ImageUpload({
     return (
       <div className={`relative inline-block ${className}`}>
         <input
+          id={inputId}
           ref={inputRef}
           type="file"
           accept="image/jpeg,image/png,image/webp"
           onChange={handleInputChange}
           className="hidden"
         />
-        <div
+        <label
+          htmlFor={inputId}
           className="w-40 h-40 rounded-xl border-2 border-dashed border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center cursor-pointer group hover:border-orange-300 transition-colors"
-          onClick={() => inputRef.current?.click()}
         >
           {avatarPreview ? (
             <div className="relative w-full h-full">
@@ -276,7 +279,7 @@ export function ImageUpload({
               Dodaj sliku
             </div>
           )}
-        </div>
+        </label>
       </div>
     );
   }
@@ -285,6 +288,7 @@ export function ImageUpload({
   return (
     <div className={className}>
       <input
+        id={inputId}
         ref={inputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp"
@@ -294,12 +298,12 @@ export function ImageUpload({
       />
 
       {/* Drag & drop zona */}
-      <div
+      <label
+        htmlFor={inputId}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        onClick={() => inputRef.current?.click()}
-        className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
+        className={`block border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
           isDragging
             ? 'border-orange-500 bg-orange-50'
             : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50/50'
@@ -312,7 +316,7 @@ export function ImageUpload({
         <p className="text-xs text-gray-400 mt-1">
           JPG, PNG, WebP — max 5MB — do {maxFiles} slika
         </p>
-      </div>
+      </label>
 
       {/* Preview uploadanih slika */}
       {files.length > 0 && (
