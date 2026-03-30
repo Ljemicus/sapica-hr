@@ -144,6 +144,10 @@ export function Navbar() {
             <HeartHandshake className="h-4 w-4" />
             Udomljavanje
           </Link>
+          <Link href="/uzgajivacnice" className="text-sm font-semibold text-amber-600 hover:text-amber-700 dark:text-amber-400 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-950/20">
+            <PawPrint className="h-4 w-4" />
+            Uzgajivači
+          </Link>
           <Link href="/izgubljeni" className="text-sm font-semibold text-red-500 hover:text-red-600 dark:text-red-400 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 relative">
             <AlertTriangle className="h-4 w-4" />
             {t('nav.lost')}
