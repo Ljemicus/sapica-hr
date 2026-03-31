@@ -13,7 +13,7 @@ export async function getArticles(category?: BlogCategory): Promise<Article[]> {
   }
   try {
     const supabase = await createClient();
-    let query = supabase.from('articles').select('*').order('date', { ascending: false });
+    let query = supabase.from('articles').select('slug, title, excerpt, body, author, date, category, emoji').order('date', { ascending: false });
 
     if (category) {
       query = query.eq('category', category);
@@ -35,7 +35,7 @@ export async function getArticle(slug: string): Promise<Article | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('articles')
-      .select('*')
+      .select('slug, title, excerpt, body, author, date, category, emoji')
       .eq('slug', slug)
       .single();
     if (error || !data) return mockGetArticle(slug) ?? null;
@@ -65,7 +65,7 @@ export async function getRelatedArticles(
 
     const { data: sameCat, error: sameCatError } = await supabase
       .from('articles')
-      .select('*')
+      .select('slug, title, excerpt, body, author, date, category, emoji')
       .eq('category', current.category)
       .neq('slug', slug)
       .order('date', { ascending: false })
@@ -77,7 +77,7 @@ export async function getRelatedArticles(
       const excludeSlugs = [slug, ...related.map((a) => a.slug)];
       const { data: others, error: othersError } = await supabase
         .from('articles')
-        .select('*')
+        .select('slug, title, excerpt, body, author, date, category, emoji')
         .not('slug', 'in', `(${excludeSlugs.join(',')})`)
         .order('date', { ascending: false })
         .limit(limit - related.length);

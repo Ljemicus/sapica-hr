@@ -27,7 +27,7 @@ export async function getTopics(category?: ForumCategorySlug): Promise<ForumTopi
     const supabase = await createClient();
     let query = supabase
       .from('forum_topics')
-      .select('*')
+      .select('id, category_slug, title, author_name, author_initial, author_gradient, created_at, views, reply_count, comment_count, likes, is_pinned, is_hot, is_solved, last_reply_at, last_reply_by, tags')
       .order('is_pinned', { ascending: false })
       .order('created_at', { ascending: false });
 
@@ -51,7 +51,7 @@ export async function getTopic(id: string): Promise<ForumTopic | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('forum_topics')
-      .select('*')
+      .select('id, category_slug, title, author_name, author_initial, author_gradient, created_at, views, reply_count, comment_count, likes, is_pinned, is_hot, is_solved, last_reply_at, last_reply_by, tags')
       .eq('id', id)
       .single();
     if (error || !data) return mockGetTopic(id) ?? null;
@@ -70,14 +70,14 @@ export async function getPosts(topicId: string): Promise<(ForumPost | ForumComme
     // Try forum_comments first (migration 008), fallback to forum_posts (migration 002)
     const { data, error } = await supabase
       .from('forum_comments')
-      .select('*')
+      .select('id, topic_id, author_name, author_initial, author_gradient, content, created_at, likes')
       .eq('topic_id', topicId)
       .order('created_at', { ascending: true });
     if (error || !data) {
       // Fallback to forum_posts table if forum_comments doesn't exist
       const { data: posts, error: postsError } = await supabase
         .from('forum_posts')
-        .select('*')
+        .select('id, topic_id, author_name, author_initial, content, created_at, likes, is_best_answer')
         .eq('topic_id', topicId)
         .order('created_at', { ascending: true });
       if (postsError || !posts) return mockGetComments(topicId);
@@ -97,7 +97,7 @@ export async function getTrendingTopics(): Promise<ForumTopic[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('forum_topics')
-      .select('*')
+      .select('id, category_slug, title, author_name, author_initial, author_gradient, created_at, views, reply_count, comment_count, likes, is_pinned, is_hot, is_solved, last_reply_at, last_reply_by, tags')
       .order('likes', { ascending: false })
       .limit(5);
     if (error || !data) return mockGetTrending();

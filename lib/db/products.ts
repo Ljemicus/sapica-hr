@@ -40,7 +40,7 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
   }
   try {
     const supabase = await createClient();
-    let query = supabase.from('products').select('*').order('rating', { ascending: false });
+    let query = supabase.from('products').select('id, slug, name, category, price, original_price, description, emoji, brand, rating, review_count, in_stock, variants, specs').order('rating', { ascending: false });
 
     if (filters?.category) {
       query = query.eq('category', filters.category);
@@ -66,7 +66,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('products')
-      .select('*')
+      .select('id, slug, name, category, price, original_price, description, emoji, brand, rating, review_count, in_stock, variants, specs')
       .eq('slug', slug)
       .single();
     if (error || !data) return mockGetBySlug(slug) ?? null;
@@ -84,7 +84,7 @@ export async function getProductReviews(productId: string): Promise<ProductRevie
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('product_reviews')
-      .select('*')
+      .select('id, product_id, author_name, rating, comment, created_at')
       .eq('product_id', productId)
       .order('created_at', { ascending: false });
     if (error || !data) return mockGetReviews(productId);
@@ -121,7 +121,7 @@ export async function getRelatedProducts(
 
     const { data, error } = await supabase
       .from('products')
-      .select('*')
+      .select('id, slug, name, category, price, original_price, description, emoji, brand, rating, review_count, in_stock, variants, specs')
       .eq('category', current.category)
       .neq('id', productId)
       .order('rating', { ascending: false })

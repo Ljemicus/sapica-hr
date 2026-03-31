@@ -29,7 +29,7 @@ export async function getTrainers(filters?: TrainerFilters): Promise<Trainer[]> 
   }
   try {
     const supabase = await createClient();
-    let query = supabase.from('trainers').select('*');
+    let query = supabase.from('trainers').select('id, name, city, specializations, price_per_hour, certificates, rating, reviews, bio, certified');
 
     if (filters?.city) {
       query = query.eq('city', filters.city);
@@ -59,7 +59,7 @@ export async function getTrainer(id: string): Promise<Trainer | null> {
   }
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('trainers').select('*').eq('id', id).single();
+    const { data, error } = await supabase.from('trainers').select('id, name, city, specializations, price_per_hour, certificates, rating, reviews, bio, certified').eq('id', id).single();
     if (error || !data) return mockGetTrainer(id) ?? null;
     return data as Trainer;
   } catch {
@@ -75,7 +75,7 @@ export async function getPrograms(trainerId: string): Promise<TrainingProgram[]>
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('training_programs')
-      .select('*')
+      .select('id, trainer_id, name, type, duration_weeks, sessions, price, description')
       .eq('trainer_id', trainerId);
     if (error || !data) return mockGetPrograms(trainerId);
     return data as TrainingProgram[];
@@ -93,7 +93,7 @@ export async function getTrainerReviews(trainerId: string): Promise<TrainerRevie
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('trainer_reviews')
-      .select('*')
+      .select('id, trainer_id, author_name, author_initial, rating, comment, created_at')
       .eq('trainer_id', trainerId)
       .order('created_at', { ascending: false });
     if (error || !data) {
