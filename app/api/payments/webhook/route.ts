@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
 import { calculateSitterPayout, calculatePlatformFee } from '@/lib/payment';
+import { appLogger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
 import type Stripe from 'stripe';
 
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
   const sig = request.headers.get('stripe-signature');
 
   if (!sig) {
+    appLogger.warn('payments.webhook', 'Missing stripe-signature header');
     return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 });
   }
 
@@ -26,7 +28,7 @@ export async function POST(request: Request) {
   try {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch {
-    console.error('[Webhook] Signature verification failed');
+    appLogger.error('payments.webhook', 'Signature verification failed');
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
@@ -106,7 +108,10 @@ export async function POST(request: Request) {
 
     case 'charge.dispute.created': {
       const dispute = event.data.object as Stripe.Dispute;
-      console.error(`[Webhook] ⚠️ DISPUTE created: ${dispute.id} — amount: €${((dispute.amount || 0) / 100).toFixed(2)}`);
+      appLogger.error('payments.webhook', 'Dispute created', {
+        disputeId: dispute.id,
+        amount: dispute.amount || 0,
+      });
       break;
     }
 

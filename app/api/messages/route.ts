@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { getConversation, getMessages, sendMessage } from '@/lib/db';
+import { appLogger } from '@/lib/logger';
 import { messageSchema } from '@/lib/validations';
 
 export async function GET(request: Request) {
@@ -28,7 +29,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
   const parsed = messageSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  if (!parsed.success) {
+    appLogger.warn('messages.send', 'Message validation failed');
+    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
 
   const message = await sendMessage({
     sender_id: user.id,
@@ -39,6 +43,12 @@ export async function POST(request: Request) {
     read: false,
   });
 
-  if (!message) return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
+  if (!message) {
+    appLogger.error('messages.send', 'Failed to send message', {
+      senderId: user.id,
+      receiverId: parsed.data.receiver_id,
+    });
+    return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
+  }
   return NextResponse.json(message, { status: 201 });
 }

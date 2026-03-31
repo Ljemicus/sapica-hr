@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { getBookings, createBooking, getSitter } from '@/lib/db';
+import { appLogger } from '@/lib/logger';
 import { bookingSchema } from '@/lib/validations';
 
 export async function GET(request: Request) {
@@ -27,12 +28,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
   const parsed = bookingSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  if (!parsed.success) {
+    appLogger.warn('bookings.create', 'Booking validation failed');
+    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
 
   const { sitter_id, pet_id, service_type, start_date, end_date, note } = parsed.data;
 
   const sitterProfile = await getSitter(sitter_id);
-  if (!sitterProfile) return NextResponse.json({ error: 'Sitter not found' }, { status: 404 });
+  if (!sitterProfile) {
+    appLogger.warn('bookings.create', 'Sitter profile missing', { sitterId: sitter_id });
+    return NextResponse.json({ error: 'Sitter not found' }, { status: 404 });
+  }
 
   const pricePerDay = sitterProfile.prices[service_type as keyof typeof sitterProfile.prices] || 0;
   const start = new Date(start_date);
@@ -52,6 +59,13 @@ export async function POST(request: Request) {
     status: 'pending',
   });
 
-  if (!booking) return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
+  if (!booking) {
+    appLogger.error('bookings.create', 'Failed to create booking', {
+      ownerId: user.id,
+      sitterId: sitter_id,
+      petId: pet_id,
+    });
+    return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
+  }
   return NextResponse.json(booking, { status: 201 });
 }

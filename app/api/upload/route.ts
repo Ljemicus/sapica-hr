@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
+import { appLogger } from '@/lib/logger';
 import { rateLimit } from '@/lib/rate-limit';
 
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -29,6 +30,7 @@ export async function POST(request: NextRequest) {
     const requestedFolder = ((formData.get('folder') as string) || 'uploads').trim();
 
     if (!file) {
+      appLogger.warn('upload.image', 'Upload rejected because file is missing');
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
     if (!ALLOWED_TYPES.has(file.type)) {
@@ -64,6 +66,12 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
+      appLogger.error('upload.image', 'Storage upload failed', {
+        userId: user.id,
+        bucket,
+        path,
+        reason: error.message,
+      });
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -76,7 +84,10 @@ export async function POST(request: NextRequest) {
       bucket,
       path,
     });
-  } catch {
+  } catch (error) {
+    appLogger.error('upload.image', 'Upload failed unexpectedly', {
+      message: error instanceof Error ? error.message : 'unknown',
+    });
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
   }
 }
