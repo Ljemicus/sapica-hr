@@ -5,6 +5,7 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
   const next = searchParams.get('next') || '/';
+  const requestedRole = searchParams.get('role');
 
   if (!isSupabaseConfigured()) {
     return NextResponse.redirect(`${origin}${next}`);
@@ -35,7 +36,7 @@ export async function GET(request: Request) {
 
     if (!error && data.user) {
       const meta = data.user.user_metadata;
-      const role = meta?.role === 'sitter' ? 'sitter' : 'owner';
+      const role = requestedRole === 'sitter' || meta?.role === 'sitter' ? 'sitter' : 'owner';
 
       await supabase.from('users').upsert({
         id: data.user.id,

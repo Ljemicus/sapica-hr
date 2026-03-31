@@ -10,7 +10,7 @@ export const metadata = {
 
 export default async function GroomerDashboardPage() {
   const user = await getAuthUser();
-  if (!user) redirect('/prijava?redirect=/dashboard/groomer');
+  if (!user) redirect('/prijava?redirect=%2Fdashboard%2Fgroomer');
 
   // Check if user has a groomer profile
   const supabase = await createClient();

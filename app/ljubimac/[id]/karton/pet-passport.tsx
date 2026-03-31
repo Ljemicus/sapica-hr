@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import {
   ArrowLeft, Printer, Syringe, AlertTriangle, Pill,
-  Stethoscope, FileText, Phone, MapPin, QrCode, Share2, Plus, Pencil, Save, X
+  Stethoscope, FileText, Phone, MapPin, QrCode, Share2, Plus, Pencil, Save, X, Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +17,7 @@ import type { Pet, PetPassport } from '@/lib/types';
 interface Props {
   pet: Pet;
   passport: PetPassport;
+  isDemo?: boolean;
 }
 
 const speciesEmoji: Record<string, string> = {
@@ -31,7 +32,7 @@ const severityColors: Record<string, string> = {
   ozbiljna: 'bg-red-100 text-red-700 border-red-200',
 };
 
-export function PetPassportView({ pet, passport }: Props) {
+export function PetPassportView({ pet, passport, isDemo = false }: Props) {
   const storageKey = `pet-passport-${pet.id}`;
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<PetPassport>(passport);
@@ -76,7 +77,14 @@ export function PetPassportView({ pet, passport }: Props) {
             {speciesEmoji[pet.species] || '🐾'}
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{pet.name}</h1>
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{pet.name}</h1>
+              {isDemo && (
+                <Badge className="bg-amber-100 text-amber-800 border border-amber-200">
+                  <Eye className="h-3.5 w-3.5 mr-1" /> Demo prikaz
+                </Badge>
+              )}
+            </div>
             <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
               <span>{pet.species === 'dog' ? 'Pas' : pet.species === 'cat' ? 'Mačka' : 'Ostalo'}</span>
               {pet.breed && <><span>•</span><span>{pet.breed}</span></>}
@@ -112,6 +120,26 @@ export function PetPassportView({ pet, passport }: Props) {
       </div>
 
       <div className="space-y-6">
+        {isDemo && (
+          <Card className="border-amber-200 bg-amber-50/80 shadow-sm animate-fade-in-up delay-50">
+            <CardContent className="p-4 md:p-5">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                  <Eye className="h-5 w-5 text-amber-700" />
+                </div>
+                <div>
+                  <p className="font-semibold text-amber-900">Ovo je demo zdravstveni karton.</p>
+                  <p className="text-sm text-amber-800 mt-1 leading-relaxed">
+                    Prikaz služi za demonstraciju funkcionalnosti PetParka. Podaci, šetnje i ažuriranja na ovoj stranici nisu privatni live medicinski zapisi stvarnog korisnika.
+                  </p>
+                  <p className="text-sm text-amber-800 mt-2 leading-relaxed">
+                    Stvarni kartoni ljubimaca dostupni su samo prijavljenim vlasnicima i njihovim odobrenim pružateljima usluga.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
         <Card className="border-0 shadow-sm animate-fade-in-up delay-100">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">

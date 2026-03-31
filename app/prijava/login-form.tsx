@@ -54,7 +54,7 @@ export function LoginForm() {
       }
 
       toast.success('Uspješna prijava!');
-      router.push(redirect !== '/' ? redirect : '/dashboard/vlasnik');
+      router.push(redirect !== '/' ? redirect : (payload.defaultRedirect || '/dashboard/vlasnik'));
       router.refresh();
     } finally {
       setLoading(false);
@@ -91,11 +91,15 @@ export function LoginForm() {
             <button
               type="button"
               onClick={async () => {
+                setLoading(true);
                 const { error } = await supabase.auth.signInWithOAuth({
                   provider: 'apple',
                   options: { redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(redirect)}` }
                 });
-                if (error) toast.error(error.message);
+                if (error) {
+                  toast.error(error.message);
+                  setLoading(false);
+                }
               }}
               className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl bg-black text-white font-medium hover:bg-gray-800 transition-colors"
               disabled={loading}

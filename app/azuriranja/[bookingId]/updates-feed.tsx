@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Heart, Filter, ArrowLeft, Camera, Send, Image, Video, FileText, Calendar } from 'lucide-react';
+import { Heart, Filter, ArrowLeft, Camera, Send, Image, Video, FileText, Calendar, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +21,7 @@ interface Props {
   currentDay: number;
   totalDays: number;
   sitterId: string;
+  isDemo?: boolean;
 }
 
 const typeIcons: Record<string, React.ElementType> = {
@@ -35,7 +36,7 @@ const typeLabels: Record<string, string> = {
   text: 'Tekst',
 };
 
-export function UpdatesFeed({ updates, bookingId, sitterName, petName, currentDay, totalDays }: Props) {
+export function UpdatesFeed({ updates, bookingId, sitterName, petName, currentDay, totalDays, isDemo = false }: Props) {
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [filterDay, setFilterDay] = useState<string>('all');
   const [showSitterForm, setShowSitterForm] = useState(false);
@@ -69,9 +70,16 @@ export function UpdatesFeed({ updates, bookingId, sitterName, petName, currentDa
 
       {/* Header Stats */}
       <div className="mb-6 animate-fade-in-up">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">
-          Ažuriranja za {petName}
-        </h1>
+        <div className="flex flex-wrap items-center gap-2 mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+            Ažuriranja za {petName}
+          </h1>
+          {isDemo && (
+            <Badge className="bg-amber-100 text-amber-800 border border-amber-200">
+              <Eye className="h-3.5 w-3.5 mr-1" /> Demo prikaz
+            </Badge>
+          )}
+        </div>
         <div className="flex flex-wrap items-center gap-3">
           <Badge className="bg-orange-100 text-orange-700 border-0">
             <Calendar className="h-3.5 w-3.5 mr-1" />
@@ -82,6 +90,24 @@ export function UpdatesFeed({ updates, bookingId, sitterName, petName, currentDa
           <span className="text-sm text-muted-foreground">{updates.length} ažuriranja</span>
         </div>
       </div>
+
+      {isDemo && (
+        <Card className="border-amber-200 bg-amber-50/80 shadow-sm mb-6 animate-fade-in-up delay-50">
+          <CardContent className="p-4 md:p-5">
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <Eye className="h-5 w-5 text-amber-700" />
+              </div>
+              <div>
+                <p className="font-semibold text-amber-900">Ovo je demo feed ažuriranja.</p>
+                <p className="text-sm text-amber-800 mt-1 leading-relaxed">
+                  Fotografije, videi i poruke na ovoj stranici služe kao showcase funkcionalnosti i nisu privatna live komunikacija stvarnog bookinga.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Day Filter */}
       <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2 animate-fade-in-up delay-100">

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { rateLimit } from '@/lib/rate-limit';
+import { loginSchema } from '@/lib/validations';
 
 export async function POST(request: Request) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
@@ -8,16 +9,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Previše pokušaja.' }, { status: 429 });
   }
 
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
-  }
-  const { email, password } = body;
-
-  if (!email || !password) {
-    return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
+  const body = await request.json().catch(() => null);
+  const parsed = loginSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'Unesite ispravan email i lozinku.' }, { status: 400 });
   }
 
   if (!isSupabaseConfigured()) {
@@ -26,11 +21,26 @@ export async function POST(request: Request) {
 
   const { createClient } = await import('@/lib/supabase/server');
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: parsed.data.email,
+    password: parsed.data.password,
+  });
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 401 });
+  if (error || !data.user) {
+    return NextResponse.json({ error: 'Pogrešan email ili lozinka.' }, { status: 401 });
   }
 
-  return NextResponse.json({ user: data.user });
+  const { data: profile } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', data.user.id)
+    .single();
+
+  const role = profile?.role || data.user.user_metadata?.role || 'owner';
+  const defaultRedirect =
+    role === 'sitter' ? '/dashboard/sitter' :
+    role === 'admin' ? '/admin' :
+    '/dashboard/vlasnik';
+
+  return NextResponse.json({ user: data.user, role, defaultRedirect });
 }

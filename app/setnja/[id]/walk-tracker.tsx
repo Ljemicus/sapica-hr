@@ -5,7 +5,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Clock, MapPin, Gauge, MessageCircle, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { Clock, MapPin, Gauge, MessageCircle, CheckCircle2, ArrowLeft, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -37,9 +37,10 @@ interface Props {
   sitterName: string;
   petName: string;
   petSpecies: Species | string;
+  isDemo?: boolean;
 }
 
-export function WalkTracker({ walk, sitterName, petName, petSpecies }: Props) {
+export function WalkTracker({ walk, sitterName, petName, petSpecies, isDemo = false }: Props) {
   const [currentPointIndex, setCurrentPointIndex] = useState(
     walk.status === 'zavrsena' ? walk.route.length - 1 : 0
   );
@@ -88,9 +89,16 @@ export function WalkTracker({ walk, sitterName, petName, petSpecies }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between mb-6 animate-fade-in-up">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-2">
-            {petEmoji} Šetnja — {petName}
-          </h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-2">
+              {petEmoji} Šetnja — {petName}
+            </h1>
+            {isDemo && (
+              <Badge className="bg-amber-100 text-amber-800 border border-amber-200">
+                <Eye className="h-3.5 w-3.5 mr-1" /> Demo prikaz
+              </Badge>
+            )}
+          </div>
           <p className="text-muted-foreground mt-1">Sitter: {sitterName}</p>
         </div>
         <Badge className={`text-sm px-3 py-1.5 ${
@@ -102,6 +110,24 @@ export function WalkTracker({ walk, sitterName, petName, petSpecies }: Props) {
           {walk.status === 'u_tijeku' ? 'U tijeku' : 'Završena'}
         </Badge>
       </div>
+
+      {isDemo && (
+        <Card className="border-amber-200 bg-amber-50/80 shadow-sm mb-6 animate-fade-in-up delay-50">
+          <CardContent className="p-4 md:p-5">
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <Eye className="h-5 w-5 text-amber-700" />
+              </div>
+              <div>
+                <p className="font-semibold text-amber-900">Ovo je demo GPS prikaz šetnje.</p>
+                <p className="text-sm text-amber-800 mt-1 leading-relaxed">
+                  Ruta, checkpointi i statistike na ovoj stranici služe za demonstraciju funkcionalnosti. Ne prikazuju live lokaciju stvarnog privatnog bookinga.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6 animate-fade-in-up delay-100">

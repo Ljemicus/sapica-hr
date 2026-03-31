@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default async function SitterWalkPage() {
   const user = await getAuthUser();
-  if (!user) redirect('/prijava');
+  if (!user) redirect('/prijava?redirect=%2Fdashboard%2Fsitter%2Fsetnja');
   if (user.role !== 'sitter') redirect('/');
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -470,21 +470,21 @@ export default async function HomePage() {
             {[
               {
                 title: 'GPS Tracking šetnji',
-                description: 'Pratite svog ljubimca u realnom vremenu dok je na šetnji. Vidite rutu, checkpointe i statistike šetnje.',
+                description: 'Demo prikaz GPS šetnje: ruta, checkpointi i statistike kao primjer funkcionalnosti PetParka.',
                 emoji: '📍',
                 color: 'from-emerald-500 to-teal-500',
                 href: '/setnja/walk1111-1111-1111-1111-111111111111',
               },
               {
                 title: 'Foto ažuriranja',
-                description: 'Primajte redovita ažuriranja s fotografijama i videima od sittera. Instagram-style feed za vašeg ljubimca.',
+                description: 'Demo feed foto i video ažuriranja koji pokazuje kako izgleda komunikacija tijekom bookinga.',
                 emoji: '📸',
                 color: 'from-blue-500 to-cyan-500',
                 href: '/azuriranja/book1111-1111-1111-1111-111111111111',
               },
               {
                 title: 'Zdravstveni karton',
-                description: 'Digitalni pas-putovnica s cijepljenjima, alergijama, lijekovima i kontaktom veterinara. Uvijek pri ruci.',
+                description: 'Demo zdravstveni karton s cijepljenjima, alergijama i terapijama — primjer kako izgleda privatni zapis.',
                 emoji: '🏥',
                 color: 'from-purple-500 to-pink-500',
                 href: '/ljubimac/pet11111-1111-1111-1111-111111111111/karton',
@@ -498,6 +498,11 @@ export default async function HomePage() {
                     </div>
                     <h3 className="font-bold text-lg mb-2 group-hover:text-orange-500 transition-colors font-[var(--font-heading)]">{feature.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                    <div className="mt-3 flex items-center justify-center">
+                      <Badge variant="secondary" className="bg-amber-50 text-amber-700 border border-amber-200">
+                        Demo primjer
+                      </Badge>
+                    </div>
                     <div className="mt-4 text-sm font-semibold text-teal-600 dark:text-teal-400 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       Pogledaj demo <ArrowRight className="h-3 w-3" />
                     </div>

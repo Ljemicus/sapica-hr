@@ -78,10 +78,12 @@ export function RegisterForm() {
 
   const handleGoogleSignup = async () => {
     setLoading(true);
+    const target = redirect || (selectedRole === 'sitter' ? '/dashboard/sitter' : '/dashboard/vlasnik');
+    const role = selectedRole === 'sitter' ? 'sitter' : 'owner';
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/api/auth/callback?next=/dashboard/vlasnik`,
+        redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(target)}&role=${encodeURIComponent(role)}`,
       },
     });
     if (error) {
@@ -166,11 +168,17 @@ export function RegisterForm() {
             <button
               type="button"
               onClick={async () => {
+                setLoading(true);
+                const target = redirect || (selectedRole === 'sitter' ? '/dashboard/sitter' : '/dashboard/vlasnik');
+                const role = selectedRole === 'sitter' ? 'sitter' : 'owner';
                 const { error } = await supabase.auth.signInWithOAuth({
                   provider: 'apple',
-                  options: { redirectTo: `${window.location.origin}/api/auth/callback?next=/dashboard/vlasnik` }
+                  options: { redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(target)}&role=${encodeURIComponent(role)}` }
                 });
-                if (error) toast.error(error.message);
+                if (error) {
+                  toast.error(error.message);
+                  setLoading(false);
+                }
               }}
               className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl bg-black text-white font-medium hover:bg-gray-800 transition-colors"
             >
