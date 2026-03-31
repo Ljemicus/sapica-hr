@@ -155,7 +155,11 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
           c.partnerId === selectedPartnerId ? { ...c, unreadCount: 0 } : c
         )
       );
-      await supabase.from('messages').update({ read: true }).eq('sender_id', selectedPartnerId).eq('receiver_id', currentUser.id).eq('read', false);
+      await fetch('/api/messages/read', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ partner_id: selectedPartnerId }),
+      });
     };
     void markRead();
   }, [selectedPartnerId, currentUser.id, supabase]);
@@ -165,10 +169,15 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
     setSending(true);
     const content = newMessage.trim();
     const msg = { sender_id: currentUser.id, receiver_id: selectedPartnerId, content, read: false };
-    const { data } = await supabase.from('messages').insert(msg).select().single();
+    const response = await fetch('/api/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ receiver_id: selectedPartnerId, content }),
+    });
 
+    const payload = response.ok ? await response.json() : null;
     const mockId = `local-${Date.now()}`;
-    const localMsg = data || { id: mockId, ...msg, created_at: new Date().toISOString() };
+    const localMsg = payload || { id: mockId, ...msg, created_at: new Date().toISOString() };
 
     setConversations(prev => {
       const updated = [...prev];
