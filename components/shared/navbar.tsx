@@ -377,13 +377,13 @@ export function Navbar() {
                   <PawPrint className="h-5 w-5 text-amber-500" />
                   Uzgajivači
                 </Link>
-                <Link href="/dog-friendly" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/20 font-medium transition-colors">
-                  <Dog className="h-5 w-5" />
-                  Dog-Friendly
+                <Link href="/udomljavanje" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-950/20 font-semibold transition-colors">
+                  <HeartHandshake className="h-5 w-5" />
+                  Udomljavanje
                 </Link>
 
                 <div className="border-t border-border/50 my-3" />
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Značajke</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Dodatne mogućnosti</p>
                 <Link href="/setnja/walk1111-1111-1111-1111-111111111111" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <MapPin className="h-5 w-5 text-emerald-500" />
                   {t('nav.gps_tracking')}
@@ -399,6 +399,10 @@ export function Navbar() {
 
                 <div className="border-t border-border/50 my-3" />
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Zajednica</p>
+                <Link href="/dog-friendly" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/20 font-medium transition-colors">
+                  <Dog className="h-5 w-5" />
+                  Dog-Friendly
+                </Link>
                 <Link href="/shop" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <ShoppingBag className="h-5 w-5 text-amber-500" />
                   {t('nav.shop')}
@@ -410,10 +414,6 @@ export function Navbar() {
                 <Link href="/forum" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <MessageSquare className="h-5 w-5 text-teal-500" />
                   {t('nav.forum')}
-                </Link>
-                <Link href="/udomljavanje" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-950/20 font-semibold transition-colors">
-                  <HeartHandshake className="h-5 w-5" />
-                  Udomljavanje
                 </Link>
                 <Link href="/izgubljeni" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold transition-colors">
                   <AlertTriangle className="h-5 w-5" />

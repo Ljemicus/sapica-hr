@@ -127,15 +127,14 @@ export default async function HomePage() {
           <div className="max-w-4xl mx-auto text-center">
             <Badge className="mb-6 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/40 border-0 text-sm px-5 py-2 animate-fade-in-up shadow-sm rounded-full font-semibold">
               <PawPrint className="h-3.5 w-3.5 mr-1.5" />
-              #1 Pet Sitting platforma u Hrvatskoj
+              Sve za ljubimce na jednom mjestu
             </Badge>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-heading)]">
-              Tko čuva vašeg ljubimca{' '}
-              <span className="text-gradient">dok ste na putu?</span>
+              Za sretne ljubimce i{' '}
+              <span className="text-gradient">mirnije vlasnike.</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in-up delay-200 leading-relaxed">
-              Pronađite pouzdane i verificirane čuvare ljubimaca u vašem gradu.
-              Vaš ljubimac zaslužuje najbolju brigu — čak i kad niste tu.
+              PetPark okuplja pouzdane usluge, korisne savjete i zajednicu posvećenu kvalitetnoj brizi o ljubimcima — sve na jednom mjestu.
             </p>
 
             {/* Hero Image */}
@@ -227,7 +226,7 @@ export default async function HomePage() {
             <Badge variant="secondary" className="mb-4 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-semibold">Usluge</Badge>
             <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Sve što vaš ljubimac treba</h2>
             <p className="text-muted-foreground max-w-lg mx-auto text-lg">
-              Od smještaja do šetnje — pronađite savršenu uslugu za vašeg ljubimca
+              Od čuvanja i njege do dresure i svakodnevne podrške — pronađite usluge prilagođene svom ljubimcu
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
@@ -463,8 +462,8 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 relative">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4 text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 border-0 rounded-full font-semibold">Zašto PetPark</Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Što PetPark nudi više od ostalih</h2>
-            <p className="text-muted-foreground text-lg max-w-lg mx-auto">Napredne značajke za potpuni mir i kontrolu</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Više od obične pet platforme</h2>
+            <p className="text-muted-foreground text-lg max-w-lg mx-auto">PetPark spaja korisne alate, preglednost i dodatnu vrijednost za vlasnike ljubimaca</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
             {[
@@ -521,7 +520,7 @@ export default async function HomePage() {
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-semibold">Istraži više</Badge>
             <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Još više za vašeg ljubimca</h2>
-            <p className="text-muted-foreground text-lg max-w-lg mx-auto">Osim čuvanja, nudimo grooming, školovanje pasa i zajednicu ljubitelja životinja</p>
+            <p className="text-muted-foreground text-lg max-w-lg mx-auto">Istražite usluge, sadržaj i zajednicu koji PetPark čine mjestom za cjelovitu brigu o ljubimcima</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
             {[
@@ -624,7 +623,7 @@ export default async function HomePage() {
                     <Link href="/udomljavanje">
                       <Button size="lg" className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg">
                         <Heart className="h-5 w-5 mr-2 fill-white" />
-                        Pregledaj ljubimce
+                        Istraži udomljavanje
                         <ArrowRight className="h-5 w-5 ml-2" />
                       </Button>
                     </Link>
@@ -657,7 +656,7 @@ export default async function HomePage() {
                   <Link href="/dog-friendly">
                     <Button size="lg" className="bg-white text-teal-700 hover:bg-teal-50 font-bold rounded-xl shadow-lg">
                       <Dog className="h-5 w-5 mr-2" />
-                      Istraži lokacije
+                      Pronađi lokacije
                       <ArrowRight className="h-5 w-5 ml-2" />
                     </Button>
                   </Link>
@@ -681,25 +680,24 @@ export default async function HomePage() {
           <div className="max-w-2xl mx-auto">
             <Badge className="mb-6 bg-white/20 text-white hover:bg-white/20 border-0 text-sm px-4 py-1.5 rounded-full font-semibold">
               <Heart className="h-3.5 w-3.5 mr-1.5 fill-white" />
-              Pridruži se zajednici
+              Pridruži se PetPark zajednici
             </Badge>
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-8 text-white leading-tight font-[var(--font-heading)]">
-              Volite životinje?<br />Zarađujte čuvajući ljubimce!
+              Volite životinje?<br />Pretvorite to u posao koji volite.
             </h2>
             <p className="text-base md:text-lg text-white/80 mb-8 max-w-lg mx-auto leading-relaxed">
-              Pridružite se stotinama sittera diljem Hrvatske. Postavite vlastite cijene,
-              upravljajte rasporedom i zarađujte radeći ono što volite.
+              Pridružite se rastućoj mreži sittera i partnera diljem Hrvatske. Postavite vlastite cijene, upravljajte rasporedom i gradite posao uz PetPark.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/registracija?role=sitter">
                 <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 shadow-xl shadow-black/10 text-base px-8 btn-hover font-bold rounded-xl">
-                  Postani sitter
+                  Postani partner
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/pretraga">
                 <Button size="lg" variant="outline" className="border-2 border-white/40 text-white hover:bg-white/10 text-base px-8 rounded-xl">
-                  Pretraži sittere
+                  Istraži PetPark
                 </Button>
               </Link>
             </div>
