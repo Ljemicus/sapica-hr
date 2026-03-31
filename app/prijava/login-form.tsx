@@ -40,24 +40,25 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginInput) => {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: data.email,
-      password: data.password,
-    });
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const payload = await response.json().catch(() => ({}));
 
-    if (error) {
-      toast.error(
-        error.message === 'Invalid login credentials'
-          ? 'Pogrešan email ili lozinka'
-          : error.message
-      );
+      if (!response.ok) {
+        toast.error(payload.error || 'Prijava nije uspjela');
+        return;
+      }
+
+      toast.success('Uspješna prijava!');
+      router.push(redirect !== '/' ? redirect : '/dashboard/vlasnik');
+      router.refresh();
+    } finally {
       setLoading(false);
-      return;
     }
-
-    toast.success('Uspješna prijava!');
-    router.push(redirect !== '/' ? redirect : '/');
-    router.refresh();
   };
 
   const handleGoogleLogin = async () => {
@@ -174,12 +175,15 @@ export function LoginForm() {
             </Button>
           </form>
 
-          <div className="mt-8 text-center">
+          <div className="mt-8 text-center space-y-2">
             <p className="text-sm text-muted-foreground">
               Nemate račun?{' '}
-              <Link href="/registracija" className="text-orange-500 hover:underline font-semibold">
+              <Link href={`/registracija${redirect && redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className="text-orange-500 hover:underline font-semibold">
                 Registrirajte se
               </Link>
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Nakon prijave vratit ćemo vas tamo gdje ste stali.
             </p>
           </div>
         </div>

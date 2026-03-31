@@ -35,6 +35,7 @@ export function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const defaultRole = searchParams.get('role') as 'owner' | 'sitter' | null;
+  const redirect = searchParams.get('redirect') || '';
   const supabase = createClient();
 
   const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<RegisterInput>({
@@ -62,12 +63,13 @@ export function RegisterForm() {
 
       if (payload.session) {
         toast.success('Registracija uspješna!');
-        const target = data.role === 'sitter' ? '/dashboard/sitter' : '/dashboard/vlasnik';
+        const target = redirect || (data.role === 'sitter' ? '/dashboard/sitter' : '/dashboard/vlasnik');
         router.push(target);
         router.refresh();
       } else {
         toast.success('Registracija uspješna! Provjerite email za potvrdu.');
-        router.push('/prijava');
+        const loginUrl = `/prijava${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`;
+        router.push(loginUrl);
       }
     } finally {
       setLoading(false);
@@ -298,12 +300,19 @@ export function RegisterForm() {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            Već imate račun?{' '}
-            <Link href="/prijava" className="text-orange-500 hover:underline font-semibold">
-              Prijavite se
-            </Link>
-          </p>
+          <div className="text-center text-sm text-muted-foreground mt-6 space-y-2">
+            <p>
+              Već imate račun?{' '}
+              <Link href={`/prijava${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className="text-orange-500 hover:underline font-semibold">
+                Prijavite se
+              </Link>
+            </p>
+            {redirect && (
+              <p className="text-xs text-muted-foreground">
+                Nakon registracije vratit ćemo vas tamo gdje ste stali.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>
