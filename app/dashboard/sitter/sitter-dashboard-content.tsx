@@ -20,7 +20,6 @@ import { Separator } from '@/components/ui/separator';
 import { EmptyState } from '@/components/shared/empty-state';
 import { StarRating } from '@/components/shared/star-rating';
 import { ImageUpload } from '@/components/shared/image-upload';
-import { createClient } from '@/lib/supabase/client';
 import { STATUS_LABELS, SERVICE_LABELS, CITIES, type User as UserType, type SitterProfile, type Booking, type Review, type Availability, type BookingStatus, type ServiceType, type PetUpdate, type UpdateType } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -63,7 +62,6 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
     city: profile?.city || user.city || '',
   });
   const router = useRouter();
-  const supabase = createClient();
 
   const availableDates = new Set(availability.filter(a => a.available).map(a => a.date));
 

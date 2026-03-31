@@ -11,7 +11,6 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { createClient } from '@/lib/supabase/client';
 import { STATUS_LABELS, SERVICE_LABELS, type User, type Booking, type SitterProfile, type BookingStatus, type ServiceType } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -44,7 +43,6 @@ interface Props {
 export function AdminContent({ users, bookings, sitters }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
-  const supabase = createClient();
 
   const toggleVerification = async (userId: string, currentStatus: boolean) => {
     const response = await fetch('/api/admin/sitter-verification', {

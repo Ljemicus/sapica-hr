@@ -18,7 +18,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { EmptyState } from '@/components/shared/empty-state';
 import { StarRating } from '@/components/shared/star-rating';
 import { ImageUpload } from '@/components/shared/image-upload';
-import { createClient } from '@/lib/supabase/client';
 import { STATUS_LABELS, SPECIES_LABELS, SERVICE_LABELS, type User, type Pet, type Booking, type BookingStatus, type ServiceType, type Species, type Walk } from '@/lib/types';
 import { toast } from 'sonner';
 
@@ -61,7 +60,6 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
   const [petForm, setPetForm] = useState({ name: '', species: 'dog' as Species, breed: '', age: '', weight: '', special_needs: '', photo_url: '' });
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
 
   const openAddPet = () => {
     setEditingPet(null);
