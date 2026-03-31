@@ -220,7 +220,7 @@ export function ImageUpload({
           type="file"
           accept="image/jpeg,image/png,image/webp"
           onChange={handleInputChange}
-          className="hidden"
+          className="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0 opacity-0 pointer-events-none"
         />
         <label htmlFor={inputId} className="relative group cursor-pointer block">
           <div className="relative h-24 w-24 rounded-full ring-2 ring-orange-100 overflow-hidden bg-gradient-to-br from-orange-400 to-amber-300 flex items-center justify-center">
@@ -260,7 +260,7 @@ export function ImageUpload({
           type="file"
           accept="image/jpeg,image/png,image/webp"
           onChange={handleInputChange}
-          className="hidden"
+          className="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0 opacity-0 pointer-events-none"
         />
         <label
           htmlFor={inputId}
@@ -294,7 +294,7 @@ export function ImageUpload({
         accept="image/jpeg,image/png,image/webp"
         multiple
         onChange={handleInputChange}
-        className="hidden"
+        className="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0 opacity-0 pointer-events-none"
       />
 
       {/* Drag & drop zona */}
