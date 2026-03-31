@@ -1,6 +1,6 @@
 export { isSupabaseConfigured } from './helpers';
 export { getUser, getUsers, getUsersByRole, updateUserProfile } from './users';
-export { getPets, getPetsByOwner, getPet, createPet } from './pets';
+export { getPets, getPetsByOwner, getPet, createPet, getPetCardData, type PetCardData } from './pets';
 export { getSitters, getSitter, getSitterById, getSitterProfileById } from './sitters';
 export { getBookings, getAllBookings, getBooking, createBooking, updateBooking, updateBookingStatus } from './bookings';
 export { getReviews, getReviewsBySitter, getReviewedBookingIds, createReview } from './reviews';

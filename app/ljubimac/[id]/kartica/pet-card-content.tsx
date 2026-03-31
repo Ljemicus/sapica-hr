@@ -1,31 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Share2, Printer, Phone, AlertTriangle, Dog, Cat, HelpCircle, Heart, Weight, Calendar, Cpu, Loader2 } from 'lucide-react';
+import { ArrowLeft, Share2, Printer, Phone, AlertTriangle, Dog, Cat, HelpCircle, Heart, Weight, Calendar, Cpu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { createClient } from '@/lib/supabase/client';
+import type { PetCardData } from '@/lib/db';
 
 interface PetCardContentProps {
   petId: string;
-}
-
-interface PetCardData {
-  name: string;
-  species: 'dog' | 'cat' | 'other';
-  breed: string;
-  age: number;
-  weight: number;
-  microchip: string;
-  ownerName: string;
-  ownerPhone: string;
-  vetName: string;
-  vetPhone: string;
-  allergies: string[];
-  specialNeeds: string;
+  pet: PetCardData | null;
 }
 
 const speciesEmoji: Record<string, string> = { dog: '🐕', cat: '🐈', other: '🐰' };
@@ -37,50 +23,8 @@ const speciesGradient: Record<string, string> = {
 };
 const SpeciesIcon: Record<string, React.ElementType> = { dog: Dog, cat: Cat, other: HelpCircle };
 
-export function PetCardContent({ petId }: PetCardContentProps) {
+export function PetCardContent({ petId, pet }: PetCardContentProps) {
   const [copied, setCopied] = useState(false);
-  const [pet, setPet] = useState<PetCardData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    async function fetchPet() {
-      try {
-        const supabase = createClient();
-        const { data: petData, error: petError } = await supabase
-          .from('pets')
-          .select('*, owner:users!owner_id(name, phone)')
-          .eq('id', petId)
-          .single();
-
-        if (petError || !petData) {
-          setError(true);
-          setLoading(false);
-          return;
-        }
-
-        setPet({
-          name: petData.name,
-          species: petData.species || 'dog',
-          breed: petData.breed || 'Nepoznata pasmina',
-          age: petData.age || 0,
-          weight: petData.weight || 0,
-          microchip: petData.microchip || 'Nije uneseno',
-          ownerName: petData.owner?.name || 'Nepoznato',
-          ownerPhone: petData.owner?.phone || '',
-          vetName: petData.vet_name || 'Nije uneseno',
-          vetPhone: petData.vet_phone || '',
-          allergies: petData.allergies || [],
-          specialNeeds: petData.special_needs || '',
-        });
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchPet();
-  }, [petId]);
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -94,15 +38,7 @@ export function PetCardContent({ petId }: PetCardContentProps) {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8 max-w-xl flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
-      </div>
-    );
-  }
-
-  if (error || !pet) {
+  if (!pet) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-xl text-center">
         <p className="text-muted-foreground">Ljubimac nije pronađen.</p>
