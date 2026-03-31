@@ -17,7 +17,7 @@ export default async function SitterDashboardPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const bookings = await getBookings(user.id, 'sitter') as any[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const reviews = await getReviewsBySitter(user.id) as any[];
+  const reviews = await getReviewsBySitter(user.id, 'sitter-dashboard') as any[];
   const availability = await getAvailability(user.id);
   const recentUpdates = await getRecentUpdatesBySitter(user.id);
 

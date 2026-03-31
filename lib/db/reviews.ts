@@ -20,21 +20,52 @@ export async function getReviews(): Promise<Review[]> {
   }
 }
 
-export async function getReviewsBySitter(sitterId: string): Promise<Review[]> {
+type ReviewFields = 'full' | 'sitter-dashboard';
+
+function pickMockReviewFields(reviews: Review[], fields: ReviewFields = 'full'): Review[] {
+  if (fields === 'full') return reviews;
+
+  return reviews.map((review) => ({
+    id: review.id,
+    booking_id: review.booking_id,
+    reviewer_id: review.reviewer_id,
+    reviewee_id: review.reviewee_id,
+    rating: review.rating,
+    comment: review.comment,
+    created_at: review.created_at,
+    reviewer: review.reviewer
+      ? {
+          id: review.reviewer.id,
+          email: '',
+          name: review.reviewer.name,
+          role: 'owner',
+          avatar_url: review.reviewer.avatar_url,
+          phone: null,
+          city: null,
+          created_at: '',
+        }
+      : undefined,
+  }));
+}
+
+export async function getReviewsBySitter(sitterId: string, fields: ReviewFields = 'full'): Promise<Review[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetReviewsForSitter(sitterId);
+    return pickMockReviewFields(mockGetReviewsForSitter(sitterId), fields);
   }
   try {
     const supabase = await createClient();
+    const selectClause = fields === 'sitter-dashboard'
+      ? 'id, booking_id, reviewer_id, reviewee_id, rating, comment, created_at, reviewer:users!reviewer_id(id, name, avatar_url)'
+      : '*, reviewer:users!reviewer_id(*)';
     const { data, error } = await supabase
       .from('reviews')
-      .select('*, reviewer:users!reviewer_id(*)')
+      .select(selectClause)
       .eq('reviewee_id', sitterId)
       .order('created_at', { ascending: false });
-    if (error || !data) return mockGetReviewsForSitter(sitterId);
-    return data as Review[];
+    if (error || !data) return pickMockReviewFields(mockGetReviewsForSitter(sitterId), fields);
+    return data as unknown as Review[];
   } catch {
-    return mockGetReviewsForSitter(sitterId);
+    return pickMockReviewFields(mockGetReviewsForSitter(sitterId), fields);
   }
 }
 
