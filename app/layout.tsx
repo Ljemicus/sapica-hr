@@ -5,16 +5,11 @@ import './globals.css';
 import { Navbar } from '@/components/shared/navbar';
 import { Footer } from '@/components/shared/footer';
 import { BottomNav } from '@/components/shared/bottom-nav';
-import { ScrollToTop } from '@/components/shared/scroll-to-top';
-import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/contexts/auth-context';
 import { CartProvider } from '@/lib/cart-context';
 import { LanguageProvider } from '@/lib/i18n';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
-import { PushNotificationPrompt } from '@/components/shared/push-notification';
-import { CookieConsent } from '@/components/shared/cookie-consent';
-import { NotificationPrompt } from '@/components/shared/notification-prompt';
-import { FloatingChat } from '@/components/shared/floating-chat';
+import { DeferredUI } from '@/components/shared/deferred-ui';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -124,13 +119,7 @@ export default function RootLayout({
           <main id="main-content" className="flex-1 pb-16 md:pb-0">{children}</main>
           <Footer />
           <BottomNav />
-          <ScrollToTop />
-          <PushNotificationPrompt />
-          <NotificationPrompt />
-          <Toaster position="top-right" richColors />
-
-          <FloatingChat />
-          <CookieConsent />
+          <DeferredUI />
           </CartProvider>
           </LanguageProvider>
         </AuthProvider>

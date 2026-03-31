@@ -10,11 +10,12 @@ interface LostPetFilters {
   city?: string;
   species?: LostPetSpecies;
   status?: LostPetStatus;
+  limit?: number;
 }
 
 export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetLostPets(filters);
+    return mockGetLostPets(filters).slice(0, filters?.limit ?? Number.POSITIVE_INFINITY);
   }
   try {
     const supabase = await createClient();
@@ -33,11 +34,15 @@ export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> 
       query = query.eq('status', filters.status);
     }
 
+    if (filters?.limit != null) {
+      query = query.limit(filters.limit);
+    }
+
     const { data, error } = await query;
-    if (error || !data) return mockGetLostPets(filters);
+    if (error || !data) return mockGetLostPets(filters).slice(0, filters?.limit ?? Number.POSITIVE_INFINITY);
     return data as LostPet[];
   } catch {
-    return mockGetLostPets(filters);
+    return mockGetLostPets(filters).slice(0, filters?.limit ?? Number.POSITIVE_INFINITY);
   }
 }
 

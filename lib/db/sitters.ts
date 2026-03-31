@@ -10,6 +10,7 @@ interface SitterFilters {
   min_price?: number;
   max_price?: number;
   sort?: 'rating' | 'reviews' | 'price_asc' | 'price_desc';
+  limit?: number;
 }
 
 function applyFiltersAndSort(
@@ -63,6 +64,10 @@ function applyFiltersAndSort(
       filtered.sort((a, b) => b.rating_avg - a.rating_avg);
   }
 
+  if (filters?.limit != null) {
+    filtered = filtered.slice(0, filters.limit);
+  }
+
   return filtered;
 }
 
@@ -89,6 +94,10 @@ export async function getSitters(
     }
     if (filters?.min_rating) {
       query = query.gte('rating_avg', filters.min_rating);
+    }
+
+    if (filters?.limit != null) {
+      query = query.limit(filters.limit);
     }
 
     const { data, error } = await query;
