@@ -97,7 +97,7 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
       };
       fetchPartner();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- conversations/supabase are stable refs, adding them causes infinite re-render
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- conversations are seeded server-side; adding them would re-open the draft thread repeatedly
   }, [toParam]);
 
   // Supabase real-time subscription
@@ -162,7 +162,7 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
       });
     };
     void markRead();
-  }, [selectedPartnerId, currentUser.id, supabase]);
+  }, [selectedPartnerId, currentUser.id]);
 
   const sendMessage = async () => {
     if (!newMessage.trim() || !selectedPartnerId) return;

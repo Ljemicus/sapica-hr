@@ -1,7 +1,52 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
-import { getMessagesForUser as mockGetMessages } from '@/lib/mock-data';
+import { getMessagesForUser as mockGetMessages, getUserById } from '@/lib/mock-data';
 import type { Message } from '@/lib/types';
+
+
+export interface ConversationSummary {
+  partnerId: string;
+  partnerName: string;
+  partnerAvatar: string | null;
+  messages: Message[];
+  lastMessage: Message | null;
+  unreadCount: number;
+}
+
+function buildMockConversationSummaries(userId: string): ConversationSummary[] {
+  const allMessages = mockGetMessages(userId);
+  const partnerIds = [...new Set(allMessages.map((msg) => msg.sender_id === userId ? msg.receiver_id : msg.sender_id))];
+  const grouped = new Map<string, Message[]>();
+
+  for (const msg of allMessages) {
+    const partnerId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
+    const current = grouped.get(partnerId) || [];
+    current.push(msg);
+    grouped.set(partnerId, current);
+  }
+
+  return partnerIds.map((partnerId) => {
+    const partner = getUserById(partnerId);
+    const messages = (grouped.get(partnerId) || []).sort(
+      (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
+    const lastMessage = messages[messages.length - 1] || null;
+    const unreadCount = messages.filter((m) => !m.read && m.receiver_id === userId).length;
+
+    return {
+      partnerId,
+      partnerName: partner?.name || 'Korisnik',
+      partnerAvatar: partner?.avatar_url || null,
+      messages,
+      lastMessage,
+      unreadCount,
+    };
+  }).sort((a, b) => {
+    const aTime = a.lastMessage ? new Date(a.lastMessage.created_at).getTime() : 0;
+    const bTime = b.lastMessage ? new Date(b.lastMessage.created_at).getTime() : 0;
+    return bTime - aTime;
+  });
+}
 
 export async function getConversations(userId: string): Promise<Message[]> {
   if (!isSupabaseConfigured()) {
@@ -169,5 +214,62 @@ export async function markAsRead(
       .eq('read', false);
   } catch {
     // silently fail
+  }
+}
+
+export async function getConversationSummaries(userId: string): Promise<ConversationSummary[]> {
+  if (!isSupabaseConfigured()) {
+    return buildMockConversationSummaries(userId);
+  }
+
+  try {
+    const allMessages = await getMessages(userId);
+    const partnerIds = [...new Set(allMessages.map((msg) => msg.sender_id === userId ? msg.receiver_id : msg.sender_id))];
+
+    if (partnerIds.length === 0) return [];
+
+    const supabase = await createClient();
+    const { data: partners, error } = await supabase
+      .from('users')
+      .select('id, name, avatar_url')
+      .in('id', partnerIds);
+
+    if (error) return buildMockConversationSummaries(userId);
+
+    const partnerMap = new Map((partners || []).map((partner) => [partner.id as string, partner]));
+    const grouped = new Map<string, Message[]>();
+
+    for (const msg of allMessages) {
+      const partnerId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
+      const current = grouped.get(partnerId) || [];
+      current.push(msg);
+      grouped.set(partnerId, current);
+    }
+
+    return Array.from(grouped.entries())
+      .map(([partnerId, messages]) => {
+        const partner = partnerMap.get(partnerId);
+        const sortedMessages = [...messages].sort(
+          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+        const lastMessage = sortedMessages[sortedMessages.length - 1] || null;
+        const unreadCount = sortedMessages.filter((m) => !m.read && m.receiver_id === userId).length;
+
+        return {
+          partnerId,
+          partnerName: (partner?.name as string | undefined) || 'Korisnik',
+          partnerAvatar: (partner?.avatar_url as string | null | undefined) || null,
+          messages: sortedMessages,
+          lastMessage,
+          unreadCount,
+        };
+      })
+      .sort((a, b) => {
+        const aTime = a.lastMessage ? new Date(a.lastMessage.created_at).getTime() : 0;
+        const bTime = b.lastMessage ? new Date(b.lastMessage.created_at).getTime() : 0;
+        return bTime - aTime;
+      });
+  } catch {
+    return buildMockConversationSummaries(userId);
   }
 }
