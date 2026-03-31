@@ -8,7 +8,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const bookings = await getUserGroomerBookings(user.id);
+  const bookings = await getUserGroomerBookings(user.id, 'history-list');
   return NextResponse.json(bookings);
 }
 
