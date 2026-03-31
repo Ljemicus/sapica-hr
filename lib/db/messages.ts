@@ -13,6 +13,21 @@ export interface ConversationSummary {
   unreadCount: number;
 }
 
+interface ConversationSummaryRow {
+  partner_id: string;
+  partner_name: string | null;
+  partner_avatar: string | null;
+  last_message_id: string | null;
+  last_message_sender_id: string | null;
+  last_message_receiver_id: string | null;
+  last_message_booking_id: string | null;
+  last_message_content: string | null;
+  last_message_image_url: string | null;
+  last_message_read: boolean | null;
+  last_message_created_at: string | null;
+  unread_count: number | null;
+}
+
 function buildMockConversationSummaries(userId: string): ConversationSummary[] {
   const allMessages = mockGetMessages(userId);
   const partnerIds = [...new Set(allMessages.map((msg) => msg.sender_id === userId ? msg.receiver_id : msg.sender_id))];
@@ -220,6 +235,37 @@ export async function markAsRead(
 export async function getConversationSummaries(userId: string): Promise<ConversationSummary[]> {
   if (!isSupabaseConfigured()) {
     return buildMockConversationSummaries(userId);
+  }
+
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.rpc('get_message_conversation_summaries', {
+      p_user_id: userId,
+    });
+
+    if (!error && Array.isArray(data)) {
+      return (data as ConversationSummaryRow[]).map((row) => ({
+        partnerId: row.partner_id,
+        partnerName: row.partner_name || 'Korisnik',
+        partnerAvatar: row.partner_avatar,
+        messages: [],
+        lastMessage: row.last_message_id
+          ? {
+              id: row.last_message_id,
+              sender_id: row.last_message_sender_id || userId,
+              receiver_id: row.last_message_receiver_id || row.partner_id,
+              booking_id: row.last_message_booking_id,
+              content: row.last_message_content,
+              image_url: row.last_message_image_url,
+              read: row.last_message_read ?? true,
+              created_at: row.last_message_created_at || new Date(0).toISOString(),
+            }
+          : null,
+        unreadCount: row.unread_count ?? 0,
+      }));
+    }
+  } catch {
+    // fall through to compatibility path below
   }
 
   try {

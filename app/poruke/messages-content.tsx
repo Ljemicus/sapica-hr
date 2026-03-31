@@ -72,11 +72,34 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
   const [sending, setSending] = useState(false);
   const [typingPartners, setTypingPartners] = useState<Set<string>>(new Set());
   const [readMessages, setReadMessages] = useState<Set<string>>(new Set());
+  const [loadingConversationId, setLoadingConversationId] = useState<string | null>(null);
+  const [loadedConversationIds, setLoadedConversationIds] = useState<Set<string>>(new Set(
+    initialConversations
+      .filter((conversation) => conversation.messages.length > 0)
+      .map((conversation) => conversation.partnerId)
+  ));
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
 
   const selectedConversation = conversations.find(c => c.partnerId === selectedPartnerId);
+
+  const sortConversations = useCallback((items: Conversation[]) => {
+    return [...items].sort((a, b) => {
+      const aTime = a.lastMessage ? new Date(a.lastMessage.created_at).getTime() : 0;
+      const bTime = b.lastMessage ? new Date(b.lastMessage.created_at).getTime() : 0;
+      return bTime - aTime;
+    });
+  }, []);
+
+  const upsertConversation = useCallback((partnerId: string, updater: (conversation: Conversation | undefined) => Conversation) => {
+    setConversations((prev) => {
+      const existing = prev.find((conversation) => conversation.partnerId === partnerId);
+      const nextConversation = updater(existing);
+      const rest = prev.filter((conversation) => conversation.partnerId !== partnerId);
+      return sortConversations([nextConversation, ...rest]);
+    });
+  }, [sortConversations]);
 
   // Auto-scroll na dno kad dođe nova poruka
   const scrollToBottom = useCallback(() => {
@@ -88,41 +111,68 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
       const fetchPartner = async () => {
         const { data } = await supabase.from('users').select('id, name, avatar_url').eq('id', toParam).single();
         if (data) {
-          setConversations(prev => [{
-            partnerId: data.id, partnerName: data.name, partnerAvatar: data.avatar_url,
-            messages: [], lastMessage: null, unreadCount: 0,
-          }, ...prev]);
+          upsertConversation(data.id, (existing) => existing || {
+            partnerId: data.id,
+            partnerName: data.name,
+            partnerAvatar: data.avatar_url,
+            messages: [],
+            lastMessage: null,
+            unreadCount: 0,
+          });
           setSelectedPartnerId(data.id);
         }
       };
-      fetchPartner();
+      void fetchPartner();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps -- conversations are seeded server-side; adding them would re-open the draft thread repeatedly
-  }, [toParam]);
+  }, [toParam, upsertConversation]);
+
+  useEffect(() => {
+    if (!selectedPartnerId || loadedConversationIds.has(selectedPartnerId) || loadingConversationId === selectedPartnerId) {
+      return;
+    }
+
+    const fetchConversation = async () => {
+      setLoadingConversationId(selectedPartnerId);
+      try {
+        const response = await fetch(`/api/messages?partner_id=${encodeURIComponent(selectedPartnerId)}`);
+        if (!response.ok) return;
+        const messages = await response.json() as Message[];
+        upsertConversation(selectedPartnerId, (existing) => ({
+          partnerId: selectedPartnerId,
+          partnerName: existing?.partnerName || 'Korisnik',
+          partnerAvatar: existing?.partnerAvatar || null,
+          messages,
+          lastMessage: messages[messages.length - 1] || existing?.lastMessage || null,
+          unreadCount: existing?.unreadCount || 0,
+        }));
+        setLoadedConversationIds((prev) => new Set(prev).add(selectedPartnerId));
+      } finally {
+        setLoadingConversationId((current) => current === selectedPartnerId ? null : current);
+      }
+    };
+
+    void fetchConversation();
+  }, [loadedConversationIds, loadingConversationId, selectedPartnerId, upsertConversation]);
 
   // Supabase real-time subscription
   useEffect(() => {
     const channel = supabase.channel('messages')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `receiver_id=eq.${currentUser.id}` }, (payload) => {
         const newMsg = payload.new as Message;
-        setConversations(prev => {
-          const updated = [...prev];
-          const convIndex = updated.findIndex(c => c.partnerId === newMsg.sender_id);
-          if (convIndex >= 0) {
-            updated[convIndex] = {
-              ...updated[convIndex],
-              messages: [...updated[convIndex].messages, { ...newMsg, sender: { id: newMsg.sender_id, name: '', avatar_url: null, email: '', role: 'owner' as const, phone: null, city: null, created_at: '' } }],
-              lastMessage: newMsg,
-              unreadCount: updated[convIndex].unreadCount + (selectedPartnerId === newMsg.sender_id ? 0 : 1),
-            };
-          }
-          return updated;
-        });
+        upsertConversation(newMsg.sender_id, (existing) => ({
+          partnerId: newMsg.sender_id,
+          partnerName: existing?.partnerName || 'Korisnik',
+          partnerAvatar: existing?.partnerAvatar || null,
+          messages: existing?.messages?.length ? [...existing.messages, { ...newMsg, sender: { id: newMsg.sender_id, name: '', avatar_url: null, email: '', role: 'owner' as const, phone: null, city: null, created_at: '' } }] : existing?.messages || [],
+          lastMessage: newMsg,
+          unreadCount: (existing?.unreadCount || 0) + (selectedPartnerId === newMsg.sender_id ? 0 : 1),
+        }));
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   // eslint-disable-next-line react-hooks/exhaustive-deps -- supabase is a stable client ref
-  }, [currentUser.id, selectedPartnerId]);
+  }, [currentUser.id, selectedPartnerId, upsertConversation]);
 
   // Realtime — subscribe for incoming messages via Supabase Realtime
   useEffect(() => {
@@ -179,18 +229,15 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
     const mockId = `local-${Date.now()}`;
     const localMsg = payload || { id: mockId, ...msg, created_at: new Date().toISOString() };
 
-    setConversations(prev => {
-      const updated = [...prev];
-      const convIndex = updated.findIndex(c => c.partnerId === selectedPartnerId);
-      if (convIndex >= 0) {
-        updated[convIndex] = {
-          ...updated[convIndex],
-          messages: [...updated[convIndex].messages, { ...localMsg, sender: { id: currentUser.id, name: currentUser.name, avatar_url: currentUser.avatar_url } }],
-          lastMessage: localMsg,
-        };
-      }
-      return updated;
-    });
+    upsertConversation(selectedPartnerId, (existing) => ({
+      partnerId: selectedPartnerId,
+      partnerName: existing?.partnerName || 'Korisnik',
+      partnerAvatar: existing?.partnerAvatar || null,
+      messages: [...(existing?.messages || []), { ...localMsg, sender: { id: currentUser.id, name: currentUser.name, avatar_url: currentUser.avatar_url } }],
+      lastMessage: localMsg,
+      unreadCount: existing?.unreadCount || 0,
+    }));
+    setLoadedConversationIds((prev) => new Set(prev).add(selectedPartnerId));
     setNewMessage('');
     setSending(false);
 
@@ -203,6 +250,7 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
   const messageGroups = selectedConversation ? groupMessagesByDate(selectedConversation.messages) : [];
   const isPartnerTyping = selectedPartnerId ? typingPartners.has(selectedPartnerId) : false;
   const totalUnread = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
+  const isLoadingConversation = selectedPartnerId !== null && loadingConversationId === selectedPartnerId;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
@@ -308,43 +356,49 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
                 {/* Messages */}
                 <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
                   <div className="space-y-1">
-                    {messageGroups.map((group, gi) => (
-                      <div key={gi}>
-                        <div className="flex items-center justify-center my-4">
-                          <span className="text-[11px] text-muted-foreground bg-gray-100 px-3 py-1 rounded-full">
-                            {formatDateHeader(group.date)}
-                          </span>
-                        </div>
-                        {group.messages.map((msg, i) => {
-                          const isMine = msg.sender_id === currentUser.id;
-                          const isRead = readMessages.has(msg.id) || msg.read;
-                          return (
-                            <div key={msg.id || `${gi}-${i}`} className={`flex ${isMine ? 'justify-end' : 'justify-start'} mb-1.5`}>
-                              <div className={`max-w-[75%] px-4 py-2.5 shadow-sm ${
-                                isMine
-                                  ? 'bg-orange-500 text-white chat-bubble-mine'
-                                  : 'bg-white border chat-bubble-theirs'
-                              }`}>
-                                <p className="text-sm leading-relaxed">{msg.content}</p>
-                                <div className={`flex items-center gap-1 justify-end mt-1 ${isMine ? 'text-orange-200' : 'text-muted-foreground'}`}>
-                                  <span className="text-[10px]">{format(new Date(msg.created_at), 'HH:mm')}</span>
-                                  {isMine && (
-                                    <CheckCheck className={`h-3 w-3 ${isRead ? 'text-white' : 'text-orange-300'}`} />
-                                  )}
+                    {isLoadingConversation && selectedConversation.messages.length === 0 ? (
+                      <div className="text-center py-12 text-sm text-muted-foreground">
+                        Učitavam razgovor...
+                      </div>
+                    ) : (
+                      messageGroups.map((group, gi) => (
+                        <div key={gi}>
+                          <div className="flex items-center justify-center my-4">
+                            <span className="text-[11px] text-muted-foreground bg-gray-100 px-3 py-1 rounded-full">
+                              {formatDateHeader(group.date)}
+                            </span>
+                          </div>
+                          {group.messages.map((msg, i) => {
+                            const isMine = msg.sender_id === currentUser.id;
+                            const isRead = readMessages.has(msg.id) || msg.read;
+                            return (
+                              <div key={msg.id || `${gi}-${i}`} className={`flex ${isMine ? 'justify-end' : 'justify-start'} mb-1.5`}>
+                                <div className={`max-w-[75%] px-4 py-2.5 shadow-sm ${
+                                  isMine
+                                    ? 'bg-orange-500 text-white chat-bubble-mine'
+                                    : 'bg-white border chat-bubble-theirs'
+                                }`}>
+                                  <p className="text-sm leading-relaxed">{msg.content}</p>
+                                  <div className={`flex items-center gap-1 justify-end mt-1 ${isMine ? 'text-orange-200' : 'text-muted-foreground'}`}>
+                                    <span className="text-[10px]">{format(new Date(msg.created_at), 'HH:mm')}</span>
+                                    {isMine && (
+                                      <CheckCheck className={`h-3 w-3 ${isRead ? 'text-white' : 'text-orange-300'}`} />
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ))}
+                            );
+                          })}
+                        </div>
+                      ))
+                    )}
 
                     {/* Typing indicator */}
                     {isPartnerTyping && (
                       <TypingIndicator name={selectedConversation.partnerName} />
                     )}
 
-                    {selectedConversation.messages.length === 0 && !isPartnerTyping && (
+                    {selectedConversation.messages.length === 0 && !isPartnerTyping && !isLoadingConversation && (
                       <div className="text-center py-12 text-muted-foreground">
                         <MessageCircle className="h-10 w-10 mx-auto mb-3 opacity-20" />
                         <p className="text-sm">Započnite razgovor s {selectedConversation.partnerName}</p>

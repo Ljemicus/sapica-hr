@@ -1,13 +1,19 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getMessages, sendMessage } from '@/lib/db';
+import { getConversation, getMessages, sendMessage } from '@/lib/db';
 import { messageSchema } from '@/lib/validations';
 
-export async function GET() {
+export async function GET(request: Request) {
   const user = await getAuthUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const messages = await getMessages(user.id);
+  const { searchParams } = new URL(request.url);
+  const partnerId = searchParams.get('partner_id');
+
+  const messages = partnerId
+    ? await getConversation(user.id, partnerId)
+    : await getMessages(user.id);
+
   return NextResponse.json(messages);
 }
 
