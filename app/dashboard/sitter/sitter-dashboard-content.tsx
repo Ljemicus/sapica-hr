@@ -80,29 +80,43 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
       return;
     }
     setLoading(true);
-    const data = { bio: profileForm.bio, experience_years: parseInt(profileForm.experience_years), services: profileForm.services, prices: profileForm.prices, city: profileForm.city, user_id: user.id };
+    const response = await fetch('/api/sitter-profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        bio: profileForm.bio,
+        experience_years: parseInt(profileForm.experience_years),
+        services: profileForm.services,
+        prices: profileForm.prices,
+        city: profileForm.city,
+      }),
+    });
 
-    const { error } = profile
-      ? await supabase.from('sitter_profiles').update(data).eq('user_id', user.id)
-      : await supabase.from('sitter_profiles').insert(data);
-
-    if (error) toast.error('Greška pri spremanju profila');
+    if (!response.ok) toast.error('Greška pri spremanju profila');
     else { toast.success('Profil spremljen!'); setShowProfileDialog(false); router.refresh(); }
     setLoading(false);
   };
 
   const updateBookingStatus = async (bookingId: string, status: BookingStatus) => {
-    const { error } = await supabase.from('bookings').update({ status }).eq('id', bookingId);
-    if (error) toast.error('Greška pri ažuriranju statusa');
+    const response = await fetch(`/api/bookings/${bookingId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    });
+    if (!response.ok) toast.error('Greška pri ažuriranju statusa');
     else { toast.success(`Rezervacija ${STATUS_LABELS[status].toLowerCase()}`); router.refresh(); }
   };
 
   const toggleAvailability = async (dateStr: string) => {
     const isAvailable = availableDates.has(dateStr);
-    if (isAvailable) {
-      await supabase.from('availability').delete().eq('sitter_id', user.id).eq('date', dateStr);
-    } else {
-      await supabase.from('availability').upsert({ sitter_id: user.id, date: dateStr, available: true });
+    const response = await fetch('/api/availability', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dates: [dateStr], available: !isAvailable }),
+    });
+    if (!response.ok) {
+      toast.error('Greška pri ažuriranju dostupnosti');
+      return;
     }
     router.refresh();
   };
@@ -122,24 +136,25 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
       return;
     }
     setSendingUpdate(true);
-    const { error, data } = await supabase
-      .from('pet_updates')
-      .insert({
+    const response = await fetch('/api/pet-updates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         booking_id: updateBookingId,
-        sitter_id: user.id,
         type: updateType,
         emoji: updateEmoji,
         caption: updateCaption,
         photo_url: updatePhotoUrls[0] || null,
-      })
-      .select()
-      .single();
+      }),
+    });
 
-    if (error) {
+    if (!response.ok) {
       toast.error('Greška pri slanju ažuriranja');
       setSendingUpdate(false);
       return;
-    } else if (data) {
+    }
+    const data = await response.json();
+    if (data) {
       setSentUpdates(prev => [data as PetUpdate, ...prev].slice(0, 5));
     }
 

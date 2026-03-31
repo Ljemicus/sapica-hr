@@ -47,8 +47,12 @@ export function AdminContent({ users, bookings, sitters }: Props) {
   const supabase = createClient();
 
   const toggleVerification = async (userId: string, currentStatus: boolean) => {
-    const { error } = await supabase.from('sitter_profiles').update({ verified: !currentStatus }).eq('user_id', userId);
-    if (error) toast.error('Greška pri ažuriranju');
+    const response = await fetch('/api/admin/sitter-verification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, verified: !currentStatus }),
+    });
+    if (!response.ok) toast.error('Greška pri ažuriranju');
     else { toast.success(!currentStatus ? 'Sitter verificiran!' : 'Verifikacija uklonjena'); router.refresh(); }
   };
 
