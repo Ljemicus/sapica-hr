@@ -35,7 +35,7 @@ export async function getGroomers(filters?: GroomerFilters): Promise<Groomer[]> 
     }
 
     const { data, error } = await query;
-    if (error || !data) return mockGetGroomers(filters ? { city: filters.city, service: filters.service } : undefined);
+    if (error || !data) return [];
 
     let results = data as Groomer[];
 
@@ -48,13 +48,13 @@ export async function getGroomers(filters?: GroomerFilters): Promise<Groomer[]> 
     results.sort((a, b) => b.rating - a.rating);
     return results;
   } catch {
-    return mockGetGroomers(filters ? { city: filters.city, service: filters.service } : undefined);
+    return [];
   }
 }
 
 export async function getGroomer(id: string): Promise<Groomer | null> {
   if (!isSupabaseConfigured()) {
-    return mockGetGroomer(id) ?? null;
+    return null;
   }
   try {
     const supabase = await createClient();
@@ -70,14 +70,14 @@ export async function getGroomer(id: string): Promise<Groomer | null> {
 
     return mockGetGroomer(id) ?? null;
   } catch {
-    return mockGetGroomer(id) ?? null;
+    return null;
   }
 }
 
 export async function getGroomerReviews(groomerId: string): Promise<GroomerReview[]> {
   if (!isSupabaseConfigured()) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return mockGetGroomerReviews(groomerId) as any[];
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -88,11 +88,11 @@ export async function getGroomerReviews(groomerId: string): Promise<GroomerRevie
       .order('created_at', { ascending: false });
     if (error || !data) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return mockGetGroomerReviews(groomerId) as any[];
+      return [];
     }
     return data as GroomerReview[];
   } catch {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return mockGetGroomerReviews(groomerId) as any[];
+    return [];
   }
 }

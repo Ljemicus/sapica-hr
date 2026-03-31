@@ -36,7 +36,7 @@ export async function getTrainers(filters?: TrainerFilters): Promise<Trainer[]> 
     }
 
     const { data, error } = await query;
-    if (error || !data) return mockGetTrainers(filters ? { city: filters.city, type: filters.type } : undefined);
+    if (error || !data) return [];
 
     let results = data as Trainer[];
 
@@ -49,7 +49,7 @@ export async function getTrainers(filters?: TrainerFilters): Promise<Trainer[]> 
     results.sort((a, b) => b.rating - a.rating);
     return results;
   } catch {
-    return mockGetTrainers(filters ? { city: filters.city, type: filters.type } : undefined);
+    return [];
   }
 }
 
@@ -60,10 +60,10 @@ export async function getTrainer(id: string): Promise<Trainer | null> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('trainers').select('id, name, city, specializations, price_per_hour, certificates, rating, reviews, bio, certified').eq('id', id).single();
-    if (error || !data) return mockGetTrainer(id) ?? null;
+    if (error || !data) return null;
     return data as Trainer;
   } catch {
-    return mockGetTrainer(id) ?? null;
+    return null;
   }
 }
 
@@ -77,17 +77,17 @@ export async function getPrograms(trainerId: string): Promise<TrainingProgram[]>
       .from('training_programs')
       .select('id, trainer_id, name, type, duration_weeks, sessions, price, description')
       .eq('trainer_id', trainerId);
-    if (error || !data) return mockGetPrograms(trainerId);
+    if (error || !data) return [];
     return data as TrainingProgram[];
   } catch {
-    return mockGetPrograms(trainerId);
+    return [];
   }
 }
 
 export async function getTrainerReviews(trainerId: string): Promise<TrainerReview[]> {
   if (!isSupabaseConfigured()) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return mockGetTrainerReviews(trainerId) as any[];
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -98,11 +98,11 @@ export async function getTrainerReviews(trainerId: string): Promise<TrainerRevie
       .order('created_at', { ascending: false });
     if (error || !data) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return mockGetTrainerReviews(trainerId) as any[];
+      return [];
     }
     return data as TrainerReview[];
   } catch {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return mockGetTrainerReviews(trainerId) as any[];
+    return [];
   }
 }

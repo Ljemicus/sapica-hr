@@ -16,10 +16,10 @@ export async function getAvailability(sitterId: string): Promise<Availability[]>
       .eq('sitter_id', sitterId)
       .gte('date', today)
       .order('date', { ascending: true });
-    if (error || !data) return mockGetAvailability(sitterId);
+    if (error || !data) return [];
     return data as Availability[];
   } catch {
-    return mockGetAvailability(sitterId);
+    return [];
   }
 }
 
