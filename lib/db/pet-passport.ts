@@ -14,10 +14,10 @@ export async function getPassport(petId: string): Promise<PetPassport | null> {
       .select('*')
       .eq('pet_id', petId)
       .single();
-    if (error || !data) return mockGetPassport(petId) ?? null;
+    if (error || !data) return null;
     return data as PetPassport;
   } catch {
-    return mockGetPassport(petId) ?? null;
+    return null;
   }
 }
 
@@ -26,9 +26,7 @@ export async function updatePassport(
   passportData: Partial<Omit<PetPassport, 'pet_id'>>
 ): Promise<PetPassport | null> {
   if (!isSupabaseConfigured()) {
-    const existing = mockGetPassport(petId);
-    if (existing) return { ...existing, ...passportData };
-    return { pet_id: petId, vaccinations: [], allergies: [], medications: [], vet_info: { name: '', phone: '', address: '', emergency: false }, notes: '', ...passportData };
+    return null;
   }
   try {
     const supabase = await createClient();

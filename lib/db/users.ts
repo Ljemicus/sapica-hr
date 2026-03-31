@@ -10,10 +10,10 @@ export async function getUser(id: string): Promise<User | null> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('users').select('id, email, name, role, avatar_url, phone, city, created_at').eq('id', id).single();
-    if (error || !data) return getUserById(id) ?? null;
+    if (error || !data) return null;
     return data as User;
   } catch {
-    return getUserById(id) ?? null;
+    return null;
   }
 }
 
@@ -44,10 +44,10 @@ export async function getUsers(fields: UserFields = 'full'): Promise<User[]> {
       ? 'id, email, name, role, avatar_url, city, created_at'
       : '*';
     const { data, error } = await supabase.from('users').select(selectClause);
-    if (error || !data) return pickMockUserFields(mockUsers, fields);
+    if (error || !data) return [];
     return data as unknown as User[];
   } catch {
-    return pickMockUserFields(mockUsers, fields);
+    return [];
   }
 }
 
@@ -82,9 +82,9 @@ export async function getUsersByRole(role: string): Promise<User[]> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('users').select('id, email, name, role, avatar_url, phone, city, created_at').eq('role', role);
-    if (error || !data) return mockUsers.filter((u) => u.role === role);
+    if (error || !data) return [];
     return data as unknown as User[];
   } catch {
-    return mockUsers.filter((u) => u.role === role);
+    return [];
   }
 }

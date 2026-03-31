@@ -13,10 +13,10 @@ export async function getReviews(): Promise<Review[]> {
       .from('reviews')
       .select('*, reviewer:users!reviewer_id(*)')
       .order('created_at', { ascending: false });
-    if (error || !data) return mockReviews;
+    if (error || !data) return [];
     return data as Review[];
   } catch {
-    return mockReviews;
+    return [];
   }
 }
 
@@ -62,10 +62,10 @@ export async function getReviewsBySitter(sitterId: string, fields: ReviewFields 
       .select(selectClause)
       .eq('reviewee_id', sitterId)
       .order('created_at', { ascending: false });
-    if (error || !data) return pickMockReviewFields(mockGetReviewsForSitter(sitterId), fields);
+    if (error || !data) return [];
     return data as unknown as Review[];
   } catch {
-    return pickMockReviewFields(mockGetReviewsForSitter(sitterId), fields);
+    return [];
   }
 }
 
@@ -82,11 +82,11 @@ export async function getReviewedBookingIds(userId: string): Promise<string[]> {
       .select('booking_id')
       .eq('reviewer_id', userId);
     if (error || !data) {
-      return mockReviews.filter((r) => r.reviewer_id === userId).map((r) => r.booking_id);
+      return [];
     }
     return data.map((r) => r.booking_id);
   } catch {
-    return mockReviews.filter((r) => r.reviewer_id === userId).map((r) => r.booking_id);
+    return [];
   }
 }
 
@@ -98,12 +98,7 @@ export async function createReview(reviewData: {
   comment: string | null;
 }): Promise<Review | null> {
   if (!isSupabaseConfigured()) {
-    const mockReview: Review = {
-      ...reviewData,
-      id: `mock-review-${Date.now()}`,
-      created_at: new Date().toISOString(),
-    };
-    return mockReview;
+    return null;
   }
   try {
     const supabase = await createClient();

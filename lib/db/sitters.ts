@@ -109,12 +109,12 @@ export async function getSitters(
 
     const { data, error } = await query;
     if (error || !data) {
-      return applyFiltersAndSort(getSitterProfiles(), filters);
+      return [];
     }
 
     return applyFiltersAndSort(data as unknown as (SitterProfile & { user: User })[], filters);
   } catch {
-    return applyFiltersAndSort(getSitterProfiles(), filters);
+    return [];
   }
 }
 
@@ -131,10 +131,10 @@ export async function getSitter(
       .select('*, user:users(*)')
       .eq('user_id', userId)
       .single();
-    if (error || !data) return getSitterProfile(userId) ?? null;
+    if (error || !data) return null;
     return data as SitterProfile & { user: User };
   } catch {
-    return getSitterProfile(userId) ?? null;
+    return null;
   }
 }
 

@@ -26,10 +26,10 @@ export async function getPets(): Promise<Pet[]> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('pets').select('*');
-    if (error || !data) return mockPets;
+    if (error || !data) return [];
     return data as Pet[];
   } catch {
-    return mockPets;
+    return [];
   }
 }
 
@@ -60,10 +60,10 @@ export async function getPetsByOwner(ownerId: string, fields: PetFields = 'full'
     const supabase = await createClient();
     const selectClause = fields === 'walk-label' ? 'id, owner_id, name, species, created_at' : '*';
     const { data, error } = await supabase.from('pets').select(selectClause).eq('owner_id', ownerId);
-    if (error || !data) return pickMockPetFields(mockGetPetsForOwner(ownerId), fields);
+    if (error || !data) return [];
     return data as unknown as Pet[];
   } catch {
-    return pickMockPetFields(mockGetPetsForOwner(ownerId), fields);
+    return [];
   }
 }
 
@@ -74,10 +74,10 @@ export async function getPet(id: string): Promise<Pet | null> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('pets').select('*').eq('id', id).single();
-    if (error || !data) return mockPets.find((p) => p.id === id) ?? null;
+    if (error || !data) return null;
     return data as Pet;
   } catch {
-    return mockPets.find((p) => p.id === id) ?? null;
+    return null;
   }
 }
 
@@ -92,19 +92,7 @@ export async function createPet(petData: {
   photo_url?: string | null;
 }): Promise<Pet | null> {
   if (!isSupabaseConfigured()) {
-    const mockPet: Pet = {
-      id: `mock-pet-${Date.now()}`,
-      owner_id: petData.owner_id,
-      name: petData.name,
-      species: petData.species as Pet['species'],
-      breed: petData.breed ?? null,
-      age: petData.age ?? null,
-      weight: petData.weight ?? null,
-      special_needs: petData.special_needs ?? null,
-      photo_url: petData.photo_url ?? null,
-      created_at: new Date().toISOString(),
-    };
-    return mockPet;
+    return null;
   }
   try {
     const supabase = await createClient();
