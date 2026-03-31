@@ -130,7 +130,7 @@ export default async function HomePage() {
               Sve za ljubimce na jednom mjestu
             </Badge>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-heading)]">
-              Za sretne <span className="text-orange-500">ljubimce</span> i{' '}
+              Za <span className="text-orange-500">sretne ljubimce</span> i{' '}
               <span className="text-teal-600 dark:text-teal-400">mirnije vlasnike.</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in-up delay-200 leading-relaxed">
