@@ -34,22 +34,23 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && data.user) {
-      const { data: existing } = await supabase
-        .from('users')
-        .select('id')
-        .eq('id', data.user.id)
-        .single();
+      const meta = data.user.user_metadata;
+      const role = meta?.role === 'sitter' ? 'sitter' : 'owner';
 
-      if (!existing) {
-        const meta = data.user.user_metadata;
-        await supabase.from('users').insert({
-          id: data.user.id,
-          email: data.user.email,
-          name: meta?.full_name || meta?.name || data.user.email?.split('@')[0] || '',
-          role: 'owner',
-          avatar_url: meta?.avatar_url || null,
-          city: null,
-        });
+      await supabase.from('users').upsert({
+        id: data.user.id,
+        email: data.user.email,
+        name: meta?.full_name || meta?.name || data.user.email?.split('@')[0] || '',
+        role,
+        avatar_url: meta?.avatar_url || null,
+        city: meta?.city || null,
+      }, { onConflict: 'id' });
+
+      if (role === 'sitter') {
+        await supabase.from('sitter_profiles').upsert({
+          user_id: data.user.id,
+          city: meta?.city || null,
+        }, { onConflict: 'user_id' });
       }
 
       return NextResponse.redirect(`${origin}${next}`);

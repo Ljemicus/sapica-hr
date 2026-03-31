@@ -46,28 +46,31 @@ export function RegisterForm() {
 
   const onSubmit = async (data: RegisterInput) => {
     setLoading(true);
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: data.email, password: data.password,
-      options: { data: { name: data.name, role: data.role, city: data.city } },
-    });
-    if (authError) { toast.error(authError.message); setLoading(false); return; }
-    if (authData.user) {
-      const { error: profileError } = await supabase.from('users').insert({ id: authData.user.id, email: data.email, name: data.name, role: data.role, city: data.city, avatar_url: avatarUrl });
-      if (profileError) { toast.error('Greška pri kreiranju profila'); setLoading(false); return; }
-      if (data.role === 'sitter') {
-        await supabase.from('sitter_profiles').insert({ user_id: authData.user.id, city: data.city });
-      }
-    }
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...data, avatar_url: avatarUrl }),
+      });
+      const payload = await response.json().catch(() => ({}));
 
-    // If email confirmation is required, the session won't be set yet
-    if (authData.session) {
-      toast.success('Registracija uspješna!');
-      const target = data.role === 'sitter' ? '/dashboard/sitter' : '/dashboard/vlasnik';
-      router.push(target);
-      router.refresh();
-    } else {
-      toast.success('Registracija uspješna! Provjerite email za potvrdu.');
-      router.push('/prijava');
+      if (!response.ok) {
+        toast.error(payload.error || 'Registracija nije uspjela');
+        setLoading(false);
+        return;
+      }
+
+      if (payload.session) {
+        toast.success('Registracija uspješna!');
+        const target = data.role === 'sitter' ? '/dashboard/sitter' : '/dashboard/vlasnik';
+        router.push(target);
+        router.refresh();
+      } else {
+        toast.success('Registracija uspješna! Provjerite email za potvrdu.');
+        router.push('/prijava');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
