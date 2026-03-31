@@ -14,7 +14,7 @@ export default async function SitterWalkPage() {
   if (user.role !== 'sitter') redirect('/');
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const bookings = await getBookings(user.id, 'sitter') as any[];
+  const bookings = await getBookings(user.id, 'sitter', 'walk-selector') as any[];
   const activeBookings = bookings.filter(
     (b) => b.status === 'accepted' && new Date(b.start_date) <= new Date() && new Date(b.end_date) >= new Date()
   );

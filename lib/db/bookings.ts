@@ -3,25 +3,63 @@ import { isSupabaseConfigured } from './helpers';
 import { getBookingsForUser as mockGetBookings, getUserById, mockBookings, mockPets } from '@/lib/mock-data';
 import type { Booking } from '@/lib/types';
 
+type BookingFields = 'full' | 'walk-selector';
+
+function pickMockBookingFields(bookings: Booking[], fields: BookingFields = 'full'): Booking[] {
+  if (fields === 'full') return bookings;
+
+  return bookings.map((booking) => ({
+    id: booking.id,
+    owner_id: booking.owner_id,
+    sitter_id: booking.sitter_id,
+    pet_id: booking.pet_id,
+    service_type: booking.service_type,
+    start_date: booking.start_date,
+    end_date: booking.end_date,
+    status: booking.status,
+    total_price: booking.total_price,
+    note: booking.note,
+    created_at: booking.created_at,
+    pet: booking.pet
+      ? {
+          id: booking.pet.id,
+          owner_id: booking.pet.owner_id,
+          name: booking.pet.name,
+          species: booking.pet.species,
+          breed: null,
+          age: null,
+          weight: null,
+          special_needs: null,
+          photo_url: null,
+          created_at: booking.pet.created_at,
+        }
+      : undefined,
+  }));
+}
+
 export async function getBookings(
   userId: string,
-  role: 'owner' | 'sitter'
+  role: 'owner' | 'sitter',
+  fields: BookingFields = 'full'
 ): Promise<Booking[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetBookings(userId, role);
+    return pickMockBookingFields(mockGetBookings(userId, role), fields);
   }
   try {
     const supabase = await createClient();
     const column = role === 'owner' ? 'owner_id' : 'sitter_id';
+    const selectClause = fields === 'walk-selector'
+      ? 'id, owner_id, sitter_id, pet_id, service_type, start_date, end_date, status, total_price, note, created_at, pet:pets(id, owner_id, name, species, created_at)'
+      : '*, owner:users!owner_id(*), sitter:users!sitter_id(*), pet:pets(*)';
     const { data, error } = await supabase
       .from('bookings')
-      .select('*, owner:users!owner_id(*), sitter:users!sitter_id(*), pet:pets(*)')
+      .select(selectClause)
       .eq(column, userId)
       .order('created_at', { ascending: false });
-    if (error || !data) return mockGetBookings(userId, role);
+    if (error || !data) return pickMockBookingFields(mockGetBookings(userId, role), fields);
     return data as unknown as Booking[];
   } catch {
-    return mockGetBookings(userId, role);
+    return pickMockBookingFields(mockGetBookings(userId, role), fields);
   }
 }
 
