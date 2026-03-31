@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 import type { Metadata } from 'next';
 import { getSitter, getReviewsBySitter, getAvailability } from '@/lib/db';
 import { SitterProfileContent } from './sitter-profile-content';
@@ -8,9 +9,11 @@ interface SitterPageProps {
   params: Promise<{ id: string }>;
 }
 
+const getCachedSitter = cache(async (id: string) => getSitter(id));
+
 export async function generateMetadata({ params }: SitterPageProps): Promise<Metadata> {
   const { id } = await params;
-  const profile = await getSitter(id);
+  const profile = await getCachedSitter(id);
 
   return {
     title: profile ? `${profile.user.name} — Sitter u ${profile.user.city || 'Hrvatskoj'}` : 'Sitter profil',
@@ -21,7 +24,7 @@ export async function generateMetadata({ params }: SitterPageProps): Promise<Met
 export default async function SitterPage({ params }: SitterPageProps) {
   const { id } = await params;
 
-  const profile = await getSitter(id);
+  const profile = await getCachedSitter(id);
   if (!profile) return notFound();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

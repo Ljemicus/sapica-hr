@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 import type { Metadata } from 'next';
 import { getGroomer, getGroomerReviews, getGroomerAvailableDates } from '@/lib/db';
 import { GroomerProfile } from './groomer-profile';
@@ -8,9 +9,11 @@ interface GroomerPageProps {
   params: Promise<{ id: string }>;
 }
 
+const getCachedGroomer = cache(async (id: string) => getGroomer(id));
+
 export async function generateMetadata({ params }: GroomerPageProps): Promise<Metadata> {
   const { id } = await params;
-  const groomer = await getGroomer(id);
+  const groomer = await getCachedGroomer(id);
   if (!groomer) notFound();
   return {
     title: `${groomer.name} — Grooming u ${groomer.city}`,
@@ -20,7 +23,7 @@ export async function generateMetadata({ params }: GroomerPageProps): Promise<Me
 
 export default async function GroomerPage({ params }: GroomerPageProps) {
   const { id } = await params;
-  const groomer = await getGroomer(id);
+  const groomer = await getCachedGroomer(id);
   if (!groomer) return notFound();
 
   const reviews = await getGroomerReviews(id);

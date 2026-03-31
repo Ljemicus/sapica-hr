@@ -1,12 +1,15 @@
+import { cache } from 'react';
 import type { Metadata } from 'next';
 import { getProductBySlug, getProductReviews, getRelatedProducts } from '@/lib/db';
 import { ProductDetail } from './product-detail';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
+const getCachedProductBySlug = cache(async (slug: string) => getProductBySlug(slug));
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getCachedProductBySlug(slug);
   if (!product) return { title: 'Proizvod nije pronađen' };
   return {
     title: `${product.name} — ${product.brand}`,
@@ -16,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getCachedProductBySlug(slug);
   if (!product) notFound();
 
   const jsonLd = {

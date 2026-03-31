@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 import type { Metadata } from 'next';
 import { getArticle, getRelatedArticles } from '@/lib/db';
 import { ArticleContent } from './article-content';
@@ -11,9 +12,11 @@ interface ArticlePageProps {
   params: Promise<{ slug: string }>;
 }
 
+const getCachedArticle = cache(async (slug: string) => getArticle(slug));
+
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticle(slug);
+  const article = await getCachedArticle(slug);
   if (!article) notFound();
   return {
     title: `${article.title} | PetPark`,
@@ -41,7 +44,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-  const article = await getArticle(slug);
+  const article = await getCachedArticle(slug);
   if (!article) return notFound();
   const related = await getRelatedArticles(slug, 3);
 

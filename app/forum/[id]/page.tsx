@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, MessageCircle, Heart, Clock, Pin, Flame } from 'lucide-react';
@@ -9,6 +10,8 @@ import { FORUM_CATEGORIES } from '@/lib/types';
 import { getTopic, getPosts, getTopics } from '@/lib/db';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { CommentForm } from './comment-form';
+
+const getCachedTopic = cache(async (id: string) => getTopic(id));
 
 const gradients = [
   'from-orange-400 to-amber-300',
@@ -39,7 +42,7 @@ function timeAgo(dateStr: string) {
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const topic = await getTopic(id);
+  const topic = await getCachedTopic(id);
   if (!topic) return { title: 'Post nije pronađen' };
   return {
     title: `${topic.title} — Forum`,
@@ -49,7 +52,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ForumTopicPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const topic = await getTopic(id);
+  const topic = await getCachedTopic(id);
   if (!topic) notFound();
 
   const comments = await getPosts(id);
