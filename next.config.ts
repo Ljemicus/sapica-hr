@@ -1,5 +1,20 @@
 import type { NextConfig } from "next";
 
+const csp = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  "script-src 'self' 'unsafe-inline' https://plausible.io",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: https: blob:",
+  "font-src 'self' data:",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.coingecko.com https://plausible.io https://api.resend.com https://api.stripe.com",
+  "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com",
+  "form-action 'self' https://checkout.stripe.com",
+  "upgrade-insecure-requests",
+].join('; ');
+
 const nextConfig: NextConfig = {
   async headers() {
     return [{
@@ -9,8 +24,9 @@ const nextConfig: NextConfig = {
         { key: 'X-Content-Type-Options', value: 'nosniff' },
         { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         { key: 'X-DNS-Prefetch-Control', value: 'on' },
+        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
-        { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.coingecko.com https://plausible.io; frame-ancestors 'none';" },
+        { key: 'Content-Security-Policy', value: csp },
       ],
     }];
   },

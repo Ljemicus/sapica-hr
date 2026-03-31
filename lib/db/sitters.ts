@@ -110,7 +110,7 @@ export async function getSitters(
       return applyFiltersAndSort(getSitterProfiles(), filters);
     }
 
-    return applyFiltersAndSort(data as (SitterProfile & { user: User })[], filters);
+    return applyFiltersAndSort(data as unknown as (SitterProfile & { user: User })[], filters);
   } catch {
     return applyFiltersAndSort(getSitterProfiles(), filters);
   }

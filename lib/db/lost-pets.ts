@@ -45,7 +45,7 @@ export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> 
 
     const { data, error } = await query;
     if (error || !data) return mockGetLostPets(filters).slice(0, filters?.limit ?? Number.POSITIVE_INFINITY);
-    return data as LostPet[];
+    return data as unknown as LostPet[];
   } catch {
     return mockGetLostPets(filters).slice(0, filters?.limit ?? Number.POSITIVE_INFINITY);
   }
