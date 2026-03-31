@@ -14,19 +14,12 @@ import { EmptyState } from '@/components/shared/empty-state';
 import { createClient } from '@/lib/supabase/client';
 import { getRealtimeManager } from '@/lib/realtime';
 import type { User, Message } from '@/lib/types';
+import { formatLocalOutgoingMessage, sortConversations, upsertConversationState, type ConversationState } from './message-state';
 
-interface Conversation {
-  partnerId: string;
-  partnerName: string;
-  partnerAvatar: string | null;
-  messages: Message[];
-  lastMessage: Message | null;
-  unreadCount: number;
-}
 
 interface Props {
   currentUser: User;
-  conversations: Conversation[];
+  conversations: ConversationState[];
 }
 
 function formatDateHeader(dateStr: string) {
@@ -84,22 +77,9 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
 
   const selectedConversation = conversations.find(c => c.partnerId === selectedPartnerId);
 
-  const sortConversations = useCallback((items: Conversation[]) => {
-    return [...items].sort((a, b) => {
-      const aTime = a.lastMessage ? new Date(a.lastMessage.created_at).getTime() : 0;
-      const bTime = b.lastMessage ? new Date(b.lastMessage.created_at).getTime() : 0;
-      return bTime - aTime;
-    });
+  const upsertConversation = useCallback((partnerId: string, updater: (conversation: ConversationState | undefined) => ConversationState) => {
+    setConversations((prev) => upsertConversationState(prev, partnerId, updater));
   }, []);
-
-  const upsertConversation = useCallback((partnerId: string, updater: (conversation: Conversation | undefined) => Conversation) => {
-    setConversations((prev) => {
-      const existing = prev.find((conversation) => conversation.partnerId === partnerId);
-      const nextConversation = updater(existing);
-      const rest = prev.filter((conversation) => conversation.partnerId !== partnerId);
-      return sortConversations([nextConversation, ...rest]);
-    });
-  }, [sortConversations]);
 
   // Auto-scroll na dno kad dođe nova poruka
   const scrollToBottom = useCallback(() => {
@@ -233,7 +213,7 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
       partnerId: selectedPartnerId,
       partnerName: existing?.partnerName || 'Korisnik',
       partnerAvatar: existing?.partnerAvatar || null,
-      messages: [...(existing?.messages || []), { ...localMsg, sender: { id: currentUser.id, name: currentUser.name, avatar_url: currentUser.avatar_url } }],
+      messages: [...(existing?.messages || []), formatLocalOutgoingMessage(localMsg, currentUser)],
       lastMessage: localMsg,
       unreadCount: existing?.unreadCount || 0,
     }));
