@@ -13,9 +13,9 @@ export default async function AdminPage() {
   if (!user) redirect('/prijava?redirect=%2Fadmin');
   if (user.role !== 'admin') redirect('/');
 
-  const users = (await getUsers()).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-  const sitters = await getSitters();
-  const allBookings = await getAllBookings();
+  const users = (await getUsers('admin-list')).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  const sitters = await getSitters({ fields: 'admin-list' });
+  const allBookings = await getAllBookings('admin-list');
 
   const bookings = allBookings.map(b => ({
     ...b,

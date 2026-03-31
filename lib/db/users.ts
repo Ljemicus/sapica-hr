@@ -17,17 +17,37 @@ export async function getUser(id: string): Promise<User | null> {
   }
 }
 
-export async function getUsers(): Promise<User[]> {
+type UserFields = 'full' | 'admin-list';
+
+function pickMockUserFields(users: User[], fields: UserFields = 'full'): User[] {
+  if (fields === 'full') return users;
+
+  return users.map((user) => ({
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role,
+    avatar_url: user.avatar_url,
+    phone: null,
+    city: user.city,
+    created_at: user.created_at,
+  }));
+}
+
+export async function getUsers(fields: UserFields = 'full'): Promise<User[]> {
   if (!isSupabaseConfigured()) {
-    return mockUsers;
+    return pickMockUserFields(mockUsers, fields);
   }
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('users').select('*');
-    if (error || !data) return mockUsers;
-    return data as User[];
+    const selectClause = fields === 'admin-list'
+      ? 'id, email, name, role, avatar_url, city, created_at'
+      : '*';
+    const { data, error } = await supabase.from('users').select(selectClause);
+    if (error || !data) return pickMockUserFields(mockUsers, fields);
+    return data as unknown as User[];
   } catch {
-    return mockUsers;
+    return pickMockUserFields(mockUsers, fields);
   }
 }
 
@@ -63,7 +83,7 @@ export async function getUsersByRole(role: string): Promise<User[]> {
     const supabase = await createClient();
     const { data, error } = await supabase.from('users').select('*').eq('role', role);
     if (error || !data) return mockUsers.filter((u) => u.role === role);
-    return data as User[];
+    return data as unknown as User[];
   } catch {
     return mockUsers.filter((u) => u.role === role);
   }

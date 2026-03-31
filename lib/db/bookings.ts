@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
-import { getBookingsForUser as mockGetBookings, mockBookings } from '@/lib/mock-data';
+import { getBookingsForUser as mockGetBookings, getUserById, mockBookings, mockPets } from '@/lib/mock-data';
 import type { Booking } from '@/lib/types';
 
 export async function getBookings(
@@ -19,26 +19,40 @@ export async function getBookings(
       .eq(column, userId)
       .order('created_at', { ascending: false });
     if (error || !data) return mockGetBookings(userId, role);
-    return data as Booking[];
+    return data as unknown as Booking[];
   } catch {
     return mockGetBookings(userId, role);
   }
 }
 
-export async function getAllBookings(): Promise<Booking[]> {
+type AllBookingFields = 'full' | 'admin-list';
+
+function attachMockBookingRelations(bookings: Booking[]): Booking[] {
+  return bookings.map((booking) => ({
+    ...booking,
+    owner: getUserById(booking.owner_id),
+    sitter: getUserById(booking.sitter_id),
+    pet: mockPets.find((pet) => pet.id === booking.pet_id),
+  }));
+}
+
+export async function getAllBookings(fields: AllBookingFields = 'full'): Promise<Booking[]> {
   if (!isSupabaseConfigured()) {
-    return mockBookings;
+    return attachMockBookingRelations(mockBookings);
   }
   try {
     const supabase = await createClient();
+    const selectClause = fields === 'admin-list'
+      ? 'id, owner_id, sitter_id, pet_id, service_type, start_date, end_date, status, total_price, note, created_at, owner:users!owner_id(id, name), sitter:users!sitter_id(id, name)'
+      : '*, owner:users!owner_id(*), sitter:users!sitter_id(*), pet:pets(*)';
     const { data, error } = await supabase
       .from('bookings')
-      .select('*, owner:users!owner_id(*), sitter:users!sitter_id(*), pet:pets(*)')
+      .select(selectClause)
       .order('created_at', { ascending: false });
-    if (error || !data) return mockBookings;
-    return data as Booking[];
+    if (error || !data) return attachMockBookingRelations(mockBookings);
+    return data as unknown as Booking[];
   } catch {
-    return mockBookings;
+    return attachMockBookingRelations(mockBookings);
   }
 }
 
