@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { isSameDay } from 'date-fns';
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
 import { getBookings } from '@/lib/db';
@@ -15,16 +16,18 @@ export default async function SitterWalkPage() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const bookings = await getBookings(user.id, 'sitter', 'walk-selector') as any[];
+  const now = new Date();
+
   const activeBookings = bookings.filter(
-    (b) => b.status === 'accepted' && new Date(b.start_date) <= new Date() && new Date(b.end_date) >= new Date()
+    (booking) => booking.status === 'accepted' && new Date(booking.start_date) <= now && new Date(booking.end_date) >= now
   );
 
-  // Also include upcoming accepted bookings for today
+  // Also include accepted bookings scheduled to start today.
   const todayBookings = bookings.filter(
-    (b) => b.status === 'accepted'
+    (booking) => booking.status === 'accepted' && isSameDay(new Date(booking.start_date), now)
   );
 
-  const availableBookings = todayBookings.length > 0 ? todayBookings : activeBookings;
+  const availableBookings = activeBookings.length > 0 ? activeBookings : todayBookings;
 
   return <WalkSession userId={user.id} bookings={availableBookings} />;
 }

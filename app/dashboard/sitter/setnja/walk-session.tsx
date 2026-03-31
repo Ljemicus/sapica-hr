@@ -46,6 +46,17 @@ interface RoutePoint {
 
 type WalkState = 'idle' | 'active' | 'paused' | 'finished';
 
+const GEOLOCATION_OPTIONS: PositionOptions = {
+  enableHighAccuracy: true,
+  timeout: 15000,
+  maximumAge: 5000,
+};
+
+const INITIAL_GEOLOCATION_OPTIONS: PositionOptions = {
+  enableHighAccuracy: true,
+  timeout: 10000,
+};
+
 interface Props {
   userId: string;
   bookings: (Booking & { pet: { name: string; species: string } })[];
@@ -80,7 +91,7 @@ export function WalkSession({ userId, bookings }: Props) {
 
   const watchIdRef = useRef<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const supabase = createClient();
+  const supabaseRef = useRef(createClient());
 
   const selectedBooking = bookings.find(b => b.id === selectedBookingId);
 
@@ -134,6 +145,36 @@ export function WalkSession({ userId, bookings }: Props) {
     }
   }, []);
 
+  const stopWatchingPosition = useCallback(() => {
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+  }, []);
+
+  const startWatchingPosition = useCallback(() => {
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      addRoutePoint,
+      handleGeoError,
+      GEOLOCATION_OPTIONS
+    );
+  }, [addRoutePoint, handleGeoError]);
+
+  const persistWalkEnd = useCallback(async () => {
+    if (!walkId) return;
+
+    await supabaseRef.current
+      .from('walks')
+      .update({
+        end_time: new Date().toISOString(),
+        status: 'zavrsena',
+        distance_km: Number(distance.toFixed(2)),
+        route: routePoints.map((point) => ({ lat: point.lat, lng: point.lng })),
+        checkpoints: [],
+      })
+      .eq('id', walkId);
+  }, [distance, routePoints, walkId]);
+
   const startWalk = async () => {
     if (!navigator.geolocation) {
       setGeoError('Vaš preglednik ne podržava geolokaciju. Koristite moderan preglednik (Chrome, Firefox, Safari).');
@@ -164,7 +205,7 @@ export function WalkSession({ userId, bookings }: Props) {
 
         // Create walk in DB
         const petId = selectedBooking?.pet_id || '';
-        const { data } = await supabase
+        const { data, error } = await supabaseRef.current
           .from('walks')
           .insert({
             sitter_id: userId,
@@ -179,64 +220,51 @@ export function WalkSession({ userId, bookings }: Props) {
           .select()
           .single();
 
-        if (data?.id) setWalkId(data.id);
+        if (error || !data?.id) {
+          setWalkState('idle');
+          setRoutePoints([]);
+          setStartTime(null);
+          toast.error('Šetnja nije spremljena. Pokušajte ponovo.');
+          return;
+        }
+
+        setWalkId(data.id);
 
         toast.success('Šetnja započeta!');
 
         // Start watching position
-        watchIdRef.current = navigator.geolocation.watchPosition(
-          addRoutePoint,
-          handleGeoError,
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 }
-        );
+        startWatchingPosition();
       },
       handleGeoError,
-      { enableHighAccuracy: true, timeout: 10000 }
+      INITIAL_GEOLOCATION_OPTIONS
     );
   };
 
   const pauseWalk = () => {
-    if (watchIdRef.current !== null) {
-      navigator.geolocation.clearWatch(watchIdRef.current);
-      watchIdRef.current = null;
-    }
+    stopWatchingPosition();
     setWalkState('paused');
     toast('Šetnja pauzirana');
   };
 
   const resumeWalk = () => {
+    if (!navigator.geolocation) {
+      setGeoError('Vaš preglednik ne podržava geolokaciju. Koristite moderan preglednik (Chrome, Firefox, Safari).');
+      return;
+    }
+
     setWalkState('active');
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      addRoutePoint,
-      handleGeoError,
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 }
-    );
+    startWatchingPosition();
     toast('Šetnja nastavljena');
   };
 
   const endWalk = async () => {
-    if (watchIdRef.current !== null) {
-      navigator.geolocation.clearWatch(watchIdRef.current);
-      watchIdRef.current = null;
-    }
+    stopWatchingPosition();
     setWalkState('finished');
 
     const durationMin = Math.round(elapsed / 60);
     const distKm = distance.toFixed(2);
 
-    // Save to Supabase
-    if (walkId) {
-      await supabase
-        .from('walks')
-        .update({
-          end_time: new Date().toISOString(),
-          status: 'zavrsena',
-          distance_km: parseFloat(distKm),
-          route: routePoints.map(p => ({ lat: p.lat, lng: p.lng })),
-          checkpoints: [],
-        })
-        .eq('id', walkId);
-    }
+    await persistWalkEnd();
 
     setShowEndDialog(false);
     toast.success(`Šetnja završena! Trajanje: ${durationMin}min, ${distKm}km`);
@@ -245,11 +273,9 @@ export function WalkSession({ userId, bookings }: Props) {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (watchIdRef.current !== null) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
-      }
+      stopWatchingPosition();
     };
-  }, []);
+  }, [stopWatchingPosition]);
 
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
