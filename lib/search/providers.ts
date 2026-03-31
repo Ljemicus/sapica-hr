@@ -2,14 +2,86 @@ import { getGroomers, getSitters, getTrainers } from '@/lib/db';
 import type { ServiceType } from '@/lib/types';
 import type { UnifiedProvider, ProviderCategory } from '@/app/pretraga/types';
 
-interface ProviderSearchParams {
+export type ProviderSort = 'rating' | 'reviews' | 'price';
+
+export interface ProviderSearchParams {
   category?: ProviderCategory;
+  city?: string;
+  service?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minRating?: number;
+  sort?: ProviderSort;
+}
+
+function normalizeSort(sort?: string): ProviderSort {
+  if (sort === 'reviews' || sort === 'price') return sort;
+  return 'rating';
+}
+
+function toNumericFilter(value?: string): number | undefined {
+  if (!value) return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function sortProviders(providers: UnifiedProvider[], sort: ProviderSort): UnifiedProvider[] {
+  const next = [...providers];
+
+  switch (sort) {
+    case 'reviews':
+      next.sort((a, b) => b.reviews - a.reviews);
+      return next;
+    case 'price':
+      next.sort((a, b) => {
+        const aPrice = a.lowestPrice ?? Number.POSITIVE_INFINITY;
+        const bPrice = b.lowestPrice ?? Number.POSITIVE_INFINITY;
+        return aPrice - bPrice;
+      });
+      return next;
+    case 'rating':
+    default:
+      next.sort((a, b) => b.rating - a.rating);
+      return next;
+  }
+}
+
+function applyUnifiedFilters(providers: UnifiedProvider[], params: ProviderSearchParams): UnifiedProvider[] {
+  let next = [...providers];
+
+  if (params.minRating != null) {
+    next = next.filter((provider) => provider.rating >= params.minRating!);
+  }
+
+  if (params.minPrice != null) {
+    next = next.filter((provider) => provider.lowestPrice == null || provider.lowestPrice >= params.minPrice!);
+  }
+
+  if (params.maxPrice != null) {
+    next = next.filter((provider) => provider.lowestPrice == null || provider.lowestPrice <= params.maxPrice!);
+  }
+
+  return sortProviders(next, params.sort || 'rating');
+}
+
+export function normalizeProviderSearchParams(params: {
+  category?: string;
   city?: string;
   service?: string;
   min_price?: string;
   max_price?: string;
   min_rating?: string;
   sort?: string;
+}): ProviderSearchParams {
+  return {
+    category: params.category as ProviderCategory | undefined,
+    city: params.city || undefined,
+    service: params.service || undefined,
+    minPrice: toNumericFilter(params.min_price),
+    maxPrice: toNumericFilter(params.max_price),
+    minRating: toNumericFilter(params.min_rating),
+    sort: normalizeSort(params.sort),
+  };
 }
 
 export async function getUnifiedProviders(params: ProviderSearchParams): Promise<UnifiedProvider[]> {
@@ -23,10 +95,10 @@ export async function getUnifiedProviders(params: ProviderSearchParams): Promise
       ? getSitters({
           city: params.city,
           service: params.service as ServiceType | undefined,
-          min_rating: params.min_rating ? Number(params.min_rating) : undefined,
-          min_price: params.min_price ? Number(params.min_price) : undefined,
-          max_price: params.max_price ? Number(params.max_price) : undefined,
-          sort: params.sort as 'rating' | 'reviews' | 'price_asc' | 'price_desc' | undefined,
+          min_rating: params.minRating,
+          min_price: params.minPrice,
+          max_price: params.maxPrice,
+          sort: params.sort === 'price' ? 'price_asc' : params.sort,
         })
       : Promise.resolve([]),
     shouldFetchGroomers
@@ -62,6 +134,7 @@ export async function getUnifiedProviders(params: ProviderSearchParams): Promise
   }
 
   for (const g of groomers) {
+    const prices = Object.values(g.prices || {}).filter((p): p is number => typeof p === 'number');
     providers.push({
       id: g.id,
       name: g.name,
@@ -74,7 +147,7 @@ export async function getUnifiedProviders(params: ProviderSearchParams): Promise
       superhost: false,
       category: 'grooming',
       services: g.services,
-      lowestPrice: undefined,
+      lowestPrice: prices.length > 0 ? Math.min(...prices) : undefined,
       responseTime: null,
       profileUrl: `/groomer/${g.id}`,
       locationLat: null,
@@ -95,7 +168,7 @@ export async function getUnifiedProviders(params: ProviderSearchParams): Promise
       superhost: false,
       category: 'dresura',
       services: t.specializations,
-      lowestPrice: undefined,
+      lowestPrice: typeof t.price_per_hour === 'number' ? t.price_per_hour : undefined,
       responseTime: null,
       profileUrl: `/trener/${t.id}`,
       locationLat: null,
@@ -105,5 +178,5 @@ export async function getUnifiedProviders(params: ProviderSearchParams): Promise
     });
   }
 
-  return providers.sort((a, b) => b.rating - a.rating);
+  return applyUnifiedFilters(providers, params);
 }

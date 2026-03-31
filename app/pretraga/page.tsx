@@ -1,10 +1,9 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import { getUnifiedProviders } from '@/lib/search/providers';
+import { getUnifiedProviders, normalizeProviderSearchParams } from '@/lib/search/providers';
 import { SearchContent } from './search-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { ServiceJsonLd } from '@/components/seo/json-ld';
-import type { ProviderCategory } from './types';
 
 export const metadata: Metadata = {
   title: 'Pronađite pet sittera u vašem gradu',
@@ -35,17 +34,9 @@ interface SearchPageProps {
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
-  const category = (params.category as ProviderCategory) || undefined;
+  const normalizedParams = normalizeProviderSearchParams(params);
 
-  const providers = await getUnifiedProviders({
-    category,
-    city: params.city,
-    service: params.service,
-    min_price: params.min_price,
-    max_price: params.max_price,
-    min_rating: params.min_rating,
-    sort: params.sort,
-  });
+  const providers = await getUnifiedProviders(normalizedParams);
 
   return (
     <>
