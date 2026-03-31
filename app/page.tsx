@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -27,7 +28,7 @@ import { Input } from '@/components/ui/input';
 import { getLostPets } from '@/lib/db';
 import { getSitters } from '@/lib/db';
 import { LOST_PET_SPECIES_LABELS } from '@/lib/types';
-import { NewsletterSignup } from '@/components/shared/newsletter-signup';
+const NewsletterSignup = dynamic(() => import('@/components/shared/newsletter-signup').then((mod) => mod.NewsletterSignup));
 import { ItemListJsonLd } from '@/components/seo/json-ld';
 
 const homepageServices = [
@@ -98,7 +99,7 @@ const cities = [
 
 export default async function HomePage() {
   // Fetch top-rated sitters from Supabase
-  const topSitters = await getSitters({ sort: 'rating', limit: 6 });
+  const topSitters = await getSitters({ sort: 'rating', limit: 6, fields: 'homepage-card' });
   const featuredSitters = topSitters.map((s, i) => ({
     id: s.user_id,
     name: s.user?.name || 'Sitter',
@@ -726,7 +727,7 @@ export default async function HomePage() {
 }
 
 async function LostPetsHomepageSection() {
-  const lostPets = await getLostPets({ status: 'lost', limit: 3 });
+  const lostPets = await getLostPets({ status: 'lost', limit: 3, fields: 'homepage-card' });
   if (lostPets.length === 0) return null;
 
   return (

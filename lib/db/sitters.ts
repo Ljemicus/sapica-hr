@@ -11,6 +11,7 @@ interface SitterFilters {
   max_price?: number;
   sort?: 'rating' | 'reviews' | 'price_asc' | 'price_desc';
   limit?: number;
+  fields?: 'full' | 'homepage-card';
 }
 
 function applyFiltersAndSort(
@@ -87,7 +88,11 @@ export async function getSitters(
   }
   try {
     const supabase = await createClient();
-    let query = supabase.from('sitter_profiles').select('*, user:users(*)');
+    const selectClause = filters?.fields === 'homepage-card'
+      ? 'user_id, city, bio, rating_avg, review_count, prices, verified, superhost, user:users(name)'
+      : '*, user:users(*)';
+
+    let query = supabase.from('sitter_profiles').select(selectClause);
 
     if (filters?.city) {
       query = query.eq('city', filters.city);

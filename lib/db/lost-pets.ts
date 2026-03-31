@@ -11,6 +11,7 @@ interface LostPetFilters {
   species?: LostPetSpecies;
   status?: LostPetStatus;
   limit?: number;
+  fields?: 'full' | 'homepage-card';
 }
 
 export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> {
@@ -19,9 +20,13 @@ export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> 
   }
   try {
     const supabase = await createClient();
+    const selectClause = filters?.fields === 'homepage-card'
+      ? 'id, name, species, breed, image_url, city, neighborhood, date_lost'
+      : '*';
+
     let query = supabase
       .from('lost_pets')
-      .select('*')
+      .select(selectClause)
       .order('date_lost', { ascending: false });
 
     if (filters?.city) {

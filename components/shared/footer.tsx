@@ -1,6 +1,7 @@
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { MapPin, Mail } from 'lucide-react';
-import { NewsletterSignup } from '@/components/shared/newsletter-signup';
+const NewsletterSignup = dynamic(() => import('@/components/shared/newsletter-signup').then((mod) => mod.NewsletterSignup));
 
 function PawLogo({ className }: { className?: string }) {
   return (
