@@ -134,7 +134,7 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
             <div className="flex-1 min-w-0">
               <h3 className="text-lg md:text-xl font-bold mb-1">🔍 Izgubljeni ljubimci</h3>
               <p className="text-sm md:text-base text-white/85">
-                Prijavite ili pronađite izgubljenog ljubimca. Mapa, dojave i obavijesti — uskoro još više!
+                Prijavite ili pronađite izgubljenog ljubimca. Mapa i dojave su aktivni, a dodatne obavijesti dolaze kasnije.
               </p>
             </div>
             <ArrowRight className="h-6 w-6 flex-shrink-0 group-hover:translate-x-1 transition-transform" />

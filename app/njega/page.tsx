@@ -140,7 +140,7 @@ export default function GroomingPage() {
                     <Sparkles className="h-8 w-8 md:h-10 md:w-10 text-pink-500 dark:text-pink-400" />
                   </div>
                   <p className="font-bold text-sm md:text-base font-[var(--font-heading)]">{item.label}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Primjer uskoro</p>
+                  <p className="text-xs text-muted-foreground mt-1">Demo profil — služi kao primjer prikaza</p>
                 </CardContent>
               </Card>
             ))}

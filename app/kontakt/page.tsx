@@ -214,7 +214,7 @@ export default function KontaktPage() {
             {[
               { q: 'Kako se registrirati kao sitter?', a: 'Kliknite "Registracija" i odaberite opciju "Sitter". Ispunite profil, dodajte opis iskustva i postavite cijene za usluge koje nudite.' },
               { q: 'Je li korištenje platforme besplatno?', a: 'Da, registracija i pretraživanje su potpuno besplatni. PetPark naplaćuje proviziju od 10% samo na uspješno obavljene rezervacije.' },
-              { q: 'Kako funkcionira plaćanje?', a: 'Plaćanje se vrši sigurno putem Stripe-a. Novac se zadržava dok vlasnik ne potvrdi da je usluga uspješno obavljena.' },
+              { q: 'Kako funkcionira plaćanje?', a: 'Booking plaćanja za rezervacije idu putem Stripe-a kad je sitter povezao plaćanja. Shop checkout još nije aktivan.' },
               { q: 'Što ako sitter otkaže rezervaciju?', a: 'U slučaju otkazivanja, vlasnik dobiva potpuni povrat novca. Ponovljena otkazivanja mogu rezultirati suspenzijom sitterovog računa.' },
               { q: 'Kako mogu kontaktirati korisničku podršku?', a: 'Pošaljite nam poruku putem forme iznad ili email na petparkhr@gmail.com svaki dan osim nedjelje, 08-20h.' },
             ].map((faq, i) => (

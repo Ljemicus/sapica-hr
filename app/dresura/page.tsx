@@ -81,7 +81,7 @@ export default async function DresuraPage({ searchParams }: DresuraPageProps) {
                 </div>
                 <p className="font-bold text-sm md:text-base font-[var(--font-heading)]">{item.name}</p>
                 <p className="text-xs text-muted-foreground mt-1 italic">&ldquo;{item.desc}&rdquo;</p>
-                <p className="text-xs text-muted-foreground mt-2">Video uskoro</p>
+                <p className="text-xs text-muted-foreground mt-2">Video preview još nije aktivan</p>
               </div>
             ))}
           </div>
