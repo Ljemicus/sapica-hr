@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
 import { GroomerDashboardContent } from './groomer-dashboard-content';
 import { createClient } from '@/lib/supabase/server';
+import { getGroomerBookings } from '@/lib/db';
 
 export const metadata = {
   title: 'Groomer Dashboard — PetPark',
@@ -31,13 +32,7 @@ export default async function GroomerDashboardPage() {
 
   // Fetch bookings
   const today = new Date().toISOString().split('T')[0];
-  const { data: bookings } = await supabase
-    .from('groomer_bookings')
-    .select('*')
-    .eq('groomer_id', groomer.id)
-    .gte('date', today)
-    .order('date', { ascending: true })
-    .order('start_time', { ascending: true });
+  const bookings = await getGroomerBookings(groomer.id, { fromDate: today, fields: 'dashboard-list' });
 
   // Fetch availability
   const { data: availability } = await supabase
@@ -51,7 +46,7 @@ export default async function GroomerDashboardPage() {
   return (
     <GroomerDashboardContent
       groomer={groomer}
-      bookings={bookings || []}
+      bookings={bookings}
       availability={availability || []}
     />
   );

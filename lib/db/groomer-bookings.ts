@@ -33,16 +33,21 @@ export async function createGroomerBooking(
   }
 }
 
+type GroomerBookingFields = 'full' | 'dashboard-list';
+
 export async function getGroomerBookings(
   groomerId: string,
-  filters?: { status?: string; fromDate?: string }
+  filters?: { status?: string; fromDate?: string; fields?: GroomerBookingFields }
 ): Promise<GroomerBooking[]> {
   if (!isSupabaseConfigured()) return [];
   try {
     const supabase = await createClient();
+    const selectClause = filters?.fields === 'dashboard-list'
+      ? 'id, groomer_id, user_id, service, date, start_time, end_time, price, status, pet_name, pet_type, note, created_at, updated_at'
+      : '*';
     let query = supabase
       .from('groomer_bookings')
-      .select('*')
+      .select(selectClause)
       .eq('groomer_id', groomerId)
       .order('date', { ascending: true })
       .order('start_time', { ascending: true });
@@ -56,7 +61,7 @@ export async function getGroomerBookings(
 
     const { data, error } = await query;
     if (error || !data) return [];
-    return data as GroomerBooking[];
+    return data as unknown as GroomerBooking[];
   } catch {
     return [];
   }
