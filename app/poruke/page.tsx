@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
-import { getConversations, getConversation } from '@/lib/db';
-import { getUser } from '@/lib/db';
+import { getMessages } from '@/lib/db';
+import { createClient } from '@/lib/supabase/server';
 import { MessagesContent } from './messages-content';
 
 export const metadata: Metadata = {
@@ -11,40 +11,39 @@ export const metadata: Metadata = {
 
 export default async function MessagesPage() {
   const user = await getAuthUser();
-  if (!user) redirect('/prijava');
+  if (!user) redirect('/prijava?redirect=%2Fporuke');
 
-  const convSummaries = await getConversations(user.id);
+  const allMessages = await getMessages(user.id);
+  const partnerIds = [...new Set(allMessages.map((msg) => msg.sender_id === user.id ? msg.receiver_id : msg.sender_id))];
 
-  // Build conversation objects with partner details and messages
-  const conversationMap = new Map<string, {
-    partnerId: string;
-    partnerName: string;
-    partnerAvatar: string | null;
-    messages: typeof convSummaries;
-    lastMessage: typeof convSummaries[0] | null;
-    unreadCount: number;
-  }>();
+  const supabase = await createClient();
+  const { data: partners } = partnerIds.length > 0
+    ? await supabase.from('users').select('id,name,avatar_url').in('id', partnerIds)
+    : { data: [] };
+  const partnerMap = new Map((partners || []).map((partner) => [partner.id, partner]));
 
-  for (const msg of convSummaries) {
+  const grouped = new Map<string, typeof allMessages>();
+  for (const msg of allMessages) {
     const partnerId = msg.sender_id === user.id ? msg.receiver_id : msg.sender_id;
-    if (!conversationMap.has(partnerId)) {
-      // Fetch full conversation between user and partner
-      const fullMessages = await getConversation(user.id, partnerId);
-      const unreadCount = fullMessages.filter(m => !m.read && m.receiver_id === user.id).length;
-      const partner = await getUser(partnerId);
+    const current = grouped.get(partnerId) || [];
+    current.push(msg);
+    grouped.set(partnerId, current);
+  }
 
-      conversationMap.set(partnerId, {
+  const sortedConversations = Array.from(grouped.entries())
+    .map(([partnerId, messages]) => {
+      const partner = partnerMap.get(partnerId);
+      const lastMessage = messages[messages.length - 1] || null;
+      const unreadCount = messages.filter((m) => !m.read && m.receiver_id === user.id).length;
+      return {
         partnerId,
         partnerName: partner?.name || 'Korisnik',
         partnerAvatar: partner?.avatar_url || null,
-        messages: fullMessages,
-        lastMessage: msg,
+        messages,
+        lastMessage,
         unreadCount,
-      });
-    }
-  }
-
-  const sortedConversations = Array.from(conversationMap.values())
+      };
+    })
     .sort((a, b) => {
       const aTime = a.lastMessage ? new Date(a.lastMessage.created_at).getTime() : 0;
       const bTime = b.lastMessage ? new Date(b.lastMessage.created_at).getTime() : 0;
