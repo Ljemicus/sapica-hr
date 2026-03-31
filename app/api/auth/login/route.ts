@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
+import { appLogger } from '@/lib/logger';
 import { rateLimit } from '@/lib/rate-limit';
 import { loginSchema } from '@/lib/validations';
 
@@ -27,6 +28,7 @@ export async function POST(request: Request) {
   });
 
   if (error || !data.user) {
+    appLogger.warn('auth.login', 'Login failed', { email: parsed.data.email });
     return NextResponse.json({ error: 'Pogrešan email ili lozinka.' }, { status: 401 });
   }
 

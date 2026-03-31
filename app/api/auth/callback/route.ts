@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
+import { buildUserFromAuth } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
+import { appLogger } from '@/lib/logger';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -35,22 +37,22 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && data.user) {
-      const meta = data.user.user_metadata;
-      const role = requestedRole === 'sitter' || meta?.role === 'sitter' ? 'sitter' : 'owner';
+      const fallbackUser = buildUserFromAuth(data.user);
+      const role = requestedRole === 'sitter' || fallbackUser.role === 'sitter' ? 'sitter' : 'owner';
 
       await supabase.from('users').upsert({
-        id: data.user.id,
-        email: data.user.email,
-        name: meta?.full_name || meta?.name || data.user.email?.split('@')[0] || '',
+        id: fallbackUser.id,
+        email: fallbackUser.email,
+        name: fallbackUser.name,
         role,
-        avatar_url: meta?.avatar_url || null,
-        city: meta?.city || null,
+        avatar_url: fallbackUser.avatar_url,
+        city: fallbackUser.city,
       }, { onConflict: 'id' });
 
       if (role === 'sitter') {
         await supabase.from('sitter_profiles').upsert({
-          user_id: data.user.id,
-          city: meta?.city || null,
+          user_id: fallbackUser.id,
+          city: fallbackUser.city,
         }, { onConflict: 'user_id' });
       }
 
@@ -58,5 +60,6 @@ export async function GET(request: Request) {
     }
   }
 
+  appLogger.warn('auth.callback', 'Auth callback fell through to login redirect');
   return NextResponse.redirect(`${origin}/prijava`);
 }

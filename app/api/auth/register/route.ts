@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
+import { appLogger } from '@/lib/logger';
 import { registerSchema } from '@/lib/validations';
 import { rateLimit } from '@/lib/rate-limit';
 
@@ -35,6 +36,10 @@ export async function POST(request: Request) {
   });
 
   if (error || !data.user) {
+    appLogger.warn('auth.register', 'Registration failed', {
+      email: parsed.data.email,
+      reason: error?.message || 'unknown',
+    });
     return NextResponse.json({ error: error?.message || 'Registracija nije uspjela' }, { status: 400 });
   }
 
@@ -49,6 +54,7 @@ export async function POST(request: Request) {
 
   const { error: profileError } = await supabase.from('users').upsert(userPayload, { onConflict: 'id' });
   if (profileError) {
+    appLogger.error('auth.register', 'Failed to upsert user profile', { userId: data.user.id });
     return NextResponse.json({ error: 'Greška pri kreiranju profila' }, { status: 500 });
   }
 
@@ -58,6 +64,7 @@ export async function POST(request: Request) {
       city: parsed.data.city,
     }, { onConflict: 'user_id' });
     if (sitterError) {
+      appLogger.error('auth.register', 'Failed to create sitter profile', { userId: data.user.id });
       return NextResponse.json({ error: 'Greška pri kreiranju sitter profila' }, { status: 500 });
     }
   }

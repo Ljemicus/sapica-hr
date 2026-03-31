@@ -12,7 +12,7 @@ export async function getAvailability(sitterId: string): Promise<Availability[]>
     const today = new Date().toISOString().split('T')[0];
     const { data, error } = await supabase
       .from('availability')
-      .select('*')
+      .select('id, sitter_id, date, available')
       .eq('sitter_id', sitterId)
       .gte('date', today)
       .order('date', { ascending: true });

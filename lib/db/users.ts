@@ -9,7 +9,7 @@ export async function getUser(id: string): Promise<User | null> {
   }
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
+    const { data, error } = await supabase.from('users').select('id, email, name, role, avatar_url, phone, city, created_at').eq('id', id).single();
     if (error || !data) return getUserById(id) ?? null;
     return data as User;
   } catch {
@@ -81,7 +81,7 @@ export async function getUsersByRole(role: string): Promise<User[]> {
   }
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('users').select('*').eq('role', role);
+    const { data, error } = await supabase.from('users').select('id, email, name, role, avatar_url, phone, city, created_at').eq('role', role);
     if (error || !data) return mockUsers.filter((u) => u.role === role);
     return data as unknown as User[];
   } catch {
