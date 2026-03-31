@@ -44,10 +44,10 @@ export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> 
     }
 
     const { data, error } = await query;
-    if (error || !data) return mockGetLostPets(filters).slice(0, filters?.limit ?? Number.POSITIVE_INFINITY);
+    if (error || !data) return [];
     return data as unknown as LostPet[];
   } catch {
-    return mockGetLostPets(filters).slice(0, filters?.limit ?? Number.POSITIVE_INFINITY);
+    return [];
   }
 }
 
@@ -62,9 +62,9 @@ export async function getLostPet(id: string): Promise<LostPet | null> {
       .select('*')
       .eq('id', id)
       .single();
-    if (error || !data) return mockGetLostPet(id) ?? null;
+    if (error || !data) return null;
     return data as LostPet;
   } catch {
-    return mockGetLostPet(id) ?? null;
+    return null;
   }
 }
