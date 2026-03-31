@@ -81,12 +81,20 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
     const data = { name: petForm.name, species: petForm.species, breed: petForm.breed || null, age: petForm.age ? parseInt(petForm.age) : null, weight: petForm.weight ? parseFloat(petForm.weight) : null, special_needs: petForm.special_needs || null, photo_url: petForm.photo_url || null, owner_id: user.id };
 
     if (editingPet) {
-      const { error } = await supabase.from('pets').update(data).eq('id', editingPet.id);
-      if (error) toast.error('Greška pri ažuriranju');
+      const response = await fetch(`/api/pets/${editingPet.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) toast.error('Greška pri ažuriranju');
       else toast.success('Ljubimac ažuriran!');
     } else {
-      const { error } = await supabase.from('pets').insert(data);
-      if (error) toast.error('Greška pri dodavanju');
+      const response = await fetch('/api/pets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) toast.error('Greška pri dodavanju');
       else toast.success('Ljubimac dodan!');
     }
     setShowPetDialog(false);
@@ -96,8 +104,8 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
 
   const deletePet = async (petId: string) => {
     if (!confirm('Jeste li sigurni da želite obrisati ovog ljubimca?')) return;
-    const { error } = await supabase.from('pets').delete().eq('id', petId);
-    if (error) toast.error('Greška pri brisanju');
+    const response = await fetch(`/api/pets/${petId}`, { method: 'DELETE' });
+    if (!response.ok) toast.error('Greška pri brisanju');
     else { toast.success('Ljubimac obrisan'); router.refresh(); }
   };
 
@@ -115,8 +123,12 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
   const submitReview = async () => {
     if (!reviewBooking || !reviewComment.trim()) { toast.error('Unesite komentar'); return; }
     setLoading(true);
-    const { error } = await supabase.from('reviews').insert({ booking_id: reviewBooking.id, reviewer_id: user.id, reviewee_id: reviewBooking.sitter_id, rating: reviewRating, comment: reviewComment });
-    if (error) toast.error('Greška pri slanju recenzije');
+    const response = await fetch('/api/reviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ booking_id: reviewBooking.id, rating: reviewRating, comment: reviewComment }),
+    });
+    if (!response.ok) toast.error('Greška pri slanju recenzije');
     else { toast.success('Recenzija poslana!'); setShowReviewDialog(false); router.refresh(); }
     setLoading(false);
   };
