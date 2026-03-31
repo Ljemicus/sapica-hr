@@ -17,17 +17,37 @@ export async function getPets(): Promise<Pet[]> {
   }
 }
 
-export async function getPetsByOwner(ownerId: string): Promise<Pet[]> {
+type PetFields = 'full' | 'walk-label';
+
+function pickMockPetFields(pets: Pet[], fields: PetFields = 'full'): Pet[] {
+  if (fields === 'full') return pets;
+
+  return pets.map((pet) => ({
+    id: pet.id,
+    owner_id: pet.owner_id,
+    name: pet.name,
+    species: pet.species,
+    breed: null,
+    age: null,
+    weight: null,
+    special_needs: null,
+    photo_url: null,
+    created_at: pet.created_at,
+  }));
+}
+
+export async function getPetsByOwner(ownerId: string, fields: PetFields = 'full'): Promise<Pet[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetPetsForOwner(ownerId);
+    return pickMockPetFields(mockGetPetsForOwner(ownerId), fields);
   }
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('pets').select('*').eq('owner_id', ownerId);
-    if (error || !data) return mockGetPetsForOwner(ownerId);
-    return data as Pet[];
+    const selectClause = fields === 'walk-label' ? 'id, owner_id, name, species, created_at' : '*';
+    const { data, error } = await supabase.from('pets').select(selectClause).eq('owner_id', ownerId);
+    if (error || !data) return pickMockPetFields(mockGetPetsForOwner(ownerId), fields);
+    return data as unknown as Pet[];
   } catch {
-    return mockGetPetsForOwner(ownerId);
+    return pickMockPetFields(mockGetPetsForOwner(ownerId), fields);
   }
 }
 

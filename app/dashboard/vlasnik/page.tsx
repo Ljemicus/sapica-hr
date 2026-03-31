@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
-import { getPetsByOwner, getBookings, getReviewedBookingIds, getWalksForUser, getUser, getPet } from '@/lib/db';
+import { getPetsByOwner, getBookings, getReviewedBookingIds, getWalksForUser, getUser } from '@/lib/db';
 import { OwnerDashboardContent } from './owner-dashboard-content';
 
 export const metadata: Metadata = {
@@ -19,22 +19,24 @@ export default async function OwnerDashboardPage() {
 
   const reviewedBookingIds = await getReviewedBookingIds(user.id);
 
-  // Get active walks for owner's pets
-  const ownerPetIds = pets.map(p => p.id);
   const walks = await getWalksForUser(user.id);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const activeWalks: any[] = [];
-  for (const w of walks) {
-    if (ownerPetIds.includes(w.pet_id) && w.status === 'u_tijeku') {
-      const sitterUser = await getUser(w.sitter_id);
-      const petData = await getPet(w.pet_id);
-      activeWalks.push({
-        ...w,
-        sitterName: sitterUser?.name || 'Nepoznato',
-        petName: petData?.name || 'Nepoznato',
-      });
-    }
-  }
+  const activeOwnerWalks = walks.filter((walk) => walk.status === 'u_tijeku');
+
+  const [ownerPets, activeSitters] = await Promise.all([
+    getPetsByOwner(user.id, 'walk-label'),
+    Promise.all([...new Set(activeOwnerWalks.map((walk) => walk.sitter_id))].map((sitterId) => getUser(sitterId))),
+  ]);
+
+  const petNamesById = new Map(ownerPets.map((pet) => [pet.id, pet.name]));
+  const sitterNamesById = new Map(activeSitters.filter(Boolean).map((sitter) => [sitter!.id, sitter!.name]));
+
+  const activeWalks = activeOwnerWalks
+    .filter((walk) => petNamesById.has(walk.pet_id))
+    .map((walk) => ({
+      ...walk,
+      sitterName: sitterNamesById.get(walk.sitter_id) || 'Nepoznato',
+      petName: petNamesById.get(walk.pet_id) || 'Nepoznato',
+    }));
 
   return (
     <OwnerDashboardContent
