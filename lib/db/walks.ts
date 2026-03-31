@@ -15,10 +15,10 @@ export async function getWalk(id: string): Promise<Walk | null> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('walks').select('*').eq('id', id).single();
-    if (error || !data) return mockGetWalk(id) ?? null;
+    if (error || !data) return null;
     return data as Walk;
   } catch {
-    return mockGetWalk(id) ?? null;
+    return null;
   }
 }
 
@@ -33,10 +33,10 @@ export async function getWalksByBooking(bookingId: string): Promise<Walk[]> {
       .select('*')
       .eq('booking_id', bookingId)
       .order('start_time', { ascending: false });
-    if (error || !data) return mockWalks.filter((w) => w.booking_id === bookingId);
+    if (error || !data) return [];
     return data as Walk[];
   } catch {
-    return mockWalks.filter((w) => w.booking_id === bookingId);
+    return [];
   }
 }
 
@@ -81,7 +81,7 @@ export async function getWalksForUser(userId: string): Promise<Walk[]> {
       return true;
     });
   } catch {
-    return mockGetWalksForUser(userId);
+    return [];
   }
 }
 
@@ -97,9 +97,9 @@ export async function getActiveWalksForSitter(sitterId: string): Promise<Walk[]>
       .eq('sitter_id', sitterId)
       .eq('status', 'u_tijeku')
       .order('start_time', { ascending: false });
-    if (error || !data) return mockGetActiveWalks(sitterId);
+    if (error || !data) return [];
     return data as Walk[];
   } catch {
-    return mockGetActiveWalks(sitterId);
+    return [];
   }
 }

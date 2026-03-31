@@ -88,20 +88,7 @@ export async function getConversations(userId: string): Promise<Message[]> {
       .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
       .order('created_at', { ascending: false });
     if (error || !data) {
-      const all = mockGetMessages(userId);
-      const seen = new Set<string>();
-      const conversations: Message[] = [];
-      const sorted = [...all].sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-      for (const msg of sorted) {
-        const partnerId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
-        if (!seen.has(partnerId)) {
-          seen.add(partnerId);
-          conversations.push(msg);
-        }
-      }
-      return conversations;
+      return [];
     }
     const seen = new Set<string>();
     const conversations: Message[] = [];
@@ -114,20 +101,7 @@ export async function getConversations(userId: string): Promise<Message[]> {
     }
     return conversations;
   } catch {
-    const all = mockGetMessages(userId);
-    const seen = new Set<string>();
-    const conversations: Message[] = [];
-    const sorted = [...all].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-    for (const msg of sorted) {
-      const partnerId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
-      if (!seen.has(partnerId)) {
-        seen.add(partnerId);
-        conversations.push(msg);
-      }
-    }
-    return conversations;
+    return [];
   }
 }
 
@@ -142,10 +116,10 @@ export async function getMessages(userId: string): Promise<Message[]> {
       .select('*, sender:users!sender_id(*)')
       .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
       .order('created_at', { ascending: false });
-    if (error || !data) return mockGetMessages(userId);
+    if (error || !data) return [];
     return data as Message[];
   } catch {
-    return mockGetMessages(userId);
+    return [];
   }
 }
 
@@ -171,21 +145,11 @@ export async function getConversation(
       )
       .order('created_at', { ascending: true });
     if (error || !data) {
-      const all = mockGetMessages(userId1);
-      return all.filter(
-        (m) =>
-          (m.sender_id === userId1 && m.receiver_id === userId2) ||
-          (m.sender_id === userId2 && m.receiver_id === userId1)
-      );
+      return [];
     }
     return data as Message[];
   } catch {
-    const all = mockGetMessages(userId1);
-    return all.filter(
-      (m) =>
-        (m.sender_id === userId1 && m.receiver_id === userId2) ||
-        (m.sender_id === userId2 && m.receiver_id === userId1)
-    );
+    return [];
   }
 }
 
@@ -280,7 +244,7 @@ export async function getConversationSummaries(userId: string): Promise<Conversa
       .select('id, name, avatar_url')
       .in('id', partnerIds);
 
-    if (error) return buildMockConversationSummaries(userId);
+    if (error) return [];
 
     const partnerMap = new Map((partners || []).map((partner) => [partner.id as string, partner]));
     const grouped = new Map<string, Message[]>();
@@ -316,6 +280,6 @@ export async function getConversationSummaries(userId: string): Promise<Conversa
         return bTime - aTime;
       });
   } catch {
-    return buildMockConversationSummaries(userId);
+    return [];
   }
 }

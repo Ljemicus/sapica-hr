@@ -13,10 +13,10 @@ export async function getUpdates(): Promise<PetUpdate[]> {
       .from('pet_updates')
       .select('*')
       .order('created_at', { ascending: false });
-    if (error || !data) return mockUpdates;
+    if (error || !data) return [];
     return data as PetUpdate[];
   } catch {
-    return mockUpdates;
+    return [];
   }
 }
 
@@ -51,9 +51,9 @@ export async function getUpdatesByBooking(bookingId: string, fields: BookingUpda
       .select(selectClause)
       .eq('booking_id', bookingId)
       .order('created_at', { ascending: false });
-    if (error || !data) return pickMockUpdateFields(mockGetUpdates(bookingId), fields);
+    if (error || !data) return [];
     return data as unknown as PetUpdate[];
   } catch {
-    return pickMockUpdateFields(mockGetUpdates(bookingId), fields);
+    return [];
   }
 }

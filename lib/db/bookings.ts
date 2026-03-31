@@ -70,10 +70,10 @@ export async function getBookings(
       .select(selectClause)
       .eq(column, userId)
       .order('created_at', { ascending: false });
-    if (error || !data) return pickMockBookingFields(mockGetBookings(userId, role), fields);
+    if (error || !data) return [];
     return data as unknown as Booking[];
   } catch {
-    return pickMockBookingFields(mockGetBookings(userId, role), fields);
+    return [];
   }
 }
 
@@ -101,10 +101,10 @@ export async function getAllBookings(fields: AllBookingFields = 'full'): Promise
       .from('bookings')
       .select(selectClause)
       .order('created_at', { ascending: false });
-    if (error || !data) return attachMockBookingRelations(mockBookings);
+    if (error || !data) return [];
     return data as unknown as Booking[];
   } catch {
-    return attachMockBookingRelations(mockBookings);
+    return [];
   }
 }
 
@@ -119,10 +119,10 @@ export async function getBooking(id: string): Promise<Booking | null> {
       .select('*, owner:users!owner_id(*), sitter:users!sitter_id(*), pet:pets(*)')
       .eq('id', id)
       .single();
-    if (error || !data) return mockBookings.find((b) => b.id === id) ?? null;
+    if (error || !data) return null;
     return data as Booking;
   } catch {
-    return mockBookings.find((b) => b.id === id) ?? null;
+    return null;
   }
 }
 
