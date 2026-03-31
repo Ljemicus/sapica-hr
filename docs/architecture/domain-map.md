@@ -140,6 +140,11 @@ Ako feature ne pripada jasno nijednoj, to je signal da dizajn još nije čist.
 - koristiti ovaj domain map za naming i placement novih helpera
 - nove cross-domain agregacije stavljati u adapter sloj (`lib/search`, `lib/adapters`)
 - ne širiti `lib/db/index.ts` bez razmišljanja o domain ownershipu
+- koristiti domain entrypointove gdje imaju smisla:
+  - `lib/db/marketplace.ts`
+  - `lib/db/extensions.ts`
+  - `lib/db/content.ts`
+  - `lib/db/discovery.ts`
 
 ### Kasnije
 - po potrebi grupirati helpere u podfoldere, npr.:

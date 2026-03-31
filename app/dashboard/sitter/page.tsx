@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
-import { getSitter, getBookings, getReviewsBySitter, getAvailability, getRecentUpdatesBySitter } from '@/lib/db';
+import { getAvailability, getBookings, getRecentUpdatesBySitter, getReviewsBySitter, getSitter } from '@/lib/db/marketplace';
 import { SitterDashboardContent } from './sitter-dashboard-content';
 
 export const metadata: Metadata = {
