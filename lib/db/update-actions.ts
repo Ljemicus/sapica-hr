@@ -15,13 +15,7 @@ interface CreatePetUpdateInput {
 
 export async function createPetUpdate(input: CreatePetUpdateInput): Promise<PetUpdate | null> {
   if (!isSupabaseConfigured()) {
-    // Mock: return a fake update for demo
-    return {
-      id: `upd-${Date.now()}`,
-      ...input,
-      photo_url: input.photo_url ?? null,
-      created_at: new Date().toISOString(),
-    };
+    return null;
   }
 
   try {

@@ -21,16 +21,7 @@ interface UpdateWalkInput {
 
 export async function createWalk(input: CreateWalkInput): Promise<Walk | null> {
   if (!isSupabaseConfigured()) {
-    // Mock: return a fake walk for demo
-    return {
-      id: `walk-${Date.now()}`,
-      ...input,
-      end_time: null,
-      status: 'u_tijeku',
-      distance_km: 0,
-      route: [],
-      checkpoints: [],
-    };
+    return null;
   }
 
   try {
