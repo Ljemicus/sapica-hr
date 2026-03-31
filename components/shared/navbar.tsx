@@ -372,6 +372,10 @@ export function Navbar() {
                   <Siren className="h-5 w-5" />
                   Hitna pomoć
                 </Link>
+                <Link href="/izgubljeni" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold transition-colors">
+                  <AlertTriangle className="h-5 w-5" />
+                  {t('nav.lost')}
+                </Link>
 
                 <Link href="/uzgajivacnice" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <PawPrint className="h-5 w-5 text-amber-500" />
@@ -414,10 +418,6 @@ export function Navbar() {
                 <Link href="/forum" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors">
                   <MessageSquare className="h-5 w-5 text-teal-500" />
                   {t('nav.forum')}
-                </Link>
-                <Link href="/izgubljeni" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold transition-colors">
-                  <AlertTriangle className="h-5 w-5" />
-                  {t('nav.lost')}
                 </Link>
 
                 {user && (
