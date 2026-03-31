@@ -3,12 +3,16 @@ import { getAuthUser } from '@/lib/auth';
 import { getBookings, createBooking, getSitter } from '@/lib/db';
 import { bookingSchema } from '@/lib/validations';
 
-export async function GET() {
+export async function GET(request: Request) {
   const user = await getAuthUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+  const { searchParams } = new URL(request.url);
+  const fieldsParam = searchParams.get('fields');
   const role = user.role === 'sitter' ? 'sitter' : 'owner';
-  const bookings = await getBookings(user.id, role);
+  const fields = role === 'owner' && fieldsParam === 'owner-history' ? 'owner-history' : 'full';
+
+  const bookings = await getBookings(user.id, role, fields);
   return NextResponse.json(bookings);
 }
 

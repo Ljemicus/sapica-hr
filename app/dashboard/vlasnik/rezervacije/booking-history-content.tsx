@@ -13,7 +13,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/shared/empty-state';
-import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/auth-context';
 
 type FilterTab = 'sve' | 'u_tijeku' | 'zavrsene' | 'otkazane';
@@ -111,15 +110,10 @@ export function BookingHistoryContent() {
         return;
       }
       try {
-        const supabase = createClient();
-        const { data, error } = await supabase
-          .from('bookings')
-          .select('id, start_date, end_date, status, total_price, service_type, sitter:users!sitter_id(name), pet:pets(name, species)')
-          .eq('owner_id', user.id)
-          .order('created_at', { ascending: false });
-
-        if (!error && data) {
-          setBookings(data as unknown as BookingRow[]);
+        const response = await fetch('/api/bookings?fields=owner-history', { cache: 'no-store' });
+        if (response.ok) {
+          const data = await response.json();
+          setBookings(Array.isArray(data) ? data as BookingRow[] : []);
         }
       } catch {
         // silently fail — empty state shown
