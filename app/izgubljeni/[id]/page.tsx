@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: LostPetPageProps): Promise<Me
   const pet = await getLostPetFromDb(id);
 
   if (!pet) {
-    return { title: 'Ljubimac nije pronađen' };
+    notFound();
   }
 
   const title = pet.status === 'lost'

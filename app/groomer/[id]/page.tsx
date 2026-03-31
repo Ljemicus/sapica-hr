@@ -11,9 +11,10 @@ interface GroomerPageProps {
 export async function generateMetadata({ params }: GroomerPageProps): Promise<Metadata> {
   const { id } = await params;
   const groomer = await getGroomer(id);
+  if (!groomer) notFound();
   return {
-    title: groomer ? `${groomer.name} — Grooming u ${groomer.city}` : 'Groomer profil',
-    description: groomer ? `Pogledajte profil groomera ${groomer.name}. Zakažite termin za uljepšavanje ljubimca.` : '',
+    title: `${groomer.name} — Grooming u ${groomer.city}`,
+    description: `Pogledajte profil groomera ${groomer.name}. Zakažite termin za uljepšavanje ljubimca.`,
   };
 }
 

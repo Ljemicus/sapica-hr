@@ -33,7 +33,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const article = await getArticle(slug);
-  if (!article) return { title: 'Članak nije pronađen' };
+  if (!article) notFound();
   return {
     title: article.title,
     description: article.excerpt,

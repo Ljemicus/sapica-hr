@@ -14,9 +14,9 @@ interface ArticlePageProps {
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
   const article = await getArticle(slug);
-  if (!article) return { title: 'Članak' };
+  if (!article) notFound();
   return {
-    title: article.title,
+    title: `${article.title} | PetPark`,
     description: article.excerpt,
     openGraph: {
       title: article.title,

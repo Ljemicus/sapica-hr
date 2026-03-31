@@ -11,9 +11,10 @@ interface TrainerPageProps {
 export async function generateMetadata({ params }: TrainerPageProps): Promise<Metadata> {
   const { id } = await params;
   const trainer = await getTrainer(id);
+  if (!trainer) notFound();
   return {
-    title: trainer ? `${trainer.name} — Trener pasa u ${trainer.city}` : 'Trener profil',
-    description: trainer ? `Pogledajte profil trenera ${trainer.name}. Zakažite dresuru za svog psa.` : '',
+    title: `${trainer.name} — Trener pasa u ${trainer.city}`,
+    description: `Pogledajte profil trenera ${trainer.name}. Zakažite dresuru za svog psa.`,
   };
 }
 
