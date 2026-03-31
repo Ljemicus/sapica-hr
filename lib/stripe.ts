@@ -9,10 +9,10 @@ export function getStripe(): Stripe {
 
   const secretKey = process.env.STRIPE_SECRET_KEY;
   if (!secretKey || secretKey.includes('REPLACE')) {
-    // Stripe secret key not configured — payments will fail
+    throw new Error('STRIPE_SECRET_KEY nije konfiguriran');
   }
 
-  _stripe = new Stripe(secretKey || 'sk_test_placeholder', {
+  _stripe = new Stripe(secretKey, {
     apiVersion: '2026-02-25.clover',
     typescript: true,
   });

@@ -16,8 +16,8 @@ export function CartContent() {
   const total = subtotal + pdv;
 
   const handleCheckout = () => {
-    toast.info('Plaćanje uskoro!', {
-      description: 'Online plaćanje bit će dostupno uskoro. Hvala na strpljenju!',
+    toast.info('Shop checkout još nije aktivan', {
+      description: 'Plaćanje za shop proizvode još nije spojeno. Booking plaćanja rade odvojeno preko rezervacija.',
     });
   };
 

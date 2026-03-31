@@ -27,11 +27,9 @@ export default function CheckoutPage({
   useEffect(() => {
     async function fetchBooking() {
       try {
-        const res = await fetch('/api/bookings');
+        const res = await fetch(`/api/bookings/${bookingId}`);
         if (!res.ok) throw new Error('Greška pri dohvaćanju rezervacije');
-        const bookings: BookingWithDetails[] = await res.json();
-        const found = bookings.find((b) => b.id === bookingId);
-        if (!found) throw new Error('Rezervacija nije pronađena');
+        const found: BookingWithDetails = await res.json();
         setBooking(found);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Nepoznata greška');

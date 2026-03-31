@@ -5,6 +5,20 @@ import { getBooking, updateBooking } from '@/lib/db';
 const OWNER_ALLOWED = new Set(['cancelled']);
 const SITTER_ALLOWED = new Set(['accepted', 'rejected', 'completed']);
 
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const user = await getAuthUser();
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const booking = await getBooking(id);
+  if (!booking) return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+  if (booking.owner_id !== user.id && booking.sitter_id !== user.id && user.role !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  return NextResponse.json(booking);
+}
+
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const user = await getAuthUser();
