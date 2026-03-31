@@ -17,7 +17,7 @@ export default async function GroomerDashboardPage() {
   const supabase = await createClient();
   const { data: groomer } = await supabase
     .from('groomers')
-    .select('*')
+    .select('id, name, city, services, prices, rating, reviews, bio, verified, specialization, user_id, phone, email, address, working_hours')
     .eq('user_id', user.id)
     .single();
 
@@ -37,7 +37,7 @@ export default async function GroomerDashboardPage() {
   // Fetch availability
   const { data: availability } = await supabase
     .from('groomer_availability')
-    .select('*')
+    .select('id, groomer_id, date, start_time, end_time, slot_duration_minutes, is_available')
     .eq('groomer_id', groomer.id)
     .gte('date', today)
     .order('date', { ascending: true })
