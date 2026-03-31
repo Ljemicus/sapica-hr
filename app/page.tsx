@@ -172,12 +172,10 @@ export default async function HomePage() {
                     aria-label="Vrsta usluge"
                   />
                 </div>
-                <Link href="/pretraga">
-                  <Button size="lg" className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 h-12 md:h-13 px-8 rounded-xl md:rounded-full btn-hover shadow-lg shadow-orange-300/40 dark:shadow-orange-900/30 text-base font-semibold">
-                    <Search className="h-4 w-4 mr-2" />
-                    Pretraži
-                  </Button>
-                </Link>
+                <Button type="submit" size="lg" className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 h-12 md:h-13 px-8 rounded-xl md:rounded-full btn-hover shadow-lg shadow-orange-300/40 dark:shadow-orange-900/30 text-base font-semibold">
+                  <Search className="h-4 w-4 mr-2" />
+                  Pretraži
+                </Button>
               </form>
             </div>
 

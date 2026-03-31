@@ -123,7 +123,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       services: t.specializations,
       lowestPrice: undefined,
       responseTime: null,
-      profileUrl: `/dresura/${t.id}`,
+      profileUrl: `/trener/${t.id}`,
       locationLat: null,
       locationLng: null,
       certified: t.certified,
