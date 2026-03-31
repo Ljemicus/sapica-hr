@@ -12,9 +12,10 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { EmptyState } from '@/components/shared/empty-state';
 import { createClient } from '@/lib/supabase/client';
-import { getRealtimeManager } from '@/lib/realtime';
+import { subscribeToIncomingMessages, subscribeToTypingIndicators } from './messages-realtime';
+import { applyFetchedThread, fetchConversationThread, sendConversationMessage } from './messages-thread';
 import type { User, Message } from '@/lib/types';
-import { formatLocalOutgoingMessage, sortConversations, upsertConversationState, type ConversationState } from './message-state';
+import { upsertConversationState, type ConversationState } from './message-state';
 
 
 interface Props {
@@ -115,18 +116,13 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
     const fetchConversation = async () => {
       setLoadingConversationId(selectedPartnerId);
       try {
-        const response = await fetch(`/api/messages?partner_id=${encodeURIComponent(selectedPartnerId)}`);
-        if (!response.ok) return;
-        const messages = await response.json() as Message[];
-        upsertConversation(selectedPartnerId, (existing) => ({
+        const messages = await fetchConversationThread(selectedPartnerId);
+        applyFetchedThread({
           partnerId: selectedPartnerId,
-          partnerName: existing?.partnerName || 'Korisnik',
-          partnerAvatar: existing?.partnerAvatar || null,
           messages,
-          lastMessage: messages[messages.length - 1] || existing?.lastMessage || null,
-          unreadCount: existing?.unreadCount || 0,
-        }));
-        setLoadedConversationIds((prev) => new Set(prev).add(selectedPartnerId));
+          setConversations,
+          setLoadedConversationIds,
+        });
       } finally {
         setLoadingConversationId((current) => current === selectedPartnerId ? null : current);
       }
@@ -135,40 +131,19 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
     void fetchConversation();
   }, [loadedConversationIds, loadingConversationId, selectedPartnerId, upsertConversation]);
 
-  // Supabase real-time subscription
   useEffect(() => {
-    const channel = supabase.channel('messages')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `receiver_id=eq.${currentUser.id}` }, (payload) => {
-        const newMsg = payload.new as Message;
-        upsertConversation(newMsg.sender_id, (existing) => ({
-          partnerId: newMsg.sender_id,
-          partnerName: existing?.partnerName || 'Korisnik',
-          partnerAvatar: existing?.partnerAvatar || null,
-          messages: existing?.messages?.length ? [...existing.messages, { ...newMsg, sender: { id: newMsg.sender_id, name: '', avatar_url: null, email: '', role: 'owner' as const, phone: null, city: null, created_at: '' } }] : existing?.messages || [],
-          lastMessage: newMsg,
-          unreadCount: (existing?.unreadCount || 0) + (selectedPartnerId === newMsg.sender_id ? 0 : 1),
-        }));
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- supabase is a stable client ref
-  }, [currentUser.id, selectedPartnerId, upsertConversation]);
-
-  // Realtime — subscribe for incoming messages via Supabase Realtime
-  useEffect(() => {
-    const rt = getRealtimeManager();
-    rt.subscribe(currentUser.id);
-
-    const unsubTyping = rt.onTyping(({ partnerId, isTyping }) => {
-      setTypingPartners(prev => {
-        const next = new Set(prev);
-        if (isTyping) next.add(partnerId);
-        else next.delete(partnerId);
-        return next;
-      });
+    return subscribeToIncomingMessages({
+      currentUserId: currentUser.id,
+      selectedPartnerId,
+      setConversations,
     });
+  }, [currentUser.id, selectedPartnerId]);
 
-    return () => { rt.destroy(); unsubTyping(); };
+  useEffect(() => {
+    return subscribeToTypingIndicators({
+      currentUserId: currentUser.id,
+      setTypingPartners,
+    });
   }, [currentUser.id]);
 
   // Auto-scroll
@@ -198,26 +173,13 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
     if (!newMessage.trim() || !selectedPartnerId) return;
     setSending(true);
     const content = newMessage.trim();
-    const msg = { sender_id: currentUser.id, receiver_id: selectedPartnerId, content, read: false };
-    const response = await fetch('/api/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ receiver_id: selectedPartnerId, content }),
+    const localMsg = await sendConversationMessage({
+      currentUser,
+      selectedPartnerId,
+      content,
+      setConversations,
+      setLoadedConversationIds,
     });
-
-    const payload = response.ok ? await response.json() : null;
-    const mockId = `local-${Date.now()}`;
-    const localMsg = payload || { id: mockId, ...msg, created_at: new Date().toISOString() };
-
-    upsertConversation(selectedPartnerId, (existing) => ({
-      partnerId: selectedPartnerId,
-      partnerName: existing?.partnerName || 'Korisnik',
-      partnerAvatar: existing?.partnerAvatar || null,
-      messages: [...(existing?.messages || []), formatLocalOutgoingMessage(localMsg, currentUser)],
-      lastMessage: localMsg,
-      unreadCount: existing?.unreadCount || 0,
-    }));
-    setLoadedConversationIds((prev) => new Set(prev).add(selectedPartnerId));
     setNewMessage('');
     setSending(false);
 
