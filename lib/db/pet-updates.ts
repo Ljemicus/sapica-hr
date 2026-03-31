@@ -20,20 +20,40 @@ export async function getUpdates(): Promise<PetUpdate[]> {
   }
 }
 
-export async function getUpdatesByBooking(bookingId: string): Promise<PetUpdate[]> {
+type BookingUpdateFields = 'full' | 'recent-list';
+
+function pickMockUpdateFields(updates: PetUpdate[], fields: BookingUpdateFields = 'full'): PetUpdate[] {
+  if (fields === 'full') return updates;
+
+  return updates.map((update) => ({
+    id: update.id,
+    booking_id: update.booking_id,
+    sitter_id: update.sitter_id,
+    type: update.type,
+    emoji: update.emoji,
+    caption: update.caption,
+    photo_url: update.photo_url,
+    created_at: update.created_at,
+  }));
+}
+
+export async function getUpdatesByBooking(bookingId: string, fields: BookingUpdateFields = 'full'): Promise<PetUpdate[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetUpdates(bookingId);
+    return pickMockUpdateFields(mockGetUpdates(bookingId), fields);
   }
   try {
     const supabase = await createClient();
+    const selectClause = fields === 'recent-list'
+      ? 'id, booking_id, sitter_id, type, emoji, caption, photo_url, created_at'
+      : '*';
     const { data, error } = await supabase
       .from('pet_updates')
-      .select('*')
+      .select(selectClause)
       .eq('booking_id', bookingId)
       .order('created_at', { ascending: false });
-    if (error || !data) return mockGetUpdates(bookingId);
-    return data as PetUpdate[];
+    if (error || !data) return pickMockUpdateFields(mockGetUpdates(bookingId), fields);
+    return data as unknown as PetUpdate[];
   } catch {
-    return mockGetUpdates(bookingId);
+    return pickMockUpdateFields(mockGetUpdates(bookingId), fields);
   }
 }
