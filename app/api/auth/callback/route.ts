@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { ensureSitterProfile, syncUserProfile } from '@/lib/auth-profile';
 import { buildUserFromAuth } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { appLogger } from '@/lib/logger';
@@ -40,20 +41,24 @@ export async function GET(request: Request) {
       const fallbackUser = buildUserFromAuth(data.user);
       const role = requestedRole === 'sitter' || fallbackUser.role === 'sitter' ? 'sitter' : 'owner';
 
-      await supabase.from('users').upsert({
-        id: fallbackUser.id,
-        email: fallbackUser.email,
-        name: fallbackUser.name,
-        role,
-        avatar_url: fallbackUser.avatar_url,
-        city: fallbackUser.city,
-      }, { onConflict: 'id' });
+      await syncUserProfile({
+        supabase,
+        user: {
+          id: fallbackUser.id,
+          email: fallbackUser.email,
+          name: fallbackUser.name,
+          role,
+          avatar_url: fallbackUser.avatar_url,
+          city: fallbackUser.city,
+        },
+      });
 
       if (role === 'sitter') {
-        await supabase.from('sitter_profiles').upsert({
-          user_id: fallbackUser.id,
+        await ensureSitterProfile({
+          supabase,
+          userId: fallbackUser.id,
           city: fallbackUser.city,
-        }, { onConflict: 'user_id' });
+        });
       }
 
       return NextResponse.redirect(`${origin}${next}`);

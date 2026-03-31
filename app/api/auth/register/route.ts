@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { ensureSitterProfile, syncUserProfile } from '@/lib/auth-profile';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { appLogger } from '@/lib/logger';
 import { registerSchema } from '@/lib/validations';
@@ -43,26 +44,28 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error?.message || 'Registracija nije uspjela' }, { status: 400 });
   }
 
-  const userPayload = {
-    id: data.user.id,
-    email: parsed.data.email,
-    name: parsed.data.name,
-    role: parsed.data.role,
-    city: parsed.data.city,
-    avatar_url: body?.avatar_url || null,
-  };
-
-  const { error: profileError } = await supabase.from('users').upsert(userPayload, { onConflict: 'id' });
+  const profileError = await syncUserProfile({
+    supabase,
+    user: {
+      id: data.user.id,
+      email: parsed.data.email,
+      name: parsed.data.name,
+      role: parsed.data.role,
+      city: parsed.data.city,
+      avatar_url: body?.avatar_url || null,
+    },
+  });
   if (profileError) {
     appLogger.error('auth.register', 'Failed to upsert user profile', { userId: data.user.id });
     return NextResponse.json({ error: 'Greška pri kreiranju profila' }, { status: 500 });
   }
 
   if (parsed.data.role === 'sitter') {
-    const { error: sitterError } = await supabase.from('sitter_profiles').upsert({
-      user_id: data.user.id,
+    const sitterError = await ensureSitterProfile({
+      supabase,
+      userId: data.user.id,
       city: parsed.data.city,
-    }, { onConflict: 'user_id' });
+    });
     if (sitterError) {
       appLogger.error('auth.register', 'Failed to create sitter profile', { userId: data.user.id });
       return NextResponse.json({ error: 'Greška pri kreiranju sitter profila' }, { status: 500 });
