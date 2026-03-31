@@ -3,7 +3,7 @@ import { isSupabaseConfigured } from './helpers';
 import { getBookingsForUser as mockGetBookings, getUserById, mockBookings, mockPets } from '@/lib/mock-data';
 import type { Booking } from '@/lib/types';
 
-type BookingFields = 'full' | 'walk-selector';
+type BookingFields = 'full' | 'walk-selector' | 'owner-history';
 
 function pickMockBookingFields(bookings: Booking[], fields: BookingFields = 'full'): Booking[] {
   if (fields === 'full') return bookings;
@@ -20,13 +20,25 @@ function pickMockBookingFields(bookings: Booking[], fields: BookingFields = 'ful
     total_price: booking.total_price,
     note: booking.note,
     created_at: booking.created_at,
+    sitter: booking.sitter
+      ? {
+          id: booking.sitter.id,
+          email: '',
+          name: booking.sitter.name,
+          role: 'sitter',
+          avatar_url: booking.sitter.avatar_url,
+          phone: null,
+          city: null,
+          created_at: '',
+        }
+      : undefined,
     pet: booking.pet
       ? {
           id: booking.pet.id,
           owner_id: booking.pet.owner_id,
           name: booking.pet.name,
           species: booking.pet.species,
-          breed: null,
+          breed: fields === 'owner-history' ? null : null,
           age: null,
           weight: null,
           special_needs: null,
@@ -50,7 +62,9 @@ export async function getBookings(
     const column = role === 'owner' ? 'owner_id' : 'sitter_id';
     const selectClause = fields === 'walk-selector'
       ? 'id, owner_id, sitter_id, pet_id, service_type, start_date, end_date, status, total_price, note, created_at, pet:pets(id, owner_id, name, species, created_at)'
-      : '*, owner:users!owner_id(*), sitter:users!sitter_id(*), pet:pets(*)';
+      : fields === 'owner-history'
+        ? 'id, owner_id, sitter_id, pet_id, service_type, start_date, end_date, status, total_price, note, created_at, sitter:users!sitter_id(id, name, avatar_url), pet:pets(id, owner_id, name, species, created_at)'
+        : '*, owner:users!owner_id(*), sitter:users!sitter_id(*), pet:pets(*)';
     const { data, error } = await supabase
       .from('bookings')
       .select(selectClause)
