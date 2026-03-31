@@ -36,10 +36,10 @@ export async function getTopics(category?: ForumCategorySlug): Promise<ForumTopi
     }
 
     const { data, error } = await query;
-    if (error || !data) return mockGetTopics(category);
+    if (error || !data) return [];
     return data as ForumTopic[];
   } catch {
-    return mockGetTopics(category);
+    return [];
   }
 }
 
@@ -54,10 +54,10 @@ export async function getTopic(id: string): Promise<ForumTopic | null> {
       .select('id, category_slug, title, author_name, author_initial, author_gradient, created_at, views, reply_count, comment_count, likes, is_pinned, is_hot, is_solved, last_reply_at, last_reply_by, tags')
       .eq('id', id)
       .single();
-    if (error || !data) return mockGetTopic(id) ?? null;
+    if (error || !data) return null;
     return data as ForumTopic;
   } catch {
-    return mockGetTopic(id) ?? null;
+    return null;
   }
 }
 
@@ -80,12 +80,12 @@ export async function getPosts(topicId: string): Promise<(ForumPost | ForumComme
         .select('id, topic_id, author_name, author_initial, content, created_at, likes, is_best_answer')
         .eq('topic_id', topicId)
         .order('created_at', { ascending: true });
-      if (postsError || !posts) return mockGetComments(topicId);
+      if (postsError || !posts) return [];
       return posts as ForumPost[];
     }
     return data as ForumComment[];
   } catch {
-    return mockGetComments(topicId);
+    return [];
   }
 }
 
@@ -100,9 +100,9 @@ export async function getTrendingTopics(): Promise<ForumTopic[]> {
       .select('id, category_slug, title, author_name, author_initial, author_gradient, created_at, views, reply_count, comment_count, likes, is_pinned, is_hot, is_solved, last_reply_at, last_reply_by, tags')
       .order('likes', { ascending: false })
       .limit(5);
-    if (error || !data) return mockGetTrending();
+    if (error || !data) return [];
     return data as ForumTopic[];
   } catch {
-    return mockGetTrending();
+    return [];
   }
 }

@@ -35,8 +35,7 @@ function mapDbProduct(row: Record<string, unknown>): Product {
 
 export async function getProducts(filters?: ProductFilters): Promise<Product[]> {
   if (!isSupabaseConfigured()) {
-    if (filters?.category) return mockGetByCategory(filters.category);
-    return mockProducts;
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -48,13 +47,11 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
 
     const { data, error } = await query;
     if (error || !data) {
-      if (filters?.category) return mockGetByCategory(filters.category);
-      return mockProducts;
+      return [];
     }
     return data.map(mapDbProduct);
   } catch {
-    if (filters?.category) return mockGetByCategory(filters.category);
-    return mockProducts;
+    return [];
   }
 }
 
@@ -69,10 +66,10 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       .select('id, slug, name, category, price, original_price, description, emoji, brand, rating, review_count, in_stock, variants, specs')
       .eq('slug', slug)
       .single();
-    if (error || !data) return mockGetBySlug(slug) ?? null;
+    if (error || !data) return null;
     return mapDbProduct(data);
   } catch {
-    return mockGetBySlug(slug) ?? null;
+    return null;
   }
 }
 
@@ -87,7 +84,7 @@ export async function getProductReviews(productId: string): Promise<ProductRevie
       .select('id, product_id, author_name, rating, comment, created_at')
       .eq('product_id', productId)
       .order('created_at', { ascending: false });
-    if (error || !data) return mockGetReviews(productId);
+    if (error || !data) return [];
     return data.map((r) => ({
       id: r.id,
       productId: r.product_id,
@@ -98,7 +95,7 @@ export async function getProductReviews(productId: string): Promise<ProductRevie
       createdAt: r.created_at,
     }));
   } catch {
-    return mockGetReviews(productId);
+    return [];
   }
 }
 
@@ -117,7 +114,7 @@ export async function getRelatedProducts(
       .eq('id', productId)
       .single();
 
-    if (currentError || !current) return mockGetRelated(productId, limit);
+    if (currentError || !current) return [];
 
     const { data, error } = await supabase
       .from('products')
@@ -127,9 +124,9 @@ export async function getRelatedProducts(
       .order('rating', { ascending: false })
       .limit(limit);
 
-    if (error || !data) return mockGetRelated(productId, limit);
+    if (error || !data) return [];
     return data.map(mapDbProduct);
   } catch {
-    return mockGetRelated(productId, limit);
+    return [];
   }
 }

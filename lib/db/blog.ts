@@ -20,10 +20,10 @@ export async function getArticles(category?: BlogCategory): Promise<Article[]> {
     }
 
     const { data, error } = await query;
-    if (error || !data) return mockGetArticles(category);
+    if (error || !data) return [];
     return data as Article[];
   } catch {
-    return mockGetArticles(category);
+    return [];
   }
 }
 
@@ -38,10 +38,10 @@ export async function getArticle(slug: string): Promise<Article | null> {
       .select('slug, title, excerpt, body, author, date, category, emoji')
       .eq('slug', slug)
       .single();
-    if (error || !data) return mockGetArticle(slug) ?? null;
+    if (error || !data) return null;
     return data as Article;
   } catch {
-    return mockGetArticle(slug) ?? null;
+    return null;
   }
 }
 
@@ -61,7 +61,7 @@ export async function getRelatedArticles(
       .eq('slug', slug)
       .single();
 
-    if (currentError || !current) return mockGetRelated(slug, limit);
+    if (currentError || !current) return [];
 
     const { data: sameCat, error: sameCatError } = await supabase
       .from('articles')
@@ -89,6 +89,6 @@ export async function getRelatedArticles(
 
     return related;
   } catch {
-    return mockGetRelated(slug, limit);
+    return [];
   }
 }
