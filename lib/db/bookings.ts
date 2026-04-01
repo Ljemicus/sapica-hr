@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
 import { getBookingsForUser as mockGetBookings, getUserById, mockBookings, mockPets } from '@/lib/mock-data';
-import type { Booking } from '@/lib/types';
+import type { Booking, OwnerHistoryBooking, WalkSelectorBooking } from '@/lib/types';
 
 type BookingFields = 'full' | 'walk-selector' | 'owner-history';
 
@@ -52,8 +52,23 @@ function pickMockBookingFields(bookings: Booking[], fields: BookingFields = 'ful
 export async function getBookings(
   userId: string,
   role: 'owner' | 'sitter',
+  fields: 'owner-history'
+): Promise<OwnerHistoryBooking[]>;
+export async function getBookings(
+  userId: string,
+  role: 'owner' | 'sitter',
+  fields: 'walk-selector'
+): Promise<WalkSelectorBooking[]>;
+export async function getBookings(
+  userId: string,
+  role: 'owner' | 'sitter',
+  fields?: Exclude<BookingFields, 'owner-history' | 'walk-selector'>
+): Promise<Booking[]>;
+export async function getBookings(
+  userId: string,
+  role: 'owner' | 'sitter',
   fields: BookingFields = 'full'
-): Promise<Booking[]> {
+): Promise<Booking[] | OwnerHistoryBooking[]> {
   if (!isSupabaseConfigured()) {
     return pickMockBookingFields(mockGetBookings(userId, role), fields);
   }

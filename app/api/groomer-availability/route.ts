@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getGroomerAvailability, setGroomerAvailability } from '@/lib/db';
+import type { GroomerAvailabilitySlot } from '@/lib/types';
+
+type GroomerAvailabilityGetResponse = GroomerAvailabilitySlot[];
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -12,7 +15,7 @@ export async function GET(request: Request) {
   }
 
   const slots = await getGroomerAvailability(groomerId, fromDate, toDate);
-  return NextResponse.json(slots);
+  return NextResponse.json<GroomerAvailabilityGetResponse>(slots);
 }
 
 export async function POST(request: Request) {

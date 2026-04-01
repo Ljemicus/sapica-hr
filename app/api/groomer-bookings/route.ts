@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { createGroomerBooking, getUserGroomerBookings } from '@/lib/db';
 import { appLogger } from '@/lib/logger';
+import type { GroomerBooking } from '@/lib/types';
+
+type GroomerBookingsGetResponse = GroomerBooking[];
 
 export async function GET() {
   const user = await getAuthUser();
@@ -10,7 +13,7 @@ export async function GET() {
   }
 
   const bookings = await getUserGroomerBookings(user.id, 'history-list');
-  return NextResponse.json(bookings);
+  return NextResponse.json<GroomerBookingsGetResponse>(bookings);
 }
 
 export async function POST(request: Request) {

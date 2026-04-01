@@ -9,7 +9,6 @@ export async function createGroomerBooking(
   try {
     const supabase = await createClient();
 
-    // Check slot isn't already booked
     const { data: existing } = await supabase
       .from('groomer_bookings')
       .select('id')
@@ -19,7 +18,7 @@ export async function createGroomerBooking(
       .not('status', 'in', '("cancelled","rejected")')
       .maybeSingle();
 
-    if (existing) return null; // Slot taken
+    if (existing) return null;
 
     const { data, error } = await supabase
       .from('groomer_bookings')

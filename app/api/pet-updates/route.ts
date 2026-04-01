@@ -3,6 +3,7 @@ import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { createPetUpdate } from '@/lib/db';
 import { z } from 'zod';
+import type { PetUpdate } from '@/lib/types';
 
 const schema = z.object({
   booking_id: z.string().uuid(),
@@ -30,5 +31,5 @@ export async function POST(request: Request) {
   });
 
   if (!update) return apiError({ status: 500, code: 'PET_UPDATE_CREATE_FAILED', message: 'Failed to create update' });
-  return NextResponse.json(update, { status: 201 });
+  return NextResponse.json<PetUpdate>(update, { status: 201 });
 }

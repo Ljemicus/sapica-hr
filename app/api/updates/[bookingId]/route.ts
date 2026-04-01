@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { getBooking, getUpdatesByBooking } from '@/lib/db';
+import type { PetUpdate } from '@/lib/types';
+
+interface UpdatesRouteError {
+  error: string;
+}
 
 export async function GET(
   _request: Request,
@@ -8,14 +13,14 @@ export async function GET(
 ) {
   const user = await getAuthUser();
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json<UpdatesRouteError>({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { bookingId } = await params;
   const booking = await getBooking(bookingId);
 
   if (!booking) {
-    return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+    return NextResponse.json<UpdatesRouteError>({ error: 'Booking not found' }, { status: 404 });
   }
 
   const canAccess =
@@ -24,9 +29,9 @@ export async function GET(
     booking.sitter_id === user.id;
 
   if (!canAccess) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    return NextResponse.json<UpdatesRouteError>({ error: 'Forbidden' }, { status: 403 });
   }
 
   const updates = await getUpdatesByBooking(bookingId);
-  return NextResponse.json(updates);
+  return NextResponse.json<PetUpdate[]>(updates);
 }

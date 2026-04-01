@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/shared/empty-state';
-import { STATUS_LABELS, SERVICE_LABELS, type BookingStatus, type ServiceType } from '@/lib/types';
+import { STATUS_LABELS, SERVICE_LABELS, type ServiceType } from '@/lib/types';
 import { statusColors, statusDotColors, type OwnerDashboardBooking } from './owner-dashboard-types';
 
 interface Props {
@@ -33,7 +33,7 @@ export function OwnerBookingsTab({ bookings, onCancelBooking }: Props) {
         {bookings.map((booking) => (
           <div key={booking.id} className="relative flex gap-4">
             <div className="hidden sm:flex flex-col items-center pt-5">
-              <div className={`w-3 h-3 rounded-full ${statusDotColors[booking.status as BookingStatus]} ring-4 ring-white z-10`} />
+              <div className={`w-3 h-3 rounded-full ${statusDotColors[booking.status]} ring-4 ring-white z-10`} />
             </div>
             <Card className="flex-1 border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4">
@@ -50,8 +50,8 @@ export function OwnerBookingsTab({ bookings, onCancelBooking }: Props) {
                       </p>
                     </div>
                   </div>
-                  <Badge className={`${statusColors[booking.status as BookingStatus]} border`}>
-                    {STATUS_LABELS[booking.status as BookingStatus]}
+                  <Badge className={`${statusColors[booking.status]} border`}>
+                    {STATUS_LABELS[booking.status]}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between mt-3 pt-3 border-t text-sm">

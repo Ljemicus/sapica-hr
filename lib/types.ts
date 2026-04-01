@@ -87,6 +87,27 @@ export interface Booking {
   sitter_profile?: SitterProfile;
 }
 
+export type OwnerHistoryBooking = Booking & {
+  sitter?: Pick<User, 'id' | 'name' | 'avatar_url'>;
+  pet?: Pick<Pet, 'id' | 'owner_id' | 'name' | 'species' | 'created_at'>;
+};
+
+export type SitterDashboardBooking = Booking & {
+  owner: User & Pick<User, 'email' | 'name' | 'avatar_url'>;
+  pet: Pet & Pick<Pet, 'name' | 'species' | 'breed' | 'special_needs'>;
+  address?: string | null;
+  message?: string | null;
+};
+
+export type OwnerDashboardBooking = Booking & {
+  sitter: User & Pick<User, 'name' | 'avatar_url'>;
+  pet: Pet & Pick<Pet, 'name' | 'species'>;
+};
+
+export type WalkSelectorBooking = Booking & {
+  pet?: Pick<Pet, 'id' | 'owner_id' | 'name' | 'species' | 'created_at'>;
+};
+
 export interface Review {
   id: string;
   booking_id: string;
@@ -98,6 +119,17 @@ export interface Review {
   reviewer?: User;
   booking?: Booking;
 }
+
+export type SitterDashboardReview = Review & {
+  reviewer: User & Pick<User, 'name' | 'avatar_url'>;
+};
+
+export type PublicSitterReview = Review & {
+  reviewer: User & Pick<User, 'name' | 'avatar_url'>;
+  booking: Pick<Booking, 'service_type'>;
+};
+
+export type WalkLabelPet = Pick<Pet, 'id' | 'owner_id' | 'name' | 'species' | 'created_at'>;
 
 export interface Message {
   id: string;

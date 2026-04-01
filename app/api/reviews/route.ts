@@ -3,6 +3,9 @@ import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { getReviews, getReviewsBySitter, getBooking, createReview } from '@/lib/db';
 import { reviewSchema } from '@/lib/validations';
+import type { Review } from '@/lib/types';
+
+type ReviewsGetResponse = Review[];
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -10,11 +13,11 @@ export async function GET(request: Request) {
 
   if (sitterId) {
     const reviews = await getReviewsBySitter(sitterId);
-    return NextResponse.json(reviews);
+    return NextResponse.json<ReviewsGetResponse>(reviews);
   }
 
   const reviews = await getReviews();
-  return NextResponse.json(reviews);
+  return NextResponse.json<ReviewsGetResponse>(reviews);
 }
 
 export async function POST(request: Request) {

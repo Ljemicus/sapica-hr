@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
-import type { Booking } from '@/lib/types';
+import type { WalkSelectorBooking } from '@/lib/types';
 
 const MapContainer = dynamic(
   () => import('react-leaflet').then(mod => mod.MapContainer),
@@ -59,7 +59,7 @@ const INITIAL_GEOLOCATION_OPTIONS: PositionOptions = {
 
 interface Props {
   userId: string;
-  bookings: (Booking & { pet: { name: string; species: string } })[];
+  bookings: WalkSelectorBooking[];
 }
 
 function haversineDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {

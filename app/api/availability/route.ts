@@ -3,6 +3,9 @@ import { getAuthUser } from '@/lib/auth';
 import { getAvailability, setAvailability } from '@/lib/db';
 import { appLogger } from '@/lib/logger';
 import { rateLimit } from '@/lib/rate-limit';
+import type { Availability } from '@/lib/types';
+
+type AvailabilityGetResponse = Availability[];
 
 export async function POST(request: Request) {
   const user = await getAuthUser();
@@ -36,5 +39,5 @@ export async function GET(request: Request) {
   if (!sitterId) return NextResponse.json({ error: 'sitter_id required' }, { status: 400 });
 
   const data = await getAvailability(sitterId);
-  return NextResponse.json(data);
+  return NextResponse.json<AvailabilityGetResponse>(data);
 }

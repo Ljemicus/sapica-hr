@@ -1,15 +1,15 @@
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
 import { getBookings, getPetsByOwner, getReviewedBookingIds, getUser, getWalksForUser } from '@/lib/db/marketplace';
+import type { OwnerDashboardProps } from './components/owner-dashboard-types';
 
-export async function getOwnerDashboardData() {
+export async function getOwnerDashboardData(): Promise<OwnerDashboardProps> {
   const user = await getAuthUser();
   if (!user) redirect('/prijava');
   if (user.role !== 'owner') redirect('/');
 
   const pets = await getPetsByOwner(user.id);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const bookings = await getBookings(user.id, 'owner') as any[];
+  const bookings = (await getBookings(user.id, 'owner')) as OwnerDashboardProps['bookings'];
   const reviewedBookingIds = await getReviewedBookingIds(user.id);
 
   const walks = await getWalksForUser(user.id);

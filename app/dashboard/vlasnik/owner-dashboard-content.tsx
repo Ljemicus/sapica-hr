@@ -42,7 +42,7 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
       age: pet.age?.toString() || '',
       weight: pet.weight?.toString() || '',
       special_needs: pet.special_needs || '',
-      photo_url: ((pet as unknown as Record<string, unknown>).photo_url as string) || '',
+      photo_url: pet.photo_url || '',
     });
     setShowPetDialog(true);
   };

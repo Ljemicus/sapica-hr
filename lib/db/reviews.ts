@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
 import { mockReviews, getReviewsForSitter as mockGetReviewsForSitter } from '@/lib/mock-data';
-import type { Review } from '@/lib/types';
+import type { Review, SitterDashboardReview } from '@/lib/types';
 
 export async function getReviews(): Promise<Review[]> {
   if (!isSupabaseConfigured()) {
@@ -22,35 +22,34 @@ export async function getReviews(): Promise<Review[]> {
 
 type ReviewFields = 'full' | 'sitter-dashboard';
 
-function pickMockReviewFields(reviews: Review[], fields: ReviewFields = 'full'): Review[] {
+function pickMockReviewFields(reviews: Review[], fields: 'sitter-dashboard'): SitterDashboardReview[];
+function pickMockReviewFields(reviews: Review[], fields?: 'full'): Review[];
+function pickMockReviewFields(reviews: Review[], fields: ReviewFields = 'full'): Review[] | SitterDashboardReview[] {
   if (fields === 'full') return reviews;
 
-  return reviews.map((review) => ({
-    id: review.id,
-    booking_id: review.booking_id,
-    reviewer_id: review.reviewer_id,
-    reviewee_id: review.reviewee_id,
-    rating: review.rating,
-    comment: review.comment,
-    created_at: review.created_at,
-    reviewer: review.reviewer
-      ? {
-          id: review.reviewer.id,
-          email: '',
-          name: review.reviewer.name,
-          role: 'owner',
-          avatar_url: review.reviewer.avatar_url,
-          phone: null,
-          city: null,
-          created_at: '',
-        }
-      : undefined,
-  }));
+  return reviews
+    .filter((review): review is SitterDashboardReview => Boolean(review.reviewer))
+    .map((review) => ({
+      ...review,
+      reviewer: {
+        ...review.reviewer,
+        email: review.reviewer.email || '',
+        role: review.reviewer.role || 'owner',
+        phone: review.reviewer.phone || null,
+        city: review.reviewer.city || null,
+        created_at: review.reviewer.created_at || '',
+      },
+    }));
 }
 
-export async function getReviewsBySitter(sitterId: string, fields: ReviewFields = 'full'): Promise<Review[]> {
+export async function getReviewsBySitter(sitterId: string, fields: 'sitter-dashboard'): Promise<SitterDashboardReview[]>;
+export async function getReviewsBySitter(sitterId: string, fields?: 'full'): Promise<Review[]>;
+export async function getReviewsBySitter(sitterId: string, fields: ReviewFields = 'full'): Promise<Review[] | SitterDashboardReview[]> {
   if (!isSupabaseConfigured()) {
-    return pickMockReviewFields(mockGetReviewsForSitter(sitterId), fields);
+    const sitterReviews = mockGetReviewsForSitter(sitterId);
+    return fields === 'sitter-dashboard'
+      ? pickMockReviewFields(sitterReviews, 'sitter-dashboard')
+      : pickMockReviewFields(sitterReviews, 'full');
   }
   try {
     const supabase = await createClient();
@@ -63,7 +62,7 @@ export async function getReviewsBySitter(sitterId: string, fields: ReviewFields 
       .eq('reviewee_id', sitterId)
       .order('created_at', { ascending: false });
     if (error || !data) return [];
-    return data as unknown as Review[];
+    return fields === 'sitter-dashboard' ? (data as unknown as SitterDashboardReview[]) : (data as unknown as Review[]);
   } catch {
     return [];
   }

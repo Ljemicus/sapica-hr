@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
-import { SERVICE_LABELS, type SitterProfile, type User, type Review, type Availability, type ServiceType, type Pet } from '@/lib/types';
+import { SERVICE_LABELS, type SitterProfile, type User, type PublicSitterReview, type Availability, type ServiceType, type Pet } from '@/lib/types';
 import { useUser } from '@/hooks/use-user';
 import { AvailabilityCalendar } from '@/components/shared/availability-calendar';
 import { BookingDialog } from './booking-dialog';
@@ -38,7 +38,7 @@ const serviceColors: Record<ServiceType, string> = {
 
 interface SitterProfileContentProps {
   profile: SitterProfile & { user: User };
-  reviews: (Review & { reviewer: { name: string; avatar_url: string | null }; booking: { service_type: string } })[];
+  reviews: PublicSitterReview[];
   availability: Availability[];
   bookingPets: Pet[];
   bookingUserId: string | null;

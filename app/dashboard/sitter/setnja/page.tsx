@@ -14,15 +14,13 @@ export default async function SitterWalkPage() {
   if (!user) redirect('/prijava?redirect=%2Fdashboard%2Fsitter%2Fsetnja');
   if (user.role !== 'sitter') redirect('/');
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const bookings = await getBookings(user.id, 'sitter', 'walk-selector') as any[];
+  const bookings = await getBookings(user.id, 'sitter', 'walk-selector');
   const now = new Date();
 
   const activeBookings = bookings.filter(
     (booking) => booking.status === 'accepted' && new Date(booking.start_date) <= now && new Date(booking.end_date) >= now
   );
 
-  // Also include accepted bookings scheduled to start today.
   const todayBookings = bookings.filter(
     (booking) => booking.status === 'accepted' && isSameDay(new Date(booking.start_date), now)
   );

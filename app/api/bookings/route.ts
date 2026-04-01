@@ -12,9 +12,11 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const fieldsParam = searchParams.get('fields');
   const role = user.role === 'sitter' ? 'sitter' : 'owner';
-  const fields = role === 'owner' && fieldsParam === 'owner-history' ? 'owner-history' : 'full';
+  const fields: 'full' | 'owner-history' = role === 'owner' && fieldsParam === 'owner-history' ? 'owner-history' : 'full';
 
-  const bookings = await getBookings(user.id, role, fields);
+  const bookings = fields === 'owner-history'
+    ? await getBookings(user.id, role, 'owner-history')
+    : await getBookings(user.id, role, 'full');
   return NextResponse.json(bookings);
 }
 

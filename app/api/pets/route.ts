@@ -3,13 +3,16 @@ import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { getPetsByOwner, createPet } from '@/lib/db';
 import { petSchema } from '@/lib/validations';
+import type { Pet } from '@/lib/types';
+
+type PetsGetResponse = Pet[];
 
 export async function GET() {
   const user = await getAuthUser();
   if (!user) return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
 
   const pets = await getPetsByOwner(user.id);
-  return NextResponse.json(pets);
+  return NextResponse.json<PetsGetResponse>(pets);
 }
 
 export async function POST(request: Request) {

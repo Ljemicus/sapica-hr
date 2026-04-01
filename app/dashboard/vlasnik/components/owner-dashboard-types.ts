@@ -1,10 +1,10 @@
-import type { Booking, BookingStatus, Pet, ServiceType, Species, User, Walk } from '@/lib/types';
+import type { BookingStatus, OwnerDashboardBooking as OwnerBookingShape, Pet, ServiceType, Species, User, Walk } from '@/lib/types';
 import { dashboardBookingStatusColors, dashboardBookingStatusDotColors } from '@/app/dashboard/shared/dashboard-booking-status';
 
 export interface OwnerDashboardProps {
   user: User;
   pets: Pet[];
-  bookings: (Booking & { sitter: { name: string; avatar_url: string | null }; pet: { name: string; species: string } })[];
+  bookings: OwnerBookingShape[];
   reviewedBookingIds: string[];
   activeWalks: (Walk & { sitterName: string; petName: string })[];
 }
