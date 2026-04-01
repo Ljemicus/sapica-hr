@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { appLogger } from '@/lib/logger';
 import { getAuthUser } from '@/lib/auth';
 import { createCheckoutSession, calculatePlatformFee } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
@@ -24,6 +25,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Nedostaje bookingId.' }, { status: 400 });
   }
 
+  if (typeof bookingId !== 'string' || !bookingId.trim()) {
+    return NextResponse.json({ error: 'Neispravan bookingId.' }, { status: 400 });
+  }
+
   const supabase = await createClient();
 
   // Get booking
@@ -43,6 +48,11 @@ export async function POST(request: Request) {
   }
 
   // Check if already paid
+  if (booking.total_price <= 0) {
+    appLogger.warn('payments.checkout', 'Booking has invalid total price for checkout', { bookingId });
+    return NextResponse.json({ error: 'Rezervacija ima neispravan iznos za plaćanje.' }, { status: 400 });
+  }
+
   if (booking.payment_status === 'paid') {
     return NextResponse.json({ error: 'Ova rezervacija je već plaćena.' }, { status: 400 });
   }

@@ -40,13 +40,29 @@ export async function POST(request: Request) {
       const session = event.data.object as Stripe.Checkout.Session;
       const bookingId = session.metadata?.bookingId;
 
-      if (bookingId) {
-        const amountTotal = session.amount_total || 0;
+      if (!bookingId) {
+        appLogger.warn('payments.webhook', 'checkout.session.completed missing bookingId metadata', {
+          sessionId: session.id,
+        });
+        break;
+      }
+
+      const amountTotal = session.amount_total || 0;
+      if (amountTotal <= 0) {
+        appLogger.error('payments.webhook', 'checkout.session.completed has invalid amount', {
+          sessionId: session.id,
+          bookingId,
+          amountTotal,
+        });
+        break;
+      }
+
+      {
         const platformFee = calculatePlatformFee(amountTotal);
         const sitterPayout = calculateSitterPayout(amountTotal);
 
         // Update booking
-        await supabase
+        const { error: bookingUpdateError } = await supabase
           .from('bookings')
           .update({
             payment_status: 'paid',
@@ -58,8 +74,17 @@ export async function POST(request: Request) {
           })
           .eq('id', bookingId);
 
+        if (bookingUpdateError) {
+          appLogger.error('payments.webhook', 'Failed to update booking after checkout completion', {
+            bookingId,
+            sessionId: session.id,
+            reason: bookingUpdateError.message,
+          });
+          break;
+        }
+
         // Log payment
-        await supabase.from('payments').insert({
+        const { error: paymentInsertError } = await supabase.from('payments').insert({
           booking_id: bookingId,
           stripe_payment_intent_id: typeof session.payment_intent === 'string'
             ? session.payment_intent
@@ -72,7 +97,14 @@ export async function POST(request: Request) {
           status: 'succeeded',
         });
 
+        if (paymentInsertError) {
+          appLogger.error('payments.webhook', 'Failed to insert payment log after checkout completion', {
+            bookingId,
+            sessionId: session.id,
+            reason: paymentInsertError.message,
+          });
         }
+      }
       break;
     }
 
@@ -84,11 +116,24 @@ export async function POST(request: Request) {
       const pi = event.data.object as Stripe.PaymentIntent;
       const bookingId = pi.metadata?.bookingId;
 
-      if (bookingId) {
-        await supabase
-          .from('bookings')
-          .update({ payment_status: 'failed' })
-          .eq('id', bookingId);
+      if (!bookingId) {
+        appLogger.warn('payments.webhook', 'payment_intent.payment_failed missing bookingId metadata', {
+          paymentIntentId: pi.id,
+        });
+        break;
+      }
+
+      const { error: paymentFailedUpdateError } = await supabase
+        .from('bookings')
+        .update({ payment_status: 'failed' })
+        .eq('id', bookingId);
+
+      if (paymentFailedUpdateError) {
+        appLogger.error('payments.webhook', 'Failed to mark booking payment as failed', {
+          bookingId,
+          paymentIntentId: pi.id,
+          reason: paymentFailedUpdateError.message,
+        });
       }
       break;
     }
@@ -97,13 +142,20 @@ export async function POST(request: Request) {
       const account = event.data.object as Stripe.Account;
 
       // Update sitter onboarding status
-      await supabase
+      const { error: accountUpdateError } = await supabase
         .from('sitter_profiles')
         .update({
           stripe_onboarding_complete: account.details_submitted || false,
           payout_enabled: account.payouts_enabled || false,
         })
         .eq('stripe_account_id', account.id);
+
+      if (accountUpdateError) {
+        appLogger.error('payments.webhook', 'Failed to update sitter onboarding status', {
+          stripeAccountId: account.id,
+          reason: accountUpdateError.message,
+        });
+      }
       break;
     }
 
