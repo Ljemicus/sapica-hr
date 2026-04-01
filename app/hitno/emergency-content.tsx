@@ -1,52 +1,11 @@
 'use client';
 
-import { Phone, MapPin, AlertTriangle, Heart, Printer, Siren } from 'lucide-react';
+import { useMemo } from 'react';
+import { Phone, MapPin, AlertTriangle, Heart, Printer, Siren, Clock3, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-
-const emergencyVets = [
-  {
-    city: 'Zagreb',
-    clinics: [
-      { name: 'Veterinarski fakultet — Klinika za kirurgiju', phone: '01 2390 395', address: 'Heinzelova 55', hours: '24h dežurstvo' },
-      { name: 'Veterinarska stanica Zagreb', phone: '01 4413 333', address: 'Heinzelova 62', hours: '24h hitna služba' },
-    ],
-  },
-  {
-    city: 'Split',
-    clinics: [
-      { name: 'Veterinarska ambulanta Marjan', phone: '021 389 445', address: 'Šetalište Ivana Meštrovića 45', hours: '24h dežurstvo' },
-      { name: 'Veterinarska stanica Split', phone: '021 540 022', address: 'Pojišanska 31', hours: 'Pon-Sub 8-20, hitno po dogovoru' },
-    ],
-  },
-  {
-    city: 'Rijeka',
-    clinics: [
-      { name: 'Veterinarska stanica Rijeka', phone: '051 330 433', address: 'Zvonimirova 5', hours: '24h dežurstvo' },
-      { name: 'Vet ambulanta Kantrida', phone: '051 622 144', address: 'Brentinijeva 2', hours: 'Pon-Pet 8-20, Sub 8-14' },
-    ],
-  },
-  {
-    city: 'Osijek',
-    clinics: [
-      { name: 'Veterinarski fakultet Osijek — Klinika', phone: '031 554 922', address: 'Trg Svetog Trojstva 3', hours: '24h dežurstvo' },
-      { name: 'Veterinarska stanica Osijek', phone: '031 208 344', address: 'Drinska 17', hours: 'Pon-Sub 8-20' },
-    ],
-  },
-  {
-    city: 'Zadar',
-    clinics: [
-      { name: 'Veterinarska stanica Zadar', phone: '023 316 028', address: 'Put Murvice 14', hours: '24h hitna služba' },
-    ],
-  },
-  {
-    city: 'Pula',
-    clinics: [
-      { name: 'Veterinarska stanica Pula', phone: '052 541 288', address: 'Šijanska cesta 14', hours: '24h dežurstvo' },
-    ],
-  },
-];
+import { getVeterinarianEmergencyLabel, getVeterinarianPrimaryPhone, type Veterinarian } from '@/lib/db/veterinarians';
 
 const emergencyGuides = [
   {
@@ -135,10 +94,56 @@ const emergencyGuides = [
   },
 ];
 
-export function EmergencyContent() {
+interface EmergencyContentProps {
+  veterinarians: Veterinarian[];
+}
+
+function getEmergencyBadgeClass(mode: Veterinarian['emergency_mode']) {
+  switch (mode) {
+    case 'open_24h':
+      return 'bg-green-50 text-green-700 border-green-200';
+    case 'on_call':
+      return 'bg-orange-50 text-orange-700 border-orange-200';
+    case 'emergency_contact':
+      return 'bg-amber-50 text-amber-700 border-amber-200';
+    case 'emergency_intake':
+      return 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200';
+    default:
+      return 'bg-muted text-muted-foreground';
+  }
+}
+
+export function EmergencyContent({ veterinarians }: EmergencyContentProps) {
+  const groupedByCity = useMemo(() => {
+    const grouped = new Map<string, Veterinarian[]>();
+
+    for (const clinic of veterinarians) {
+      if (!clinic.city) continue;
+      const items = grouped.get(clinic.city) ?? [];
+      items.push(clinic);
+      grouped.set(clinic.city, items);
+    }
+
+    return Array.from(grouped.entries())
+      .sort(([a], [b]) => a.localeCompare(b, 'hr'))
+      .map(([city, clinics]) => ({
+        city,
+        clinics: clinics.sort((a, b) => a.name.localeCompare(b.name, 'hr')),
+      }));
+  }, [veterinarians]);
+
+  const primaryPhone = useMemo(() => {
+    const firstWithPhone = veterinarians.find((clinic) => getVeterinarianPrimaryPhone(clinic));
+    return firstWithPhone ? getVeterinarianPrimaryPhone(firstWithPhone) : '';
+  }, [veterinarians]);
+
+  const printableContacts = useMemo(
+    () => groupedByCity.slice(0, 4).flatMap((group) => group.clinics.slice(0, 1).map((clinic) => ({ city: group.city, phone: getVeterinarianPrimaryPhone(clinic) }))),
+    [groupedByCity],
+  );
+
   return (
     <div>
-      {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-red-600 via-red-500 to-orange-500">
         <div className="absolute inset-0 paw-pattern opacity-[0.05]" />
         <div className="container mx-auto px-4 py-16 md:py-24 relative">
@@ -151,63 +156,102 @@ export function EmergencyContent() {
               🚨 Hitne situacije
             </h1>
             <p className="text-lg md:text-xl text-white/80 mb-8 animate-fade-in-up delay-200 leading-relaxed">
-              Brzi vodič za hitne veterinarske situacije. Znajte što napraviti
-              dok ne stignete do veterinara.
+              Brzi vodič za hitne veterinarske situacije i verificirani hitni kontakti iz baze — bez izmišljenih dežurstava.
             </p>
-            <a href="tel:014413333" className="inline-block animate-fade-in-up delay-300">
-              <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 shadow-lg shadow-red-900/30 text-lg px-8 py-6 rounded-xl font-bold btn-hover">
-                <Phone className="h-5 w-5 mr-2" />
-                Nazovi najbliži hitni vet
-              </Button>
-            </a>
+            {primaryPhone ? (
+              <a href={`tel:${primaryPhone.replace(/\s/g, '')}`} className="inline-block animate-fade-in-up delay-300">
+                <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 shadow-lg shadow-red-900/30 text-lg px-8 py-6 rounded-xl font-bold btn-hover">
+                  <Phone className="h-5 w-5 mr-2" />
+                  Nazovi hitni kontakt
+                </Button>
+              </a>
+            ) : null}
           </div>
         </div>
       </section>
 
       <div className="container mx-auto px-4 py-12 max-w-5xl">
-        {/* Section 1: Emergency Vet Numbers by City */}
         <section className="mb-16">
           <h2 className="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-3 animate-fade-in-up">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-500 flex items-center justify-center shadow-sm">
               <Phone className="h-5 w-5 text-white" />
             </div>
-            Hitni veterinarski brojevi
+            Hitni veterinarski kontakti
           </h2>
-          <p className="text-muted-foreground mb-8 animate-fade-in-up delay-100">Klinike s hitnim dežurstvom po gradovima</p>
+          <p className="text-muted-foreground mb-8 animate-fade-in-up delay-100">
+            Prikazujemo samo kontakte s verificiranom hitnom oznakom iz baze podataka.
+          </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {emergencyVets.map((city, i) => (
-              <Card key={city.city} className={`border-0 shadow-sm animate-fade-in-up delay-${((i % 4) + 1) * 100}`}>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-red-500" />
-                    {city.city}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {city.clinics.map((clinic) => (
-                    <div key={clinic.name} className="p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50 space-y-1">
-                      <p className="font-medium text-sm">{clinic.name}</p>
-                      <a href={`tel:${clinic.phone.replace(/\s/g, '')}`} className="text-red-600 font-bold flex items-center gap-1 text-sm hover:text-red-700 transition-colors">
-                        <Phone className="h-3.5 w-3.5" />
-                        {clinic.phone}
-                      </a>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <MapPin className="h-3 w-3 flex-shrink-0" />
-                        {clinic.address}
-                      </div>
-                      <Badge className="bg-green-50 text-green-700 border border-green-200 text-xs hover:bg-green-50">
-                        {clinic.hours}
-                      </Badge>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {groupedByCity.length === 0 ? (
+            <Card className="border border-dashed shadow-none">
+              <CardContent className="py-10 text-center text-muted-foreground">
+                Trenutno nema verificiranih hitnih veterinarskih kontakata u bazi.
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {groupedByCity.map((city, i) => (
+                <Card key={city.city} className={`border-0 shadow-sm animate-fade-in-up delay-${((i % 4) + 1) * 100}`}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-red-500" />
+                      {city.city}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {city.clinics.map((clinic) => {
+                      const emergencyLabel = getVeterinarianEmergencyLabel(clinic.emergency_mode);
+                      const displayPhone = getVeterinarianPrimaryPhone(clinic);
+
+                      return (
+                        <div key={clinic.slug} className="p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50 space-y-2">
+                          <div className="flex flex-wrap items-start justify-between gap-2">
+                            <p className="font-medium text-sm">{clinic.name}</p>
+                            {emergencyLabel && (
+                              <Badge className={`border text-xs ${getEmergencyBadgeClass(clinic.emergency_mode)}`}>
+                                <Clock3 className="h-3 w-3 mr-1" />
+                                {emergencyLabel}
+                              </Badge>
+                            )}
+                          </div>
+
+                          {displayPhone ? (
+                            <a href={`tel:${displayPhone.replace(/\s/g, '')}`} className="text-red-600 font-bold flex items-center gap-1 text-sm hover:text-red-700 transition-colors">
+                              <Phone className="h-3.5 w-3.5" />
+                              {displayPhone}
+                            </a>
+                          ) : (
+                            <p className="text-xs text-muted-foreground">Telefon nije javno potvrđen u bazi.</p>
+                          )}
+
+                          {clinic.address && (
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <MapPin className="h-3 w-3 flex-shrink-0" />
+                              {clinic.address}
+                            </div>
+                          )}
+
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            <Badge variant="secondary" className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              <ShieldCheck className="h-3 w-3 mr-1" />
+                              Verificirano
+                            </Badge>
+                            {clinic.source && clinic.source !== 'Ministarstvo poljoprivrede — Upisnik veterinarskih stanica 25.1.2023.' && (
+                              <Badge variant="secondary" className="text-xs">
+                                Dodatni web izvor
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </section>
 
-        {/* Section 2: Emergency Guides */}
         <section className="mb-16">
           <h2 className="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-3 animate-fade-in-up">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-sm">
@@ -258,7 +302,6 @@ export function EmergencyContent() {
           </div>
         </section>
 
-        {/* Section 3: Printable Emergency Contacts Card */}
         <section className="mb-16">
           <h2 className="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-3 animate-fade-in-up">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center shadow-sm">
@@ -298,10 +341,15 @@ export function EmergencyContent() {
                 ))}
               </div>
 
-              <div className="pt-4 border-t text-center">
-                <p className="text-xs text-muted-foreground mb-1">Hitni vet Zagreb: 01 2390 395 · Split: 021 389 445</p>
-                <p className="text-xs text-muted-foreground">Rijeka: 051 330 433 · Osijek: 031 554 922</p>
-              </div>
+              {printableContacts.length > 0 && (
+                <div className="pt-4 border-t text-center space-y-1">
+                  {printableContacts.map((item) => (
+                    <p key={item.city} className="text-xs text-muted-foreground">
+                      {item.city}: {item.phone || 'provjeri na petpark.hr/hitno'}
+                    </p>
+                  ))}
+                </div>
+              )}
 
               <Button onClick={() => window.print()} className="w-full bg-orange-500 hover:bg-orange-600 btn-hover print:hidden">
                 <Printer className="h-4 w-4 mr-2" />
@@ -311,24 +359,24 @@ export function EmergencyContent() {
           </Card>
         </section>
 
-        {/* Big CTA */}
-        <section className="text-center py-12 animate-fade-in-up">
-          <a href="tel:014413333">
-            <Button size="lg" className="bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200/50 text-lg px-10 py-6 rounded-xl font-bold btn-hover">
-              <Phone className="h-5 w-5 mr-2" />
-              Nazovi najbliži hitni vet
-            </Button>
-          </a>
-          <p className="text-sm text-muted-foreground mt-4">
-            U životno opasnoj situaciji, ne čekajte — odmah nazovite veterinara!
-          </p>
-        </section>
+        {primaryPhone ? (
+          <section className="text-center py-12 animate-fade-in-up">
+            <a href={`tel:${primaryPhone.replace(/\s/g, '')}`}>
+              <Button size="lg" className="bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200/50 text-lg px-10 py-6 rounded-xl font-bold btn-hover">
+                <Phone className="h-5 w-5 mr-2" />
+                Nazovi hitni kontakt
+              </Button>
+            </a>
+            <p className="text-sm text-muted-foreground mt-4">
+              U životno opasnoj situaciji, ne čekajte — odmah nazovite veterinara!
+            </p>
+          </section>
+        ) : null}
       </div>
 
-      {/* Print Styles */}
       <style jsx global>{`
         @media print {
-          nav, footer, .print\\:hidden, section:not(:nth-of-type(4)) { display: none !important; }
+          nav, footer, .print\:hidden, section:not(:nth-of-type(4)) { display: none !important; }
           body { font-size: 12px; }
           .shadow-sm, .shadow-md, .shadow-lg { box-shadow: none !important; }
           .container { max-width: 100% !important; padding: 0 !important; }

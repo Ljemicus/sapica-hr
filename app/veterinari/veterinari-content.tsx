@@ -1,14 +1,29 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { MapPin, Phone, Search, PawPrint, Siren, Mail, Globe, ShieldCheck, Building2, Stethoscope } from 'lucide-react';
+import { MapPin, Phone, Search, PawPrint, Siren, Mail, Globe, ShieldCheck, Building2, Stethoscope, Clock3, ShieldAlert } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { Veterinarian } from '@/lib/db/veterinarians';
+import { getVeterinarianEmergencyLabel, getVeterinarianPrimaryPhone, type Veterinarian } from '@/lib/db/veterinarians';
 
 interface VeterinariContentProps {
   veterinarians: Veterinarian[];
+}
+
+function getEmergencyBadgeClass(mode: Veterinarian['emergency_mode']) {
+  switch (mode) {
+    case 'open_24h':
+      return 'bg-red-100 text-red-700 border-red-200';
+    case 'on_call':
+      return 'bg-orange-100 text-orange-700 border-orange-200';
+    case 'emergency_contact':
+      return 'bg-amber-100 text-amber-700 border-amber-200';
+    case 'emergency_intake':
+      return 'bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200';
+    default:
+      return 'bg-muted text-muted-foreground';
+  }
 }
 
 export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
@@ -21,12 +36,22 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
   );
 
   const filteredClinics = useMemo(() => {
-    return veterinarians.filter((clinic) => {
-      if (selectedCity !== 'all' && clinic.city !== selectedCity) return false;
-      if (stationOnly && clinic.type !== 'veterinarska_stanica') return false;
-      return true;
-    });
+    return veterinarians
+      .filter((clinic) => {
+        if (selectedCity !== 'all' && clinic.city !== selectedCity) return false;
+        if (stationOnly && clinic.type !== 'veterinarska_stanica') return false;
+        return true;
+      })
+      .sort((a, b) => {
+        if (a.emergency_verified !== b.emergency_verified) return a.emergency_verified ? -1 : 1;
+        return a.name.localeCompare(b.name, 'hr');
+      });
   }, [selectedCity, stationOnly, veterinarians]);
+
+  const emergencyCount = useMemo(
+    () => veterinarians.filter((clinic) => clinic.emergency_verified && clinic.emergency_mode).length,
+    [veterinarians],
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -43,7 +68,7 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
             </span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj s adresama i kontakt podacima.
+            Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj, uz posebno označene verificirane hitne kontakte gdje su potvrđeni.
           </p>
         </div>
       </section>
@@ -83,12 +108,18 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
       <section className="container mx-auto px-4 py-10">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
           <p className="text-sm text-muted-foreground">
-            Pronađeno <span className="font-semibold text-foreground">{filteredClinics.length}</span> unosa iz službenog registra.
+            Pronađeno <span className="font-semibold text-foreground">{filteredClinics.length}</span> unosa iz službenog registra i verificiranih hitnih dopuna.
           </p>
-          <Badge variant="secondary" className="w-fit bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <ShieldCheck className="h-3.5 w-3.5 mr-1" />
-            Službeni izvor
-          </Badge>
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="secondary" className="w-fit bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <ShieldCheck className="h-3.5 w-3.5 mr-1" />
+              Službeni izvor
+            </Badge>
+            <Badge variant="secondary" className="w-fit bg-red-50 text-red-700 border border-red-200">
+              <ShieldAlert className="h-3.5 w-3.5 mr-1" />
+              {emergencyCount} verificiranih hitnih oznaka
+            </Badge>
+          </div>
         </div>
 
         {filteredClinics.length === 0 ? (
@@ -98,83 +129,96 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredClinics.map((clinic) => (
-              <Card key={clinic.id} className="border-0 shadow-sm rounded-2xl card-hover">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between gap-2 mb-4">
-                    <div>
-                      <h3 className="font-bold text-lg leading-tight">{clinic.name}</h3>
-                      {clinic.organization_name && clinic.organization_name !== clinic.name && (
-                        <p className="text-sm text-muted-foreground mt-1">{clinic.organization_name}</p>
-                      )}
+            {filteredClinics.map((clinic) => {
+              const displayPhone = getVeterinarianPrimaryPhone(clinic);
+              const emergencyLabel = getVeterinarianEmergencyLabel(clinic.emergency_mode);
+
+              return (
+                <Card key={clinic.id} className="border-0 shadow-sm rounded-2xl card-hover">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between gap-2 mb-4">
+                      <div>
+                        <h3 className="font-bold text-lg leading-tight">{clinic.name}</h3>
+                        {clinic.organization_name && clinic.organization_name !== clinic.name && (
+                          <p className="text-sm text-muted-foreground mt-1">{clinic.organization_name}</p>
+                        )}
+                      </div>
+                      <Badge variant="secondary" className="shrink-0 flex items-center gap-1">
+                        {clinic.type === 'veterinarska_stanica' ? (
+                          <>
+                            <Building2 className="h-3 w-3" />
+                            Stanica
+                          </>
+                        ) : (
+                          <>
+                            <Siren className="h-3 w-3" />
+                            Ambulanta
+                          </>
+                        )}
+                      </Badge>
                     </div>
-                    <Badge variant="secondary" className="shrink-0 flex items-center gap-1">
-                      {clinic.type === 'veterinarska_stanica' ? (
-                        <>
-                          <Building2 className="h-3 w-3" />
-                          Stanica
-                        </>
-                      ) : (
-                        <>
-                          <Siren className="h-3 w-3" />
-                          Ambulanta
-                        </>
-                      )}
-                    </Badge>
-                  </div>
 
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                    <MapPin className="h-4 w-4 shrink-0" />
-                    <span>{clinic.address}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                    <Phone className="h-4 w-4 shrink-0" />
-                    {clinic.phone ? (
-                      <a href={`tel:${clinic.phone.replace(/\s/g, '')}`} className="hover:text-foreground transition-colors">
-                        {clinic.phone}
-                      </a>
-                    ) : (
-                      <span>Kontakt nije naveden</span>
+                    {clinic.address && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                        <MapPin className="h-4 w-4 shrink-0" />
+                        <span>{clinic.address}</span>
+                      </div>
                     )}
-                  </div>
 
-                  {clinic.email && (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                      <Mail className="h-4 w-4 shrink-0" />
-                      <a href={`mailto:${clinic.email}`} className="hover:text-foreground transition-colors break-all">
-                        {clinic.email}
-                      </a>
+                      <Phone className="h-4 w-4 shrink-0" />
+                      {displayPhone ? (
+                        <a href={`tel:${displayPhone.replace(/\s/g, '')}`} className="hover:text-foreground transition-colors">
+                          {displayPhone}
+                        </a>
+                      ) : (
+                        <span>Kontakt nije naveden</span>
+                      )}
                     </div>
-                  )}
 
-                  {clinic.website && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                      <Globe className="h-4 w-4 shrink-0" />
-                      <a href={clinic.website} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors break-all">
-                        {clinic.website.replace(/^https?:\/\//, '')}
-                      </a>
-                    </div>
-                  )}
+                    {clinic.email && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                        <Mail className="h-4 w-4 shrink-0" />
+                        <a href={`mailto:${clinic.email}`} className="hover:text-foreground transition-colors break-all">
+                          {clinic.email}
+                        </a>
+                      </div>
+                    )}
 
-                  <div className="flex flex-wrap gap-1.5">
-                    <Badge variant="secondary" className="text-xs">
-                      {clinic.city}
-                    </Badge>
-                    {clinic.county && (
+                    {clinic.website && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                        <Globe className="h-4 w-4 shrink-0" />
+                        <a href={clinic.website} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors break-all">
+                          {clinic.website.replace(/^https?:\/\//, '')}
+                        </a>
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-1.5">
                       <Badge variant="secondary" className="text-xs">
-                        {clinic.county}
+                        {clinic.city}
                       </Badge>
-                    )}
-                    {clinic.verified && (
-                      <Badge className="text-xs bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0">
-                        Službeno verificirano
-                      </Badge>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                      {clinic.county && (
+                        <Badge variant="secondary" className="text-xs">
+                          {clinic.county}
+                        </Badge>
+                      )}
+                      {clinic.verified && (
+                        <Badge className="text-xs bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0">
+                          Službeno verificirano
+                        </Badge>
+                      )}
+                      {clinic.emergency_verified && emergencyLabel && (
+                        <Badge className={`text-xs border ${getEmergencyBadgeClass(clinic.emergency_mode)}`}>
+                          <Clock3 className="h-3 w-3 mr-1" />
+                          {emergencyLabel}
+                        </Badge>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </section>

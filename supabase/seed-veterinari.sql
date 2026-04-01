@@ -21,6 +21,10 @@ CREATE TABLE IF NOT EXISTS public.veterinarians (
   source TEXT DEFAULT '',
   status TEXT DEFAULT 'active',
   verified BOOLEAN DEFAULT TRUE,
+  emergency_mode TEXT CHECK (emergency_mode IN ('open_24h', 'on_call', 'emergency_contact', 'emergency_intake')),
+  emergency_phone TEXT DEFAULT '',
+  emergency_verified BOOLEAN DEFAULT FALSE,
+  emergency_source_note TEXT DEFAULT '',
   review_count INTEGER DEFAULT 0,
   rating DECIMAL DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -33,6 +37,8 @@ CREATE POLICY "Public read veterinarians" ON public.veterinarians FOR SELECT USI
 CREATE INDEX IF NOT EXISTS idx_veterinarians_city ON public.veterinarians(city);
 CREATE INDEX IF NOT EXISTS idx_veterinarians_type ON public.veterinarians(type);
 CREATE INDEX IF NOT EXISTS idx_veterinarians_slug ON public.veterinarians(slug);
+CREATE INDEX IF NOT EXISTS idx_veterinarians_emergency_verified ON public.veterinarians(emergency_verified);
+CREATE INDEX IF NOT EXISTS idx_veterinarians_emergency_city ON public.veterinarians(city) WHERE emergency_verified = TRUE;
 
 INSERT INTO public.veterinarians (name, slug, organization_name, branch_name, type, official_type, address, city, postal_code, county, phone, email, website, oib, source_registry_no, source, status, verified) VALUES
   ('Veterinarska ambulanta Varaždin', 'veterinarska-ambulanta-varazdin', '', 'Varaždin', 'veterinarska_stanica', 'Ambulanta u sjedištu stanice', 'Trg Ivana Perkovca 24, 42000 Varaždin', 'Varaždin', '42000', '', '042/240 100', 'ambulanta@vsv.hr', 'http://www.vsv.hr/? task=group&gid=3&aid=16', '41540201755', '41.1.', 'Ministarstvo poljoprivrede — Upisnik veterinarskih stanica 25.1.2023.', 'active', true),
@@ -256,3 +262,62 @@ ON CONFLICT (slug) DO UPDATE SET
   source = EXCLUDED.source,
   status = EXCLUDED.status,
   verified = EXCLUDED.verified;
+
+ALTER TABLE public.veterinarians
+  ADD COLUMN IF NOT EXISTS emergency_mode TEXT CHECK (emergency_mode IN ('open_24h', 'on_call', 'emergency_contact', 'emergency_intake')),
+  ADD COLUMN IF NOT EXISTS emergency_phone TEXT DEFAULT '',
+  ADD COLUMN IF NOT EXISTS emergency_verified BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS emergency_source_note TEXT DEFAULT '';
+
+UPDATE public.veterinarians
+SET emergency_mode = 'on_call',
+    emergency_phone = '091-214-8822',
+    emergency_verified = TRUE,
+    emergency_source_note = 'Web navodi 24-satnu pripravnost veterinara za hitne slučajeve',
+    website = COALESCE(NULLIF(website, ''), 'http://vetstri.hr/pripravnost/')
+WHERE slug = 'veterinarska-stanica-rijeka-d-o-o';
+
+UPDATE public.veterinarians
+SET emergency_mode = 'on_call',
+    emergency_phone = '+385 98 33 94 00',
+    emergency_verified = TRUE,
+    emergency_source_note = 'Web navodi dežurni mobitel 24h',
+    website = COALESCE(NULLIF(website, ''), 'https://www.veterinarskastanicazadar.hr/contact.html')
+WHERE slug = 'veterinarska-stanica-zadar-d-o-o';
+
+INSERT INTO public.veterinarians (
+  name, slug, organization_name, branch_name, type, official_type, address, city, county,
+  phone, website, source, status, verified, emergency_mode, emergency_phone, emergency_verified, emergency_source_note
+) VALUES
+  ('Klinika Kreszinger', 'klinika-kreszinger', 'Klinika Kreszinger', '', 'veterinarska_ambulanta', 'Privatna veterinarska klinika', '', 'Zagreb', 'Grad Zagreb', '', 'https://klinika-kreszinger.com/hitne-intervencije/', 'Verificirani hitni veterinarski podaci', 'active', true, 'open_24h', '', true, 'Web navodi hitne intervencije 0-24h'),
+  ('NINA VET', 'nina-vet', 'NINA VET', '', 'veterinarska_ambulanta', 'Privatna veterinarska ambulanta', '', 'Zagreb', 'Grad Zagreb', '', 'https://nina-vet.hr/', 'Verificirani hitni veterinarski podaci', 'active', true, 'open_24h', '', true, 'Web navodi dežurnu veterinarsku ambulantu 0-24h'),
+  ('Veterinarski fakultet', 'veterinarski-fakultet-hitni-prijem', 'Veterinarski fakultet', '', 'veterinarska_ambulanta', 'Hitni ambulantni prijem za male životinje', 'Heinzelova 55', 'Zagreb', 'Grad Zagreb', '', 'https://www.zgportal.com/zginfo/dezurni-veterinar-u-zagrebu-hitni-ambulantni-prijam-za-male-zivotinje/', 'Verificirani hitni veterinarski podaci', 'active', true, 'emergency_intake', '', true, 'Hitni prijem bez najave prema web izvoru'),
+  ('Veterinarska klinika Buba', 'veterinarska-klinika-buba', 'Veterinarska klinika Buba', '', 'veterinarska_ambulanta', 'Privatna veterinarska klinika', 'Riječka ulica 10', 'Zagreb', 'Grad Zagreb', '', '', 'Verificirani hitni veterinarski podaci', 'active', true, 'on_call', '', true, 'Web navodi dežurnog veterinara i raspored dežurstva'),
+  ('Veterinarska ambulanta Morna', 'veterinarska-ambulanta-morna', 'Veterinarska ambulanta Morna', '', 'veterinarska_ambulanta', 'Privatna veterinarska ambulanta', 'Donje Svetice 31', 'Zagreb', 'Grad Zagreb', '', '', 'Verificirani hitni veterinarski podaci', 'active', true, 'emergency_contact', '', true, 'Web navodi dostupan telefon za hitne slučajeve 0-24h'),
+  ('Specijalističke veterinarske ambulante Marković', 'specijalisticke-veterinarske-ambulante-markovic', 'Specijalističke veterinarske ambulante Marković', '', 'veterinarska_ambulanta', 'Specijalistička veterinarska ambulanta', 'Ulica Pile I 33', 'Zagreb', 'Grad Zagreb', '', 'https://www.markovic.hr/kontakt/', 'Verificirani hitni veterinarski podaci', 'active', true, 'open_24h', '', true, 'Web navodi hitnu veterinarsku ambulantu 0-24h'),
+  ('Happy Vet', 'happy-vet', 'Happy Vet', '', 'veterinarska_ambulanta', 'Privatna veterinarska ambulanta', 'Bolnička cesta 63', 'Zagreb', 'Grad Zagreb', '', '', 'Verificirani hitni veterinarski podaci', 'active', true, 'on_call', '', true, 'Web navodi hitni telefon 0-24h i dolazak po pozivu'),
+  ('Veterinarska ambulanta Trsat', 'veterinarska-ambulanta-trsat', 'Veterinarska ambulanta Trsat', '', 'veterinarska_ambulanta', 'Privatna veterinarska ambulanta', 'Josipa Kulfaneka 4', 'Rijeka', 'Primorsko-goranska', '+385 91 567 1918', '', 'Verificirani hitni veterinarski podaci', 'active', true, 'emergency_contact', '+385 91 567 1918', true, 'Web navodi broj za hitnoće'),
+  ('Vetti Split', 'vetti-split', 'Vetti Split', '', 'veterinarska_ambulanta', 'Privatna veterinarska ambulanta', 'Dračevac 4d', 'Split', 'Splitsko-dalmatinska', '', 'https://vetti-split.hr/en/on-call-service/', 'Verificirani hitni veterinarski podaci', 'active', true, 'on_call', '', true, 'Web navodi dežurnu veterinarsku službu za hitne slučajeve'),
+  ('Specijalistička veterinarska praksa Pilić', 'specijalisticka-veterinarska-praksa-pilic', 'Specijalistička veterinarska praksa Pilić', '', 'veterinarska_ambulanta', 'Specijalistička veterinarska praksa', 'Ulica Matice hrvatske 10', 'Split', 'Splitsko-dalmatinska', '099/467 9999', 'https://veterina-ivana-pilic.hr/', 'Verificirani hitni veterinarski podaci', 'active', true, 'on_call', '099/467 9999', true, 'Web navodi broj za hitnu/dežurnu službu'),
+  ('Veterinarska ambulanta Bokanjac', 'veterinarska-ambulanta-bokanjac', 'Veterinarska ambulanta Bokanjac', '', 'veterinarska_ambulanta', 'Privatna veterinarska ambulanta', '', 'Zadar', 'Zadarska', '', 'https://veterinarskaambulantabokanjac.hr/', 'Verificirani hitni veterinarski podaci', 'active', true, 'open_24h', '', true, 'Web navodi hitnu službu i dežurnog veterinara 0-24h'),
+  ('Veterinar d.o.o.', 'veterinar-d-o-o-pula', 'Veterinar d.o.o.', '', 'veterinarska_ambulanta', 'Privatna veterinarska ambulanta', 'Krševanova stancija 2', 'Pula', 'Istarska', '', 'https://veterinar.hr/', 'Verificirani hitni veterinarski podaci', 'active', true, 'open_24h', '', true, 'Web navodi 24h hitnu pomoć i stacionar'),
+  ('Specijalistička veterinarska ambulanta Hajster', 'specijalisticka-veterinarska-ambulanta-hajster', 'Specijalistička veterinarska ambulanta Hajster', '', 'veterinarska_ambulanta', 'Specijalistička veterinarska ambulanta', 'Marianijeva 3', 'Pula', 'Istarska', '', '', 'Verificirani hitni veterinarski podaci', 'active', true, 'open_24h', '', true, 'Web navodi rad 0-24h'),
+  ('Veterinarska stanica Osijek d.o.o.', 'veterinarska-stanica-osijek-d-o-o-hitni-kontakt', 'Veterinarska stanica Osijek d.o.o.', '', 'veterinarska_stanica', 'Veterinarska stanica', 'Vinkovačka cesta 59', 'Osijek', 'Osječko-baranjska', '031 275 060', 'https://vetos.hr/macka/hitna-stanja-kod-kucnih-ljubimaca/', 'Verificirani hitni veterinarski podaci', 'active', true, 'emergency_contact', '031 275 060', true, 'Web navodi kontakt za hitna stanja kod kućnih ljubimaca'),
+  ('CellulaVet', 'cellulavet', 'CellulaVet', '', 'veterinarska_ambulanta', 'Privatna veterinarska ambulanta', 'Osijek', 'Osijek', 'Osječko-baranjska', '+385 91 900 1316', 'https://cellulavet.com/pocetna/', 'Verificirani hitni veterinarski podaci', 'active', true, 'on_call', '+385 91 900 1316', true, 'Web navodi dežurnog veterinara za hitna stanja i rezervaciju termina')
+ON CONFLICT (slug) DO UPDATE SET
+  name = EXCLUDED.name,
+  organization_name = EXCLUDED.organization_name,
+  type = EXCLUDED.type,
+  official_type = EXCLUDED.official_type,
+  address = EXCLUDED.address,
+  city = EXCLUDED.city,
+  county = EXCLUDED.county,
+  phone = EXCLUDED.phone,
+  website = EXCLUDED.website,
+  source = EXCLUDED.source,
+  status = EXCLUDED.status,
+  verified = EXCLUDED.verified,
+  emergency_mode = EXCLUDED.emergency_mode,
+  emergency_phone = EXCLUDED.emergency_phone,
+  emergency_verified = EXCLUDED.emergency_verified,
+  emergency_source_note = EXCLUDED.emergency_source_note;
