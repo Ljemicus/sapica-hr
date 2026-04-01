@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import type { Metadata } from 'next';
-import { getGroomer, getGroomerReviews, getGroomerAvailableDates } from '@/lib/db';
+import { getGroomerPageData } from './groomer-page-data';
 import { GroomerProfile } from './groomer-profile';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
@@ -9,7 +9,7 @@ interface GroomerPageProps {
   params: Promise<{ id: string }>;
 }
 
-const getCachedGroomer = cache(async (id: string) => getGroomer(id));
+const getCachedGroomer = cache(async (id: string) => (await getGroomerPageData(id)).groomer);
 
 export async function generateMetadata({ params }: GroomerPageProps): Promise<Metadata> {
   const { id } = await params;
@@ -23,14 +23,8 @@ export async function generateMetadata({ params }: GroomerPageProps): Promise<Me
 
 export default async function GroomerPage({ params }: GroomerPageProps) {
   const { id } = await params;
-  const groomer = await getCachedGroomer(id);
+  const { groomer, reviews, availableDates } = await getGroomerPageData(id);
   if (!groomer) return notFound();
-
-  const reviews = await getGroomerReviews(id);
-
-  // Query groomer-specific availability slots
-  const availableDatesList = await getGroomerAvailableDates(id);
-  const availableDates = new Set(availableDatesList);
 
   const jsonLd = {
     '@context': 'https://schema.org',

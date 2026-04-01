@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import type { Metadata } from 'next';
-import { getSitter, getReviewsBySitter, getAvailability } from '@/lib/db';
+import { getSitterPageData } from './sitter-page-data';
 import { SitterProfileContent } from './sitter-profile-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
@@ -9,7 +9,7 @@ interface SitterPageProps {
   params: Promise<{ id: string }>;
 }
 
-const getCachedSitter = cache(async (id: string) => getSitter(id));
+const getCachedSitter = cache(async (id: string) => (await getSitterPageData(id)).profile);
 
 export async function generateMetadata({ params }: SitterPageProps): Promise<Metadata> {
   const { id } = await params;
@@ -24,12 +24,8 @@ export async function generateMetadata({ params }: SitterPageProps): Promise<Met
 export default async function SitterPage({ params }: SitterPageProps) {
   const { id } = await params;
 
-  const profile = await getCachedSitter(id);
+  const { profile, reviews, availability } = await getSitterPageData(id);
   if (!profile) return notFound();
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const reviews = await getReviewsBySitter(id) as any[];
-  const availability = await getAvailability(id);
 
   const jsonLd = {
     '@context': 'https://schema.org',
