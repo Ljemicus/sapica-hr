@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Kontaktirajte PetPark',
-  description: 'Imate pitanje, prijedlog ili trebate pomoć? Javite nam se putem kontakt obrasca ili na info@petpark.hr.',
+  description: 'Imate pitanje, prijedlog ili trebate pomoć? Javite nam se putem kontakt obrasca ili na petparkhr@gmail.com.',
   keywords: ['kontakt', 'podrška', 'PetPark kontakt', 'pomoć'],
   openGraph: {
     title: 'Kontaktirajte PetPark',

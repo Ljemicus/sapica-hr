@@ -84,7 +84,7 @@ export default function KontaktPage() {
                 </div>
                 <div>
                   <p className="font-medium text-sm text-gray-900">Email</p>
-                  <p className="text-sm text-gray-500">info@petpark.hr</p>
+                  <p className="text-sm text-gray-500">petparkhr@gmail.com</p>
                 </div>
               </CardContent>
             </Card>
@@ -204,7 +204,7 @@ export default function KontaktPage() {
               { q: 'Je li korištenje platforme besplatno?', a: 'Da, registracija i pretraživanje su potpuno besplatni. PetPark naplaćuje proviziju od 10% samo na uspješno obavljene rezervacije.' },
               { q: 'Kako funkcionira plaćanje?', a: 'Booking plaćanja za rezervacije idu putem Stripe-a kad je sitter povezao plaćanja. Shop checkout još nije aktivan.' },
               { q: 'Što ako sitter otkaže rezervaciju?', a: 'U slučaju otkazivanja, vlasnik dobiva potpuni povrat novca. Ponovljena otkazivanja mogu rezultirati suspenzijom sitterovog računa.' },
-              { q: 'Kako mogu kontaktirati korisničku podršku?', a: 'Pošaljite nam poruku putem forme iznad ili email na info@petpark.hr svaki dan osim nedjelje, 08-20h.' },
+              { q: 'Kako mogu kontaktirati korisničku podršku?', a: 'Pošaljite nam poruku putem forme iznad ili email na petparkhr@gmail.com svaki dan osim nedjelje, 08-20h.' },
             ].map((faq, i) => (
               <Card key={i} className="border-0 shadow-sm">
                 <CardContent className="p-5">

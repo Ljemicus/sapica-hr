@@ -104,7 +104,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
     },
     {
       q: 'Kako kontaktirati podršku?',
-      a: 'Email: petparkhr@gmail.com, telefon: +385 91 567 6202, ili koristite chat na stranici. Radimo Pon-Sub 08-20h.',
+      a: 'Email: petparkhr@gmail.com ili koristite chat na stranici. Radimo Pon-Sub 08-20h.',
     },
     {
       q: 'Mogu li koristiti PetPark za mačke i male životinje?',
