@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { getBookings, createBooking, getSitter } from '@/lib/db';
 import { appLogger } from '@/lib/logger';
@@ -6,7 +7,7 @@ import { bookingSchema } from '@/lib/validations';
 
 export async function GET(request: Request) {
   const user = await getAuthUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!user) return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
 
   const { searchParams } = new URL(request.url);
   const fieldsParam = searchParams.get('fields');
@@ -19,18 +20,18 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const user = await getAuthUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!user) return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
 
   let body;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    return apiError({ status: 400, code: 'INVALID_JSON', message: 'Invalid JSON body' });
   }
   const parsed = bookingSchema.safeParse(body);
   if (!parsed.success) {
     appLogger.warn('bookings.create', 'Booking validation failed');
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return apiError({ status: 400, code: 'INVALID_INPUT', message: 'Neispravan booking payload.', details: parsed.error.flatten() });
   }
 
   const { sitter_id, pet_id, service_type, start_date, end_date, note } = parsed.data;
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
   const sitterProfile = await getSitter(sitter_id);
   if (!sitterProfile) {
     appLogger.warn('bookings.create', 'Sitter profile missing', { sitterId: sitter_id });
-    return NextResponse.json({ error: 'Sitter not found' }, { status: 404 });
+    return apiError({ status: 404, code: 'SITTER_NOT_FOUND', message: 'Sitter not found' });
   }
 
   const pricePerDay = sitterProfile.prices[service_type as keyof typeof sitterProfile.prices] || 0;
@@ -65,7 +66,7 @@ export async function POST(request: Request) {
       sitterId: sitter_id,
       petId: pet_id,
     });
-    return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
+    return apiError({ status: 500, code: 'BOOKING_CREATE_FAILED', message: 'Failed to create booking' });
   }
   return NextResponse.json(booking, { status: 201 });
 }

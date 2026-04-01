@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ensureSitterProfile, syncUserProfile } from '@/lib/auth-profile';
+import { apiError } from '@/lib/api-errors';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { appLogger } from '@/lib/logger';
 import { registerSchema } from '@/lib/validations';
@@ -8,17 +9,17 @@ import { rateLimit } from '@/lib/rate-limit';
 export async function POST(request: Request) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
   if (!rateLimit(`register:${ip}`, 5, 60_000)) {
-    return NextResponse.json({ error: 'Previše pokušaja registracije.' }, { status: 429 });
+    return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše pokušaja registracije.' });
   }
 
   if (!isSupabaseConfigured()) {
-    return NextResponse.json({ error: 'Autentifikacija nije dostupna.' }, { status: 503 });
+    return apiError({ status: 503, code: 'AUTH_UNAVAILABLE', message: 'Autentifikacija nije dostupna.' });
   }
 
   const body = await request.json().catch(() => null);
   const parsed = registerSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return apiError({ status: 400, code: 'INVALID_INPUT', message: 'Neispravan unos.', details: parsed.error.flatten() });
   }
 
   const { createClient } = await import('@/lib/supabase/server');
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
       email: parsed.data.email,
       reason: error?.message || 'unknown',
     });
-    return NextResponse.json({ error: error?.message || 'Registracija nije uspjela' }, { status: 400 });
+    return apiError({ status: 400, code: 'REGISTER_FAILED', message: error?.message || 'Registracija nije uspjela' });
   }
 
   const profileError = await syncUserProfile({
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
   });
   if (profileError) {
     appLogger.error('auth.register', 'Failed to upsert user profile', { userId: data.user.id });
-    return NextResponse.json({ error: 'Greška pri kreiranju profila' }, { status: 500 });
+    return apiError({ status: 500, code: 'PROFILE_UPSERT_FAILED', message: 'Greška pri kreiranju profila' });
   }
 
   if (parsed.data.role === 'sitter') {
@@ -68,7 +69,7 @@ export async function POST(request: Request) {
     });
     if (sitterError) {
       appLogger.error('auth.register', 'Failed to create sitter profile', { userId: data.user.id });
-      return NextResponse.json({ error: 'Greška pri kreiranju sitter profila' }, { status: 500 });
+      return apiError({ status: 500, code: 'SITTER_PROFILE_CREATE_FAILED', message: 'Greška pri kreiranju sitter profila' });
     }
   }
 

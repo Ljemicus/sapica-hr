@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { getConversation, getMessages, sendMessage } from '@/lib/db';
 import { appLogger } from '@/lib/logger';
@@ -6,7 +7,7 @@ import { messageSchema } from '@/lib/validations';
 
 export async function GET(request: Request) {
   const user = await getAuthUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!user) return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
 
   const { searchParams } = new URL(request.url);
   const partnerId = searchParams.get('partner_id');
@@ -20,18 +21,18 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const user = await getAuthUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!user) return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
 
   let body;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    return apiError({ status: 400, code: 'INVALID_JSON', message: 'Invalid JSON body' });
   }
   const parsed = messageSchema.safeParse(body);
   if (!parsed.success) {
     appLogger.warn('messages.send', 'Message validation failed');
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return apiError({ status: 400, code: 'INVALID_INPUT', message: 'Neispravna poruka.', details: parsed.error.flatten() });
   }
 
   const message = await sendMessage({
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
       senderId: user.id,
       receiverId: parsed.data.receiver_id,
     });
-    return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
+    return apiError({ status: 500, code: 'MESSAGE_SEND_FAILED', message: 'Failed to send message' });
   }
   return NextResponse.json(message, { status: 201 });
 }
