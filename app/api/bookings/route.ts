@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   const user = await getAuthUser();
   if (!user) return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
 
-  let body;
+  let body: unknown;
   try {
     body = await request.json();
   } catch {
