@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
+import type { LoginSuccessResponse } from '@/lib/auth-responses';
+import { parseAuthRole } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { appLogger } from '@/lib/logger';
 import { rateLimit } from '@/lib/rate-limit';
@@ -39,11 +41,12 @@ export async function POST(request: Request) {
     .eq('id', data.user.id)
     .single();
 
-  const role = profile?.role || data.user.user_metadata?.role || 'owner';
+  const role = parseAuthRole(profile?.role || data.user.user_metadata?.role);
   const defaultRedirect =
     role === 'sitter' ? '/dashboard/sitter' :
     role === 'admin' ? '/admin' :
     '/dashboard/vlasnik';
 
-  return NextResponse.json({ user: data.user, role, defaultRedirect });
+  const response: LoginSuccessResponse = { user: data.user, role, defaultRedirect };
+  return NextResponse.json(response);
 }

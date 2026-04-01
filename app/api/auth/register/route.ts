@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ensureSitterProfile, syncUserProfile, type AuthProfileSupabaseLike } from '@/lib/auth-profile';
 import { apiError } from '@/lib/api-errors';
+import type { RegisterSuccessResponse } from '@/lib/auth-responses';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { appLogger } from '@/lib/logger';
 import { registerSchema } from '@/lib/validations';
@@ -75,10 +76,12 @@ export async function POST(request: Request) {
     }
   }
 
-  return NextResponse.json({
+  const response: RegisterSuccessResponse = {
     user: data.user,
     session: data.session,
     needsEmailConfirmation: !data.session,
     role: parsed.data.role,
-  });
+  };
+
+  return NextResponse.json(response);
 }
