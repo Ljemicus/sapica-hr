@@ -2,7 +2,7 @@ import { getRealtimeManager } from '@/lib/realtime';
 import { createClient } from '@/lib/supabase/client';
 import type { Message } from '@/lib/types';
 import type { ConversationState } from './message-state';
-import { upsertConversationState } from './message-state';
+import { appendMessageIfMissing, upsertConversationState } from './message-state';
 
 export function subscribeToIncomingMessages(params: {
   currentUserId: string;
@@ -30,22 +30,19 @@ export function subscribeToIncomingMessages(params: {
             partnerName: existing?.partnerName || 'Korisnik',
             partnerAvatar: existing?.partnerAvatar || null,
             messages: existing?.messages?.length
-              ? [
-                  ...existing.messages,
-                  {
-                    ...newMsg,
-                    sender: {
-                      id: newMsg.sender_id,
-                      email: '',
-                      name: '',
-                      role: 'owner',
-                      avatar_url: null,
-                      phone: null,
-                      city: null,
-                      created_at: '',
-                    },
+              ? appendMessageIfMissing(existing.messages, {
+                  ...newMsg,
+                  sender: {
+                    id: newMsg.sender_id,
+                    email: '',
+                    name: '',
+                    role: 'owner',
+                    avatar_url: null,
+                    phone: null,
+                    city: null,
+                    created_at: '',
                   },
-                ]
+                })
               : existing?.messages || [],
             lastMessage: newMsg,
             unreadCount: (existing?.unreadCount || 0) + (selectedPartnerId === newMsg.sender_id ? 0 : 1),

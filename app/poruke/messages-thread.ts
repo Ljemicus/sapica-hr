@@ -5,7 +5,8 @@ import { formatLocalOutgoingMessage, upsertConversationState } from './message-s
 export async function fetchConversationThread(partnerId: string): Promise<Message[]> {
   const response = await fetch(`/api/messages?partner_id=${encodeURIComponent(partnerId)}`);
   if (!response.ok) return [];
-  return await response.json() as Message[];
+  const messages = await response.json() as Message[];
+  return messages.filter((message) => message.sender_id === partnerId || message.receiver_id === partnerId);
 }
 
 export function applyFetchedThread(params: {
@@ -48,10 +49,15 @@ export async function sendConversationMessage(params: {
 }) {
   const { currentUser, selectedPartnerId, content, setConversations, setLoadedConversationIds } = params;
 
+  const trimmedContent = content.trim();
+  if (!trimmedContent) {
+    throw new Error('Message content is empty');
+  }
+
   const response = await fetch('/api/messages', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ receiver_id: selectedPartnerId, content }),
+    body: JSON.stringify({ receiver_id: selectedPartnerId, content: trimmedContent }),
   });
 
   const payload = response.ok ? await response.json() : null;
@@ -61,7 +67,7 @@ export async function sendConversationMessage(params: {
     sender_id: currentUser.id,
     receiver_id: selectedPartnerId,
     booking_id: null,
-    content,
+    content: trimmedContent,
     image_url: null,
     read: false,
     created_at: new Date().toISOString(),

@@ -35,6 +35,10 @@ export async function POST(request: Request) {
     return apiError({ status: 400, code: 'INVALID_INPUT', message: 'Neispravna poruka.', details: parsed.error.flatten() });
   }
 
+  if (parsed.data.receiver_id === user.id) {
+    return apiError({ status: 400, code: 'SELF_MESSAGE_NOT_ALLOWED', message: 'Ne možeš poslati poruku sam sebi.' });
+  }
+
   const message = await sendMessage({
     sender_id: user.id,
     receiver_id: parsed.data.receiver_id,

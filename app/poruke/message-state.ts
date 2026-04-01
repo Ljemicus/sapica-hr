@@ -43,3 +43,11 @@ export function formatLocalOutgoingMessage(payload: Message, currentUser: { id: 
     },
   };
 }
+
+
+export function appendMessageIfMissing(messages: Message[], message: Message): Message[] {
+  if (messages.some((existing) => existing.id === message.id)) {
+    return messages;
+  }
+  return [...messages, message];
+}
