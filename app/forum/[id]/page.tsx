@@ -6,12 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { getForumTopicPageData } from './forum-topic-data';
 import { FORUM_CATEGORIES } from '@/lib/types';
-import { getTopic, getPosts, getTopics } from '@/lib/db';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { CommentForm } from './comment-form';
 
-const getCachedTopic = cache(async (id: string) => getTopic(id));
+const getCachedTopic = cache(async (id: string) => (await getForumTopicPageData(id)).topic);
 
 const gradients = [
   'from-orange-400 to-amber-300',
@@ -52,17 +52,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ForumTopicPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const topic = await getCachedTopic(id);
+  const { topic, comments, related, category: cat } = await getForumTopicPageData(id);
   if (!topic) notFound();
-
-  const comments = await getPosts(id);
-  const cat = FORUM_CATEGORIES.find(c => c.slug === topic.category_slug);
-
-  // Related topics from same category
-  const allCategoryTopics = await getTopics(topic.category_slug);
-  const related = allCategoryTopics
-    .filter(t => t.id !== topic.id)
-    .slice(0, 3);
 
   return (
     <div>

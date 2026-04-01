@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import type { Metadata } from 'next';
-import { getArticle, getRelatedArticles } from '@/lib/db';
+import { getArticlePageData } from './article-page-data';
 import { ArticleContent } from './article-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { BLOG_CATEGORY_LABELS } from '@/lib/types';
@@ -12,7 +12,7 @@ interface ArticlePageProps {
   params: Promise<{ slug: string }>;
 }
 
-const getCachedArticle = cache(async (slug: string) => getArticle(slug));
+const getCachedArticle = cache(async (slug: string) => (await getArticlePageData(slug)).article);
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -44,9 +44,8 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-  const article = await getCachedArticle(slug);
+  const { article, related } = await getArticlePageData(slug);
   if (!article) return notFound();
-  const related = await getRelatedArticles(slug, 3);
 
   const jsonLd = {
     '@context': 'https://schema.org',

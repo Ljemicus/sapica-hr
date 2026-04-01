@@ -1,11 +1,11 @@
 import { cache } from 'react';
 import type { Metadata } from 'next';
-import { getProductBySlug, getProductReviews, getRelatedProducts } from '@/lib/db';
+import { getProductPageData } from './product-page-data';
 import { ProductDetail } from './product-detail';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
-const getCachedProductBySlug = cache(async (slug: string) => getProductBySlug(slug));
+const getCachedProductBySlug = cache(async (slug: string) => (await getProductPageData(slug)).product);
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = await getCachedProductBySlug(slug);
+  const { product, reviews, related } = await getProductPageData(slug);
   if (!product) notFound();
 
   const jsonLd = {
@@ -48,7 +48,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         { label: 'Shop', href: '/shop' },
         { label: product.name, href: `/shop/${slug}` },
       ]} />
-      <ProductDetail product={product} reviews={await getProductReviews(product.id)} related={await getRelatedProducts(product.id)} />
+      <ProductDetail product={product} reviews={reviews} related={related} />
     </>
   );
 }
