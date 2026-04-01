@@ -7,6 +7,10 @@ export interface KBEntry {
   category: string;
 }
 
+interface MatchOptions {
+  isAuthenticated?: boolean;
+}
+
 // Strip Croatian diacritics for fuzzy matching
 export function stripDiacritics(text: string): string {
   return text
@@ -18,7 +22,7 @@ export function stripDiacritics(text: string): string {
     .replace(/ž/g, 'z');
 }
 
-export function findBestMatch(input: string): string {
+export function findBestMatch(input: string, options: MatchOptions = {}): string {
   const normalized = stripDiacritics(input.trim());
 
   let bestMatch: KBEntry | null = null;
@@ -42,10 +46,32 @@ export function findBestMatch(input: string): string {
     return bestMatch.response;
   }
 
-  return 'Hmm, nisam siguran/na da razumijem. 🤔 Možeš li preformulirati pitanje? Ili nas kontaktiraj na petparkhr@gmail.com!';
+  if (options.isAuthenticated) {
+    return 'Ne vidim još točan odgovor na to pitanje. 🤔 Mogu pomoći oko registracije, bookinga, plaćanja, usluga i snalaženja na PetParku. Ako želiš razgovarati sa sitterom ili otvoriti postojeći razgovor, idi u Poruke. Za podršku nam piši na petparkhr@gmail.com.';
+  }
+
+  return 'Ne vidim još točan odgovor na to pitanje. 🤔 Pokušaj pitati npr. kako funkcionira booking, prijava, grooming ili forum. Ako trebaš pomoć od tima, javi se na petparkhr@gmail.com.';
 }
 
-export const WELCOME_MESSAGE = 'Bok! 🐾 Ja sam PetPark asistent. Kako ti mogu pomoći?\n\nMogu ti pomoći s:\n• Registracijom i prijavom\n• Pretraživanjem sittera\n• Bookingom i plaćanjem\n• Groomingom i školovanjem pasa\n• Forumom i zajednicom';
+export function getSuggestedPrompts(isAuthenticated = false): string[] {
+  if (isAuthenticated) {
+    return [
+      'Kako dogovoriti booking?',
+      'Kako funkcionira plaćanje?',
+      'Gdje pronaći groomere?',
+      'Kako radi forum?',
+    ];
+  }
+
+  return [
+    'Kako PetPark funkcionira?',
+    'Kako se registrirati?',
+    'Kako pronaći sittera?',
+    'Koliko košta?',
+  ];
+}
+
+export const WELCOME_MESSAGE = 'Bok! 🐾 Ja sam PetPark AI asistent. Mogu ti pomoći oko registracije, pronalaska sittera, bookinga, plaćanja, groominga, školovanja pasa i snalaženja na platformi. Pitaj me što god trebaš.';
 
 export const knowledgeBase: KBEntry[] = [
   // === OPĆENITO ===
