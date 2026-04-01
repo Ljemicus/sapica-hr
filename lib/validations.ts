@@ -56,6 +56,48 @@ export const messageSchema = z.object({
   booking_id: z.string().uuid().optional(),
 });
 
+// ── Adoption Listing ──
+
+export const adoptionListingImageSchema = z.object({
+  url: z.string().url('Neispravan URL slike'),
+  alt: z.string().nullable().optional(),
+  is_primary: z.boolean().default(false),
+});
+
+export const adoptionListingSchema = z.object({
+  name: z.string().min(1, 'Unesite ime životinje'),
+  species: z.enum(['dog', 'cat', 'rabbit', 'other'], { message: 'Odaberite vrstu' }),
+  breed: z.string().optional(),
+  age_months: z.coerce.number().min(0).max(360).optional(),
+  gender: z.enum(['male', 'female']).optional(),
+  size: z.enum(['small', 'medium', 'large']).optional(),
+  weight_kg: z.coerce.number().min(0).max(200).optional(),
+  color: z.string().optional(),
+  sterilized: z.boolean().default(false),
+  vaccinated: z.boolean().default(false),
+  microchipped: z.boolean().default(false),
+  good_with_kids: z.boolean().nullable().optional(),
+  good_with_pets: z.boolean().nullable().optional(),
+  description: z.string().min(20, 'Opis mora imati najmanje 20 znakova'),
+  personality: z.string().optional(),
+  special_needs: z.string().optional(),
+  city: z.string().min(1, 'Odaberite grad'),
+  images: z.array(adoptionListingImageSchema).max(8, 'Najviše 8 slika').default([]),
+  contact_phone: z.string().optional(),
+  contact_email: z.string().email('Neispravan email').optional().or(z.literal('')),
+  is_urgent: z.boolean().default(false),
+});
+
+/** Publish rules: stricter checks required before status can move to 'active'. */
+export const adoptionPublishRules = adoptionListingSchema.extend({
+  description: z.string().min(20, 'Opis mora imati najmanje 20 znakova'),
+  city: z.string().min(1, 'Grad je obavezan za objavu'),
+  images: z.array(adoptionListingImageSchema).min(1, 'Potrebna je barem jedna slika za objavu').max(8),
+});
+
+export type AdoptionListingInput = z.infer<typeof adoptionListingSchema>;
+export type AdoptionPublishInput = z.infer<typeof adoptionPublishRules>;
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type PetInput = z.infer<typeof petSchema>;

@@ -5,7 +5,7 @@ import { MapPin, Phone, Search, PawPrint, Siren, Mail, Globe, ShieldCheck, Build
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getVeterinarianEmergencyLabel, getVeterinarianPrimaryPhone, type Veterinarian } from '@/lib/db/veterinarians';
+import { getVeterinarianEmergencyLabel, getVeterinarianPrimaryPhone, type Veterinarian } from '@/lib/db/veterinarian-helpers';
 
 interface VeterinariContentProps {
   veterinarians: Veterinarian[];

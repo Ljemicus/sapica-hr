@@ -83,6 +83,7 @@ export function getUserMenuItems(t: TranslationFn, user?: NavbarUser | null): Na
 
   if (user?.role === 'owner') {
     items.push({ href: '/dashboard/vlasnik', label: t('nav.view_pets'), icon: FileHeart, separatorBefore: true });
+    items.push({ href: '/dashboard/adoption', label: 'Oglasi za udomljavanje', icon: HeartHandshake });
   }
 
   if (user?.role !== 'sitter') {

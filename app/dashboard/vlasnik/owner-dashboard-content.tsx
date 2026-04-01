@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Calendar, CalendarCheck, PawPrint, Plus, Star } from 'lucide-react';
+import { ArrowRight, Calendar, CalendarCheck, HeartHandshake, PawPrint, Plus, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -161,6 +161,11 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
         <a href="/dashboard/vlasnik/rezervacije">
           <Button variant="outline" className="hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200">
             <CalendarCheck className="h-4 w-4 mr-1" /> Rezervacije
+          </Button>
+        </a>
+        <a href="/dashboard/adoption">
+          <Button variant="outline" className="hover:bg-pink-50 hover:text-pink-600 hover:border-pink-200">
+            <HeartHandshake className="h-4 w-4 mr-1" /> Udomljavanje
           </Button>
         </a>
       </div>

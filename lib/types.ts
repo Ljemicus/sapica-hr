@@ -625,6 +625,155 @@ export interface ProductReview {
   createdAt: string;
 }
 
+// ── Publisher Profiles (Faza 1) ──
+
+export type PublisherProfileType = 'vlasnik' | 'čuvar' | 'groomer' | 'trener' | 'uzgajivač' | 'veterinar';
+
+export const PUBLISHER_PROFILE_TYPE_LABELS: Record<PublisherProfileType, string> = {
+  'vlasnik': 'Vlasnik ljubimca',
+  'čuvar': 'Čuvar / Šetač',
+  'groomer': 'Groomer',
+  'trener': 'Trener',
+  'uzgajivač': 'Uzgajivač',
+  'veterinar': 'Veterinar',
+};
+
+export const PUBLISHER_PROFILE_TYPE_EMOJI: Record<PublisherProfileType, string> = {
+  'vlasnik': '🐾',
+  'čuvar': '🏠',
+  'groomer': '✂️',
+  'trener': '🎓',
+  'uzgajivač': '🐕‍🦺',
+  'veterinar': '🏥',
+};
+
+export const PUBLISHER_PROFILE_TYPE_DESCRIPTIONS: Record<PublisherProfileType, string> = {
+  'vlasnik': 'Tražim usluge za svog ljubimca',
+  'čuvar': 'Nudim usluge čuvanja i šetnje',
+  'groomer': 'Nudim usluge uljepšavanja',
+  'trener': 'Nudim usluge treniranja',
+  'uzgajivač': 'Uzgajam i prodajem ljubimce',
+  'veterinar': 'Pružam veterinarske usluge',
+};
+
+export interface PublisherProfile {
+  id: string;
+  user_id: string;
+  type: PublisherProfileType;
+  display_name: string;
+  bio: string | null;
+  city: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+  is_onboarded: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── Adoption Listings (Faza 2) ──
+
+export type AdoptionSpecies = 'dog' | 'cat' | 'rabbit' | 'other';
+export type AdoptionGender = 'male' | 'female';
+export type AdoptionSize = 'small' | 'medium' | 'large';
+export type AdoptionListingStatus = 'draft' | 'active' | 'paused' | 'adopted' | 'expired';
+
+export const ADOPTION_SPECIES_LABELS: Record<AdoptionSpecies, string> = {
+  'dog': 'Pas',
+  'cat': 'Mačka',
+  'rabbit': 'Kunić',
+  'other': 'Ostalo',
+};
+
+export const ADOPTION_SPECIES_EMOJI: Record<AdoptionSpecies, string> = {
+  'dog': '🐕',
+  'cat': '🐈',
+  'rabbit': '🐰',
+  'other': '🐾',
+};
+
+export const ADOPTION_GENDER_LABELS: Record<AdoptionGender, string> = {
+  'male': 'Muški',
+  'female': 'Ženski',
+};
+
+export const ADOPTION_SIZE_LABELS: Record<AdoptionSize, string> = {
+  'small': 'Mali',
+  'medium': 'Srednji',
+  'large': 'Veliki',
+};
+
+export const ADOPTION_STATUS_LABELS: Record<AdoptionListingStatus, string> = {
+  'draft': 'Skica',
+  'active': 'Aktivno',
+  'paused': 'Pauzirano',
+  'adopted': 'Udomljeno',
+  'expired': 'Isteklo',
+};
+
+export const ADOPTION_STATUS_COLORS: Record<AdoptionListingStatus, string> = {
+  'draft': 'bg-gray-100 text-gray-700',
+  'active': 'bg-green-100 text-green-700',
+  'paused': 'bg-yellow-100 text-yellow-700',
+  'adopted': 'bg-blue-100 text-blue-700',
+  'expired': 'bg-red-100 text-red-700',
+};
+
+export interface AdoptionListingImage {
+  url: string;
+  alt: string | null;
+  is_primary: boolean;
+}
+
+export interface AdoptionListing {
+  id: string;
+  publisher_id: string;
+  status: AdoptionListingStatus;
+  name: string;
+  species: AdoptionSpecies;
+  breed: string | null;
+  age_months: number | null;
+  gender: AdoptionGender | null;
+  size: AdoptionSize | null;
+  weight_kg: number | null;
+  color: string | null;
+  sterilized: boolean;
+  vaccinated: boolean;
+  microchipped: boolean;
+  good_with_kids: boolean | null;
+  good_with_pets: boolean | null;
+  description: string;
+  personality: string | null;
+  special_needs: string | null;
+  city: string;
+  images: AdoptionListingImage[];
+  contact_phone: string | null;
+  contact_email: string | null;
+  is_urgent: boolean;
+  published_at: string | null;
+  expires_at: string | null;
+  created_at: string;
+  updated_at: string;
+  publisher?: PublisherProfile;
+}
+
+export type AdoptionListingCard = Pick<
+  AdoptionListing,
+  | 'id'
+  | 'status'
+  | 'name'
+  | 'species'
+  | 'breed'
+  | 'age_months'
+  | 'gender'
+  | 'size'
+  | 'city'
+  | 'images'
+  | 'is_urgent'
+  | 'published_at'
+> & {
+  publisher_display_name: string | null;
+};
+
 export const CITIES = [
   'Zagreb',
   'Rijeka',

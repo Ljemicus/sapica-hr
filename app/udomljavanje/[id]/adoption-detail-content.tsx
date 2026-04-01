@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
-  ArrowLeft, Heart, MapPin, Phone, Mail, Clock, Share2, Copy,
-  Check, Syringe, Cpu, Baby, PawPrint, Scissors,
+  ArrowLeft, Heart, MapPin, Share2, Copy,
+  Check, Syringe, Cpu, Baby, PawPrint, Scissors, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,31 +16,39 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { useAdoptionFavorites } from '@/hooks/use-adoption-favorites';
+import type { AdoptionListing } from '@/lib/types';
 import {
-  getAdoptionPetById,
-  getShelterById,
-  getPetsByShelter,
-  formatAge,
-  getAgeCategoryLabel,
-  SPECIES_EMOJI,
-  SPECIES_LABEL,
-  GENDER_LABEL,
-  SIZE_LABEL,
-} from '@/lib/db/adoption';
+  ADOPTION_SPECIES_LABELS,
+  ADOPTION_SPECIES_EMOJI,
+  ADOPTION_GENDER_LABELS,
+  ADOPTION_SIZE_LABELS,
+} from '@/lib/types';
 
-interface Props {
-  petId: string;
+function formatAge(months: number | null): string {
+  if (months == null) return 'Nepoznato';
+  if (months < 12) return `${months} mj.`;
+  const years = Math.floor(months / 12);
+  const rem = months % 12;
+  return rem > 0 ? `${years} g. ${rem} mj.` : `${years} g.`;
 }
 
-export function AdoptionDetailContent({ petId }: Props) {
-  const pet = getAdoptionPetById(petId)!;
-  const shelter = getShelterById(pet.shelter_id)!;
-  const otherPets = getPetsByShelter(pet.shelter_id).filter((p) => p.id !== pet.id).slice(0, 3);
+const SPECIES_GRADIENTS: Record<string, string> = {
+  dog: 'from-amber-300 to-orange-400',
+  cat: 'from-purple-300 to-pink-400',
+  rabbit: 'from-green-300 to-teal-400',
+  other: 'from-blue-300 to-indigo-400',
+};
 
+export function AdoptionDetailContent({ listing }: { listing: AdoptionListing }) {
   const { toggleFavorite, isFavorite } = useAdoptionFavorites();
   const [copied, setCopied] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [currentImage, setCurrentImage] = useState(0);
+
+  const images = listing.images ?? [];
+  const gradient = SPECIES_GRADIENTS[listing.species] ?? SPECIES_GRADIENTS.other;
+  const publisher = listing.publisher;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -48,39 +57,129 @@ export function AdoptionDetailContent({ petId }: Props) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
-    setTimeout(() => {
+    const formData = new FormData(e.currentTarget);
+    const body = {
+      listing_id: listing.id,
+      name: formData.get('name'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      message: formData.get('message'),
+      has_experience: formData.get('has_experience') === 'on',
+      has_yard: formData.get('has_yard') === 'on',
+    };
+
+    try {
+      const res = await fetch('/api/adoption-listings/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (res.ok) {
+        toast.success('Vaš upit je poslan! Kontaktirat ćemo vas uskoro.');
+        setFormOpen(false);
+      } else {
+        toast.error('Greška pri slanju upita. Pokušajte ponovo.');
+      }
+    } catch {
+      toast.error('Mrežna greška. Pokušajte ponovo.');
+    } finally {
       setSubmitting(false);
-      setFormOpen(false);
-      toast.success('Vaš upit je poslan! Azil će vas kontaktirati.');
-    }, 1000);
+    }
   };
 
   const statusBadges = [
-    { label: 'Steriliziran/a', active: pet.sterilized, icon: Scissors },
-    { label: 'Cijepljen/a', active: pet.vaccinated, icon: Syringe },
-    { label: 'Mikročipiran/a', active: pet.microchipped, icon: Cpu },
-    { label: 'Dobar s djecom', active: pet.good_with_kids, icon: Baby },
-    { label: 'Dobar s drugim ljubimcima', active: pet.good_with_pets, icon: PawPrint },
+    { label: 'Steriliziran/a', active: listing.sterilized, icon: Scissors },
+    { label: 'Cijepljen/a', active: listing.vaccinated, icon: Syringe },
+    { label: 'Mikročipiran/a', active: listing.microchipped, icon: Cpu },
+    { label: 'Dobar s djecom', active: listing.good_with_kids, icon: Baby },
+    { label: 'Dobar s drugim ljubimcima', active: listing.good_with_pets, icon: PawPrint },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50/50 via-white to-pink-50/30 dark:from-purple-950/10 dark:via-background dark:to-pink-950/10">
-      {/* Hero image */}
-      <div className={`relative h-64 md:h-80 bg-gradient-to-br ${pet.image_gradient} flex items-center justify-center`}>
-        <div className="absolute inset-0 paw-pattern opacity-10" />
-        <span className="text-8xl md:text-9xl">{SPECIES_EMOJI[pet.species]}</span>
-        {pet.urgent && (
-          <div className="absolute top-4 left-4">
-            <Badge className="bg-red-500 text-white font-bold rounded-full flex items-center gap-1.5 text-sm px-3 py-1">
-              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-              Hitno traži dom
-            </Badge>
+      {/* Image gallery / hero */}
+      {images.length > 0 ? (
+        <div className="relative h-72 md:h-96 bg-gray-100">
+          <Image
+            src={images[currentImage].url}
+            alt={images[currentImage].alt || listing.name}
+            fill
+            className="object-cover"
+            unoptimized
+            priority
+          />
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={() => setCurrentImage((p) => (p - 1 + images.length) % images.length)}
+                className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => setCurrentImage((p) => (p + 1) % images.length)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                {images.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentImage(i)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      i === currentImage ? 'bg-white w-4' : 'bg-white/50'
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+          {listing.is_urgent && (
+            <div className="absolute top-4 left-4">
+              <Badge className="bg-red-500 text-white font-bold rounded-full flex items-center gap-1.5 text-sm px-3 py-1">
+                <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                Hitno traži dom
+              </Badge>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className={`relative h-64 md:h-80 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+          <div className="absolute inset-0 paw-pattern opacity-10" />
+          <span className="text-8xl md:text-9xl">{ADOPTION_SPECIES_EMOJI[listing.species]}</span>
+          {listing.is_urgent && (
+            <div className="absolute top-4 left-4">
+              <Badge className="bg-red-500 text-white font-bold rounded-full flex items-center gap-1.5 text-sm px-3 py-1">
+                <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                Hitno traži dom
+              </Badge>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Thumbnails */}
+      {images.length > 1 && (
+        <div className="container mx-auto px-4 -mt-6 relative z-10">
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {images.map((img, i) => (
+              <button
+                key={img.url}
+                onClick={() => setCurrentImage(i)}
+                className={`relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${
+                  i === currentImage ? 'border-purple-500 shadow-md' : 'border-white/80 opacity-70 hover:opacity-100'
+                }`}
+              >
+                <Image src={img.url} alt={img.alt || ''} fill className="object-cover" unoptimized />
+              </button>
+            ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="container mx-auto px-4 py-8">
         {/* Back link */}
@@ -96,21 +195,23 @@ export function AdoptionDetailContent({ petId }: Props) {
             <div className="flex items-start justify-between">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)]">{pet.name}</h1>
-                  <span className="text-2xl">{SPECIES_EMOJI[pet.species]}</span>
+                  <h1 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)]">{listing.name}</h1>
+                  <span className="text-2xl">{ADOPTION_SPECIES_EMOJI[listing.species]}</span>
                 </div>
-                <p className="text-lg text-muted-foreground">{pet.breed}</p>
+                {listing.breed && (
+                  <p className="text-lg text-muted-foreground">{listing.breed}</p>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => toggleFavorite(pet.id)}
+                  onClick={() => toggleFavorite(listing.id)}
                   className={`p-2.5 rounded-full transition-all duration-200 ${
-                    isFavorite(pet.id)
+                    isFavorite(listing.id)
                       ? 'bg-red-500 text-white shadow-lg shadow-red-200/50'
                       : 'bg-white text-gray-400 hover:text-red-500 hover:bg-white shadow-sm border border-gray-200'
                   }`}
                 >
-                  <Heart className={`h-5 w-5 ${isFavorite(pet.id) ? 'fill-white' : ''}`} />
+                  <Heart className={`h-5 w-5 ${isFavorite(listing.id) ? 'fill-white' : ''}`} />
                 </button>
                 <button
                   onClick={handleCopyLink}
@@ -124,25 +225,24 @@ export function AdoptionDetailContent({ petId }: Props) {
             {/* Info grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
-                { label: 'Vrsta', value: SPECIES_LABEL[pet.species] },
-                { label: 'Dob', value: formatAge(pet.age_months) },
-                { label: 'Spol', value: GENDER_LABEL[pet.gender] },
-                { label: 'Veličina', value: SIZE_LABEL[pet.size] },
-                { label: 'Težina', value: `${pet.weight_kg} kg` },
-                { label: 'Boja', value: pet.color },
-                { label: 'Kategorija', value: getAgeCategoryLabel(pet.age_months) },
-                { label: 'Lokacija', value: pet.city },
-              ].map((item) => (
-                <div key={item.label} className="bg-white dark:bg-card rounded-xl p-3 border border-gray-100 dark:border-border">
-                  <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
-                  <p className="font-semibold text-sm">{item.value}</p>
+                { label: 'Vrsta', value: ADOPTION_SPECIES_LABELS[listing.species] },
+                { label: 'Dob', value: formatAge(listing.age_months) },
+                listing.gender ? { label: 'Spol', value: ADOPTION_GENDER_LABELS[listing.gender] } : null,
+                listing.size ? { label: 'Veličina', value: ADOPTION_SIZE_LABELS[listing.size] } : null,
+                listing.weight_kg ? { label: 'Težina', value: `${listing.weight_kg} kg` } : null,
+                listing.color ? { label: 'Boja', value: listing.color } : null,
+                { label: 'Lokacija', value: listing.city },
+              ].filter(Boolean).map((item) => (
+                <div key={item!.label} className="bg-white dark:bg-card rounded-xl p-3 border border-gray-100 dark:border-border">
+                  <p className="text-xs text-muted-foreground mb-1">{item!.label}</p>
+                  <p className="font-semibold text-sm">{item!.value}</p>
                 </div>
               ))}
             </div>
 
             {/* Status badges */}
             <div className="flex flex-wrap gap-2">
-              {statusBadges.map((badge) => (
+              {statusBadges.filter((b) => b.active !== null).map((badge) => (
                 <Badge
                   key={badge.label}
                   className={`rounded-full text-sm px-3 py-1 flex items-center gap-1.5 ${
@@ -161,14 +261,18 @@ export function AdoptionDetailContent({ petId }: Props) {
             {/* Description */}
             <Card className="border-0 shadow-sm rounded-2xl">
               <CardContent className="p-6">
-                <h2 className="font-bold text-lg mb-3 font-[var(--font-heading)]">O {pet.name}</h2>
-                <p className="text-muted-foreground leading-relaxed mb-4">{pet.description}</p>
-                <h3 className="font-semibold text-sm mb-2">Osobnost</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{pet.personality}</p>
-                {pet.special_needs && (
+                <h2 className="font-bold text-lg mb-3 font-[var(--font-heading)]">O {listing.name}</h2>
+                <p className="text-muted-foreground leading-relaxed mb-4 whitespace-pre-line">{listing.description}</p>
+                {listing.personality && (
+                  <>
+                    <h3 className="font-semibold text-sm mb-2">Osobnost</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{listing.personality}</p>
+                  </>
+                )}
+                {listing.special_needs && (
                   <>
                     <h3 className="font-semibold text-sm mb-2 mt-4 text-amber-600 dark:text-amber-400">Posebne potrebe</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">{pet.special_needs}</p>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{listing.special_needs}</p>
                   </>
                 )}
               </CardContent>
@@ -177,39 +281,39 @@ export function AdoptionDetailContent({ petId }: Props) {
             {/* CTA */}
             <Dialog open={formOpen} onOpenChange={setFormOpen}>
               <DialogTrigger render={<Button size="lg" className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-lg py-6 shadow-xl shadow-purple-200/50 dark:shadow-purple-900/30 rounded-xl" />}>
-                  <Heart className="h-5 w-5 mr-2 fill-white" />
-                  Pošalji upit za udomljavanje
+                <Heart className="h-5 w-5 mr-2 fill-white" />
+                Pošalji upit za udomljavanje
               </DialogTrigger>
               <DialogContent className="sm:max-w-md rounded-2xl">
                 <DialogHeader>
                   <DialogTitle className="font-[var(--font-heading)] text-xl">
-                    Upit za udomljavanje — {pet.name}
+                    Upit za udomljavanje — {listing.name}
                   </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-2">
                   <div>
-                    <Label htmlFor="name">Ime i prezime</Label>
-                    <Input id="name" required placeholder="Vaše ime" className="mt-1" />
+                    <Label htmlFor="inquiry-name">Ime i prezime</Label>
+                    <Input id="inquiry-name" name="name" required placeholder="Vaše ime" className="mt-1" />
                   </div>
                   <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" required placeholder="vas@email.com" className="mt-1" />
+                    <Label htmlFor="inquiry-email">Email</Label>
+                    <Input id="inquiry-email" name="email" type="email" required placeholder="vas@email.com" className="mt-1" />
                   </div>
                   <div>
-                    <Label htmlFor="phone">Telefon</Label>
-                    <Input id="phone" type="tel" required placeholder="+385 91 234 5678" className="mt-1" />
+                    <Label htmlFor="inquiry-phone">Telefon</Label>
+                    <Input id="inquiry-phone" name="phone" type="tel" required placeholder="+385 91 234 5678" className="mt-1" />
                   </div>
                   <div>
-                    <Label htmlFor="message">Poruka (zašto želite udomiti)</Label>
-                    <Textarea id="message" required placeholder="Opišite zašto želite udomiti ovog ljubimca..." className="mt-1" rows={3} />
+                    <Label htmlFor="inquiry-message">Poruka (zašto želite udomiti)</Label>
+                    <Textarea id="inquiry-message" name="message" required placeholder="Opišite zašto želite udomiti ovog ljubimca..." className="mt-1" rows={3} />
                   </div>
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm">
-                      <input type="checkbox" className="rounded border-gray-300" />
+                      <input type="checkbox" name="has_experience" className="rounded border-gray-300" />
                       Imam iskustva s ljubimcima
                     </label>
                     <label className="flex items-center gap-2 text-sm">
-                      <input type="checkbox" className="rounded border-gray-300" />
+                      <input type="checkbox" name="has_yard" className="rounded border-gray-300" />
                       Imam vrt/dvorište
                     </label>
                   </div>
@@ -223,28 +327,29 @@ export function AdoptionDetailContent({ petId }: Props) {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Shelter info */}
+            {/* Publisher info — contact details gated behind inquiry form */}
             <Card className="border-0 shadow-sm rounded-2xl">
               <CardContent className="p-6">
-                <h2 className="font-bold text-lg mb-4 font-[var(--font-heading)]">Azil / Udruga</h2>
+                <h2 className="font-bold text-lg mb-4 font-[var(--font-heading)]">Kontakt</h2>
                 <div className="space-y-3">
-                  <p className="font-semibold text-purple-600 dark:text-purple-400">{shelter.name}</p>
+                  {publisher && (
+                    <p className="font-semibold text-purple-600 dark:text-purple-400">{publisher.display_name}</p>
+                  )}
                   <div className="flex items-start gap-2 text-sm text-muted-foreground">
                     <MapPin className="h-4 w-4 text-purple-400 flex-shrink-0 mt-0.5" />
-                    {shelter.address}
+                    {listing.city}
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Phone className="h-4 w-4 text-purple-400 flex-shrink-0" />
-                    {shelter.phone}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Mail className="h-4 w-4 text-purple-400 flex-shrink-0" />
-                    {shelter.email}
-                  </div>
-                  <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <Clock className="h-4 w-4 text-purple-400 flex-shrink-0 mt-0.5" />
-                    {shelter.working_hours}
-                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Pošaljite upit putem obrasca ispod kako biste kontaktirali oglašivača.
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-xl text-purple-600 border-purple-200 hover:bg-purple-50 dark:text-purple-400 dark:border-purple-800 dark:hover:bg-purple-950/20"
+                    onClick={() => setFormOpen(true)}
+                  >
+                    <Heart className="h-4 w-4 mr-2" />
+                    Pošalji upit
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -261,43 +366,6 @@ export function AdoptionDetailContent({ petId }: Props) {
             </Card>
           </div>
         </div>
-
-        {/* Other pets from same shelter */}
-        {otherPets.length > 0 && (
-          <section className="mt-12">
-            <h2 className="text-2xl font-extrabold mb-6 font-[var(--font-heading)]">Više od {shelter.name}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {otherPets.map((p) => (
-                <Link key={p.id} href={`/udomljavanje/${p.id}`}>
-                  <Card className="group card-hover cursor-pointer overflow-hidden border-0 shadow-sm rounded-2xl">
-                    <CardContent className="p-0">
-                      <div className={`relative h-40 bg-gradient-to-br ${p.image_gradient} flex items-center justify-center`}>
-                        <div className="absolute inset-0 paw-pattern opacity-10" />
-                        <span className="text-5xl group-hover:scale-110 transition-transform duration-300">
-                          {SPECIES_EMOJI[p.species]}
-                        </span>
-                        {p.urgent && (
-                          <Badge className="absolute top-3 left-3 bg-red-500 text-white font-bold rounded-full flex items-center gap-1.5">
-                            <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                            Hitno
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-bold group-hover:text-purple-500 transition-colors font-[var(--font-heading)]">{p.name}</h3>
-                        <p className="text-sm text-muted-foreground">{p.breed}</p>
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-2">
-                          <MapPin className="h-3 w-3" />
-                          {p.city}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
       </div>
     </div>
   );
