@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { createClient } from '@/lib/supabase/client';
 import { bookingSchema, type BookingInput } from '@/lib/validations';
 import { SERVICE_LABELS, type SitterProfile, type User, type Pet, type ServiceType } from '@/lib/types';
 import { toast } from 'sonner';
@@ -20,14 +19,13 @@ interface BookingDialogProps {
   onOpenChange: (open: boolean) => void;
   profile: SitterProfile & { user: User };
   userId: string;
+  pets: Pet[];
 }
 
-export function BookingDialog({ open, onOpenChange, profile, userId }: BookingDialogProps) {
-  const [pets, setPets] = useState<Pet[]>([]);
+export function BookingDialog({ open, onOpenChange, profile, userId, pets }: BookingDialogProps) {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const router = useRouter();
-  const supabase = createClient();
 
   const { register, handleSubmit, formState: { errors }, watch } = useForm<BookingInput>({
     resolver: zodResolver(bookingSchema),
@@ -40,15 +38,6 @@ export function BookingDialog({ open, onOpenChange, profile, userId }: BookingDi
   const startDate = watch('start_date');
   const endDate = watch('end_date');
 
-
-  useEffect(() => {
-    const fetchPets = async () => {
-      const { data } = await supabase.from('pets').select('*').eq('owner_id', userId);
-      setPets(data || []);
-    };
-    fetchPets();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- supabase is a stable client ref
-  }, [userId]);
 
   const calculatePrice = () => {
     if (!selectedService || !startDate || !endDate) return 0;

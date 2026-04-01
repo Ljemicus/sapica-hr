@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import type { Metadata } from 'next';
+import { getSitterBookingData } from './sitter-booking-data';
 import { getSitterPageData } from './sitter-page-data';
 import { SitterProfileContent } from './sitter-profile-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
@@ -24,7 +25,10 @@ export async function generateMetadata({ params }: SitterPageProps): Promise<Met
 export default async function SitterPage({ params }: SitterPageProps) {
   const { id } = await params;
 
-  const { profile, reviews, availability } = await getSitterPageData(id);
+  const [{ profile, reviews, availability }, bookingData] = await Promise.all([
+    getSitterPageData(id),
+    getSitterBookingData(),
+  ]);
   if (!profile) return notFound();
 
   const jsonLd = {
@@ -56,6 +60,8 @@ export default async function SitterPage({ params }: SitterPageProps) {
         profile={profile}
         reviews={reviews}
         availability={availability}
+        bookingPets={bookingData.pets}
+        bookingUserId={bookingData.currentUserId}
       />
     </>
   );

@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
-import { SERVICE_LABELS, type SitterProfile, type User, type Review, type Availability, type ServiceType } from '@/lib/types';
+import { SERVICE_LABELS, type SitterProfile, type User, type Review, type Availability, type ServiceType, type Pet } from '@/lib/types';
 import { useUser } from '@/hooks/use-user';
 import { AvailabilityCalendar } from '@/components/shared/availability-calendar';
 import { BookingDialog } from './booking-dialog';
@@ -40,9 +40,11 @@ interface SitterProfileContentProps {
   profile: SitterProfile & { user: User };
   reviews: (Review & { reviewer: { name: string; avatar_url: string | null }; booking: { service_type: string } })[];
   availability: Availability[];
+  bookingPets: Pet[];
+  bookingUserId: string | null;
 }
 
-export function SitterProfileContent({ profile, reviews, availability }: SitterProfileContentProps) {
+export function SitterProfileContent({ profile, reviews, availability, bookingPets, bookingUserId }: SitterProfileContentProps) {
   const { user } = useUser();
   const [showBooking, setShowBooking] = useState(false);
   const router = useRouter();
@@ -313,7 +315,8 @@ export function SitterProfileContent({ profile, reviews, availability }: SitterP
           open={showBooking}
           onOpenChange={setShowBooking}
           profile={profile}
-          userId={user.id}
+          userId={bookingUserId || user.id}
+          pets={bookingPets}
         />
       )}
     </div>
