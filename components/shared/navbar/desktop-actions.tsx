@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { MessageCircle, ShoppingCart, LogOut } from 'lucide-react';
+import { ShoppingCart, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -61,11 +61,6 @@ export function DesktopActions({ t, user, loading, getItemCount, signOut }: Desk
         <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />
       ) : user ? (
         <div className="flex items-center gap-1">
-          <Link href="/poruke">
-            <Button variant="ghost" size="icon" className="relative hover:bg-accent rounded-xl" aria-label={t('nav.messages')}>
-              <MessageCircle className="h-5 w-5" />
-            </Button>
-          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger render={<Button variant="ghost" className="relative h-9 w-9 rounded-full ring-2 ring-orange-200 dark:ring-orange-800 hover:ring-orange-400 dark:hover:ring-orange-600 transition-all" />}>
               <Avatar className="h-9 w-9">
