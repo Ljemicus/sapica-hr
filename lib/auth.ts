@@ -26,6 +26,19 @@ export function parseAuthRole(value: unknown, fallback: User['role'] = 'owner'):
   return isUserRole(value) ? value : fallback;
 }
 
+export function isUserRecord(value: unknown): value is User {
+  if (!value || typeof value !== 'object') return false;
+
+  const user = value as Partial<User>;
+  return (
+    typeof user.id === 'string' &&
+    typeof user.email === 'string' &&
+    typeof user.name === 'string' &&
+    isUserRole(user.role) &&
+    typeof user.created_at === 'string'
+  );
+}
+
 export function buildUserFromAuth(authUser: AuthIdentityUser): User {
   const meta = authUser.user_metadata;
 
@@ -58,11 +71,11 @@ export async function getAuthUser(): Promise<User | null> {
     // public.users is the canonical profile source when available
     const { data } = await supabase
       .from('users')
-      .select('*')
+      .select('id, email, name, role, avatar_url, phone, city, created_at')
       .eq('id', authUser.id)
       .single();
 
-    if (data) return data as User;
+    if (isUserRecord(data)) return data;
 
     appLogger.warn('auth', 'Falling back to auth metadata because public.users profile is missing', {
       userId: authUser.id,
