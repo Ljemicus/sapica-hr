@@ -38,10 +38,13 @@ export function PetPassportView({ pet, passport, isDemo = false }: Props) {
   const [draft, setDraft] = useState<PetPassport>(passport);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) setDraft(JSON.parse(saved));
-    } catch {}
+    const loadDraft = () => {
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) setDraft(JSON.parse(saved));
+      } catch {}
+    };
+    loadDraft();
   }, [storageKey]);
 
   const saveDraft = () => {

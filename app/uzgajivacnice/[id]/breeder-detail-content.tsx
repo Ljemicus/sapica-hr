@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import type { Breeder } from '@/lib/mock-breeders';
+import type { Breeder } from '@/lib/db/breeders';
 
 interface BreederDetailContentProps {
   breeder: Breeder;

@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { ServiceJsonLd } from '@/components/seo/json-ld';
 import { BreedersContent } from './breeders-content';
-import { getBreeders } from '@/lib/mock-breeders';
+import { getBreeders } from '@/lib/db/breeders';
 
 export const metadata: Metadata = {
   title: 'Uzgajivači — Certificirani uzgajivači u Hrvatskoj',

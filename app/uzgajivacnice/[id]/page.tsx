@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getBreeder, MOCK_BREEDERS } from '@/lib/mock-breeders';
+import { getBreeder, MOCK_BREEDERS } from '@/lib/db/breeders';
 import { BreederDetailContent } from './breeder-detail-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 

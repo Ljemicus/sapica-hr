@@ -73,14 +73,21 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
   const lowestPrice = Math.min(...Object.values(groomer.prices).filter(p => p > 0));
 
   useEffect(() => {
-    const fromDate = new Date().toISOString().split('T')[0];
-    const toDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 60).toISOString().split('T')[0];
-    setAvailabilityLoading(true);
-    fetch(`/api/groomer-availability?groomer_id=${groomer.id}&from_date=${fromDate}&to_date=${toDate}`)
-      .then((r) => r.json())
-      .then((data) => setAvailabilitySlots(Array.isArray(data) ? data : []))
-      .catch(() => setAvailabilitySlots([]))
-      .finally(() => setAvailabilityLoading(false));
+    const loadSlots = async () => {
+      const fromDate = new Date().toISOString().split('T')[0];
+      const toDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 60).toISOString().split('T')[0];
+      setAvailabilityLoading(true);
+      try {
+        const r = await fetch(`/api/groomer-availability?groomer_id=${groomer.id}&from_date=${fromDate}&to_date=${toDate}`);
+        const data = await r.json();
+        setAvailabilitySlots(Array.isArray(data) ? data : []);
+      } catch {
+        setAvailabilitySlots([]);
+      } finally {
+        setAvailabilityLoading(false);
+      }
+    };
+    loadSlots();
   }, [groomer.id]);
 
   const selectedDateSlots = useMemo(

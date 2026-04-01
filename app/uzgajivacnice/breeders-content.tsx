@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { EmptyState } from '@/components/shared/empty-state';
 import { CITIES } from '@/lib/types';
-import type { Breeder } from '@/lib/mock-breeders';
+import type { Breeder } from '@/lib/db/breeders';
 
 const speciesTabs = [
   { value: 'all', label: 'Sve', emoji: '' },
