@@ -36,6 +36,26 @@ export async function POST(request: Request) {
 
   const { sitter_id, pet_id, service_type, start_date, end_date, note } = parsed.data;
 
+  const start = new Date(start_date);
+  const end = new Date(end_date);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return apiError({ status: 400, code: 'INVALID_BOOKING_DATES', message: 'Booking datumi nisu valjani.' });
+  }
+
+  if (end < start) {
+    return apiError({ status: 400, code: 'INVALID_BOOKING_RANGE', message: 'Datum završetka ne može biti prije datuma početka.' });
+  }
+
+  const startDay = new Date(start);
+  startDay.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (startDay < today) {
+    return apiError({ status: 400, code: 'BOOKING_IN_PAST', message: 'Booking ne može početi u prošlosti.' });
+  }
+
   const sitterProfile = await getSitter(sitter_id);
   if (!sitterProfile) {
     appLogger.warn('bookings.create', 'Sitter profile missing', { sitterId: sitter_id });
@@ -43,8 +63,11 @@ export async function POST(request: Request) {
   }
 
   const pricePerDay = sitterProfile.prices[service_type as keyof typeof sitterProfile.prices] || 0;
-  const start = new Date(start_date);
-  const end = new Date(end_date);
+
+  if (pricePerDay <= 0) {
+    return apiError({ status: 400, code: 'SERVICE_UNAVAILABLE', message: 'Odabrana usluga nije dostupna za ovog sittera.' });
+  }
+
   const days = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
   const total_price = pricePerDay * days;
 
