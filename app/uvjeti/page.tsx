@@ -229,7 +229,7 @@ export default function UvjetiPage() {
             <div className="space-y-3 text-gray-600 leading-relaxed">
               <p>
                 Možete u bilo kojem trenutku zatvoriti svoj korisnički račun kontaktiranjem korisničke podrške
-                na <a href="mailto:petparkhr@gmail.com" className="text-orange-600 hover:underline">petparkhr@gmail.com</a>.
+                na <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline">info@petpark.hr</a>.
               </p>
               <p>Zadržavamo pravo suspendirati ili trajno ukinuti korisnički račun u slučaju:</p>
               <ul className="space-y-2 ml-4">
@@ -282,7 +282,7 @@ export default function UvjetiPage() {
                 <h2 className="text-xl font-bold text-gray-900 mb-2">Trebate pojašnjenje?</h2>
                 <p className="text-gray-600">
                   Za sva pitanja vezana uz ove uvjete korištenja, obratite nam se na{' '}
-                  <a href="mailto:petparkhr@gmail.com" className="text-orange-600 hover:underline font-medium">petparkhr@gmail.com</a>.
+                  <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline font-medium">info@petpark.hr</a>.
                 </p>
               </div>
             </div>
