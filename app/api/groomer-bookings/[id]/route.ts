@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { updateGroomerBookingStatus, cancelGroomerBooking } from '@/lib/db';
 import type { GroomerBookingStatus } from '@/lib/types';
+import { appLogger } from '@/lib/logger';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -27,6 +28,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     if (status === 'cancelled') {
       const result = await cancelGroomerBooking(id, user.id);
       if (!result) {
+        appLogger.warn('groomerBookings.update', 'cancel failed – not found or not owner', { bookingId: id, userId: user.id });
         return NextResponse.json({ error: 'Booking not found or not yours' }, { status: 404 });
       }
       return NextResponse.json(result);
@@ -35,10 +37,12 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     // Otherwise it's a groomer updating status (confirmed/rejected/completed)
     const result = await updateGroomerBookingStatus(id, status);
     if (!result) {
+      appLogger.warn('groomerBookings.update', 'status update failed – not found', { bookingId: id, status });
       return NextResponse.json({ error: 'Could not update booking' }, { status: 404 });
     }
     return NextResponse.json(result);
-  } catch {
+  } catch (err) {
+    appLogger.error('groomerBookings.update', 'unexpected error', { bookingId: id, error: String(err) });
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 }

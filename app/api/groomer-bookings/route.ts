@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { createGroomerBooking, getUserGroomerBookings } from '@/lib/db';
+import { appLogger } from '@/lib/logger';
 
 export async function GET() {
   const user = await getAuthUser();
@@ -44,6 +45,7 @@ export async function POST(request: Request) {
     });
 
     if (!booking) {
+      appLogger.warn('groomerBookings.create', 'slot conflict', { groomer_id, date, start_time });
       return NextResponse.json(
         { error: 'Termin je zauzet. Odaberite drugi termin.' },
         { status: 409 }
@@ -51,7 +53,8 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(booking, { status: 201 });
-  } catch {
+  } catch (err) {
+    appLogger.error('groomerBookings.create', 'unexpected error', { error: String(err) });
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 }

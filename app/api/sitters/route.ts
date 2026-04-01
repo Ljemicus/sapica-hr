@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSitters } from '@/lib/db';
 import type { ServiceType } from '@/lib/types';
+import { appLogger } from '@/lib/logger';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -11,13 +12,18 @@ export async function GET(request: Request) {
   const maxPrice = searchParams.get('max_price');
   const sort = searchParams.get('sort') || undefined;
 
-  const data = await getSitters({
-    city,
-    service,
-    min_rating: minRating ? Number(minRating) : undefined,
-    min_price: minPrice ? Number(minPrice) : undefined,
-    max_price: maxPrice ? Number(maxPrice) : undefined,
-    sort: sort as 'rating' | 'reviews' | 'price_asc' | 'price_desc' | undefined,
-  });
-  return NextResponse.json(data);
+  try {
+    const data = await getSitters({
+      city,
+      service,
+      min_rating: minRating ? Number(minRating) : undefined,
+      min_price: minPrice ? Number(minPrice) : undefined,
+      max_price: maxPrice ? Number(maxPrice) : undefined,
+      sort: sort as 'rating' | 'reviews' | 'price_asc' | 'price_desc' | undefined,
+    });
+    return NextResponse.json(data);
+  } catch (err) {
+    appLogger.error('sitters.list', 'failed to fetch sitters', { error: String(err) });
+    return NextResponse.json({ error: 'Failed to load sitters' }, { status: 500 });
+  }
 }

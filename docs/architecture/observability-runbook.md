@@ -20,6 +20,13 @@ Primjeri:
 - `messages.send`
 - `upload.image`
 - `payments.webhook`
+- `groomerBookings.create`
+- `groomerBookings.update`
+- `availability.update`
+- `sitterProfile.save`
+- `walks.list`
+- `groomers.list`
+- `sitters.list`
 
 ---
 
@@ -111,6 +118,69 @@ Primjeri:
 - koji je Stripe event type
 - je li booking id prisutan u metadata
 - jesu li booking/payment writeovi uspjeli
+
+---
+
+## 6. Groomer bookings fail
+
+### Scopeovi
+- `groomerBookings.create`
+- `groomerBookings.update`
+
+### Gledaj za
+- slot conflict (409)
+- cancel/update na nepostojeći booking
+- unexpected error u create ili update flowu
+
+### Prva provjera
+- je li groomer_id validan
+- je li slot slobodan (conflict)
+- je li booking id prisutan i pripada useru (za cancel)
+
+---
+
+## 7. Availability fail
+
+### Scope
+- `availability.update`
+
+### Gledaj za
+- invalid JSON body u POST requestu
+- setAvailability DB write fail
+
+### Prva provjera
+- je li body validan JSON
+- je li dates array prisutan
+
+---
+
+## 8. Sitter profile fail
+
+### Scope
+- `sitterProfile.save`
+
+### Gledaj za
+- DB write fail (insert ili update)
+
+### Prva provjera
+- je li user role sitter
+- je li supabase write uspio (error.message u logu)
+
+---
+
+## 9. Listing routes fail
+
+### Scopeovi
+- `walks.list`
+- `groomers.list`
+- `sitters.list`
+
+### Gledaj za
+- DB query fail na list endpointima
+
+### Prva provjera
+- je li Supabase dostupan
+- jesu li query parametri validni
 
 ---
 

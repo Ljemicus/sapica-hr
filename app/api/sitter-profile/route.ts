@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
 import { sitterProfileSchema } from '@/lib/validations';
+import { appLogger } from '@/lib/logger';
 
 export async function POST(request: Request) {
   const user = await getAuthUser();
@@ -27,6 +28,9 @@ export async function POST(request: Request) {
     : supabase.from('sitter_profiles').insert(data);
 
   const { error } = await query;
-  if (error) return NextResponse.json({ error: 'Failed to save profile' }, { status: 500 });
+  if (error) {
+    appLogger.error('sitterProfile.save', 'db write failed', { error: error.message, userId: user.id });
+    return NextResponse.json({ error: 'Failed to save profile' }, { status: 500 });
+  }
   return NextResponse.json({ success: true });
 }

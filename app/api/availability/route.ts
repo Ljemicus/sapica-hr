@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { getAvailability, setAvailability } from '@/lib/db';
+import { appLogger } from '@/lib/logger';
 
 export async function POST(request: Request) {
   const user = await getAuthUser();
@@ -9,7 +10,8 @@ export async function POST(request: Request) {
   let body;
   try {
     body = await request.json();
-  } catch {
+  } catch (err) {
+    appLogger.warn('availability.update', 'invalid JSON body', { error: String(err) });
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
   const { dates, available } = body;
