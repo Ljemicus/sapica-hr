@@ -3,22 +3,32 @@ import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { appLogger } from '@/lib/logger';
 import type { User } from '@/lib/types';
 
-export function buildUserFromAuth(authUser: {
+export interface AuthUserMetadata {
+  name?: string;
+  full_name?: string;
+  role?: User['role'];
+  avatar_url?: string | null;
+  city?: string | null;
+}
+
+export interface AuthIdentityUser {
   id: string;
   email?: string;
   created_at: string;
-  user_metadata?: Record<string, unknown> | null;
-}): User {
+  user_metadata?: AuthUserMetadata | null;
+}
+
+export function buildUserFromAuth(authUser: AuthIdentityUser): User {
   const meta = authUser.user_metadata;
 
   return {
     id: authUser.id,
     email: authUser.email || '',
-    name: (meta?.name as string | undefined) || (meta?.full_name as string | undefined) || authUser.email?.split('@')[0] || '',
-    role: ((meta?.role as User['role'] | undefined) || 'owner'),
-    avatar_url: (meta?.avatar_url as string | null | undefined) || null,
+    name: meta?.name || meta?.full_name || authUser.email?.split('@')[0] || '',
+    role: meta?.role || 'owner',
+    avatar_url: meta?.avatar_url || null,
     phone: null,
-    city: (meta?.city as string | null | undefined) || null,
+    city: meta?.city || null,
     created_at: authUser.created_at,
   };
 }

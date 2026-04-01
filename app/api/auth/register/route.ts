@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { ensureSitterProfile, syncUserProfile } from '@/lib/auth-profile';
+import { ensureSitterProfile, syncUserProfile, type AuthProfileSupabaseLike } from '@/lib/auth-profile';
 import { apiError } from '@/lib/api-errors';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { appLogger } from '@/lib/logger';
@@ -45,8 +45,10 @@ export async function POST(request: Request) {
     return apiError({ status: 400, code: 'REGISTER_FAILED', message: error?.message || 'Registracija nije uspjela' });
   }
 
+  const authProfileSupabase = supabase as unknown as AuthProfileSupabaseLike;
+
   const profileError = await syncUserProfile({
-    supabase,
+    supabase: authProfileSupabase,
     user: {
       id: data.user.id,
       email: parsed.data.email,
@@ -63,7 +65,7 @@ export async function POST(request: Request) {
 
   if (parsed.data.role === 'sitter') {
     const sitterError = await ensureSitterProfile({
-      supabase,
+      supabase: authProfileSupabase,
       userId: data.user.id,
       city: parsed.data.city,
     });

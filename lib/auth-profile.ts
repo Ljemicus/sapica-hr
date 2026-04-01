@@ -1,7 +1,22 @@
 import type { User } from '@/lib/types';
 
+interface UpsertResult {
+  error: { message?: string } | null;
+}
+
+interface ProfileTableClient {
+  upsert: (
+    values: Record<string, unknown>,
+    options?: { onConflict?: string }
+  ) => Promise<UpsertResult>;
+}
+
+export interface AuthProfileSupabaseLike {
+  from: (table: 'users' | 'sitter_profiles') => ProfileTableClient;
+}
+
 export async function syncUserProfile(params: {
-  supabase: any;
+  supabase: AuthProfileSupabaseLike;
   user: Pick<User, 'id' | 'email' | 'name' | 'role' | 'avatar_url' | 'city'>;
 }) {
   const { supabase, user } = params;
@@ -22,7 +37,7 @@ export async function syncUserProfile(params: {
 }
 
 export async function ensureSitterProfile(params: {
-  supabase: any;
+  supabase: AuthProfileSupabaseLike;
   userId: string;
   city: string | null;
 }) {

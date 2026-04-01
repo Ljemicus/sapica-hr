@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { ensureSitterProfile, syncUserProfile } from '@/lib/auth-profile';
+import { ensureSitterProfile, syncUserProfile, type AuthProfileSupabaseLike } from '@/lib/auth-profile';
 import { buildUserFromAuth } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { appLogger } from '@/lib/logger';
@@ -41,8 +41,10 @@ export async function GET(request: Request) {
       const fallbackUser = buildUserFromAuth(data.user);
       const role = requestedRole === 'sitter' || fallbackUser.role === 'sitter' ? 'sitter' : 'owner';
 
+      const authProfileSupabase = supabase as unknown as AuthProfileSupabaseLike;
+
       await syncUserProfile({
-        supabase,
+        supabase: authProfileSupabase,
         user: {
           id: fallbackUser.id,
           email: fallbackUser.email,
@@ -55,7 +57,7 @@ export async function GET(request: Request) {
 
       if (role === 'sitter') {
         await ensureSitterProfile({
-          supabase,
+          supabase: authProfileSupabase,
           userId: fallbackUser.id,
           city: fallbackUser.city,
         });
