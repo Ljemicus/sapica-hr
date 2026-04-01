@@ -77,14 +77,18 @@ onda default pretpostavka treba biti:
 
 ---
 
-## Trenutna odluka za 5.2.a
+## Trenutna odluka za 5.2.a / 5.2.b
 
 Nakon ovog pregleda:
 - messaging client fetchovi = KEEP
 - walk session client fetchovi = KEEP
 - grooming slot fetch = KEEP
 - auth form fetchovi = KEEP
-- sitter booking pets fetch = već serveriziran
+- sitter booking pets fetch = serveriziran
+
+Dodatni pregled public/profile/detail flowova nije otkrio novi očiti client-side Supabase fetch koji bi trebalo hitno serverizirati.
 
 Zaključak:
-5.2.a nije "ukloni sve client fetchove", nego potvrdi koji su opravdani.
+- 5.2.a nije "ukloni sve client fetchove", nego potvrdi koji su opravdani
+- 5.2.b trenutno nema novi high-confidence kandidat u pregledanim flowovima
+- sljedeći cleanup kandidati više pripadaju page/data efficiency i boundary cleanupu nego client-fetch disciplini
