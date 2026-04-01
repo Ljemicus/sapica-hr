@@ -18,6 +18,14 @@ export interface AuthIdentityUser {
   user_metadata?: AuthUserMetadata | null;
 }
 
+export function isUserRole(value: unknown): value is User['role'] {
+  return value === 'owner' || value === 'sitter' || value === 'admin';
+}
+
+export function parseAuthRole(value: unknown, fallback: User['role'] = 'owner'): User['role'] {
+  return isUserRole(value) ? value : fallback;
+}
+
 export function buildUserFromAuth(authUser: AuthIdentityUser): User {
   const meta = authUser.user_metadata;
 
@@ -25,7 +33,7 @@ export function buildUserFromAuth(authUser: AuthIdentityUser): User {
     id: authUser.id,
     email: authUser.email || '',
     name: meta?.name || meta?.full_name || authUser.email?.split('@')[0] || '',
-    role: meta?.role || 'owner',
+    role: parseAuthRole(meta?.role),
     avatar_url: meta?.avatar_url || null,
     phone: null,
     city: meta?.city || null,

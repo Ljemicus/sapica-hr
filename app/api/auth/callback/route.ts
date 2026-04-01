@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ensureSitterProfile, syncUserProfile, type AuthProfileSupabaseLike } from '@/lib/auth-profile';
-import { buildUserFromAuth } from '@/lib/auth';
+import { buildUserFromAuth, parseAuthRole } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { appLogger } from '@/lib/logger';
 
@@ -39,7 +39,8 @@ export async function GET(request: Request) {
 
     if (!error && data.user) {
       const fallbackUser = buildUserFromAuth(data.user);
-      const role = requestedRole === 'sitter' || fallbackUser.role === 'sitter' ? 'sitter' : 'owner';
+      const requestedAuthRole = parseAuthRole(requestedRole);
+      const role = requestedAuthRole === 'sitter' || fallbackUser.role === 'sitter' ? 'sitter' : 'owner';
 
       const authProfileSupabase = supabase as unknown as AuthProfileSupabaseLike;
 
