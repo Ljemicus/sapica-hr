@@ -60,10 +60,9 @@ export async function sendConversationMessage(params: {
     body: JSON.stringify({ receiver_id: selectedPartnerId, content: trimmedContent }),
   });
 
-  const payload = response.ok ? await response.json() : null;
-  const mockId = `local-${Date.now()}`;
-  const localMsg = payload || {
-    id: mockId,
+  const payload: Message | null = response.ok ? ((await response.json()) as Message) : null;
+  const localMsg: Message = payload ?? {
+    id: `local-${Date.now()}`,
     sender_id: currentUser.id,
     receiver_id: selectedPartnerId,
     booking_id: null,
