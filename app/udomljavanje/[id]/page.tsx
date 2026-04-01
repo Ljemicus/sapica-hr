@@ -4,6 +4,8 @@ import { getAdoptionPet, getShelterById, SPECIES_LABEL } from '@/lib/db/adoption
 import { AdoptionDetailContent } from './adoption-detail-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+
 interface Props {
   params: Promise<{ id: string }>;
 }
@@ -21,6 +23,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${pet.name} traži dom | PetPark`,
       description: pet.description.slice(0, 200),
       type: 'article',
+      url: `${BASE_URL}/udomljavanje/${id}`,
+      images: [
+        {
+          url: '/opengraph-image',
+          width: 1200,
+          height: 630,
+          alt: `${pet.name} traži dom | PetPark`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${pet.name} traži dom | PetPark`,
+      description: pet.description.slice(0, 200),
+      images: ['/opengraph-image'],
+    },
+    alternates: {
+      canonical: `${BASE_URL}/udomljavanje/${id}`,
     },
   };
 }

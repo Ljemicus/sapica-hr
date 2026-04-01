@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
-import { getPet, createPet } from '@/lib/db';
+import { getPet } from '@/lib/db';
 import { createClient } from '@/lib/supabase/server';
 import { petSchema } from '@/lib/validations';
 

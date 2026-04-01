@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { apiError } from '@/lib/api-errors';
 import { getStripe } from '@/lib/stripe';
 import { calculateSitterPayout, calculatePlatformFee } from '@/lib/payment';
 import { appLogger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/server';
 import type Stripe from 'stripe';
 
 export const runtime = 'nodejs';
@@ -33,7 +33,15 @@ export async function POST(request: Request) {
     return apiError({ status: 400, code: 'INVALID_SIGNATURE', message: 'Invalid signature' });
   }
 
-  const supabase = await createClient();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    appLogger.error('payments.webhook', 'Supabase service role is not configured for webhook processing');
+    return apiError({ status: 500, code: 'WEBHOOK_STORAGE_UNAVAILABLE', message: 'Webhook storage not configured' });
+  }
+
+  const supabase = createSupabaseClient(supabaseUrl, serviceRoleKey);
 
   switch (event.type) {
     case 'checkout.session.completed': {

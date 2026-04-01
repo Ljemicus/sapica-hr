@@ -4,7 +4,6 @@ import {
   getTrainerById as mockGetTrainer,
   getTrainers as mockGetTrainers,
   getTrainingProgramsForTrainer as mockGetPrograms,
-  getTrainerReviews as mockGetTrainerReviews,
 } from '@/lib/mock-data';
 import type { Trainer, TrainingProgram, TrainingType } from '@/lib/types';
 
@@ -86,7 +85,6 @@ export async function getPrograms(trainerId: string): Promise<TrainingProgram[]>
 
 export async function getTrainerReviews(trainerId: string): Promise<TrainerReview[]> {
   if (!isSupabaseConfigured()) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return [];
   }
   try {
@@ -97,12 +95,10 @@ export async function getTrainerReviews(trainerId: string): Promise<TrainerRevie
       .eq('trainer_id', trainerId)
       .order('created_at', { ascending: false });
     if (error || !data) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return [];
     }
     return data as TrainerReview[];
   } catch {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return [];
   }
 }

@@ -11,6 +11,8 @@ import { FORUM_CATEGORIES } from '@/lib/types';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { CommentForm } from './comment-form';
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+
 const getCachedTopic = cache(async (id: string) => (await getForumTopicPageData(id)).topic);
 
 const gradients = [
@@ -47,6 +49,22 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return {
     title: `${topic.title} — Forum`,
     description: `Diskusija: ${topic.title}`,
+    openGraph: {
+      title: `${topic.title} — Forum | PetPark`,
+      description: `Diskusija: ${topic.title}`,
+      url: `${BASE_URL}/forum/${id}`,
+      type: 'article',
+      images: ['/opengraph-image'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${topic.title} — Forum | PetPark`,
+      description: `Diskusija: ${topic.title}`,
+      images: ['/opengraph-image'],
+    },
+    alternates: {
+      canonical: `${BASE_URL}/forum/${id}`,
+    },
   };
 }
 

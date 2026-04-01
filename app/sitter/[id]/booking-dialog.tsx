@@ -18,11 +18,11 @@ interface BookingDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   profile: SitterProfile & { user: User };
-  userId: string;
+  userId?: string;
   pets: Pet[];
 }
 
-export function BookingDialog({ open, onOpenChange, profile, userId, pets }: BookingDialogProps) {
+export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pets }: BookingDialogProps) {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const router = useRouter();
@@ -50,7 +50,6 @@ export function BookingDialog({ open, onOpenChange, profile, userId, pets }: Boo
 
   const onSubmit = async (data: BookingInput) => {
     setLoading(true);
-    const totalPrice = calculatePrice();
 
     const response = await fetch('/api/bookings', {
       method: 'POST',

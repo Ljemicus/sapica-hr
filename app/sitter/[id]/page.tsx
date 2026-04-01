@@ -6,6 +6,8 @@ import { getSitterPageData } from './sitter-page-data';
 import { SitterProfileContent } from './sitter-profile-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+
 interface SitterPageProps {
   params: Promise<{ id: string }>;
 }
@@ -19,6 +21,22 @@ export async function generateMetadata({ params }: SitterPageProps): Promise<Met
   return {
     title: profile ? `${profile.user.name} — Sitter u ${profile.user.city || 'Hrvatskoj'}` : 'Sitter profil',
     description: profile ? `Pogledajte profil sittera ${profile.user.name}. Rezervirajte uslugu čuvanja ljubimaca.` : '',
+    openGraph: profile ? {
+      title: `${profile.user.name} — Sitter u ${profile.user.city || 'Hrvatskoj'}`,
+      description: `Pogledajte profil sittera ${profile.user.name}. Rezervirajte uslugu čuvanja ljubimaca.`,
+      url: `${BASE_URL}/sitter/${id}`,
+      type: 'profile',
+      images: ['/opengraph-image'],
+    } : undefined,
+    twitter: profile ? {
+      card: 'summary_large_image',
+      title: `${profile.user.name} — Sitter u ${profile.user.city || 'Hrvatskoj'}`,
+      description: `Pogledajte profil sittera ${profile.user.name}. Rezervirajte uslugu čuvanja ljubimaca.`,
+      images: ['/opengraph-image'],
+    } : undefined,
+    alternates: profile ? {
+      canonical: `${BASE_URL}/sitter/${id}`,
+    } : undefined,
   };
 }
 

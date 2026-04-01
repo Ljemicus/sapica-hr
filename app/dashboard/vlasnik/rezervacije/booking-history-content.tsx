@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import { CalendarCheck, Star, RefreshCw, ArrowLeft, Clock, Dog, Cat, Loader2, Scissors, XCircle } from 'lucide-react';
@@ -100,7 +99,6 @@ export function BookingHistoryContent() {
   const [groomingLoading, setGroomingLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const { user } = useAuth();
-  const router = useRouter();
 
   // Fetch sitting bookings
   useEffect(() => {

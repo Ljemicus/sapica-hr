@@ -9,7 +9,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https: blob:",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.coingecko.com https://plausible.io https://api.resend.com https://api.stripe.com",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://plausible.io https://api.resend.com https://api.stripe.com",
   "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com",
   "form-action 'self' https://checkout.stripe.com",
   "upgrade-insecure-requests",

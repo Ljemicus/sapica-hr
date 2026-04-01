@@ -78,7 +78,12 @@ export function CookieConsent() {
                     <p className="text-sm font-medium text-gray-900">Neophodni kolačići</p>
                     <p className="text-xs text-gray-500">Potrebni za rad stranice (autentikacija, sesija)</p>
                   </div>
-                  <div className="h-5 w-9 bg-orange-500 rounded-full flex items-center justify-end px-0.5">
+                  <div
+                    role="switch"
+                    aria-checked="true"
+                    aria-label="Neophodni kolačići su uvijek uključeni"
+                    className="h-5 w-9 bg-orange-500 rounded-full flex items-center justify-end px-0.5"
+                  >
                     <div className="h-4 w-4 bg-white rounded-full" />
                   </div>
                 </div>
@@ -88,6 +93,10 @@ export function CookieConsent() {
                     <p className="text-xs text-gray-500">Pomažu nam razumjeti kako koristite stranicu (Plausible)</p>
                   </div>
                   <button
+                    type="button"
+                    role="switch"
+                    aria-checked={analytics}
+                    aria-label="Uključi ili isključi analitičke kolačiće"
                     onClick={() => setAnalytics(!analytics)}
                     className={`h-5 w-9 rounded-full flex items-center px-0.5 transition-colors ${analytics ? 'bg-orange-500 justify-end' : 'bg-gray-300 justify-start'}`}
                   >

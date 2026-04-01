@@ -9,8 +9,15 @@ interface SendEmailOptions {
 
 export async function sendEmail({ to, subject, html }: SendEmailOptions) {
   if (!RESEND_API_KEY) {
+    const message = 'RESEND_API_KEY is not configured';
+
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[Email Error]', message, { to, subject });
+      return { success: false, error: message };
+    }
+
     console.log('[Email DEV]', { to, subject });
-    return { success: true, dev: true };
+    return { success: true, dev: true, warning: message };
   }
 
   try {

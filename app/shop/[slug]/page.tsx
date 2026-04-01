@@ -5,6 +5,8 @@ import { ProductDetail } from './product-detail';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+
 const getCachedProductBySlug = cache(async (slug: string) => (await getProductPageData(slug)).product);
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -14,6 +16,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${product.name} — ${product.brand}`,
     description: product.description,
+    alternates: {
+      canonical: `${BASE_URL}/shop/${slug}`,
+    },
   };
 }
 

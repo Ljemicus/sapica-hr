@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import {
-  Star, MapPin, Shield, Award, Phone, Mail, Clock, Baby, ChevronRight,
+  Star, MapPin, Shield, Award, Phone, Mail, Clock,
   Image as ImageIcon, MessageSquare, Send, Share2, ArrowLeft, Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';

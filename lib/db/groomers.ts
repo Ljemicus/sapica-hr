@@ -3,7 +3,6 @@ import { isSupabaseConfigured } from './helpers';
 import {
   getGroomerById as mockGetGroomer,
   getGroomers as mockGetGroomers,
-  getGroomerReviews as mockGetGroomerReviews,
 } from '@/lib/mock-data';
 import type { Groomer, GroomingServiceType } from '@/lib/types';
 
@@ -76,7 +75,6 @@ export async function getGroomer(id: string): Promise<Groomer | null> {
 
 export async function getGroomerReviews(groomerId: string): Promise<GroomerReview[]> {
   if (!isSupabaseConfigured()) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return [];
   }
   try {
@@ -87,12 +85,10 @@ export async function getGroomerReviews(groomerId: string): Promise<GroomerRevie
       .eq('groomer_id', groomerId)
       .order('created_at', { ascending: false });
     if (error || !data) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return [];
     }
     return data as GroomerReview[];
   } catch {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return [];
   }
 }

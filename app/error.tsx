@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { appLogger } from '@/lib/logger';
 
 export default function Error({
   error,
@@ -11,11 +12,14 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Optionally log to an error reporting service
+    appLogger.error('app.error', 'Unhandled app error boundary triggered', {
+      message: error.message,
+      digest: error.digest,
+    });
   }, [error]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
+    <div role="alert" aria-live="assertive" className="flex flex-col items-center justify-center min-h-[60vh] px-4">
       <div className="text-6xl mb-4">😿</div>
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Nešto je pošlo po krivu</h1>
       <p className="text-gray-500 mb-6 text-center max-w-md">

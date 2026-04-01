@@ -4,6 +4,8 @@ import { getTrainer, getPrograms, getTrainerReviews, getAvailability } from '@/l
 import { TrainerProfile } from './trainer-profile';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+
 interface TrainerPageProps {
   params: Promise<{ id: string }>;
 }
@@ -15,6 +17,22 @@ export async function generateMetadata({ params }: TrainerPageProps): Promise<Me
   return {
     title: `${trainer.name} — Trener pasa u ${trainer.city}`,
     description: `Pogledajte profil trenera ${trainer.name}. Zakažite dresuru za svog psa.`,
+    openGraph: {
+      title: `${trainer.name} — Trener pasa u ${trainer.city}`,
+      description: `Pogledajte profil trenera ${trainer.name}. Zakažite dresuru za svog psa.`,
+      url: `${BASE_URL}/trener/${id}`,
+      type: 'profile',
+      images: ['/opengraph-image'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${trainer.name} — Trener pasa u ${trainer.city}`,
+      description: `Pogledajte profil trenera ${trainer.name}. Zakažite dresuru za svog psa.`,
+      images: ['/opengraph-image'],
+    },
+    alternates: {
+      canonical: `${BASE_URL}/trener/${id}`,
+    },
   };
 }
 

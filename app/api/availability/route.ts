@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { getAvailability, setAvailability } from '@/lib/db';
 import { appLogger } from '@/lib/logger';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: Request) {
   const user = await getAuthUser();
@@ -25,6 +26,11 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
+  const ip = request.headers.get('x-forwarded-for') || 'unknown';
+  if (!rateLimit(`availability:${ip}`, 120, 60_000)) {
+    return NextResponse.json({ error: 'Previše zahtjeva. Pokušajte kasnije.' }, { status: 429 });
+  }
+
   const { searchParams } = new URL(request.url);
   const sitterId = searchParams.get('sitter_id');
   if (!sitterId) return NextResponse.json({ error: 'sitter_id required' }, { status: 400 });

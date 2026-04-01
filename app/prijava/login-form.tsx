@@ -153,6 +153,7 @@ export function LoginForm() {
                 />
                 <button
                   type="button"
+                  aria-label={showPassword ? 'Sakrij lozinku' : 'Prikaži lozinku'}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >

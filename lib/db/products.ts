@@ -1,9 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
 import {
-  mockProducts,
   getProductBySlug as mockGetBySlug,
-  getProductsByCategory as mockGetByCategory,
   getProductReviews as mockGetReviews,
   getRelatedProducts as mockGetRelated,
 } from '@/lib/mock-data';

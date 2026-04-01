@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { updateGroomerBookingStatus, cancelGroomerBooking } from '@/lib/db';
+import { updateGroomerBookingStatus, cancelGroomerBooking, getGroomer } from '@/lib/db';
 import type { GroomerBookingStatus } from '@/lib/types';
 import { appLogger } from '@/lib/logger';
 
@@ -18,13 +18,12 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
   try {
     const body = await request.json();
-    const { status } = body as { status: GroomerBookingStatus };
+    const { status, groomerId } = body as { status: GroomerBookingStatus; groomerId?: string };
 
     if (!status) {
       return NextResponse.json({ error: 'status is required' }, { status: 400 });
     }
 
-    // If user is cancelling their own booking
     if (status === 'cancelled') {
       const result = await cancelGroomerBooking(id, user.id);
       if (!result) {
@@ -34,7 +33,23 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       return NextResponse.json(result);
     }
 
-    // Otherwise it's a groomer updating status (confirmed/rejected/completed)
+    if (!groomerId) {
+      return NextResponse.json({ error: 'groomerId is required for status updates' }, { status: 400 });
+    }
+
+    const groomer = await getGroomer(groomerId);
+    const isAuthorizedGroomer = Boolean(groomer && groomer.user_id === user.id);
+
+    if (!isAuthorizedGroomer && user.role !== 'admin') {
+      appLogger.warn('groomerBookings.update', 'forbidden status update attempt', {
+        bookingId: id,
+        userId: user.id,
+        groomerId,
+        status,
+      });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const result = await updateGroomerBookingStatus(id, status);
     if (!result) {
       appLogger.warn('groomerBookings.update', 'status update failed – not found', { bookingId: id, status });

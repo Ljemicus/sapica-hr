@@ -5,6 +5,8 @@ import { getGroomerPageData } from './groomer-page-data';
 import { GroomerProfile } from './groomer-profile';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+
 interface GroomerPageProps {
   params: Promise<{ id: string }>;
 }
@@ -18,6 +20,22 @@ export async function generateMetadata({ params }: GroomerPageProps): Promise<Me
   return {
     title: `${groomer.name} — Grooming u ${groomer.city}`,
     description: `Pogledajte profil groomera ${groomer.name}. Zakažite termin za uljepšavanje ljubimca.`,
+    openGraph: {
+      title: `${groomer.name} — Grooming u ${groomer.city}`,
+      description: `Pogledajte profil groomera ${groomer.name}. Zakažite termin za uljepšavanje ljubimca.`,
+      url: `${BASE_URL}/groomer/${id}`,
+      type: 'profile',
+      images: ['/opengraph-image'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${groomer.name} — Grooming u ${groomer.city}`,
+      description: `Pogledajte profil groomera ${groomer.name}. Zakažite termin za uljepšavanje ljubimca.`,
+      images: ['/opengraph-image'],
+    },
+    alternates: {
+      canonical: `${BASE_URL}/groomer/${id}`,
+    },
   };
 }
 

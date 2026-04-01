@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSitters } from '@/lib/db';
 import type { ServiceType } from '@/lib/types';
 import { appLogger } from '@/lib/logger';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -11,6 +12,11 @@ export async function GET(request: Request) {
   const minPrice = searchParams.get('min_price');
   const maxPrice = searchParams.get('max_price');
   const sort = searchParams.get('sort') || undefined;
+  const ip = request.headers.get('x-forwarded-for') || 'unknown';
+
+  if (!rateLimit(`sitters:list:${ip}`, 60, 60_000)) {
+    return NextResponse.json({ error: 'Previše zahtjeva. Pokušajte kasnije.' }, { status: 429 });
+  }
 
   try {
     const data = await getSitters({

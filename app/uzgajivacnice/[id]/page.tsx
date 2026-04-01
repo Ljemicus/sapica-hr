@@ -4,6 +4,8 @@ import { getBreeder, MOCK_BREEDERS } from '@/lib/db/breeders';
 import { BreederDetailContent } from './breeder-detail-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+
 interface BreederPageProps {
   params: Promise<{ id: string }>;
 }
@@ -14,6 +16,9 @@ export async function generateMetadata({ params }: BreederPageProps): Promise<Me
   return {
     title: breeder ? `${breeder.name} — Uzgajivač u ${breeder.city}` : 'Uzgajivač profil',
     description: breeder ? `Pogledajte profil uzgajivača ${breeder.name} u ${breeder.city}. ${breeder.breeds.join(', ')}.` : '',
+    alternates: breeder ? {
+      canonical: `${BASE_URL}/uzgajivacnice/${id}`,
+    } : undefined,
   };
 }
 
