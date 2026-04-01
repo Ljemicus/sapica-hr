@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createClient } from '@/lib/supabase/client';
+import { getAuthCallbackUrl } from '@/lib/auth-redirect';
 import { loginSchema, type LoginInput } from '@/lib/validations';
 import { toast } from 'sonner';
 
@@ -61,23 +62,23 @@ export function LoginForm() {
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleOAuthLogin = async (provider: 'google' | 'apple' | 'facebook') => {
     setLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider,
       options: {
-        redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(redirect)}`,
+        redirectTo: getAuthCallbackUrl(redirect),
       },
     });
+
     if (error) {
-      toast.error('Greška pri prijavi s Google računom');
+      toast.error(`Greška pri prijavi putem ${provider === 'google' ? 'Googlea' : provider === 'apple' ? 'Applea' : 'Facebooka'}`);
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-[80vh] flex">
-      {/* Left side - Form */}
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="text-center mb-8 animate-fade-in-up">
@@ -86,21 +87,10 @@ export function LoginForm() {
             <p className="text-muted-foreground mt-2">Prijavite se na svoj <span className="text-orange-500">Pet</span><span className="text-teal-600">Park</span> račun</p>
           </div>
 
-          {/* Social Login */}
           <div className="space-y-3 animate-fade-in-up delay-100">
             <button
               type="button"
-              onClick={async () => {
-                setLoading(true);
-                const { error } = await supabase.auth.signInWithOAuth({
-                  provider: 'apple',
-                  options: { redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(redirect)}` }
-                });
-                if (error) {
-                  toast.error(error.message);
-                  setLoading(false);
-                }
-              }}
+              onClick={() => handleOAuthLogin('apple')}
               className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl bg-black text-white font-medium hover:bg-gray-800 transition-colors"
               disabled={loading}
             >
@@ -111,7 +101,7 @@ export function LoginForm() {
             </button>
             <button
               type="button"
-              onClick={handleGoogleLogin}
+              onClick={() => handleOAuthLogin('google')}
               className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl border-2 border-gray-200 font-medium hover:bg-gray-50 hover:border-gray-300 transition-colors"
               disabled={loading}
             >
@@ -125,11 +115,9 @@ export function LoginForm() {
             </button>
             <button
               type="button"
-              onClick={() => toast.info('Facebook prijava trenutno nije aktivna', { description: 'Koristite email, Google ili Apple prijavu.' })}
-              className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl bg-[#1877F2] text-white/90 font-medium opacity-60 cursor-not-allowed"
-              disabled
-              aria-disabled="true"
-              title="Facebook prijava trenutno nije aktivna"
+              onClick={() => handleOAuthLogin('facebook')}
+              className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl bg-[#1877F2] text-white font-medium hover:bg-[#1669d8] transition-colors"
+              disabled={loading}
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -193,7 +181,6 @@ export function LoginForm() {
         </div>
       </div>
 
-      {/* Right side - Decorative */}
       <div className="hidden lg:flex flex-1 bg-gradient-to-br from-orange-500 to-amber-400 items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 paw-pattern opacity-[0.08]" />
         <div className="absolute top-20 -left-20 w-60 h-60 bg-white rounded-full opacity-10" />

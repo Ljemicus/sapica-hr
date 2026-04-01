@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ImageUpload } from '@/components/shared/image-upload';
 import { createClient } from '@/lib/supabase/client';
+import { getAuthCallbackUrl } from '@/lib/auth-redirect';
 import { registerSchema, type RegisterInput } from '@/lib/validations';
 import { CITIES } from '@/lib/types';
 import { toast } from 'sonner';
@@ -76,25 +77,25 @@ export function RegisterForm() {
     }
   };
 
-  const handleGoogleSignup = async () => {
+  const handleOAuthSignup = async (provider: 'google' | 'apple' | 'facebook') => {
     setLoading(true);
     const target = redirect || (selectedRole === 'sitter' ? '/dashboard/sitter' : '/dashboard/vlasnik');
     const role = selectedRole === 'sitter' ? 'sitter' : 'owner';
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider,
       options: {
-        redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(target)}&role=${encodeURIComponent(role)}`,
+        redirectTo: getAuthCallbackUrl(target, role),
       },
     });
+
     if (error) {
-      toast.error('Greška pri registraciji s Google računom');
+      toast.error(`Greška pri registraciji putem ${provider === 'google' ? 'Googlea' : provider === 'apple' ? 'Applea' : 'Facebooka'}`);
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-[80vh] flex">
-      {/* Left side - Decorative */}
       <div className="hidden lg:flex flex-1 bg-gradient-to-br from-orange-500 to-amber-400 items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 paw-pattern opacity-[0.08]" />
         <div className="absolute bottom-20 -left-20 w-60 h-60 bg-white rounded-full opacity-10" />
@@ -120,7 +121,6 @@ export function RegisterForm() {
         </div>
       </div>
 
-      {/* Right side - Form */}
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="text-center mb-8 animate-fade-in-up">
@@ -129,7 +129,6 @@ export function RegisterForm() {
             <p className="text-muted-foreground mt-2">Kreirajte svoj <span className="text-orange-500">Pet</span><span className="text-teal-600">Park</span> račun</p>
           </div>
 
-          {/* Role Selection */}
           <div className="space-y-2 mb-6 animate-fade-in-up delay-100">
             <Label className="text-sm font-medium">Ja sam...</Label>
             <div className="grid grid-cols-2 gap-3">
@@ -163,24 +162,12 @@ export function RegisterForm() {
             {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
           </div>
 
-          {/* Social Registration */}
           <div className="space-y-3 mb-6 animate-fade-in-up delay-150">
             <button
               type="button"
-              onClick={async () => {
-                setLoading(true);
-                const target = redirect || (selectedRole === 'sitter' ? '/dashboard/sitter' : '/dashboard/vlasnik');
-                const role = selectedRole === 'sitter' ? 'sitter' : 'owner';
-                const { error } = await supabase.auth.signInWithOAuth({
-                  provider: 'apple',
-                  options: { redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(target)}&role=${encodeURIComponent(role)}` }
-                });
-                if (error) {
-                  toast.error(error.message);
-                  setLoading(false);
-                }
-              }}
+              onClick={() => handleOAuthSignup('apple')}
               className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl bg-black text-white font-medium hover:bg-gray-800 transition-colors"
+              disabled={loading}
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
@@ -189,7 +176,7 @@ export function RegisterForm() {
             </button>
             <button
               type="button"
-              onClick={handleGoogleSignup}
+              onClick={() => handleOAuthSignup('google')}
               className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl border-2 border-gray-200 font-medium hover:bg-gray-50 hover:border-gray-300 transition-colors"
               disabled={loading}
             >
@@ -203,11 +190,9 @@ export function RegisterForm() {
             </button>
             <button
               type="button"
-              onClick={() => toast.info('Facebook prijava trenutno nije aktivna', { description: 'Koristite email, Google ili Apple registraciju.' })}
-              className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl bg-[#1877F2] text-white/90 font-medium opacity-60 cursor-not-allowed"
-              disabled
-              aria-disabled="true"
-              title="Facebook prijava trenutno nije aktivna"
+              onClick={() => handleOAuthSignup('facebook')}
+              className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl bg-[#1877F2] text-white font-medium hover:bg-[#1669d8] transition-colors"
+              disabled={loading}
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -222,7 +207,6 @@ export function RegisterForm() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 animate-fade-in-up delay-200">
-            {/* Avatar upload */}
             <div className="flex justify-center mb-2">
               <ImageUpload
                 variant="avatar"
