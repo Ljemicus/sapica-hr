@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-errors';
 import { appLogger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/server';
 
@@ -8,13 +9,13 @@ export async function POST(request: NextRequest) {
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
     }
 
     const { endpoint, p256dh, auth } = await request.json();
 
     if (!endpoint || !p256dh || !auth) {
-      return NextResponse.json({ error: 'Missing subscription data' }, { status: 400 });
+      return apiError({ status: 400, code: 'INVALID_SUBSCRIPTION', message: 'Missing subscription data' });
     }
 
     const { error } = await supabase
@@ -36,6 +37,6 @@ export async function POST(request: NextRequest) {
     appLogger.error('notifications.subscribe', 'Push subscription error', {
       message: error instanceof Error ? error.message : 'unknown',
     });
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return apiError({ status: 500, code: 'SUBSCRIPTION_SAVE_FAILED', message: 'Internal server error' });
   }
 }

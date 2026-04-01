@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-errors';
 import { getStripe } from '@/lib/stripe';
 import { calculateSitterPayout, calculatePlatformFee } from '@/lib/payment';
 import { appLogger } from '@/lib/logger';
@@ -13,7 +14,7 @@ export async function POST(request: Request) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
   if (!webhookSecret || webhookSecret.includes('REPLACE')) {
-    return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
+    return apiError({ status: 500, code: 'WEBHOOK_UNAVAILABLE', message: 'Webhook not configured' });
   }
 
   const body = await request.text();
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
 
   if (!sig) {
     appLogger.warn('payments.webhook', 'Missing stripe-signature header');
-    return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 });
+    return apiError({ status: 400, code: 'SIGNATURE_MISSING', message: 'Missing stripe-signature header' });
   }
 
   let event: Stripe.Event;
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch {
     appLogger.error('payments.webhook', 'Signature verification failed');
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+    return apiError({ status: 400, code: 'INVALID_SIGNATURE', message: 'Invalid signature' });
   }
 
   const supabase = await createClient();

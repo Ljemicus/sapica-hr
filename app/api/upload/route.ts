@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { appLogger } from '@/lib/logger';
 import { rateLimit } from '@/lib/rate-limit';
@@ -16,12 +17,12 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getAuthUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
     }
 
     const ip = request.headers.get('x-forwarded-for') || 'unknown';
     if (!rateLimit(`upload:${user.id}:${ip}`, 10, 60_000)) {
-      return NextResponse.json({ error: 'Previše uploadova. Pokušajte kasnije.' }, { status: 429 });
+      return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše uploadova. Pokušajte kasnije.' });
     }
 
     const formData = await request.formData();
@@ -31,22 +32,22 @@ export async function POST(request: NextRequest) {
 
     if (!file) {
       appLogger.warn('upload.image', 'Upload rejected because file is missing');
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+      return apiError({ status: 400, code: 'FILE_MISSING', message: 'No file provided' });
     }
     if (!ALLOWED_TYPES.has(file.type)) {
-      return NextResponse.json({ error: 'Dozvoljene su samo JPG, PNG i WebP slike.' }, { status: 400 });
+      return apiError({ status: 400, code: 'INVALID_FILE_TYPE', message: 'Dozvoljene su samo JPG, PNG i WebP slike.' });
     }
     if (file.size <= 0 || file.size > MAX_FILE_SIZE) {
-      return NextResponse.json({ error: 'Datoteka je prevelika. Max 5MB.' }, { status: 400 });
+      return apiError({ status: 400, code: 'FILE_TOO_LARGE', message: 'Datoteka je prevelika. Max 5MB.' });
     }
     if (!ALLOWED_BUCKETS.has(requestedBucket)) {
-      return NextResponse.json({ error: 'Invalid bucket' }, { status: 400 });
+      return apiError({ status: 400, code: 'INVALID_BUCKET', message: 'Invalid bucket' });
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!supabaseUrl || !serviceRoleKey) {
-      return NextResponse.json({ error: 'Storage not configured' }, { status: 500 });
+      return apiError({ status: 500, code: 'STORAGE_UNAVAILABLE', message: 'Storage not configured' });
     }
 
     const safeFolder = sanitizeSegment(requestedFolder) || 'uploads';
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
         path,
         reason: error.message,
       });
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return apiError({ status: 500, code: 'UPLOAD_FAILED', message: error.message });
     }
 
     const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
@@ -88,6 +89,6 @@ export async function POST(request: NextRequest) {
     appLogger.error('upload.image', 'Upload failed unexpectedly', {
       message: error instanceof Error ? error.message : 'unknown',
     });
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+    return apiError({ status: 500, code: 'UPLOAD_FAILED', message: 'Upload failed' });
   }
 }
