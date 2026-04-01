@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getArticles } from '@/lib/db';
+import { getArticles } from '@/lib/db/content';
 import { BlogContent } from './blog-content';
 import type { BlogCategory } from '@/lib/types';
 

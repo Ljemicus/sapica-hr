@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { MessageSquare } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { getTopics, getTrendingTopics } from '@/lib/db';
+import { getTopics, getTrendingTopics } from '@/lib/db/content';
 import { ForumContent } from './forum-content';
 
 export const metadata: Metadata = {

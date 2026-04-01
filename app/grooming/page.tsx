@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getGroomers } from '@/lib/db';
+import { getGroomers } from '@/lib/db/extensions';
 import { GroomingContent } from './grooming-content';
 import type { GroomingServiceType } from '@/lib/types';
 
