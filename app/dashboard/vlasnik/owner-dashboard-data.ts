@@ -1,7 +1,11 @@
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
 import { getBookings, getPetsByOwner, getReviewedBookingIds, getUser, getWalksForUser } from '@/lib/db/marketplace';
-import type { OwnerDashboardProps } from './components/owner-dashboard-types';
+import type { OwnerDashboardBooking, OwnerDashboardProps } from './components/owner-dashboard-types';
+
+function isOwnerDashboardBooking(value: Awaited<ReturnType<typeof getBookings>>[number]): value is OwnerDashboardBooking {
+  return Boolean(value.sitter && value.pet);
+}
 
 export async function getOwnerDashboardData(): Promise<OwnerDashboardProps> {
   const user = await getAuthUser();
@@ -9,7 +13,7 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardProps> {
   if (user.role !== 'owner') redirect('/');
 
   const pets = await getPetsByOwner(user.id);
-  const bookings = (await getBookings(user.id, 'owner')) as OwnerDashboardProps['bookings'];
+  const bookings = (await getBookings(user.id, 'owner')).filter(isOwnerDashboardBooking);
   const reviewedBookingIds = await getReviewedBookingIds(user.id);
 
   const walks = await getWalksForUser(user.id);

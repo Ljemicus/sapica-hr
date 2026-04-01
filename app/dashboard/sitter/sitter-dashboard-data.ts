@@ -8,6 +8,15 @@ import {
   getSitter,
 } from '@/lib/db/marketplace';
 import type { SitterDashboardProps } from './components/sitter-dashboard-types';
+import type { SitterDashboardBooking, SitterDashboardReview } from '@/lib/types';
+
+function isSitterDashboardBooking(value: Awaited<ReturnType<typeof getBookings>>[number]): value is SitterDashboardBooking {
+  return Boolean(value.owner && value.pet);
+}
+
+function isSitterDashboardReview(value: Awaited<ReturnType<typeof getReviewsBySitter>>[number]): value is SitterDashboardReview {
+  return Boolean(value.reviewer);
+}
 
 export async function getSitterDashboardData(): Promise<SitterDashboardProps> {
   const user = await getAuthUser();
@@ -15,8 +24,8 @@ export async function getSitterDashboardData(): Promise<SitterDashboardProps> {
   if (user.role !== 'sitter') redirect('/');
 
   const profile = await getSitter(user.id);
-  const bookings = (await getBookings(user.id, 'sitter')) as SitterDashboardProps['bookings'];
-  const reviews = await getReviewsBySitter(user.id, 'sitter-dashboard');
+  const bookings = (await getBookings(user.id, 'sitter')).filter(isSitterDashboardBooking);
+  const reviews = (await getReviewsBySitter(user.id, 'sitter-dashboard')).filter(isSitterDashboardReview);
   const availability = await getAvailability(user.id);
   const recentUpdates = await getRecentUpdatesBySitter(user.id);
 
