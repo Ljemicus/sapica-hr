@@ -1,18 +1,21 @@
 import type { Metadata } from 'next';
 import { VeterinariContent } from './veterinari-content';
+import { getVeterinarians } from '@/lib/db/veterinarians';
 
 export const metadata: Metadata = {
-  title: 'Veterinarske ordinacije u Hrvatskoj',
-  description: 'Pronađite pouzdane veterinarske ordinacije u vašem gradu. Pregled klinika s ocjenama, radnim vremenom i kontakt podacima.',
-  keywords: ['veterinar', 'veterinarska ordinacija', 'veterinar zagreb', 'veterinar split', 'veterinarska klinika'],
+  title: 'Veterinarske stanice i ambulante u Hrvatskoj',
+  description: 'Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj s adresama i kontakt podacima.',
+  keywords: ['veterinar', 'veterinarska stanica', 'veterinarska ambulanta', 'veterinari hrvatska', 'petpark veterinari'],
   openGraph: {
-    title: 'Veterinarske ordinacije u Hrvatskoj | PetPark',
-    description: 'Pronađite pouzdane veterinarske ordinacije u vašem gradu s ocjenama i kontakt podacima.',
+    title: 'Veterinarske stanice i ambulante u Hrvatskoj | PetPark',
+    description: 'Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj s adresama i kontakt podacima.',
     url: 'https://petpark.hr/veterinari',
     type: 'website',
   },
 };
 
-export default function VeterinariPage() {
-  return <VeterinariContent />;
+export default async function VeterinariPage() {
+  const veterinarians = await getVeterinarians();
+
+  return <VeterinariContent veterinarians={veterinarians} />;
 }

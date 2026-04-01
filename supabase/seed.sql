@@ -344,5 +344,11 @@ INSERT INTO public.articles (slug, title, excerpt, body, author, date, category,
 ('zasto-je-socijalizacija-macaka-vazna', 'Zašto je socijalizacija mačaka važna', 'Mačke nisu samotnjaci — evo zašto i kako socijalizirati mačku.', 'Unatoč uvriježenom mišljenju, mačke su socijalne životinje koje trebaju interakciju. Socijalizacija je najvažnija između 2. i 7. tjedna života, ali nikad nije kasno. Izložite mačku različitim zvukovima, teksturama i ljudima. Igra je ključna — koristite igračke s perjem, laser pointere i puzzle feedere. Ako imate više mačaka, osigurajte svakoj vlastiti prostor za hranjenje i litter box. Socijalizirana mačka je sretnija i zdravija mačka.', 'Dr. Nina Šimunović', '2026-03-01', 'zdravlje', '🐱')
 ON CONFLICT (slug) DO NOTHING;
 
+-- ════════════════════════════════════════════════════════
+-- Veterinarians (Official Registry)
+-- ════════════════════════════════════════════════════════
+
+\i ./seed-veterinari.sql
+
 -- Re-enable FK checks
 SET session_replication_role = DEFAULT;
