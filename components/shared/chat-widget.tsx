@@ -105,8 +105,8 @@ export function ChatWidget() {
         <div className="flex items-center gap-2">
           <span className="text-lg">🐾</span>
           <div>
-            <h3 className="font-semibold text-sm">PetPark AI asistent</h3>
-            <p className="text-[11px] text-orange-100">Brza pomoć za onboarding, podršku i česta pitanja</p>
+            <h3 className="font-semibold text-sm">PetPark pomoćnik</h3>
+            <p className="text-[11px] text-orange-100">Brza pomoć za snalaženje, rezervacije i česta pitanja</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -182,7 +182,7 @@ export function ChatWidget() {
             <Link href="/poruke" className="font-semibold text-orange-600 hover:text-orange-700">
               Poruke
             </Link>
-            . AI asistent služi za pomoć oko korištenja PetParka.
+            . PetPark pomoćnik služi za brzu pomoć oko korištenja platforme.
           </div>
         )}
         <div className="flex items-center gap-2">
@@ -192,7 +192,7 @@ export function ChatWidget() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Pitaj nešto o PetParku..."
+            placeholder="Npr. kako dogovoriti čuvanje?"
             className="flex-1 rounded-full border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-100"
           />
           <button
@@ -214,7 +214,7 @@ export function ChatWidget() {
         <div className="flex items-center gap-2">
           <MessageCircle className="h-5 w-5" />
           <div>
-            <h3 className="font-semibold text-sm">Chat i podrška</h3>
+            <h3 className="font-semibold text-sm">PetPark pomoć</h3>
             <p className="text-[11px] text-orange-100">Odaberi što ti sada treba</p>
           </div>
         </div>
@@ -229,7 +229,7 @@ export function ChatWidget() {
 
       <div className="flex-1 bg-white p-4">
         <div className="mb-3 rounded-2xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
-          Tvoje postojeće poruke ostaju odvojene. AI asistent je dodatna pomoć kad želiš brzo saznati kako nešto radi na PetParku.
+          Tvoje postojeće poruke ostaju odvojene. PetPark pomoćnik je tu kad želiš brzo saznati kako nešto radi na platformi.
         </div>
 
         <div className="space-y-3">
@@ -242,7 +242,7 @@ export function ChatWidget() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                Otvori poruke
+                Idi u poruke
                 <ExternalLink className="h-3.5 w-3.5 text-gray-400 transition-transform group-hover:translate-x-0.5" />
               </div>
               <p className="mt-1 text-sm text-gray-600">
@@ -261,11 +261,11 @@ export function ChatWidget() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                Pitaj AI asistenta
+                Brza PetPark pomoć
                 <Sparkles className="h-3.5 w-3.5 text-orange-500" />
               </div>
               <p className="mt-1 text-sm text-gray-600">
-                Dobij brze odgovore o registraciji, bookingu, plaćanju, uslugama i snalaženju na platformi.
+                Dobij brze odgovore o registraciji, rezervacijama, plaćanju, uslugama i snalaženju na PetParku.
               </p>
             </div>
             <ChevronRight className="mt-1 h-4 w-4 text-orange-500 transition-transform group-hover:translate-x-0.5" />
@@ -281,7 +281,7 @@ export function ChatWidget() {
         <button
           onClick={handleOpen}
           className="fixed bottom-6 left-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-all hover:scale-110 hover:bg-orange-600 active:scale-95 disabled:cursor-wait disabled:opacity-70"
-          aria-label={isAuthenticated ? 'Otvori chat i AI asistenta' : 'Otvori AI asistenta'}
+          aria-label={isAuthenticated ? 'Otvori pomoć i poruke' : 'Otvori PetPark pomoć'}
           disabled={loading}
         >
           <MessageCircle className="h-6 w-6" />

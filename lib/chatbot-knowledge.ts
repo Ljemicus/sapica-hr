@@ -47,19 +47,19 @@ export function findBestMatch(input: string, options: MatchOptions = {}): string
   }
 
   if (options.isAuthenticated) {
-    return 'Ne vidim još točan odgovor na to pitanje. 🤔 Mogu pomoći oko registracije, bookinga, plaćanja, usluga i snalaženja na PetParku. Ako želiš razgovarati sa sitterom ili otvoriti postojeći razgovor, idi u Poruke. Za podršku nam piši na petparkhr@gmail.com.';
+    return 'Još nemam baš točan odgovor na to pitanje. 🤔 Mogu pomoći oko registracije, rezervacija, plaćanja, usluga i snalaženja na PetParku. Ako želiš razgovarati sa sitterom ili otvoriti postojeći razgovor, idi u Poruke. Ako zapne, javi nam se na petparkhr@gmail.com.';
   }
 
-  return 'Ne vidim još točan odgovor na to pitanje. 🤔 Pokušaj pitati npr. kako funkcionira booking, prijava, grooming ili forum. Ako trebaš pomoć od tima, javi se na petparkhr@gmail.com.';
+  return 'Još nemam baš točan odgovor na to pitanje. 🤔 Pokušaj pitati npr. kako funkcionira rezervacija, prijava, grooming ili forum. Ako trebaš pomoć tima, javi se na petparkhr@gmail.com.';
 }
 
 export function getSuggestedPrompts(isAuthenticated = false): string[] {
   if (isAuthenticated) {
     return [
-      'Kako dogovoriti booking?',
+      'Kako poslati upit za čuvanje?',
       'Kako funkcionira plaćanje?',
-      'Gdje pronaći groomere?',
-      'Kako radi forum?',
+      'Gdje mogu naći groomera?',
+      'Gdje vidim svoje rezervacije?',
     ];
   }
 
@@ -67,11 +67,11 @@ export function getSuggestedPrompts(isAuthenticated = false): string[] {
     'Kako PetPark funkcionira?',
     'Kako se registrirati?',
     'Kako pronaći sittera?',
-    'Koliko košta?',
+    'Kako rezervirati čuvanje?',
   ];
 }
 
-export const WELCOME_MESSAGE = 'Bok! 🐾 Ja sam PetPark AI asistent. Mogu ti pomoći oko registracije, pronalaska sittera, bookinga, plaćanja, groominga, školovanja pasa i snalaženja na platformi. Pitaj me što god trebaš.';
+export const WELCOME_MESSAGE = 'Bok! 🐾 Ja sam PetPark pomoćnik. Tu sam da ti brzo pomognem oko registracije, pronalaska sittera, rezervacija, plaćanja, groominga, školovanja pasa i snalaženja na platformi. Reci što trebaš.';
 
 export const knowledgeBase: KBEntry[] = [
   // === OPĆENITO ===
@@ -104,7 +104,7 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['prijaviti', 'prijava', 'login', 'ulogirati', 'ne mogu se prijaviti', 'ne radi prijava'],
-    response: 'Za prijavu koristi email + lozinku ili Google račun. Ako imaš problema:\n\n• Provjeri je li email točan\n• Pokušaj resetirati lozinku\n• Probaj Google prijavu\n\nAko i dalje ne radi, javi nam se na petparkhr@gmail.com i riješimo to! 💪',
+    response: 'Za prijavu koristi email + lozinku ili Google račun. Ako imaš problema:\n\n• Provjeri je li email točan\n• Pokušaj resetirati lozinku\n• Probaj Google prijavu\n\nAko i dalje ne radi, javi nam se na petparkhr@gmail.com pa rješavamo. 💪',
     category: 'registration',
   },
   {
@@ -148,7 +148,7 @@ export const knowledgeBase: KBEntry[] = [
   // === BOOKING ===
   {
     keywords: ['booking', 'bookirati', 'rezervacija', 'rezervirati', 'naručiti', 'zakazati'],
-    response: 'Booking je jednostavan! 📅\n\n1️⃣ Pronađi sittera koji ti odgovara\n2️⃣ Klikni na profil\n3️⃣ Odaberi datum i uslugu\n4️⃣ Pošalji zahtjev\n5️⃣ Sitter potvrdi — i dogovoreno!\n\nSve detalje možeš dogovoriti preko chata na platformi.',
+    response: 'Rezervacija je jednostavna! 📅\n\n1️⃣ Pronađi sittera koji ti odgovara\n2️⃣ Otvori profil\n3️⃣ Odaberi datum i uslugu\n4️⃣ Pošalji zahtjev\n5️⃣ Kad sitter potvrdi — dogovoreno!\n\nSve detalje možeš dogovoriti kroz poruke na platformi.',
     category: 'booking',
   },
   {
@@ -194,12 +194,12 @@ export const knowledgeBase: KBEntry[] = [
   // === KONTAKT / PROBLEMI ===
   {
     keywords: ['kontakt', 'email', 'mail', 'javiti', 'pomoć', 'pomoc', 'support', 'podrška', 'podrska'],
-    response: 'Možeš nas kontaktirati na:\n\n📧 **petparkhr@gmail.com**\n💬 Discord #customer-support\n\nOdgovaramo u najkraćem mogućem roku! 🚀',
+    response: 'Možeš nam se javiti na:\n\n📧 **petparkhr@gmail.com**\n💬 Discord #customer-support\n\nOdgovaramo čim uhvatimo. 🚀',
     category: 'contact',
   },
   {
     keywords: ['bug', 'greška', 'greska', 'ne radi', 'error', 'problem', 'kvari', 'crashira'],
-    response: 'Ups, sorry za problem! 🔧 Javi nam detalje:\n\n• Što se točno dogodilo?\n• Na kojem uređaju/browseru?\n• Ako možeš, pošalji screenshot\n\n📧 petparkhr@gmail.com ili ovdje u chatu — pogledamo odmah!',
+    response: 'Ups, žao mi je zbog problema. 🔧 Javi nam detalje:\n\n• Što se točno dogodilo?\n• Na kojem uređaju ili browseru?\n• Ako možeš, pošalji screenshot\n\n📧 petparkhr@gmail.com — pogledamo što prije!',
     category: 'contact',
   },
   {
@@ -221,7 +221,7 @@ export const knowledgeBase: KBEntry[] = [
   },
   {
     keywords: ['bok', 'hej', 'hello', 'hi', 'pozdrav', 'cao', 'zdravo', 'dobro jutro', 'dobar dan'],
-    response: 'Bok! 👋🐾 Kako ti mogu pomoći? Pitaj me bilo što o PetParku!',
+    response: 'Bok! 👋🐾 Kako mogu pomoći oko PetParka?',
     category: 'general',
   },
 ];
