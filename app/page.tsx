@@ -14,11 +14,11 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'PetPark — Sve za ljubimce na jednom mjestu',
-  description: 'Čuvanje, grooming, školovanje pasa, veterinari, pet shop, udomljavanje, dog-friendly lokacije i zajednica ljubitelja životinja — sve na jednom mjestu u Hrvatskoj.',
-  keywords: ['pet sitting hrvatska', 'čuvanje ljubimaca', 'grooming', 'školovanje pasa', 'veterinar', 'pet shop', 'udomljavanje', 'dog-friendly'],
+  description: 'Čuvanje, grooming, školovanje pasa, veterinari, udomljavanje, dog-friendly lokacije i zajednica ljubitelja životinja — sve na jednom mjestu u Hrvatskoj.',
+  keywords: ['pet sitting hrvatska', 'čuvanje ljubimaca', 'grooming', 'školovanje pasa', 'veterinar', 'udomljavanje', 'dog-friendly'],
   openGraph: {
     title: 'PetPark — Sve za ljubimce na jednom mjestu',
-    description: 'Čuvanje, grooming, školovanje, veterinari, shop, udomljavanje i zajednica — sve u jednoj aplikaciji.',
+    description: 'Čuvanje, grooming, školovanje, veterinari, udomljavanje i zajednica — sve u jednoj aplikaciji.',
     url: 'https://petpark.hr',
     type: 'website',
   },
@@ -36,7 +36,6 @@ const homepageServices = [
   { name: 'Grooming', url: 'https://petpark.hr/njega', description: 'Profesionalni saloni za uljepšavanje ljubimaca' },
   { name: 'Školovanje pasa', url: 'https://petpark.hr/dresura', description: 'Certificirani treneri i programi za pse' },
   { name: 'Veterinari', url: 'https://petpark.hr/veterinari', description: 'Veterinarske ordinacije u vašem gradu' },
-  { name: 'Pet Shop', url: 'https://petpark.hr/shop', description: 'Hrana, igračke i oprema za ljubimce' },
   { name: 'Udomljavanje', url: 'https://petpark.hr/udomljavanje', description: 'Psi i mačke koji traže dom' },
   { name: 'Dog-Friendly lokacije', url: 'https://petpark.hr/dog-friendly', description: 'Kafići, restorani i plaže za pse' },
   { name: 'Izgubljeni ljubimci', url: 'https://petpark.hr/izgubljeni', description: 'Prijavite ili pronađite izgubljenog ljubimca' },
@@ -64,18 +63,17 @@ const mainCards = [
   { href: '/dresura', emoji: '🎓', title: 'Školovanje pasa', description: 'Profesionalna obuka i trening', bg: 'from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/20', hover: 'hover:shadow-indigo-200/40 dark:hover:shadow-indigo-900/20', border: 'border-indigo-100 dark:border-indigo-900/30' },
   { href: '/forum', emoji: '💬', title: 'Forum', description: 'Zajednica ljubitelja životinja', bg: 'from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/20', hover: 'hover:shadow-teal-200/40 dark:hover:shadow-teal-900/20', border: 'border-teal-100 dark:border-teal-900/30' },
   { href: '/zajednica', emoji: '📝', title: 'Blog', description: 'Savjeti, vodiči i priče', bg: 'from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/20', hover: 'hover:shadow-purple-200/40 dark:hover:shadow-purple-900/20', border: 'border-purple-100 dark:border-purple-900/30' },
-  { href: '/shop', emoji: '🛒', title: 'Webshop', description: 'Sve za vašeg ljubimca', bg: 'from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/20', hover: 'hover:shadow-amber-200/40 dark:hover:shadow-amber-900/20', border: 'border-amber-100 dark:border-amber-900/30' },
 ];
 
 const services = [
-  { type: 'boarding' as const, title: 'Smještaj', description: 'Vaš ljubimac boravi kod sittera', icon: Home, price: 'od 20€/noć', color: 'from-orange-500 to-amber-500', image: '/images/services/01-pet-sitting.jpg' },
-  { type: 'walking' as const, title: 'Šetnja', description: 'Šetnja vašeg psa u kvartu', icon: Dog, price: 'od 8€/šetnja', color: 'from-emerald-500 to-teal-500', image: '/images/services/04-setanje-pasa.jpg' },
-  { type: 'house-sitting' as const, title: 'Čuvanje u kući', description: 'Sitter dolazi u vašu kuću', icon: House, price: 'od 30€/noć', color: 'from-blue-500 to-cyan-500', image: '/images/services/06-community.jpg' },
-  { type: 'drop-in' as const, title: 'Kratki posjet', description: 'Posjet vašem ljubimcu od 30min', icon: Eye, price: 'od 12€/posjet', color: 'from-purple-500 to-pink-500', image: '/images/services/08-macka.jpg' },
-  { type: 'daycare' as const, title: 'Dnevna briga', description: 'Cjelodnevna briga kod sittera', icon: Sun, price: 'od 18€/dan', color: 'from-rose-500 to-orange-500', image: '/images/services/07-hero-puppy.jpg' },
-  { type: 'grooming' as const, title: 'Grooming', description: 'Kupanje, šišanje i njega dlake', icon: Scissors, price: 'od 25€', color: 'from-pink-500 to-fuchsia-500', image: '/images/services/08-macka.jpg' },
-  { type: 'agility' as const, title: 'Agility trening', description: 'Sportski trening za aktivne pse', icon: GraduationCap, price: 'od 15€/sat', color: 'from-yellow-500 to-orange-500', image: '/images/services/04-setanje-pasa.jpg' },
-  { type: 'training' as const, title: 'Školovanje pasa', description: 'Profesionalna obuka i socijalizacija', icon: BookOpen, price: 'od 20€/sat', color: 'from-teal-500 to-emerald-500', image: '/images/services/06-community.jpg' },
+  { type: 'boarding' as const, title: 'Smještaj', description: 'Vaš ljubimac boravi kod sittera', icon: Home, color: 'from-orange-500 to-amber-500', image: '/images/services/01-pet-sitting.jpg' },
+  { type: 'walking' as const, title: 'Šetnja', description: 'Šetnja vašeg psa u kvartu', icon: Dog, color: 'from-emerald-500 to-teal-500', image: '/images/services/04-setanje-pasa.jpg' },
+  { type: 'house-sitting' as const, title: 'Čuvanje u kući', description: 'Sitter dolazi u vašu kuću', icon: House, color: 'from-blue-500 to-cyan-500', image: '/images/services/06-community.jpg' },
+  { type: 'drop-in' as const, title: 'Kratki posjet', description: 'Posjet vašem ljubimcu od 30min', icon: Eye, color: 'from-purple-500 to-pink-500', image: '/images/services/08-macka.jpg' },
+  { type: 'daycare' as const, title: 'Dnevna briga', description: 'Cjelodnevna briga kod sittera', icon: Sun, color: 'from-rose-500 to-orange-500', image: '/images/services/07-hero-puppy.jpg' },
+  { type: 'grooming' as const, title: 'Grooming', description: 'Kupanje, šišanje i njega dlake', icon: Scissors, color: 'from-pink-500 to-fuchsia-500', image: '/images/services/08-macka.jpg' },
+  { type: 'agility' as const, title: 'Agility trening', description: 'Sportski trening za aktivne pse', icon: GraduationCap, color: 'from-yellow-500 to-orange-500', image: '/images/services/04-setanje-pasa.jpg' },
+  { type: 'training' as const, title: 'Školovanje pasa', description: 'Profesionalna obuka i socijalizacija', icon: BookOpen, color: 'from-teal-500 to-emerald-500', image: '/images/services/06-community.jpg' },
 ];
 
 const cities = [
@@ -222,7 +220,6 @@ export default async function HomePage() {
                     </div>
                     <div className="absolute bottom-4 left-4 right-4 text-white">
                       <h3 className="text-xl font-extrabold font-[var(--font-heading)]">{service.title}</h3>
-                      <p className="text-white/85 text-sm mt-1">{service.price}</p>
                     </div>
                   </div>
                   <CardContent className="p-5">

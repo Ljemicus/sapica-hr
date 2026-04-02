@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Menu, ShoppingCart } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -37,16 +37,6 @@ export function MobileSheet({ open, setOpen, t, user, getItemCount, onLogout }: 
 
   return (
     <div className="flex items-center gap-1.5 md:hidden">
-      <Link href="/shop/kosarica">
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 hover:bg-accent rounded-xl" aria-label={t('common.cart')}>
-          <ShoppingCart className="h-4.5 w-4.5" />
-          {getItemCount() > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-orange-500 text-white text-[8px] font-bold flex items-center justify-center">
-              {getItemCount() > 99 ? '99+' : getItemCount()}
-            </span>
-          )}
-        </Button>
-      </Link>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger render={<Button variant="ghost" size="icon" />} className="md:hidden rounded-xl" aria-label="Otvori izbornik">
           <Menu className="h-5 w-5" />

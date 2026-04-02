@@ -66,7 +66,6 @@ export default async function Image() {
           <span>Grooming</span>
           <span>Školovanje</span>
           <span>Veterinari</span>
-          <span>Shop</span>
           <span>Udomljavanje</span>
         </div>
       </div>

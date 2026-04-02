@@ -33,7 +33,6 @@ const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitema
   { route: '/izgubljeni', changeFrequency: 'daily', priority: 0.8 },
   { route: '/privatnost', changeFrequency: 'yearly', priority: 0.2 },
   { route: '/uvjeti', changeFrequency: 'yearly', priority: 0.2 },
-  { route: '/shop', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/o-nama', changeFrequency: 'monthly', priority: 0.5 },
   { route: '/postani-sitter', changeFrequency: 'monthly', priority: 0.6 },
   { route: '/hitno', changeFrequency: 'weekly', priority: 0.6 },
@@ -91,12 +90,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  const productEntries: MetadataRoute.Sitemap = products.map((p) => ({
-    url: `${BASE_URL}/shop/${p.slug}`,
-    lastModified: toLastModified((p as { updated_at?: string; created_at?: string; date?: string }).updated_at ?? (p as { created_at?: string }).created_at ?? (p as { date?: string }).date),
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
-  }));
+  const productEntries: MetadataRoute.Sitemap = []; // Shop hidden for now
 
   const blogEntries: MetadataRoute.Sitemap = articles.map((a) => ({
     url: `${BASE_URL}/zajednica/${a.slug}`,
@@ -131,7 +125,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...sitterEntries,
     ...groomerEntries,
     ...trainerEntries,
-    ...productEntries,
     ...blogEntries,
     ...forumEntries,
     ...lostPetEntries,

@@ -31,7 +31,7 @@ export function WebsiteJsonLd() {
               width: 1200,
               height: 630,
             },
-            description: 'Hrvatska super-aplikacija za ljubimce. Čuvanje, grooming, školovanje, veterinari, shop, udomljavanje i zajednica — sve na jednom mjestu.',
+            description: 'Hrvatska super-aplikacija za ljubimce. Čuvanje, grooming, školovanje, veterinari, udomljavanje i zajednica — sve na jednom mjestu.',
             address: {
               '@type': 'PostalAddress',
               addressLocality: 'Rijeka',
@@ -216,7 +216,6 @@ export function SiteNavigationJsonLd() {
     { name: 'Grooming', url: 'https://petpark.hr/njega' },
     { name: 'Školovanje pasa', url: 'https://petpark.hr/dresura' },
     { name: 'Veterinari', url: 'https://petpark.hr/veterinari' },
-    { name: 'Pet Shop', url: 'https://petpark.hr/shop' },
     { name: 'Blog', url: 'https://petpark.hr/zajednica' },
     { name: 'Forum', url: 'https://petpark.hr/forum' },
     { name: 'Udomljavanje', url: 'https://petpark.hr/udomljavanje' },

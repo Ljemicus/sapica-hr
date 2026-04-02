@@ -31,10 +31,10 @@ export const metadata: Metadata = {
     default: 'PetPark — Sve za ljubimce na jednom mjestu',
     template: '%s | PetPark',
   },
-  description: 'PetPark je hrvatska super-aplikacija za ljubimce. Čuvanje, grooming, školovanje pasa, veterinari, shop, udomljavanje, dog-friendly lokacije i još više — sve na jednom mjestu.',
+  description: 'PetPark je hrvatska super-aplikacija za ljubimce. Čuvanje, grooming, školovanje pasa, veterinari, udomljavanje, dog-friendly lokacije i još više — sve na jednom mjestu.',
   keywords: [
     'pet sitting', 'čuvanje ljubimaca', 'šetanje pasa', 'grooming', 'školovanje pasa',
-    'čuvar za pse', 'čuvar za mačke', 'pet sitter Hrvatska', 'veterinar', 'pet shop',
+    'čuvar za pse', 'čuvar za mačke', 'pet sitter Hrvatska', 'veterinar',
     'udomljavanje pasa', 'dog-friendly', 'izgubljeni ljubimci',
     'Zagreb', 'Split', 'Rijeka', 'Osijek', 'Pula', 'Zadar',
   ],
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   formatDetection: { telephone: true, email: true },
   openGraph: {
     title: 'PetPark — Sve za ljubimce na jednom mjestu',
-    description: 'Čuvanje, grooming, školovanje, veterinari, shop, udomljavanje i zajednica ljubitelja životinja — sve u jednoj aplikaciji.',
+    description: 'Čuvanje, grooming, školovanje, veterinari, udomljavanje i zajednica ljubitelja životinja — sve u jednoj aplikaciji.',
     type: 'website',
     locale: 'hr_HR',
     url: 'https://petpark.hr',
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'PetPark — Sve za ljubimce na jednom mjestu',
-    description: 'Čuvanje, grooming, školovanje, veterinari, shop, udomljavanje i zajednica ljubitelja životinja — sve u jednoj aplikaciji.',
+    description: 'Čuvanje, grooming, školovanje, veterinari, udomljavanje i zajednica ljubitelja životinja — sve u jednoj aplikaciji.',
     images: ['/opengraph-image'],
   },
   robots: {

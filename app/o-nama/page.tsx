@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
   title: 'O nama — Naša priča | PetPark',
-  description: 'PetPark je nastao iz jednostavnog problema — vlasnici ljubimaca u Hrvatskoj nisu imali sve na jednom mjestu. Čuvanje, grooming, školovanje, veterinari, shop, udomljavanje — sad imaju.',
+  description: 'PetPark je nastao iz jednostavnog problema — vlasnici ljubimaca u Hrvatskoj nisu imali sve na jednom mjestu. Čuvanje, grooming, školovanje, veterinari, udomljavanje — sad imaju.',
   alternates: { canonical: 'https://petpark.hr/o-nama' },
 };
 
@@ -70,7 +70,7 @@ export default function AboutPage() {
               </p>
               <p className="text-lg animate-fade-in-up delay-100">
                 Osnovali smo PetPark jer smo to sami trebali. Platforma gdje vlasnici ljubimaca mogu naći
-                sve na jednom mjestu — čuvanje, grooming, školovanje, veterinare, shop, udomljavanje,
+                sve na jednom mjestu — čuvanje, grooming, školovanje, veterinare, udomljavanje,
                 dog-friendly lokacije i zajednicu koja razumije. Ne agencija, ne posrednik —{' '}
                 <strong className="text-foreground">ekosustav za ljude koji vole životinje</strong>.
               </p>

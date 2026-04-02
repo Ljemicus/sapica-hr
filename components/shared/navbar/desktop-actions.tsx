@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ShoppingCart, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -46,17 +46,6 @@ export function DesktopActions({ t, user, loading, getItemCount, signOut }: Desk
           </Link>
         );
       })}
-      <Link href="/shop/kosarica">
-        <Button variant="ghost" size="icon" className="relative hover:bg-accent rounded-xl" aria-label={t('common.cart')}>
-          <ShoppingCart className="h-5 w-5" />
-          {getItemCount() > 0 && (
-            <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center">
-              {getItemCount() > 99 ? '99+' : getItemCount()}
-            </span>
-          )}
-        </Button>
-      </Link>
-
       {loading ? (
         <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />
       ) : user ? (
