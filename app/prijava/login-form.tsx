@@ -165,6 +165,12 @@ export function LoginForm() {
               {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
             </div>
 
+            <div className="flex justify-end">
+              <Link href="/zaboravljena-lozinka" className="text-sm text-orange-500 hover:underline">
+                Zaboravili ste lozinku?
+              </Link>
+            </div>
+
             <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50 h-11" disabled={loading}>
               {loading ? 'Prijava...' : 'Prijavi se'}
             </Button>

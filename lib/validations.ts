@@ -138,6 +138,88 @@ export const adoptionPublishRules = adoptionListingSchema.extend({
 export type AdoptionListingInput = z.infer<typeof adoptionListingSchema>;
 export type AdoptionPublishInput = z.infer<typeof adoptionPublishRules>;
 
+// ── Provider Onboarding ──
+
+export const providerBasicProfileSchema = z.object({
+  display_name: z.string().min(2, 'Ime mora imati najmanje 2 znaka'),
+  bio: z.string().min(10, 'Bio mora imati najmanje 10 znakova').max(1000, 'Bio može imati najviše 1000 znakova'),
+  city: z.string().min(1, 'Odaberite grad'),
+  phone: z.string().min(6, 'Unesite valjani telefonski broj'),
+});
+
+export const providerServiceInfoSchema = z.object({
+  provider_type: z.string().min(1, 'Odaberite vrstu profila'),
+  services: z.array(z.string()).min(1, 'Odaberite barem jednu uslugu'),
+  experience_years: z.coerce.number().min(0, 'Minimalno 0').max(50, 'Maksimalno 50'),
+  prices: z.record(z.string(), z.coerce.number().min(0, 'Cijena mora biti pozitivna')),
+});
+
+export const providerLegalInfoSchema = z.object({
+  business_name: z.string().optional(),
+  oib: z.string().regex(/^\d{11}$/, 'OIB mora imati točno 11 znamenki').optional().or(z.literal('')),
+  address: z.string().optional(),
+});
+
+export const providerPayoutInfoSchema = z.object({
+  stripe_account_id: z.string().optional(),
+  stripe_onboarding_complete: z.boolean().optional(),
+});
+
+export const providerTermsSchema = z.object({
+  terms_accepted: z.boolean().refine((value) => value === true, {
+    message: 'Morate prihvatiti uvjete korištenja',
+  }),
+  privacy_accepted: z.boolean().refine((value) => value === true, {
+    message: 'Morate prihvatiti politiku privatnosti',
+  }),
+});
+
+/** Combined schema for full application submission */
+export const providerApplicationSchema = providerBasicProfileSchema
+  .merge(providerServiceInfoSchema)
+  .merge(providerLegalInfoSchema)
+  .merge(providerPayoutInfoSchema)
+  .merge(providerTermsSchema);
+
+/** Partial save schema (draft) — everything optional except user presence */
+export const providerDraftSchema = z.object({
+  display_name: z.string().optional(),
+  bio: z.string().optional(),
+  city: z.string().optional(),
+  phone: z.string().optional(),
+  provider_type: z.string().optional(),
+  services: z.array(z.string()).optional(),
+  experience_years: z.coerce.number().min(0).max(50).optional(),
+  prices: z.record(z.string(), z.coerce.number().min(0)).optional(),
+  business_name: z.string().optional(),
+  oib: z.string().optional(),
+  address: z.string().optional(),
+  terms_accepted: z.boolean().optional(),
+  privacy_accepted: z.boolean().optional(),
+});
+
+export type ProviderBasicProfileInput = z.input<typeof providerBasicProfileSchema>;
+export type ProviderServiceInfoInput = z.input<typeof providerServiceInfoSchema>;
+export type ProviderLegalInfoInput = z.input<typeof providerLegalInfoSchema>;
+export type ProviderPayoutInfoInput = z.input<typeof providerPayoutInfoSchema>;
+export type ProviderTermsInput = z.input<typeof providerTermsSchema>;
+export type ProviderApplicationInput = z.input<typeof providerApplicationSchema>;
+export type ProviderDraftInput = z.input<typeof providerDraftSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email('Unesite valjanu email adresu'),
+});
+
+export const resetPasswordSchema = z.object({
+  password: z.string().min(6, 'Lozinka mora imati najmanje 6 znakova'),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Lozinke se ne podudaraju',
+  path: ['confirmPassword'],
+});
+
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type PetInput = z.infer<typeof petSchema>;
