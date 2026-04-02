@@ -1,3 +1,7 @@
+/**
+ * @deprecated Demo/example breeder data — not connected to live directory.
+ */
+
 export interface AvailableLitter {
   breed: string;
   count: number;

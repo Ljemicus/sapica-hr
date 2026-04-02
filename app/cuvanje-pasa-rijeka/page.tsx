@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { MapPin, ArrowRight, Star, Shield, Clock, Heart, Mountain, Anchor } from 'lucide-react';
+import { MapPin, ArrowRight, Star, Shield, Clock, Heart, Mountain, Anchor, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   alternates: { canonical: `${BASE_URL}/cuvanje-pasa-rijeka` },
 };
 
-const MOCK_SITTERS = [
+const EXAMPLE_SITTERS = [
   { name: 'Nina V.', neighborhood: 'Trsat', rating: 4.9, reviews: 34, price: 17, services: ['Smještaj', 'Šetnja'], superhost: true },
   { name: 'Damir H.', neighborhood: 'Kantrida', rating: 4.8, reviews: 22, price: 14, services: ['Dnevna njega', 'Šetnja'], superhost: false },
   { name: 'Sara B.', neighborhood: 'Sušak', rating: 5.0, reviews: 27, price: 18, services: ['Smještaj', 'Dnevna njega'], superhost: true },
@@ -264,15 +264,21 @@ export default function CuvanjePasaRijeka() {
         </div>
       </section>
 
-      {/* Mock sitter listings */}
+      {/* Example sitter listings */}
       <section className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-2 font-[var(--font-heading)]">
-            Istaknuti sitteri u <span className="text-gradient">Rijeci</span>
-          </h2>
-          <p className="text-muted-foreground mb-8">Pouzdani sitteri u gradu na Kvarneru.</p>
+          <div className="flex items-center gap-3 mb-2">
+            <h2 className="text-3xl font-bold font-[var(--font-heading)]">
+              Istaknuti sitteri u <span className="text-gradient">Rijeci</span>
+            </h2>
+            <Badge variant="outline" className="text-xs px-3 py-1 rounded-full flex-shrink-0">
+              <Eye className="h-3 w-3 mr-1" />
+              Primjer prikaza
+            </Badge>
+          </div>
+          <p className="text-muted-foreground mb-8">Ilustrativni profili — stvarne sittere pronađite putem pretrage.</p>
           <div className="grid sm:grid-cols-2 gap-6">
-            {MOCK_SITTERS.map((sitter) => (
+            {EXAMPLE_SITTERS.map((sitter) => (
               <Card key={sitter.name} className="border-0 shadow-md hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-3">
