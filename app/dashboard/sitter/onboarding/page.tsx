@@ -2,13 +2,15 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Camera, User, Briefcase, Calendar, PartyPopper, ArrowLeft, ArrowRight, Check, PawPrint, Upload } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Camera, User, Briefcase, Calendar, PartyPopper, ArrowLeft, ArrowRight, Check, PawPrint, Upload, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 const STEPS = [
   { title: 'Profilna slika', icon: Camera, description: 'Dodajte svoju fotografiju' },
@@ -29,12 +31,14 @@ const SERVICES = [
 const DAYS = ['Ponedjeljak', 'Utorak', 'Srijeda', 'Četvrtak', 'Petak', 'Subota', 'Nedjelja'];
 
 export default function SitterOnboardingPage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [bio, setBio] = useState('');
   const [experience, setExperience] = useState('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [prices, setPrices] = useState<Record<string, string>>({});
   const [availableDays, setAvailableDays] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
 
   const progress = ((currentStep + 1) / STEPS.length) * 100;
 
@@ -285,11 +289,72 @@ export default function SitterOnboardingPage() {
               Natrag
             </Button>
             <Button
-              onClick={() => setCurrentStep(prev => prev + 1)}
+              onClick={async () => {
+                // Validate before advancing from step 3 (last data step) → save profile
+                if (currentStep === 3) {
+                  if (!bio || bio.length < 10) {
+                    toast.error('Bio mora imati najmanje 10 znakova');
+                    setCurrentStep(1);
+                    return;
+                  }
+                  if (selectedServices.length === 0) {
+                    toast.error('Odaberite barem jednu uslugu');
+                    setCurrentStep(2);
+                    return;
+                  }
+                  setSaving(true);
+                  try {
+                    const pricesNumeric: Record<string, number> = {};
+                    for (const [key, val] of Object.entries(prices)) {
+                      pricesNumeric[key] = parseInt(val) || 0;
+                    }
+                    const res = await fetch('/api/sitter-profile', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        bio,
+                        experience_years: parseInt(experience) || 0,
+                        services: selectedServices,
+                        prices: pricesNumeric,
+                        city: '',
+                      }),
+                    });
+                    if (!res.ok) {
+                      const data = await res.json().catch(() => null);
+                      toast.error(data?.error ? 'Greška: provjerite unos' : 'Greška pri spremanju profila');
+                      setSaving(false);
+                      return;
+                    }
+                    toast.success('Profil spremljen!');
+                    router.refresh();
+                  } catch {
+                    toast.error('Mrežna greška');
+                    setSaving(false);
+                    return;
+                  }
+                  setSaving(false);
+                }
+                setCurrentStep(prev => prev + 1);
+              }}
+              disabled={saving}
               className="bg-orange-500 hover:bg-orange-600 rounded-xl font-semibold"
             >
-              Dalje
-              <ArrowRight className="ml-2 h-4 w-4" />
+              {saving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Spremanje...
+                </>
+              ) : currentStep === 3 ? (
+                <>
+                  Spremi i završi
+                  <Check className="ml-2 h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  Dalje
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
             </Button>
           </div>
         )}

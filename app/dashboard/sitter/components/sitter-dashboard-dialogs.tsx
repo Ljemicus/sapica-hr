@@ -38,6 +38,7 @@ interface Props {
   onToggleService: (service: ServiceType) => void;
   user: UserType;
   emojiOptions: string[];
+  onAvatarUploaded?: () => void;
 }
 
 export function SitterDashboardDialogs({
@@ -61,6 +62,7 @@ export function SitterDashboardDialogs({
   onToggleService,
   user,
   emojiOptions,
+  onAvatarUploaded,
 }: Props) {
   return (
     <>
@@ -169,7 +171,7 @@ export function SitterDashboardDialogs({
                 entityId={user.id}
                 currentImageUrl={user.avatar_url}
                 fallbackText={user.name?.charAt(0) || '?'}
-                onUploadComplete={() => {}}
+                onUploadComplete={() => onAvatarUploaded?.()}
               />
             </div>
             <p className="text-center text-xs text-muted-foreground -mt-2">Profilna fotografija</p>

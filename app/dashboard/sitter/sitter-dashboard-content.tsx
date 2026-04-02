@@ -269,6 +269,7 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
         onToggleService={toggleService}
         user={user}
         emojiOptions={EMOJI_OPTIONS}
+        onAvatarUploaded={() => router.refresh()}
       />
     </div>
   );
