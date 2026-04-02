@@ -5,7 +5,7 @@ import Image from 'next/image';
 import {
   Search, Shield, Star, Heart, MapPin, ChevronRight,
   Home, Dog, House, Eye, Sun, Users, Calendar,
-  ArrowRight, Quote, Scissors, GraduationCap, BookOpen,
+  ArrowRight, Scissors, GraduationCap, BookOpen,
   PawPrint,
 } from 'lucide-react';
 
@@ -26,11 +26,8 @@ export const metadata: Metadata = {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { getLostPets } from '@/lib/db';
 import { getSitters } from '@/lib/db';
-import { LOST_PET_SPECIES_LABELS } from '@/lib/types';
 const NewsletterSignup = dynamic(() => import('@/components/shared/newsletter-signup').then((mod) => mod.NewsletterSignup));
 import { ItemListJsonLd } from '@/components/seo/json-ld';
 
@@ -53,16 +50,6 @@ const SITTER_GRADIENTS = [
   'from-emerald-400 to-teal-300',
   'from-rose-400 to-orange-300',
   'from-sky-400 to-blue-300',
-];
-
-
-const reviewCards = [
-  { name: 'Marina K.', city: 'Rijeka', text: 'Pronašli smo savršenu čuvaricu za našeg Maxa! Ana je slala fotke svaki dan i Max se vratio sretan kao nikad.', rating: 5, initial: 'M', gradient: 'from-orange-400 to-rose-400', petType: 'dog' as const },
-  { name: 'Luka P.', city: 'Zagreb', text: 'Najbolji posao ikad - zarađujem radeći ono što volim! PetPark mi je omogućio fleksibilan raspored i divne klijente.', rating: 5, initial: 'L', gradient: 'from-teal-400 to-cyan-400', petType: 'dog' as const, isSitter: true },
-  { name: 'Nina Š.', city: 'Split', text: 'Mačka Mila je prvi put bila sama i bilo me strah. Ali sitterica je bila predivna i slala ažuriranja svakih par sati!', rating: 5, initial: 'N', gradient: 'from-purple-400 to-pink-400', petType: 'cat' as const },
-  { name: 'Tomislav B.', city: 'Osijek', text: 'Filip je spasio naš godišnji odmor! Buddy je uživao u velikom vrtu. GPS tracking šetnji nam je dao potpuni mir.', rating: 5, initial: 'T', gradient: 'from-blue-400 to-indigo-400', petType: 'dog' as const },
-  { name: 'Ana M.', city: 'Pula', text: 'Kao sitterica na PetParku zarađujem 600€ mjesečno. Fleksibilno, zabavno i upoznajem divne ljubimce svaki dan!', rating: 5, initial: 'A', gradient: 'from-emerald-400 to-teal-400', petType: 'cat' as const, isSitter: true },
-  { name: 'Petra V.', city: 'Zadar', text: 'Treći put koristimo PetPark i svaki put je iskustvo savršeno. Verificirani sitteri daju nam potpuno povjerenje.', rating: 5, initial: 'P', gradient: 'from-amber-400 to-orange-400', petType: 'dog' as const },
 ];
 
 const howItWorks = [
@@ -92,20 +79,17 @@ const services = [
 ];
 
 const cities = [
-  { name: 'Zagreb', sitters: 180, image: '/images/cities/zagreb.jpg' },
-  { name: 'Rijeka', sitters: 95, image: '/images/cities/rijeka.jpg' },
-  { name: 'Split', sitters: 120, image: '/images/cities/split.jpg' },
-  { name: 'Osijek', sitters: 45, image: '/images/cities/osijek.jpg' },
-  { name: 'Pula', sitters: 55, image: '/images/cities/pula.jpg' },
-  { name: 'Zadar', sitters: 60, image: '/images/cities/zadar.jpg' },
+  { name: 'Zagreb', image: '/images/cities/zagreb.jpg' },
+  { name: 'Rijeka', image: '/images/cities/rijeka.jpg' },
+  { name: 'Split', image: '/images/cities/split.jpg' },
+  { name: 'Osijek', image: '/images/cities/osijek.jpg' },
+  { name: 'Pula', image: '/images/cities/pula.jpg' },
+  { name: 'Zadar', image: '/images/cities/zadar.jpg' },
 ];
 
 export default async function HomePage() {
-  // Fetch sitters and lost pets in parallel to avoid sequential waterfall
-  const [topSitters, lostPets] = await Promise.all([
-    getSitters({ sort: 'rating', limit: 6, fields: 'homepage-card' }),
-    getLostPets({ status: 'lost', limit: 3, fields: 'homepage-card' }),
-  ]);
+  const topSitters = await getSitters({ sort: 'rating', limit: 6, fields: 'homepage-card' });
+
   const featuredSitters = topSitters.map((s, i) => ({
     id: s.user_id,
     name: s.user?.name || 'Sitter',
@@ -143,7 +127,6 @@ export default async function HomePage() {
               PetPark okuplja pouzdane usluge, korisne savjete i zajednicu posvećenu kvalitetnoj brizi o ljubimcima — sve na jednom mjestu.
             </p>
 
-            {/* Hero Image */}
             <div className="mb-8 animate-fade-in-up delay-200 max-w-2xl mx-auto">
               <Image
                 src="/hero-pets.jpg"
@@ -156,7 +139,6 @@ export default async function HomePage() {
               />
             </div>
 
-            {/* Search Bar */}
             <div className="bg-white dark:bg-card rounded-2xl md:rounded-full shadow-2xl shadow-orange-200/30 dark:shadow-black/20 p-2.5 md:p-3 max-w-2xl mx-auto animate-fade-in-up delay-300 border border-orange-100/60 dark:border-orange-800/30">
               <form action="/pretraga" className="flex flex-col md:flex-row gap-2">
                 <div className="flex-1 relative">
@@ -185,7 +167,6 @@ export default async function HomePage() {
               </form>
             </div>
 
-            {/* Trust indicators */}
             <div className="flex items-center justify-center gap-4 sm:gap-8 mt-8 text-sm text-muted-foreground animate-fade-in-up delay-400 flex-wrap">
               <div className="flex items-center gap-2">
                 <Shield className="h-4 w-4 text-teal-500" />
@@ -193,18 +174,17 @@ export default async function HomePage() {
               </div>
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
-                <span>4.8 prosječna ocjena</span>
+                <span>Recenzije stvarnih korisnika</span>
               </div>
               <div className="hidden sm:flex items-center gap-2">
                 <Heart className="h-4 w-4 text-rose-400 fill-rose-400" />
-                <span>500+ sretnih ljubimaca</span>
+                <span>Briga prilagođena vašem ljubimcu</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── 6 Big Section Cards (Google Stitch style) ── */}
       <section className="py-4 relative z-10" aria-label="Brzi pristup">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 -mt-8 md:-mt-12">
@@ -223,86 +203,33 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Lost Pets Section ── */}
-      {lostPets.length > 0 && (
-        <section className="py-12 md:py-16 bg-gradient-to-b from-red-50 to-orange-50/50 dark:from-red-950/20 dark:to-orange-950/10 relative overflow-hidden" aria-label="Izgubljeni ljubimci">
-          <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
-          <div className="container mx-auto px-4 relative">
-            <div className="text-center mb-8">
-              <Badge className="mb-4 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40 border-0 text-sm px-4 py-1.5 animate-pulse rounded-full font-semibold">
-                Hitno — pomoć potrebna
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-extrabold mb-3 font-[var(--font-heading)]">Izgubljeni ljubimci</h2>
-              <p className="text-muted-foreground max-w-lg mx-auto text-lg">
-                Ovi ljubimci traže put kući. Svako dijeljenje pomaže!
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-              {lostPets.map((pet) => (
-                <Link key={pet.id} href={`/izgubljeni/${pet.id}`}>
-                  <Card className="group border-2 border-red-200 dark:border-red-800/50 hover:border-red-400 dark:hover:border-red-600 hover:shadow-xl transition-all duration-300 overflow-hidden h-full rounded-2xl">
-                    <div className="relative h-44 md:h-48 bg-muted">
-                      <Image src={pet.image_url} alt={pet.name} fill loading="lazy" sizes="(min-width: 768px) 30vw, 92vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                      <Badge className="absolute top-3 left-3 bg-red-500 text-white font-bold rounded-full">
-                        Traži se
-                      </Badge>
-                      <div className="absolute bottom-3 left-3">
-                        <h3 className="text-xl font-bold text-white drop-shadow-lg font-[var(--font-heading)]">{pet.name}</h3>
-                        <p className="text-sm text-white/90 drop-shadow">{LOST_PET_SPECIES_LABELS[pet.species]} &bull; {pet.breed}</p>
-                      </div>
-                    </div>
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                        <MapPin className="h-4 w-4 text-red-400" />
-                        <span className="font-medium">{pet.city}, {pet.neighborhood}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Calendar className="h-4 w-4" />
-                        <span>{new Date(pet.date_lost).toLocaleDateString('hr-HR', { day: 'numeric', month: 'long' })}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-            <div className="text-center">
-              <Link href="/izgubljeni">
-                <Button size="lg" className="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-500 font-bold text-base px-8 py-5 shadow-xl shadow-red-200/50 dark:shadow-red-900/30 rounded-xl">
-                  <Heart className="h-5 w-5 mr-2" />
-                  Pomozi pronaći — Pogledaj sve
-                  <ArrowRight className="h-5 w-5 ml-2" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── Services Section ── */}
-      <section className="py-16 md:py-24 bg-warm-section" aria-label="Usluge">
+      <section className="py-16 md:py-24" aria-label="Usluge">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-semibold">Usluge</Badge>
             <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Sve što vaš ljubimac treba</h2>
-            <p className="text-muted-foreground max-w-lg mx-auto text-lg">
-              Od čuvanja i njege do dresure i svakodnevne podrške — pronađite usluge prilagođene svom ljubimcu
-            </p>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Od čuvanja i šetnji do groominga i školovanja — pronađite uslugu koja odgovara vašem ljubimcu.</p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {services.map((service, i) => (
               <Link key={service.type} href={`/pretraga?service=${service.type}`}>
-                <Card className={`group card-hover cursor-pointer h-full border-0 shadow-sm overflow-hidden rounded-2xl animate-fade-in-up delay-${Math.min((i + 1) * 100, 700)}`}>
-                  <CardContent className="p-5 text-center relative">
-                    <div className={`inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br ${service.color} text-white mb-3 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
-                      <service.icon className="h-6 w-6 md:h-7 md:w-7" />
+                <Card className={`group overflow-hidden card-hover border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${Math.min((i + 1) * 100, 700)}`}>
+                  <div className="relative h-44 overflow-hidden">
+                    <Image src={service.image} alt={service.title} fill loading="lazy" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                    <div className={`absolute top-4 left-4 inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br ${service.color} text-white shadow-lg`}>
+                      <service.icon className="h-6 w-6" />
                     </div>
-                    <h3 className="font-bold text-base md:text-lg mb-1 group-hover:text-orange-500 transition-colors font-[var(--font-heading)]">{service.title}</h3>
-                    <p className="text-xs md:text-sm text-muted-foreground mb-3">{service.description}</p>
-                    <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-3">
-                      <Image src={service.image} alt={service.title} fill loading="lazy" sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 92vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <h3 className="text-xl font-extrabold font-[var(--font-heading)]">{service.title}</h3>
+                      <p className="text-white/85 text-sm mt-1">{service.price}</p>
                     </div>
-                    <p className="text-sm font-bold text-orange-500">{service.price}</p>
+                  </div>
+                  <CardContent className="p-5">
+                    <p className="text-sm text-muted-foreground leading-relaxed">{service.description}</p>
+                    <div className="mt-4 flex items-center text-sm font-semibold text-orange-600 dark:text-orange-400">
+                      Pregledaj uslugu <ChevronRight className="h-4 w-4 ml-1" />
+                    </div>
                   </CardContent>
                 </Card>
               </Link>
@@ -311,204 +238,24 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── How It Works ── */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-orange-50/40 to-white dark:from-orange-950/10 dark:to-background relative overflow-hidden" aria-label="Kako funkcionira">
+      <section className="py-16 md:py-24 bg-warm-section relative overflow-hidden" aria-label="Kako funkcionira">
         <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
         <div className="container mx-auto px-4 relative">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4 text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 border-0 rounded-full font-semibold">Kako funkcionira</Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Tri jednostavna koraka</h2>
-            <p className="text-muted-foreground text-lg">Od pretrage do sretnog ljubimca</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Tri jednostavna koraka do idealne brige</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">PetPark vam olakšava pronalazak provjerene usluge za vašeg ljubimca.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {howItWorks.map((item, i) => (
-              <div key={item.step} className={`text-center relative animate-fade-in-up delay-${(i + 1) * 200}`}>
-                <div className="step-number text-7xl md:text-8xl font-extrabold text-orange-100/80 dark:text-orange-900/30 leading-none mb-4 select-none">
-                  {String(item.step).padStart(2, '0')}
-                </div>
-                <div className={`relative inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br ${item.color} text-white mb-5 shadow-lg -mt-12`}>
-                  <item.icon className="h-6 w-6 md:h-7 md:w-7" />
-                </div>
-                <h3 className="text-xl font-bold mb-3 font-[var(--font-heading)]">{item.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Featured Sitters ── */}
-      <section className="py-16 md:py-24" aria-label="Popularni sitteri">
-        <div className="container mx-auto px-4">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <Badge variant="secondary" className="mb-4 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-semibold">Top sitteri</Badge>
-              <h2 className="text-3xl md:text-4xl font-extrabold mb-3 font-[var(--font-heading)]">Popularni sitteri</h2>
-              <p className="text-muted-foreground text-lg">Upoznajte naše najbolje ocijenjene čuvare ljubimaca</p>
-            </div>
-            <Link href="/pretraga" className="hidden md:block">
-              <Button variant="outline" className="items-center gap-1 hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:text-orange-600 hover:border-orange-200 dark:hover:border-orange-800 rounded-xl">
-                Vidi sve <ChevronRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-            {featuredSitters.map((sitter, i) => (
-              <Link key={sitter.id} href={`/sitter/${sitter.id}`}>
-                <Card className={`group card-hover cursor-pointer overflow-hidden border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${Math.min((i + 1) * 100, 700)}`}>
-                  <CardContent className="p-0">
-                    <div className={`relative h-44 bg-gradient-to-br ${sitter.gradient} flex items-center justify-center`}>
-                      <div className="absolute inset-0 paw-pattern opacity-10" />
-                      <Avatar className="h-20 w-20 md:h-22 md:w-22 border-4 border-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                        <AvatarFallback className="bg-white/90 dark:bg-gray-800/90 text-foreground text-2xl font-bold">
-                          {sitter.initial}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="absolute top-3 right-3 flex gap-1.5">
-                        {sitter.verified && (
-                          <Badge className="bg-white/90 dark:bg-gray-900/80 text-teal-600 dark:text-teal-400 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5">
-                            <Shield className="h-3 w-3 mr-1" />
-                            Verificiran
-                          </Badge>
-                        )}
-                        {sitter.superhost && (
-                          <Badge className="bg-white/90 dark:bg-gray-900/80 text-amber-600 dark:text-amber-400 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5 font-semibold">
-                            <Star className="h-3 w-3 mr-1 fill-amber-500" />
-                            Superhost
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                    <div className="p-5">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-bold text-lg group-hover:text-orange-500 transition-colors font-[var(--font-heading)]">{sitter.name}</h3>
-                        <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/30 px-2.5 py-1 rounded-full">
-                          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                          <span className="text-sm font-bold text-amber-700 dark:text-amber-400">{sitter.rating}</span>
-                          <span className="text-xs text-amber-600/70 dark:text-amber-400/60">({sitter.reviews})</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground mb-3">
-                        <MapPin className="h-3.5 w-3.5 text-teal-500" />
-                        {sitter.city}
-                      </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{sitter.bio}</p>
-                      <div className="flex items-center justify-between pt-3 border-t border-border/50">
-                        <span className="text-xl font-extrabold text-orange-500">od {sitter.price}€</span>
-                        <span className="text-xs text-muted-foreground flex items-center gap-1 group-hover:text-orange-500 transition-colors">
-                          Pogledaj profil <ArrowRight className="h-3 w-3" />
-                        </span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-          <div className="text-center mt-8 md:hidden">
-            <Link href="/pretraga">
-              <Button variant="outline" className="hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:text-orange-600 hover:border-orange-200 dark:hover:border-orange-800 rounded-xl">
-                Vidi sve sittere <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Cities Section ── */}
-      <section className="py-16 md:py-24 bg-warm-section" aria-label="Gradovi">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4 text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 border-0 rounded-full font-semibold">Lokacije</Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Dostupni u cijeloj Hrvatskoj</h2>
-            <p className="text-muted-foreground text-lg">Pronađite čuvare u vašem gradu</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
-            {cities.map((city, i) => (
-              <Link key={city.name} href={`/pretraga?city=${city.name}`}>
-                <Card className={`group card-hover cursor-pointer overflow-hidden border-0 shadow-md rounded-2xl animate-fade-in-up delay-${Math.min((i + 1) * 100, 700)}`}>
-                  <CardContent className="p-0">
-                    <div className="h-32 md:h-36 relative flex items-end p-4 overflow-hidden">
-                      <Image src={city.image} alt={city.name} fill loading="lazy" sizes="(min-width: 1024px) 16vw, (min-width: 768px) 30vw, 46vw" className="object-cover group-hover:scale-110 transition-transform duration-500" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/5" />
-                      <div className="relative">
-                        <h3 className="text-white font-extrabold text-lg leading-none drop-shadow-sm font-[var(--font-heading)]">{city.name}</h3>
-                        <p className="text-white/90 text-sm mt-1 font-medium">{city.sitters} sittera</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Reviews / Social Proof ── */}
-      <section className="py-16 md:py-24 relative overflow-hidden" aria-label="Recenzije">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-50 dark:bg-orange-950/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl opacity-50" />
-        <div className="container mx-auto px-4 relative">
-          <div className="text-center mb-8">
-            <Badge variant="secondary" className="mb-4 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-semibold">Recenzije</Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Što kažu naši korisnici</h2>
-            <p className="text-muted-foreground text-lg">Stvarna iskustva vlasnika ljubimaca i sittera</p>
-          </div>
-
-          {/* Stats Bar */}
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 mb-12 animate-fade-in-up">
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-0.5">
-                <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
-              </div>
-              <span className="text-lg font-bold">4.9</span>
-              <span className="text-muted-foreground text-sm">prosječna ocjena</span>
-            </div>
-            <div className="w-px h-6 bg-border hidden sm:block" />
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold">500+</span>
-              <span className="text-muted-foreground text-sm">rezervacija</span>
-            </div>
-            <div className="w-px h-6 bg-border hidden sm:block" />
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold">6+</span>
-              <span className="text-muted-foreground text-sm">gradova</span>
-            </div>
-          </div>
-
-          {/* Review Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
-            {reviewCards.map((review, i) => (
-              <Card key={i} className={`border-0 shadow-sm card-hover rounded-2xl animate-fade-in-up delay-${Math.min((i + 1) * 100, 700)}`}>
-                <CardContent className="p-6 relative">
-                  <Quote className="h-8 w-8 text-orange-100 dark:text-orange-900/40 absolute top-4 right-4" />
-                  <div className="flex items-center gap-0.5 mb-3">
-                    {Array.from({ length: 5 }, (_, j) => (
-                      <Star key={j} className={`h-3.5 w-3.5 ${j < review.rating ? 'fill-amber-400 text-amber-400' : 'fill-muted text-muted'}`} />
-                    ))}
+              <Card key={item.step} className={`relative overflow-hidden border-0 shadow-sm rounded-2xl card-hover animate-fade-in-up delay-${(i + 1) * 100}`}>
+                <CardContent className="p-6 md:p-7">
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.color} text-white flex items-center justify-center shadow-lg mb-5`}>
+                    <item.icon className="h-6 w-6" />
                   </div>
-                  <p className="text-muted-foreground mb-5 leading-relaxed text-sm">&ldquo;{review.text}&rdquo;</p>
-                  <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback className={`bg-gradient-to-br ${review.gradient} text-white text-sm font-bold`}>
-                          {review.initial}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-semibold text-sm">{review.name}</p>
-                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <MapPin className="h-3 w-3" />
-                          {review.city}
-                          {review.isSitter && (
-                            <Badge className="ml-1 bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 text-[10px] px-1.5 py-0 h-4 hover:bg-teal-50 border-0">
-                              Sitter
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <span className="text-xl">{review.petType === 'cat' ? '🐱' : '🐶'}</span>
-                  </div>
+                  <Badge className="mb-3 bg-accent text-accent-foreground rounded-full border-0">Korak {item.step}</Badge>
+                  <h3 className="text-xl font-bold mb-3 font-[var(--font-heading)]">{item.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{item.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -516,54 +263,88 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Why PetPark / Features Section ── */}
-      <section className="py-16 md:py-24 bg-warm-section relative overflow-hidden" aria-label="Značajke">
-        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
-        <div className="container mx-auto px-4 relative">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4 text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 border-0 rounded-full font-semibold">Zašto PetPark</Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Više od obične pet platforme</h2>
-            <p className="text-muted-foreground text-lg max-w-lg mx-auto">PetPark spaja korisne alate, preglednost i dodatnu vrijednost za vlasnike ljubimaca</p>
+      {featuredSitters.length > 0 && (
+        <section className="py-16 md:py-24" aria-label="Popularni sitteri">
+          <div className="container mx-auto px-4">
+            <div className="flex items-end justify-between gap-4 mb-10">
+              <div>
+                <Badge variant="secondary" className="mb-4 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-semibold">Popularni sitteri</Badge>
+                <h2 className="text-3xl md:text-4xl font-extrabold mb-3 font-[var(--font-heading)]">Pouzdani čuvari koje vlasnici rado biraju</h2>
+                <p className="text-muted-foreground text-lg max-w-2xl">Istražite profile sittera s najboljim ocjenama i verifikacijom.</p>
+              </div>
+              <Link href="/pretraga" className="hidden md:inline-flex">
+                <Button variant="outline" className="rounded-full">
+                  Pregledaj sve
+                  <ChevronRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {featuredSitters.map((sitter, i) => (
+                <Link key={sitter.id} href={`/sitter/${sitter.id}`}>
+                  <Card className={`overflow-hidden border-0 shadow-sm rounded-2xl card-hover animate-fade-in-up delay-${Math.min((i + 1) * 100, 700)}`}>
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between gap-3 mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`h-12 w-12 rounded-2xl bg-gradient-to-br ${sitter.gradient} text-white font-bold flex items-center justify-center text-lg shadow-lg`}>
+                            {sitter.initial}
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-lg leading-tight font-[var(--font-heading)]">{sitter.name}</h3>
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                              <MapPin className="h-3.5 w-3.5" />
+                              {sitter.city}
+                            </div>
+                          </div>
+                        </div>
+                        {sitter.verified && <Badge className="bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-50">Verificiran</Badge>}
+                      </div>
+                      <div className="flex items-center gap-4 text-sm mb-4">
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                          <span className="font-semibold">{sitter.rating?.toFixed(1) || '—'}</span>
+                          <span className="text-muted-foreground">({sitter.reviews || 0})</span>
+                        </div>
+                        {sitter.superhost && <Badge variant="secondary" className="rounded-full">Top izbor</Badge>}
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-5">{sitter.bio || 'Pouzdan sitter za pse i mačke u vašem gradu.'}</p>
+                      <div className="flex items-center justify-between pt-4 border-t border-border/60">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Cijene od</p>
+                          <p className="font-bold text-lg">{sitter.price}€</p>
+                        </div>
+                        <span className="text-sm font-semibold text-orange-600 dark:text-orange-400 inline-flex items-center gap-1">
+                          Pogledaj profil <ChevronRight className="h-4 w-4" />
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
-            {[
-              {
-                title: 'GPS Tracking šetnji',
-                description: 'Demo prikaz GPS šetnje: ruta, checkpointi i statistike kao primjer funkcionalnosti PetParka.',
-                emoji: '📍',
-                color: 'from-emerald-500 to-teal-500',
-                href: '/setnja/walk1111-1111-1111-1111-111111111111',
-              },
-              {
-                title: 'Foto ažuriranja',
-                description: 'Demo feed foto i video ažuriranja koji pokazuje kako izgleda komunikacija tijekom bookinga.',
-                emoji: '📸',
-                color: 'from-blue-500 to-cyan-500',
-                href: '/azuriranja/book1111-1111-1111-1111-111111111111',
-              },
-              {
-                title: 'Zdravstveni karton',
-                description: 'Demo zdravstveni karton s cijepljenjima, alergijama i terapijama — primjer kako izgleda privatni zapis.',
-                emoji: '🏥',
-                color: 'from-purple-500 to-pink-500',
-                href: '/ljubimac/pet11111-1111-1111-1111-111111111111/karton',
-              },
-            ].map((feature, i) => (
-              <Link key={feature.title} href={feature.href}>
-                <Card className={`group card-hover cursor-pointer h-full border-0 shadow-sm rounded-2xl overflow-hidden animate-fade-in-up delay-${(i + 1) * 100}`}>
-                  <CardContent className="p-6 text-center">
-                    <div className={`inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br ${feature.color} text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
-                      <span className="text-2xl md:text-3xl">{feature.emoji}</span>
-                    </div>
-                    <h3 className="font-bold text-lg mb-2 group-hover:text-orange-500 transition-colors font-[var(--font-heading)]">{feature.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
-                    <div className="mt-3 flex items-center justify-center">
-                      <Badge variant="secondary" className="bg-amber-50 text-amber-700 border border-amber-200">
-                        Demo primjer
-                      </Badge>
-                    </div>
-                    <div className="mt-4 text-sm font-semibold text-teal-600 dark:text-teal-400 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      Pogledaj demo <ArrowRight className="h-3 w-3" />
+        </section>
+      )}
+
+      <section className="py-16 md:py-24" aria-label="Gradovi">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <Badge variant="secondary" className="mb-4 text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 border-0 rounded-full font-semibold">Gradovi</Badge>
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Pronađi usluge u svom gradu</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">PetPark povezuje vlasnike ljubimaca s lokalnim sitterima, groomerima i trenerima diljem Hrvatske.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {cities.map((city) => (
+              <Link key={city.name} href={`/pretraga?city=${encodeURIComponent(city.name)}`}>
+                <Card className="group overflow-hidden rounded-2xl border-0 shadow-sm card-hover">
+                  <CardContent className="p-0">
+                    <div className="h-32 md:h-36 relative flex items-end p-4 overflow-hidden">
+                      <Image src={city.image} alt={city.name} fill loading="lazy" sizes="(min-width: 1024px) 16vw, (min-width: 768px) 30vw, 46vw" className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/5" />
+                      <div className="relative">
+                        <h3 className="text-white font-extrabold text-lg leading-none drop-shadow-sm font-[var(--font-heading)]">{city.name}</h3>
+                        <p className="text-white/90 text-sm mt-1 font-medium">Istraži ponudu u gradu</p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -573,7 +354,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── More Services Section ── */}
       <section className="py-16 md:py-24 relative overflow-hidden" aria-label="Istraži više">
         <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
         <div className="container mx-auto px-4 relative">
@@ -644,10 +424,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Newsletter ── */}
       <NewsletterSignup />
 
-      {/* ── Adoption CTA ── */}
       <section className="py-12 md:py-16 bg-gradient-to-b from-purple-50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/10 relative overflow-hidden" aria-label="Udomljavanje">
         <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
         <div className="container mx-auto px-4 relative">
@@ -695,7 +473,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Dog-Friendly CTA ── */}
       <section className="py-12 md:py-16 relative overflow-hidden" aria-label="Dog-Friendly lokacije">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/10" />
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
@@ -711,7 +488,7 @@ export default async function HomePage() {
                     Dog-Friendly Lokacije
                   </h2>
                   <p className="text-white/80 mb-6 max-w-md">
-                    Pronađite kafiće, restorane, plaže i parkove koji dobrodošlicom primaju vašeg ljubimca. 35+ lokacija u 7 gradova!
+                    Pronađite kafiće, restorane, plaže i parkove koji dobrodošlicom primaju vašeg ljubimca.
                   </p>
                   <Link href="/dog-friendly">
                     <Button size="lg" className="bg-white text-teal-700 hover:bg-teal-50 font-bold rounded-xl shadow-lg">
@@ -730,7 +507,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── CTA for Sitters ── */}
       <section className="py-16 md:py-24 relative overflow-hidden" aria-label="Poziv za sittere">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-orange-500 to-teal-500" />
         <div className="absolute inset-0 paw-pattern opacity-[0.06]" />
@@ -762,22 +538,18 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-3 gap-6 mt-14 max-w-md mx-auto">
-              <div className="animate-count-up">
-                <p className="text-3xl md:text-4xl font-extrabold text-white font-[var(--font-heading)]">500+</p>
-                <p className="text-sm text-white/70 mt-1">Sittera</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-14 max-w-3xl mx-auto text-white/85">
+              <div className="animate-fade-in-up">
+                <p className="text-sm uppercase tracking-[0.2em] text-white/60 mb-2">Verifikacija</p>
+                <p className="text-base font-semibold">Istaknite profil i gradite povjerenje</p>
               </div>
-              <div className="animate-count-up delay-200">
-                <p className="text-3xl md:text-4xl font-extrabold text-white font-[var(--font-heading)]">2000+</p>
-                <p className="text-sm text-white/70 mt-1">Rezervacija</p>
+              <div className="animate-fade-in-up delay-200">
+                <p className="text-sm uppercase tracking-[0.2em] text-white/60 mb-2">Fleksibilnost</p>
+                <p className="text-base font-semibold">Postavite vlastite cijene i raspored</p>
               </div>
-              <div className="animate-count-up delay-400">
-                <p className="text-3xl md:text-4xl font-extrabold text-white font-[var(--font-heading)]">4.8</p>
-                <div className="flex items-center justify-center gap-0.5 mt-1">
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <Star key={i} className="h-3 w-3 fill-white text-white" />
-                  ))}
-                </div>
+              <div className="animate-fade-in-up delay-400">
+                <p className="text-sm uppercase tracking-[0.2em] text-white/60 mb-2">Rast</p>
+                <p className="text-base font-semibold">Lakše do novih upita i vidljivosti</p>
               </div>
             </div>
           </div>
@@ -786,4 +558,3 @@ export default async function HomePage() {
     </div>
   );
 }
-
