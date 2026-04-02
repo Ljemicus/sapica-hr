@@ -72,6 +72,8 @@ export function RegisterForm() {
         const loginUrl = `/prijava${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`;
         router.push(loginUrl);
       }
+    } catch {
+      toast.error('Mrežna greška. Provjerite internetsku vezu.');
     } finally {
       setLoading(false);
     }

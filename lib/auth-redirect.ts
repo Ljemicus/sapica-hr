@@ -5,10 +5,12 @@
 export function safeRedirectPath(raw: string | null | undefined, fallback = '/'): string {
   if (!raw) return fallback;
   const trimmed = raw.trim();
-  // Block absolute URLs, protocol-relative URLs, and data/javascript URIs
+  // Block absolute URLs, protocol-relative URLs, data/javascript URIs,
+  // and backslash paths (some browsers normalise \ to / → open redirect).
   if (
     /^[a-z][a-z0-9+.-]*:/i.test(trimmed) ||
     trimmed.startsWith('//') ||
+    trimmed.startsWith('\\') ||
     trimmed.includes('\n') ||
     trimmed.includes('\r')
   ) {

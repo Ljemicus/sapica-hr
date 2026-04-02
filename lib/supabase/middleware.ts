@@ -40,7 +40,8 @@ export async function updateSession(request: NextRequest) {
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
     url.pathname = '/prijava';
-    url.searchParams.set('redirect', request.nextUrl.pathname);
+    const originalPath = request.nextUrl.pathname + request.nextUrl.search;
+    url.searchParams.set('redirect', originalPath);
     return NextResponse.redirect(url);
   }
 

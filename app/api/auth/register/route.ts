@@ -23,6 +23,17 @@ export async function POST(request: Request) {
     return apiError({ status: 400, code: 'INVALID_INPUT', message: 'Neispravan unos.', details: parsed.error.flatten() });
   }
 
+  // Sanitise optional avatar_url – must be a valid http(s) URL or null
+  let avatarUrl: string | null = null;
+  if (typeof body?.avatar_url === 'string' && body.avatar_url.length > 0) {
+    try {
+      const parsedUrl = new URL(body.avatar_url);
+      if (parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:') {
+        avatarUrl = body.avatar_url;
+      }
+    } catch { /* invalid URL → keep null */ }
+  }
+
   const { createClient } = await import('@/lib/supabase/server');
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -33,7 +44,7 @@ export async function POST(request: Request) {
         name: parsed.data.name,
         role: parsed.data.role,
         city: parsed.data.city,
-        avatar_url: body?.avatar_url || null,
+        avatar_url: avatarUrl,
       },
     },
   });
@@ -56,7 +67,7 @@ export async function POST(request: Request) {
       name: parsed.data.name,
       role: parsed.data.role,
       city: parsed.data.city,
-      avatar_url: body?.avatar_url || null,
+      avatar_url: avatarUrl,
     },
   });
   if (profileError) {

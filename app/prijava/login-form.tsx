@@ -57,6 +57,8 @@ export function LoginForm() {
       toast.success('Uspješna prijava!');
       router.push(redirect !== '/' ? redirect : (payload.defaultRedirect || '/dashboard/vlasnik'));
       router.refresh();
+    } catch {
+      toast.error('Mrežna greška. Provjerite internetsku vezu.');
     } finally {
       setLoading(false);
     }
