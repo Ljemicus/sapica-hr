@@ -16,7 +16,8 @@ export function SitterCalendarTab({ currentMonth, availableDates, onPreviousMont
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
-  const startDay = monthStart.getDay();
+  // Monday-first: convert Sunday=0 to 6, Monday=1 to 0, etc.
+  const startDay = (monthStart.getDay() + 6) % 7;
 
   return (
     <Card className="border-0 shadow-sm">
@@ -39,7 +40,7 @@ export function SitterCalendarTab({ currentMonth, availableDates, onPreviousMont
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-7 gap-1 mb-2">
-          {['Ned', 'Pon', 'Uto', 'Sri', 'Čet', 'Pet', 'Sub'].map((day) => (
+          {['Pon', 'Uto', 'Sri', 'Čet', 'Pet', 'Sub', 'Ned'].map((day) => (
             <div key={day} className="text-center text-xs font-semibold text-muted-foreground py-2 uppercase tracking-wider">{day}</div>
           ))}
         </div>

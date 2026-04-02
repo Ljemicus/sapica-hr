@@ -17,7 +17,6 @@ export type DashboardGroomerAvailabilitySlot = GroomerDashboardProps['availabili
 
 export interface GroomerBookingsTabProps {
   bookings: DashboardGroomerBooking[];
-  pendingBookingsCount: number;
   updatingId: string | null;
   onUpdateStatus: (bookingId: string, status: GroomerBookingStatus) => void;
 }

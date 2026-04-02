@@ -123,7 +123,6 @@ export function GroomerDashboardContent({ groomer, bookings, availability }: Gro
         <TabsContent value="bookings">
           <GroomerBookingsTab
             bookings={bookings}
-            pendingBookingsCount={pendingBookings.length}
             updatingId={updatingId}
             onUpdateStatus={handleStatusUpdate}
           />
