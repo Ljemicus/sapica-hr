@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import {
@@ -47,8 +48,32 @@ export function PetPassportView({ pet, passport, isDemo = false }: Props) {
     loadDraft();
   }, [storageKey]);
 
-  const saveDraft = () => {
+  const [saving, setSaving] = useState(false);
+
+  const saveDraft = async () => {
+    setSaving(true);
+    // Always persist locally as fallback
     localStorage.setItem(storageKey, JSON.stringify(draft));
+
+    // Attempt backend persistence
+    try {
+      const res = await fetch(`/api/pet-passport/${pet.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(draft),
+      });
+      if (res.ok) {
+        toast.success('Karton spremljen');
+      } else if (res.status === 401) {
+        // Not logged in — localStorage save is the fallback
+        toast.info('Spremljeno lokalno (prijavite se za trajno spremanje)');
+      } else {
+        toast.error('Greška pri spremanju — lokalna kopija sačuvana');
+      }
+    } catch {
+      toast.info('Spremljeno lokalno');
+    }
+    setSaving(false);
     setIsEditing(false);
   };
 
@@ -111,8 +136,8 @@ export function PetPassportView({ pet, passport, isDemo = false }: Props) {
               <Button variant="outline" className="hover:bg-red-50 hover:text-red-600 hover:border-red-200" onClick={cancelEdit}>
                 <X className="h-4 w-4 mr-1" /> Odustani
               </Button>
-              <Button className="bg-orange-500 hover:bg-orange-600" onClick={saveDraft}>
-                <Save className="h-4 w-4 mr-1" /> Spremi
+              <Button className="bg-orange-500 hover:bg-orange-600" onClick={saveDraft} disabled={saving}>
+                <Save className="h-4 w-4 mr-1" /> {saving ? 'Spremanje...' : 'Spremi'}
               </Button>
             </>
           )}

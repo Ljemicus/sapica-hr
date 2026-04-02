@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { toast } from 'sonner';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -370,19 +371,25 @@ export default function AdoptionListingForm({ listing }: AdoptionListingFormProp
             bucket="pet-photos"
             entityId={listing?.id ?? 'new-listing'}
             onUploadComplete={(urls) => {
-              setImages(urls.map((url, i) => ({
-                url,
-                alt: form.name || null,
-                is_primary: i === 0 && images.length === 0,
-              })));
+              setImages((prev) => {
+                const existingUrls = new Set(prev.map((img) => img.url));
+                const newImages = urls
+                  .filter((url) => !existingUrls.has(url))
+                  .map((url) => ({
+                    url,
+                    alt: form.name || null,
+                    is_primary: prev.length === 0,
+                  }));
+                return [...prev, ...newImages].slice(0, 8);
+              });
             }}
           />
-          {/* Show existing images when editing */}
-          {listing && images.length > 0 && (
+          {/* Show existing / uploaded images */}
+          {images.length > 0 && (
             <div className="grid grid-cols-3 gap-2">
               {images.map((img, i) => (
                 <div key={img.url} className="relative group rounded-lg overflow-hidden bg-gray-100 aspect-square">
-                  <img src={img.url} alt={img.alt || ''} className="w-full h-full object-cover" />
+                  <Image src={img.url} alt={img.alt || ''} fill className="object-cover" sizes="(max-width: 768px) 33vw, 150px" />
                   <button
                     type="button"
                     onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}

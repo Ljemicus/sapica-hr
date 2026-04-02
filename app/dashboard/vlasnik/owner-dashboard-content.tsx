@@ -64,6 +64,7 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
       owner_id: user.id,
     };
 
+    let success = false;
     if (editingPet) {
       const response = await fetch(`/api/pets/${editingPet.id}`, {
         method: 'PATCH',
@@ -71,7 +72,7 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
         body: JSON.stringify(data),
       });
       if (!response.ok) toast.error('Greška pri ažuriranju');
-      else toast.success('Ljubimac ažuriran!');
+      else { toast.success('Ljubimac ažuriran!'); success = true; }
     } else {
       const response = await fetch('/api/pets', {
         method: 'POST',
@@ -79,11 +80,13 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
         body: JSON.stringify(data),
       });
       if (!response.ok) toast.error('Greška pri dodavanju');
-      else toast.success('Ljubimac dodan!');
+      else { toast.success('Ljubimac dodan!'); success = true; }
     }
-    setShowPetDialog(false);
     setLoading(false);
-    router.refresh();
+    if (success) {
+      setShowPetDialog(false);
+      router.refresh();
+    }
   };
 
   const deletePet = async (petId: string) => {
