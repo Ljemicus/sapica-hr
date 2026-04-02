@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { SERVICE_LABELS } from '@/lib/types';
 import type { Booking } from '@/lib/types';
+import { STATUS_LABELS } from '@/lib/types';
 import { PLATFORMA_FEE, formatCurrency } from '@/lib/payment';
 
 type BookingWithDetails = Booking;
@@ -77,6 +78,27 @@ export default function CheckoutPage({
         <Button variant="outline" onClick={() => router.back()}>
           Natrag
         </Button>
+      </div>
+    );
+  }
+
+  if (booking.status !== 'accepted') {
+    return (
+      <div className="mx-auto flex min-h-[60vh] max-w-lg items-center justify-center px-4 py-12">
+        <Card className="w-full text-center">
+          <CardContent className="pt-8 pb-4">
+            <h1 className="mb-2 text-2xl font-bold">Plaćanje nije dostupno</h1>
+            <p className="text-muted-foreground">
+              Rezervacija mora biti prihvaćena od strane čuvara prije plaćanja.
+              Trenutni status: <strong>{STATUS_LABELS[booking.status] ?? booking.status}</strong>
+            </p>
+          </CardContent>
+          <CardFooter className="flex justify-center pb-8">
+            <Button variant="outline" onClick={() => router.push('/dashboard/vlasnik')}>
+              Povratak na dashboard
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     );
   }

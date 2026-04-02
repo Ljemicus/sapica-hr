@@ -3,6 +3,7 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { apiError } from '@/lib/api-errors';
 import { getStripe } from '@/lib/stripe';
 import { calculateSitterPayout, calculatePlatformFee, formatCurrency } from '@/lib/payment';
+import { SERVICE_LABELS, type ServiceType } from '@/lib/types';
 import { appLogger } from '@/lib/logger';
 import { sendEmail } from '@/lib/email';
 import { paymentConfirmationEmail, sitterPaymentNotificationEmail } from '@/lib/email-templates';
@@ -67,6 +68,23 @@ export async function POST(request: Request) {
         break;
       }
 
+      // Idempotency: skip if already processed
+      {
+        const { data: existingBooking } = await supabase
+          .from('bookings')
+          .select('payment_status')
+          .eq('id', bookingId)
+          .single();
+
+        if (existingBooking?.payment_status === 'paid') {
+          appLogger.info('payments.webhook', 'Skipping already-paid booking (duplicate webhook)', {
+            bookingId,
+            sessionId: session.id,
+          });
+          break;
+        }
+      }
+
       {
         const platformFee = calculatePlatformFee(amountTotal);
         const sitterPayout = calculateSitterPayout(amountTotal);
@@ -125,7 +143,7 @@ export async function POST(request: Request) {
 
           if (bookingDetails?.owner?.email) {
             const dates = `${new Date(bookingDetails.start_date).toLocaleDateString('hr-HR')} – ${new Date(bookingDetails.end_date).toLocaleDateString('hr-HR')}`;
-            const serviceName = bookingDetails.service_type || 'Usluga';
+            const serviceName = SERVICE_LABELS[bookingDetails.service_type as ServiceType] || bookingDetails.service_type || 'Usluga';
 
             sendEmail({
               to: bookingDetails.owner.email,

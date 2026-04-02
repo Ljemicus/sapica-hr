@@ -47,7 +47,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Nemate pristup ovoj rezervaciji.' }, { status: 403 });
   }
 
-  // Check if already paid
+  // Only accepted bookings can be paid
+  if (booking.status !== 'accepted') {
+    return NextResponse.json({ error: 'Samo prihvaćene rezervacije mogu biti plaćene.' }, { status: 400 });
+  }
+
   if (booking.total_price <= 0) {
     appLogger.warn('payments.checkout', 'Booking has invalid total price for checkout', { bookingId });
     return NextResponse.json({ error: 'Rezervacija ima neispravan iznos za plaćanje.' }, { status: 400 });
@@ -55,6 +59,10 @@ export async function POST(request: Request) {
 
   if (booking.payment_status === 'paid') {
     return NextResponse.json({ error: 'Ova rezervacija je već plaćena.' }, { status: 400 });
+  }
+
+  if (booking.payment_status === 'pending' && booking.stripe_session_id) {
+    return NextResponse.json({ error: 'Plaćanje je već u tijeku. Osvježite stranicu.' }, { status: 400 });
   }
 
   // Get sitter's Stripe account
