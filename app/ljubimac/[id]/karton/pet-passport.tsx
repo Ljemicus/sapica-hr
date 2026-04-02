@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import {
   ArrowLeft, Printer, Syringe, AlertTriangle, Pill,
-  Stethoscope, FileText, Phone, MapPin, QrCode, Share2, Plus, Pencil, Save, X, Eye
+  Stethoscope, FileText, Phone, MapPin, QrCode, Share2, Plus, Pencil, Save, X, Eye, Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,6 +63,8 @@ export function PetPassportView({ pet, passport, isDemo = false }: Props) {
         body: JSON.stringify(draft),
       });
       if (res.ok) {
+        // Backend is the source of truth — remove localStorage draft
+        localStorage.removeItem(storageKey);
         toast.success('Karton spremljen');
       } else if (res.status === 401) {
         // Not logged in — localStorage save is the fallback
@@ -78,18 +80,17 @@ export function PetPassportView({ pet, passport, isDemo = false }: Props) {
   };
 
   const cancelEdit = () => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      setDraft(saved ? JSON.parse(saved) : passport);
-    } catch {
-      setDraft(passport);
-    }
+    setDraft(passport);
     setIsEditing(false);
   };
 
   const addVaccination = () => setDraft({ ...draft, vaccinations: [...draft.vaccinations, { name: '', date: '', vet: '', next_date: '' }] });
   const addAllergy = () => setDraft({ ...draft, allergies: [...draft.allergies, { name: '', severity: 'blaga', notes: '' }] });
   const addMedication = () => setDraft({ ...draft, medications: [...draft.medications, { name: '', dose: '', schedule: '', start_date: '', end_date: null }] });
+
+  const removeVaccination = (index: number) => setDraft({ ...draft, vaccinations: draft.vaccinations.filter((_, i) => i !== index) });
+  const removeAllergy = (index: number) => setDraft({ ...draft, allergies: draft.allergies.filter((_, i) => i !== index) });
+  const removeMedication = (index: number) => setDraft({ ...draft, medications: draft.medications.filter((_, i) => i !== index) });
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl print:max-w-none print:p-0">
@@ -183,13 +184,16 @@ export function PetPassportView({ pet, passport, isDemo = false }: Props) {
             {draft.vaccinations.length === 0 ? <p className="text-muted-foreground text-sm">Nema zabilježenih cijepljenja.</p> : (
               <div className="space-y-3">
                 {draft.vaccinations.map((v, i) => (
-                  <div key={i} className="grid grid-cols-1 md:grid-cols-4 gap-3 p-3 rounded-xl bg-gray-50">
+                  <div key={i} className="grid grid-cols-1 md:grid-cols-4 gap-3 p-3 rounded-xl bg-gray-50 relative">
                     {isEditing ? (
                       <>
                         <input className="rounded border px-3 py-2 text-sm" placeholder="Cjepivo" value={v.name} onChange={(e) => setDraft({ ...draft, vaccinations: draft.vaccinations.map((item, idx) => idx === i ? { ...item, name: e.target.value } : item) })} />
                         <input type="date" className="rounded border px-3 py-2 text-sm" value={v.date} onChange={(e) => setDraft({ ...draft, vaccinations: draft.vaccinations.map((item, idx) => idx === i ? { ...item, date: e.target.value } : item) })} />
                         <input className="rounded border px-3 py-2 text-sm" placeholder="Veterinar" value={v.vet} onChange={(e) => setDraft({ ...draft, vaccinations: draft.vaccinations.map((item, idx) => idx === i ? { ...item, vet: e.target.value } : item) })} />
-                        <input type="date" className="rounded border px-3 py-2 text-sm" value={v.next_date} onChange={(e) => setDraft({ ...draft, vaccinations: draft.vaccinations.map((item, idx) => idx === i ? { ...item, next_date: e.target.value } : item) })} />
+                        <div className="flex gap-2">
+                          <input type="date" className="rounded border px-3 py-2 text-sm flex-1" value={v.next_date} onChange={(e) => setDraft({ ...draft, vaccinations: draft.vaccinations.map((item, idx) => idx === i ? { ...item, next_date: e.target.value } : item) })} />
+                          <button type="button" onClick={() => removeVaccination(i)} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors" title="Ukloni"><Trash2 className="h-4 w-4" /></button>
+                        </div>
                       </>
                     ) : (
                       <>
@@ -227,7 +231,10 @@ export function PetPassportView({ pet, passport, isDemo = false }: Props) {
                           <option value="umjerena">Umjerena</option>
                           <option value="ozbiljna">Ozbiljna</option>
                         </select>
-                        <input className="rounded border px-3 py-2 text-sm" placeholder="Napomena" value={a.notes} onChange={(e) => setDraft({ ...draft, allergies: draft.allergies.map((item, idx) => idx === i ? { ...item, notes: e.target.value } : item) })} />
+                        <div className="flex gap-2">
+                          <input className="rounded border px-3 py-2 text-sm flex-1" placeholder="Napomena" value={a.notes} onChange={(e) => setDraft({ ...draft, allergies: draft.allergies.map((item, idx) => idx === i ? { ...item, notes: e.target.value } : item) })} />
+                          <button type="button" onClick={() => removeAllergy(i)} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors" title="Ukloni"><Trash2 className="h-4 w-4" /></button>
+                        </div>
                       </div>
                     ) : (
                       <>
@@ -260,7 +267,10 @@ export function PetPassportView({ pet, passport, isDemo = false }: Props) {
                         <input className="rounded border px-3 py-2 text-sm" placeholder="Naziv lijeka" value={m.name} onChange={(e) => setDraft({ ...draft, medications: draft.medications.map((item, idx) => idx === i ? { ...item, name: e.target.value } : item) })} />
                         <input className="rounded border px-3 py-2 text-sm" placeholder="Doza" value={m.dose} onChange={(e) => setDraft({ ...draft, medications: draft.medications.map((item, idx) => idx === i ? { ...item, dose: e.target.value } : item) })} />
                         <input className="rounded border px-3 py-2 text-sm" placeholder="Raspored" value={m.schedule} onChange={(e) => setDraft({ ...draft, medications: draft.medications.map((item, idx) => idx === i ? { ...item, schedule: e.target.value } : item) })} />
-                        <input type="date" className="rounded border px-3 py-2 text-sm" value={m.start_date} onChange={(e) => setDraft({ ...draft, medications: draft.medications.map((item, idx) => idx === i ? { ...item, start_date: e.target.value } : item) })} />
+                        <div className="flex gap-2">
+                          <input type="date" className="rounded border px-3 py-2 text-sm flex-1" value={m.start_date} onChange={(e) => setDraft({ ...draft, medications: draft.medications.map((item, idx) => idx === i ? { ...item, start_date: e.target.value } : item) })} />
+                          <button type="button" onClick={() => removeMedication(i)} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors" title="Ukloni"><Trash2 className="h-4 w-4" /></button>
+                        </div>
                       </div>
                     ) : (
                       <>

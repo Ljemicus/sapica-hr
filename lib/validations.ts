@@ -27,6 +27,46 @@ export const petSchema = z.object({
   photo_url: z.string().url().nullish(),
 });
 
+// ── Pet Passport ──
+
+const vaccinationSchema = z.object({
+  name: z.string(),
+  date: z.string(),
+  vet: z.string(),
+  next_date: z.string(),
+});
+
+const allergySchema = z.object({
+  name: z.string(),
+  severity: z.enum(['blaga', 'umjerena', 'ozbiljna']),
+  notes: z.string(),
+});
+
+const medicationSchema = z.object({
+  name: z.string(),
+  dose: z.string(),
+  schedule: z.string(),
+  start_date: z.string(),
+  end_date: z.string().nullable(),
+});
+
+const vetInfoSchema = z.object({
+  name: z.string(),
+  phone: z.string(),
+  address: z.string(),
+  emergency: z.boolean(),
+});
+
+export const petPassportSchema = z.object({
+  vaccinations: z.array(vaccinationSchema).optional(),
+  allergies: z.array(allergySchema).optional(),
+  medications: z.array(medicationSchema).optional(),
+  vet_info: vetInfoSchema.optional(),
+  notes: z.string().optional(),
+});
+
+export type PetPassportInput = z.infer<typeof petPassportSchema>;
+
 export const sitterProfileSchema = z.object({
   bio: z.string().min(10, 'Bio mora imati najmanje 10 znakova'),
   experience_years: z.coerce.number().min(0).max(50),

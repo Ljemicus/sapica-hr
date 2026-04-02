@@ -65,22 +65,26 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
     };
 
     let success = false;
-    if (editingPet) {
-      const response = await fetch(`/api/pets/${editingPet.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) toast.error('Greška pri ažuriranju');
-      else { toast.success('Ljubimac ažuriran!'); success = true; }
-    } else {
-      const response = await fetch('/api/pets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) toast.error('Greška pri dodavanju');
-      else { toast.success('Ljubimac dodan!'); success = true; }
+    try {
+      if (editingPet) {
+        const response = await fetch(`/api/pets/${editingPet.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        if (!response.ok) toast.error('Greška pri ažuriranju');
+        else { toast.success('Ljubimac ažuriran!'); success = true; }
+      } else {
+        const response = await fetch('/api/pets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        if (!response.ok) toast.error('Greška pri dodavanju');
+        else { toast.success('Ljubimac dodan!'); success = true; }
+      }
+    } catch {
+      toast.error('Mrežna greška — pokušajte ponovo');
     }
     setLoading(false);
     if (success) {
@@ -89,27 +93,39 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
     }
   };
 
+  const [deletingPetId, setDeletingPetId] = useState<string | null>(null);
+
   const deletePet = async (petId: string) => {
     if (!confirm('Jeste li sigurni da želite obrisati ovog ljubimca?')) return;
-    const response = await fetch(`/api/pets/${petId}`, { method: 'DELETE' });
-    if (!response.ok) toast.error('Greška pri brisanju');
-    else {
-      toast.success('Ljubimac obrisan');
-      router.refresh();
+    setDeletingPetId(petId);
+    try {
+      const response = await fetch(`/api/pets/${petId}`, { method: 'DELETE' });
+      if (!response.ok) toast.error('Greška pri brisanju');
+      else {
+        toast.success('Ljubimac obrisan');
+        router.refresh();
+      }
+    } catch {
+      toast.error('Mrežna greška — pokušajte ponovo');
     }
+    setDeletingPetId(null);
   };
 
   const cancelBooking = async (bookingId: string) => {
     if (!confirm('Jeste li sigurni da želite otkazati ovu rezervaciju?')) return;
-    const response = await fetch(`/api/bookings/${bookingId}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'cancelled' }),
-    });
-    if (!response.ok) toast.error('Greška pri otkazivanju');
-    else {
-      toast.success('Rezervacija otkazana');
-      router.refresh();
+    try {
+      const response = await fetch(`/api/bookings/${bookingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'cancelled' }),
+      });
+      if (!response.ok) toast.error('Greška pri otkazivanju');
+      else {
+        toast.success('Rezervacija otkazana');
+        router.refresh();
+      }
+    } catch {
+      toast.error('Mrežna greška — pokušajte ponovo');
     }
   };
 
@@ -119,16 +135,20 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
       return;
     }
     setLoading(true);
-    const response = await fetch('/api/reviews', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ booking_id: reviewBooking.id, rating: reviewRating, comment: reviewComment }),
-    });
-    if (!response.ok) toast.error('Greška pri slanju recenzije');
-    else {
-      toast.success('Recenzija poslana!');
-      setShowReviewDialog(false);
-      router.refresh();
+    try {
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ booking_id: reviewBooking.id, rating: reviewRating, comment: reviewComment }),
+      });
+      if (!response.ok) toast.error('Greška pri slanju recenzije');
+      else {
+        toast.success('Recenzija poslana!');
+        setShowReviewDialog(false);
+        router.refresh();
+      }
+    } catch {
+      toast.error('Mrežna greška — pokušajte ponovo');
     }
     setLoading(false);
   };
