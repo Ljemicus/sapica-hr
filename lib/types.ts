@@ -79,6 +79,7 @@ export interface Booking {
   end_date: string;
   status: BookingStatus;
   total_price: number;
+  payment_status?: PaymentStatus;
   note: string | null;
   created_at: string;
   owner?: User;

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createClient } from '@/lib/supabase/client';
-import { getAuthCallbackUrl } from '@/lib/auth-redirect';
+import { getAuthCallbackUrl, safeRedirectPath } from '@/lib/auth-redirect';
 import { loginSchema, type LoginInput } from '@/lib/validations';
 import { toast } from 'sonner';
 
@@ -32,7 +32,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/';
+  const redirect = safeRedirectPath(searchParams.get('redirect'));
   const supabase = createClient();
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginInput>({

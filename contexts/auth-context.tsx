@@ -95,6 +95,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = useCallback(async () => {
     if (isSupabaseConfiguredClient()) {
+      // Call server-side logout to clear server session cookies
+      await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
       await supabase.auth.signOut();
     }
     setUser(null);

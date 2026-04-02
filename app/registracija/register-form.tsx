@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ImageUpload } from '@/components/shared/image-upload';
 import { createClient } from '@/lib/supabase/client';
-import { getAuthCallbackUrl } from '@/lib/auth-redirect';
+import { getAuthCallbackUrl, safeRedirectPath } from '@/lib/auth-redirect';
 import { registerSchema, type RegisterInput } from '@/lib/validations';
 import { CITIES } from '@/lib/types';
 import { toast } from 'sonner';
@@ -36,7 +36,7 @@ export function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const defaultRole = searchParams.get('role') as 'owner' | 'sitter' | null;
-  const redirect = searchParams.get('redirect') || '';
+  const redirect = safeRedirectPath(searchParams.get('redirect'), '');
   const supabase = createClient();
 
   const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<RegisterInput>({

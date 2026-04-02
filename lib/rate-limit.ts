@@ -1,4 +1,6 @@
 const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+const CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+let lastCleanup = Date.now();
 
 let warnedAboutMemoryLimiter = false;
 
@@ -19,6 +21,15 @@ export function rateLimit(key: string, limit: number = 10, windowMs: number = 60
   }
 
   const now = Date.now();
+
+  // Periodically evict expired entries to prevent unbounded memory growth
+  if (now - lastCleanup > CLEANUP_INTERVAL_MS) {
+    lastCleanup = now;
+    for (const [k, v] of rateLimitMap) {
+      if (now - v.lastReset > windowMs) rateLimitMap.delete(k);
+    }
+  }
+
   const entry = rateLimitMap.get(key);
   if (!entry || now - entry.lastReset > windowMs) {
     rateLimitMap.set(key, { count: 1, lastReset: now });
