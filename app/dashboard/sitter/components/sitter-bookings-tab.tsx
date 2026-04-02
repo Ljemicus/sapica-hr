@@ -112,7 +112,7 @@ export function SitterBookingsTab({ bookings, pendingBookings, upcomingBookings,
                         <Button size="sm" variant="outline" onClick={() => onOpenUpdateDialog(booking.id)} className="hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 btn-hover">
                           <Camera className="h-4 w-4 mr-1" /> Pošalji ažuriranje
                         </Button>
-                        <Link href={`/dashboard/messages?booking=${booking.id}`} className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-xs transition-[color,box-shadow] hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200">
+                        <Link href={`/poruke?to=${booking.owner?.id}`} className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-xs transition-[color,box-shadow] hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200">
                           Poruke
                         </Link>
                       </div>

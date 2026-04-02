@@ -59,6 +59,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json<BookingRouteError>({ error: 'Sitter ne može postaviti taj status.' }, { status: 403 });
   }
 
+  if (status === 'cancelled' && (booking.status === 'completed' || booking.status === 'rejected' || booking.status === 'cancelled')) {
+    return NextResponse.json<BookingRouteError>({ error: 'Završene, odbijene ili već otkazane rezervacije ne mogu se otkazati.' }, { status: 400 });
+  }
+
   if (status === 'completed' && booking.status !== 'accepted') {
     return NextResponse.json<BookingRouteError>({ error: 'Rezervacija mora biti prihvaćena prije završetka.' }, { status: 400 });
   }

@@ -29,21 +29,19 @@ export function subscribeToIncomingMessages(params: {
             partnerId: newMsg.sender_id,
             partnerName: existing?.partnerName || 'Korisnik',
             partnerAvatar: existing?.partnerAvatar || null,
-            messages: existing?.messages?.length
-              ? appendMessageIfMissing(existing.messages, {
+            messages: appendMessageIfMissing(existing?.messages || [], {
                   ...newMsg,
                   sender: {
                     id: newMsg.sender_id,
                     email: '',
-                    name: '',
+                    name: existing?.partnerName || '',
                     role: 'owner',
-                    avatar_url: null,
+                    avatar_url: existing?.partnerAvatar || null,
                     phone: null,
                     city: null,
                     created_at: '',
                   },
-                })
-              : existing?.messages || [],
+                }),
             lastMessage: newMsg,
             unreadCount: (existing?.unreadCount || 0) + (selectedPartnerId === newMsg.sender_id ? 0 : 1),
           }))

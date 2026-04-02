@@ -216,7 +216,6 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
                 </div>
               ) : (
                 conversations.map((conv) => {
-                  const isOnline = conv.partnerId.charCodeAt(0) % 2 === 0;
                   const isTyping = typingPartners.has(conv.partnerId);
                   return (
                     <button
@@ -226,13 +225,10 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
                         selectedPartnerId === conv.partnerId ? 'bg-orange-50/50 border-l-2 border-l-orange-500' : ''
                       }`}
                     >
-                      <div className="relative">
-                        <Avatar className="h-11 w-11 flex-shrink-0">
-                          <AvatarImage src={conv.partnerAvatar || ''} />
-                          <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm">{conv.partnerName?.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div className={`absolute -bottom-0.5 -right-0.5 status-dot ${isOnline ? 'online' : 'offline'}`} />
-                      </div>
+                      <Avatar className="h-11 w-11 flex-shrink-0">
+                        <AvatarImage src={conv.partnerAvatar || ''} />
+                        <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm">{conv.partnerName?.charAt(0)}</AvatarFallback>
+                      </Avatar>
                       <div className="flex-1 text-left min-w-0">
                         <div className="flex items-center justify-between">
                           <span className={`font-medium text-sm truncate ${conv.unreadCount > 0 ? 'text-gray-900' : ''}`}>{conv.partnerName}</span>
@@ -271,27 +267,15 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
                   <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSelectedPartnerId(null)}>
                     <ArrowLeft className="h-4 w-4" />
                   </Button>
-                  <div className="relative">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src={selectedConversation.partnerAvatar || ''} />
-                      <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm">{selectedConversation.partnerName?.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className={`absolute -bottom-0.5 -right-0.5 status-dot ${selectedConversation.partnerId.charCodeAt(0) % 2 === 0 ? 'online' : 'offline'}`} />
-                  </div>
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src={selectedConversation.partnerAvatar || ''} />
+                    <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm">{selectedConversation.partnerName?.charAt(0)}</AvatarFallback>
+                  </Avatar>
                   <div>
                     <span className="font-semibold text-sm">{selectedConversation.partnerName}</span>
-                    <p className="text-[10px] text-muted-foreground">
-                      {isPartnerTyping ? (
-                        <span className="text-orange-500">piše...</span>
-                      ) : selectedConversation.partnerId.charCodeAt(0) % 2 === 0 ? (
-                        <span className="flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
-                          Online
-                        </span>
-                      ) : (
-                        'Zadnji put viđen danas'
-                      )}
-                    </p>
+                    {isPartnerTyping && (
+                      <p className="text-[10px] text-orange-500">piše...</p>
+                    )}
                   </div>
                 </div>
 
@@ -320,7 +304,7 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
                                     ? 'bg-orange-500 text-white chat-bubble-mine'
                                     : 'bg-white border chat-bubble-theirs'
                                 }`}>
-                                  <p className="text-sm leading-relaxed">{msg.content}</p>
+                                  <p className="text-sm leading-relaxed">{msg.content || (msg.image_url ? '' : '\u00A0')}</p>
                                   <div className={`flex items-center gap-1 justify-end mt-1 ${isMine ? 'text-orange-200' : 'text-muted-foreground'}`}>
                                     <span className="text-[10px]">{format(new Date(msg.created_at), 'HH:mm')}</span>
                                     {isMine && (
