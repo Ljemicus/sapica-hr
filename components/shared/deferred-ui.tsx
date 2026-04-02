@@ -18,17 +18,12 @@ const CookieConsent = dynamic(
   () => import('@/components/shared/cookie-consent').then((mod) => mod.CookieConsent)
 );
 
-const FloatingChat = dynamic(
-  () => import('@/components/shared/floating-chat').then((mod) => mod.FloatingChat)
-);
-
 export function DeferredUI() {
   return (
     <>
       <ScrollToTop />
       <PushNotificationPrompt />
       <Toaster position="top-right" richColors />
-      <FloatingChat />
       <CookieConsent />
     </>
   );
