@@ -280,7 +280,7 @@ export function ChatWidget() {
       {!isOpen && (
         <button
           onClick={handleOpen}
-          className="fixed bottom-6 left-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-all hover:scale-110 hover:bg-orange-600 active:scale-95 disabled:cursor-wait disabled:opacity-70"
+          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-all hover:scale-110 hover:bg-orange-600 active:scale-95 disabled:cursor-wait disabled:opacity-70"
           aria-label={isAuthenticated ? 'Otvori pomoć i poruke' : 'Otvori PetPark pomoć'}
           disabled={loading}
         >
@@ -290,7 +290,7 @@ export function ChatWidget() {
 
       {isOpen && (
         <div
-          className="fixed bottom-4 left-4 z-50 flex w-[calc(100vw-2rem)] max-w-[400px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl animate-in slide-in-from-bottom-4 fade-in duration-200 sm:bottom-6 sm:left-6"
+          className="fixed bottom-20 right-4 z-50 flex w-[calc(100vw-2rem)] max-w-[400px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl animate-in slide-in-from-bottom-4 fade-in duration-200 md:bottom-6 md:right-6"
           style={{ height: 'min(540px, calc(100vh - 6rem))' }}
         >
           {view === 'chooser' ? renderChooser() : renderAssistant()}
