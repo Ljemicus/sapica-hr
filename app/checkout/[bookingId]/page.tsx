@@ -81,6 +81,29 @@ export default function CheckoutPage({
     );
   }
 
+  if (booking.payment_status === 'paid') {
+    return (
+      <div className="mx-auto flex min-h-[60vh] max-w-lg items-center justify-center px-4 py-12">
+        <Card className="w-full text-center">
+          <CardContent className="pt-8 pb-4">
+            <div className="mb-4 flex justify-center">
+              <Badge variant="default" className="text-base px-4 py-1">Plaćeno</Badge>
+            </div>
+            <h1 className="mb-2 text-2xl font-bold">Rezervacija je već plaćena</h1>
+            <p className="text-muted-foreground">
+              Ova rezervacija je uspješno plaćena. Ne trebate ponavljati plaćanje.
+            </p>
+          </CardContent>
+          <CardFooter className="flex justify-center pb-8">
+            <Button variant="outline" onClick={() => router.push('/dashboard/vlasnik')}>
+              Povratak na dashboard
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
+
   const totalCents = Math.round(booking.total_price * 100);
   const platformFeeCents = Math.round(totalCents * PLATFORMA_FEE);
   const sitterPayoutCents = totalCents - platformFeeCents;

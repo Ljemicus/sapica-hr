@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
-import { getBookings, createBooking, getSitter } from '@/lib/db';
+import { getBookings, createBooking, getSitter, getPet } from '@/lib/db';
 import { appLogger } from '@/lib/logger';
 import { bookingSchema } from '@/lib/validations';
+import { SERVICE_LABELS, type ServiceType } from '@/lib/types';
+import { sendEmail } from '@/lib/email';
+import { newBookingRequestEmail } from '@/lib/email-templates';
 
 export async function GET(request: Request) {
   const user = await getAuthUser();
@@ -93,5 +96,29 @@ export async function POST(request: Request) {
     });
     return apiError({ status: 500, code: 'BOOKING_CREATE_FAILED', message: 'Failed to create booking' });
   }
+
+  // Best-effort: notify sitter via email
+  try {
+    const pet = await getPet(pet_id);
+    const sitterEmail = sitterProfile.user?.email;
+    if (sitterEmail) {
+      const dates = `${new Date(start_date).toLocaleDateString('hr-HR')} – ${new Date(end_date).toLocaleDateString('hr-HR')}`;
+      const serviceName = SERVICE_LABELS[service_type as ServiceType] || service_type;
+      sendEmail({
+        to: sitterEmail,
+        subject: 'Novi upit za čuvanje!',
+        html: newBookingRequestEmail(
+          sitterProfile.user?.name || 'Čuvar',
+          user.name || 'Korisnik',
+          pet?.name || 'Ljubimac',
+          serviceName,
+          dates,
+        ),
+      }).catch((err) => appLogger.error('bookings.create', 'Failed to send booking request email', { error: String(err) }));
+    }
+  } catch (emailErr) {
+    appLogger.error('bookings.create', 'Email notification error', { error: String(emailErr) });
+  }
+
   return NextResponse.json(booking, { status: 201 });
 }

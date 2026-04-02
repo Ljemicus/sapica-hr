@@ -2,8 +2,10 @@ import { NextResponse } from 'next/server';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { apiError } from '@/lib/api-errors';
 import { getStripe } from '@/lib/stripe';
-import { calculateSitterPayout, calculatePlatformFee } from '@/lib/payment';
+import { calculateSitterPayout, calculatePlatformFee, formatCurrency } from '@/lib/payment';
 import { appLogger } from '@/lib/logger';
+import { sendEmail } from '@/lib/email';
+import { paymentConfirmationEmail, sitterPaymentNotificationEmail } from '@/lib/email-templates';
 import type Stripe from 'stripe';
 
 export const runtime = 'nodejs';
@@ -111,6 +113,49 @@ export async function POST(request: Request) {
             sessionId: session.id,
             reason: paymentInsertError.message,
           });
+        }
+
+        // Best-effort: send payment confirmation emails
+        try {
+          const { data: bookingDetails } = await supabase
+            .from('bookings')
+            .select('*, owner:profiles!bookings_owner_id_fkey(name, email), sitter:profiles!bookings_sitter_id_fkey(name, email), pet:pets!bookings_pet_id_fkey(name)')
+            .eq('id', bookingId)
+            .single();
+
+          if (bookingDetails?.owner?.email) {
+            const dates = `${new Date(bookingDetails.start_date).toLocaleDateString('hr-HR')} – ${new Date(bookingDetails.end_date).toLocaleDateString('hr-HR')}`;
+            const serviceName = bookingDetails.service_type || 'Usluga';
+
+            sendEmail({
+              to: bookingDetails.owner.email,
+              subject: 'Plaćanje potvrđeno!',
+              html: paymentConfirmationEmail(
+                bookingDetails.owner.name || 'Korisnik',
+                bookingDetails.pet?.name || 'Ljubimac',
+                serviceName,
+                dates,
+                formatCurrency(amountTotal),
+              ),
+            }).catch((err) => appLogger.error('payments.webhook', 'Failed to send owner payment email', { error: String(err) }));
+
+            if (bookingDetails.sitter?.email) {
+              sendEmail({
+                to: bookingDetails.sitter.email,
+                subject: 'Nova uplata primljena!',
+                html: sitterPaymentNotificationEmail(
+                  bookingDetails.sitter.name || 'Čuvar',
+                  bookingDetails.owner.name || 'Korisnik',
+                  bookingDetails.pet?.name || 'Ljubimac',
+                  serviceName,
+                  dates,
+                  formatCurrency(sitterPayout),
+                ),
+              }).catch((err) => appLogger.error('payments.webhook', 'Failed to send sitter payment email', { error: String(err) }));
+            }
+          }
+        } catch (emailErr) {
+          appLogger.error('payments.webhook', 'Failed to fetch booking details for email', { error: String(emailErr) });
         }
       }
       break;

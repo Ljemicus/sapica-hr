@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { getBooking, updateBooking } from '@/lib/db';
 import type { Booking, BookingStatus } from '@/lib/types';
+import { appLogger } from '@/lib/logger';
+import { sendEmail } from '@/lib/email';
+import { bookingAcceptedEmail, bookingCancelledEmail } from '@/lib/email-templates';
 
 interface BookingRouteError {
   error: string;
@@ -73,6 +76,40 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   const updated = await updateBooking(id, { status });
   if (!updated) return NextResponse.json<BookingRouteError>({ error: 'Booking update failed' }, { status: 500 });
+
+  // Best-effort: send status notification emails
+  try {
+    const dates = `${new Date(booking.start_date).toLocaleDateString('hr-HR')} – ${new Date(booking.end_date).toLocaleDateString('hr-HR')}`;
+    const petName = booking.pet?.name || 'Ljubimac';
+
+    if (status === 'accepted' && booking.owner?.email) {
+      sendEmail({
+        to: booking.owner.email,
+        subject: 'Rezervacija potvrđena!',
+        html: bookingAcceptedEmail(
+          booking.owner.name || 'Korisnik',
+          booking.sitter?.name || 'Čuvar',
+          petName,
+          dates,
+        ),
+      }).catch((err) => appLogger.error('bookings.update', 'Failed to send accepted email', { error: String(err) }));
+    }
+
+    if (status === 'cancelled') {
+      // Notify the other party
+      const recipientEmail = isOwner ? booking.sitter?.email : booking.owner?.email;
+      const recipientName = isOwner ? booking.sitter?.name : booking.owner?.name;
+      if (recipientEmail) {
+        sendEmail({
+          to: recipientEmail,
+          subject: 'Rezervacija otkazana',
+          html: bookingCancelledEmail(recipientName || 'Korisnik', petName, dates),
+        }).catch((err) => appLogger.error('bookings.update', 'Failed to send cancelled email', { error: String(err) }));
+      }
+    }
+  } catch (emailErr) {
+    appLogger.error('bookings.update', 'Email notification error', { error: String(emailErr) });
+  }
 
   return NextResponse.json<Booking>(updated);
 }

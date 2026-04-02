@@ -39,6 +39,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Nedostaju polja: bookingId, reason.' }, { status: 400 });
   }
 
+  const validReasons: RefundReason[] = ['owner_cancel', 'sitter_cancel', 'other'];
+  if (!validReasons.includes(reason)) {
+    return NextResponse.json({ error: 'Neispravan razlog otkazivanja.' }, { status: 400 });
+  }
+
   const supabase = await createClient();
 
   const { data: booking, error: bookingError } = await supabase
@@ -69,6 +74,12 @@ export async function POST(request: Request) {
   const refundAmountCents = Math.round(totalCents * (refundPercentage / 100));
 
   if (refundPercentage === 0) {
+    // Still cancel the booking even if no refund is given
+    await supabase
+      .from('bookings')
+      .update({ status: 'cancelled' })
+      .eq('id', bookingId);
+
     return NextResponse.json({
       refundId: null,
       amount: 0,

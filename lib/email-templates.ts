@@ -188,6 +188,43 @@ export function walkUpdateEmail(
   return baseLayout(content, `${sitterName} je krenuo/la u šetnju s ${petName}`);
 }
 
+export function paymentConfirmationEmail(
+  ownerName: string,
+  petName: string,
+  serviceName: string,
+  dates: string,
+  amountFormatted: string,
+): string {
+  const content = `
+    ${heading('Plaćanje potvrđeno! &#9989;')}
+    ${paragraph(`Pozdrav ${ownerName},`)}
+    ${paragraph(`Vaše plaćanje za <strong>${serviceName}</strong> za ljubimca <strong>${petName}</strong> je uspješno provedeno.`)}
+    ${infoBox(`&#128197; Datumi: ${dates}<br>&#128176; Iznos: ${amountFormatted}`)}
+    ${paragraph('Rezervacija je potvrđena. Čuvar će biti obaviješten.')}
+    ${ctaButton('Pogledaj rezervaciju', 'https://petpark.hr/dashboard/vlasnik')}
+  `;
+  return baseLayout(content, `Plaćanje za ${serviceName} je potvrđeno`);
+}
+
+export function sitterPaymentNotificationEmail(
+  sitterName: string,
+  ownerName: string,
+  petName: string,
+  serviceName: string,
+  dates: string,
+  payoutFormatted: string,
+): string {
+  const content = `
+    ${heading('Nova uplata primljena! &#128176;')}
+    ${paragraph(`Pozdrav ${sitterName},`)}
+    ${paragraph(`<strong>${ownerName}</strong> je platio/la <strong>${serviceName}</strong> za ljubimca <strong>${petName}</strong>.`)}
+    ${infoBox(`&#128197; Datumi: ${dates}<br>&#128176; Vaša zarada: ${payoutFormatted}`)}
+    ${paragraph('Sredstva će biti dostupna na vašem Stripe računu nakon završetka usluge.')}
+    ${ctaButton('Pogledaj dashboard', 'https://petpark.hr/dashboard/sitter')}
+  `;
+  return baseLayout(content, `${ownerName} je platio/la za ${serviceName}`);
+}
+
 export function welcomeEmail(userName: string): string {
   const content = `
     ${heading('Dobrodošli na PetPark! &#128062;')}

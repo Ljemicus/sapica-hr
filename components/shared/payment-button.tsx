@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { CreditCard, Loader2 } from 'lucide-react';
@@ -14,7 +13,6 @@ interface PaymentButtonProps {
 }
 
 export function PaymentButton({ bookingId, amount, disabled }: PaymentButtonProps) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   async function handlePayment() {
@@ -33,7 +31,7 @@ export function PaymentButton({ bookingId, amount, disabled }: PaymentButtonProp
         return;
       }
 
-      router.push(data.url);
+      window.location.href = data.url;
     } catch {
       toast.error('Greška pri povezivanju sa Stripe-om.');
     } finally {
