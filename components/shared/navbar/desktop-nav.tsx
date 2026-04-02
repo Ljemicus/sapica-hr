@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 import { getDesktopLinks, getHksMenu, getServicesMenu } from './config';
 import type { NavbarUser, TranslationFn } from './types';
 
@@ -36,6 +37,7 @@ export function DesktopNav({ t, user }: { t: TranslationFn; user?: NavbarUser | 
                 <DropdownMenuItem render={<Link href={item.href} />} className={`cursor-pointer rounded-lg ${item.className || ''}`}>
                   {Icon ? <Icon className="mr-2 h-4 w-4" /> : null}
                   {item.label}
+                  {item.demo ? <Badge variant="secondary" className="ml-auto text-[10px] px-1.5 py-0 bg-amber-50 text-amber-600 border-amber-200">Demo</Badge> : null}
                 </DropdownMenuItem>
               </div>
             );

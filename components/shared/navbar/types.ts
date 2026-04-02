@@ -15,6 +15,7 @@ export interface NavbarLinkItem {
   icon?: LucideIcon;
   className?: string;
   external?: boolean;
+  demo?: boolean;
 }
 
 export interface NavbarMenuItem extends NavbarLinkItem {

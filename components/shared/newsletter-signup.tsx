@@ -8,20 +8,14 @@ import { toast } from 'sonner';
 
 export function NewsletterSignup() {
   const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      toast.success('Uspješno ste se pretplatili na newsletter!', {
-        description: 'Provjerite svoj email za potvrdu.',
-      });
-      setEmail('');
-      setLoading(false);
-    }, 800);
+    toast.info('Newsletter pretplata je uskoro dostupna!', {
+      description: 'Radimo na tome — hvala na interesu.',
+    });
+    setEmail('');
   };
 
   return (
@@ -51,20 +45,12 @@ export function NewsletterSignup() {
             />
             <Button
               type="submit"
-              disabled={loading}
               className="bg-white text-orange-600 hover:bg-white/90 font-bold h-12 px-6 rounded-xl shadow-lg shadow-black/10"
             >
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <span className="h-4 w-4 border-2 border-orange-600/30 border-t-orange-600 rounded-full animate-spin" />
-                  Šaljem...
-                </span>
-              ) : (
-                <span className="flex items-center gap-2">
-                  <Send className="h-4 w-4" />
-                  Pretplatite se
-                </span>
-              )}
+              <span className="flex items-center gap-2">
+                <Send className="h-4 w-4" />
+                Pretplatite se
+              </span>
             </Button>
           </form>
           <p className="text-white/60 text-xs mt-4">

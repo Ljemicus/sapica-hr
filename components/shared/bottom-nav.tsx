@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/auth-context';
 const navItems = [
   { href: '/', icon: Home, label: 'Početna' },
   { href: '/pretraga', icon: Search, label: 'Pretraži' },
-  { href: '/blog', icon: BookOpen, label: 'Blog' },
+  { href: '/zajednica', icon: BookOpen, label: 'Blog' },
   { href: '/forum', icon: MessageSquare, label: 'Forum' },
 ];
 

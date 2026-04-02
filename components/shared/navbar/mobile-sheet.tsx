@@ -93,8 +93,14 @@ export function MobileSheet({ open, setOpen, t, user, getItemCount, onLogout }: 
               {primaryLinks.slice(1).map((item) => renderLink(item.href, item.label, item.icon, item.className))}
 
               <div className="border-t border-border/50 my-3" />
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Dodatne mogućnosti</p>
-              {utilityLinks.map((item) => renderLink(item.href, item.label, item.icon, item.className))}
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Ogledni prikaz (Demo)</p>
+              {utilityLinks.map((item) => (
+                <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors ${item.className || ''}`}>
+                  {item.icon ? <item.icon className="h-5 w-5" /> : null}
+                  {item.label}
+                  {item.demo ? <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 border border-amber-200 font-medium">Demo</span> : null}
+                </Link>
+              ))}
 
               <div className="border-t border-border/50 my-3" />
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Zajednica</p>
