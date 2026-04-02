@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Menu, MessageCircle, ShoppingCart } from 'lucide-react';
+import { Menu, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -37,11 +37,6 @@ export function MobileSheet({ open, setOpen, t, user, getItemCount, onLogout }: 
 
   return (
     <div className="flex items-center gap-1.5 md:hidden">
-      <Link href="/kontakt">
-        <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-accent rounded-xl" aria-label={t('common.help')}>
-          <MessageCircle className="h-4.5 w-4.5 text-orange-500" />
-        </Button>
-      </Link>
       <Link href="/shop/kosarica">
         <Button variant="ghost" size="icon" className="relative h-9 w-9 hover:bg-accent rounded-xl" aria-label={t('common.cart')}>
           <ShoppingCart className="h-4.5 w-4.5" />
