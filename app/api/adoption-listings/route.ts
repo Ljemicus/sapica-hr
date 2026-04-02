@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     personality: data.personality || null,
     special_needs: data.special_needs || null,
     city: data.city,
-    images: data.images,
+    images: data.images.map((img) => ({ ...img, alt: img.alt ?? null })),
     contact_phone: data.contact_phone || publisher.phone || null,
     contact_email: data.contact_email || user.email || null,
     is_urgent: data.is_urgent,

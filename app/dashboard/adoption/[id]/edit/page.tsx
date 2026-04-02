@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { LoadingSpinner } from '@/components/shared/loading-spinner';
 import AdoptionListingForm from '../../adoption-listing-form';
 import type { AdoptionListing } from '@/lib/types';
 
@@ -28,7 +29,7 @@ export default function EditAdoptionListingPage() {
   if (loading) {
     return (
       <div className="container mx-auto max-w-3xl px-4 py-8">
-        <div className="py-12 text-center text-muted-foreground">Učitavanje...</div>
+        <LoadingSpinner className="py-12" />
       </div>
     );
   }

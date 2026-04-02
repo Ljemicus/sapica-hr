@@ -63,7 +63,7 @@ export default function LostPetsMap({ pets }: LostPetsMapProps) {
           <Popup>
             <div className="w-48">
               <div className="relative h-24 w-full mb-2 rounded overflow-hidden">
-                <Image src={pet.image_url} alt={pet.name} fill className="object-cover" />
+                <Image src={pet.image_url} alt={pet.name} fill sizes="192px" className="object-cover" />
               </div>
               <p className="font-bold text-sm">{pet.name}</p>
               <p className="text-xs text-gray-600">{pet.city}, {pet.neighborhood}</p>

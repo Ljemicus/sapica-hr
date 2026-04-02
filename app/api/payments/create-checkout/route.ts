@@ -96,7 +96,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url, sessionId });
   } catch (err) {
-    console.error('[Stripe] Checkout error:', err);
+    appLogger.error('payments.checkout', 'Checkout session creation failed', { error: String(err) });
     return NextResponse.json(
       { error: 'Greška pri kreiranju plaćanja. Pokušajte ponovo.' },
       { status: 500 }

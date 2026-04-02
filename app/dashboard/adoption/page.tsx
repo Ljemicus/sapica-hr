@@ -3,12 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { HeartHandshake } from 'lucide-react';
 import { toast } from 'sonner';
 import { buttonVariants } from '@/components/ui/button';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { LoadingSpinner } from '@/components/shared/loading-spinner';
+import { EmptyState } from '@/components/shared/empty-state';
 import type { AdoptionListing, AdoptionListingStatus } from '@/lib/types';
 import {
   ADOPTION_STATUS_LABELS,
@@ -55,7 +58,8 @@ export default function AdoptionDashboardPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, name: string) => {
+    if (!window.confirm(`Jeste li sigurni da želite obrisati oglas "${name}"?`)) return;
     const res = await fetch(`/api/adoption-listings/${id}`, { method: 'DELETE' });
     if (res.ok) {
       toast.success('Oglas obrisan');
@@ -117,11 +121,18 @@ export default function AdoptionDashboardPage() {
         {['all', 'draft', 'active', 'paused', 'adopted'].map((tab) => (
           <TabsContent key={tab} value={tab}>
             {loading ? (
-              <div className="py-12 text-center text-muted-foreground">Učitavanje...</div>
+              <LoadingSpinner className="py-12" />
             ) : filterByTab(tab).length === 0 ? (
-              <div className="py-12 text-center text-muted-foreground">
-                Nema oglasa{tab !== 'all' ? ` u kategoriji "${ADOPTION_STATUS_LABELS[tab as AdoptionListingStatus]}"` : ''}.
-              </div>
+              <EmptyState
+                icon={HeartHandshake}
+                title={tab === 'all' ? 'Nemate oglasa' : `Nema oglasa u kategoriji "${ADOPTION_STATUS_LABELS[tab as AdoptionListingStatus]}"`}
+                description={tab === 'all' ? 'Kreirajte prvi oglas za udomljavanje kako biste pomogli ljubimcu pronaći novi dom.' : 'Trenutno nema oglasa u ovoj kategoriji.'}
+                action={tab === 'all' ? (
+                  <Link href="/dashboard/adoption/new" className={buttonVariants({ variant: 'default' }) + ' bg-teal-600 hover:bg-teal-700'}>
+                    + Novi oglas
+                  </Link>
+                ) : undefined}
+              />
             ) : (
               <div className="space-y-4">
                 {filterByTab(tab).map((listing) => (
@@ -171,7 +182,7 @@ export default function AdoptionDashboardPage() {
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => handleDelete(listing.id)}
+                            onClick={() => handleDelete(listing.id, listing.name)}
                           >
                             Obriši
                           </Button>

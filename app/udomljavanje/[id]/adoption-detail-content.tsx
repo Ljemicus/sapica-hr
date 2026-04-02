@@ -79,6 +79,7 @@ export function AdoptionDetailContent({ listing }: { listing: AdoptionListing })
       });
       if (res.ok) {
         toast.success('Vaš upit je poslan! Kontaktirat ćemo vas uskoro.');
+        e.currentTarget.reset();
         setFormOpen(false);
       } else {
         toast.error('Greška pri slanju upita. Pokušajte ponovo.');
@@ -107,29 +108,34 @@ export function AdoptionDetailContent({ listing }: { listing: AdoptionListing })
             src={images[currentImage].url}
             alt={images[currentImage].alt || listing.name}
             fill
+            sizes="100vw"
             className="object-cover"
-            unoptimized
             priority
           />
           {images.length > 1 && (
             <>
               <button
                 onClick={() => setCurrentImage((p) => (p - 1 + images.length) % images.length)}
+                aria-label="Prethodna fotografija"
                 className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
               <button
                 onClick={() => setCurrentImage((p) => (p + 1) % images.length)}
+                aria-label="Sljedeća fotografija"
                 className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors"
               >
                 <ChevronRight className="h-5 w-5" />
               </button>
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" role="tablist" aria-label="Fotografije">
                 {images.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentImage(i)}
+                    role="tab"
+                    aria-selected={i === currentImage}
+                    aria-label={`Fotografija ${i + 1} od ${images.length}`}
                     className={`w-2 h-2 rounded-full transition-all ${
                       i === currentImage ? 'bg-white w-4' : 'bg-white/50'
                     }`}
@@ -170,11 +176,12 @@ export function AdoptionDetailContent({ listing }: { listing: AdoptionListing })
               <button
                 key={img.url}
                 onClick={() => setCurrentImage(i)}
+                aria-label={`Prikaži fotografiju ${i + 1}`}
                 className={`relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${
                   i === currentImage ? 'border-purple-500 shadow-md' : 'border-white/80 opacity-70 hover:opacity-100'
                 }`}
               >
-                <Image src={img.url} alt={img.alt || ''} fill className="object-cover" unoptimized />
+                <Image src={img.url} alt={img.alt || ''} fill sizes="64px" className="object-cover" />
               </button>
             ))}
           </div>
@@ -205,6 +212,7 @@ export function AdoptionDetailContent({ listing }: { listing: AdoptionListing })
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => toggleFavorite(listing.id)}
+                  aria-label={isFavorite(listing.id) ? `Ukloni ${listing.name} iz favorita` : `Dodaj ${listing.name} u favorite`}
                   className={`p-2.5 rounded-full transition-all duration-200 ${
                     isFavorite(listing.id)
                       ? 'bg-red-500 text-white shadow-lg shadow-red-200/50'
@@ -215,6 +223,7 @@ export function AdoptionDetailContent({ listing }: { listing: AdoptionListing })
                 </button>
                 <button
                   onClick={handleCopyLink}
+                  aria-label={copied ? 'Link kopiran' : 'Kopiraj link'}
                   className="p-2.5 rounded-full bg-white text-gray-400 hover:text-purple-500 hover:bg-white shadow-sm border border-gray-200 transition-all"
                 >
                   {copied ? <Check className="h-5 w-5 text-green-500" /> : <Share2 className="h-5 w-5" />}
@@ -305,7 +314,7 @@ export function AdoptionDetailContent({ listing }: { listing: AdoptionListing })
                   </div>
                   <div>
                     <Label htmlFor="inquiry-message">Poruka (zašto želite udomiti)</Label>
-                    <Textarea id="inquiry-message" name="message" required placeholder="Opišite zašto želite udomiti ovog ljubimca..." className="mt-1" rows={3} />
+                    <Textarea id="inquiry-message" name="message" required minLength={10} placeholder="Opišite zašto želite udomiti ovog ljubimca..." className="mt-1" rows={3} />
                   </div>
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm">
@@ -340,7 +349,7 @@ export function AdoptionDetailContent({ listing }: { listing: AdoptionListing })
                     {listing.city}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Pošaljite upit putem obrasca ispod kako biste kontaktirali oglašivača.
+                    Pošaljite upit putem obrasca kako biste kontaktirali oglašivača.
                   </p>
                   <Button
                     variant="outline"

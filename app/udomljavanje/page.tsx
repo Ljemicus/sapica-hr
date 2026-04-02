@@ -12,6 +12,9 @@ export const metadata: Metadata = {
     url: 'https://petpark.hr/udomljavanje',
     type: 'website',
   },
+  alternates: {
+    canonical: 'https://petpark.hr/udomljavanje',
+  },
 };
 
 export default async function AdoptionPage() {

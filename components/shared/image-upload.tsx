@@ -225,7 +225,7 @@ export function ImageUpload({
         <label htmlFor={inputId} className="relative group cursor-pointer block">
           <div className="relative h-24 w-24 rounded-full ring-2 ring-orange-100 overflow-hidden bg-gradient-to-br from-orange-400 to-amber-300 flex items-center justify-center">
             {avatarPreview ? (
-              <Image src={avatarPreview} alt="Avatar" fill className="object-cover" unoptimized />
+              <Image src={avatarPreview} alt="Avatar" fill sizes="96px" className="object-cover" />
             ) : (
               <span className="text-white text-2xl font-bold">{fallbackText}</span>
             )}
@@ -268,7 +268,7 @@ export function ImageUpload({
         >
           {avatarPreview ? (
             <div className="relative w-full h-full">
-              <Image src={avatarPreview} alt="Slika" fill className="object-cover" unoptimized />
+              <Image src={avatarPreview} alt="Slika" fill sizes="160px" className="object-cover" />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <ImagePlus className="h-6 w-6 text-white" />
               </div>

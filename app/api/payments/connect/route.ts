@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { appLogger } from '@/lib/logger';
 import { getAuthUser } from '@/lib/auth';
 import { createConnectAccount, createAccountLink, getAccountStatus } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
@@ -33,7 +34,7 @@ export async function GET() {
       ...status,
     });
   } catch (err) {
-    console.error('[Stripe] Account status error:', err);
+    appLogger.error('payments.connect', 'Account status lookup failed', { error: String(err) });
     return NextResponse.json({
       connected: true,
       chargesEnabled: profile.stripe_onboarding_complete || false,
@@ -92,7 +93,7 @@ export async function POST() {
 
     return NextResponse.json({ onboardingUrl, accountId });
   } catch (err) {
-    console.error('[Stripe] Connect account error:', err);
+    appLogger.error('payments.connect', 'Connect account creation failed', { error: String(err) });
     return NextResponse.json(
       { error: 'Greška pri kreiranju Stripe računa. Pokušajte ponovo.' },
       { status: 500 }

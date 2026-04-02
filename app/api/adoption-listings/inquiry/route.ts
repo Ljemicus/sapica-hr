@@ -61,7 +61,6 @@ export async function POST(request: Request) {
   });
 
   // Notify publisher via email (best-effort, don't block response)
-  const publisherEmail = listing.contact_email ?? listing.publisher?.phone;
   if (listing.contact_email) {
     sendEmail({
       to: listing.contact_email,

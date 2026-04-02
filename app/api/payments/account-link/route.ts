@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { appLogger } from '@/lib/logger';
 import { getAuthUser } from '@/lib/auth';
 import { createAccountLink } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
@@ -34,7 +35,7 @@ export async function POST() {
     const url = await createAccountLink(profile.stripe_account_id);
     return NextResponse.json({ url });
   } catch (err) {
-    console.error('[account-link] Stripe error:', err);
+    appLogger.error('payments.account-link', 'Stripe error', { error: String(err) });
     return NextResponse.json(
       { error: 'Greška pri generiranju linka za onboarding.' },
       { status: 500 }

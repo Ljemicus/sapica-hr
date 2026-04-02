@@ -83,7 +83,11 @@ export function getUserMenuItems(t: TranslationFn, user?: NavbarUser | null): Na
 
   if (user?.role === 'owner') {
     items.push({ href: '/dashboard/vlasnik', label: t('nav.view_pets'), icon: FileHeart, separatorBefore: true });
-    items.push({ href: '/dashboard/adoption', label: 'Oglasi za udomljavanje', icon: HeartHandshake });
+  }
+
+  // All authenticated non-admin users can publish adoption listings
+  if (user && user.role !== 'admin') {
+    items.push({ href: '/dashboard/adoption', label: 'Oglasi za udomljavanje', icon: HeartHandshake, separatorBefore: user.role !== 'owner' });
   }
 
   if (user?.role !== 'sitter') {
@@ -130,6 +134,11 @@ export function getMobileAccountLinks(t: TranslationFn, user?: NavbarUser | null
     { href: '/poruke', label: t('nav.messages'), icon: MessageCircle },
     { href: '/omiljeni', label: t('nav.favorites'), icon: Heart },
   ];
+
+  // All authenticated non-admin users can publish adoption listings
+  if (user && user.role !== 'admin') {
+    items.push({ href: '/dashboard/adoption', label: 'Oglasi za udomljavanje', icon: HeartHandshake });
+  }
 
   if (user?.role !== 'sitter') {
     items.push({ href: '/postani-sitter', label: t('nav.become_sitter'), icon: Sparkles, className: 'text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/20 font-semibold' });

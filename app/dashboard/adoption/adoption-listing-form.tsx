@@ -330,7 +330,9 @@ export default function AdoptionListingForm({ listing }: AdoptionListingFormProp
               placeholder="Opišite životinju, njezin karakter, povijest..."
               className="focus:border-teal-300"
             />
-            <p className="text-xs text-muted-foreground">{form.description.length}/20 min</p>
+            <p className={`text-xs ${form.description.length >= 20 ? 'text-muted-foreground' : 'text-amber-500 dark:text-amber-400'}`}>
+              {form.description.length} znakova (minimalno 20)
+            </p>
           </div>
 
           <div className="space-y-2">

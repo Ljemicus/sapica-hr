@@ -3,12 +3,13 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, MapPin, Filter, ArrowRight, Search } from 'lucide-react';
+import { Heart, HeartHandshake, MapPin, Filter, ArrowRight, Search, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { useAdoptionFavorites } from '@/hooks/use-adoption-favorites';
+import { EmptyState } from '@/components/shared/empty-state';
 import type { AdoptionListingCard } from '@/lib/types';
 import {
   ADOPTION_SPECIES_LABELS,
@@ -61,6 +62,16 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
   const [genderFilter, setGenderFilter] = useState<string | null>('all');
   const [search, setSearch] = useState('');
   const { toggleFavorite, isFavorite } = useAdoptionFavorites();
+
+  const hasActiveFilters = speciesFilter !== 'all' || (cityFilter && cityFilter !== 'all') || (sizeFilter && sizeFilter !== 'all') || (genderFilter && genderFilter !== 'all') || search.trim() !== '';
+
+  const clearFilters = () => {
+    setSpeciesFilter('all');
+    setCityFilter('all');
+    setSizeFilter('all');
+    setGenderFilter('all');
+    setSearch('');
+  };
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -117,6 +128,7 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10"
+              aria-label="Pretraži oglase za udomljavanje"
             />
           </div>
 
@@ -174,6 +186,16 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
               </SelectContent>
             </Select>
           </div>
+
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="mt-3 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+              Poništi filtere
+            </button>
+          )}
         </div>
       </section>
 
@@ -186,10 +208,19 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
         </div>
 
         {filtered.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-xl font-semibold mb-2">Nema rezultata</p>
-            <p className="text-muted-foreground">Pokušajte promijeniti filtere ili pojam pretrage.</p>
-          </div>
+          <EmptyState
+            icon={hasActiveFilters ? Search : HeartHandshake}
+            title={hasActiveFilters ? 'Nema rezultata' : 'Trenutno nema oglasa'}
+            description={hasActiveFilters ? 'Pokušajte promijeniti filtere ili pojam pretrage.' : 'Još nema objavljenih oglasa za udomljavanje. Provjerite ponovo uskoro!'}
+            action={hasActiveFilters ? (
+              <button
+                onClick={clearFilters}
+                className="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors"
+              >
+                Poništi sve filtere
+              </button>
+            ) : undefined}
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
             {filtered.map((listing) => {
@@ -207,8 +238,8 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
                             src={primaryImage.url}
                             alt={primaryImage.alt || listing.name}
                             fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            unoptimized
                           />
                         ) : (
                           <>
@@ -236,6 +267,7 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
                             e.stopPropagation();
                             toggleFavorite(listing.id);
                           }}
+                          aria-label={isFavorite(listing.id) ? `Ukloni ${listing.name} iz favorita` : `Dodaj ${listing.name} u favorite`}
                           className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${
                             isFavorite(listing.id)
                               ? 'bg-red-500 text-white shadow-lg shadow-red-200/50'

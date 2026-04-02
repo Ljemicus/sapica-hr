@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { appLogger } from '@/lib/logger';
 import { getAuthUser } from '@/lib/auth';
 import { createRefund, formatCurrency } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
@@ -118,7 +119,7 @@ export async function POST(request: Request) {
           : `Djelomični povrat (${refundPercentage}%).`,
     });
   } catch (err) {
-    console.error('[Stripe] Refund error:', err);
+    appLogger.error('payments.refund', 'Refund creation failed', { error: String(err) });
     return NextResponse.json(
       { error: 'Greška pri povratu sredstava. Pokušajte ponovo.' },
       { status: 500 }

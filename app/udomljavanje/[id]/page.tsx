@@ -12,7 +12,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const listing = await getAdoptionListing(id);
-  if (!listing) return { title: 'Oglas nije pronađen' };
+  if (!listing || listing.status !== 'active') return { title: 'Oglas nije pronađen' };
 
   const primaryImage = listing.images?.find((img) => img.is_primary) ?? listing.images?.[0];
 

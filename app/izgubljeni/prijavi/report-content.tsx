@@ -181,7 +181,7 @@ export function ReportLostPetContent() {
                 <div className="flex flex-wrap gap-3 mb-4">
                   {previews.map((preview, i) => (
                     <div key={i} className="relative w-24 h-24 rounded-lg overflow-hidden border">
-                      <Image src={preview} alt={`Preview ${i + 1}`} fill className="object-cover" />
+                      <Image src={preview} alt={`Preview ${i + 1}`} fill sizes="96px" className="object-cover" />
                       <button
                         type="button"
                         onClick={() => removeFile(i)}

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { appLogger } from '@/lib/logger';
 import { getAuthUser } from '@/lib/auth';
 import { createDashboardLink } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
@@ -35,7 +36,7 @@ export async function POST() {
     const url = await createDashboardLink(profile.stripe_account_id);
     return NextResponse.json({ url });
   } catch (err) {
-    console.error('[dashboard-link] Stripe error:', err);
+    appLogger.error('payments.dashboard-link', 'Stripe error', { error: String(err) });
     return NextResponse.json(
       { error: 'Greška pri generiranju linka.' },
       { status: 500 }

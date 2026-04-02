@@ -1,3 +1,5 @@
+import { appLogger } from '@/lib/logger';
+
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL = 'PetPark <noreply@petpark.hr>';
 
@@ -12,11 +14,11 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions) {
     const message = 'RESEND_API_KEY is not configured';
 
     if (process.env.NODE_ENV === 'production') {
-      console.error('[Email Error]', message, { to, subject });
+      appLogger.error('email', message, { to, subject });
       return { success: false, error: message };
     }
 
-    console.log('[Email DEV]', { to, subject });
+    appLogger.info('email', 'Dev mode — email not sent', { to, subject });
     return { success: true, dev: true, warning: message };
   }
 
@@ -32,13 +34,13 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions) {
 
     if (!res.ok) {
       const error = await res.text();
-      console.error('[Email Error]', error);
+      appLogger.error('email', 'Resend API error', { error });
       return { success: false, error };
     }
 
     return { success: true, data: await res.json() };
   } catch (err) {
-    console.error('[Email Error]', err);
+    appLogger.error('email', 'Failed to send email', { error: String(err) });
     return { success: false, error: 'Failed to send email' };
   }
 }

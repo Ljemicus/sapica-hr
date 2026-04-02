@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { appLogger } from '@/lib/logger';
 
 export type { EmergencyMode, Veterinarian } from './veterinarian-helpers';
 export { getVeterinarianEmergencyLabel, getVeterinarianPrimaryPhone } from './veterinarian-helpers';
@@ -16,7 +17,7 @@ async function getVeterinarianRows() {
     .order('name', { ascending: true });
 
   if (error) {
-    console.error('Error fetching veterinarians:', error);
+    appLogger.error('db.veterinarians', 'Failed to fetch veterinarians', { error: error.message });
     return [] as Veterinarian[];
   }
 
