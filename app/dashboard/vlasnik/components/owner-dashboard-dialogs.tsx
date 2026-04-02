@@ -52,7 +52,7 @@ export function OwnerDashboardDialogs({
             <DialogTitle>{editingPet ? 'Uredi ljubimca' : 'Dodaj ljubimca'}</DialogTitle>
             <DialogDescription>Unesite podatke o vašem ljubimcu</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <fieldset disabled={loading} className="space-y-4">
             <div className="space-y-2">
               <Label>Ime *</Label>
               <Input value={petForm.name} onChange={(e) => onPetFormChange({ ...petForm, name: e.target.value })} placeholder="Ime ljubimca" className="focus:border-orange-300" />
@@ -82,11 +82,11 @@ export function OwnerDashboardDialogs({
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label>Dob (godine)</Label>
-                <Input type="number" value={petForm.age} onChange={(e) => onPetFormChange({ ...petForm, age: e.target.value })} className="focus:border-orange-300" />
+                <Input type="number" min="0" max="30" value={petForm.age} onChange={(e) => onPetFormChange({ ...petForm, age: e.target.value })} className="focus:border-orange-300" />
               </div>
               <div className="space-y-2">
                 <Label>Težina (kg)</Label>
-                <Input type="number" value={petForm.weight} onChange={(e) => onPetFormChange({ ...petForm, weight: e.target.value })} className="focus:border-orange-300" />
+                <Input type="number" min="0" max="200" step="0.1" value={petForm.weight} onChange={(e) => onPetFormChange({ ...petForm, weight: e.target.value })} className="focus:border-orange-300" />
               </div>
             </div>
             <div className="space-y-2">
@@ -99,6 +99,7 @@ export function OwnerDashboardDialogs({
                 variant="square"
                 bucket="pet-photos"
                 entityId={editingPet?.id || 'new'}
+                currentImageUrl={petForm.photo_url || null}
                 onUploadComplete={(urls) => {
                   if (urls[0]) onPetFormChange({ ...petForm, photo_url: urls[0] });
                 }}
@@ -107,7 +108,7 @@ export function OwnerDashboardDialogs({
             <Button onClick={onSavePet} className="w-full bg-orange-500 hover:bg-orange-600 btn-hover" disabled={loading}>
               {loading ? 'Spremanje...' : editingPet ? 'Spremi promjene' : 'Dodaj ljubimca'}
             </Button>
-          </div>
+          </fieldset>
         </DialogContent>
       </Dialog>
 
@@ -117,7 +118,7 @@ export function OwnerDashboardDialogs({
             <DialogTitle>Ostavi recenziju</DialogTitle>
             <DialogDescription>Za: {reviewBooking?.sitter?.name}</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <fieldset disabled={loading} className="space-y-4">
             <div className="space-y-2">
               <Label>Ocjena</Label>
               <div className="flex justify-center py-3 bg-orange-50/50 rounded-xl">
@@ -131,7 +132,7 @@ export function OwnerDashboardDialogs({
             <Button onClick={onSubmitReview} className="w-full bg-orange-500 hover:bg-orange-600 btn-hover" disabled={loading}>
               {loading ? 'Šaljem...' : 'Pošalji recenziju'}
             </Button>
-          </div>
+          </fieldset>
         </DialogContent>
       </Dialog>
     </>

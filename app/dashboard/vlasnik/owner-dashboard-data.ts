@@ -19,12 +19,11 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardProps> {
   const walks = await getWalksForUser(user.id);
   const activeOwnerWalks = walks.filter((walk) => walk.status === 'u_tijeku');
 
-  const [ownerPets, activeSitters] = await Promise.all([
-    getPetsByOwner(user.id, 'walk-label'),
-    Promise.all([...new Set(activeOwnerWalks.map((walk) => walk.sitter_id))].map((sitterId) => getUser(sitterId))),
-  ]);
+  const activeSitters = await Promise.all(
+    [...new Set(activeOwnerWalks.map((walk) => walk.sitter_id))].map((sitterId) => getUser(sitterId)),
+  );
 
-  const petNamesById = new Map(ownerPets.map((pet) => [pet.id, pet.name]));
+  const petNamesById = new Map(pets.map((pet) => [pet.id, pet.name]));
   const sitterNamesById = new Map(activeSitters.filter(Boolean).map((sitter) => [sitter!.id, sitter!.name]));
 
   const activeWalks = activeOwnerWalks
