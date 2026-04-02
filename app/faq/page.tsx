@@ -31,6 +31,7 @@ export const metadata: Metadata = {
     url: 'https://petpark.hr/faq',
     type: 'website',
   },
+  alternates: { canonical: 'https://petpark.hr/faq' },
 };
 
 export default function FaqPage() {

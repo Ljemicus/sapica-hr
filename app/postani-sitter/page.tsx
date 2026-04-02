@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     url: 'https://petpark.hr/postani-sitter',
     type: 'website',
   },
+  alternates: { canonical: 'https://petpark.hr/postani-sitter' },
 };
 
 const BENEFITS = [

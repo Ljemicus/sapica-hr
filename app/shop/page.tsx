@@ -12,6 +12,7 @@ export const metadata: Metadata = {
     url: 'https://petpark.hr/shop',
     type: 'website',
   },
+  alternates: { canonical: 'https://petpark.hr/shop' },
 };
 
 export default async function ShopPage() {

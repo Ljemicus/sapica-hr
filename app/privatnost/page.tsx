@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 export const metadata: Metadata = {
   title: 'Politika privatnosti',
   description: 'Politika privatnosti platforme PetPark. Saznajte kako prikupljamo, koristimo i štitimo vaše osobne podatke.',
+  alternates: { canonical: 'https://petpark.hr/privatnost' },
 };
 
 export default function PrivatnostPage() {

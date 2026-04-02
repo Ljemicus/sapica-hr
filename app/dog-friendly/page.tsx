@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     locale: 'hr_HR',
     type: 'website',
   },
+  alternates: { canonical: 'https://petpark.hr/dog-friendly' },
 };
 
 export default async function DogFriendlyPage() {

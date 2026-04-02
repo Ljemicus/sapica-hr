@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 export const metadata: Metadata = {
   title: 'Uvjeti korištenja',
   description: 'Uvjeti korištenja platforme PetPark. Pravila i odgovornosti korisnika, čuvara ljubimaca i vlasnika.',
+  alternates: { canonical: 'https://petpark.hr/uvjeti' },
 };
 
 export default function UvjetiPage() {

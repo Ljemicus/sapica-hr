@@ -12,6 +12,7 @@ export const metadata: Metadata = {
     url: 'https://petpark.hr/veterinari',
     type: 'website',
   },
+  alternates: { canonical: 'https://petpark.hr/veterinari' },
 };
 
 export default async function VeterinariPage() {

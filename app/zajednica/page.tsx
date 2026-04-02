@@ -9,6 +9,7 @@ import { BLOG_CATEGORY_LABELS, BLOG_CATEGORY_EMOJI, type BlogCategory } from '@/
 export const metadata = {
   title: 'Zajednica — Savjeti za vlasnike ljubimaca',
   description: 'Članci, savjeti i priče za vlasnike pasa i mačaka. Zdravlje, prehrana, školovanje pasa i putovanja s ljubimcima.',
+  alternates: { canonical: 'https://petpark.hr/zajednica' },
 };
 
 const categoryColors: Record<BlogCategory, string> = {

@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     locale: 'hr_HR',
     siteName: 'PetPark',
   },
+  alternates: { canonical: 'https://petpark.hr/hitno' },
 };
 
 export default async function HitnoPage() {

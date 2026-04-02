@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     url: 'https://petpark.hr/forum',
     type: 'website',
   },
+  alternates: { canonical: 'https://petpark.hr/forum' },
 };
 
 export default async function ForumPage() {

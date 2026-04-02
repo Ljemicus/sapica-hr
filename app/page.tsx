@@ -143,7 +143,8 @@ export default async function HomePage() {
                 src="/hero-pets.jpg"
                 alt="Sretni psi i mačke zajedno"
                 width={672}
-                height={240}
+                height={375}
+                sizes="(max-width: 672px) 100vw, 672px"
                 className="w-full h-44 md:h-60 lg:h-68 object-cover rounded-3xl shadow-xl shadow-orange-200/30 dark:shadow-orange-900/20 border-4 border-white/80 dark:border-white/10"
                 priority
               />

@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     url: 'https://petpark.hr/blog',
     type: 'website',
   },
+  alternates: { canonical: 'https://petpark.hr/blog' },
 };
 
 interface BlogPageProps {

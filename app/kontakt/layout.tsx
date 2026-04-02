@@ -10,6 +10,7 @@ export const metadata: Metadata = {
     url: 'https://petpark.hr/kontakt',
     type: 'website',
   },
+  alternates: { canonical: 'https://petpark.hr/kontakt' },
 };
 
 export default function KontaktLayout({ children }: { children: React.ReactNode }) {

@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     url: 'https://petpark.hr/izgubljeni',
     type: 'website',
   },
+  alternates: { canonical: 'https://petpark.hr/izgubljeni' },
 };
 
 export default function LostPetsPage() {

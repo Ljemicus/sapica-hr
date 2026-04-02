@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     url: 'https://petpark.hr/grooming',
     type: 'website',
   },
+  alternates: { canonical: 'https://petpark.hr/grooming' },
 };
 
 interface GroomingPageProps {
