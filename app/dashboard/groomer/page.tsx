@@ -18,7 +18,7 @@ export default async function GroomerDashboardPage() {
   const supabase = await createClient();
   const { data: groomer } = await supabase
     .from('groomers')
-    .select('id, name, city, services, prices, rating, reviews, bio, verified, specialization, user_id, phone, email, address, working_hours')
+    .select('id, name, city, services, prices, rating, review_count, bio, verified, specialization, user_id, phone, email, address, working_hours')
     .eq('user_id', user.id)
     .single();
 

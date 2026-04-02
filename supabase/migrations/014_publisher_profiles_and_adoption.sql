@@ -83,24 +83,28 @@ alter table public.publisher_profiles enable row level security;
 alter table public.adoption_listings enable row level security;
 
 -- publisher_profiles policies
-create policy if not exists "publisher_profiles_select_own"
+drop policy if exists "publisher_profiles_select_own" on public.publisher_profiles;
+create policy "publisher_profiles_select_own"
 on public.publisher_profiles
 for select
 using (auth.uid() = user_id);
 
-create policy if not exists "publisher_profiles_insert_own"
+drop policy if exists "publisher_profiles_insert_own" on public.publisher_profiles;
+create policy "publisher_profiles_insert_own"
 on public.publisher_profiles
 for insert
 with check (auth.uid() = user_id);
 
-create policy if not exists "publisher_profiles_update_own"
+drop policy if exists "publisher_profiles_update_own" on public.publisher_profiles;
+create policy "publisher_profiles_update_own"
 on public.publisher_profiles
 for update
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
 -- adoption_listings policies
-create policy if not exists "adoption_listings_select_active_or_own"
+drop policy if exists "adoption_listings_select_active_or_own" on public.adoption_listings;
+create policy "adoption_listings_select_active_or_own"
 on public.adoption_listings
 for select
 using (
@@ -113,7 +117,8 @@ using (
   )
 );
 
-create policy if not exists "adoption_listings_insert_own"
+drop policy if exists "adoption_listings_insert_own" on public.adoption_listings;
+create policy "adoption_listings_insert_own"
 on public.adoption_listings
 for insert
 with check (
@@ -125,7 +130,8 @@ with check (
   )
 );
 
-create policy if not exists "adoption_listings_update_own"
+drop policy if exists "adoption_listings_update_own" on public.adoption_listings;
+create policy "adoption_listings_update_own"
 on public.adoption_listings
 for update
 using (
@@ -145,7 +151,8 @@ with check (
   )
 );
 
-create policy if not exists "adoption_listings_delete_own"
+drop policy if exists "adoption_listings_delete_own" on public.adoption_listings;
+create policy "adoption_listings_delete_own"
 on public.adoption_listings
 for delete
 using (

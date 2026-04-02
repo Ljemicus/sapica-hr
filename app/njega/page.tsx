@@ -336,7 +336,7 @@ function GroomerCard({ groomer, index }: { groomer: Groomer; index: number }) {
               <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded-full">
                 <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                 <span className="text-sm font-bold text-amber-700 dark:text-amber-400">{groomer.rating.toFixed(1)}</span>
-                <span className="text-xs text-amber-600/70 dark:text-amber-400/60">({groomer.reviews})</span>
+                <span className="text-xs text-amber-600/70 dark:text-amber-400/60">({groomer.review_count})</span>
               </div>
             </div>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">

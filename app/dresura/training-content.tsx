@@ -255,7 +255,7 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
                   <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{trainer.city}</span>
                   <span className="flex items-center gap-1">
                     <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                    {trainer.rating.toFixed(1)} ({trainer.reviews})
+                    {trainer.rating.toFixed(1)} ({trainer.review_count})
                   </span>
                 </div>
               </div>

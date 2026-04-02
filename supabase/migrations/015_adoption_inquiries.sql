@@ -19,7 +19,8 @@ create index if not exists idx_adoption_inquiries_publisher_id on public.adoptio
 alter table public.adoption_inquiries enable row level security;
 
 -- Publishers can read inquiries for their own listings
-create policy if not exists "adoption_inquiries_select_own"
+drop policy if exists "adoption_inquiries_select_own" on public.adoption_inquiries;
+create policy "adoption_inquiries_select_own"
 on public.adoption_inquiries
 for select
 using (
@@ -32,7 +33,8 @@ using (
 );
 
 -- Anyone can insert an inquiry (public form)
-create policy if not exists "adoption_inquiries_insert_public"
+drop policy if exists "adoption_inquiries_insert_public" on public.adoption_inquiries;
+create policy "adoption_inquiries_insert_public"
 on public.adoption_inquiries
 for insert
 with check (true);

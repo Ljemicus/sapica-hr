@@ -30,7 +30,7 @@ function sortProviders(providers: UnifiedProvider[], sort: ProviderSort): Unifie
 
   switch (sort) {
     case 'reviews':
-      next.sort((a, b) => b.reviews - a.reviews);
+      next.sort((a, b) => b.review_count - a.review_count);
       return next;
     case 'price':
       next.sort((a, b) => {
@@ -142,7 +142,7 @@ export async function getUnifiedProviders(params: ProviderSearchParams): Promise
       city: g.city,
       bio: g.bio,
       rating: g.rating,
-      reviews: g.reviews,
+      reviews: g.review_count,
       verified: g.verified,
       superhost: false,
       category: 'grooming',
@@ -163,7 +163,7 @@ export async function getUnifiedProviders(params: ProviderSearchParams): Promise
       city: t.city,
       bio: t.bio,
       rating: t.rating,
-      reviews: t.reviews,
+      reviews: t.review_count,
       verified: t.certified,
       superhost: false,
       category: 'dresura',

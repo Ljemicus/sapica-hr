@@ -59,7 +59,7 @@ export default async function GroomerPage({ params }: GroomerPageProps) {
     aggregateRating: groomer.rating ? {
       '@type': 'AggregateRating',
       ratingValue: groomer.rating,
-      reviewCount: groomer.reviews,
+      reviewCount: groomer.review_count,
     } : undefined,
     priceRange: '€€',
     serviceType: 'Pet Grooming',

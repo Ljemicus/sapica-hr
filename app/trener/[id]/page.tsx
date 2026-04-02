@@ -65,7 +65,7 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
     aggregateRating: trainer.rating ? {
       '@type': 'AggregateRating',
       ratingValue: trainer.rating,
-      reviewCount: trainer.reviews,
+      reviewCount: trainer.review_count,
     } : undefined,
     priceRange: '€€',
     serviceType: 'Dog Training',

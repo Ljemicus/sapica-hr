@@ -300,7 +300,7 @@ export interface Groomer {
   services: GroomingServiceType[];
   prices: Record<GroomingServiceType, number>;
   rating: number;
-  reviews: number;
+  review_count: number;
   bio: string;
   verified: boolean;
   specialization: GroomerSpecialization;
@@ -379,9 +379,13 @@ export interface Trainer {
   price_per_hour: number;
   certificates: string[];
   rating: number;
-  reviews: number;
+  review_count: number;
   bio: string;
   certified: boolean;
+  user_id?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
 }
 
 export interface TrainingProgram {
@@ -774,6 +778,70 @@ export type AdoptionListingCard = Pick<
 > & {
   publisher_display_name: string | null;
 };
+
+// ── Provider Onboarding ──
+
+export type ProviderApplicationStatus = 'draft' | 'pending_verification' | 'restricted' | 'active' | 'rejected';
+
+export const PROVIDER_APPLICATION_STATUS_LABELS: Record<ProviderApplicationStatus, string> = {
+  'draft': 'Skica',
+  'pending_verification': 'U provjeri',
+  'restricted': 'Ograničeno',
+  'active': 'Aktivno',
+  'rejected': 'Odbijeno',
+};
+
+export const PROVIDER_APPLICATION_STATUS_COLORS: Record<ProviderApplicationStatus, string> = {
+  'draft': 'bg-gray-100 text-gray-700 border-gray-200',
+  'pending_verification': 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  'restricted': 'bg-orange-100 text-orange-700 border-orange-200',
+  'active': 'bg-green-100 text-green-700 border-green-200',
+  'rejected': 'bg-red-100 text-red-700 border-red-200',
+};
+
+export interface ProviderApplication {
+  id: string;
+  user_id: string;
+  status: ProviderApplicationStatus;
+
+  // Basic profile
+  display_name: string;
+  bio: string | null;
+  city: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+
+  // Service info
+  provider_type: string;
+  services: string[];
+  experience_years: number;
+  prices: Record<string, number>;
+
+  // Legal / business info
+  business_name: string | null;
+  oib: string | null;
+  address: string | null;
+  id_verified: boolean;
+
+  // Payout info
+  stripe_account_id: string | null;
+  stripe_onboarding_complete: boolean;
+  payout_enabled: boolean;
+
+  // Terms
+  terms_accepted: boolean;
+  terms_accepted_at: string | null;
+  privacy_accepted: boolean;
+  privacy_accepted_at: string | null;
+
+  // Admin
+  admin_notes: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+
+  created_at: string;
+  updated_at: string;
+}
 
 export const CITIES = [
   'Zagreb',

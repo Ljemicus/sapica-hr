@@ -162,7 +162,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                     <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1 rounded-full">
                       <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                       <span className="font-semibold">{groomer.rating.toFixed(1)}</span>
-                      <span className="text-sm text-amber-700/70">({groomer.reviews} recenzija)</span>
+                      <span className="text-sm text-amber-700/70">({groomer.review_count} recenzija)</span>
                     </div>
                   </div>
                 </div>
