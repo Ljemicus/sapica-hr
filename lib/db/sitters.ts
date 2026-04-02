@@ -103,6 +103,17 @@ export async function getSitters(
       query = query.gte('rating_avg', filters.min_rating);
     }
 
+    // Push sorting to the database when possible
+    switch (filters?.sort) {
+      case 'rating':
+        query = query.order('rating_avg', { ascending: false });
+        break;
+      case 'reviews':
+        query = query.order('review_count', { ascending: false });
+        break;
+      // price sorts require in-memory filtering on JSONB, handled below
+    }
+
     if (filters?.limit != null) {
       query = query.limit(filters.limit);
     }

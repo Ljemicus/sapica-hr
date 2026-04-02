@@ -9,6 +9,9 @@ import {
   PawPrint,
 } from 'lucide-react';
 
+// Revalidate the homepage at most once per 60 seconds (ISR)
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'PetPark — Sve za ljubimce na jednom mjestu',
   description: 'Čuvanje, grooming, školovanje pasa, veterinari, pet shop, udomljavanje, dog-friendly lokacije i zajednica ljubitelja životinja — sve na jednom mjestu u Hrvatskoj.',
@@ -98,8 +101,11 @@ const cities = [
 ];
 
 export default async function HomePage() {
-  // Fetch top-rated sitters from Supabase
-  const topSitters = await getSitters({ sort: 'rating', limit: 6, fields: 'homepage-card' });
+  // Fetch sitters and lost pets in parallel to avoid sequential waterfall
+  const [topSitters, lostPets] = await Promise.all([
+    getSitters({ sort: 'rating', limit: 6, fields: 'homepage-card' }),
+    getLostPets({ status: 'lost', limit: 3, fields: 'homepage-card' }),
+  ]);
   const featuredSitters = topSitters.map((s, i) => ({
     id: s.user_id,
     name: s.user?.name || 'Sitter',
@@ -218,7 +224,60 @@ export default async function HomePage() {
       </section>
 
       {/* ── Lost Pets Section ── */}
-      <LostPetsHomepageSection />
+      {lostPets.length > 0 && (
+        <section className="py-12 md:py-16 bg-gradient-to-b from-red-50 to-orange-50/50 dark:from-red-950/20 dark:to-orange-950/10 relative overflow-hidden" aria-label="Izgubljeni ljubimci">
+          <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+          <div className="container mx-auto px-4 relative">
+            <div className="text-center mb-8">
+              <Badge className="mb-4 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40 border-0 text-sm px-4 py-1.5 animate-pulse rounded-full font-semibold">
+                Hitno — pomoć potrebna
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-extrabold mb-3 font-[var(--font-heading)]">Izgubljeni ljubimci</h2>
+              <p className="text-muted-foreground max-w-lg mx-auto text-lg">
+                Ovi ljubimci traže put kući. Svako dijeljenje pomaže!
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+              {lostPets.map((pet) => (
+                <Link key={pet.id} href={`/izgubljeni/${pet.id}`}>
+                  <Card className="group border-2 border-red-200 dark:border-red-800/50 hover:border-red-400 dark:hover:border-red-600 hover:shadow-xl transition-all duration-300 overflow-hidden h-full rounded-2xl">
+                    <div className="relative h-44 md:h-48 bg-muted">
+                      <Image src={pet.image_url} alt={pet.name} fill loading="lazy" sizes="(min-width: 768px) 30vw, 92vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      <Badge className="absolute top-3 left-3 bg-red-500 text-white font-bold rounded-full">
+                        Traži se
+                      </Badge>
+                      <div className="absolute bottom-3 left-3">
+                        <h3 className="text-xl font-bold text-white drop-shadow-lg font-[var(--font-heading)]">{pet.name}</h3>
+                        <p className="text-sm text-white/90 drop-shadow">{LOST_PET_SPECIES_LABELS[pet.species]} &bull; {pet.breed}</p>
+                      </div>
+                    </div>
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                        <MapPin className="h-4 w-4 text-red-400" />
+                        <span className="font-medium">{pet.city}, {pet.neighborhood}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Calendar className="h-4 w-4" />
+                        <span>{new Date(pet.date_lost).toLocaleDateString('hr-HR', { day: 'numeric', month: 'long' })}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+            <div className="text-center">
+              <Link href="/izgubljeni">
+                <Button size="lg" className="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-500 font-bold text-base px-8 py-5 shadow-xl shadow-red-200/50 dark:shadow-red-900/30 rounded-xl">
+                  <Heart className="h-5 w-5 mr-2" />
+                  Pomozi pronaći — Pogledaj sve
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── Services Section ── */}
       <section className="py-16 md:py-24 bg-warm-section" aria-label="Usluge">
@@ -728,62 +787,3 @@ export default async function HomePage() {
   );
 }
 
-async function LostPetsHomepageSection() {
-  const lostPets = await getLostPets({ status: 'lost', limit: 3, fields: 'homepage-card' });
-  if (lostPets.length === 0) return null;
-
-  return (
-    <section className="py-12 md:py-16 bg-gradient-to-b from-red-50 to-orange-50/50 dark:from-red-950/20 dark:to-orange-950/10 relative overflow-hidden" aria-label="Izgubljeni ljubimci">
-      <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
-      <div className="container mx-auto px-4 relative">
-        <div className="text-center mb-8">
-          <Badge className="mb-4 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40 border-0 text-sm px-4 py-1.5 animate-pulse rounded-full font-semibold">
-            Hitno — pomoć potrebna
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold mb-3 font-[var(--font-heading)]">Izgubljeni ljubimci</h2>
-          <p className="text-muted-foreground max-w-lg mx-auto text-lg">
-            Ovi ljubimci traže put kući. Svako dijeljenje pomaže!
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-          {lostPets.map((pet) => (
-            <Link key={pet.id} href={`/izgubljeni/${pet.id}`}>
-              <Card className="group border-2 border-red-200 dark:border-red-800/50 hover:border-red-400 dark:hover:border-red-600 hover:shadow-xl transition-all duration-300 overflow-hidden h-full rounded-2xl">
-                <div className="relative h-44 md:h-48 bg-muted">
-                  <Image src={pet.image_url} alt={pet.name} fill loading="lazy" sizes="(min-width: 768px) 30vw, 92vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <Badge className="absolute top-3 left-3 bg-red-500 text-white font-bold rounded-full">
-                    Traži se
-                  </Badge>
-                  <div className="absolute bottom-3 left-3">
-                    <h3 className="text-xl font-bold text-white drop-shadow-lg font-[var(--font-heading)]">{pet.name}</h3>
-                    <p className="text-sm text-white/90 drop-shadow">{LOST_PET_SPECIES_LABELS[pet.species]} &bull; {pet.breed}</p>
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                    <MapPin className="h-4 w-4 text-red-400" />
-                    <span className="font-medium">{pet.city}, {pet.neighborhood}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span>{new Date(pet.date_lost).toLocaleDateString('hr-HR', { day: 'numeric', month: 'long' })}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-        <div className="text-center">
-          <Link href="/izgubljeni">
-            <Button size="lg" className="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-500 font-bold text-base px-8 py-5 shadow-xl shadow-red-200/50 dark:shadow-red-900/30 rounded-xl">
-              <Heart className="h-5 w-5 mr-2" />
-              Pomozi pronaći — Pogledaj sve
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </Button>
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
