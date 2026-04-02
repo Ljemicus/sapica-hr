@@ -87,7 +87,7 @@ export function Footer() {
               <li><Link href="/dog-friendly" className="hover:text-green-400 transition-colors">Dog-Friendly lokacije</Link></li>
               <li><Link href="/udomljavanje" className="hover:text-pink-400 transition-colors">Udomljavanje</Link></li>
               <li><Link href="/hitno" className="hover:text-red-400 transition-colors font-medium">🚨 Hitna pomoć</Link></li>
-              <li><Link href="/registracija?role=sitter" className="hover:text-teal-400 transition-colors">Postani sitter</Link></li>
+              <li><Link href="/postani-sitter" className="hover:text-teal-400 transition-colors">Postani sitter</Link></li>
             </ul>
           </div>
           <div>
@@ -95,8 +95,8 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li><Link href="/faq" className="hover:text-orange-400 transition-colors">Česta pitanja</Link></li>
               <li><Link href="/kontakt" className="hover:text-orange-400 transition-colors">Kontakt</Link></li>
-              <li><Link href="/uvjeti" className="hover:text-orange-400 transition-colors">Sigurnost</Link></li>
-              <li><Link href="/uvjeti" className="hover:text-orange-400 transition-colors">Pravila zajednice</Link></li>
+              <li><Link href="/uvjeti" className="hover:text-orange-400 transition-colors">Sigurnost i pravila</Link></li>
+              <li><Link href="/izgubljeni" className="hover:text-red-400 transition-colors">Izgubljeni ljubimci</Link></li>
             </ul>
           </div>
           <div>
@@ -104,7 +104,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-orange-400 flex-shrink-0" />
-                <span>petparkhr@gmail.com</span>
+                <span>info@petpark.hr</span>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 text-orange-400 flex-shrink-0 mt-0.5" />

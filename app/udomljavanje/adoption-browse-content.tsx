@@ -319,8 +319,8 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
                         )}
 
                         <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between">
-                          <span className="text-sm font-semibold text-purple-600 dark:text-purple-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            Saznaj više <ArrowRight className="h-3 w-3" />
+                          <span className="text-sm font-semibold text-purple-600 dark:text-purple-400 flex items-center gap-1">
+                            Saznaj više <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
                           </span>
                         </div>
                       </div>

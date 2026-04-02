@@ -6,6 +6,7 @@ import { getProducts } from '@/lib/db/products';
 import { getArticles } from '@/lib/db/blog';
 import { getTopics } from '@/lib/db/forum';
 import { getLostPets } from '@/lib/db/lost-pets';
+import { getActiveAdoptionListings } from '@/lib/db/adoption-listings';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 const DEFAULT_LAST_MODIFIED = new Date('2026-04-01T00:00:00.000Z');
@@ -45,6 +46,7 @@ const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitema
   { route: '/cuvanje-pasa-zagreb', changeFrequency: 'monthly', priority: 0.6 },
   { route: '/cuvanje-pasa-split', changeFrequency: 'monthly', priority: 0.6 },
   { route: '/cuvanje-pasa-rijeka', changeFrequency: 'monthly', priority: 0.6 },
+  { route: '/grooming', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/grooming-zagreb', changeFrequency: 'monthly', priority: 0.6 },
 ];
 
@@ -57,7 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Fetch all dynamic data in parallel
-  const [sitters, groomers, trainers, products, articles, topics, lostPets] = await Promise.all([
+  const [sitters, groomers, trainers, products, articles, topics, lostPets, adoptionListings] = await Promise.all([
     getSitters().catch(() => []),
     getGroomers().catch(() => []),
     getTrainers().catch(() => []),
@@ -65,6 +67,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getArticles().catch(() => []),
     getTopics().catch(() => []),
     getLostPets().catch(() => []),
+    getActiveAdoptionListings().catch(() => []),
   ]);
 
   const sitterEntries: MetadataRoute.Sitemap = sitters.map((s) => ({
@@ -96,7 +99,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const blogEntries: MetadataRoute.Sitemap = articles.map((a) => ({
-    url: `${BASE_URL}/blog/${a.slug}`,
+    url: `${BASE_URL}/zajednica/${a.slug}`,
     lastModified: toLastModified((a as { updated_at?: string; date?: string; created_at?: string }).updated_at ?? (a as { date?: string }).date ?? (a as { created_at?: string }).created_at),
     changeFrequency: 'monthly' as const,
     priority: 0.5,
@@ -116,6 +119,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  const adoptionEntries: MetadataRoute.Sitemap = adoptionListings.map((a) => ({
+    url: `${BASE_URL}/udomljavanje/${a.id}`,
+    lastModified: toLastModified((a as { updated_at?: string; created_at?: string }).updated_at ?? (a as { created_at?: string }).created_at),
+    changeFrequency: 'weekly' as const,
+    priority: 0.6,
+  }));
+
   return [
     ...staticEntries,
     ...sitterEntries,
@@ -125,5 +135,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...blogEntries,
     ...forumEntries,
     ...lostPetEntries,
+    ...adoptionEntries,
   ];
 }

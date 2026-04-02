@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Clock, ChevronRight, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { EmptyState } from '@/components/shared/empty-state';
 import { getArticles } from '@/lib/db';
 import { BLOG_CATEGORY_LABELS, BLOG_CATEGORY_EMOJI, type BlogCategory } from '@/lib/types';
 
@@ -97,8 +98,8 @@ export default async function ZajednicaPage() {
                     <p className="text-muted-foreground mb-4 leading-relaxed">{featured.excerpt}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Autor: {featured.author}</span>
-                      <span className="text-sm font-medium text-orange-500 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        Čitaj dalje <ChevronRight className="h-4 w-4" />
+                      <span className="text-sm font-medium text-orange-500 flex items-center gap-1">
+                        Čitaj dalje <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                       </span>
                     </div>
                   </div>
@@ -143,10 +144,11 @@ export default async function ZajednicaPage() {
         </div>
 
         {articles.length === 0 && (
-          <div className="text-center py-16 text-muted-foreground">
-            <BookOpen className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <p className="text-lg font-medium">Nema podataka</p>
-          </div>
+          <EmptyState
+            icon={BookOpen}
+            title="Još nema članaka"
+            description="Uskoro objavljujemo korisne savjete za vlasnike ljubimaca. Pratite nas!"
+          />
         )}
       </div>
     </div>

@@ -59,17 +59,17 @@ export default function KontaktPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50/50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-orange-50/50 to-white dark:from-orange-950/10 dark:to-background">
       <div className="container mx-auto px-4 py-12 max-w-5xl">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+          <div className="inline-flex items-center gap-2 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
             <MessageSquare className="h-4 w-4" />
             Kontakt
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
             Kako vam možemo pomoći?
           </h1>
-          <p className="text-gray-500 max-w-lg mx-auto">
+          <p className="text-muted-foreground max-w-lg mx-auto">
             Imate pitanje, prijedlog ili ste primijetili grešku? Javite nam se i odgovorit ćemo u najkraćem roku.
           </p>
         </div>
@@ -79,30 +79,30 @@ export default function KontaktPage() {
           <div className="space-y-4">
             <Card className="border-0 shadow-sm">
               <CardContent className="flex items-start gap-3 p-5">
-                <div className="h-10 w-10 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-                  <Mail className="h-5 w-5 text-orange-600" />
+                <div className="h-10 w-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center flex-shrink-0">
+                  <Mail className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                 </div>
                 <div>
-                  <p className="font-medium text-sm text-gray-900">Email</p>
-                  <p className="text-sm text-gray-500">info@petpark.hr</p>
+                  <p className="font-medium text-sm text-foreground">Email</p>
+                  <p className="text-sm text-muted-foreground">info@petpark.hr</p>
                 </div>
               </CardContent>
             </Card>
 
             <Card className="border-0 shadow-sm">
               <CardContent className="flex items-start gap-3 p-5">
-                <div className="h-10 w-10 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="h-5 w-5 text-orange-600" />
+                <div className="h-10 w-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center flex-shrink-0">
+                  <MapPin className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                 </div>
                 <div>
-                  <p className="font-medium text-sm text-gray-900">Adresa</p>
-                  <p className="text-sm text-gray-500">Rijeka, Hrvatska</p>
+                  <p className="font-medium text-sm text-foreground">Adresa</p>
+                  <p className="text-sm text-muted-foreground">Rijeka, Hrvatska</p>
                 </div>
               </CardContent>
             </Card>
 
-            <div className="p-5 bg-orange-50 rounded-xl text-sm text-gray-600">
-              <p className="font-medium text-gray-900 mb-1">Radno vrijeme podrške</p>
+            <div className="p-5 bg-orange-50 dark:bg-orange-950/20 rounded-xl text-sm text-muted-foreground">
+              <p className="font-medium text-foreground mb-1">Radno vrijeme podrške</p>
               <p>Pon — Sub: 08:00 — 20:00</p>
               <p>Ned: Zatvoreno</p>
             </div>
@@ -147,7 +147,7 @@ export default function KontaktPage() {
                       value={formData.subject}
                       onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
                       required
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      className="flex h-10 w-full rounded-md border border-input bg-background text-foreground px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&>option]:bg-background [&>option]:text-foreground"
                     >
                       <option value="" disabled>Odaberite temu...</option>
                       {SUBJECT_OPTIONS.map(opt => (
@@ -197,7 +197,7 @@ export default function KontaktPage() {
         </div>
         {/* FAQ sekcija */}
         <div className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Česta pitanja</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-6 text-center">Česta pitanja</h2>
           <div className="space-y-4 max-w-3xl mx-auto">
             {[
               { q: 'Kako se registrirati kao sitter?', a: 'Kliknite "Registracija" i odaberite opciju "Sitter". Ispunite profil, dodajte opis iskustva i postavite cijene za usluge koje nudite.' },
@@ -208,8 +208,8 @@ export default function KontaktPage() {
             ].map((faq, i) => (
               <Card key={i} className="border-0 shadow-sm">
                 <CardContent className="p-5">
-                  <h3 className="font-semibold text-sm text-gray-900 mb-1">{faq.q}</h3>
-                  <p className="text-sm text-gray-600">{faq.a}</p>
+                  <h3 className="font-semibold text-sm text-foreground mb-1">{faq.q}</h3>
+                  <p className="text-sm text-muted-foreground">{faq.a}</p>
                 </CardContent>
               </Card>
             ))}

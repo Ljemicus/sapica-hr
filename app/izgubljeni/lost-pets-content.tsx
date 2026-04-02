@@ -12,6 +12,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import type { LostPet } from '@/lib/types';
 import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS, CITIES } from '@/lib/types';
 import { fetchLostPets } from '@/lib/supabase/lost-pets';
+import { EmptyState } from '@/components/shared/empty-state';
 import { ShareButtons } from './share-buttons';
 
 const LostPetsMap = dynamic(() => import('@/components/shared/lost-pets-map'), { ssr: false });
@@ -81,10 +82,10 @@ export function LostPetsContent() {
 
       {/* Filters */}
       <section className="container mx-auto px-4 -mt-6 relative z-10">
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 md:p-6">
+        <div className="bg-white dark:bg-card rounded-2xl shadow-lg border border-gray-100 dark:border-border p-4 md:p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Filter className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-600">Filtriraj</span>
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-medium text-muted-foreground">Filtriraj</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <Select value={cityFilter} onValueChange={setCityFilter}>
@@ -144,7 +145,7 @@ export function LostPetsContent() {
             <Map className="h-4 w-4 mr-2" />
             Mapa
           </Button>
-          <span className="text-sm text-gray-500 ml-2">
+          <span className="text-sm text-muted-foreground ml-2">
             {loading ? '...' : `${pets.length} rezultata`}
           </span>
         </div>
@@ -164,13 +165,22 @@ export function LostPetsContent() {
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="h-8 w-8 animate-spin text-red-400" />
-            <span className="ml-3 text-gray-500">Učitavanje...</span>
+            <span className="ml-3 text-muted-foreground">Učitavanje...</span>
           </div>
         ) : pets.length === 0 ? (
-          <div className="text-center py-16">
-            <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg">Nema rezultata za odabrane filtere.</p>
-          </div>
+          <EmptyState
+            icon={Search}
+            title="Nema rezultata"
+            description="Nema prijava za odabrane filtere. Pokušajte promijeniti grad, vrstu ili status."
+            action={
+              <Link href="/izgubljeni/prijavi">
+                <Button size="sm" className="bg-red-500 hover:bg-red-600 text-white">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Prijavi nestanak
+                </Button>
+              </Link>
+            }
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {pets.map((pet) => (
