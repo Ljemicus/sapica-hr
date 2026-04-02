@@ -42,7 +42,9 @@ export async function generateMetadata({ params }: GroomerPageProps): Promise<Me
 export default async function GroomerPage({ params }: GroomerPageProps) {
   const { id } = await params;
   const { groomer, reviews, availableDates } = await getGroomerPageData(id);
-  if (!groomer) return notFound();
+  if (!groomer) {
+    notFound();
+  }
 
   const jsonLd = {
     '@context': 'https://schema.org',

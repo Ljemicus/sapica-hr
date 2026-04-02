@@ -4,7 +4,7 @@ import { ArrowLeft, Clock, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { getArticle, getRelatedArticles } from '@/lib/db';
+import { getArticle, getArticles, getRelatedArticles } from '@/lib/db';
 import { BLOG_CATEGORY_LABELS, BLOG_CATEGORY_EMOJI, type BlogCategory } from '@/lib/types';
 import { ArticleJsonLd } from '@/components/seo/json-ld';
 
@@ -29,6 +29,13 @@ const categoryGradients: Record<BlogCategory, string> = {
 };
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  const articles = await getArticles();
+  return articles.map((article) => ({ slug: article.slug }));
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -61,7 +68,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const article = await getArticle(slug);
-  if (!article) notFound();
+  if (!article) {
+    notFound();
+  }
 
   const related = await getRelatedArticles(slug, 3);
 

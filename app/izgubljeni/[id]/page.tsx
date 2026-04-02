@@ -96,7 +96,9 @@ export default async function LostPetDetailPage({ params }: LostPetPageProps) {
   const { id } = await params;
   const pet = await getLostPetFromDb(id);
 
-  if (!pet) return notFound();
+  if (!pet) {
+    notFound();
+  }
 
   return <LostPetDetailContent pet={pet} />;
 }

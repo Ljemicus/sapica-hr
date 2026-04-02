@@ -39,7 +39,9 @@ export async function generateMetadata({ params }: TrainerPageProps): Promise<Me
 export default async function TrainerPage({ params }: TrainerPageProps) {
   const { id } = await params;
   const trainer = await getTrainer(id);
-  if (!trainer) return notFound();
+  if (!trainer) {
+    notFound();
+  }
 
   const programs = await getPrograms(id);
   const reviews = await getTrainerReviews(id);
