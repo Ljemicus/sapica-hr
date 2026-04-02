@@ -131,7 +131,6 @@ export function getMobileCommunityLinks(t: TranslationFn): NavbarLinkItem[] {
 export function getMobileAccountLinks(t: TranslationFn, user?: NavbarUser | null): NavbarLinkItem[] {
   const items: NavbarLinkItem[] = [
     { href: getDashboardLink(user), label: t('nav.dashboard'), icon: User },
-    { href: '/poruke', label: t('nav.messages'), icon: MessageCircle },
     { href: '/omiljeni', label: t('nav.favorites'), icon: Heart },
   ];
 
