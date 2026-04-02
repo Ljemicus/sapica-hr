@@ -3,6 +3,8 @@ import { appLogger } from '@/lib/logger';
 import { getAuthUser } from '@/lib/auth';
 import { createRefund, formatCurrency } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
+import { sendEmail } from '@/lib/email';
+import { bookingCancelledEmail } from '@/lib/email-templates';
 
 type RefundReason = 'owner_cancel' | 'sitter_cancel' | 'other';
 
@@ -57,8 +59,18 @@ export async function POST(request: Request) {
   }
 
   // Check authorization
-  if (booking.owner_id !== user.id && booking.sitter_id !== user.id && user.role !== 'admin') {
+  const isOwner = booking.owner_id === user.id;
+  const isSitter = booking.sitter_id === user.id;
+  if (!isOwner && !isSitter && user.role !== 'admin') {
     return NextResponse.json({ error: 'Nemate pristup ovoj rezervaciji.' }, { status: 403 });
+  }
+
+  // Validate reason matches the actor to prevent owners claiming sitter_cancel for 100% refund
+  if (reason === 'sitter_cancel' && !isSitter && user.role !== 'admin') {
+    return NextResponse.json({ error: 'Samo čuvar može otkazati kao sitter_cancel.' }, { status: 403 });
+  }
+  if (reason === 'owner_cancel' && !isOwner && user.role !== 'admin') {
+    return NextResponse.json({ error: 'Samo vlasnik može otkazati kao owner_cancel.' }, { status: 403 });
   }
 
   if (booking.payment_status !== 'paid') {
@@ -117,6 +129,35 @@ export async function POST(request: Request) {
       refund_id: refundId,
       refund_amount: refundAmountCents,
     });
+
+    // Best-effort: send cancellation email to the other party
+    try {
+      const { data: bookingDetails } = await supabase
+        .from('bookings')
+        .select('start_date, end_date, owner:users!owner_id(name, email), sitter:users!sitter_id(name, email), pet:pets(name)')
+        .eq('id', bookingId)
+        .single();
+
+      if (bookingDetails) {
+        const dates = `${new Date(bookingDetails.start_date).toLocaleDateString('hr-HR')} – ${new Date(bookingDetails.end_date).toLocaleDateString('hr-HR')}`;
+        const pet = bookingDetails.pet as unknown as { name: string } | null;
+        const owner = bookingDetails.owner as unknown as { name: string; email: string } | null;
+        const sitter = bookingDetails.sitter as unknown as { name: string; email: string } | null;
+        const petName = pet?.name || 'Ljubimac';
+        const recipientEmail = isOwner ? sitter?.email : owner?.email;
+        const recipientName = isOwner ? sitter?.name : owner?.name;
+
+        if (recipientEmail) {
+          sendEmail({
+            to: recipientEmail,
+            subject: 'Rezervacija otkazana — povrat sredstava',
+            html: bookingCancelledEmail(recipientName || 'Korisnik', petName, dates),
+          }).catch((err) => appLogger.error('payments.refund', 'Failed to send cancellation email', { error: String(err) }));
+        }
+      }
+    } catch (emailErr) {
+      appLogger.error('payments.refund', 'Email notification error', { error: String(emailErr) });
+    }
 
     return NextResponse.json({
       refundId,

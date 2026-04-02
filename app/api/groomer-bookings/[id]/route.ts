@@ -20,8 +20,9 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     const body = await request.json();
     const { status, groomerId } = body as { status: GroomerBookingStatus; groomerId?: string };
 
-    if (!status) {
-      return NextResponse.json({ error: 'status is required' }, { status: 400 });
+    const VALID_GROOMER_STATUSES: GroomerBookingStatus[] = ['pending', 'confirmed', 'rejected', 'completed', 'cancelled'];
+    if (!status || !VALID_GROOMER_STATUSES.includes(status)) {
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
     }
 
     if (status === 'cancelled') {

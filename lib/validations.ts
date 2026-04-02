@@ -81,7 +81,7 @@ export const bookingSchema = z.object({
   service_type: z.enum(['boarding', 'walking', 'house-sitting', 'drop-in', 'daycare'], { message: 'Odaberite uslugu' }),
   start_date: z.string().min(1, 'Odaberite datum početka'),
   end_date: z.string().min(1, 'Odaberite datum završetka'),
-  note: z.string().optional(),
+  note: z.string().max(500, 'Napomena može imati najviše 500 znakova').optional(),
 });
 
 export const reviewSchema = z.object({
@@ -91,7 +91,7 @@ export const reviewSchema = z.object({
 });
 
 export const messageSchema = z.object({
-  content: z.string().min(1, 'Poruka ne može biti prazna'),
+  content: z.string().min(1, 'Poruka ne može biti prazna').max(2000, 'Poruka može imati najviše 2000 znakova'),
   receiver_id: z.string().uuid(),
   booking_id: z.string().uuid().optional(),
 });

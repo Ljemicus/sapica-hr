@@ -27,7 +27,7 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
   const [step, setStep] = useState(1);
   const router = useRouter();
 
-  const { register, handleSubmit, formState: { errors }, watch } = useForm<BookingInput>({
+  const { register, handleSubmit, formState: { errors }, watch, trigger } = useForm<BookingInput>({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
       sitter_id: profile.user_id,
@@ -35,6 +35,7 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
   });
 
   const selectedService = watch('service_type');
+  const selectedPet = watch('pet_id');
   const startDate = watch('start_date');
   const endDate = watch('end_date');
 
@@ -153,7 +154,10 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
                 {errors.service_type && <p className="text-sm text-red-500">{errors.service_type.message}</p>}
               </div>
 
-              <Button type="button" className="w-full bg-orange-500 hover:bg-orange-600" onClick={() => setStep(2)}>
+              <Button type="button" className="w-full bg-orange-500 hover:bg-orange-600" onClick={async () => {
+                const valid = await trigger(['pet_id', 'service_type']);
+                if (valid) setStep(2);
+              }}>
                 Dalje <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </div>
@@ -183,7 +187,10 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
                 <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(1)}>
                   Natrag
                 </Button>
-                <Button type="button" className="flex-1 bg-orange-500 hover:bg-orange-600" onClick={() => setStep(3)}>
+                <Button type="button" className="flex-1 bg-orange-500 hover:bg-orange-600" onClick={async () => {
+                  const valid = await trigger(['start_date', 'end_date']);
+                  if (valid) setStep(3);
+                }}>
                   Dalje <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>

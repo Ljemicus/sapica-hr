@@ -33,6 +33,16 @@ export async function POST(request: Request) {
       );
     }
 
+    const bookingDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (Number.isNaN(bookingDate.getTime()) || bookingDate < today) {
+      return NextResponse.json(
+        { error: 'Datum termina ne može biti u prošlosti.' },
+        { status: 400 }
+      );
+    }
+
     const booking = await createGroomerBooking({
       groomer_id,
       user_id: user.id,

@@ -143,6 +143,22 @@ export function bookingAcceptedEmail(
   return baseLayout(content, `${sitterName} je prihvatio/la rezervaciju za ${petName}`);
 }
 
+export function bookingRejectedEmail(
+  ownerName: string,
+  sitterName: string,
+  petName: string,
+  dates: string,
+): string {
+  const content = `
+    ${heading('Rezervacija odbijena')}
+    ${paragraph(`Pozdrav ${ownerName},`)}
+    ${paragraph(`Nažalost, <strong>${sitterName}</strong> ne može prihvatiti rezervaciju za <strong>${petName}</strong> (<strong>${dates}</strong>).`)}
+    ${paragraph('Ne brinite — na PetParku možete lako pronaći drugog pouzdanog sittera za vašeg ljubimca.')}
+    ${ctaButton('Pronađi drugog sittera', 'https://petpark.hr/pretraga')}
+  `;
+  return baseLayout(content, `${sitterName} ne može prihvatiti rezervaciju za ${petName}`);
+}
+
 export function bookingCancelledEmail(
   recipientName: string,
   petName: string,

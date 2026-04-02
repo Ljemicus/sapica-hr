@@ -4,7 +4,7 @@ import { getBooking, updateBooking } from '@/lib/db';
 import type { Booking, BookingStatus } from '@/lib/types';
 import { appLogger } from '@/lib/logger';
 import { sendEmail } from '@/lib/email';
-import { bookingAcceptedEmail, bookingCancelledEmail } from '@/lib/email-templates';
+import { bookingAcceptedEmail, bookingRejectedEmail, bookingCancelledEmail } from '@/lib/email-templates';
 
 interface BookingRouteError {
   error: string;
@@ -12,7 +12,7 @@ interface BookingRouteError {
 
 const VALID_STATUSES: BookingStatus[] = ['accepted', 'rejected', 'completed', 'cancelled'];
 const OWNER_ALLOWED = new Set<BookingStatus>(['cancelled']);
-const SITTER_ALLOWED = new Set<BookingStatus>(['accepted', 'rejected', 'completed']);
+const SITTER_ALLOWED = new Set<BookingStatus>(['accepted', 'rejected', 'completed', 'cancelled']);
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -93,6 +93,19 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
           dates,
         ),
       }).catch((err) => appLogger.error('bookings.update', 'Failed to send accepted email', { error: String(err) }));
+    }
+
+    if (status === 'rejected' && booking.owner?.email) {
+      sendEmail({
+        to: booking.owner.email,
+        subject: 'Rezervacija odbijena',
+        html: bookingRejectedEmail(
+          booking.owner.name || 'Korisnik',
+          booking.sitter?.name || 'Čuvar',
+          petName,
+          dates,
+        ),
+      }).catch((err) => appLogger.error('bookings.update', 'Failed to send rejected email', { error: String(err) }));
     }
 
     if (status === 'cancelled') {

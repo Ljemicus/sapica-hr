@@ -61,6 +61,10 @@ export async function POST(request: Request) {
     return apiError({ status: 400, code: 'BOOKING_IN_PAST', message: 'Booking ne može početi u prošlosti.' });
   }
 
+  if (sitter_id === user.id) {
+    return apiError({ status: 400, code: 'SELF_BOOKING', message: 'Ne možete rezervirati vlastiti profil.' });
+  }
+
   const sitterProfile = await getSitter(sitter_id);
   if (!sitterProfile) {
     appLogger.warn('bookings.create', 'Sitter profile missing', { sitterId: sitter_id });
