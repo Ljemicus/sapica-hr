@@ -6,7 +6,7 @@ import {
   Search, Shield, Star, Heart, MapPin, ChevronRight,
   Home, Dog, House, Eye, Sun, Users, Calendar,
   ArrowRight, Scissors, GraduationCap, BookOpen,
-  PawPrint,
+  PawPrint, ShieldCheck, CreditCard, PhoneCall, BadgeCheck,
 } from 'lucide-react';
 
 // Revalidate the homepage at most once per 60 seconds (ISR)
@@ -122,7 +122,7 @@ export default async function HomePage() {
               <span className="text-teal-600 dark:text-teal-400">mirnije vlasnike.</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in-up delay-200 leading-relaxed">
-              PetPark okuplja pouzdane usluge, korisne savjete i zajednicu posvećenu kvalitetnoj brizi o ljubimcima — sve na jednom mjestu.
+              Pronađite provjerenog skrbnika, groomera ili trenera za svog ljubimca — s recenzijama stvarnih korisnika, jasnom verifikacijom i podrškom na svakom koraku.
             </p>
 
             <div className="mb-8 animate-fade-in-up delay-200 max-w-2xl mx-auto">
@@ -165,18 +165,22 @@ export default async function HomePage() {
               </form>
             </div>
 
-            <div className="flex items-center justify-center gap-4 sm:gap-8 mt-8 text-sm text-muted-foreground animate-fade-in-up delay-400 flex-wrap">
+            <div className="flex items-center justify-center gap-4 sm:gap-6 mt-8 text-sm text-muted-foreground animate-fade-in-up delay-400 flex-wrap">
               <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-teal-500" />
-                <span>Verificirani sitteri</span>
+                <ShieldCheck className="h-4 w-4 text-teal-500" />
+                <span>Ručno verificirani profili</span>
               </div>
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
                 <span>Recenzije stvarnih korisnika</span>
               </div>
               <div className="hidden sm:flex items-center gap-2">
-                <Heart className="h-4 w-4 text-rose-400 fill-rose-400" />
-                <span>Briga prilagođena vašem ljubimcu</span>
+                <CreditCard className="h-4 w-4 text-blue-500" />
+                <span>Sigurno plaćanje</span>
+              </div>
+              <div className="hidden sm:flex items-center gap-2">
+                <PhoneCall className="h-4 w-4 text-rose-400" />
+                <span>Podrška 7 dana u tjednu</span>
               </div>
             </div>
           </div>
@@ -256,6 +260,55 @@ export default async function HomePage() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Trust & Safety Section ── */}
+      <section className="py-16 md:py-24 bg-warm-section relative overflow-hidden" aria-label="Sigurnost i povjerenje">
+        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+        <div className="container mx-auto px-4 relative">
+          <div className="text-center mb-12">
+            <Badge variant="secondary" className="mb-4 text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 border-0 rounded-full font-semibold">Sigurnost i povjerenje</Badge>
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Zašto vlasnici biraju PetPark?</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Svaki korak je osmišljen da vaš ljubimac bude siguran, a vi mirni.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto mb-12">
+            <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-teal-100/60 dark:border-teal-900/30 flex flex-col gap-3 animate-fade-in-up">
+              <div className="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-950/40 flex items-center justify-center">
+                <BadgeCheck className="h-6 w-6 text-teal-600" />
+              </div>
+              <h3 className="font-bold text-base font-[var(--font-heading)]">Što znači &ldquo;Verificiran&rdquo;?</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">Svaki verificirani sitter prošao je provjeru identiteta i reference, te potpisao PetPark kodeks ponašanja. Profil vidite tek nakon odobravanja.</p>
+            </div>
+            <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-blue-100/60 dark:border-blue-900/30 flex flex-col gap-3 animate-fade-in-up delay-100">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center">
+                <CreditCard className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="font-bold text-base font-[var(--font-heading)]">Sigurno plaćanje</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">Plaćanje ide na escrow — sitter prima novac tek nakon završene usluge. Ako nešto krene po krivu, možete zatražiti povrat sredstava.</p>
+            </div>
+            <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-rose-100/60 dark:border-rose-900/30 flex flex-col gap-3 animate-fade-in-up delay-200">
+              <div className="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center">
+                <PhoneCall className="h-6 w-6 text-rose-500" />
+              </div>
+              <h3 className="font-bold text-base font-[var(--font-heading)]">Podrška 7 dana u tjednu</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">Tim PetParka dostupan je svaki dan od 8 do 22h. Ako nešto nije u redu — javljate se nama, a mi rješavamo.</p>
+            </div>
+            <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-amber-100/60 dark:border-amber-900/30 flex flex-col gap-3 animate-fade-in-up delay-300">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center">
+                <Star className="h-6 w-6 text-amber-500 fill-amber-500" />
+              </div>
+              <h3 className="font-bold text-base font-[var(--font-heading)]">Recenzije bez filtera</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">Ocjene i komentari dolaze isključivo od korisnika koji su zaista koristili uslugu. Ne uređujemo negativne recenzije.</p>
+            </div>
+          </div>
+          <div className="max-w-3xl mx-auto bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl p-6 md:p-8 text-white text-center shadow-lg shadow-teal-200/40 dark:shadow-teal-900/20">
+            <Shield className="h-8 w-8 mx-auto mb-3 opacity-90" />
+            <h3 className="text-xl font-extrabold mb-2 font-[var(--font-heading)]">PetPark garancija</h3>
+            <p className="text-white/85 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
+              Ako usluga nije pružena kako je dogovoreno, vraćamo vam novac. Bez kompliciranja, bez dugih čekanja. To je naše obećanje svakom vlasniku.
+            </p>
           </div>
         </div>
       </section>
