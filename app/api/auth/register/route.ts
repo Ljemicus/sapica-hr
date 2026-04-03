@@ -71,8 +71,10 @@ export async function POST(request: Request) {
     },
   });
   if (profileError) {
-    appLogger.error('auth.register', 'Failed to upsert user profile', { userId: data.user.id });
-    return apiError({ status: 500, code: 'PROFILE_UPSERT_FAILED', message: 'Greška pri kreiranju profila' });
+    appLogger.warn('auth.register', 'Profile upsert failed after sign up; expecting DB trigger or callback sync to complete profile', {
+      userId: data.user.id,
+      reason: profileError.message || 'unknown',
+    });
   }
 
   if (parsed.data.role === 'sitter') {
@@ -82,8 +84,10 @@ export async function POST(request: Request) {
       city: parsed.data.city,
     });
     if (sitterError) {
-      appLogger.error('auth.register', 'Failed to create sitter profile', { userId: data.user.id });
-      return apiError({ status: 500, code: 'SITTER_PROFILE_CREATE_FAILED', message: 'Greška pri kreiranju sitter profila' });
+      appLogger.warn('auth.register', 'Sitter profile ensure failed after sign up; expecting DB trigger or callback sync to complete profile', {
+        userId: data.user.id,
+        reason: sitterError.message || 'unknown',
+      });
     }
   }
 
