@@ -30,7 +30,10 @@ const SERVICE_OPTIONS = [
   'Čuvanje u domu vlasnika',
   'Njega i kupanje',
   'Trening i dresura',
-];
+] as const;
+
+type ProviderTypeOption = (typeof PROVIDER_TYPES)[number]['value'];
+type ProviderServiceOption = (typeof SERVICE_OPTIONS)[number];
 
 /** Statuses where the form is read-only (user cannot edit) */
 const LOCKED_STATUSES = new Set(['pending_verification', 'active', 'restricted']);
@@ -47,8 +50,8 @@ function mapInitialValues(user: User, application: ProviderApplication | null): 
     bio: application?.bio || '',
     city: application?.city || user.city || '',
     phone: application?.phone || user.phone || '',
-    provider_type: application?.provider_type || 'čuvar',
-    services: application?.services || [],
+    provider_type: ((application?.provider_type as ProviderTypeOption | undefined) || 'čuvar'),
+    services: (application?.services?.filter((service): service is ProviderServiceOption => (SERVICE_OPTIONS as readonly string[]).includes(service)) || []),
     experience_years: application?.experience_years || 0,
     prices: application?.prices || {},
     business_name: application?.business_name || '',
@@ -87,7 +90,7 @@ export function ProviderOnboardingForm({ user, initialApplication, stripeReturn 
     defaultValues,
   });
 
-  const selectedServices = watch('services');
+  const selectedServices = (watch('services') || []) as ProviderServiceOption[];
 
   useEffect(() => {
     if (source !== 'direct') {
@@ -339,7 +342,7 @@ export function ProviderOnboardingForm({ user, initialApplication, stripeReturn 
                     <Label>Koje usluge nudiš?</Label>
                     <div className="grid gap-2 md:grid-cols-2">
                       {SERVICE_OPTIONS.map((service) => {
-                        const checked = selectedServices?.includes(service) || false;
+                        const checked = selectedServices.includes(service as ProviderServiceOption);
                         return (
                           <label key={service} className={`flex items-center gap-3 rounded-xl border p-3 text-sm transition ${checked ? 'border-orange-300 bg-orange-50 dark:bg-orange-950/20' : 'border-border'}`}>
                             <input
@@ -347,8 +350,8 @@ export function ProviderOnboardingForm({ user, initialApplication, stripeReturn 
                               checked={checked}
                               disabled={locked}
                               onChange={(event) => {
-                                const next = new Set(getValues('services'));
-                                if (event.target.checked) next.add(service); else next.delete(service);
+                                const next = new Set<ProviderServiceOption>(getValues('services') || []);
+                                if (event.target.checked) next.add(service as ProviderServiceOption); else next.delete(service as ProviderServiceOption);
                                 setValue('services', Array.from(next), { shouldValidate: true });
                               }}
                             />

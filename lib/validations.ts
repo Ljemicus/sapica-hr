@@ -140,6 +140,21 @@ export type AdoptionPublishInput = z.infer<typeof adoptionPublishRules>;
 
 // ── Provider Onboarding ──
 
+const providerTypeSchema = z.enum(['čuvar', 'groomer', 'trener', 'drugo'], {
+  message: 'Odaberite vrstu profila',
+});
+
+const providerServiceSchema = z.enum([
+  'Čuvanje preko noći',
+  'Dnevni boravak',
+  'Šetnja pasa',
+  'Čuvanje u domu vlasnika',
+  'Njega i kupanje',
+  'Trening i dresura',
+], {
+  message: 'Odaberite valjanu uslugu',
+});
+
 export const providerBasicProfileSchema = z.object({
   display_name: z.string().min(2, 'Ime mora imati najmanje 2 znaka'),
   bio: z.string().min(10, 'Bio mora imati najmanje 10 znakova').max(1000, 'Bio može imati najviše 1000 znakova'),
@@ -148,8 +163,8 @@ export const providerBasicProfileSchema = z.object({
 });
 
 export const providerServiceInfoSchema = z.object({
-  provider_type: z.string().min(1, 'Odaberite vrstu profila'),
-  services: z.array(z.string()).min(1, 'Odaberite barem jednu uslugu'),
+  provider_type: providerTypeSchema,
+  services: z.array(providerServiceSchema).min(1, 'Odaberite barem jednu uslugu'),
   experience_years: z.coerce.number().min(0, 'Minimalno 0').max(50, 'Maksimalno 50'),
   prices: z.record(z.string(), z.coerce.number().min(0, 'Cijena mora biti pozitivna')),
 });
@@ -187,8 +202,8 @@ export const providerDraftSchema = z.object({
   bio: z.string().optional(),
   city: z.string().optional(),
   phone: z.string().optional(),
-  provider_type: z.string().optional(),
-  services: z.array(z.string()).optional(),
+  provider_type: providerTypeSchema.optional(),
+  services: z.array(providerServiceSchema).optional(),
   experience_years: z.coerce.number().min(0).max(50).optional(),
   prices: z.record(z.string(), z.coerce.number().min(0)).optional(),
   business_name: z.string().optional(),
