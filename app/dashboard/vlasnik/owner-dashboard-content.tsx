@@ -93,7 +93,7 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
     }
   };
 
-  const [deletingPetId, setDeletingPetId] = useState<string | null>(null);
+  const [, setDeletingPetId] = useState<string | null>(null);
 
   const deletePet = async (petId: string) => {
     if (!confirm('Jeste li sigurni da želite obrisati ovog ljubimca?')) return;

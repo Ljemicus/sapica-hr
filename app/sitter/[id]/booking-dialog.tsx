@@ -34,8 +34,8 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
     },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const selectedService = watch('service_type');
-  const selectedPet = watch('pet_id');
   const startDate = watch('start_date');
   const endDate = watch('end_date');
 
