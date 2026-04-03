@@ -69,16 +69,18 @@ export async function getPetsByOwner(ownerId: string, fields: PetFields = 'full'
 }
 
 export async function getPet(id: string): Promise<Pet | null> {
+  const mockPet = mockPets.find((p) => p.id === id) ?? null;
+
   if (!isSupabaseConfigured()) {
-    return mockPets.find((p) => p.id === id) ?? null;
+    return mockPet;
   }
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('pets').select('*').eq('id', id).single();
-    if (error || !data) return null;
+    if (error || !data) return mockPet;
     return data as Pet;
   } catch {
-    return null;
+    return mockPet;
   }
 }
 
