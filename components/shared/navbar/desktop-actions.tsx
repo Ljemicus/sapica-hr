@@ -18,11 +18,10 @@ interface DesktopActionsProps {
   t: TranslationFn;
   user?: NavbarUser | null;
   loading: boolean;
-  getItemCount: () => number;
   signOut: () => Promise<void>;
 }
 
-export function DesktopActions({ t, user, loading, getItemCount, signOut }: DesktopActionsProps) {
+export function DesktopActions({ t, user, loading, signOut }: DesktopActionsProps) {
   const router = useRouter();
   const actions = getHeaderActions(t);
   const userMenuItems = getUserMenuItems(t, user);

@@ -15,7 +15,6 @@ import {
   Scissors,
   Search,
   Shield,
-  ShoppingBag,
   Siren,
   Sparkles,
   Star,
@@ -32,7 +31,6 @@ export function getDashboardLink(user?: NavbarUser | null) {
 export function getDesktopLinks(t: TranslationFn, user?: NavbarUser | null): NavbarLinkItem[] {
   return [
     { href: '/o-nama', label: 'O nama' },
-    { href: '/shop', label: t('nav.shop'), icon: ShoppingBag },
     { href: '/zajednica', label: t('nav.blog'), icon: BookOpen },
     { href: '/forum', label: t('nav.forum'), icon: MessageSquare },
     { href: '/udomljavanje', label: 'Udomljavanje', icon: HeartHandshake, className: 'text-sm font-semibold text-pink-500 hover:text-pink-600 dark:text-pink-400 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-pink-50 dark:hover:bg-pink-950/20' },
@@ -85,7 +83,6 @@ export function getUserMenuItems(t: TranslationFn, user?: NavbarUser | null): Na
     items.push({ href: '/dashboard/vlasnik', label: t('nav.view_pets'), icon: FileHeart, separatorBefore: true });
   }
 
-  // All authenticated non-admin users can publish adoption listings
   if (user && user.role !== 'admin') {
     items.push({ href: '/dashboard/adoption', label: 'Oglasi za udomljavanje', icon: HeartHandshake, separatorBefore: user.role !== 'owner' });
   }
@@ -122,7 +119,6 @@ export function getMobileUtilityLinks(t: TranslationFn): NavbarLinkItem[] {
 export function getMobileCommunityLinks(t: TranslationFn): NavbarLinkItem[] {
   return [
     { href: '/dog-friendly', label: 'Dog-Friendly', icon: Dog, className: 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/20 font-medium' },
-    { href: '/shop', label: t('nav.shop'), icon: ShoppingBag },
     { href: '/zajednica', label: t('nav.blog'), icon: BookOpen },
     { href: '/forum', label: t('nav.forum'), icon: MessageSquare },
   ];
@@ -134,7 +130,6 @@ export function getMobileAccountLinks(t: TranslationFn, user?: NavbarUser | null
     { href: '/omiljeni', label: t('nav.favorites'), icon: Heart },
   ];
 
-  // All authenticated non-admin users can publish adoption listings
   if (user && user.role !== 'admin') {
     items.push({ href: '/dashboard/adoption', label: 'Oglasi za udomljavanje', icon: HeartHandshake });
   }

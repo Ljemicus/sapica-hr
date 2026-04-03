@@ -2,7 +2,6 @@ import type { MetadataRoute } from 'next';
 import { getSitters } from '@/lib/db/sitters';
 import { getGroomers } from '@/lib/db/groomers';
 import { getTrainers } from '@/lib/db/trainers';
-import { getProducts } from '@/lib/db/products';
 import { getArticles } from '@/lib/db/blog';
 import { getTopics } from '@/lib/db/forum';
 import { getLostPets } from '@/lib/db/lost-pets';
@@ -34,7 +33,7 @@ const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitema
   { route: '/privatnost', changeFrequency: 'yearly', priority: 0.2 },
   { route: '/uvjeti', changeFrequency: 'yearly', priority: 0.2 },
   { route: '/o-nama', changeFrequency: 'monthly', priority: 0.5 },
-  { route: '/postani-sitter', changeFrequency: 'monthly', priority: 0.6 },
+  { route: '/postani-sitter/oglas', changeFrequency: 'monthly', priority: 0.6 },
   { route: '/hitno', changeFrequency: 'weekly', priority: 0.6 },
   { route: '/faq', changeFrequency: 'monthly', priority: 0.5 },
   { route: '/veterinari', changeFrequency: 'weekly', priority: 0.7 },
@@ -58,11 +57,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Fetch all dynamic data in parallel
-  const [sitters, groomers, trainers, products, articles, topics, lostPets, adoptionListings] = await Promise.all([
+  const [sitters, groomers, trainers, articles, topics, lostPets, adoptionListings] = await Promise.all([
     getSitters().catch(() => []),
     getGroomers().catch(() => []),
     getTrainers().catch(() => []),
-    getProducts().catch(() => []),
     getArticles().catch(() => []),
     getTopics().catch(() => []),
     getLostPets().catch(() => []),
@@ -89,8 +87,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }));
-
-  const productEntries: MetadataRoute.Sitemap = []; // Shop hidden for now
 
   const blogEntries: MetadataRoute.Sitemap = articles.map((a) => ({
     url: `${BASE_URL}/zajednica/${a.slug}`,

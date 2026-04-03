@@ -68,7 +68,6 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
   },
   alternates: {
-    canonical: 'https://petpark.hr',
     languages: {
       'hr': 'https://petpark.hr',
     },

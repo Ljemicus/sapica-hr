@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
-import { useCart } from '@/lib/cart-context';
 import { useLanguage } from '@/lib/i18n';
 import { PawLogo } from '@/components/shared/navbar/paw-logo';
 import { DesktopNav } from '@/components/shared/navbar/desktop-nav';
@@ -13,7 +12,6 @@ import { MobileSheet } from '@/components/shared/navbar/mobile-sheet';
 
 export function Navbar() {
   const { user, loading, signOut } = useAuth();
-  const { getItemCount } = useCart();
   const { t } = useLanguage();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -51,8 +49,8 @@ export function Navbar() {
         </Link>
 
         <DesktopNav t={t} user={user} />
-        <DesktopActions t={t} user={user} loading={loading} getItemCount={getItemCount} signOut={signOut} />
-        <MobileSheet open={open} setOpen={setOpen} t={t} user={user} getItemCount={getItemCount} onLogout={handleLogout} />
+        <DesktopActions t={t} user={user} loading={loading} signOut={signOut} />
+        <MobileSheet open={open} setOpen={setOpen} t={t} user={user} onLogout={handleLogout} />
       </div>
     </header>
   );

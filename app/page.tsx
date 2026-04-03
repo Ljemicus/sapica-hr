@@ -13,7 +13,7 @@ import {
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'PetPark — Sve za ljubimce na jednom mjestu',
+  title: { absolute: 'PetPark — Sve za ljubimce na jednom mjestu' },
   description: 'Čuvanje, grooming, školovanje pasa, veterinari, udomljavanje, dog-friendly lokacije i zajednica ljubitelja životinja — sve na jednom mjestu u Hrvatskoj.',
   keywords: ['pet sitting hrvatska', 'čuvanje ljubimaca', 'grooming', 'školovanje pasa', 'veterinar', 'udomljavanje', 'dog-friendly'],
   openGraph: {
@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     url: 'https://petpark.hr',
     type: 'website',
   },
+  alternates: { canonical: 'https://petpark.hr' },
 };
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -94,7 +95,6 @@ export default async function HomePage() {
     city: s.city || '',
     rating: s.rating_avg,
     reviews: s.review_count,
-    price: Math.min(...Object.values(s.prices || {}).filter(Boolean) as number[]) || 20,
     bio: s.bio || '',
     verified: s.verified,
     superhost: s.superhost,
@@ -305,11 +305,7 @@ export default async function HomePage() {
                         {sitter.superhost && <Badge variant="secondary" className="rounded-full">Top izbor</Badge>}
                       </div>
                       <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-5">{sitter.bio || 'Pouzdan sitter za pse i mačke u vašem gradu.'}</p>
-                      <div className="flex items-center justify-between pt-4 border-t border-border/60">
-                        <div>
-                          <p className="text-xs text-muted-foreground">Cijene od</p>
-                          <p className="font-bold text-lg">{sitter.price}€</p>
-                        </div>
+                      <div className="flex items-center justify-end pt-4 border-t border-border/60">
                         <span className="text-sm font-semibold text-orange-600 dark:text-orange-400 inline-flex items-center gap-1">
                           Pogledaj profil <ChevronRight className="h-4 w-4" />
                         </span>

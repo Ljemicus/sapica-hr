@@ -11,7 +11,7 @@ import {
 import { useLanguage, LANGUAGE_LABELS, LANGUAGE_NAMES } from '@/lib/i18n';
 import type { Language } from '@/lib/i18n';
 
-const languages: Language[] = ['hr', 'en', 'it', 'sl'];
+const languages: Language[] = ['hr', 'en'];
 
 export function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();

@@ -30,7 +30,7 @@ function sortProviders(providers: UnifiedProvider[], sort: ProviderSort): Unifie
 
   switch (sort) {
     case 'reviews':
-      next.sort((a, b) => b.review_count - a.review_count);
+      next.sort((a, b) => b.reviews - a.reviews);
       return next;
     case 'price':
       next.sort((a, b) => {

@@ -18,11 +18,10 @@ interface MobileSheetProps {
   setOpen: (open: boolean) => void;
   t: TranslationFn;
   user?: NavbarUser | null;
-  getItemCount: () => number;
   onLogout: () => Promise<void>;
 }
 
-export function MobileSheet({ open, setOpen, t, user, getItemCount, onLogout }: MobileSheetProps) {
+export function MobileSheet({ open, setOpen, t, user, onLogout }: MobileSheetProps) {
   const primaryLinks = getMobilePrimaryLinks(t);
   const utilityLinks = getMobileUtilityLinks(t);
   const communityLinks = getMobileCommunityLinks(t);

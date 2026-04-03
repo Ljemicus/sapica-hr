@@ -29,18 +29,14 @@ export type TranslationKey =
   | 'common.cart'
   | 'common.help';
 
-export type Language = 'hr' | 'en' | 'it' | 'sl';
+export type Language = 'hr' | 'en';
 
 export const LANGUAGE_LABELS: Record<Language, string> = {
   hr: '🇭🇷 HR',
   en: '🇬🇧 EN',
-  it: '🇮🇹 IT',
-  sl: '🇸🇮 SL',
 };
 
 export const LANGUAGE_NAMES: Record<Language, string> = {
   hr: 'Hrvatski',
   en: 'English',
-  it: 'Italiano',
-  sl: 'Slovenščina',
 };
