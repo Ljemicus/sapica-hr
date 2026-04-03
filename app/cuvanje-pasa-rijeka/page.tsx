@@ -22,6 +22,12 @@ export const metadata: Metadata = {
     locale: 'hr_HR',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera | PetPark',
+    description: 'Pronađite verificirane pet sittere u Rijeci. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
+    images: [`${BASE_URL}/opengraph-image`],
+  },
   alternates: { canonical: `${BASE_URL}/cuvanje-pasa-rijeka` },
 };
 

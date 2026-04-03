@@ -22,6 +22,12 @@ export const metadata: Metadata = {
     locale: 'hr_HR',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Čuvanje pasa u Zagrebu — pronađite pouzdanog sittera | PetPark',
+    description: 'Pronađite verificirane pet sittere u Zagrebu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
+    images: [`${BASE_URL}/opengraph-image`],
+  },
   alternates: { canonical: `${BASE_URL}/cuvanje-pasa-zagreb` },
 };
 

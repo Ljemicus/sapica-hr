@@ -1,21 +1,25 @@
 /**
  * Blog data layer.
- * Seeded blog/article content disabled — returns empty results.
- * Will be re-enabled when real editorial content is available.
+ * These articles are intentional editorial content and should remain publicly visible.
  */
 import type { Article, BlogCategory } from '@/lib/types';
+import {
+  getArticles as getEditorialArticles,
+  getArticleBySlug,
+  getRelatedArticles as getEditorialRelatedArticles,
+} from '@/lib/content/blog/articles';
 
-export async function getArticles(_category?: BlogCategory): Promise<Article[]> {
-  return [];
+export async function getArticles(category?: BlogCategory): Promise<Article[]> {
+  return getEditorialArticles(category);
 }
 
-export async function getArticle(_slug: string): Promise<Article | null> {
-  return null;
+export async function getArticle(slug: string): Promise<Article | null> {
+  return getArticleBySlug(slug) ?? null;
 }
 
 export async function getRelatedArticles(
-  _slug: string,
-  _limit: number = 3
+  slug: string,
+  limit: number = 3
 ): Promise<Article[]> {
-  return [];
+  return getEditorialRelatedArticles(slug, limit);
 }

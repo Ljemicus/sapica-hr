@@ -12,6 +12,17 @@ import { BLOG_CATEGORY_LABELS, BLOG_CATEGORY_EMOJI, type BlogCategory } from '@/
 export const metadata: Metadata = {
   title: 'Zajednica — Savjeti za vlasnike ljubimaca',
   description: 'Članci, savjeti i priče za vlasnike pasa i mačaka. Zdravlje, prehrana, školovanje pasa i putovanja s ljubimcima.',
+  openGraph: {
+    title: 'Zajednica — Savjeti za vlasnike ljubimaca | PetPark',
+    description: 'Članci, savjeti i priče za vlasnike pasa i mačaka. Zdravlje, prehrana, školovanje pasa i putovanja s ljubimcima.',
+    url: 'https://petpark.hr/zajednica',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Zajednica — Savjeti za vlasnike ljubimaca | PetPark',
+    description: 'Članci, savjeti i priče za vlasnike pasa i mačaka. Zdravlje, prehrana, školovanje pasa i putovanja s ljubimcima.',
+  },
   alternates: { canonical: 'https://petpark.hr/zajednica' },
 };
 
