@@ -161,24 +161,40 @@ export async function autoLinkProviderDirectoryListing(
   }
 
   try {
-    const query = supabase
-      .from(config.table)
-      .select('id, name, city, email, phone, address, bio, user_id')
-      .is('user_id', null);
+    const baseQuery = () =>
+      supabase
+        .from(config.table)
+        .select('id, name, city, email, phone, address, bio, user_id')
+        .is('user_id', null);
 
     const normalizedCity = normalizeText(application.city);
-    const { data, error } = normalizedCity
-      ? await query.eq('city', application.city)
-      : await query;
 
-    if (error || !data?.length) {
-      if (error) {
-        appLogger.error('providerDirectory.autoLink', `Failed to load ${config.label} directory rows`, { reason: error.message });
-      }
+    // Try city-scoped first, fall back to all unlinked rows for email/phone matches
+    const initial = normalizedCity
+      ? await baseQuery().eq('city', application.city)
+      : await baseQuery();
+
+    if (initial.error) {
+      appLogger.error('providerDirectory.autoLink', `Failed to load ${config.label} directory rows`, { reason: initial.error.message });
       return { linked: false, providerType };
     }
 
-    const match = pickBestMatch(data as DirectoryRow[], application, authEmail);
+    let rows = initial.data;
+
+    if (!rows?.length && normalizedCity) {
+      const fallback = await baseQuery();
+      if (fallback.error) {
+        appLogger.error('providerDirectory.autoLink', `Fallback query failed for ${config.label}`, { reason: fallback.error.message });
+        return { linked: false, providerType };
+      }
+      rows = fallback.data;
+    }
+
+    if (!rows?.length) {
+      return { linked: false, providerType };
+    }
+
+    const match = pickBestMatch(rows as DirectoryRow[], application, authEmail);
     if (!match) {
       return { linked: false, providerType };
     }
