@@ -1,9 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
-import {
-  getGroomerById as mockGetGroomer,
-  getGroomers as mockGetGroomers,
-} from '@/lib/mock-data';
 import type { Groomer, GroomingServiceType } from '@/lib/types';
 
 interface GroomerFilters {
@@ -23,7 +19,7 @@ interface GroomerReview {
 
 export async function getGroomers(filters?: GroomerFilters): Promise<Groomer[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetGroomers(filters ? { city: filters.city, service: filters.service } : undefined);
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -67,7 +63,7 @@ export async function getGroomer(id: string): Promise<Groomer | null> {
       if (list && list[index]) return list[index] as Groomer;
     }
 
-    return mockGetGroomer(id) ?? null;
+    return null;
   } catch {
     return null;
   }

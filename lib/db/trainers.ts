@@ -1,10 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
-import {
-  getTrainerById as mockGetTrainer,
-  getTrainers as mockGetTrainers,
-  getTrainingProgramsForTrainer as mockGetPrograms,
-} from '@/lib/mock-data';
 import type { Trainer, TrainingProgram, TrainingType } from '@/lib/types';
 
 interface TrainerFilters {
@@ -24,7 +19,7 @@ interface TrainerReview {
 
 export async function getTrainers(filters?: TrainerFilters): Promise<Trainer[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetTrainers(filters ? { city: filters.city, type: filters.type } : undefined);
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -54,7 +49,7 @@ export async function getTrainers(filters?: TrainerFilters): Promise<Trainer[]> 
 
 export async function getTrainer(id: string): Promise<Trainer | null> {
   if (!isSupabaseConfigured()) {
-    return mockGetTrainer(id) ?? null;
+    return null;
   }
   try {
     const supabase = await createClient();
@@ -68,7 +63,7 @@ export async function getTrainer(id: string): Promise<Trainer | null> {
 
 export async function getPrograms(trainerId: string): Promise<TrainingProgram[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetPrograms(trainerId);
+    return [];
   }
   try {
     const supabase = await createClient();
