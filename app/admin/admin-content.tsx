@@ -4,14 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Users, ClipboardList, Shield, CheckCircle, XCircle, Search, DollarSign, MapPin } from 'lucide-react';
+import { Users, ClipboardList, Shield, CheckCircle, XCircle, Search, MapPin, FileCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { STATUS_LABELS, SERVICE_LABELS, type User, type Booking, type SitterProfile, type BookingStatus, type ServiceType } from '@/lib/types';
+import { STATUS_LABELS, SERVICE_LABELS, PROVIDER_APPLICATION_STATUS_LABELS, PROVIDER_APPLICATION_STATUS_COLORS, type User, type Booking, type SitterProfile, type BookingStatus, type ServiceType, type ProviderApplication, type ProviderApplicationStatus } from '@/lib/types';
 import { toast } from 'sonner';
 
 const statusColors: Record<BookingStatus, string> = {
@@ -38,10 +38,13 @@ interface Props {
   users: User[];
   bookings: (Booking & { owner: { name: string }; sitter: { name: string } })[];
   sitters: (SitterProfile & { user: { name: string; email: string } })[];
+  providerApplications: ProviderApplication[];
 }
 
-export function AdminContent({ users, bookings, sitters }: Props) {
+export function AdminContent({ users, bookings, sitters, providerApplications }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [reviewingId, setReviewingId] = useState<string | null>(null);
+  const [adminNotes, setAdminNotes] = useState<Record<string, string>>({});
   const router = useRouter();
 
   const toggleVerification = async (userId: string, currentStatus: boolean) => {
@@ -54,12 +57,24 @@ export function AdminContent({ users, bookings, sitters }: Props) {
     else { toast.success(!currentStatus ? 'Sitter verificiran!' : 'Verifikacija uklonjena'); router.refresh(); }
   };
 
+  const reviewProviderApplication = async (applicationId: string, status: ProviderApplicationStatus) => {
+    setReviewingId(applicationId);
+    const response = await fetch('/api/admin/provider-applications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ applicationId, status, adminNotes: adminNotes[applicationId] || '' }),
+    });
+    if (!response.ok) toast.error('Greška pri ažuriranju prijave');
+    else { toast.success(status === 'active' ? 'Prijava odobrena!' : status === 'rejected' ? 'Prijava odbijena' : 'Status ažuriran'); router.refresh(); }
+    setReviewingId(null);
+  };
+
+  const pendingApplications = providerApplications.filter(a => a.status === 'pending_verification');
+
   const filteredUsers = users.filter(u =>
     u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     u.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const totalRevenue = bookings.filter(b => b.status === 'completed').reduce((sum, b) => sum + b.total_price, 0);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
@@ -74,7 +89,7 @@ export function AdminContent({ users, bookings, sitters }: Props) {
           { label: 'Korisnika', value: users.length, icon: Users, color: 'from-blue-500 to-cyan-500' },
           { label: 'Sittera', value: sitters.length, icon: Shield, color: 'from-green-500 to-emerald-500' },
           { label: 'Rezervacija', value: bookings.length, icon: ClipboardList, color: 'from-purple-500 to-pink-500' },
-          { label: 'Ukupan prihod', value: `${totalRevenue}€`, icon: DollarSign, color: 'from-orange-500 to-amber-500' },
+          { label: 'Provider prijave', value: pendingApplications.length, icon: FileCheck, color: 'from-teal-500 to-cyan-500' },
         ].map((stat, i) => (
           <Card key={stat.label} className={`border-0 shadow-sm animate-fade-in-up delay-${(i + 1) * 100}`}>
             <CardContent className="p-4">
@@ -93,10 +108,18 @@ export function AdminContent({ users, bookings, sitters }: Props) {
       </div>
 
       <Tabs defaultValue="users" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 h-12">
+        <TabsList className="grid w-full grid-cols-4 h-12">
           <TabsTrigger value="users" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><Users className="h-4 w-4 mr-1.5" /> Korisnici</TabsTrigger>
           <TabsTrigger value="bookings" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><ClipboardList className="h-4 w-4 mr-1.5" /> Rezervacije</TabsTrigger>
           <TabsTrigger value="verification" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><Shield className="h-4 w-4 mr-1.5" /> Verifikacija</TabsTrigger>
+          <TabsTrigger value="providers" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700">
+            <FileCheck className="h-4 w-4 mr-1.5" /> Provideri
+            {pendingApplications.length > 0 && (
+              <span className="ml-1.5 inline-flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-yellow-500 text-white text-xs font-bold">
+                {pendingApplications.length}
+              </span>
+            )}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="space-y-4 animate-fade-in">
@@ -205,6 +228,106 @@ export function AdminContent({ users, bookings, sitters }: Props) {
               </CardContent>
             </Card>
           ))}
+        </TabsContent>
+
+        <TabsContent value="providers" className="space-y-4 animate-fade-in">
+          {providerApplications.length === 0 ? (
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-8 text-center text-muted-foreground">
+                Nema provider prijava.
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              {providerApplications.map((app) => (
+                <Card key={app.id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-medium truncate">{app.display_name}</p>
+                          <Badge className={`${PROVIDER_APPLICATION_STATUS_COLORS[app.status]} border text-xs`}>
+                            {PROVIDER_APPLICATION_STATUS_LABELS[app.status]}
+                          </Badge>
+                          {app.stripe_onboarding_complete && (
+                            <Badge className="bg-purple-50 text-purple-700 border border-purple-200 text-xs">Stripe OK</Badge>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {app.provider_type} · {app.city || 'Nema grada'} · {app.experience_years} god. iskustva
+                          {app.oib && ` · OIB: ${app.oib}`}
+                        </p>
+                        {app.services.length > 0 && (
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            Usluge: {app.services.join(', ')}
+                          </p>
+                        )}
+                        {app.bio && (
+                          <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{app.bio}</p>
+                        )}
+                        {app.business_name && (
+                          <p className="text-xs text-muted-foreground mt-0.5">Tvrtka: {app.business_name}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Admin notes input + action buttons */}
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+                      <div className="flex-1">
+                        <Input
+                          placeholder="Admin bilješka (opcionalno)..."
+                          value={adminNotes[app.id] ?? app.admin_notes ?? ''}
+                          onChange={(e) => setAdminNotes(prev => ({ ...prev, [app.id]: e.target.value }))}
+                          className="text-sm rounded-lg"
+                        />
+                      </div>
+                      <div className="flex gap-2 flex-shrink-0">
+                        {app.status !== 'active' && (
+                          <Button
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 shadow-sm"
+                            disabled={reviewingId === app.id}
+                            onClick={() => reviewProviderApplication(app.id, 'active')}
+                          >
+                            <CheckCircle className="h-3 w-3 mr-1" /> Odobri
+                          </Button>
+                        )}
+                        {app.status !== 'rejected' && app.status !== 'draft' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-500 hover:bg-red-50 hover:border-red-200"
+                            disabled={reviewingId === app.id}
+                            onClick={() => reviewProviderApplication(app.id, 'rejected')}
+                          >
+                            <XCircle className="h-3 w-3 mr-1" /> Odbij
+                          </Button>
+                        )}
+                        {app.status === 'active' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-orange-500 hover:bg-orange-50 hover:border-orange-200"
+                            disabled={reviewingId === app.id}
+                            onClick={() => reviewProviderApplication(app.id, 'restricted')}
+                          >
+                            Ograniči
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    {app.reviewed_at && (
+                      <p className="text-xs text-muted-foreground">
+                        Zadnji pregled: {new Date(app.reviewed_at).toLocaleDateString('hr-HR')}
+                        {app.admin_notes && ` — "${app.admin_notes}"`}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

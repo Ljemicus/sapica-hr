@@ -24,7 +24,9 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: 'Neautorizirano' }, { status: 401 });
   }
 
-  const body = await request.json();
+  const body = await request.json().catch(() => null);
+  if (!body) return NextResponse.json({ error: 'Neispravan zahtjev' }, { status: 400 });
+
   const parsed = providerDraftSchema.safeParse(body);
 
   if (!parsed.success) {
@@ -45,7 +47,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Neautorizirano' }, { status: 401 });
   }
 
-  const body = await request.json();
+  const body = await request.json().catch(() => null);
+  if (!body) return NextResponse.json({ error: 'Neispravan zahtjev' }, { status: 400 });
   const parsed = providerApplicationSchema.safeParse(body);
 
   if (!parsed.success) {

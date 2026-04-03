@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
-import { getUsers, getAllBookings, getSitters } from '@/lib/db';
+import { getUsers, getAllBookings, getSitters, getAllProviderApplications } from '@/lib/db';
 import { AdminContent } from './admin-content';
 
 export const metadata: Metadata = {
@@ -16,6 +16,7 @@ export default async function AdminPage() {
   const users = (await getUsers('admin-list')).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   const sitters = await getSitters({ fields: 'admin-list' });
   const allBookings = await getAllBookings('admin-list');
+  const providerApplications = await getAllProviderApplications();
 
   const bookings = allBookings.map(b => ({
     ...b,
@@ -28,6 +29,7 @@ export default async function AdminPage() {
       users={users}
       bookings={bookings}
       sitters={sitters}
+      providerApplications={providerApplications}
     />
   );
 }

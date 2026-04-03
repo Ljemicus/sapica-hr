@@ -35,7 +35,7 @@ function maybeHard404DynamicProfile(request: NextRequest) {
   return null;
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const forced404 = maybeHard404DynamicProfile(request);
   if (forced404) {
     return forced404;

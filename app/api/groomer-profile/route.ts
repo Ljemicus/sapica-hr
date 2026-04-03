@@ -23,6 +23,9 @@ export async function PATCH(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body) return NextResponse.json({ error: 'Neispravan zahtjev' }, { status: 400 });
 
+  const VALID_SERVICES = new Set(['sisanje', 'kupanje', 'trimanje', 'nokti', 'cetkanje']);
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const updates: Record<string, unknown> = {};
 
   if (typeof body.name === 'string' && body.name.trim().length >= 2) {
@@ -38,7 +41,10 @@ export async function PATCH(request: Request) {
     updates.phone = body.phone.trim() || null;
   }
   if (typeof body.email === 'string') {
-    updates.email = body.email.trim() || null;
+    const trimmed = body.email.trim();
+    if (!trimmed || EMAIL_RE.test(trimmed)) {
+      updates.email = trimmed || null;
+    }
   }
   if (typeof body.address === 'string') {
     updates.address = body.address.trim() || null;
@@ -47,10 +53,21 @@ export async function PATCH(request: Request) {
     updates.specialization = body.specialization;
   }
   if (Array.isArray(body.services) && body.services.length > 0) {
-    updates.services = body.services;
+    const validServices = body.services.filter((s: unknown) => typeof s === 'string' && VALID_SERVICES.has(s));
+    if (validServices.length > 0) {
+      updates.services = validServices;
+    }
   }
   if (body.prices && typeof body.prices === 'object' && !Array.isArray(body.prices)) {
-    updates.prices = body.prices;
+    const cleanPrices: Record<string, number> = {};
+    for (const [key, val] of Object.entries(body.prices)) {
+      if (typeof val === 'number' && Number.isFinite(val) && val >= 0) {
+        cleanPrices[key] = val;
+      }
+    }
+    if (Object.keys(cleanPrices).length > 0) {
+      updates.prices = cleanPrices;
+    }
   }
 
   if (Object.keys(updates).length === 0) {
