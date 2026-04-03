@@ -39,7 +39,7 @@ export function WebsiteJsonLd() {
             },
             contactPoint: {
               '@type': 'ContactPoint',
-              email: 'petparkhr@gmail.com',
+              email: 'info@petpark.hr',
               telephone: '+385915676202',
               contactType: 'customer service',
               availableLanguage: ['Croatian', 'English'],

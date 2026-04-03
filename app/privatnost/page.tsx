@@ -132,7 +132,7 @@ export default function PrivatnostPage() {
             </div>
             <p className="text-gray-600 mt-4">
               Za ostvarivanje bilo kojeg od navedenih prava, kontaktirajte nas na{' '}
-              <a href="mailto:petparkhr@gmail.com" className="text-orange-600 hover:underline">petparkhr@gmail.com</a>.
+              <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline">info@petpark.hr</a>.
               Na vaš zahtjev odgovorit ćemo u roku od 30 dana.
             </p>
           </section>
@@ -194,7 +194,7 @@ export default function PrivatnostPage() {
                 <h2 className="text-xl font-bold text-gray-900 mb-2">Imate pitanja?</h2>
                 <p className="text-gray-600">
                   Za sva pitanja vezana uz zaštitu vaših osobnih podataka, obratite nam se na{' '}
-                  <a href="mailto:petparkhr@gmail.com" className="text-orange-600 hover:underline font-medium">petparkhr@gmail.com</a>.
+                  <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline font-medium">info@petpark.hr</a>.
                 </p>
               </div>
             </div>
