@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { format, addDays, eachDayOfInterval, isWeekend } from 'date-fns';
-import { Calendar, Clock, Scissors } from 'lucide-react';
+import { Calendar, Clock, Scissors, UserPen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
@@ -11,6 +11,7 @@ import { type GroomerBookingStatus } from '@/lib/types';
 import { GroomerDashboardStats } from './components/groomer-dashboard-stats';
 import { GroomerBookingsTab } from './components/groomer-bookings-tab';
 import { GroomerAvailabilityTab } from './components/groomer-availability-tab';
+import { GroomerProfileTab } from './components/groomer-profile-tab';
 import type { GroomerDashboardProps } from './components/groomer-dashboard-types';
 
 export function GroomerDashboardContent({ groomer, bookings, availability }: GroomerDashboardProps) {
@@ -104,7 +105,7 @@ export function GroomerDashboardContent({ groomer, bookings, availability }: Gro
       />
 
       <Tabs defaultValue="bookings" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="bookings" className="flex items-center gap-1.5">
             <Calendar className="h-4 w-4" />
             Termini
@@ -117,6 +118,10 @@ export function GroomerDashboardContent({ groomer, bookings, availability }: Gro
           <TabsTrigger value="availability" className="flex items-center gap-1.5">
             <Clock className="h-4 w-4" />
             Raspored
+          </TabsTrigger>
+          <TabsTrigger value="profile" className="flex items-center gap-1.5">
+            <UserPen className="h-4 w-4" />
+            Profil
           </TabsTrigger>
         </TabsList>
 
@@ -133,6 +138,13 @@ export function GroomerDashboardContent({ groomer, bookings, availability }: Gro
             availability={availability}
             generatingSlots={generatingSlots}
             onGenerateSlots={handleGenerateSlots}
+          />
+        </TabsContent>
+
+        <TabsContent value="profile">
+          <GroomerProfileTab
+            groomer={groomer}
+            onProfileUpdated={() => startTransition(() => router.refresh())}
           />
         </TabsContent>
       </Tabs>
