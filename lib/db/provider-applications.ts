@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
 import type { ProviderApplication, ProviderApplicationStatus } from '@/lib/types';
+import type { PublicStatus } from '@/lib/types/trust';
 import type { ProviderDraftInput } from '@/lib/validations';
 
 function normalizePatch(input: ProviderDraftInput) {
@@ -239,6 +240,44 @@ export async function updateProviderStripeState(
       .from('provider_applications')
       .update({ ...patch, updated_at: new Date().toISOString() })
       .eq('user_id', userId)
+      .select('*')
+      .single();
+
+    if (error || !data) return null;
+    return data as ProviderApplication;
+  } catch {
+    return null;
+  }
+}
+
+export async function updateProviderPublicStatus(
+  applicationId: string,
+  publicStatus: PublicStatus,
+  reviewedBy?: string,
+  adminNotes?: string
+): Promise<ProviderApplication | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+    const patch: Record<string, unknown> = {
+      public_status: publicStatus,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (reviewedBy !== undefined) {
+      patch.reviewed_by = reviewedBy;
+      patch.reviewed_at = new Date().toISOString();
+    }
+
+    if (adminNotes !== undefined) {
+      patch.admin_notes = adminNotes || null;
+    }
+
+    const { data, error } = await supabase
+      .from('provider_applications')
+      .update(patch)
+      .eq('id', applicationId)
       .select('*')
       .single();
 

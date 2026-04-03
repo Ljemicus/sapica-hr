@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Users, ClipboardList, Shield, CheckCircle, XCircle, Search, MapPin, FileCheck, ShieldCheck } from 'lucide-react';
+import { Users, ClipboardList, Shield, CheckCircle, XCircle, Search, MapPin, FileCheck, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { STATUS_LABELS, SERVICE_LABELS, PROVIDER_APPLICATION_STATUS_LABELS, PROVIDER_APPLICATION_STATUS_COLORS, type User, type Booking, type SitterProfile, type BookingStatus, type ServiceType, type ProviderApplication, type ProviderApplicationStatus } from '@/lib/types';
+import type { PublicStatus } from '@/lib/types/trust';
 import { toast } from 'sonner';
 import { AdminVerificationQueue } from '@/components/admin-verification-queue';
 
@@ -68,6 +69,35 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
     if (!response.ok) toast.error('Greška pri ažuriranju prijave');
     else { toast.success(status === 'active' ? 'Prijava odobrena!' : status === 'rejected' ? 'Prijava odbijena' : 'Status ažuriran'); router.refresh(); }
     setReviewingId(null);
+  };
+
+  const updateProviderPublicStatus = async (applicationId: string, publicStatus: PublicStatus) => {
+    setReviewingId(applicationId);
+    try {
+      const response = await fetch('/api/admin/provider-public-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ applicationId, publicStatus, adminNotes: adminNotes[applicationId] || '' }),
+      });
+
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(data?.error?.message || 'Greška pri ažuriranju javnog statusa');
+      }
+
+      toast.success(
+        publicStatus === 'public'
+          ? 'Provider je javno objavljen'
+          : publicStatus === 'hidden'
+            ? 'Provider je sakriven'
+            : 'Javni status ažuriran'
+      );
+      router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Greška pri ažuriranju javnog statusa');
+    } finally {
+      setReviewingId(null);
+    }
   };
 
   const pendingApplications = providerApplications.filter(a => a.status === 'pending_verification');
@@ -253,6 +283,9 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
                           <Badge className={`${PROVIDER_APPLICATION_STATUS_COLORS[app.status]} border text-xs`}>
                             {PROVIDER_APPLICATION_STATUS_LABELS[app.status]}
                           </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            Javno: {app.public_status}
+                          </Badge>
                           {app.stripe_onboarding_complete && (
                             <Badge className="bg-purple-50 text-purple-700 border border-purple-200 text-xs">Stripe OK</Badge>
                           )}
@@ -293,7 +326,29 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
                             disabled={reviewingId === app.id}
                             onClick={() => reviewProviderApplication(app.id, 'active')}
                           >
-                            <CheckCircle className="h-3 w-3 mr-1" /> Odobri
+                            <CheckCircle className="h-3 w-3 mr-1" /> Odobri prijavu
+                          </Button>
+                        )}
+                        {app.status === 'active' && app.public_status !== 'public' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-blue-600 hover:bg-blue-50 hover:border-blue-200"
+                            disabled={reviewingId === app.id}
+                            onClick={() => updateProviderPublicStatus(app.id, 'public')}
+                          >
+                            <Eye className="h-3 w-3 mr-1" /> Objavi javno
+                          </Button>
+                        )}
+                        {app.public_status === 'public' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-orange-500 hover:bg-orange-50 hover:border-orange-200"
+                            disabled={reviewingId === app.id}
+                            onClick={() => updateProviderPublicStatus(app.id, 'hidden')}
+                          >
+                            <EyeOff className="h-3 w-3 mr-1" /> Sakrij
                           </Button>
                         )}
                         {app.status !== 'rejected' && app.status !== 'draft' && (
@@ -315,7 +370,7 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
                             disabled={reviewingId === app.id}
                             onClick={() => reviewProviderApplication(app.id, 'restricted')}
                           >
-                            Ograniči
+                            Ograniči prijavu
                           </Button>
                         )}
                       </div>
