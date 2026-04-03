@@ -7,7 +7,8 @@ import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import {
   Star, MapPin, Award, ChevronLeft, GraduationCap, Clock, Calendar,
-  MessageCircle, CheckCircle2, Share2, Check
+  MessageCircle, CheckCircle2, Share2, Check, Phone, Mail, MapPinned,
+  BookOpen
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,10 @@ import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
 import { AvailabilityCalendar } from '@/components/shared/availability-calendar';
 import { TRAINING_TYPE_LABELS, type Trainer, type TrainingProgram } from '@/lib/types';
+import {
+  formatAddress, getTrainingDescription, trainerSummary,
+  getBioPlaceholder, getNoProgramsMessage, hasContactInfo,
+} from '@/lib/profile-helpers';
 import { useUser } from '@/hooks/use-user';
 import { TrainerBookingDialog } from './booking-dialog';
 
@@ -112,12 +117,18 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 mt-3 flex-wrap">
+                  <div className="flex items-center gap-3 mt-3 flex-wrap">
                     <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1 rounded-full">
                       <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                       <span className="font-semibold">{trainer.rating.toFixed(1)}</span>
                       <span className="text-sm text-amber-700/70">({trainer.review_count} recenzija)</span>
                     </div>
+                    {programs.length > 0 && (
+                      <div className="flex items-center gap-1.5 bg-indigo-50 px-3 py-1 rounded-full">
+                        <BookOpen className="h-4 w-4 text-indigo-500" />
+                        <span className="text-sm text-indigo-700">{programs.length} programa</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -130,9 +141,69 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
               <CardTitle className="text-lg">O meni</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground leading-relaxed">{trainer.bio}</p>
+              <p className="text-muted-foreground leading-relaxed">
+                {trainer.bio || getBioPlaceholder('trainer')}
+              </p>
+              <p className="text-xs text-muted-foreground/60 mt-3">
+                {trainerSummary(trainer)}
+              </p>
             </CardContent>
           </Card>
+
+          {/* Contact Info */}
+          {hasContactInfo(trainer) ? (
+            <Card className="border-0 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-lg">Kontakt informacije</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {trainer.phone && (
+                    <a href={`tel:${trainer.phone}`} className="flex items-center gap-3 p-3 rounded-xl border bg-white hover:bg-orange-50 hover:border-orange-200 transition-colors group">
+                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                        <Phone className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Telefon</div>
+                        <span className="font-medium">{trainer.phone}</span>
+                      </div>
+                    </a>
+                  )}
+                  {trainer.email && (
+                    <a href={`mailto:${trainer.email}`} className="flex items-center gap-3 p-3 rounded-xl border bg-white hover:bg-orange-50 hover:border-orange-200 transition-colors group">
+                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                        <Mail className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Email</div>
+                        <span className="font-medium">{trainer.email}</span>
+                      </div>
+                    </a>
+                  )}
+                  {(trainer.address || trainer.city) && (
+                    <div className="flex items-center gap-3 p-3 rounded-xl border bg-white">
+                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-sm">
+                        <MapPinned className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">{trainer.address ? 'Adresa' : 'Grad'}</div>
+                        <span className="font-medium">{formatAddress(trainer.address, trainer.city)}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-0 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-lg">Kontakt informacije</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">Kontakt informacije nisu navedene. Koristite gumb &quot;Kontaktiraj&quot; za upit.</p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Specializations */}
           <Card className="border-0 shadow-sm">
@@ -140,11 +211,14 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
               <CardTitle className="text-lg">Specijalizacije</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-wrap gap-2">
+              <div className="space-y-3">
                 {trainer.specializations.map((spec) => (
-                  <Badge key={spec} className="bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 text-sm px-3 py-1">
-                    {TRAINING_TYPE_LABELS[spec]}
-                  </Badge>
+                  <div key={spec} className="flex items-start gap-3 p-3 rounded-xl border bg-white">
+                    <Badge className="bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 text-sm px-3 py-1 flex-shrink-0">
+                      {TRAINING_TYPE_LABELS[spec]}
+                    </Badge>
+                    <span className="text-sm text-muted-foreground">{getTrainingDescription(spec)}</span>
+                  </div>
                 ))}
               </div>
             </CardContent>
@@ -159,6 +233,13 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
               </CardTitle>
             </CardHeader>
             <CardContent>
+              {programs.length === 0 ? (
+                <div className="text-center py-8">
+                  <BookOpen className="h-10 w-10 text-gray-200 mx-auto mb-3" />
+                  <p className="text-muted-foreground font-medium">Još nema objavljenih programa</p>
+                  <p className="text-sm text-muted-foreground/70 mt-1">{getNoProgramsMessage()}</p>
+                </div>
+              ) : (
               <div className="space-y-4">
                 {programs.map((program) => (
                   <div key={program.id} className="p-4 rounded-xl border bg-white hover:shadow-md transition-shadow group">
@@ -185,6 +266,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
                   </div>
                 ))}
               </div>
+              )}
             </CardContent>
           </Card>
 
@@ -201,7 +283,11 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
             </CardHeader>
             <CardContent>
               {reviews.length === 0 ? (
-                <p className="text-muted-foreground text-center py-6">Još nema recenzija</p>
+                <div className="text-center py-8">
+                  <Star className="h-10 w-10 text-gray-200 mx-auto mb-3" />
+                  <p className="text-muted-foreground font-medium">Još nema recenzija</p>
+                  <p className="text-sm text-muted-foreground/70 mt-1">Budite prvi koji će ocijeniti ovog trenera</p>
+                </div>
               ) : (
                 <div className="space-y-5">
                   {reviews.map((review, i) => (
@@ -260,6 +346,18 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
               <div className="text-center py-2">
                 <span className="text-4xl font-extrabold text-gradient">{trainer.price_per_hour}&euro;</span>
                 <span className="text-muted-foreground block text-sm mt-1">po satu</span>
+              </div>
+
+              {/* Quick stats */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="text-center p-2 rounded-lg bg-orange-50">
+                  <span className="text-lg font-bold text-orange-600">{trainer.specializations.length}</span>
+                  <span className="text-xs text-muted-foreground block">specijalizacija</span>
+                </div>
+                <div className="text-center p-2 rounded-lg bg-blue-50">
+                  <span className="text-lg font-bold text-blue-600">{trainer.certificates.length}</span>
+                  <span className="text-xs text-muted-foreground block">certifikata</span>
+                </div>
               </div>
 
               {user ? (
