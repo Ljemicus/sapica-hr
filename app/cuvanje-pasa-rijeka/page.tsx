@@ -1,16 +1,18 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { MapPin, ArrowRight, Shield, Clock, Heart, Mountain, Anchor } from 'lucide-react';
+import { MapPin, ArrowRight, Shield, Clock, Heart, Mountain, Anchor, Scissors, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
+import { InternalLinkSection } from '@/components/shared/internal-link-section';
+import { getCityServiceLinks, getSiblingCityLinks } from '@/lib/seo/internal-links';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 export const metadata: Metadata = {
   title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera',
-  description: 'Pronađite iskusne i verificirane pet sittere u Rijeci. Čuvanje pasa u vašem kvartu — Trsat, Kantrida, Sušak, Kozala, Turnić i okolica. Rezervirajte online!',
+  description: 'Pronađite iskusne i verificirane pet sittere u Rijeci. Čuvanje pasa u vašem kvartu — Trsat, Kantrida, Sušak, Kozala, Turnić i okolica. Pošaljite upit online.',
   keywords: ['čuvanje pasa rijeka', 'pet sitter rijeka', 'čuvanje ljubimaca rijeka', 'dog sitter rijeka', 'šetanje pasa rijeka', 'dnevna njega pasa rijeka'],
   openGraph: {
     title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera | PetPark',
@@ -47,7 +49,7 @@ export default function CuvanjePasaRijeka() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'PetPark — Čuvanje pasa u Rijeci',
-    description: 'Pronađite pouzdane pet sittere za čuvanje pasa u Rijeci. Verificirani sitteri, online rezervacija, osiguranje.',
+    description: 'Pronađite pouzdane pet sittere za čuvanje pasa u Rijeci. Verificirani profili i slanje upita online.',
     url: `${BASE_URL}/cuvanje-pasa-rijeka`,
     logo: `${BASE_URL}/opengraph-image`,
     image: `${BASE_URL}/opengraph-image`,
@@ -204,7 +206,7 @@ export default function CuvanjePasaRijeka() {
               za jutarnje i večernje šetnje jer kombinira more, svježi zrak i ravan teren.
             </p>
             <p>
-              Trsatska šuma iznad istoimene gradske četvrti nudi prekrasne staze kroz gusty šumu
+              Trsatska šuma iznad istoimene gradske četvrti nudi prekrasne staze kroz gustu šumu
               s pogledom na grad i zaljev. Park Mlaka u centru grada manji je, ali praktičan za brze
               šetnje. Za aktivnije pse, okolica Rijeke nudi pristup planinskim stazama prema
               Učki i Gorskom kotaru, gdje vaš ljubimac može uživati u prirodi daleko od gradske gužve.
@@ -266,7 +268,7 @@ export default function CuvanjePasaRijeka() {
             </h2>
             <div className="grid sm:grid-cols-3 gap-6">
               {[
-                { icon: Shield, title: 'Verificirani sitteri', desc: 'Provjera identiteta i iskustva za svakog sittera. Samo pouzdani dobivaju pristup platformi.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
+                { icon: Shield, title: 'Verificirani profili', desc: 'Svaki profil prolazi osnovnu provjeru prije objave kako biste lakše procijenili kome šaljete upit.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
                 { icon: Heart, title: 'Nastali u Rijeci', desc: 'PetPark je osnovan u Rijeci. Poznajemo grad, zajednicu i potrebe lokalnih vlasnika ljubimaca.', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' },
                 { icon: Clock, title: 'Podrška pon–sub', desc: 'Naš tim podrške dostupan je pon–sub od 8 do 20h. Tu smo kad vam treba pomoć.', color: 'text-teal-500', bg: 'bg-teal-50 dark:bg-teal-950/20' },
               ].map((item) => (
@@ -284,6 +286,16 @@ export default function CuvanjePasaRijeka() {
           </div>
         </div>
       </section>
+
+      <InternalLinkSection
+        eyebrow="Idući korak"
+        title="Istražite Rijeku i povezane PetPark rute"
+        description="Rijeka već ima sadržajni sitting landing, grooming supply i training supply — zato ovdje povezujemo realne nastavke puta umjesto generičkog SEO punjenja."
+        items={[
+          ...getCityServiceLinks('Rijeka').slice(0, 4),
+          ...getSiblingCityLinks('Rijeka'),
+        ]}
+      />
 
       {/* FAQ */}
       <section className="container mx-auto px-4 py-16">
@@ -307,6 +319,43 @@ export default function CuvanjePasaRijeka() {
         </div>
       </section>
 
+      {/* Cross-links: other cities + services */}
+      <section className="container mx-auto px-4 py-12">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 font-[var(--font-heading)]">
+          Čuvanje pasa u drugim gradovima
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+          <Link href="/cuvanje-pasa-zagreb" className="group flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:border-orange-300 hover:shadow-md transition-all">
+            <MapPin className="h-5 w-5 text-orange-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm group-hover:text-orange-600 transition-colors">Zagreb</p>
+              <p className="text-xs text-muted-foreground">Sitteri u zagrebačkim kvartovima</p>
+            </div>
+          </Link>
+          <Link href="/cuvanje-pasa-split" className="group flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:border-blue-300 hover:shadow-md transition-all">
+            <MapPin className="h-5 w-5 text-blue-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm group-hover:text-blue-600 transition-colors">Split</p>
+              <p className="text-xs text-muted-foreground">Sitteri u splitskim kvartovima</p>
+            </div>
+          </Link>
+          <Link href="/njega?city=Rijeka" className="group flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:border-pink-300 hover:shadow-md transition-all">
+            <Scissors className="h-5 w-5 text-pink-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm group-hover:text-pink-600 transition-colors">Grooming u Rijeci</p>
+              <p className="text-xs text-muted-foreground">Šišanje, kupanje i njega</p>
+            </div>
+          </Link>
+          <Link href="/dresura?city=Rijeka" className="group flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:border-indigo-300 hover:shadow-md transition-all">
+            <GraduationCap className="h-5 w-5 text-indigo-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm group-hover:text-indigo-600 transition-colors">Školovanje pasa u Rijeci</p>
+              <p className="text-xs text-muted-foreground">Treneri i programi</p>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="bg-gradient-to-r from-teal-500 to-blue-500 py-16">
         <div className="container mx-auto px-4 text-center">
@@ -314,7 +363,7 @@ export default function CuvanjePasaRijeka() {
             Pronađite savršenog sittera u Rijeci
           </h2>
           <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-            Pouzdani sitteri u svim riječkim kvartovima čekaju vašeg ljubimca. Rezervirajte online brzo i sigurno.
+            Pouzdani profili u svim riječkim kvartovima čekaju vaš upit. Pošaljite upit online brzo i jasno.
           </p>
           <Link href="/pretraga?city=Rijeka">
               <Button size="lg" className="bg-white text-teal-600 hover:bg-white/90 rounded-full px-8 font-semibold">

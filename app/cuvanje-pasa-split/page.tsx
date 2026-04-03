@@ -1,16 +1,18 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { MapPin, ArrowRight, Shield, Clock, Heart, Sun, Waves } from 'lucide-react';
+import { MapPin, ArrowRight, Shield, Clock, Heart, Sun, Waves, Scissors, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
+import { InternalLinkSection } from '@/components/shared/internal-link-section';
+import { getCityServiceLinks, getSiblingCityLinks } from '@/lib/seo/internal-links';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 export const metadata: Metadata = {
   title: 'Čuvanje pasa u Splitu — pronađite pouzdanog sittera',
-  description: 'Pronađite iskusne i verificirane pet sittere u Splitu. Čuvanje pasa u vašem kvartu — Bačvice, Firule, Marjan, Spinut, Solin i okolica. Rezervirajte online!',
+  description: 'Pronađite iskusne i verificirane pet sittere u Splitu. Čuvanje pasa u vašem kvartu — Bačvice, Firule, Marjan, Spinut, Solin i okolica. Pošaljite upit online.',
   keywords: ['čuvanje pasa split', 'pet sitter split', 'čuvanje ljubimaca split', 'dog sitter split', 'šetanje pasa split', 'dnevna njega pasa split'],
   openGraph: {
     title: 'Čuvanje pasa u Splitu — pronađite pouzdanog sittera | PetPark',
@@ -47,7 +49,7 @@ export default function CuvanjePasaSplit() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'PetPark — Čuvanje pasa u Splitu',
-    description: 'Pronađite pouzdane pet sittere za čuvanje pasa u Splitu. Verificirani sitteri, online rezervacija, osiguranje.',
+    description: 'Pronađite pouzdane pet sittere za čuvanje pasa u Splitu. Verificirani profili i slanje upita online.',
     url: `${BASE_URL}/cuvanje-pasa-split`,
     logo: `${BASE_URL}/opengraph-image`,
     image: `${BASE_URL}/opengraph-image`,
@@ -265,7 +267,7 @@ export default function CuvanjePasaSplit() {
             </h2>
             <div className="grid sm:grid-cols-3 gap-6">
               {[
-                { icon: Shield, title: 'Verificirani sitteri', desc: 'Svaki sitter prolazi provjeru identiteta i iskustva. Samo pouzdani sitteri dobivaju pristup platformi.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
+                { icon: Shield, title: 'Verificirani profili', desc: 'Svaki profil prolazi osnovnu provjeru prije objave kako biste lakše procijenili kome šaljete upit.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
                 { icon: Heart, title: 'Sigurna platforma', desc: 'Sve rezervacije prolaze kroz platformu — transparentno plaćanje i komunikacija na jednom mjestu.', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' },
                 { icon: Clock, title: 'Lokalni sitteri', desc: 'Sitteri iz vašeg kvarta koji poznaju Split, lokalne parkove i specifičnosti mediteranske klime.', color: 'text-teal-500', bg: 'bg-teal-50 dark:bg-teal-950/20' },
               ].map((item) => (
@@ -283,6 +285,16 @@ export default function CuvanjePasaSplit() {
           </div>
         </div>
       </section>
+
+      <InternalLinkSection
+        eyebrow="Idući korak"
+        title="Istražite Split i srodne usluge"
+        description="Split ima realan grooming i training supply, pa iz landingice možete odmah skočiti na relevantne filtered/service rute umjesto da stranica ostane SEO slijepa ulica."
+        items={[
+          ...getCityServiceLinks('Split').slice(0, 4),
+          ...getSiblingCityLinks('Split'),
+        ]}
+      />
 
       {/* FAQ */}
       <section className="container mx-auto px-4 py-16">
@@ -306,6 +318,43 @@ export default function CuvanjePasaSplit() {
         </div>
       </section>
 
+      {/* Cross-links: other cities + services */}
+      <section className="container mx-auto px-4 py-12">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 font-[var(--font-heading)]">
+          Čuvanje pasa u drugim gradovima
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+          <Link href="/cuvanje-pasa-zagreb" className="group flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:border-orange-300 hover:shadow-md transition-all">
+            <MapPin className="h-5 w-5 text-orange-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm group-hover:text-orange-600 transition-colors">Zagreb</p>
+              <p className="text-xs text-muted-foreground">Sitteri u zagrebačkim kvartovima</p>
+            </div>
+          </Link>
+          <Link href="/cuvanje-pasa-rijeka" className="group flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:border-teal-300 hover:shadow-md transition-all">
+            <MapPin className="h-5 w-5 text-teal-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm group-hover:text-teal-600 transition-colors">Rijeka</p>
+              <p className="text-xs text-muted-foreground">Sitteri u riječkim kvartovima</p>
+            </div>
+          </Link>
+          <Link href="/njega?city=Split" className="group flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:border-pink-300 hover:shadow-md transition-all">
+            <Scissors className="h-5 w-5 text-pink-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm group-hover:text-pink-600 transition-colors">Grooming u Splitu</p>
+              <p className="text-xs text-muted-foreground">Šišanje, kupanje i njega</p>
+            </div>
+          </Link>
+          <Link href="/dresura?city=Split" className="group flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:border-indigo-300 hover:shadow-md transition-all">
+            <GraduationCap className="h-5 w-5 text-indigo-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm group-hover:text-indigo-600 transition-colors">Školovanje pasa u Splitu</p>
+              <p className="text-xs text-muted-foreground">Treneri i programi</p>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="bg-gradient-to-r from-blue-500 to-teal-500 py-16">
         <div className="container mx-auto px-4 text-center">
@@ -313,7 +362,7 @@ export default function CuvanjePasaSplit() {
             Pronađite savršenog sittera u Splitu
           </h2>
           <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-            Verificirani sitteri u svim splitskim kvartovima spremni su za vašeg ljubimca. Rezervirajte sigurno i brzo.
+            Verificirani profili u svim splitskim kvartovima spremni su za vaš upit. Pošaljite upit brzo i jasno.
           </p>
           <Link href="/pretraga?city=Split">
               <Button size="lg" className="bg-white text-blue-600 hover:bg-white/90 rounded-full px-8 font-semibold">

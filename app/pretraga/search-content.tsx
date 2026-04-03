@@ -55,10 +55,10 @@ const CATEGORY_TABS: { key: ProviderCategory | 'all'; label: string; emoji: stri
 ];
 
 const TITLE_MAP: Record<string, string> = {
-  all: 'Pretraži sve',
-  sitter: 'Pretraži sittere',
-  grooming: 'Pretraži groomere',
-  dresura: 'Pretraži trenere za školovanje pasa',
+  all: 'Pronađi uslugu za svog ljubimca',
+  sitter: 'Pronađi sittera',
+  grooming: 'Pronađi groomera',
+  dresura: 'Pronađi trenera za pse',
 };
 
 function getServiceLabel(service: string, category?: ProviderCategory): string {
@@ -109,7 +109,7 @@ function SearchFilterPanel({
           onChange={(e) => onCityChange(e.target.value)}
           className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
         >
-          <option value="">Svi gradovi</option>
+          <option value="">Odaberi grad</option>
           {CITIES.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
@@ -176,7 +176,7 @@ function SearchFilterPanel({
           onChange={(e) => onMinRatingChange(e.target.value)}
           className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
         >
-          <option value="">Sve ocjene</option>
+          <option value="">Bez minimalne ocjene</option>
           <option value="4.5">4.5+</option>
           <option value="4">4.0+</option>
           <option value="3.5">3.5+</option>
@@ -188,7 +188,7 @@ function SearchFilterPanel({
 
       <div className="flex gap-2">
         <Button onClick={onApply} className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover">
-          Primijeni filtere
+          Prikaži rezultate
         </Button>
         {activeFilterCount > 0 && (
           <Button variant="outline" onClick={onClear} className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
@@ -235,19 +235,19 @@ function ProviderCard({ provider }: { provider: UnifiedProvider }) {
               {provider.verified && (
                 <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5">
                   <Shield className="h-3 w-3 mr-1" />
-                  Verificiran
+                  Verificiran profil
                 </Badge>
               )}
               {provider.superhost && (
                 <Badge className="bg-white/90 text-amber-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5 font-semibold">
                   <Award className="h-3 w-3 mr-1" />
-                  Superhost
+                  Top izbor
                 </Badge>
               )}
               {provider.certified && !provider.superhost && (
                 <Badge className="bg-white/90 text-amber-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5 font-semibold">
                   <Award className="h-3 w-3 mr-1" />
-                  Certificiran
+                  Certificiran profil
                 </Badge>
               )}
             </div>
@@ -299,7 +299,7 @@ function ProviderCard({ provider }: { provider: UnifiedProvider }) {
               </div>
               <div className="flex items-center gap-2">
                 {provider.lowestPrice != null ? (
-                  <span className="text-xl font-extrabold text-orange-500">od {provider.lowestPrice}&euro;</span>
+                  <span className="text-xl font-extrabold text-orange-500">već od {provider.lowestPrice}&euro;</span>
                 ) : (
                   <span className="text-sm text-muted-foreground">Pogledaj profil</span>
                 )}
@@ -419,8 +419,8 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
           <div>
             <h1 className="text-2xl font-bold">{title}</h1>
             <p className="text-muted-foreground text-sm">
-              {filtered.length} {filtered.length === 1 ? 'rezultat pronađen' : 'rezultata pronađeno'}
-              {city && ` u gradu ${city}`}
+              {filtered.length} {filtered.length === 1 ? 'profil odgovara pretrazi' : 'profila odgovara pretrazi'}
+              {city && ` · ${city}`}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -436,7 +436,7 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
                   )}
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] overflow-y-auto">
-                <SheetTitle className="mb-4">Filteri</SheetTitle>
+                <SheetTitle className="mb-4">Suzi pretragu</SheetTitle>
                 <SearchFilterPanel
                   city={city} service={service} minPrice={minPrice} maxPrice={maxPrice} minRating={minRating}
                   activeFilterCount={activeFilterCount} category={activeCategory}
@@ -452,9 +452,9 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
               onChange={(e) => { setSort(e.target.value); setTimeout(applyFilters, 0); }}
               className="h-9 rounded-lg border border-input bg-background px-3 text-sm focus:border-orange-300"
             >
-              <option value="rating">Po ocjeni</option>
-              <option value="reviews">Po broju recenzija</option>
-              <option value="price">Po cijeni</option>
+              <option value="rating">Najbolje ocijenjeni</option>
+              <option value="reviews">Najviše recenzija</option>
+              <option value="price">Najpovoljniji prvo</option>
             </select>
 
             {/* View toggle */}
@@ -509,12 +509,12 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
           )}
           {minRating && (
             <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
-              {minRating}+ zvjezdica
+              {minRating}+ ocjena
               <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMinRating(''); applyFilters(); }} />
             </Badge>
           )}
           <button onClick={clearFilters} className="text-xs text-orange-500 hover:underline self-center ml-1">
-            Ukloni sve
+            Očisti filtere
           </button>
         </div>
       )}
@@ -525,7 +525,7 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
           <Card className="p-5 sticky top-32 border-0 shadow-sm rounded-2xl">
             <h2 className="font-semibold mb-4 flex items-center gap-2 text-sm uppercase tracking-wider text-muted-foreground">
               <Filter className="h-4 w-4" />
-              Filteri
+              Suzi pretragu
             </h2>
             <SearchFilterPanel
               city={city} service={service} minPrice={minPrice} maxPrice={maxPrice} minRating={minRating}
@@ -546,11 +546,11 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
           ) : filtered.length === 0 ? (
             <EmptyState
               icon={PawPrint}
-              title="Nema pronađenih rezultata"
-              description="Pokušajte promijeniti filtere ili pretražiti u drugom gradu."
+              title="Nismo našli dobar match"
+              description="Promijenite grad ili maknite neke filtere — vjerojatno ima više rezultata odmah iza ugla."
               action={
                 <Button variant="outline" onClick={clearFilters} className="hover:bg-orange-50 hover:text-orange-600">
-                  Poništi filtere
+                  Očisti filtere
                 </Button>
               }
             />
@@ -565,6 +565,22 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
               ))}
             </div>
           )}
+        </div>
+      </div>
+
+      {/* City landing page links */}
+      <div className="mt-12 pt-8 border-t">
+        <h2 className="text-lg font-bold mb-4 font-[var(--font-heading)]">Istražite po gradovima</h2>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/cuvanje-pasa-zagreb" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-medium hover:border-orange-300 hover:text-orange-600 transition-colors">
+            <MapPin className="h-3.5 w-3.5" /> Zagreb
+          </Link>
+          <Link href="/cuvanje-pasa-rijeka" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-medium hover:border-teal-300 hover:text-teal-600 transition-colors">
+            <MapPin className="h-3.5 w-3.5" /> Rijeka
+          </Link>
+          <Link href="/cuvanje-pasa-split" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-medium hover:border-blue-300 hover:text-blue-600 transition-colors">
+            <MapPin className="h-3.5 w-3.5" /> Split
+          </Link>
         </div>
       </div>
     </div>

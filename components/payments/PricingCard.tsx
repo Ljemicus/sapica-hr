@@ -50,7 +50,7 @@ export function PricingCard({ services, onBook }: PricingCardProps) {
               onClick={() => onBook?.(service)}
               className="mt-2 sm:mt-0"
             >
-              Rezerviraj
+              Pošalji upit
             </Button>
           </div>
         ))}

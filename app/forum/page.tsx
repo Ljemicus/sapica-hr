@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { MessageSquare } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { InternalLinkSection } from '@/components/shared/internal-link-section';
 import { getTopics, getTrendingTopics } from '@/lib/db/content';
+import { SEARCH_DISCOVERY_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
 import { ForumContent } from './forum-content';
 
 export const metadata: Metadata = {
@@ -45,6 +47,16 @@ export default async function ForumPage() {
       </section>
 
       <ForumContent initialTopics={topics} initialTrending={trending} />
+
+      <InternalLinkSection
+        eyebrow="Treba vam više od rasprave?"
+        title="Prijeđite s foruma na konkretnu pomoć"
+        description="Pronađite usluge, lokacije i vodiče koji vam mogu pomoći."
+        items={[
+          ...SEARCH_DISCOVERY_LINKS.slice(0, 4),
+          ...CONTENT_DISCOVERY_LINKS,
+        ]}
+      />
     </div>
   );
 }

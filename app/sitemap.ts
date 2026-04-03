@@ -6,6 +6,8 @@ import { getArticles } from '@/lib/db/blog';
 import { getTopics } from '@/lib/db/forum';
 import { getLostPets } from '@/lib/db/lost-pets';
 import { getActiveAdoptionListings } from '@/lib/db/adoption-listings';
+import { shouldIndexSitter, shouldIndexGroomer, shouldIndexTrainer, shouldIndexLostPet, shouldIndexAdoptionCard } from '@/lib/seo/indexability';
+import { appLogger } from '@/lib/logger';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 const DEFAULT_LAST_MODIFIED = new Date('2026-04-01T00:00:00.000Z');
@@ -40,12 +42,11 @@ const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitema
   { route: '/udomljavanje', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/dog-friendly', changeFrequency: 'weekly', priority: 0.6 },
   { route: '/uzgajivacnice', changeFrequency: 'monthly', priority: 0.4 },
-  { route: '/blog', changeFrequency: 'weekly', priority: 0.7 },
-  { route: '/cuvanje-pasa-zagreb', changeFrequency: 'monthly', priority: 0.6 },
-  { route: '/cuvanje-pasa-split', changeFrequency: 'monthly', priority: 0.6 },
-  { route: '/cuvanje-pasa-rijeka', changeFrequency: 'monthly', priority: 0.6 },
-  { route: '/grooming', changeFrequency: 'weekly', priority: 0.7 },
-  { route: '/grooming-zagreb', changeFrequency: 'monthly', priority: 0.6 },
+  // /blog and /grooming are 301-redirected to /zajednica and /njega — excluded from sitemap
+  { route: '/cuvanje-pasa-zagreb', changeFrequency: 'weekly', priority: 0.7 },
+  { route: '/cuvanje-pasa-split', changeFrequency: 'weekly', priority: 0.7 },
+  { route: '/cuvanje-pasa-rijeka', changeFrequency: 'weekly', priority: 0.7 },
+  { route: '/grooming-zagreb', changeFrequency: 'weekly', priority: 0.6 },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -67,26 +68,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getActiveAdoptionListings().catch(() => []),
   ]);
 
-  const sitterEntries: MetadataRoute.Sitemap = sitters.map((s) => ({
-    url: `${BASE_URL}/sitter/${s.user_id}`,
-    lastModified: toLastModified((s as { updated_at?: string; created_at?: string }).updated_at ?? (s as { created_at?: string }).created_at),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
+  const sitterEntries: MetadataRoute.Sitemap = sitters
+    .filter(shouldIndexSitter)
+    .map((s) => ({
+      url: `${BASE_URL}/sitter/${s.user_id}`,
+      lastModified: toLastModified((s as { updated_at?: string; created_at?: string }).updated_at ?? (s as { created_at?: string }).created_at),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }));
 
-  const groomerEntries: MetadataRoute.Sitemap = groomers.map((g) => ({
-    url: `${BASE_URL}/groomer/${g.id}`,
-    lastModified: toLastModified((g as { updated_at?: string; created_at?: string }).updated_at ?? (g as { created_at?: string }).created_at),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
+  // Only include indexable (non-thin) profiles in the sitemap.
+  const groomerEntries: MetadataRoute.Sitemap = groomers
+    .filter(shouldIndexGroomer)
+    .map((g) => ({
+      url: `${BASE_URL}/groomer/${g.id}`,
+      lastModified: toLastModified((g as { updated_at?: string; created_at?: string }).updated_at ?? (g as { created_at?: string }).created_at),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }));
 
-  const trainerEntries: MetadataRoute.Sitemap = trainers.map((t) => ({
-    url: `${BASE_URL}/trener/${t.id}`,
-    lastModified: toLastModified((t as { updated_at?: string; created_at?: string }).updated_at ?? (t as { created_at?: string }).created_at),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
+  const trainerEntries: MetadataRoute.Sitemap = trainers
+    .filter(shouldIndexTrainer)
+    .map((t) => ({
+      url: `${BASE_URL}/trener/${t.id}`,
+      lastModified: toLastModified((t as { updated_at?: string; created_at?: string }).updated_at ?? (t as { created_at?: string }).created_at),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }));
 
   const blogEntries: MetadataRoute.Sitemap = articles.map((a) => ({
     url: `${BASE_URL}/zajednica/${a.slug}`,
@@ -102,21 +110,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  const lostPetEntries: MetadataRoute.Sitemap = lostPets.map((p) => ({
-    url: `${BASE_URL}/izgubljeni/${p.id}`,
-    lastModified: toLastModified((p as { updated_at?: string; date_lost?: string; created_at?: string }).updated_at ?? (p as { date_lost?: string }).date_lost ?? (p as { created_at?: string }).created_at),
-    changeFrequency: 'daily' as const,
-    priority: 0.6,
-  }));
+  // "Found" pets and thin reports are excluded from the sitemap.
+  const lostPetEntries: MetadataRoute.Sitemap = lostPets
+    .filter(shouldIndexLostPet)
+    .map((p) => ({
+      url: `${BASE_URL}/izgubljeni/${p.id}`,
+      lastModified: toLastModified((p as { updated_at?: string; date_lost?: string; created_at?: string }).updated_at ?? (p as { date_lost?: string }).date_lost ?? (p as { created_at?: string }).created_at),
+      changeFrequency: 'daily' as const,
+      priority: 0.6,
+    }));
 
-  const adoptionEntries: MetadataRoute.Sitemap = adoptionListings.map((a) => ({
+  const adoptionEntries: MetadataRoute.Sitemap = adoptionListings
+    .filter(shouldIndexAdoptionCard)
+    .map((a) => ({
     url: `${BASE_URL}/udomljavanje/${a.id}`,
     lastModified: toLastModified((a as { updated_at?: string; created_at?: string }).updated_at ?? (a as { created_at?: string }).created_at),
     changeFrequency: 'weekly' as const,
     priority: 0.6,
   }));
 
-  return [
+  const all = [
     ...staticEntries,
     ...sitterEntries,
     ...groomerEntries,
@@ -126,4 +139,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...lostPetEntries,
     ...adoptionEntries,
   ];
+
+  appLogger.info('sitemap.generate', 'Sitemap generated', {
+    total: all.length,
+    static: staticEntries.length,
+    sitters: sitterEntries.length,
+    groomers: groomerEntries.length,
+    trainers: trainerEntries.length,
+    articles: blogEntries.length,
+    forum: forumEntries.length,
+    lostPets: lostPetEntries.length,
+    adoption: adoptionEntries.length,
+  });
+
+  return all;
 }

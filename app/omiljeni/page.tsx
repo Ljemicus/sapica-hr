@@ -7,6 +7,7 @@ import { OmiljeniContent } from './omiljeni-content';
 export const metadata: Metadata = {
   title: 'Omiljeni sitteri',
   description: 'Vaši omiljeni sitteri na jednom mjestu.',
+  robots: { index: false, follow: false },
 };
 
 export default async function OmiljeniPage() {

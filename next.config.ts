@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
       { source: '/sitters', destination: '/pretraga', permanent: true },
       { source: '/groomers', destination: '/njega', permanent: true },
       { source: '/trainers', destination: '/dresura', permanent: true },
+      // Duplicate content cleanup — canonical is /zajednica and /njega
+      { source: '/blog', destination: '/zajednica', permanent: true },
+      { source: '/blog/:slug', destination: '/zajednica/:slug', permanent: true },
+      { source: '/grooming', destination: '/njega', permanent: true },
     ];
   },
   async headers() {

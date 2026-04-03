@@ -9,6 +9,7 @@ import { ProviderOnboardingForm } from './provider-onboarding-form';
 export const metadata: Metadata = {
   title: 'Onboarding providera | PetPark',
   description: 'Postani provider na PetParku i dovrši onboarding za isplate, usluge i profil.',
+  robots: { index: false, follow: false },
 };
 
 export default async function ProviderOnboardingPage({

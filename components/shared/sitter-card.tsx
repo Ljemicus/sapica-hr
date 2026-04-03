@@ -44,13 +44,13 @@ export function SitterCard({ profile }: SitterCardProps) {
               {profile.verified && (
                 <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5">
                   <Shield className="h-3 w-3 mr-1" />
-                  Verificiran
+                  Verificiran profil
                 </Badge>
               )}
               {profile.superhost && (
                 <Badge className="bg-white/90 text-amber-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5 font-semibold">
                   <Award className="h-3 w-3 mr-1" />
-                  Superhost
+                  Top izbor
                 </Badge>
               )}
             </div>
@@ -89,7 +89,7 @@ export function SitterCard({ profile }: SitterCardProps) {
                 {profile.response_time || 'N/A'}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xl font-extrabold text-orange-500">od {lowestPrice}&euro;</span>
+                <span className="text-xl font-extrabold text-orange-500">već od {lowestPrice}&euro;</span>
                 <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-orange-400 group-hover:translate-x-1 transition-all" />
               </div>
             </div>

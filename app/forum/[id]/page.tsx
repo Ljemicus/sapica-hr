@@ -10,6 +10,8 @@ import { getForumTopicPageData } from './forum-topic-data';
 import { FORUM_CATEGORIES } from '@/lib/types';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { CommentForm } from './comment-form';
+import { InternalLinkSection } from '@/components/shared/internal-link-section';
+import { SEARCH_DISCOVERY_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -226,6 +228,16 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
           )}
         </div>
       </div>
+
+      <InternalLinkSection
+        eyebrow="Trebate konkretnu pomoć?"
+        title="Od rasprave do akcije"
+        description="Ako ste u temi pronašli ono što trebate — evo kako možete dalje."
+        items={[
+          ...SEARCH_DISCOVERY_LINKS.slice(0, 3),
+          ...CONTENT_DISCOVERY_LINKS.slice(0, 2),
+        ]}
+      />
     </div>
   );
 }

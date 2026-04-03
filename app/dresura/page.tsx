@@ -6,6 +6,8 @@ import { getTrainers } from '@/lib/db';
 import { TrainingContent } from './training-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { ServiceJsonLd } from '@/components/seo/json-ld';
+import { InternalLinkSection } from '@/components/shared/internal-link-section';
+import { TRAINING_HUB_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
 import type { TrainingType } from '@/lib/types';
 
 export const metadata: Metadata = {
@@ -63,6 +65,16 @@ export default async function DresuraPage({ searchParams }: DresuraPageProps) {
       </section>
 
       <TrainingContent trainers={trainers} initialParams={params} />
+
+      <InternalLinkSection
+        eyebrow="Gradovi s ponudom"
+        title="Tražite trening u određenom gradu?"
+        description="Umjesto novih thin landingica, ovdje vodimo na filtrirane training rute za gradove gdje već postoji realan supply trenera."
+        items={[
+          ...TRAINING_HUB_LINKS,
+          ...CONTENT_DISCOVERY_LINKS,
+        ]}
+      />
 
       {/* Cross-links to related services */}
       <section className="py-10 md:py-14 bg-warm-section">

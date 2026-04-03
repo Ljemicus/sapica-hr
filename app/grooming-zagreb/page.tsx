@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
+import { InternalLinkSection } from '@/components/shared/internal-link-section';
+import { GROOMING_HUB_LINKS, TRAINING_HUB_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -114,7 +116,7 @@ export default function GroomingZagreb() {
               Pronađite najbolje grooming salone za vašeg ljubimca. Šišanje, kupanje, trimanje i spa tretmani — sve na jednom mjestu.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
-              <Link href="/njega?city=Zagreb">
+              <Link href="/pretraga?category=grooming&city=Zagreb">
               <Button size="lg" className="bg-purple-500 hover:bg-purple-600 text-white rounded-full px-8">
                   Pronađi salon u Zagrebu
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -211,7 +213,7 @@ export default function GroomingZagreb() {
         </div>
       </section>
 
-      {/* Salon listings — coming soon */}
+      {/* Salon listings */}
       <section className="bg-muted/30 py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
@@ -219,11 +221,11 @@ export default function GroomingZagreb() {
               Saloni u <span className="text-gradient">Zagrebu</span>
             </h2>
             <p className="text-muted-foreground mb-8">
-              Popis verificiranih grooming salona u Zagrebu dolazi uskoro. U međuvremenu, pregledajte dostupne usluge njege na PetParku.
+              U Zagrebu već postoji aktivna grooming ponuda na PetParku. Otvorite filtrirane rezultate za Zagreb i pregledajte profile, usluge i cijene na jednom mjestu.
             </p>
-            <Link href="/njega?city=Zagreb">
+            <Link href="/pretraga?category=grooming&city=Zagreb">
               <Button size="lg" className="bg-purple-500 hover:bg-purple-600 text-white rounded-full px-8">
-                Pregledaj usluge njege
+                Otvori grooming rezultate u Zagrebu
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -283,6 +285,17 @@ export default function GroomingZagreb() {
         </div>
       </section>
 
+      <InternalLinkSection
+        eyebrow="Povezano"
+        title="Nastavite iz Zagreba prema drugim relevantnim rutama"
+        description="Umjesto da grooming landingica ostane izolirana, ovdje vodi prema drugim gradovima, treningu i sadržajnom sloju koji prati isti intent."
+        items={[
+          ...GROOMING_HUB_LINKS,
+          TRAINING_HUB_LINKS[0],
+          ...CONTENT_DISCOVERY_LINKS.slice(0, 2),
+        ]}
+      />
+
       {/* FAQ */}
       <section className="container mx-auto px-4 py-16">
         <div className="max-w-3xl mx-auto">
@@ -314,7 +327,7 @@ export default function GroomingZagreb() {
           <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
             Usporedite salone, pročitajte recenzije i zakažite termin za vašeg ljubimca. Sve na jednom mjestu.
           </p>
-          <Link href="/njega?city=Zagreb">
+          <Link href="/pretraga?category=grooming&city=Zagreb">
               <Button size="lg" className="bg-white text-purple-600 hover:bg-white/90 rounded-full px-8 font-semibold">
               Pretraži salone u Zagrebu
               <ArrowRight className="ml-2 h-4 w-4" />

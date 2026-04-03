@@ -90,17 +90,21 @@ export function MessagesContent({ currentUser, conversations: initialConversatio
   useEffect(() => {
     if (toParam && !conversations.find(c => c.partnerId === toParam)) {
       const fetchPartner = async () => {
-        const { data } = await supabase.from('users').select('id, name, avatar_url').eq('id', toParam).single();
-        if (data) {
-          upsertConversation(data.id, (existing) => existing || {
-            partnerId: data.id,
-            partnerName: data.name,
-            partnerAvatar: data.avatar_url,
-            messages: [],
-            lastMessage: null,
-            unreadCount: 0,
-          });
-          setSelectedPartnerId(data.id);
+        try {
+          const { data } = await supabase.from('users').select('id, name, avatar_url').eq('id', toParam).single();
+          if (data) {
+            upsertConversation(data.id, (existing) => existing || {
+              partnerId: data.id,
+              partnerName: data.name,
+              partnerAvatar: data.avatar_url,
+              messages: [],
+              lastMessage: null,
+              unreadCount: 0,
+            });
+            setSelectedPartnerId(data.id);
+          }
+        } catch {
+          // Partner lookup failed — user can still use existing conversations
         }
       };
       void fetchPartner();

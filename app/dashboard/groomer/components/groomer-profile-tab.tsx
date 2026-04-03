@@ -184,7 +184,7 @@ export function GroomerProfileTab({ groomer, onProfileUpdated }: GroomerProfileT
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">Usluge i cijene</CardTitle>
             {groomer.verified && (
-              <Badge className="bg-green-100 text-green-700 border-green-200">Verificiran</Badge>
+              <Badge className="bg-green-100 text-green-700 border-green-200">Verificiran profil</Badge>
             )}
           </div>
         </CardHeader>

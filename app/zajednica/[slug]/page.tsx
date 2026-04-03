@@ -4,7 +4,9 @@ import { ArrowLeft, Clock, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { InternalLinkSection } from '@/components/shared/internal-link-section';
 import { getArticle, getArticles, getRelatedArticles } from '@/lib/db';
+import { getArticleActionLinks } from '@/lib/seo/internal-links';
 import { BLOG_CATEGORY_LABELS, BLOG_CATEGORY_EMOJI, type BlogCategory } from '@/lib/types';
 import { ArticleJsonLd } from '@/components/seo/json-ld';
 
@@ -148,6 +150,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           )}
         </div>
       </div>
+
+      <InternalLinkSection
+        eyebrow="Što dalje?"
+        title="Pretvorite sadržaj u konkretan sljedeći korak"
+        description="Ako ste spremni za sljedeći korak — evo prijedloga povezanih s temom ovog članka."
+        items={getArticleActionLinks(article.category)}
+      />
     </div>
   );
 }

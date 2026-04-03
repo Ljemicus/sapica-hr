@@ -156,7 +156,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                       {groomer.verified && (
                         <Badge className="bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-50 animate-fade-in">
                           <Shield className="h-3 w-3 mr-1" />
-                          Verificiran
+                          Verificiran profil
                         </Badge>
                       )}
                       <Badge className="bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-50 animate-fade-in delay-100">
@@ -183,7 +183,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
           {/* Bio */}
           <Card className="border-0 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-lg">O nama</CardTitle>
+              <CardTitle className="text-lg">O groomeru</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
@@ -254,7 +254,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
           <Card className="border-0 shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Usluge i cijene</CardTitle>
+                <CardTitle className="text-lg">Usluge i okvirne cijene</CardTitle>
                 <span className="text-sm text-muted-foreground">{formatPriceRange(groomer.prices)}</span>
               </div>
             </CardHeader>
@@ -278,7 +278,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                           </div>
                         </div>
                         <span className="font-bold text-lg text-orange-500 flex-shrink-0 ml-2">
-                          {groomer.prices[service]}&euro;
+                          već od {groomer.prices[service]}&euro;
                         </span>
                       </div>
                     );
@@ -306,9 +306,9 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
               {availabilityLoading ? (
                 <p className="text-sm text-muted-foreground">Učitavam termine...</p>
               ) : !selectedDate ? (
-                <p className="text-sm text-muted-foreground">Klikni na zeleni datum iznad da vidiš slobodne sate.</p>
+                <p className="text-sm text-muted-foreground">Klikni na slobodan datum iznad da vidiš termine.</p>
               ) : selectedDateSlots.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Nema slobodnih termina za odabrani datum.</p>
+                <p className="text-sm text-muted-foreground">Za odabrani datum trenutno nema slobodnih termina.</p>
               ) : (
                 <div className="space-y-3">
                   <p className="text-sm font-medium">

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ChevronDown, HelpCircle, Users, CreditCard, ShieldCheck, Info, ArrowRight } from 'lucide-react';
+import { ChevronDown, HelpCircle, Users, CreditCard, ShieldCheck, Info, ArrowRight, Search, Scissors, GraduationCap } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -20,7 +20,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
   vlasnici: [
     {
       q: 'Kako funkcionira rezervacija?',
-      a: 'Pretražite sittere u vašem gradu, pregledajte profile i recenzije, pošaljite upit za željene datume. Sitter potvrđuje, vi plaćate online i ljubimac je zbrinut!',
+      a: 'Pretražite sittere u vašem gradu, pregledajte profile i recenzije te pošaljite upit za željene datume. Sitter potvrđuje termin, a vi zatim dovršavate rezervaciju.',
     },
     {
       q: 'Mogu li otkazati rezervaciju?',
@@ -46,7 +46,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
     },
     {
       q: 'Kako funkcionira verifikacija?',
-      a: 'Provjeravamo identitet, iskustvo sa životinjama i reference. Verificirani sitteri dobivaju plavu oznaku na profilu.',
+      a: 'Prije objave profila provjeravamo osnovne podatke, identitet i relevantne informacije o iskustvu. Verificirani profili imaju jasnu oznaku na PetParku.',
     },
     {
       q: 'Koliko mogu zaraditi?',
@@ -58,13 +58,13 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
     },
     {
       q: 'Trebam li posebno osiguranje?',
-      a: 'Ne, PetPark osiguranje pokriva sve aktivne rezervacije. Uključuje odgovornost prema trećima i veterinarske troškove.',
+      a: 'Uvjeti pokrića ovise o modelu suradnje i aktualnim pravilima platforme. Ako vam je osiguranje bitno, provjerite važeće uvjete ili se javite podršci prije prihvaćanja upita.',
     },
   ],
   placanje: [
     {
       q: 'Koji načini plaćanja su dostupni?',
-      a: 'Kartično plaćanje (Visa, Mastercard), Apple Pay, Google Pay. Sve transakcije su sigurne i enkriptirane.',
+      a: 'Kartično plaćanje (Visa, Mastercard), Apple Pay i Google Pay. Načini plaćanja mogu ovisiti o dostupnosti i aktivnim integracijama na platformi.',
     },
     {
       q: 'Kada sitter prima uplatu?',
@@ -82,7 +82,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
   sigurnost: [
     {
       q: 'Kako PetPark osigurava sigurnost ljubimaca?',
-      a: 'Svi sitteri prolaze verifikaciju, imamo sustav recenzija i podršku pon–sub 8–20h. Komunikacija sa sitterom u stvarnom vremenu za dodatni mir.',
+      a: 'PetPark koristi verifikaciju profila, recenzije korisnika i podršku za probleme s rezervacijom. Prije potvrde termina preporučujemo da provjerite profil i detalje usluge.',
     },
     {
       q: 'Što ako imam problem sa sitterom?',
@@ -104,7 +104,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
     },
     {
       q: 'Kako kontaktirati podršku?',
-      a: 'Email: info@petpark.hr ili koristite chat na stranici. Radimo Pon-Sub 08-20h.',
+      a: 'Email: info@petpark.hr ili kontakt forma na stranici. Podrška odgovara u radnom vremenu navedenom na PetParku.',
     },
     {
       q: 'Mogu li koristiti PetPark za mačke i male životinje?',
@@ -197,6 +197,51 @@ export function FaqContent() {
         </div>
       </section>
 
+      {/* Explore services */}
+      <section className="container mx-auto px-4 py-8">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-6 font-[var(--font-heading)]">Istražite naše usluge</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Link href="/pretraga" className="group">
+              <div className="flex items-center gap-3 p-4 rounded-2xl border border-border/50 bg-background hover:border-orange-300 hover:shadow-md transition-all">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 text-orange-500">
+                  <Search className="h-5 w-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-sm group-hover:text-orange-500 transition-colors">Čuvanje ljubimaca</h3>
+                  <p className="text-xs text-muted-foreground truncate">Pronađite sittera</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-orange-500 transition-colors flex-shrink-0" />
+              </div>
+            </Link>
+            <Link href="/njega" className="group">
+              <div className="flex items-center gap-3 p-4 rounded-2xl border border-border/50 bg-background hover:border-pink-300 hover:shadow-md transition-all">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-pink-100 dark:bg-pink-900/30 text-pink-500">
+                  <Scissors className="h-5 w-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-sm group-hover:text-pink-500 transition-colors">Grooming</h3>
+                  <p className="text-xs text-muted-foreground truncate">Šišanje i njega</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-pink-500 transition-colors flex-shrink-0" />
+              </div>
+            </Link>
+            <Link href="/dresura" className="group">
+              <div className="flex items-center gap-3 p-4 rounded-2xl border border-border/50 bg-background hover:border-indigo-300 hover:shadow-md transition-all">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 text-indigo-500">
+                  <GraduationCap className="h-5 w-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-sm group-hover:text-indigo-500 transition-colors">Školovanje pasa</h3>
+                  <p className="text-xs text-muted-foreground truncate">Treneri i programi</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-indigo-500 transition-colors flex-shrink-0" />
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="container mx-auto px-4 pb-20">
         <Card className="border-0 shadow-sm rounded-3xl bg-gradient-to-r from-orange-500 to-teal-500 overflow-hidden">
@@ -207,14 +252,14 @@ export function FaqContent() {
                 Još imate pitanja?
               </h2>
               <p className="text-white/85 text-lg mb-8 max-w-xl mx-auto">
-                Naš tim za podršku je tu za vas. Javite nam se i odgovoriti ćemo u najkraćem roku.
+                Naš tim za podršku je tu za vas. Javite nam se i odgovorit ćemo što je brže moguće.
               </p>
               <Link href="/kontakt">
                 <Button
                   size="lg"
                   className="bg-white text-orange-600 hover:bg-white/90 shadow-xl shadow-black/10 rounded-xl font-bold text-lg px-10 h-14"
                 >
-                  Kontaktirajte nas
+                  Javite nam se
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>

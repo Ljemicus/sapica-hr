@@ -44,6 +44,8 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
         const data: TrainerAvailabilitySlot[] = await res.json();
         setSlots(data);
       }
+    } catch {
+      toast.error('Greška pri učitavanju termina. Pokušajte ponovno.');
     } finally {
       setSlotsLoading(false);
     }
@@ -78,7 +80,7 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
       });
 
       if (res.status === 409) {
-        toast.error('Termin je zauzet. Odaberite drugi termin.');
+        toast.error('Termin više nije dostupan. Odaberite drugi termin.');
         // Refresh slots for this date
         fetchSlots(date);
         setLoading(false);
@@ -86,18 +88,18 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
       }
 
       if (!res.ok) {
-        toast.error('Greška pri kreiranju rezervacije');
+        toast.error('Nismo uspjeli poslati upit');
         setLoading(false);
         return;
       }
 
-      toast.success('Rezervacija poslana!', {
-        description: 'Trener će potvrditi vaš termin.',
+      toast.success('Upit je poslan', {
+        description: 'Trener sada treba potvrditi termin.',
       });
       onOpenChange(false);
       router.refresh();
     } catch {
-      toast.error('Greška pri slanju zahtjeva');
+      toast.error('Greška pri slanju upita');
     } finally {
       setLoading(false);
     }
@@ -106,18 +108,18 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
   const canAdvanceToStep3 = date && parsedSlot;
 
   const steps = [
-    { num: 1, label: 'Program' },
+    { num: 1, label: 'Odabir' },
     { num: 2, label: 'Termin' },
-    { num: 3, label: 'Potvrda' },
+    { num: 3, label: 'Slanje' },
   ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Zakaži trening</DialogTitle>
+          <DialogTitle>Pošalji upit za trening</DialogTitle>
           <DialogDescription>
-            Kod trenera: {trainer.name}
+            Šaljete upit treneru {trainer.name}. Termin vrijedi tek nakon potvrde.
           </DialogDescription>
         </DialogHeader>
 
@@ -145,7 +147,7 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
             <div className="space-y-4 animate-fade-in">
               {programs.length > 0 ? (
                 <div className="space-y-2">
-                  <Label>Odaberite program</Label>
+                  <Label>Odaberi program</Label>
                   <div className="space-y-2 max-h-[300px] overflow-y-auto">
                     {programs.map((p) => (
                       <label
@@ -177,8 +179,8 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
                 </div>
               ) : (
                 <div className="text-center py-4">
-                  <p className="text-sm text-muted-foreground mb-2">Nema specifičnih programa — kontaktirajte trenera za detalje.</p>
-                  <p className="text-xs text-muted-foreground">Cijena po satu: <span className="font-bold text-orange-500">{trainer.price_per_hour}&euro;</span></p>
+                  <p className="text-sm text-muted-foreground mb-2">Nema objavljenih programa — pošaljite upit treneru za detalje.</p>
+                  <p className="text-xs text-muted-foreground">Okvirna cijena po satu: <span className="font-bold text-orange-500">{trainer.price_per_hour}&euro;</span></p>
                 </div>
               )}
               <Button
@@ -194,7 +196,7 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
           {step === 2 && (
             <div className="space-y-4 animate-fade-in">
               <div className="space-y-2">
-                <Label>Datum</Label>
+                <Label>Odaberi datum</Label>
                 <Input
                   type="date"
                   value={date}
@@ -251,9 +253,9 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
               </div>
 
               <div className="space-y-2">
-                <Label>Napomena (opcionalno)</Label>
+                <Label>Napomena za trenera (opcionalno)</Label>
                 <Textarea
-                  placeholder="Pasmina, dob, problematično ponašanje..."
+                  placeholder="Npr. pasmina, dob, cilj treninga, problematično ponašanje..."
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   className="focus:border-indigo-300"
@@ -316,10 +318,10 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
                   {loading ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                      Šaljem...
+                      Šaljem upit...
                     </>
                   ) : (
-                    'Pošalji zahtjev'
+                    'Pošalji upit'
                   )}
                 </Button>
               </div>

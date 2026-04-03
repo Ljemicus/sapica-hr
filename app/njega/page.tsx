@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   Star, MapPin, Shield, Scissors, Droplets, Sparkles, ChevronRight, X, Filter, SlidersHorizontal, Search, GraduationCap, ArrowRight,
 } from 'lucide-react';
@@ -17,6 +18,8 @@ import {
   CITIES,
   type GroomingServiceType, type Groomer,
 } from '@/lib/types';
+import { InternalLinkSection } from '@/components/shared/internal-link-section';
+import { GROOMING_HUB_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
 
 const gradients = [
   'from-pink-400 to-rose-300',
@@ -28,10 +31,19 @@ const gradients = [
 ];
 
 export default function GroomingPage() {
-  const [city, setCity] = useState('');
-  const [service, setService] = useState('');
+  const searchParams = useSearchParams();
+  const queryCity = searchParams.get('city') ?? '';
+  const queryService = searchParams.get('service') ?? '';
+  const [city, setCity] = useState(queryCity);
+  const [service, setService] = useState(queryService);
   const [groomers, setGroomers] = useState<Groomer[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setCity(queryCity);
+    setService(queryService);
+    setLoading(true);
+  }, [queryCity, queryService]);
 
   useEffect(() => {
     async function fetchGroomers() {
@@ -156,6 +168,16 @@ export default function GroomingPage() {
         </div>
       </section>
 
+      <InternalLinkSection
+        eyebrow="Gradovi i sadržaj"
+        title="Gdje krenuti dalje iz njege ljubimaca"
+        description="Ovdje guramo samo rute koje imaju smisla: postojeću grooming landingicu za Zagreb, filtrirane grooming rezultate za gradove s realnim supplyjem i sadržaj koji podržava isti intent."
+        items={[
+          ...GROOMING_HUB_LINKS,
+          ...CONTENT_DISCOVERY_LINKS,
+        ]}
+      />
+
       {/* Listings */}
       <div className="container mx-auto px-4 py-8">
         <div className="sticky top-14 z-30 -mx-4 px-4 py-4 glass-strong border-b border-border/50 mb-6 -mt-2">
@@ -269,6 +291,20 @@ export default function GroomingPage() {
               </div>
             </Link>
           </div>
+          <div className="mt-8 text-center">
+            <p className="text-sm text-muted-foreground mb-3">Čuvanje pasa po gradovima</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              <Link href="/cuvanje-pasa-zagreb" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium hover:border-orange-300 hover:text-orange-600 transition-colors">
+                <MapPin className="h-3 w-3" /> Zagreb
+              </Link>
+              <Link href="/cuvanje-pasa-rijeka" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium hover:border-teal-300 hover:text-teal-600 transition-colors">
+                <MapPin className="h-3 w-3" /> Rijeka
+              </Link>
+              <Link href="/cuvanje-pasa-split" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium hover:border-blue-300 hover:text-blue-600 transition-colors">
+                <MapPin className="h-3 w-3" /> Split
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>
@@ -291,7 +327,7 @@ function GroomerCard({ groomer, index }: { groomer: Groomer; index: number }) {
           <div className="absolute top-3 right-3 flex gap-1.5">
             {groomer.verified && (
               <Badge className="bg-white/90 dark:bg-gray-900/80 text-teal-600 dark:text-teal-400 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5">
-                <Shield className="h-3 w-3 mr-1" />Verificiran
+                <Shield className="h-3 w-3 mr-1" />Verificiran profil
               </Badge>
             )}
           </div>

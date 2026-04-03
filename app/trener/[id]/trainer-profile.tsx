@@ -138,7 +138,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
           {/* Bio */}
           <Card className="border-0 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-lg">O meni</CardTitle>
+              <CardTitle className="text-lg">O treneru</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
@@ -200,7 +200,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
                 <CardTitle className="text-lg">Kontakt informacije</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">Kontakt informacije nisu navedene. Koristite gumb &quot;Kontaktiraj&quot; za upit.</p>
+                <p className="text-sm text-muted-foreground">Kontakt informacije nisu navedene. Koristite gumb za poruku ili upit za termin.</p>
               </CardContent>
             </Card>
           )}
@@ -236,7 +236,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
               {programs.length === 0 ? (
                 <div className="text-center py-8">
                   <BookOpen className="h-10 w-10 text-gray-200 mx-auto mb-3" />
-                  <p className="text-muted-foreground font-medium">Još nema objavljenih programa</p>
+                  <p className="text-muted-foreground font-medium">Još nema objavljenih programa treninga</p>
                   <p className="text-sm text-muted-foreground/70 mt-1">{getNoProgramsMessage()}</p>
                 </div>
               ) : (
@@ -286,7 +286,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
                 <div className="text-center py-8">
                   <Star className="h-10 w-10 text-gray-200 mx-auto mb-3" />
                   <p className="text-muted-foreground font-medium">Još nema recenzija</p>
-                  <p className="text-sm text-muted-foreground/70 mt-1">Budite prvi koji će ocijeniti ovog trenera</p>
+                  <p className="text-sm text-muted-foreground/70 mt-1">Budite prvi koji će podijeliti iskustvo s ovim trenerom</p>
                 </div>
               ) : (
                 <div className="space-y-5">

@@ -196,22 +196,22 @@ export function LoginForm() {
         <div className="absolute bottom-10 -right-10 w-40 h-40 bg-white rounded-full opacity-10" />
         <div className="relative text-center text-white p-12 max-w-md">
           <PawLogo className="h-16 w-16 mx-auto mb-6 opacity-90" />
-          <h2 className="text-3xl font-bold mb-4">Dobrodošli natrag!</h2>
+          <h2 className="text-3xl font-bold mb-4">Dobrodošli natrag</h2>
           <p className="text-white/80 text-lg leading-relaxed">
-            Prijavite se i pronađite savršenog čuvara za vašeg ljubimca ili upravljajte svojim sitter profilom.
+            Prijavite se da nastavite gdje ste stali — pregled profila, slanje upita i upravljanje rezervacijama na jednom mjestu.
           </p>
           <div className="mt-10 grid grid-cols-3 gap-6">
             <div>
-              <p className="text-2xl font-bold">500+</p>
-              <p className="text-sm text-white/70">Pružatelja usluga</p>
+              <p className="text-2xl font-bold">Jasni profili</p>
+              <p className="text-sm text-white/70">Brže usporedbe i manje nagađanja</p>
             </div>
             <div>
-              <p className="text-2xl font-bold">2000+</p>
-              <p className="text-sm text-white/70">Rezervacija</p>
+              <p className="text-2xl font-bold">Brži upiti</p>
+              <p className="text-sm text-white/70">Pošaljite zahtjev u par koraka</p>
             </div>
             <div>
-              <p className="text-2xl font-bold">4.8★</p>
-              <p className="text-sm text-white/70">Ocjena</p>
+              <p className="text-2xl font-bold">Sve na jednom mjestu</p>
+              <p className="text-sm text-white/70">Poruke, rezervacije i profil</p>
             </div>
           </div>
         </div>

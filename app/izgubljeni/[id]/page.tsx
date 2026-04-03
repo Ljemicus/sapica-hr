@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { LostPetDetailContent } from './lost-pet-detail-content';
 import type { LostPet } from '@/lib/types';
+import { shouldIndexLostPet, robotsMeta } from '@/lib/seo/indexability';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -64,9 +65,12 @@ export async function generateMetadata({ params }: LostPetPageProps): Promise<Me
 
   const description = `${pet.breed}, ${pet.color}. ${pet.neighborhood}, ${pet.city}. ${pet.description.slice(0, 120)}...`;
 
+  const indexable = shouldIndexLostPet(pet);
+
   return {
     title,
     description,
+    robots: robotsMeta(indexable),
     openGraph: {
       title: `${title} — PetPark`,
       description,
@@ -86,9 +90,9 @@ export async function generateMetadata({ params }: LostPetPageProps): Promise<Me
       description,
       images: pet.image_url ? [pet.image_url] : [],
     },
-    alternates: {
+    alternates: indexable ? {
       canonical: `${BASE_URL}/izgubljeni/${id}`,
-    },
+    } : undefined,
   };
 }
 

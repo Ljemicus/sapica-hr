@@ -93,13 +93,13 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                       {profile.verified && (
                         <Badge className="bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800 hover:bg-teal-50 dark:hover:bg-teal-950/30 animate-fade-in">
                           <Shield className="h-3 w-3 mr-1" />
-                          Verificiran
+                          Verificiran profil
                         </Badge>
                       )}
                       {profile.superhost && (
                         <Badge className="bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 hover:bg-amber-50 dark:hover:bg-amber-950/30 animate-fade-in delay-100">
                           <Award className="h-3 w-3 mr-1" />
-                          Superhost
+                          Top izbor
                         </Badge>
                       )}
                     </div>
@@ -144,7 +144,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
           {/* Bio */}
           <Card className="border-0 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-lg">O meni</CardTitle>
+              <CardTitle className="text-lg">O sitteru</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">{profile.bio}</p>
@@ -154,7 +154,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
           {/* Services & Prices */}
           <Card className="border-0 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-lg">Usluge i cijene</CardTitle>
+              <CardTitle className="text-lg">Usluge i okvirne cijene</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -235,9 +235,9 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
             <CardContent className="p-6 space-y-5">
               <div className="text-center py-2">
                 <span className="text-4xl font-extrabold text-gradient">
-                  od {Math.min(...Object.values(profile.prices).filter((p): p is number => typeof p === 'number' && p > 0))}&euro;
+                  već od {Math.min(...Object.values(profile.prices).filter((p): p is number => typeof p === 'number' && p > 0))}&euro;
                 </span>
-                <span className="text-muted-foreground block text-sm mt-1">po usluzi</span>
+                <span className="text-muted-foreground block text-sm mt-1">ovisno o usluzi i terminu</span>
               </div>
 
               {user && user.role === 'owner' ? (
@@ -248,19 +248,19 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                     onClick={() => setShowBooking(true)}
                   >
                     <Calendar className="h-4 w-4 mr-2" />
-                    Rezerviraj
+                    Pošalji upit za rezervaciju
                   </Button>
                   <Link href={`/poruke?to=${profile.user_id}`}>
                     <Button variant="outline" className="w-full hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:text-orange-600 hover:border-orange-200" size="lg">
                       <MessageCircle className="h-4 w-4 mr-2" />
-                      Kontaktiraj
+                      Pošalji poruku
                     </Button>
                   </Link>
                 </>
               ) : !user ? (
                 <Link href={`/prijava?redirect=/sitter/${profile.user_id}`}>
                   <Button className="w-full bg-orange-500 hover:bg-orange-600 btn-hover" size="lg">
-                    Prijavi se za rezervaciju
+                    Prijavi se za slanje upita
                   </Button>
                 </Link>
               ) : null}
@@ -271,7 +271,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
               <div>
                 <h3 className="font-medium text-sm mb-3 flex items-center gap-1.5">
                   <Calendar className="h-4 w-4 text-orange-500" />
-                  Dostupnost (sljedećih 14 dana)
+                  Dostupnost u idućih 14 dana
                 </h3>
                 <div className="grid grid-cols-7 gap-1.5">
                   {Array.from({ length: 14 }, (_, i) => {
@@ -285,7 +285,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                         className={`aspect-square rounded-lg flex items-center justify-center text-xs font-medium transition-all ${
                           isAvailable
                             ? 'bg-green-100 text-green-700 shadow-sm'
-                            : 'bg-red-50 text-red-300'
+                            : 'bg-gray-100 text-gray-400'
                         }`}
                         title={`${format(date, 'd.M.')} — ${isAvailable ? 'Dostupan' : 'Nedostupan'}`}
                       >
@@ -300,7 +300,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                     <span>Dostupan</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded bg-red-50 border border-red-100" />
+                    <div className="w-3 h-3 rounded bg-gray-100 border border-gray-200" />
                     <span>Nedostupan</span>
                   </div>
                 </div>

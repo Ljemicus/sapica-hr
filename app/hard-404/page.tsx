@@ -1,6 +1,12 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 
 export const dynamic = 'force-static';
+
+export const metadata: Metadata = {
+  title: '404 — Stranica nije pronađena',
+  robots: { index: false, follow: false },
+};
 
 export default function Hard404Page() {
   return (

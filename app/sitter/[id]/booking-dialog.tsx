@@ -34,7 +34,6 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
     },
   });
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const selectedService = watch('service_type');
   const startDate = watch('start_date');
   const endDate = watch('end_date');
@@ -51,45 +50,49 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
 
   const onSubmit = async (data: BookingInput) => {
     setLoading(true);
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sitter_id: data.sitter_id,
+          pet_id: data.pet_id,
+          service_type: data.service_type,
+          start_date: data.start_date,
+          end_date: data.end_date,
+          note: data.note || null,
+        }),
+      });
 
-    const response = await fetch('/api/bookings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sitter_id: data.sitter_id,
-        pet_id: data.pet_id,
-        service_type: data.service_type,
-        start_date: data.start_date,
-        end_date: data.end_date,
-        note: data.note || null,
-      }),
-    });
+      if (!response.ok) {
+        toast.error('Nismo uspjeli poslati upit. Pokušajte ponovno.');
+        return;
+      }
 
-    if (!response.ok) {
-      toast.error('Greška pri kreiranju rezervacije');
+      toast.success('Upit je poslan. Sitter ga sada treba potvrditi.');
+      onOpenChange(false);
+      router.push('/dashboard/vlasnik');
+      router.refresh();
+    } catch {
+      toast.error('Mrežna greška. Provjerite internetsku vezu.');
+    } finally {
       setLoading(false);
-      return;
     }
-
-    toast.success('Rezervacija poslana! Čekajte potvrdu od sittera.');
-    onOpenChange(false);
-    router.push('/dashboard/vlasnik');
-    router.refresh();
   };
 
   const steps = [
-    { num: 1, label: 'Usluga' },
+    { num: 1, label: 'Odabir' },
     { num: 2, label: 'Detalji' },
-    { num: 3, label: 'Potvrda' },
+    { num: 3, label: 'Slanje' },
   ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Rezerviraj uslugu</DialogTitle>
+          <DialogTitle>Pošalji upit za rezervaciju</DialogTitle>
           <DialogDescription>
-            Kod sittera: {profile.user?.name}
+            Šaljete upit sitteru {profile.user?.name}. Termin vrijedi tek nakon potvrde.
           </DialogDescription>
         </DialogHeader>
 
@@ -123,7 +126,7 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
                   className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-orange-300"
                   {...register('pet_id')}
                 >
-                  <option value="">Odaberite ljubimca</option>
+                  <option value="">Odaberi ljubimca</option>
                   {pets.map((pet) => (
                     <option key={pet.id} value={pet.id}>
                       {pet.name} ({pet.species === 'dog' ? 'Pas' : pet.species === 'cat' ? 'Mačka' : 'Ostalo'})
@@ -133,7 +136,7 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
                 {errors.pet_id && <p className="text-sm text-red-500">{errors.pet_id.message}</p>}
                 {pets.length === 0 && (
                   <p className="text-xs text-muted-foreground bg-amber-50 rounded-lg p-2">
-                    Nemate dodanih ljubimaca. Dodajte ih u nadzornoj ploči.
+                    Nemate dodanih ljubimaca. Prvo dodajte ljubimca u svom profilu pa se vratite ovdje.
                   </p>
                 )}
               </div>
@@ -144,7 +147,7 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
                   className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-orange-300"
                   {...register('service_type')}
                 >
-                  <option value="">Odaberite uslugu</option>
+                  <option value="">Odaberi uslugu</option>
                   {profile.services.map((service) => (
                     <option key={service} value={service}>
                       {SERVICE_LABELS[service]} — {profile.prices[service]}&euro;
@@ -167,20 +170,20 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
             <div className="space-y-4 animate-fade-in">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label>Početak</Label>
+                  <Label>Datum početka</Label>
                   <Input type="date" {...register('start_date')} min={new Date().toISOString().split('T')[0]} className="focus:border-orange-300" />
                   {errors.start_date && <p className="text-sm text-red-500">{errors.start_date.message}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label>Završetak</Label>
+                  <Label>Datum završetka</Label>
                   <Input type="date" {...register('end_date')} min={startDate || new Date().toISOString().split('T')[0]} className="focus:border-orange-300" />
                   {errors.end_date && <p className="text-sm text-red-500">{errors.end_date.message}</p>}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Napomena (opcionalno)</Label>
-                <Textarea placeholder="Posebne upute ili informacije za sittera..." {...register('note')} className="focus:border-orange-300" />
+                <Label>Napomena za sittera (opcionalno)</Label>
+                <Textarea placeholder="Npr. rutina, lijekovi, navike, posebne upute..." {...register('note')} className="focus:border-orange-300" />
               </div>
 
               <div className="flex gap-2">
@@ -201,11 +204,12 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
             <div className="space-y-4 animate-fade-in">
               {selectedService && startDate && endDate && (
                 <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-6 text-center border border-orange-100">
-                  <p className="text-sm text-muted-foreground mb-1">Ukupna cijena</p>
+                  <p className="text-sm text-muted-foreground mb-1">Procjena ukupne cijene</p>
                   <p className="text-4xl font-extrabold text-gradient">{calculatePrice()}&euro;</p>
                   <div className="mt-3 text-xs text-muted-foreground space-y-1">
                     <p>{SERVICE_LABELS[selectedService as ServiceType]}</p>
                     <p>{startDate} — {endDate}</p>
+                    <p>Konačnu potvrdu termina daje sitter</p>
                   </div>
                 </div>
               )}
@@ -215,7 +219,7 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
                   Natrag
                 </Button>
                 <Button type="submit" className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover" disabled={loading}>
-                  {loading ? 'Šaljem...' : 'Pošalji zahtjev'}
+                  {loading ? 'Šaljem upit...' : 'Pošalji upit'}
                 </Button>
               </div>
             </div>

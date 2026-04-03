@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAdoptionListing } from '@/lib/db/adoption-listings';
 import { AdoptionDetailContent } from './adoption-detail-content';
+import { shouldIndexAdoption, robotsMeta } from '@/lib/seo/indexability';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -12,13 +13,15 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const listing = await getAdoptionListing(id);
-  if (!listing || listing.status !== 'active') return { title: 'Oglas nije pronađen' };
+  if (!listing || listing.status !== 'active') return { title: 'Oglas nije pronađen', robots: { index: false, follow: false } };
 
   const primaryImage = listing.images?.find((img) => img.is_primary) ?? listing.images?.[0];
+  const indexable = shouldIndexAdoption(listing);
 
   return {
     title: `${listing.name} — Udomljavanje | PetPark`,
     description: listing.description.slice(0, 160),
+    robots: robotsMeta(indexable),
     openGraph: {
       title: `${listing.name} traži dom | PetPark`,
       description: listing.description.slice(0, 200),
@@ -26,9 +29,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `${BASE_URL}/udomljavanje/${id}`,
       images: primaryImage ? [{ url: primaryImage.url, alt: listing.name }] : [],
     },
-    alternates: {
+    alternates: indexable ? {
       canonical: `${BASE_URL}/udomljavanje/${id}`,
-    },
+    } : undefined,
   };
 }
 

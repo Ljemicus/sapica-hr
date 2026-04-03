@@ -1,16 +1,18 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { MapPin, ArrowRight, Shield, Clock, Heart, TreePine } from 'lucide-react';
+import { MapPin, ArrowRight, Shield, Clock, Heart, TreePine, Scissors, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
+import { InternalLinkSection } from '@/components/shared/internal-link-section';
+import { getCityServiceLinks, getSiblingCityLinks } from '@/lib/seo/internal-links';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 export const metadata: Metadata = {
   title: 'Čuvanje pasa u Zagrebu — pronađite pouzdanog sittera',
-  description: 'Pronađite iskusne i verificirane pet sittere u Zagrebu. Čuvanje pasa u vašem kvartu — Maksimir, Trešnjevka, Novi Zagreb, Dubrava i drugi. Rezervirajte online!',
+  description: 'Pronađite iskusne i verificirane pet sittere u Zagrebu. Čuvanje pasa u vašem kvartu — Maksimir, Trešnjevka, Novi Zagreb, Dubrava i drugi. Pošaljite upit online.',
   keywords: ['čuvanje pasa zagreb', 'pet sitter zagreb', 'čuvanje ljubimaca zagreb', 'dog sitter zagreb', 'šetanje pasa zagreb', 'dnevna njega pasa zagreb'],
   openGraph: {
     title: 'Čuvanje pasa u Zagrebu — pronađite pouzdanog sittera | PetPark',
@@ -30,7 +32,7 @@ const FAQS = [
   },
   {
     q: 'Kako pronaći pouzdanog pet sittera u Zagrebu?',
-    a: 'Na PetParku svi sitteri prolaze proces verifikacije koji uključuje provjeru identiteta i iskustva sa životinjama. Preporučujemo da provjerite recenzije drugih korisnika, dogovorite upoznavanje prije rezervacije i odaberete sittere s oznakom "Superhost" za dodatnu sigurnost.',
+    a: 'Na PetParku sitteri prolaze osnovnu provjeru profila i identiteta prije objave. Preporučujemo da provjerite recenzije drugih korisnika, dogovorite upoznavanje prije rezervacije i obratite pažnju na profile s oznakom "Top izbor".',
   },
   {
     q: 'Mogu li dobiti dnevna ažuriranja o svom psu?',
@@ -47,7 +49,7 @@ export default function CuvanjePasaZagreb() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'PetPark — Čuvanje pasa u Zagrebu',
-    description: 'Pronađite pouzdane pet sittere za čuvanje pasa u Zagrebu. Verificirani sitteri, online rezervacija, osiguranje.',
+    description: 'Pronađite pouzdane pet sittere za čuvanje pasa u Zagrebu. Verificirani profili i slanje upita online.',
     url: `${BASE_URL}/cuvanje-pasa-zagreb`,
     logo: `${BASE_URL}/opengraph-image`,
     image: `${BASE_URL}/opengraph-image`,
@@ -264,9 +266,9 @@ export default function CuvanjePasaZagreb() {
             </h2>
             <div className="grid sm:grid-cols-3 gap-6">
               {[
-                { icon: Shield, title: 'Verificirani sitteri', desc: 'Svaki sitter prolazi provjeru identiteta i iskustva. Samo pouzdani sitteri dobivaju pristup platformi.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
-                { icon: Heart, title: 'Sigurna platforma', desc: 'Sve rezervacije prolaze kroz platformu — transparentno plaćanje i komunikacija na jednom mjestu.', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' },
-                { icon: Clock, title: 'Brza rezervacija', desc: 'Pronađite sittera, pošaljite upit i rezervirajte — sve u roku od nekoliko minuta.', color: 'text-teal-500', bg: 'bg-teal-50 dark:bg-teal-950/20' },
+                { icon: Shield, title: 'Verificirani profili', desc: 'Svaki profil prolazi osnovnu provjeru prije objave kako biste lakše procijenili kome šaljete upit.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
+                { icon: Heart, title: 'Jasniji dogovor', desc: 'Profil, recenzije i detalji usluge su na jednom mjestu kako biste lakše poslali pravi upit.', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' },
+                { icon: Clock, title: 'Brz prvi korak', desc: 'Pronađite sittera i pošaljite upit u nekoliko minuta, bez nepotrebnog lutanja po stranici.', color: 'text-teal-500', bg: 'bg-teal-50 dark:bg-teal-950/20' },
               ].map((item) => (
                 <Card key={item.title} className="border-0 shadow-sm text-center">
                   <CardContent className="p-6">
@@ -282,6 +284,16 @@ export default function CuvanjePasaZagreb() {
           </div>
         </div>
       </section>
+
+      <InternalLinkSection
+        eyebrow="Idući korak"
+        title="Istražite Zagreb i druge gradove"
+        description="Ako ste krenuli od Zagreba, ovdje možete brzo skočiti na povezane usluge, pretragu i druge city stranice bez lutanja po navigaciji."
+        items={[
+          ...getCityServiceLinks('Zagreb').slice(0, 4),
+          ...getSiblingCityLinks('Zagreb'),
+        ]}
+      />
 
       {/* FAQ */}
       <section className="container mx-auto px-4 py-16">
@@ -305,6 +317,43 @@ export default function CuvanjePasaZagreb() {
         </div>
       </section>
 
+      {/* Cross-links: other cities + services */}
+      <section className="container mx-auto px-4 py-12">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 font-[var(--font-heading)]">
+          Čuvanje pasa u drugim gradovima
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+          <Link href="/cuvanje-pasa-rijeka" className="group flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:border-teal-300 hover:shadow-md transition-all">
+            <MapPin className="h-5 w-5 text-teal-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm group-hover:text-teal-600 transition-colors">Rijeka</p>
+              <p className="text-xs text-muted-foreground">Sitteri u riječkim kvartovima</p>
+            </div>
+          </Link>
+          <Link href="/cuvanje-pasa-split" className="group flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:border-blue-300 hover:shadow-md transition-all">
+            <MapPin className="h-5 w-5 text-blue-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm group-hover:text-blue-600 transition-colors">Split</p>
+              <p className="text-xs text-muted-foreground">Sitteri u splitskim kvartovima</p>
+            </div>
+          </Link>
+          <Link href="/njega?city=Zagreb" className="group flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:border-pink-300 hover:shadow-md transition-all">
+            <Scissors className="h-5 w-5 text-pink-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm group-hover:text-pink-600 transition-colors">Grooming u Zagrebu</p>
+              <p className="text-xs text-muted-foreground">Šišanje, kupanje i njega</p>
+            </div>
+          </Link>
+          <Link href="/dresura?city=Zagreb" className="group flex items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:border-indigo-300 hover:shadow-md transition-all">
+            <GraduationCap className="h-5 w-5 text-indigo-500 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm group-hover:text-indigo-600 transition-colors">Školovanje pasa u Zagrebu</p>
+              <p className="text-xs text-muted-foreground">Treneri i programi</p>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="bg-gradient-to-r from-orange-500 to-teal-500 py-16">
         <div className="container mx-auto px-4 text-center">
@@ -312,7 +361,7 @@ export default function CuvanjePasaZagreb() {
             Pronađite savršenog sittera u Zagrebu
           </h2>
           <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-            Verificirani sitteri u svim zagrebačkim kvartovima čekaju vašeg ljubimca. Rezervirajte online u par klikova.
+            Verificirani profili u svim zagrebačkim kvartovima čekaju vaš upit. Pošaljite upit online u par klikova.
           </p>
           <Link href="/pretraga?city=Zagreb">
               <Button size="lg" className="bg-white text-orange-600 hover:bg-white/90 rounded-full px-8 font-semibold">

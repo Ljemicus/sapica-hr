@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { appLogger } from '@/lib/logger';
+import { trackEvent } from '@/lib/analytics';
 
 export default function Error({
   error,
@@ -16,13 +17,18 @@ export default function Error({
       message: error.message,
       digest: error.digest,
     });
+    trackEvent('Error Boundary', {
+      message: error.message?.slice(0, 150) ?? 'unknown',
+      digest: error.digest ?? null,
+      path: window.location.pathname,
+    });
   }, [error]);
 
   return (
     <div role="alert" aria-live="assertive" className="flex flex-col items-center justify-center min-h-[60vh] px-4">
       <div className="text-6xl mb-4">😿</div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Nešto je pošlo po krivu</h1>
-      <p className="text-gray-500 mb-6 text-center max-w-md">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Nešto je pošlo po krivu</h1>
+      <p className="text-gray-500 dark:text-gray-400 mb-6 text-center max-w-md">
         Došlo je do neočekivane greške. Pokušajte ponovo ili se vratite na početnu stranicu.
       </p>
       <div className="flex items-center gap-3">
@@ -34,7 +40,7 @@ export default function Error({
         </button>
         <Link
           href="/"
-          className="px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition-colors"
+          className="px-5 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 font-medium transition-colors"
         >
           Početna
         </Link>

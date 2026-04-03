@@ -285,50 +285,19 @@ export function ArticleContent({ article, relatedArticles }: ArticleContentProps
         </div>
       )}
 
-      {/* Zadnje objave */}
-      {relatedArticles.length > 0 && (
-        <div className="mb-10">
-          <h2 className="text-xl font-bold mb-6">Zadnje objave</h2>
-          <div className="space-y-3">
-            {relatedArticles.slice(0, 5).map((post) => (
-              <Link key={post.slug} href={`/blog/${post.slug}`}>
-                <div className="group flex items-center gap-4 p-3 rounded-xl hover:bg-orange-50 transition-colors">
-                  <div className="h-12 w-12 bg-gradient-to-br from-orange-100 to-amber-50 rounded-xl flex items-center justify-center shrink-0">
-                    <span className="text-2xl group-hover:scale-110 transition-transform">{post.emoji}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm group-hover:text-orange-600 transition-colors line-clamp-1">
-                      {post.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {new Date(post.date).toLocaleDateString('hr-HR', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      {' '}&middot;{' '}
-                      {BLOG_CATEGORY_LABELS[post.category]}
-                    </p>
-                  </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-orange-400 transition-colors shrink-0" />
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* CTA */}
-      <Card className="border-0 shadow-sm rounded-2xl overflow-hidden bg-gradient-to-br from-orange-500 to-amber-400">
-        <CardContent className="p-8 text-center text-white">
-          <h2 className="text-2xl font-bold mb-3">Pronađite sittera za svog ljubimca</h2>
-          <p className="text-white/80 mb-6 max-w-md mx-auto">
-            Verificirani čuvari ljubimaca u vašem gradu. Rezervirajte online u par klikova.
-          </p>
-          <Link href="/pretraga">
-            <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 shadow-xl shadow-black/10 btn-hover font-semibold">
-              Pretraži sittere
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
+      {/* Content-to-action bridge */}
+      <div className="rounded-2xl bg-gradient-to-r from-orange-50 to-teal-50 p-8 text-center">
+        <h2 className="text-xl font-bold mb-2">Trebate uslugu za ljubimca?</h2>
+        <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+          Pronađite pouzdane sittere, groomere i trenere na PetParku.
+        </p>
+        <Link href="/pretraga">
+          <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6">
+            Pretraži usluge
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }

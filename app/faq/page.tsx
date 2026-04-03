@@ -5,17 +5,17 @@ import { FAQJsonLd } from '@/components/seo/json-ld';
 import { FaqContent } from './faq-content';
 
 const allFaqs = [
-  { q: 'Kako funkcionira rezervacija?', a: 'Pretražite sittere u vašem gradu, pregledajte profile i recenzije, pošaljite upit za željene datume. Sitter potvrđuje, vi plaćate online i ljubimac je zbrinut!' },
+  { q: 'Kako funkcionira rezervacija?', a: 'Pretražite sittere u vašem gradu, pregledajte profile i recenzije te pošaljite upit za željene datume. Sitter potvrđuje termin, a vi zatim dovršavate rezervaciju.' },
   { q: 'Mogu li otkazati rezervaciju?', a: 'Da, besplatno otkazivanje do 24 sata prije početka. Otkazivanja unutar 24 sata podliježu naknadi od 50%. Detalji su navedeni u Uvjetima korištenja.' },
   { q: 'Što ako se ljubimac razboli tijekom čuvanja?', a: 'Sitter vas odmah kontaktira i zajedno reagirate. Preporučujemo da unaprijed dogovorite veterinara i hitni kontakt sa sitterom.' },
   { q: 'Kako funkcioniraju recenzije?', a: 'Nakon svake završene rezervacije možete ostaviti recenziju i ocjenu (1-5 zvjezdica). Recenzije su javne i pomažu drugim vlasnicima.' },
   { q: 'Mogu li posjetiti ljubimca tijekom čuvanja?', a: 'Naravno! Dogovorite se sa sitterom o posjetu. Većina sittera rado šalje foto i video ažuriranja svaki dan.' },
   { q: 'Kako postati sitter?', a: 'Registrirajte se, ispunite profil, dodajte slike i opišite iskustvo. Naš tim pregledava zahtjev i javlja se u roku nekoliko radnih dana.' },
-  { q: 'Kako funkcionira verifikacija?', a: 'Provjeravamo identitet, iskustvo sa životinjama i reference. Verificirani sitteri dobivaju plavu oznaku na profilu.' },
+  { q: 'Kako funkcionira verifikacija?', a: 'Prije objave profila provjeravamo osnovne podatke, identitet i relevantne informacije o iskustvu. Verificirani profili imaju jasnu oznaku na PetParku.' },
   { q: 'Koliko mogu zaraditi?', a: 'Ovisi o lokaciji, uslugama i cijenama. Prihodi ovise o gradu, broju rezervacija i cijenama. Vi postavljate vlastite cijene.' },
   { q: 'Koji načini plaćanja su dostupni?', a: 'Kartično plaćanje (Visa, Mastercard), Apple Pay, Google Pay. Sve transakcije su sigurne i enkriptirane.' },
   { q: 'Kolika je provizija PetParka?', a: 'PetPark naplaćuje 10% provizije na svaku rezervaciju. Registracija i korištenje platforme su potpuno besplatni.' },
-  { q: 'Kako PetPark osigurava sigurnost ljubimaca?', a: 'Svi sitteri prolaze verifikaciju, imamo sustav recenzija i podršku pon–sub 8–20h. Direktna komunikacija sa sitterom za siguran mir.' },
+  { q: 'Kako PetPark osigurava sigurnost ljubimaca?', a: 'PetPark koristi verifikaciju profila, recenzije korisnika i podršku za probleme s rezervacijom. Prije potvrde termina preporučujemo da provjerite profil i detalje usluge.' },
   { q: 'Jesu li moji podaci sigurni?', a: 'Koristimo SSL enkripciju, ne dijelimo podatke s trećim stranama i pridržavamo se GDPR propisa.' },
   { q: 'U kojim gradovima je PetPark dostupan?', a: 'Trenutno smo dostupni u Zagrebu, Rijeci, Splitu, Osijeku, Zadru, Puli, Dubrovniku, Karlovcu, Varaždinu i Šibeniku. Širimo se!' },
   { q: 'Postoji li mobilna aplikacija?', a: 'Mobilna aplikacija je u razvoju! Trenutno koristite web stranicu koja je potpuno prilagođena mobilnim uređajima.' },
@@ -52,8 +52,8 @@ export default function FaqPage() {
               <span className="text-gradient">pitanja</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in-up delay-200 leading-relaxed max-w-2xl mx-auto">
-              Sve što trebate znati o PetPark platformi na jednom mjestu.
-              Ne nalazite odgovor? Kontaktirajte nas!
+              Sve što trebate znati o PetParku na jednom mjestu.
+              Ako ne nalazite odgovor, javite nam se.
             </p>
           </div>
         </div>

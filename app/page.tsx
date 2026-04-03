@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {
   Search, Shield, Star, Heart, MapPin, ChevronRight,
-  Home, Dog, House, Eye, Sun, Users, Calendar,
+  Home, Dog, House, Eye, Sun, Calendar,
   ArrowRight, Scissors, GraduationCap, BookOpen,
   PawPrint, ShieldCheck, CreditCard, PhoneCall, BadgeCheck,
 } from 'lucide-react';
@@ -13,12 +13,12 @@ import {
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: { absolute: 'PetPark — Sve za ljubimce na jednom mjestu' },
-  description: 'Čuvanje, grooming, školovanje pasa, veterinari, udomljavanje, dog-friendly lokacije i zajednica ljubitelja životinja — sve na jednom mjestu u Hrvatskoj.',
-  keywords: ['pet sitting hrvatska', 'čuvanje ljubimaca', 'grooming', 'školovanje pasa', 'veterinar', 'udomljavanje', 'dog-friendly'],
+  title: { absolute: 'PetPark — Pronađite pouzdanog sittera za svog ljubimca' },
+  description: 'Verificirani pet sitteri, groomeri i treneri u vašem gradu. Rezervirajte online brzo, jasno i bez stresa uz PetPark.',
+  keywords: ['pet sitting hrvatska', 'čuvanje ljubimaca', 'pet sitter', 'grooming', 'školovanje pasa', 'rezervacija sittera'],
   openGraph: {
-    title: 'PetPark — Sve za ljubimce na jednom mjestu',
-    description: 'Čuvanje, grooming, školovanje, veterinari, udomljavanje i zajednica — sve u jednoj aplikaciji.',
+    title: 'PetPark — Pronađite pouzdanog sittera za svog ljubimca',
+    description: 'Verificirani sitteri, jasne recenzije i brza online rezervacija za ljubimce u Hrvatskoj.',
     url: 'https://petpark.hr',
     type: 'website',
   },
@@ -34,12 +34,9 @@ import { ItemListJsonLd } from '@/components/seo/json-ld';
 
 const homepageServices = [
   { name: 'Čuvanje ljubimaca', url: 'https://petpark.hr/pretraga', description: 'Pronađite pouzdane sittere u vašem gradu' },
-  { name: 'Grooming', url: 'https://petpark.hr/njega', description: 'Profesionalni saloni za uljepšavanje ljubimaca' },
+  { name: 'Grooming', url: 'https://petpark.hr/njega', description: 'Profesionalni groomeri i saloni za njegu ljubimaca' },
   { name: 'Školovanje pasa', url: 'https://petpark.hr/dresura', description: 'Certificirani treneri i programi za pse' },
   { name: 'Veterinari', url: 'https://petpark.hr/veterinari', description: 'Veterinarske ordinacije u vašem gradu' },
-  { name: 'Udomljavanje', url: 'https://petpark.hr/udomljavanje', description: 'Psi i mačke koji traže dom' },
-  { name: 'Dog-Friendly lokacije', url: 'https://petpark.hr/dog-friendly', description: 'Kafići, restorani i plaže za pse' },
-  { name: 'Izgubljeni ljubimci', url: 'https://petpark.hr/izgubljeni', description: 'Prijavite ili pronađite izgubljenog ljubimca' },
 ];
 
 // Gradient palette for sitter cards
@@ -60,10 +57,9 @@ const howItWorks = [
 
 const mainCards = [
   { href: '/pretraga', emoji: '🐾', title: 'Sitteri', description: 'Pouzdani čuvari u vašem gradu', bg: 'from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/20', hover: 'hover:shadow-orange-200/40 dark:hover:shadow-orange-900/20', border: 'border-orange-100 dark:border-orange-900/30' },
-  { href: '/njega', emoji: '✂️', title: 'Grooming', description: 'Šišanje, kupanje i njegu noktiju', bg: 'from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-950/20', hover: 'hover:shadow-pink-200/40 dark:hover:shadow-pink-900/20', border: 'border-pink-100 dark:border-pink-900/30' },
+  { href: '/njega', emoji: '✂️', title: 'Grooming', description: 'Kupanje, šišanje i njega', bg: 'from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-950/20', hover: 'hover:shadow-pink-200/40 dark:hover:shadow-pink-900/20', border: 'border-pink-100 dark:border-pink-900/30' },
   { href: '/dresura', emoji: '🎓', title: 'Školovanje pasa', description: 'Profesionalna obuka i trening', bg: 'from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/20', hover: 'hover:shadow-indigo-200/40 dark:hover:shadow-indigo-900/20', border: 'border-indigo-100 dark:border-indigo-900/30' },
-  { href: '/forum', emoji: '💬', title: 'Forum', description: 'Zajednica ljubitelja životinja', bg: 'from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/20', hover: 'hover:shadow-teal-200/40 dark:hover:shadow-teal-900/20', border: 'border-teal-100 dark:border-teal-900/30' },
-  { href: '/zajednica', emoji: '📝', title: 'Blog', description: 'Savjeti, vodiči i priče', bg: 'from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/20', hover: 'hover:shadow-purple-200/40 dark:hover:shadow-purple-900/20', border: 'border-purple-100 dark:border-purple-900/30' },
+  { href: '/veterinari', emoji: '🩺', title: 'Veterinari', description: 'Provjerene ordinacije i pomoć', bg: 'from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/20', hover: 'hover:shadow-teal-200/40 dark:hover:shadow-teal-900/20', border: 'border-teal-100 dark:border-teal-900/30' },
 ];
 
 const services = [
@@ -78,12 +74,12 @@ const services = [
 ];
 
 const cities = [
-  { name: 'Zagreb', image: '/images/cities/zagreb.jpg' },
-  { name: 'Rijeka', image: '/images/cities/rijeka.jpg' },
-  { name: 'Split', image: '/images/cities/split.jpg' },
-  { name: 'Osijek', image: '/images/cities/osijek.jpg' },
-  { name: 'Pula', image: '/images/cities/pula.jpg' },
-  { name: 'Zadar', image: '/images/cities/zadar.jpg' },
+  { name: 'Zagreb', image: '/images/cities/zagreb.jpg', landing: '/cuvanje-pasa-zagreb' },
+  { name: 'Rijeka', image: '/images/cities/rijeka.jpg', landing: '/cuvanje-pasa-rijeka' },
+  { name: 'Split', image: '/images/cities/split.jpg', landing: '/cuvanje-pasa-split' },
+  { name: 'Osijek', image: '/images/cities/osijek.jpg', landing: null },
+  { name: 'Pula', image: '/images/cities/pula.jpg', landing: null },
+  { name: 'Zadar', image: '/images/cities/zadar.jpg', landing: null },
 ];
 
 export default async function HomePage() {
@@ -115,14 +111,14 @@ export default async function HomePage() {
           <div className="max-w-4xl mx-auto text-center">
             <Badge className="mb-6 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/40 border-0 text-sm px-5 py-2 animate-fade-in-up shadow-sm rounded-full font-semibold">
               <PawPrint className="h-3.5 w-3.5 mr-1.5" />
-              Sve za ljubimce na jednom mjestu
+              Verificirani sitteri i usluge za ljubimce
             </Badge>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-heading)]">
-              Za <span className="text-orange-500">sretne ljubimce</span> i{' '}
-              <span className="text-teal-600 dark:text-teal-400">mirnije vlasnike.</span>
+              Pronađite <span className="text-orange-500">pouzdanog sittera</span> za svog{' '}
+              <span className="text-teal-600 dark:text-teal-400">ljubimca.</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in-up delay-200 leading-relaxed">
-              Pronađite provjerenog skrbnika, groomera ili trenera za svog ljubimca — s recenzijama stvarnih korisnika, jasnom verifikacijom i podrškom na svakom koraku.
+              Verificirani čuvari, groomeri i treneri u vašem gradu. Rezervirajte online brzo, jasno i bez stresa — uz recenzije stvarnih korisnika i podršku kad zatreba.
             </p>
 
             <div className="mb-8 animate-fade-in-up delay-200 max-w-2xl mx-auto">
@@ -154,14 +150,14 @@ export default async function HomePage() {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-500" />
                   <Input
                     name="service"
-                    placeholder="Vrsta usluge (smještaj, šetnja...)"
+                    placeholder="Usluga (smještaj, šetnja, grooming...)"
                     className="pl-11 h-12 md:h-13 border-0 bg-transparent focus:ring-0 text-base placeholder:text-muted-foreground/60 rounded-xl md:rounded-full"
                     aria-label="Vrsta usluge"
                   />
                 </div>
-                <Button type="submit" size="lg" aria-label="Pretraži sittere" className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 h-12 md:h-13 px-8 rounded-xl md:rounded-full btn-hover shadow-lg shadow-orange-300/40 dark:shadow-orange-900/30 text-base font-semibold">
+                <Button type="submit" size="lg" aria-label="Pronađi sittera" className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 h-12 md:h-13 px-8 rounded-xl md:rounded-full btn-hover shadow-lg shadow-orange-300/40 dark:shadow-orange-900/30 text-base font-semibold">
                   <Search className="h-4 w-4 mr-2" />
-                  Pretraži
+                  Pronađi sittera
                 </Button>
               </form>
             </div>
@@ -280,35 +276,35 @@ export default async function HomePage() {
                 <BadgeCheck className="h-6 w-6 text-teal-600" />
               </div>
               <h3 className="font-bold text-base font-[var(--font-heading)]">Što znači &ldquo;Verificiran&rdquo;?</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">Svaki verificirani sitter prošao je provjeru identiteta i reference, te potpisao PetPark kodeks ponašanja. Profil vidite tek nakon odobravanja.</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">Verificirani profil znači da je prošla osnovna provjera identiteta i profila prije objave na PetParku.</p>
             </div>
             <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-blue-100/60 dark:border-blue-900/30 flex flex-col gap-3 animate-fade-in-up delay-100">
               <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center">
                 <CreditCard className="h-6 w-6 text-blue-600" />
               </div>
               <h3 className="font-bold text-base font-[var(--font-heading)]">Sigurno plaćanje</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">Plaćanje je sigurno i zaštićeno putem platforme. Ako nešto krene po krivu, kontaktirajte nas i razmotrimo povrat sredstava.</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">Plaćanje se odvija kroz platformu, a za probleme s rezervacijom možete se javiti podršci da zajedno riješimo slučaj.</p>
             </div>
             <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-rose-100/60 dark:border-rose-900/30 flex flex-col gap-3 animate-fade-in-up delay-200">
               <div className="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center">
                 <PhoneCall className="h-6 w-6 text-rose-500" />
               </div>
               <h3 className="font-bold text-base font-[var(--font-heading)]">Podrška pon–sub 8–20h</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">Tim PetParka dostupan je pon–sub od 8 do 20h. Ako nešto nije u redu — javljate se nama i zajedno tražimo rješenje.</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">Ako nešto zapne, javljate se podršci i zajedno tražimo najrazumnije rješenje.</p>
             </div>
             <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-amber-100/60 dark:border-amber-900/30 flex flex-col gap-3 animate-fade-in-up delay-300">
               <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center">
                 <Star className="h-6 w-6 text-amber-500 fill-amber-500" />
               </div>
               <h3 className="font-bold text-base font-[var(--font-heading)]">Recenzije bez filtera</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">Ocjene i komentari dolaze isključivo od korisnika koji su zaista koristili uslugu. Ne uređujemo negativne recenzije.</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">Recenzije pomažu da brže procijenite profil, stil komunikacije i iskustva drugih vlasnika.</p>
             </div>
           </div>
           <div className="max-w-3xl mx-auto bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl p-6 md:p-8 text-white text-center shadow-lg shadow-teal-200/40 dark:shadow-teal-900/20">
             <Shield className="h-8 w-8 mx-auto mb-3 opacity-90" />
-            <h3 className="text-xl font-extrabold mb-2 font-[var(--font-heading)]">PetPark garancija</h3>
+            <h3 className="text-xl font-extrabold mb-2 font-[var(--font-heading)]">Podrška kad zapne</h3>
             <p className="text-white/85 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
-              Ako usluga nije pružena kako je dogovoreno, odmah se javljate nama. Svaki slučaj razmatramo pojedinačno i radimo na pravednom rješenju.
+              Ako rezervacija ne ide po planu, javite se PetPark podršci. Svaki slučaj gledamo zasebno i pomažemo pronaći rješenje.
             </p>
           </div>
         </div>
@@ -349,7 +345,7 @@ export default async function HomePage() {
                             </div>
                           </div>
                         </div>
-                        {sitter.verified && <Badge className="bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-50">Verificiran</Badge>}
+                        {sitter.verified && <Badge className="bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-50">Verificiran profil</Badge>}
                       </div>
                       <div className="flex items-center gap-4 text-sm mb-4">
                         <div className="flex items-center gap-1">
@@ -383,7 +379,7 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {cities.map((city) => (
-              <Link key={city.name} href={`/pretraga?city=${encodeURIComponent(city.name)}`}>
+              <Link key={city.name} href={city.landing ?? `/pretraga?city=${encodeURIComponent(city.name)}`}>
                 <Card className="group overflow-hidden rounded-2xl border-0 shadow-sm card-hover">
                   <CardContent className="p-0">
                     <div className="h-32 md:h-36 relative flex items-end p-4 overflow-hidden">
@@ -402,155 +398,35 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 relative overflow-hidden" aria-label="Istraži više">
-        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
-        <div className="container mx-auto px-4 relative">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-semibold">Istraži više</Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">Još više za vašeg ljubimca</h2>
-            <p className="text-muted-foreground text-lg max-w-lg mx-auto">Istražite usluge, sadržaj i zajednicu koji PetPark čine mjestom za cjelovitu brigu o ljubimcima</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
-            {[
-              {
-                title: 'Grooming & Njega',
-                description: 'Premium saloni za šišanje, kupanje, trimanje i njegu noktiju. Pronađite verificirane groomere u vašem gradu.',
-                icon: Scissors,
-                color: 'from-pink-500 to-rose-500',
-                href: '/njega',
-                stat: 'Saloni',
-                image: '/images/services/02-grooming.jpg',
-              },
-              {
-                title: 'Školovanje pasa & Trening',
-                description: 'Certificirani treneri za osnovnu poslušnost, agility, korekciju ponašanja i rad sa štencima.',
-                icon: GraduationCap,
-                color: 'from-indigo-500 to-blue-500',
-                href: '/dresura',
-                stat: 'Treneri',
-                image: '/images/services/03-dresura-agility.jpg',
-              },
-              {
-                title: 'Zajednica & Blog',
-                description: 'Savjeti, vodiči i priče za vlasnike ljubimaca. Zdravlje, prehrana, školovanje pasa i putovanja.',
-                icon: BookOpen,
-                color: 'from-amber-500 to-orange-500',
-                href: '/zajednica',
-                stat: 'Članci',
-                image: '/images/services/06-community.jpg',
-              },
-              {
-                title: 'Forum zajednice',
-                description: 'Postavite pitanja, podijelite savjete ili pomozite pronaći izgubljene ljubimce. Viralna zajednica!',
-                icon: Users,
-                color: 'from-teal-500 to-emerald-500',
-                href: '/forum',
-                stat: 'Zajednica',
-                image: '/images/services/07-hero-puppy.jpg',
-              },
-            ].map((item, i) => (
-              <Link key={item.title} href={item.href}>
-                <Card className={`group card-hover cursor-pointer h-full border-0 shadow-sm rounded-2xl overflow-hidden animate-fade-in-up delay-${(i + 1) * 100}`}>
-                  <CardContent className="p-5 md:p-6 text-center">
-                    <div className={`inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br ${item.color} text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
-                      <item.icon className="h-6 w-6 md:h-7 md:w-7" />
-                    </div>
-                    <h3 className="font-bold text-lg mb-2 group-hover:text-orange-500 transition-colors font-[var(--font-heading)]">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">{item.description}</p>
-                    <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-4">
-                      <Image src={item.image} alt={item.title} fill loading="lazy" decoding="async" sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 92vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
-                    </div>
-                    <Badge variant="secondary" className="bg-accent text-muted-foreground rounded-full">{item.stat}</Badge>
-                    <div className="mt-3 text-sm font-semibold text-teal-600 dark:text-teal-400 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      Istraži <ArrowRight className="h-3 w-3" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <NewsletterSignup />
 
-      <section className="py-12 md:py-16 bg-gradient-to-b from-purple-50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/10 relative overflow-hidden" aria-label="Udomljavanje">
-        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
-        <div className="container mx-auto px-4 relative">
-          <div className="max-w-4xl mx-auto">
-            <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
-              <CardContent className="p-0">
-                <div className="grid grid-cols-1 md:grid-cols-2">
-                  <div className="bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 p-8 md:p-10 flex flex-col justify-center text-white relative">
-                    <div className="absolute inset-0 paw-pattern opacity-[0.06]" />
-                    <div className="relative">
-                      <span className="text-5xl mb-4 block">🏠</span>
-                      <h2 className="text-2xl md:text-3xl font-extrabold mb-3 font-[var(--font-heading)]">Udomite ljubimca</h2>
-                      <p className="text-purple-100 leading-relaxed">
-                        Dajte dom onima koji to najviše zaslužuju. Pregledajte pse, mačke i male ljubimce iz azila diljem Hrvatske.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="p-8 md:p-10 flex flex-col justify-center">
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">🐕</span>
-                        <span className="text-sm text-muted-foreground">Psi raznih pasmina i dobi</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">🐈</span>
-                        <span className="text-sm text-muted-foreground">Mačke koje traže topli dom</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">🐰</span>
-                        <span className="text-sm text-muted-foreground">Mali ljubimci — kunići i više</span>
-                      </div>
-                    </div>
-                    <Link href="/udomljavanje">
-                      <Button size="lg" className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg">
-                        <Heart className="h-5 w-5 mr-2 fill-white" />
-                        Istraži udomljavanje
-                        <ArrowRight className="h-5 w-5 ml-2" />
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-12 md:py-16 relative overflow-hidden" aria-label="Dog-Friendly lokacije">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/10" />
+      <section className="py-16 md:py-24 relative overflow-hidden" aria-label="Završni poziv na akciju">
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-white to-teal-50 dark:from-orange-950/20 dark:via-background dark:to-teal-950/20" />
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
         <div className="container mx-auto px-4 relative">
-          <div className="max-w-4xl mx-auto">
-            <Card className="border-0 shadow-xl rounded-2xl overflow-hidden bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 text-white">
-              <CardContent className="p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
-                <div className="flex-1 text-center md:text-left">
-                  <Badge className="mb-4 bg-white/20 text-white hover:bg-white/20 border-0 text-sm px-4 py-1.5 rounded-full font-semibold">
-                    Novo na PetParku
-                  </Badge>
-                  <h2 className="text-2xl md:text-3xl font-extrabold mb-3 font-[var(--font-heading)]">
-                    Dog-Friendly Lokacije
-                  </h2>
-                  <p className="text-white/80 mb-6 max-w-md">
-                    Pronađite kafiće, restorane, plaže i parkove koji dobrodošlicom primaju vašeg ljubimca.
-                  </p>
-                  <Link href="/dog-friendly">
-                    <Button size="lg" className="bg-white text-teal-700 hover:bg-teal-50 font-bold rounded-xl shadow-lg">
-                      <Dog className="h-5 w-5 mr-2" />
-                      Pronađi lokacije
-                      <ArrowRight className="h-5 w-5 ml-2" />
-                    </Button>
-                  </Link>
-                </div>
-                <div className="text-6xl md:text-8xl opacity-80">
-                  🐕
-                </div>
-              </CardContent>
-            </Card>
+          <div className="max-w-4xl mx-auto text-center">
+            <Badge className="mb-6 bg-orange-100 text-orange-700 hover:bg-orange-100 border-0 rounded-full font-semibold dark:bg-orange-900/30 dark:text-orange-300">
+              Spremni za rezervaciju?
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-5 font-[var(--font-heading)]">
+              Vaš ljubimac zaslužuje pouzdanu brigu.
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
+              Pronađite sittera, groomera ili trenera u svom gradu — s jasnim profilima, recenzijama i podrškom ako zapne.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/pretraga">
+                <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white px-8 rounded-xl shadow-lg shadow-orange-300/30">
+                  Pronađi sittera
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="/postani-sitter">
+                <Button size="lg" variant="outline" className="px-8 rounded-xl">
+                  Postani sitter
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

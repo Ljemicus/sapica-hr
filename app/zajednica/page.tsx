@@ -1,12 +1,15 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Clock, ChevronRight, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { EmptyState } from '@/components/shared/empty-state';
+import { InternalLinkSection } from '@/components/shared/internal-link-section';
 import { getArticles } from '@/lib/db';
+import { SEARCH_DISCOVERY_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
 import { BLOG_CATEGORY_LABELS, BLOG_CATEGORY_EMOJI, type BlogCategory } from '@/lib/types';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Zajednica — Savjeti za vlasnike ljubimaca',
   description: 'Članci, savjeti i priče za vlasnike pasa i mačaka. Zdravlje, prehrana, školovanje pasa i putovanja s ljubimcima.',
   alternates: { canonical: 'https://petpark.hr/zajednica' },
@@ -152,6 +155,16 @@ export default async function ZajednicaPage() {
           />
         )}
       </div>
+
+      <InternalLinkSection
+        eyebrow="Od čitanja do akcije"
+        title="Treba vam i konkretna usluga?"
+        description="Ako ste spremni za sljedeći korak — pronađite usluge, lokacije i savjete za svog ljubimca."
+        items={[
+          ...SEARCH_DISCOVERY_LINKS.slice(0, 4),
+          ...CONTENT_DISCOVERY_LINKS.slice(1),
+        ]}
+      />
     </div>
   );
 }

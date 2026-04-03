@@ -51,8 +51,8 @@ export function SitterProfileTab({ profile, onEdit }: Props) {
               <p className="text-sm">{profile.city || 'Nije postavljeno'}</p>
             </div>
             <div className="flex gap-2">
-              {profile.verified && <Badge className="bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-50">✓ Verificiran</Badge>}
-              {profile.superhost && <Badge className="bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-50">★ Superhost</Badge>}
+              {profile.verified && <Badge className="bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-50">✓ Verificiran profil</Badge>}
+              {profile.superhost && <Badge className="bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-50">★ Top izbor</Badge>}
             </div>
           </>
         ) : (

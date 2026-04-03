@@ -48,7 +48,10 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
     fetch(`/api/groomer-availability?groomer_id=${groomer.id}&from_date=${fromDate}&to_date=${toDate}`)
       .then((r) => r.json())
       .then((data) => setSlots(Array.isArray(data) ? data : []))
-      .catch(() => setSlots([]))
+      .catch(() => {
+        setSlots([]);
+        toast.error('Greška pri učitavanju termina. Pokušajte ponovno.');
+      })
       .finally(() => setLoading(false));
   }, [open, groomer.id]);
 
@@ -105,7 +108,7 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
       });
 
       if (res.status === 409) {
-        toast.error('Termin je zauzet!', { description: 'Odaberite drugi termin.' });
+        toast.error('Termin više nije dostupan', { description: 'Odaberite drugi termin.' });
         setStep(2);
         setSelectedSlot(null);
         setSubmitting(false);
@@ -113,36 +116,36 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
       }
 
       if (!res.ok) {
-        toast.error('Greška pri rezervaciji', { description: 'Pokušajte ponovo.' });
+        toast.error('Nismo uspjeli poslati upit', { description: 'Pokušajte ponovno.' });
         setSubmitting(false);
         return;
       }
 
-      toast.success('Termin rezerviran! 🎉', {
+      toast.success('Upit za termin je poslan', {
         description: `${GROOMING_SERVICE_LABELS[service as GroomingServiceType]} — ${format(new Date(selectedSlot.date + 'T00:00'), 'd. MMMM', { locale: hr })} u ${selectedSlot.start_time.slice(0, 5)}h`,
       });
       onOpenChange(false);
       router.push('/dashboard/vlasnik/rezervacije');
     } catch {
-      toast.error('Mrežna greška');
+      toast.error('Mrežna greška. Pokušajte ponovno.');
     } finally {
       setSubmitting(false);
     }
   };
 
   const steps = [
-    { num: 1, label: 'Usluga' },
+    { num: 1, label: 'Odabir' },
     { num: 2, label: 'Termin' },
     { num: 3, label: 'Detalji' },
-    { num: 4, label: 'Potvrda' },
+    { num: 4, label: 'Slanje' },
   ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Zakaži termin</DialogTitle>
-          <DialogDescription>Kod groomera: {groomer.name}</DialogDescription>
+          <DialogTitle>Pošalji upit za termin</DialogTitle>
+          <DialogDescription>Šaljete upit groomeru {groomer.name}. Termin vrijedi tek nakon potvrde.</DialogDescription>
         </DialogHeader>
 
         {/* Step indicator */}
@@ -173,7 +176,7 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
           {step === 1 && (
             <div className="space-y-4 animate-fade-in">
               <div className="space-y-2">
-                <Label>Odaberite uslugu</Label>
+                <Label>Odaberi uslugu</Label>
                 <div className="space-y-2">
                   {groomer.services.map((s) => (
                     <label
@@ -222,8 +225,8 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
               ) : slots.length === 0 ? (
                 <div className="text-center py-8">
                   <Calendar className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                  <p className="text-muted-foreground">Groomer trenutno nema dostupnih termina.</p>
-                  <p className="text-xs text-muted-foreground mt-1">Kontaktirajte groomera za više informacija.</p>
+                  <p className="text-muted-foreground">Groomer trenutno nema otvorene termine.</p>
+                  <p className="text-xs text-muted-foreground mt-1">Pošaljite poruku ili pokušajte s drugim datumom.</p>
                 </div>
               ) : (
                 <>
@@ -232,7 +235,7 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
                     <div className="flex items-center justify-between mb-3">
                       <Label className="flex items-center gap-1.5">
                         <Calendar className="h-4 w-4 text-orange-500" />
-                        Odaberite datum
+                        Odaberi datum
                       </Label>
                       <div className="flex items-center gap-1">
                         <Button
@@ -366,7 +369,7 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
                 />
               </div>
               <div className="space-y-2">
-                <Label>Vrsta</Label>
+                <Label>Vrsta ljubimca</Label>
                 <div className="flex gap-3">
                   {([['pas', '🐕 Pas'], ['macka', '🐈 Mačka']] as const).map(([val, label]) => (
                     <label
@@ -389,9 +392,9 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Napomena (opcionalno)</Label>
+                <Label>Napomena za groomera (opcionalno)</Label>
                 <Textarea
-                  placeholder="Posebne upute, veličina psa, alergije..."
+                  placeholder="Npr. veličina, osjetljivost kože, alergije, posebne upute..."
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   className="focus:border-pink-300"
@@ -441,7 +444,7 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
                 )}
               </div>
               <p className="text-xs text-muted-foreground text-center">
-                Groomer će potvrditi vaš termin. Dobit ćete obavijest o statusu.
+                Groomer prvo treba potvrditi termin. Dobit ćete obavijest čim odgovori.
               </p>
               <div className="flex gap-2">
                 <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(3)}>
@@ -456,10 +459,10 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
                   {submitting ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Šaljem...
+                      Šaljem upit...
                     </>
                   ) : (
-                    'Rezerviraj termin'
+                    'Pošalji upit'
                   )}
                 </Button>
               </div>

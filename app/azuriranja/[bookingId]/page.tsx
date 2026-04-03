@@ -5,6 +5,7 @@ import { UpdatesFeed } from './updates-feed';
 
 export const metadata: Metadata = {
   title: 'Ažuriranja — PetPark',
+  robots: { index: false, follow: false },
 };
 
 const DEMO_BOOKING_IDS = new Set([

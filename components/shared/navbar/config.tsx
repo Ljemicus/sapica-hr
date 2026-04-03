@@ -2,7 +2,6 @@ import {
   AlertTriangle,
   Baby,
   BookOpen,
-  Camera,
   Dog,
   FileHeart,
   GraduationCap,
@@ -31,11 +30,7 @@ export function getDashboardLink(user?: NavbarUser | null) {
 export function getDesktopLinks(t: TranslationFn, user?: NavbarUser | null): NavbarLinkItem[] {
   return [
     { href: '/o-nama', label: 'O nama' },
-    { href: '/zajednica', label: t('nav.blog'), icon: BookOpen },
-    { href: '/forum', label: t('nav.forum'), icon: MessageSquare },
-    { href: '/udomljavanje', label: 'Udomljavanje', icon: HeartHandshake, className: 'text-sm font-semibold text-pink-500 hover:text-pink-600 dark:text-pink-400 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-pink-50 dark:hover:bg-pink-950/20' },
-    { href: '/uzgajivacnice', label: 'Uzgajivači', icon: PawPrint, className: 'text-sm font-semibold text-amber-600 hover:text-amber-700 dark:text-amber-400 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-950/20' },
-    { href: '/izgubljeni', label: t('nav.lost'), icon: AlertTriangle, className: 'text-sm font-semibold text-red-500 hover:text-red-600 dark:text-red-400 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 relative' },
+    { href: '/blog', label: t('nav.blog'), icon: BookOpen },
     ...(!user ? [{ href: '/postani-sitter', label: t('nav.become_sitter'), className: 'text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 transition-colors px-3 py-2 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-950/20' }] : []),
   ];
 }
@@ -99,22 +94,22 @@ export function getMobilePrimaryLinks(t: TranslationFn): NavbarLinkItem[] {
     { href: '/dresura', label: t('nav.training'), icon: GraduationCap },
     { href: '/veterinari', label: t('nav.veterinarians'), icon: Stethoscope },
     { href: '/hitno', label: 'Hitna pomoć', icon: Siren, className: 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold' },
-    { href: '/izgubljeni', label: t('nav.lost'), icon: AlertTriangle, className: 'text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold' },
-    { href: '/uzgajivacnice', label: 'Uzgajivači', icon: PawPrint },
-    { href: '/udomljavanje', label: 'Udomljavanje', icon: HeartHandshake, className: 'text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-950/20 font-semibold' },
   ];
 }
 
-export function getMobileUtilityLinks(t: TranslationFn): NavbarLinkItem[] {
+export function getMobileUtilityLinks(_t: TranslationFn): NavbarLinkItem[] {
   return [
   ];
 }
 
 export function getMobileCommunityLinks(t: TranslationFn): NavbarLinkItem[] {
   return [
-    { href: '/dog-friendly', label: 'Dog-Friendly', icon: Dog, className: 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/20 font-medium' },
-    { href: '/zajednica', label: t('nav.blog'), icon: BookOpen },
+    { href: '/blog', label: t('nav.blog'), icon: BookOpen },
     { href: '/forum', label: t('nav.forum'), icon: MessageSquare },
+    { href: '/dog-friendly', label: 'Dog-Friendly', icon: Dog, className: 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/20 font-medium' },
+    { href: '/izgubljeni', label: t('nav.lost'), icon: AlertTriangle, className: 'text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold' },
+    { href: '/udomljavanje', label: 'Udomljavanje', icon: HeartHandshake, className: 'text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-950/20 font-semibold' },
+    { href: '/uzgajivacnice', label: 'Uzgajivači', icon: PawPrint },
   ];
 }
 

@@ -10,6 +10,7 @@ import { CartProvider } from '@/lib/cart-context';
 import { LanguageProvider } from '@/lib/i18n';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { DeferredUI } from '@/components/shared/deferred-ui';
+import { WebVitals } from '@/components/monitoring/web-vitals';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -115,6 +116,7 @@ export default function RootLayout({
           src="https://plausible.io/js/script.js"
           strategy="afterInteractive"
         />
+        <WebVitals />
         <WebsiteJsonLd />
         <SiteNavigationJsonLd />
       </head>

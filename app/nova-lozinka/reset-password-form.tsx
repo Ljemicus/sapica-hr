@@ -102,7 +102,7 @@ export function ResetPasswordForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Potvrdite lozinku</Label>
+            <Label htmlFor="confirmPassword">Ponovite lozinku</Label>
             <div className="relative">
               <Input
                 id="confirmPassword"
