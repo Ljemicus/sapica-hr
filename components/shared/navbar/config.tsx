@@ -49,9 +49,6 @@ export function getServicesMenu(t: TranslationFn): NavbarMenuItem[] {
     { href: '/hitno', label: 'Hitna pomoć', icon: Siren, className: 'text-red-600 dark:text-red-400 font-medium' },
     { href: '/uzgajivacnice', label: 'Uzgajivači', icon: Baby },
     { href: '/dog-friendly', label: 'Dog-Friendly', icon: Dog },
-    { href: '/setnja/walk1111-1111-1111-1111-111111111111', label: t('nav.gps_tracking'), icon: MapPin, separatorBefore: true, demo: true },
-    { href: '/azuriranja/book1111-1111-1111-1111-111111111111', label: t('nav.photo_updates'), icon: Camera, demo: true },
-    { href: '/ljubimac/pet11111-1111-1111-1111-111111111111/karton', label: t('nav.health_card'), icon: Heart, demo: true },
   ];
 }
 
@@ -110,9 +107,6 @@ export function getMobilePrimaryLinks(t: TranslationFn): NavbarLinkItem[] {
 
 export function getMobileUtilityLinks(t: TranslationFn): NavbarLinkItem[] {
   return [
-    { href: '/setnja/walk1111-1111-1111-1111-111111111111', label: t('nav.gps_tracking'), icon: MapPin, demo: true },
-    { href: '/azuriranja/book1111-1111-1111-1111-111111111111', label: t('nav.photo_updates'), icon: Camera, demo: true },
-    { href: '/ljubimac/pet11111-1111-1111-1111-111111111111/karton', label: t('nav.health_card'), icon: Heart, demo: true },
   ];
 }
 
