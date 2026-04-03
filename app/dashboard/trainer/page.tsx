@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getAuthUser } from '@/lib/auth';
 import { TrainerDashboardContent } from './trainer-dashboard-content';
 import { createClient } from '@/lib/supabase/server';
+import { getPrograms, getTrainerAvailability, getTrainerBookings } from '@/lib/db';
 
 export const metadata = {
   title: 'Trener Dashboard — PetPark',
@@ -35,5 +36,9 @@ export default async function TrainerDashboardPage() {
     );
   }
 
-  return <TrainerDashboardContent trainer={trainer} />;
+  const programs = await getPrograms(trainer.id);
+  const availability = await getTrainerAvailability(trainer.id);
+  const bookings = await getTrainerBookings(trainer.id);
+
+  return <TrainerDashboardContent trainer={trainer} initialPrograms={programs} initialAvailability={availability} initialBookings={bookings} />;
 }

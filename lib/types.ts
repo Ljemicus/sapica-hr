@@ -399,6 +399,54 @@ export interface TrainingProgram {
   description: string;
 }
 
+export interface TrainerAvailabilitySlot {
+  id: string;
+  trainer_id: string;
+  date: string;
+  start_time: string;
+  end_time: string;
+  is_available: boolean;
+}
+
+// ── Trainer Booking ──
+
+export type TrainerBookingStatus = 'pending' | 'confirmed' | 'rejected' | 'completed' | 'cancelled';
+
+export const TRAINER_BOOKING_STATUS_LABELS: Record<TrainerBookingStatus, string> = {
+  'pending': 'Na čekanju',
+  'confirmed': 'Potvrđeno',
+  'rejected': 'Odbijeno',
+  'completed': 'Završeno',
+  'cancelled': 'Otkazano',
+};
+
+export const TRAINER_BOOKING_STATUS_COLORS: Record<TrainerBookingStatus, string> = {
+  'pending': 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  'confirmed': 'bg-green-100 text-green-700 border-green-200',
+  'rejected': 'bg-red-100 text-red-700 border-red-200',
+  'completed': 'bg-blue-100 text-blue-700 border-blue-200',
+  'cancelled': 'bg-gray-100 text-gray-500 border-gray-200',
+};
+
+export interface TrainerBooking {
+  id: string;
+  trainer_id: string;
+  user_id: string;
+  program_id: string | null;
+  date: string;
+  start_time: string;
+  end_time: string;
+  status: TrainerBookingStatus;
+  pet_name: string | null;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+  trainer?: Trainer;
+}
+
+/** Statuses that block a slot from being available */
+export const TRAINER_BOOKING_BLOCKING_STATUSES: TrainerBookingStatus[] = ['pending', 'confirmed'];
+
 // ── Blog ──
 
 export type BlogCategory = 'zdravlje' | 'prehrana' | 'dresura' | 'putovanje' | 'zabava' | 'psi' | 'macke';

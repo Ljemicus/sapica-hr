@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getTrainer, getPrograms, getTrainerReviews, getAvailability } from '@/lib/db';
+import { getTrainer, getPrograms, getTrainerReviews, getTrainerAvailableDates } from '@/lib/db';
 import { TrainerProfile } from './trainer-profile';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
@@ -43,14 +43,13 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
     notFound();
   }
 
-  const programs = await getPrograms(id);
-  const reviews = await getTrainerReviews(id);
+  const [programs, reviews, availableDatesList] = await Promise.all([
+    getPrograms(id),
+    getTrainerReviews(id),
+    getTrainerAvailableDates(id),
+  ]);
 
-  // Query real availability from Supabase, convert to Set<string>
-  const availabilityRecords = await getAvailability(id);
-  const availableDates = new Set(
-    availabilityRecords.filter(a => a.available).map(a => a.date)
-  );
+  const availableDates = new Set<string>(availableDatesList);
 
   const jsonLd = {
     '@context': 'https://schema.org',

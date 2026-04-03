@@ -12,7 +12,6 @@ import { useAdoptionFavorites } from '@/hooks/use-adoption-favorites';
 import { EmptyState } from '@/components/shared/empty-state';
 import type { AdoptionListingCard } from '@/lib/types';
 import {
-  ADOPTION_SPECIES_LABELS,
   ADOPTION_SPECIES_EMOJI,
   ADOPTION_GENDER_LABELS,
   ADOPTION_SIZE_LABELS,

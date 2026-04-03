@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronRight, CheckCircle2, GraduationCap } from 'lucide-react';
+import { ChevronRight, CheckCircle2, GraduationCap, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { TRAINING_TYPE_LABELS, type Trainer, type TrainingProgram } from '@/lib/types';
+import { type Trainer, type TrainingProgram, type TrainerAvailabilitySlot } from '@/lib/types';
 import { toast } from 'sonner';
 
 interface TrainerBookingDialogProps {
@@ -22,21 +22,88 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
   const [step, setStep] = useState(1);
   const [programId, setProgramId] = useState('');
   const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+  const [slotKey, setSlotKey] = useState(''); // "start_time|end_time"
+  const [petName, setPetName] = useState('');
   const [note, setNote] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [slots, setSlots] = useState<TrainerAvailabilitySlot[]>([]);
   const router = useRouter();
 
   const selectedProgram = programs.find(p => p.id === programId);
 
-  const handleSubmit = () => {
-    const programName = selectedProgram?.name || TRAINING_TYPE_LABELS[trainer.specializations[0]];
-    const message = `Pozdrav! Zanima me ${programName ? `program "${programName}"` : 'trening'}${date ? ` s početkom od ${date}` : ''}${time ? ` u ${time}h` : ''}${note ? `. ${note}` : ''}.`;
-    toast.success('Zahtjev pripremljen!', {
-      description: 'Preusmjeravamo vas na poruke.',
-    });
-    onOpenChange(false);
-    router.push(`/poruke?trainer=${trainer.id}&message=${encodeURIComponent(message)}`);
+  const fetchSlots = useCallback(async (selectedDate: string) => {
+    setSlotsLoading(true);
+    setSlots([]);
+    setSlotKey('');
+    try {
+      const res = await fetch(
+        `/api/trainer-availability?trainer_id=${trainer.id}&from_date=${selectedDate}&to_date=${selectedDate}`
+      );
+      if (res.ok) {
+        const data: TrainerAvailabilitySlot[] = await res.json();
+        setSlots(data);
+      }
+    } finally {
+      setSlotsLoading(false);
+    }
+  }, [trainer.id]);
+
+  useEffect(() => {
+    if (date) fetchSlots(date);
+  }, [date, fetchSlots]);
+
+  const parsedSlot = slotKey ? {
+    start_time: slotKey.split('|')[0],
+    end_time: slotKey.split('|')[1],
+  } : null;
+
+  const handleSubmit = async () => {
+    if (!date || !parsedSlot) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch('/api/trainer-bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          trainer_id: trainer.id,
+          program_id: programId || null,
+          date,
+          start_time: parsedSlot.start_time,
+          end_time: parsedSlot.end_time,
+          pet_name: petName || null,
+          note: note || null,
+        }),
+      });
+
+      if (res.status === 409) {
+        toast.error('Termin je zauzet. Odaberite drugi termin.');
+        // Refresh slots for this date
+        fetchSlots(date);
+        setLoading(false);
+        return;
+      }
+
+      if (!res.ok) {
+        toast.error('Greška pri kreiranju rezervacije');
+        setLoading(false);
+        return;
+      }
+
+      toast.success('Rezervacija poslana!', {
+        description: 'Trener će potvrditi vaš termin.',
+      });
+      onOpenChange(false);
+      router.refresh();
+    } catch {
+      toast.error('Greška pri slanju zahtjeva');
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const canAdvanceToStep3 = date && parsedSlot;
 
   const steps = [
     { num: 1, label: 'Program' },
@@ -126,31 +193,67 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
 
           {step === 2 && (
             <div className="space-y-4 animate-fade-in">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label>Željeni datum početka</Label>
-                  <Input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                    className="focus:border-indigo-300"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Željeno vrijeme</Label>
-                  <Input
-                    type="time"
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
-                    className="focus:border-indigo-300"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label>Datum</Label>
+                <Input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="focus:border-indigo-300"
+                />
               </div>
+
+              {date && (
+                <div className="space-y-2">
+                  <Label>Slobodni termini</Label>
+                  {slotsLoading ? (
+                    <div className="flex items-center justify-center py-4 text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Učitavanje...
+                    </div>
+                  ) : slots.length === 0 ? (
+                    <p className="text-sm text-muted-foreground bg-amber-50 rounded-lg p-3">
+                      Nema slobodnih termina za ovaj datum. Odaberite drugi datum.
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2 max-h-[180px] overflow-y-auto">
+                      {slots.map((slot) => {
+                        const key = `${slot.start_time}|${slot.end_time}`;
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            className={`px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
+                              slotKey === key
+                                ? 'border-indigo-400 bg-indigo-50 text-indigo-700 shadow-sm'
+                                : 'hover:border-indigo-200 hover:bg-indigo-50/50'
+                            }`}
+                            onClick={() => setSlotKey(key)}
+                          >
+                            {slot.start_time.slice(0, 5)} — {slot.end_time.slice(0, 5)}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label>Ime ljubimca (opcionalno)</Label>
+                <Input
+                  value={petName}
+                  onChange={(e) => setPetName(e.target.value)}
+                  placeholder="Npr. Rex"
+                  className="focus:border-indigo-300"
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label>Napomena (opcionalno)</Label>
                 <Textarea
-                  placeholder="Ime psa, pasmina, dob, problematično ponašanje..."
+                  placeholder="Pasmina, dob, problematično ponašanje..."
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   className="focus:border-indigo-300"
@@ -160,7 +263,12 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
                 <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(1)}>
                   Natrag
                 </Button>
-                <Button type="button" className="flex-1 bg-indigo-500 hover:bg-indigo-600" onClick={() => setStep(3)}>
+                <Button
+                  type="button"
+                  className="flex-1 bg-indigo-500 hover:bg-indigo-600"
+                  disabled={!canAdvanceToStep3}
+                  onClick={() => setStep(3)}
+                >
                   Dalje <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>
@@ -186,15 +294,15 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
                     <p className="text-3xl font-extrabold text-gradient mt-2">{trainer.price_per_hour}&euro;/sat</p>
                   </>
                 )}
-                {date && (
+                {parsedSlot && (
                   <p className="text-sm text-muted-foreground mt-3">
-                    Početak: {date}{time ? ` u ${time}h` : ''}
+                    {date} · {parsedSlot.start_time.slice(0, 5)} — {parsedSlot.end_time.slice(0, 5)}
                   </p>
                 )}
+                {petName && (
+                  <p className="text-xs text-muted-foreground mt-1">Ljubimac: {petName}</p>
+                )}
               </div>
-              <p className="text-xs text-muted-foreground text-center">
-                Klikom na &quot;Pošalji zahtjev&quot; bit ćete preusmjereni na poruke kako biste dogovorili termin s trenerom.
-              </p>
               <div className="flex gap-2">
                 <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(2)}>
                   Natrag
@@ -202,9 +310,17 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
                 <Button
                   type="button"
                   className="flex-1 bg-indigo-500 hover:bg-indigo-600 btn-hover"
+                  disabled={loading}
                   onClick={handleSubmit}
                 >
-                  Pošalji zahtjev
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                      Šaljem...
+                    </>
+                  ) : (
+                    'Pošalji zahtjev'
+                  )}
                 </Button>
               </div>
             </div>

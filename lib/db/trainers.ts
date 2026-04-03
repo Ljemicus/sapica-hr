@@ -83,6 +83,65 @@ export async function getPrograms(trainerId: string): Promise<TrainingProgram[]>
   }
 }
 
+export async function createProgram(
+  trainerId: string,
+  program: Omit<TrainingProgram, 'id' | 'trainer_id'>
+): Promise<TrainingProgram | null> {
+  if (!isSupabaseConfigured()) return null;
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('training_programs')
+      .insert({ ...program, trainer_id: trainerId })
+      .select('id, trainer_id, name, type, duration_weeks, sessions, price, description')
+      .single();
+    if (error || !data) return null;
+    return data as TrainingProgram;
+  } catch {
+    return null;
+  }
+}
+
+export async function updateProgram(
+  programId: string,
+  trainerId: string,
+  updates: Partial<Omit<TrainingProgram, 'id' | 'trainer_id'>>
+): Promise<TrainingProgram | null> {
+  if (!isSupabaseConfigured()) return null;
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('training_programs')
+      .update(updates)
+      .eq('id', programId)
+      .eq('trainer_id', trainerId)
+      .select('id, trainer_id, name, type, duration_weeks, sessions, price, description')
+      .single();
+    if (error || !data) return null;
+    return data as TrainingProgram;
+  } catch {
+    return null;
+  }
+}
+
+export async function deleteProgram(
+  programId: string,
+  trainerId: string
+): Promise<boolean> {
+  if (!isSupabaseConfigured()) return false;
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from('training_programs')
+      .delete()
+      .eq('id', programId)
+      .eq('trainer_id', trainerId);
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
 export async function getTrainerReviews(trainerId: string): Promise<TrainerReview[]> {
   if (!isSupabaseConfigured()) {
     return [];
