@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { MapPin, ArrowRight, Star, Shield, Heart, Scissors, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Star, Shield, Heart, Scissors, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -22,13 +22,6 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: `${BASE_URL}/grooming-zagreb` },
 };
-
-const MOCK_SALONS = [
-  { name: 'Salon Šapica', neighborhood: 'Trešnjevka', rating: 4.9, reviews: 52, price: 30, services: ['Šišanje', 'Kupanje', 'Trimanje'], featured: true },
-  { name: 'Happy Paws Grooming', neighborhood: 'Maksimir', rating: 4.8, reviews: 38, price: 25, services: ['Kupanje', 'Njega kandži', 'Šišanje'], featured: false },
-  { name: 'Lux Pet Spa', neighborhood: 'Novi Zagreb', rating: 5.0, reviews: 29, price: 40, services: ['Spa tretman', 'Šišanje', 'Njega zubi'], featured: true },
-  { name: 'Groomer Marko', neighborhood: 'Dubrava', rating: 4.7, reviews: 21, price: 22, services: ['Šišanje', 'Kupanje', 'Trimanje'], featured: false },
-];
 
 const GROOMING_SERVICES = [
   { name: 'Šišanje i stiliziranje', desc: 'Profesionalno šišanje prema pasmini ili prema želji vlasnika. Uključuje pranje i sušenje.', price: 'od 25€', icon: Scissors },
@@ -218,57 +211,22 @@ export default function GroomingZagreb() {
         </div>
       </section>
 
-      {/* Mock salon listings */}
+      {/* Salon listings — coming soon */}
       <section className="bg-muted/30 py-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-2 font-[var(--font-heading)]">
-              Istaknuti saloni u <span className="text-gradient">Zagrebu</span>
+              Saloni u <span className="text-gradient">Zagrebu</span>
             </h2>
-            <p className="text-muted-foreground mb-8">Najpopularniji grooming saloni prema ocjenama korisnika.</p>
-            <div className="grid sm:grid-cols-2 gap-6">
-              {MOCK_SALONS.map((salon) => (
-                <Card key={salon.name} className="border-0 shadow-md hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="font-bold text-lg">{salon.name}</h3>
-                        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                          <MapPin className="h-3.5 w-3.5" />
-                          {salon.neighborhood}
-                        </div>
-                      </div>
-                      {salon.featured && (
-                        <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border-0 text-xs">
-                          Preporučeno
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1 mb-3">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{salon.rating}</span>
-                      <span className="text-sm text-muted-foreground">({salon.reviews} recenzija)</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5 mb-4">
-                      {salon.services.map((s) => (
-                        <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>
-                      ))}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-purple-600">od {salon.price}€<span className="text-sm font-normal text-muted-foreground">/tretman</span></span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            <div className="text-center mt-10">
-              <Link href="/njega?city=Zagreb">
+            <p className="text-muted-foreground mb-8">
+              Popis verificiranih grooming salona u Zagrebu dolazi uskoro. U međuvremenu, pregledajte dostupne usluge njege na PetParku.
+            </p>
+            <Link href="/njega?city=Zagreb">
               <Button size="lg" className="bg-purple-500 hover:bg-purple-600 text-white rounded-full px-8">
-                  Pogledaj sve salone u Zagrebu
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                Pregledaj usluge njege
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              </Link>
-            </div>
+            </Link>
           </div>
         </div>
       </section>

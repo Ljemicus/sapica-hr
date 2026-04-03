@@ -1,14 +1,8 @@
 /**
  * Adoption data layer.
- * Currently uses static data (adoption is a future feature).
- * When adoption_pets table is created in Supabase, swap to real queries.
+ * Returns empty results until adoption feature is connected to Supabase.
  */
 import {
-  mockAdoptionPets,
-  shelters,
-  getShelterById,
-  getAdoptionPetById,
-  getPetsByShelter,
   formatAge,
   getAgeCategory,
   getAgeCategoryLabel,
@@ -30,19 +24,16 @@ export {
   formatAge,
   getAgeCategory,
   getAgeCategoryLabel,
-  getShelterById,
-  getAdoptionPetById,
-  getPetsByShelter,
 };
 
 export async function getAdoptionPets(): Promise<AdoptionPet[]> {
-  return mockAdoptionPets;
+  return [];
 }
 
-export async function getAdoptionPet(id: string): Promise<AdoptionPet | undefined> {
-  return getAdoptionPetById(id);
+export async function getAdoptionPet(_id: string): Promise<AdoptionPet | undefined> {
+  return undefined;
 }
 
 export async function getShelters(): Promise<Shelter[]> {
-  return shelters;
+  return [];
 }

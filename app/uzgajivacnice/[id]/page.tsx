@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getBreeder, MOCK_BREEDERS } from '@/lib/db/breeders';
+import { getBreeder, getBreeders } from '@/lib/db/breeders';
 import { BreederDetailContent } from './breeder-detail-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
@@ -28,7 +28,8 @@ export default async function BreederPage({ params }: BreederPageProps) {
   if (!breeder) return notFound();
 
   // Get related breeders (same species, different id)
-  const related = MOCK_BREEDERS
+  const allBreeders = getBreeders();
+  const related = allBreeders
     .filter((b) => b.id !== breeder.id && (b.species === breeder.species || b.species === 'both'))
     .slice(0, 3);
 

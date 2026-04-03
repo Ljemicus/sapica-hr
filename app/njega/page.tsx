@@ -120,34 +120,6 @@ export default function GroomingPage() {
         </div>
       </section>
 
-      {/* Before/After Gallery Placeholder */}
-      <section className="py-10 md:py-14 bg-warm-section">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <Badge variant="secondary" className="mb-3 text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-950/30 border-0 rounded-full font-semibold">Galerija</Badge>
-            <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)]">Prije i poslije</h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            {[
-              { label: 'Šišanje', color: 'from-pink-200 to-rose-100 dark:from-pink-900/40 dark:to-rose-900/30' },
-              { label: 'Kupanje', color: 'from-blue-200 to-cyan-100 dark:from-blue-900/40 dark:to-cyan-900/30' },
-              { label: 'Trimanje', color: 'from-amber-200 to-yellow-100 dark:from-amber-900/40 dark:to-yellow-900/30' },
-              { label: 'Nokti', color: 'from-purple-200 to-violet-100 dark:from-purple-900/40 dark:to-violet-900/30' },
-            ].map((item) => (
-              <Card key={item.label} className={`overflow-hidden border-0 shadow-sm rounded-2xl bg-gradient-to-br ${item.color}`}>
-                <CardContent className="p-6 md:p-8 text-center">
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/60 dark:bg-white/10 mx-auto mb-3 flex items-center justify-center">
-                    <Sparkles className="h-8 w-8 md:h-10 md:w-10 text-pink-500 dark:text-pink-400" />
-                  </div>
-                  <p className="font-bold text-sm md:text-base font-[var(--font-heading)]">{item.label}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Demo profil — služi kao primjer prikaza</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Pricing Cards */}
       <section className="py-10 md:py-14">
         <div className="container mx-auto px-4">

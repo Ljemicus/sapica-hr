@@ -62,32 +62,6 @@ export default async function DresuraPage({ searchParams }: DresuraPageProps) {
         </div>
       </section>
 
-      {/* Video Testimonials Placeholder */}
-      <section className="py-10 md:py-14 bg-warm-section">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <Badge variant="secondary" className="mb-3 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 border-0 rounded-full font-semibold">Testimonijali</Badge>
-            <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)]">Što kažu vlasnici</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 max-w-4xl mx-auto">
-            {[
-              { name: 'Marko & Rex', desc: 'Agility trening transformirao je Rexovo ponašanje!', color: 'from-indigo-200 to-blue-100 dark:from-indigo-900/40 dark:to-blue-900/30' },
-              { name: 'Ana & Luna', desc: 'Luna je naučila osnove u samo 4 tjedna.', color: 'from-emerald-200 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/30' },
-              { name: 'Petra & Buddy', desc: 'Profesionalan pristup i puno strpljenja.', color: 'from-amber-200 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/30' },
-            ].map((item) => (
-              <div key={item.name} className={`rounded-2xl bg-gradient-to-br ${item.color} p-6 md:p-8 text-center`}>
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/60 dark:bg-white/10 mx-auto mb-3 flex items-center justify-center">
-                  <GraduationCap className="h-8 w-8 md:h-10 md:w-10 text-indigo-500 dark:text-indigo-400" />
-                </div>
-                <p className="font-bold text-sm md:text-base font-[var(--font-heading)]">{item.name}</p>
-                <p className="text-xs text-muted-foreground mt-1 italic">&ldquo;{item.desc}&rdquo;</p>
-                <p className="text-xs text-muted-foreground mt-2">Video preview još nije aktivan</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <TrainingContent trainers={trainers} initialParams={params} />
 
       {/* Cross-links to related services */}

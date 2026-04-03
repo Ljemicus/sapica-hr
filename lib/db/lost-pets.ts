@@ -1,9 +1,8 @@
-import { createClient } from '@/lib/supabase/server';
-import { isSupabaseConfigured } from './helpers';
-import {
-  getLostPets as mockGetLostPets,
-  getLostPetById as mockGetLostPet,
-} from '@/lib/mock-data';
+/**
+ * Lost-pets data layer.
+ * Seeded lost-pet content disabled — returns empty results.
+ * Will be re-enabled when real lost-pet reports are available.
+ */
 import type { LostPet, LostPetSpecies, LostPetStatus } from '@/lib/types';
 
 interface LostPetFilters {
@@ -14,57 +13,10 @@ interface LostPetFilters {
   fields?: 'full' | 'homepage-card';
 }
 
-export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> {
-  if (!isSupabaseConfigured()) {
-    return mockGetLostPets(filters).slice(0, filters?.limit ?? Number.POSITIVE_INFINITY);
-  }
-  try {
-    const supabase = await createClient();
-    const selectClause = filters?.fields === 'homepage-card'
-      ? 'id, name, species, breed, image_url, city, neighborhood, date_lost'
-      : '*';
-
-    let query = supabase
-      .from('lost_pets')
-      .select(selectClause)
-      .order('date_lost', { ascending: false });
-
-    if (filters?.city) {
-      query = query.eq('city', filters.city);
-    }
-    if (filters?.species) {
-      query = query.eq('species', filters.species);
-    }
-    if (filters?.status) {
-      query = query.eq('status', filters.status);
-    }
-
-    if (filters?.limit != null) {
-      query = query.limit(filters.limit);
-    }
-
-    const { data, error } = await query;
-    if (error || !data) return [];
-    return data as unknown as LostPet[];
-  } catch {
-    return [];
-  }
+export async function getLostPets(_filters?: LostPetFilters): Promise<LostPet[]> {
+  return [];
 }
 
-export async function getLostPet(id: string): Promise<LostPet | null> {
-  if (!isSupabaseConfigured()) {
-    return mockGetLostPet(id) ?? null;
-  }
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('lost_pets')
-      .select('*')
-      .eq('id', id)
-      .single();
-    if (error || !data) return null;
-    return data as LostPet;
-  } catch {
-    return null;
-  }
+export async function getLostPet(_id: string): Promise<LostPet | null> {
+  return null;
 }

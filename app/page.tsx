@@ -363,7 +363,7 @@ export default async function HomePage() {
                 icon: Scissors,
                 color: 'from-pink-500 to-rose-500',
                 href: '/njega',
-                stat: '8 salona',
+                stat: 'Saloni',
                 image: '/images/services/02-grooming.jpg',
               },
               {
@@ -372,7 +372,7 @@ export default async function HomePage() {
                 icon: GraduationCap,
                 color: 'from-indigo-500 to-blue-500',
                 href: '/dresura',
-                stat: '6 trenera',
+                stat: 'Treneri',
                 image: '/images/services/03-dresura-agility.jpg',
               },
               {
@@ -381,7 +381,7 @@ export default async function HomePage() {
                 icon: BookOpen,
                 color: 'from-amber-500 to-orange-500',
                 href: '/zajednica',
-                stat: '8 članaka',
+                stat: 'Članci',
                 image: '/images/services/06-community.jpg',
               },
               {
@@ -390,7 +390,7 @@ export default async function HomePage() {
                 icon: Users,
                 color: 'from-teal-500 to-emerald-500',
                 href: '/forum',
-                stat: '15 tema',
+                stat: 'Zajednica',
                 image: '/images/services/07-hero-puppy.jpg',
               },
             ].map((item, i) => (

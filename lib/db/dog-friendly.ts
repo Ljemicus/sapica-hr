@@ -1,10 +1,8 @@
 /**
  * Dog-friendly locations data layer.
- * Currently uses static data.
- * When dog_friendly_locations table is created in Supabase, swap to real queries.
+ * Returns empty results until dog_friendly_locations table is created in Supabase.
  */
 import {
-  mockDogFriendlyLocations,
   CATEGORY_LABELS,
   CITY_LIST,
   type DogFriendlyLocation,
@@ -15,9 +13,9 @@ export type { DogFriendlyLocation };
 export { CATEGORY_LABELS, CITY_LIST };
 
 export async function getDogFriendlyLocations(): Promise<DogFriendlyLocation[]> {
-  return mockDogFriendlyLocations;
+  return [];
 }
 
-export async function getDogFriendlyLocation(id: string): Promise<DogFriendlyLocation | undefined> {
-  return mockDogFriendlyLocations.find(l => l.id === id);
+export async function getDogFriendlyLocation(_id: string): Promise<DogFriendlyLocation | undefined> {
+  return undefined;
 }

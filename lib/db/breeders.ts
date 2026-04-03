@@ -1,20 +1,16 @@
 /**
  * Breeders data layer.
- * Currently uses static data from mock-breeders.ts.
- * Will be migrated to Supabase when breeders table is created.
- * @deprecated Static data — migrate to Supabase
+ * Will be connected to Supabase when breeders table is created.
+ * Returns empty results until real data is available.
  */
-import { getBreeders as staticGetBreeders, getBreeder as staticGetBreeder, MOCK_BREEDERS } from '@/lib/mock-breeders';
 import type { Breeder } from '@/lib/mock-breeders';
 
 export type { Breeder };
 
-export function getBreeders(filters?: { city?: string; species?: string }): Breeder[] {
-  return staticGetBreeders(filters);
+export function getBreeders(_filters?: { city?: string; species?: string }): Breeder[] {
+  return [];
 }
 
-export function getBreeder(id: string): Breeder | undefined {
-  return staticGetBreeder(id);
+export function getBreeder(_id: string): Breeder | undefined {
+  return undefined;
 }
-
-export { MOCK_BREEDERS };

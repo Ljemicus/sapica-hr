@@ -50,16 +50,13 @@ export default async function UzgajivacnicePage({ searchParams }: UzgajivacniceP
                 <Baby className="h-3.5 w-3.5 mr-1.5" />
                 Uzgajivači
               </Badge>
-              <Badge variant="outline" className="text-xs px-3 py-1 rounded-full">
-                Demo podaci
-              </Badge>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-5 animate-fade-in-up delay-100 font-[var(--font-heading)]">
-              🐾 Pronađite{' '}
+              Pronađite{' '}
               <span className="text-gradient">uzgajivače</span>
             </h1>
             <p className="text-base md:text-lg text-muted-foreground mb-6 animate-fade-in-up delay-200 leading-relaxed max-w-xl mx-auto">
-              Pregledajte demo imenik uzgajivača i dostupnih legala. Ovaj dio još nije spojen na live direktorij partnera.
+              Imenik certificiranih uzgajivača u Hrvatskoj. Ovaj dio se trenutno priprema — uskoro dostupan.
             </p>
           </div>
         </div>

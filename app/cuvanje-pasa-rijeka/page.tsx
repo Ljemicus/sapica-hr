@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { MapPin, ArrowRight, Star, Shield, Clock, Heart, Mountain, Anchor, Eye } from 'lucide-react';
+import { MapPin, ArrowRight, Shield, Clock, Heart, Mountain, Anchor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -22,13 +22,6 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: `${BASE_URL}/cuvanje-pasa-rijeka` },
 };
-
-const EXAMPLE_SITTERS = [
-  { name: 'Nina V.', neighborhood: 'Trsat', rating: 4.9, reviews: 34, price: 17, services: ['Smještaj', 'Šetnja'], superhost: true },
-  { name: 'Damir H.', neighborhood: 'Kantrida', rating: 4.8, reviews: 22, price: 14, services: ['Dnevna njega', 'Šetnja'], superhost: false },
-  { name: 'Sara B.', neighborhood: 'Sušak', rating: 5.0, reviews: 27, price: 18, services: ['Smještaj', 'Dnevna njega'], superhost: true },
-  { name: 'Matej G.', neighborhood: 'Kozala', rating: 4.7, reviews: 15, price: 12, services: ['Šetnja', 'Posjeta'], superhost: false },
-];
 
 const FAQS = [
   {
@@ -260,65 +253,6 @@ export default function CuvanjePasaRijeka() {
                 susret gdje se mogu upoznati s vašim psom i dogovoriti sve detalje njege.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Example sitter listings */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 mb-2">
-            <h2 className="text-3xl font-bold font-[var(--font-heading)]">
-              Istaknuti sitteri u <span className="text-gradient">Rijeci</span>
-            </h2>
-            <Badge variant="outline" className="text-xs px-3 py-1 rounded-full flex-shrink-0">
-              <Eye className="h-3 w-3 mr-1" />
-              Primjer prikaza
-            </Badge>
-          </div>
-          <p className="text-muted-foreground mb-8">Ilustrativni profili — stvarne sittere pronađite putem pretrage.</p>
-          <div className="grid sm:grid-cols-2 gap-6">
-            {EXAMPLE_SITTERS.map((sitter) => (
-              <Card key={sitter.name} className="border-0 shadow-md hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-bold text-lg">{sitter.name}</h3>
-                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                        <MapPin className="h-3.5 w-3.5" />
-                        {sitter.neighborhood}
-                      </div>
-                    </div>
-                    {sitter.superhost && (
-                      <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300 border-0 text-xs">
-                        Superhost
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 mb-3">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold">{sitter.rating}</span>
-                    <span className="text-sm text-muted-foreground">({sitter.reviews} recenzija)</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {sitter.services.map((s) => (
-                      <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>
-                    ))}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-orange-600">od {sitter.price}€<span className="text-sm font-normal text-muted-foreground">/dan</span></span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Link href="/pretraga?city=Rijeka">
-              <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-8">
-                Pogledaj sve sittere u Rijeci
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              </Link>
           </div>
         </div>
       </section>
