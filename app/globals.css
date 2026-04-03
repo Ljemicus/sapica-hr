@@ -344,7 +344,7 @@
 
 /* Paw pattern background */
 .paw-pattern {
-  background-image: url('/images/paw-pattern.svg');
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60' fill='none'%3E%3Cg opacity='0.4' fill='%23f97316'%3E%3Cellipse cx='30' cy='38' rx='6' ry='7'/%3E%3Cellipse cx='20' cy='25' rx='3.5' ry='4.5'/%3E%3Cellipse cx='40' cy='25' rx='3.5' ry='4.5'/%3E%3Cellipse cx='15' cy='34' rx='3' ry='4'/%3E%3Cellipse cx='45' cy='34' rx='3' ry='4'/%3E%3C/g%3E%3C/svg%3E");
   background-size: 60px 60px;
 }
 
@@ -475,5 +475,48 @@ textarea:focus {
 @media (min-width: 768px) {
   .has-bottom-nav {
     padding-bottom: 0;
+  }
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-float,
+  .animate-slide-in-left,
+  .animate-slide-in-right,
+  .animate-scale-in,
+  .animate-gradient,
+  .animate-count-up,
+  .animate-shimmer,
+  .animate-slide-up {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .hero-gradient,
+  .dark .hero-gradient {
+    animation: none !important;
+    background-size: 100% 100% !important;
+  }
+  .card-hover:hover {
+    transform: none !important;
+  }
+  .btn-hover:hover {
+    transform: none !important;
+  }
+}
+
+/* ── Mobile touch-target enforcement ── */
+/* Ensure interactive elements meet 44×44px minimum on touch devices */
+@media (pointer: coarse) {
+  a, button, [role="button"], [role="link"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  /* Override for inline decorative links that don't need it */
+  .touch-auto {
+    min-height: auto;
+    min-width: auto;
   }
 }

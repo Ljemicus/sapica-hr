@@ -134,6 +134,7 @@ export default async function HomePage() {
                 sizes="(max-width: 672px) 100vw, 672px"
                 className="w-full h-44 md:h-60 lg:h-68 object-cover rounded-3xl shadow-xl shadow-orange-200/30 dark:shadow-orange-900/20 border-4 border-white/80 dark:border-white/10"
                 priority
+                fetchPriority="high"
               />
             </div>
 
@@ -158,7 +159,7 @@ export default async function HomePage() {
                     aria-label="Vrsta usluge"
                   />
                 </div>
-                <Button type="submit" size="lg" className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 h-12 md:h-13 px-8 rounded-xl md:rounded-full btn-hover shadow-lg shadow-orange-300/40 dark:shadow-orange-900/30 text-base font-semibold">
+                <Button type="submit" size="lg" aria-label="Pretraži sittere" className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 h-12 md:h-13 px-8 rounded-xl md:rounded-full btn-hover shadow-lg shadow-orange-300/40 dark:shadow-orange-900/30 text-base font-semibold">
                   <Search className="h-4 w-4 mr-2" />
                   Pretraži
                 </Button>
@@ -217,7 +218,7 @@ export default async function HomePage() {
               <Link key={service.type} href={`/pretraga?service=${service.type}`}>
                 <Card className={`group overflow-hidden card-hover border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${Math.min((i + 1) * 100, 700)}`}>
                   <div className="relative h-44 overflow-hidden">
-                    <Image src={service.image} alt={service.title} fill loading="lazy" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <Image src={service.image} alt={service.title} fill loading="lazy" decoding="async" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                     <div className={`absolute top-4 left-4 inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br ${service.color} text-white shadow-lg`}>
                       <service.icon className="h-6 w-6" />
@@ -313,6 +314,7 @@ export default async function HomePage() {
         </div>
       </section>
 
+
       {featuredSitters.length > 0 && (
         <section className="py-16 md:py-24" aria-label="Popularni sitteri">
           <div className="container mx-auto px-4">
@@ -385,7 +387,7 @@ export default async function HomePage() {
                 <Card className="group overflow-hidden rounded-2xl border-0 shadow-sm card-hover">
                   <CardContent className="p-0">
                     <div className="h-32 md:h-36 relative flex items-end p-4 overflow-hidden">
-                      <Image src={city.image} alt={city.name} fill loading="lazy" sizes="(min-width: 1024px) 16vw, (min-width: 768px) 30vw, 46vw" className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <Image src={city.image} alt={city.name} fill loading="lazy" decoding="async" sizes="(min-width: 1024px) 16vw, (min-width: 768px) 30vw, 46vw" className="object-cover group-hover:scale-110 transition-transform duration-500" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/5" />
                       <div className="relative">
                         <h3 className="text-white font-extrabold text-lg leading-none drop-shadow-sm font-[var(--font-heading)]">{city.name}</h3>
@@ -456,7 +458,7 @@ export default async function HomePage() {
                     <h3 className="font-bold text-lg mb-2 group-hover:text-orange-500 transition-colors font-[var(--font-heading)]">{item.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed mb-4">{item.description}</p>
                     <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-4">
-                      <Image src={item.image} alt={item.title} fill loading="lazy" sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 92vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <Image src={item.image} alt={item.title} fill loading="lazy" decoding="async" sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 92vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
                     </div>
                     <Badge variant="secondary" className="bg-accent text-muted-foreground rounded-full">{item.stat}</Badge>
                     <div className="mt-3 text-sm font-semibold text-teal-600 dark:text-teal-400 flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

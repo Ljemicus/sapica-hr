@@ -16,6 +16,15 @@ const csp = [
 ].join('; ');
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: '/treneri', destination: '/dresura', permanent: true },
+      { source: '/groomeri', destination: '/njega', permanent: true },
+      { source: '/sitters', destination: '/pretraga', permanent: true },
+      { source: '/groomers', destination: '/njega', permanent: true },
+      { source: '/trainers', destination: '/dresura', permanent: true },
+    ];
+  },
   async headers() {
     return [{
       source: '/(.*)',
@@ -34,6 +43,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: '*.supabase.co' },
     ],
+    formats: ['image/avif', 'image/webp'],
   },
 };
 

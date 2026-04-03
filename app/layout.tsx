@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { Inter, Nunito } from 'next/font/google';
 import './globals.css';
@@ -10,7 +10,6 @@ import { CartProvider } from '@/lib/cart-context';
 import { LanguageProvider } from '@/lib/i18n';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { DeferredUI } from '@/components/shared/deferred-ui';
-import { ChatWidget } from '@/components/shared/chat-widget';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -21,7 +20,7 @@ const inter = Inter({
 const nunito = Nunito({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-heading',
-  weight: ['400', '600', '700', '800', '900'],
+  weight: ['600', '700', '800'],
   display: 'swap',
 });
 
@@ -84,6 +83,13 @@ export const metadata: Metadata = {
   },
 };
 
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  minimumScale: 1,
+  themeColor: '#f97316',
+};
 export default function RootLayout({
   children,
 }: {
@@ -93,6 +99,8 @@ export default function RootLayout({
     <html lang="hr" className={`${inter.variable} ${nunito.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta name="theme-color" content="#f97316" />
         <link rel="preconnect" href="https://hmtlcgjcxhjecsbmmxol.supabase.co" />
         <link rel="dns-prefetch" href="https://hmtlcgjcxhjecsbmmxol.supabase.co" />
@@ -121,7 +129,6 @@ export default function RootLayout({
             <Footer />
             <BottomNav />
             <DeferredUI />
-            <ChatWidget />
           </CartProvider>
         </AuthProvider>
       </body>

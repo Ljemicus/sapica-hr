@@ -18,6 +18,11 @@ const CookieConsent = dynamic(
   () => import('@/components/shared/cookie-consent').then((mod) => mod.CookieConsent)
 );
 
+// Lazy-load chat widget — not needed during initial paint
+const ChatWidget = dynamic(
+  () => import('@/components/shared/chat-widget').then((mod) => mod.ChatWidget)
+);
+
 export function DeferredUI() {
   return (
     <>
@@ -25,6 +30,7 @@ export function DeferredUI() {
       <PushNotificationPrompt />
       <Toaster position="top-right" richColors />
       <CookieConsent />
+      <ChatWidget />
     </>
   );
 }
