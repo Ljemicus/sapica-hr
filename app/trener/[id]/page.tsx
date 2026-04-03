@@ -5,6 +5,7 @@ import { TrainerProfile } from './trainer-profile';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { shouldIndexTrainer, robotsMeta } from '@/lib/seo/indexability';
 import { TRAINING_TYPE_LABELS } from '@/lib/types';
+import { getTrustEligibilityForTrainer } from '@/lib/trust/bridge';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -16,7 +17,9 @@ export async function generateMetadata({ params }: TrainerPageProps): Promise<Me
   const { id } = await params;
   const trainer = await getTrainer(id);
   if (!trainer) notFound();
-  const indexable = shouldIndexTrainer(trainer);
+
+  const trust = await getTrustEligibilityForTrainer(trainer);
+  const indexable = trust.eligible && shouldIndexTrainer(trainer);
   const specList = trainer.specializations.map(s => TRAINING_TYPE_LABELS[s]).join(', ');
   const desc = `${trainer.name} — trener pasa u ${trainer.city}. Specijalizacije: ${specList}. ${trainer.review_count > 0 ? `Ocjena ${trainer.rating.toFixed(1)}/5 (${trainer.review_count} recenzija). ` : ''}${trainer.certified ? 'Certificiran. ' : ''}Zakažite trening putem PetParka.`;
   return {
@@ -46,6 +49,11 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
   const { id } = await params;
   const trainer = await getTrainer(id);
   if (!trainer) {
+    notFound();
+  }
+
+  const trust = await getTrustEligibilityForTrainer(trainer);
+  if (!trust.eligible) {
     notFound();
   }
 

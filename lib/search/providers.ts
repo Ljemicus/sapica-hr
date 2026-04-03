@@ -1,6 +1,7 @@
 import { getGroomers, getSitters, getTrainers } from '@/lib/db';
 import type { ServiceType } from '@/lib/types';
 import type { UnifiedProvider, ProviderCategory } from '@/app/pretraga/types';
+import { getTrustEligibilityByUserId, getTrustEligibilityForGroomer, getTrustEligibilityForTrainer } from '@/lib/trust/bridge';
 
 export type ProviderSort = 'rating' | 'reviews' | 'price';
 
@@ -112,6 +113,8 @@ export async function getUnifiedProviders(params: ProviderSearchParams): Promise
   const providers: UnifiedProvider[] = [];
 
   for (const s of sitters) {
+    const trust = await getTrustEligibilityByUserId(s.user_id);
+    if (!trust.eligible) continue;
     const prices = Object.values(s.prices).filter((p): p is number => typeof p === 'number');
     providers.push({
       id: s.user_id,
@@ -134,6 +137,8 @@ export async function getUnifiedProviders(params: ProviderSearchParams): Promise
   }
 
   for (const g of groomers) {
+    const trust = await getTrustEligibilityForGroomer(g);
+    if (!trust.eligible) continue;
     const prices = Object.values(g.prices || {}).filter((p): p is number => typeof p === 'number');
     providers.push({
       id: g.id,
@@ -156,6 +161,8 @@ export async function getUnifiedProviders(params: ProviderSearchParams): Promise
   }
 
   for (const t of trainers) {
+    const trust = await getTrustEligibilityForTrainer(t);
+    if (!trust.eligible) continue;
     providers.push({
       id: t.id,
       name: t.name,
