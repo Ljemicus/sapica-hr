@@ -268,7 +268,7 @@ export default function CuvanjePasaRijeka() {
               {[
                 { icon: Shield, title: 'Verificirani sitteri', desc: 'Provjera identiteta i iskustva za svakog sittera. Samo pouzdani dobivaju pristup platformi.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
                 { icon: Heart, title: 'Nastali u Rijeci', desc: 'PetPark je osnovan u Rijeci. Poznajemo grad, zajednicu i potrebe lokalnih vlasnika ljubimaca.', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' },
-                { icon: Clock, title: 'Brza podrška', desc: 'Naš tim podrške dostupan je 7 dana u tjednu. Uvijek smo tu kad vam treba pomoć.', color: 'text-teal-500', bg: 'bg-teal-50 dark:bg-teal-950/20' },
+                { icon: Clock, title: 'Podrška pon–sub', desc: 'Naš tim podrške dostupan je pon–sub od 8 do 20h. Tu smo kad vam treba pomoć.', color: 'text-teal-500', bg: 'bg-teal-50 dark:bg-teal-950/20' },
               ].map((item) => (
                 <Card key={item.title} className="border-0 shadow-sm text-center">
                   <CardContent className="p-6">

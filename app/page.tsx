@@ -181,7 +181,7 @@ export default async function HomePage() {
               </div>
               <div className="hidden sm:flex items-center gap-2">
                 <PhoneCall className="h-4 w-4 text-rose-400" />
-                <span>Podrška 7 dana u tjednu</span>
+                <span>Podrška pon–sub 8–20h</span>
               </div>
             </div>
           </div>
@@ -287,14 +287,14 @@ export default async function HomePage() {
                 <CreditCard className="h-6 w-6 text-blue-600" />
               </div>
               <h3 className="font-bold text-base font-[var(--font-heading)]">Sigurno plaćanje</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">Plaćanje ide na escrow — sitter prima novac tek nakon završene usluge. Ako nešto krene po krivu, možete zatražiti povrat sredstava.</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">Plaćanje je sigurno i zaštićeno putem platforme. Ako nešto krene po krivu, kontaktirajte nas i razmotrimo povrat sredstava.</p>
             </div>
             <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-rose-100/60 dark:border-rose-900/30 flex flex-col gap-3 animate-fade-in-up delay-200">
               <div className="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center">
                 <PhoneCall className="h-6 w-6 text-rose-500" />
               </div>
-              <h3 className="font-bold text-base font-[var(--font-heading)]">Podrška 7 dana u tjednu</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">Tim PetParka dostupan je svaki dan od 8 do 22h. Ako nešto nije u redu — javljate se nama, a mi rješavamo.</p>
+              <h3 className="font-bold text-base font-[var(--font-heading)]">Podrška pon–sub 8–20h</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">Tim PetParka dostupan je pon–sub od 8 do 20h. Ako nešto nije u redu — javljate se nama i zajedno tražimo rješenje.</p>
             </div>
             <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-amber-100/60 dark:border-amber-900/30 flex flex-col gap-3 animate-fade-in-up delay-300">
               <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center">
@@ -308,7 +308,7 @@ export default async function HomePage() {
             <Shield className="h-8 w-8 mx-auto mb-3 opacity-90" />
             <h3 className="text-xl font-extrabold mb-2 font-[var(--font-heading)]">PetPark garancija</h3>
             <p className="text-white/85 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
-              Ako usluga nije pružena kako je dogovoreno, vraćamo vam novac. Bez kompliciranja, bez dugih čekanja. To je naše obećanje svakom vlasniku.
+              Ako usluga nije pružena kako je dogovoreno, odmah se javljate nama. Svaki slučaj razmatramo pojedinačno i radimo na pravednom rješenju.
             </p>
           </div>
         </div>

@@ -32,7 +32,7 @@ export default function PrivatnostPage() {
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Voditelj obrade podataka</h2>
             <p className="text-gray-600 leading-relaxed mb-3">
-              Voditelj obrade vaših osobnih podataka je PetPark d.o.o., sa sjedištem u Rijeci, Hrvatska,
+              Voditelj obrade vaših osobnih podataka je PetPark (petpark.hr), platforma sa sjedištem u Rijeci, Hrvatska,
               dostupna na adresi{' '}
               <a href="https://petpark.hr" className="text-orange-600 hover:underline">petpark.hr</a>.
             </p>

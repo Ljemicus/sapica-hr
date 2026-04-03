@@ -249,7 +249,7 @@ export default function CuvanjePasaSplit() {
                 tjedna unaprijed. Ljeto je vršna sezona i najtraženiji sitteri se brzo popune.
                 Upoznajte sittera s vašim psom prije rezervacije i obavezno ostavite detaljne
                 upute o hranjenju, lijekovima i posebnim potrebama. S PetParkom imate sigurnost
-                verificiranog sittera, osiguranja i korisničke podrške na raspolaganju 7 dana u tjednu.
+                verificiranog sittera i korisničke podrške dostupne pon–sub 8–20h.
               </p>
             </div>
           </div>
@@ -266,7 +266,7 @@ export default function CuvanjePasaSplit() {
             <div className="grid sm:grid-cols-3 gap-6">
               {[
                 { icon: Shield, title: 'Verificirani sitteri', desc: 'Svaki sitter prolazi provjeru identiteta i iskustva. Samo pouzdani sitteri dobivaju pristup platformi.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
-                { icon: Heart, title: 'Osiguranje uključeno', desc: 'Svaka rezervacija pokrivena je osiguranjem do 500€ za hitne veterinarske troškove.', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' },
+                { icon: Heart, title: 'Sigurna platforma', desc: 'Sve rezervacije prolaze kroz platformu — transparentno plaćanje i komunikacija na jednom mjestu.', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' },
                 { icon: Clock, title: 'Lokalni sitteri', desc: 'Sitteri iz vašeg kvarta koji poznaju Split, lokalne parkove i specifičnosti mediteranske klime.', color: 'text-teal-500', bg: 'bg-teal-50 dark:bg-teal-950/20' },
               ].map((item) => (
                 <Card key={item.title} className="border-0 shadow-sm text-center">

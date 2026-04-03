@@ -38,7 +38,7 @@ const FAQS = [
   },
   {
     q: 'Što ako se moj pas razboli tijekom čuvanja?',
-    a: 'Svi PetPark sitteri imaju upute za postupanje u hitnim situacijama. Sitter vas odmah kontaktira i vodi ljubimca veterinaru. PetPark nudi osiguranje koje pokriva troškove hitne veterinarske pomoći do 500€.',
+    a: 'Svi PetPark sitteri imaju upute za postupanje u hitnim situacijama. Sitter vas odmah kontaktira i zajedno reagirate. Preporučujemo da unaprijed dogovorite veterinara i hitni kontakt.',
   },
 ];
 
@@ -265,7 +265,7 @@ export default function CuvanjePasaZagreb() {
             <div className="grid sm:grid-cols-3 gap-6">
               {[
                 { icon: Shield, title: 'Verificirani sitteri', desc: 'Svaki sitter prolazi provjeru identiteta i iskustva. Samo pouzdani sitteri dobivaju pristup platformi.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
-                { icon: Heart, title: 'Osiguranje uključeno', desc: 'Svaka rezervacija pokrivena je osiguranjem do 500€ za hitne veterinarske troškove.', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' },
+                { icon: Heart, title: 'Sigurna platforma', desc: 'Sve rezervacije prolaze kroz platformu — transparentno plaćanje i komunikacija na jednom mjestu.', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' },
                 { icon: Clock, title: 'Brza rezervacija', desc: 'Pronađite sittera, pošaljite upit i rezervirajte — sve u roku od nekoliko minuta.', color: 'text-teal-500', bg: 'bg-teal-50 dark:bg-teal-950/20' },
               ].map((item) => (
                 <Card key={item.title} className="border-0 shadow-sm text-center">

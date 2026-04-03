@@ -24,11 +24,11 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
     },
     {
       q: 'Mogu li otkazati rezervaciju?',
-      a: 'Da, besplatno otkazivanje do 48 sati prije početka. Nakon toga se naplaćuje 50% cijene prve noći.',
+      a: 'Da, besplatno otkazivanje do 24 sata prije početka. Otkazivanja unutar 24 sata podliježu naknadi od 50%. Detalji su navedeni u Uvjetima korištenja.',
     },
     {
       q: 'Što ako se ljubimac razboli tijekom čuvanja?',
-      a: 'Sitter vas odmah kontaktira i vodi ljubimca veterinaru. Troškove hitne veterinarske pomoći pokriva naše osiguranje do 500€.',
+      a: 'Sitter vas odmah kontaktira i zajedno reagirate. U hitnim slučajevima preporučujemo da s vlasnicima unaprijed dogovorite veterinara i kontakt.',
     },
     {
       q: 'Kako funkcioniraju recenzije?',
@@ -42,7 +42,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
   sitteri: [
     {
       q: 'Kako postati sitter?',
-      a: 'Registrirajte se, ispunite profil, dodajte slike i opišite iskustvo. Naš tim verificira profil u roku 24-48 sati.',
+      a: 'Registrirajte se, ispunite profil, dodajte slike i opišite iskustvo. Naš tim pregledava zahtjev i javljamo se u roku nekoliko radnih dana.',
     },
     {
       q: 'Kako funkcionira verifikacija?',
@@ -50,7 +50,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
     },
     {
       q: 'Koliko mogu zaraditi?',
-      a: 'Ovisi o lokaciji, uslugama i cijenama. Aktivni sitteri zarađuju 300-800€ mjesečno. Vi postavljate vlastite cijene.',
+      a: 'Ovisi o lokaciji, uslugama i cijenama. Prihodi ovise o gradu, broju rezervacija i cijenama. Vi postavljate vlastite cijene.',
     },
     {
       q: 'Mogu li odbiti rezervaciju?',
@@ -82,11 +82,11 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
   sigurnost: [
     {
       q: 'Kako PetPark osigurava sigurnost ljubimaca?',
-      a: 'Svi sitteri prolaze verifikaciju, imamo sustav recenzija, osiguranje i podršku 7/7. GPS tracking šetnji za dodatni mir.',
+      a: 'Svi sitteri prolaze verifikaciju, imamo sustav recenzija i podršku pon–sub 8–20h. Komunikacija sa sitterom u stvarnom vremenu za dodatni mir.',
     },
     {
       q: 'Što ako imam problem sa sitterom?',
-      a: 'Kontaktirajte našu podršku putem chata ili emaila. Reagiramo u roku od 2 sata tijekom radnog vremena.',
+      a: 'Kontaktirajte našu podršku putem emaila info@petpark.hr. Odgovaramo pon–sub 8–20h, u roku od jednog radnog dana.',
     },
     {
       q: 'Jesu li moji podaci sigurni?',
@@ -94,7 +94,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
     },
     {
       q: 'Ima li PetPark osiguranje?',
-      a: 'Da! Svaka aktivna rezervacija je pokrivena osiguranjem koje uključuje veterinarske troškove do 500€ i odgovornost prema trećima.',
+      a: 'Radimo na uvođenju osiguranja za rezervacije. Detalje o pokriću pratite na stranici uvjeta korištenja ili nas kontaktirajte.',
     },
   ],
   opcenito: [
