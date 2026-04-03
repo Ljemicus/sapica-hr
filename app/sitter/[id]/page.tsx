@@ -7,6 +7,8 @@ import { SitterProfileContent } from './sitter-profile-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { shouldIndexSitter, robotsMeta } from '@/lib/seo/indexability';
 import { SERVICE_LABELS } from '@/lib/types';
+import { getProviderApplication } from '@/lib/db/provider-applications';
+import { getProviderPublicGate } from '@/lib/trust/gate';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -53,11 +55,17 @@ export async function generateMetadata({ params }: SitterPageProps): Promise<Met
 export default async function SitterPage({ params }: SitterPageProps) {
   const { id } = await params;
 
-  const [{ profile, reviews, availability }, bookingData] = await Promise.all([
+  const [{ profile, reviews, availability }, bookingData, providerApplication] = await Promise.all([
     getSitterPageData(id),
     getSitterBookingData(),
+    getProviderApplication(id),
   ]);
   if (!profile) return notFound();
+
+  if (providerApplication) {
+    const gate = await getProviderPublicGate(providerApplication.id);
+    if (!gate.allowed) return notFound();
+  }
 
   const jsonLd = {
     '@context': 'https://schema.org',

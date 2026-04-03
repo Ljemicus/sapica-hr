@@ -4,7 +4,9 @@ import { getAuthUser } from '@/lib/auth';
 import { getProviderApplication } from '@/lib/db/provider-applications';
 import { getProviderConnectStatus } from '@/lib/provider-connect';
 import { updateProviderStripeState } from '@/lib/db/provider-applications';
+import { getVerification } from '@/lib/db/provider-verifications';
 import { ProviderOnboardingForm } from './provider-onboarding-form';
+import { ProviderIdentityVerification } from '@/components/provider-identity-verification';
 
 export const metadata: Metadata = {
   title: 'Onboarding providera | PetPark',
@@ -39,11 +41,22 @@ export default async function ProviderOnboardingPage({
     }
   }
 
+  const identityVerification = application
+    ? await getVerification(application.id, 'identity')
+    : null;
+
   return (
-    <ProviderOnboardingForm
-      user={user}
-      initialApplication={application}
-      stripeReturn={stripeReturn}
-    />
+    <div className="space-y-6">
+      <ProviderOnboardingForm
+        user={user}
+        initialApplication={application}
+        stripeReturn={stripeReturn}
+      />
+      {application && (
+        <div className="container mx-auto px-4 max-w-2xl pb-8">
+          <ProviderIdentityVerification verification={identityVerification} />
+        </div>
+      )}
+    </div>
   );
 }

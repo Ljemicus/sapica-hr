@@ -56,3 +56,27 @@ export {
   getInquiriesByListing,
   type AdoptionInquiry,
 } from './adoption-inquiries';
+
+// Trust Layer
+export {
+  getVerification,
+  upsertVerification,
+  updateVerificationReview,
+  getVerificationById,
+  getPendingVerifications,
+  getAllVerifications,
+} from './provider-verifications';
+export {
+  createProviderDocument,
+  getDocumentsByVerification,
+  getDocumentsByProvider,
+} from './provider-documents';
+export {
+  grantBadge,
+  revokeBadge,
+  getActiveBadges,
+} from './provider-badges';
+export {
+  logAdminAction,
+  getAuditLogs,
+} from './audit-logs';

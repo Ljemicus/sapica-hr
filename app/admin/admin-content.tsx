@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Users, ClipboardList, Shield, CheckCircle, XCircle, Search, MapPin, FileCheck } from 'lucide-react';
+import { Users, ClipboardList, Shield, CheckCircle, XCircle, Search, MapPin, FileCheck, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { STATUS_LABELS, SERVICE_LABELS, PROVIDER_APPLICATION_STATUS_LABELS, PROVIDER_APPLICATION_STATUS_COLORS, type User, type Booking, type SitterProfile, type BookingStatus, type ServiceType, type ProviderApplication, type ProviderApplicationStatus } from '@/lib/types';
 import { toast } from 'sonner';
+import { AdminVerificationQueue } from '@/components/admin-verification-queue';
 
 const statusColors: Record<BookingStatus, string> = {
   pending: 'bg-yellow-50 text-yellow-700 border-yellow-200',
@@ -108,7 +109,7 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
       </div>
 
       <Tabs defaultValue="users" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 h-12">
+        <TabsList className="grid w-full grid-cols-5 h-12">
           <TabsTrigger value="users" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><Users className="h-4 w-4 mr-1.5" /> Korisnici</TabsTrigger>
           <TabsTrigger value="bookings" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><ClipboardList className="h-4 w-4 mr-1.5" /> Rezervacije</TabsTrigger>
           <TabsTrigger value="verification" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><Shield className="h-4 w-4 mr-1.5" /> Verifikacija</TabsTrigger>
@@ -119,6 +120,9 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
                 {pendingApplications.length}
               </span>
             )}
+          </TabsTrigger>
+          <TabsTrigger value="identity" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700">
+            <ShieldCheck className="h-4 w-4 mr-1.5" /> Identitet
           </TabsTrigger>
         </TabsList>
 
@@ -328,6 +332,10 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="identity" className="space-y-4 animate-fade-in">
+          <AdminVerificationQueue />
         </TabsContent>
       </Tabs>
     </div>

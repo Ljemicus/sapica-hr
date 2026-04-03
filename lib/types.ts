@@ -827,6 +827,11 @@ export type AdoptionListingCard = Pick<
   publisher_display_name: string | null;
 };
 
+// ── Trust Layer (canonical types in lib/types/trust.ts) ──
+// Re-export PublicStatus for use in ProviderApplication interface
+export type { PublicStatus } from '@/lib/types/trust';
+import type { PublicStatus } from '@/lib/types/trust';
+
 // ── Provider Onboarding ──
 
 export type ProviderApplicationStatus = 'draft' | 'pending_verification' | 'restricted' | 'active' | 'rejected';
@@ -886,6 +891,11 @@ export interface ProviderApplication {
   admin_notes: string | null;
   reviewed_by: string | null;
   reviewed_at: string | null;
+
+  // Trust layer
+  public_status: PublicStatus;
+  working_hours: Record<string, unknown> | null;
+  profile_completeness_pct: number | null;
 
   created_at: string;
   updated_at: string;
