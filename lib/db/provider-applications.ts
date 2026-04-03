@@ -128,12 +128,18 @@ export async function upsertProviderApplication(
 export async function submitProviderApplication(userId: string): Promise<ProviderApplication | null> {
   if (!isSupabaseConfigured()) return null;
 
+  const existing = await getProviderApplication(userId);
+  if (!existing || !['draft', 'rejected'].includes(existing.status)) {
+    return null;
+  }
+
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('provider_applications')
       .update({ status: 'pending_verification', updated_at: new Date().toISOString() })
       .eq('user_id', userId)
+      .eq('status', existing.status)
       .select('*')
       .single();
 
