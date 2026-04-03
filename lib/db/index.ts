@@ -41,6 +41,7 @@ export {
 } from './adoption-listings';
 export {
   getProviderApplication,
+  getProviderApplicationById,
   getAllProviderApplications,
   upsertProviderApplication,
   submitProviderApplication,

@@ -144,6 +144,26 @@ export async function submitProviderApplication(userId: string): Promise<Provide
   }
 }
 
+
+
+export async function getProviderApplicationById(applicationId: string): Promise<ProviderApplication | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('provider_applications')
+      .select('*')
+      .eq('id', applicationId)
+      .maybeSingle();
+
+    if (error || !data) return null;
+    return data as ProviderApplication;
+  } catch {
+    return null;
+  }
+}
+
 // ── Admin Functions ──
 
 export async function getAllProviderApplications(): Promise<ProviderApplication[]> {
