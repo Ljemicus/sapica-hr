@@ -1,18 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getBooking, getUpdatesByBooking, getUser, getPet } from '@/lib/db';
+import { isDemoBookingId } from '@/lib/demo-data';
 import { UpdatesFeed } from './updates-feed';
 
 export const metadata: Metadata = {
   title: 'Ažuriranja — PetPark',
   robots: { index: false, follow: false },
 };
-
-const DEMO_BOOKING_IDS = new Set([
-  'book1111-1111-1111-1111-111111111111',
-  'book2222-2222-2222-2222-222222222222',
-  'bookffff-ffff-ffff-ffff-ffffffffffff',
-]);
 
 export default async function UpdatesPage({ params }: { params: Promise<{ bookingId: string }> }) {
   const { bookingId } = await params;
@@ -38,7 +33,7 @@ export default async function UpdatesPage({ params }: { params: Promise<{ bookin
       currentDay={currentDay}
       totalDays={totalDays}
       sitterId={booking.sitter_id}
-      isDemo={DEMO_BOOKING_IDS.has(bookingId)}
+      isDemo={isDemoBookingId(bookingId)}
     />
   );
 }

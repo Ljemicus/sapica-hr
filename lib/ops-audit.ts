@@ -9,6 +9,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { appLogger } from './logger';
 import { dispatchAlert, type Alert } from './alerting';
+import { isDemoBookingId } from './demo-data';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -42,9 +43,6 @@ const PENDING_APP_STALE_HOURS = 48;
 const DRAFT_APP_STALE_HOURS = 168; // 7 days
 const VERIFICATION_STUCK_HOURS = 48;
 const BOOKING_PENDING_STALE_HOURS = 72;
-const SEED_TEST_BOOKING_IDS = new Set([
-  '00004444-4444-4444-4444-444444444444',
-]);
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -156,7 +154,7 @@ const checkStaleBookings: CheckFn = async (db) => {
     .order('created_at', { ascending: true })
     .limit(50);
 
-  const realRows = (data ?? []).filter((row) => !SEED_TEST_BOOKING_IDS.has(row.id));
+  const realRows = (data ?? []).filter((row) => !isDemoBookingId(row.id));
   const count = realRows.length;
   if (!count) return null;
 
