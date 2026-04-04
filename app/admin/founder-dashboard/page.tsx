@@ -53,9 +53,9 @@ export default async function FounderDashboardPage() {
         </div>
         <div className="flex items-center gap-2">
           <FounderDashboardRefresh />
-          <Button asChild variant="outline" size="sm">
-            <Link href="/admin">Admin panel</Link>
-          </Button>
+          <Link href="/admin">
+            <Button variant="outline" size="sm">Admin panel</Button>
+          </Link>
         </div>
       </div>
 
@@ -216,18 +216,18 @@ export default async function FounderDashboardPage() {
           <CardContent className="space-y-3">
             <FounderDashboardActions />
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Button asChild>
-                <Link href="/admin">
+              <Link href="/admin">
+                <Button>
                   Otvori admin panel
                   <ArrowRight className="h-4 w-4 ml-2" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/admin#providers">Provider applications</Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/admin#identity">Verifications</Link>
-              </Button>
+                </Button>
+              </Link>
+              <Link href="/admin#providers">
+                <Button variant="outline">Provider applications</Button>
+              </Link>
+              <Link href="/admin#identity">
+                <Button variant="outline">Verifications</Button>
+              </Link>
             </div>
           </CardContent>
         </Card>
