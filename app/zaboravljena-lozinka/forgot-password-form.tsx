@@ -8,10 +8,13 @@ import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useLanguage } from '@/lib/i18n/context';
+import { translateFormError } from '@/lib/i18n/form-errors';
 import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/validations';
 import { toast } from 'sonner';
 
 export function ForgotPasswordForm() {
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -30,13 +33,13 @@ export function ForgotPasswordForm() {
 
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
-        toast.error(payload.error?.message || 'Došlo je do greške.');
+        toast.error(payload.error?.message || (language === 'en' ? 'Something went wrong.' : 'Došlo je do greške.'));
         return;
       }
 
       setSent(true);
     } catch {
-      toast.error('Mrežna greška. Provjerite internetsku vezu.');
+      toast.error(language === 'en' ? 'Network error. Check your internet connection.' : 'Mrežna greška. Provjerite internetsku vezu.');
     } finally {
       setLoading(false);
     }
@@ -47,17 +50,18 @@ export function ForgotPasswordForm() {
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md text-center animate-fade-in-up">
           <CheckCircle className="h-16 w-16 text-teal-500 mx-auto mb-6" />
-          <h1 className="text-2xl font-bold mb-3">Provjerite email</h1>
+          <h1 className="text-2xl font-bold mb-3">{language === 'en' ? 'Check your email' : 'Provjerite email'}</h1>
           <p className="text-muted-foreground mb-8">
-            Ako račun s tom email adresom postoji, poslali smo vam poveznicu za resetiranje lozinke.
-            Provjerite i spam mapu.
+            {language === 'en'
+              ? 'If an account exists for that email address, we sent a password reset link. Please check your spam folder too.'
+              : 'Ako račun s tom email adresom postoji, poslali smo vam poveznicu za resetiranje lozinke. Provjerite i spam mapu.'}
           </p>
           <Link
             href="/prijava"
             className="inline-flex items-center gap-2 text-orange-500 hover:underline font-semibold"
           >
             <ArrowLeft className="h-4 w-4" />
-            Natrag na prijavu
+            {language === 'en' ? 'Back to login' : 'Natrag na prijavu'}
           </Link>
         </div>
       </div>
@@ -68,9 +72,9 @@ export function ForgotPasswordForm() {
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8 animate-fade-in-up">
-          <h1 className="text-3xl font-bold">Zaboravljena lozinka</h1>
+          <h1 className="text-3xl font-bold">{language === 'en' ? 'Forgot password' : 'Zaboravljena lozinka'}</h1>
           <p className="text-muted-foreground mt-2">
-            Unesite email adresu i poslat ćemo vam poveznicu za resetiranje lozinke.
+            {language === 'en' ? 'Enter your email address and we’ll send you a password reset link.' : 'Unesite email adresu i poslat ćemo vam poveznicu za resetiranje lozinke.'}
           </p>
         </div>
 
@@ -82,12 +86,12 @@ export function ForgotPasswordForm() {
               <Input
                 id="email"
                 type="email"
-                placeholder="vas@email.com"
+                placeholder={language === 'en' ? 'you@email.com' : 'vas@email.com'}
                 className="pl-10 focus:border-orange-300"
                 {...register('email')}
               />
             </div>
-            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+            {errors.email && <p className="text-sm text-red-500">{translateFormError(errors.email.message, language)}</p>}
           </div>
 
           <Button
@@ -95,7 +99,7 @@ export function ForgotPasswordForm() {
             className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50 h-11"
             disabled={loading}
           >
-            {loading ? 'Slanje...' : 'Pošalji poveznicu'}
+            {loading ? (language === 'en' ? 'Sending...' : 'Slanje...') : (language === 'en' ? 'Send reset link' : 'Pošalji poveznicu')}
           </Button>
         </form>
 
@@ -105,7 +109,7 @@ export function ForgotPasswordForm() {
             className="inline-flex items-center gap-2 text-sm text-orange-500 hover:underline font-semibold"
           >
             <ArrowLeft className="h-4 w-4" />
-            Natrag na prijavu
+            {language === 'en' ? 'Back to login' : 'Natrag na prijavu'}
           </Link>
         </div>
       </div>

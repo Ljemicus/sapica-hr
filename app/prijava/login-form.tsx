@@ -11,6 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createClient } from '@/lib/supabase/client';
 import { getAuthCallbackUrl, safeRedirectPath } from '@/lib/auth-redirect';
+import { useLanguage } from '@/lib/i18n/context';
+import { translateFormError } from '@/lib/i18n/form-errors';
 import { loginSchema, type LoginInput } from '@/lib/validations';
 import { toast } from 'sonner';
 
@@ -28,6 +30,7 @@ function PawLogo({ className }: { className?: string }) {
 }
 
 export function LoginForm() {
+  const { language } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -38,6 +41,34 @@ export function LoginForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
+
+  const copy = {
+    title: language === 'en' ? 'Login' : 'Prijava',
+    subtitle: language === 'en' ? 'Sign in to your ' : 'Prijavite se na svoj ',
+    subtitleEnd: language === 'en' ? ' account' : ' račun',
+    apple: language === 'en' ? 'Continue with Apple' : 'Nastavi s Apple',
+    google: language === 'en' ? 'Continue with Google' : 'Nastavi s Google',
+    facebook: language === 'en' ? 'Continue with Facebook' : 'Nastavi s Facebook',
+    divider: language === 'en' ? 'or with email' : 'ili s email-om',
+    password: language === 'en' ? 'Password' : 'Lozinka',
+    passwordPlaceholder: language === 'en' ? 'Your password' : 'Vaša lozinka',
+    forgot: language === 'en' ? 'Forgot your password?' : 'Zaboravili ste lozinku?',
+    submitIdle: language === 'en' ? 'Sign in' : 'Prijavi se',
+    submitLoading: language === 'en' ? 'Signing in...' : 'Prijava...',
+    registerLead: language === 'en' ? "Don't have an account?" : 'Nemate račun?',
+    registerCta: language === 'en' ? 'Register' : 'Registrirajte se',
+    redirectHint: language === 'en' ? 'After login, we’ll take you back to where you left off.' : 'Nakon prijave vratit ćemo vas tamo gdje ste stali.',
+    heroTitle: language === 'en' ? 'Welcome back' : 'Dobrodošli natrag',
+    heroBody: language === 'en'
+      ? 'Sign in to pick up where you left off — browse profiles, send requests, and manage bookings in one place.'
+      : 'Prijavite se da nastavite gdje ste stali — pregled profila, slanje upita i upravljanje rezervacijama na jednom mjestu.',
+    trust1Title: language === 'en' ? 'Clear profiles' : 'Jasni profili',
+    trust1Text: language === 'en' ? 'Compare faster with less guesswork' : 'Brže usporedbe i manje nagađanja',
+    trust2Title: language === 'en' ? 'Faster requests' : 'Brži upiti',
+    trust2Text: language === 'en' ? 'Send a request in just a few steps' : 'Pošaljite zahtjev u par koraka',
+    trust3Title: language === 'en' ? 'Everything in one place' : 'Sve na jednom mjestu',
+    trust3Text: language === 'en' ? 'Messages, bookings, and your profile' : 'Poruke, rezervacije i profil',
+  };
 
   const onSubmit = async (data: LoginInput) => {
     setLoading(true);
@@ -50,15 +81,15 @@ export function LoginForm() {
       const payload = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        toast.error(payload.error || 'Prijava nije uspjela');
+        toast.error(payload.error || (language === 'en' ? 'Login failed' : 'Prijava nije uspjela'));
         return;
       }
 
-      toast.success('Uspješna prijava!');
+      toast.success(language === 'en' ? 'Logged in successfully!' : 'Uspješna prijava!');
       router.push(redirect !== '/' ? redirect : (payload.defaultRedirect || '/dashboard/vlasnik'));
       router.refresh();
     } catch {
-      toast.error('Mrežna greška. Provjerite internetsku vezu.');
+      toast.error(language === 'en' ? 'Network error. Check your internet connection.' : 'Mrežna greška. Provjerite internetsku vezu.');
     } finally {
       setLoading(false);
     }
@@ -74,7 +105,9 @@ export function LoginForm() {
     });
 
     if (error) {
-      toast.error(`Greška pri prijavi putem ${provider === 'google' ? 'Googlea' : provider === 'apple' ? 'Applea' : 'Facebooka'}`);
+      toast.error(language === 'en'
+        ? `Could not continue with ${provider === 'google' ? 'Google' : provider === 'apple' ? 'Apple' : 'Facebook'}`
+        : `Greška pri prijavi putem ${provider === 'google' ? 'Googlea' : provider === 'apple' ? 'Applea' : 'Facebooka'}`);
       setLoading(false);
     }
   };
@@ -85,8 +118,8 @@ export function LoginForm() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8 animate-fade-in-up">
             <PawLogo className="h-12 w-12 text-orange-500 mx-auto mb-4" />
-            <h1 className="text-3xl font-bold">Prijava</h1>
-            <p className="text-muted-foreground mt-2">Prijavite se na svoj <span className="text-orange-500">Pet</span><span className="text-teal-600">Park</span> račun</p>
+            <h1 className="text-3xl font-bold">{copy.title}</h1>
+            <p className="text-muted-foreground mt-2">{copy.subtitle}<span className="text-orange-500">Pet</span><span className="text-teal-600">Park</span>{copy.subtitleEnd}</p>
           </div>
 
           <div className="space-y-3 animate-fade-in-up delay-100">
@@ -99,7 +132,7 @@ export function LoginForm() {
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
               </svg>
-              Nastavi s Apple
+              {copy.apple}
             </button>
             <button
               type="button"
@@ -113,7 +146,7 @@ export function LoginForm() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Nastavi s Google
+              {copy.google}
             </button>
             <button
               type="button"
@@ -124,13 +157,13 @@ export function LoginForm() {
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
               </svg>
-              Nastavi s Facebook
+              {copy.facebook}
             </button>
           </div>
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
-            <div className="relative flex justify-center text-sm"><span className="bg-white px-4 text-muted-foreground">ili s email-om</span></div>
+            <div className="relative flex justify-center text-sm"><span className="bg-white px-4 text-muted-foreground">{copy.divider}</span></div>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 animate-fade-in-up delay-200">
@@ -138,53 +171,53 @@ export function LoginForm() {
               <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input id="email" type="email" placeholder="vas@email.com" className="pl-10 focus:border-orange-300" {...register('email')} />
+                <Input id="email" type="email" placeholder={language === 'en' ? 'you@email.com' : 'vas@email.com'} className="pl-10 focus:border-orange-300" {...register('email')} />
               </div>
-              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+              {errors.email && <p className="text-sm text-red-500">{translateFormError(errors.email.message, language)}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Lozinka</Label>
+              <Label htmlFor="password">{copy.password}</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Vaša lozinka"
+                  placeholder={copy.passwordPlaceholder}
                   className="focus:border-orange-300"
                   {...register('password')}
                 />
                 <button
                   type="button"
-                  aria-label={showPassword ? 'Sakrij lozinku' : 'Prikaži lozinku'}
+                  aria-label={showPassword ? (language === 'en' ? 'Hide password' : 'Sakrij lozinku') : (language === 'en' ? 'Show password' : 'Prikaži lozinku')}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+              {errors.password && <p className="text-sm text-red-500">{translateFormError(errors.password.message, language)}</p>}
             </div>
 
             <div className="flex justify-end">
               <Link href="/zaboravljena-lozinka" className="text-sm text-orange-500 hover:underline">
-                Zaboravili ste lozinku?
+                {copy.forgot}
               </Link>
             </div>
 
             <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50 h-11" disabled={loading}>
-              {loading ? 'Prijava...' : 'Prijavi se'}
+              {loading ? copy.submitLoading : copy.submitIdle}
             </Button>
           </form>
 
           <div className="mt-8 text-center space-y-2">
             <p className="text-sm text-muted-foreground">
-              Nemate račun?{' '}
+              {copy.registerLead}{' '}
               <Link href={`/registracija${redirect && redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className="text-orange-500 hover:underline font-semibold">
-                Registrirajte se
+                {copy.registerCta}
               </Link>
             </p>
             <p className="text-xs text-muted-foreground">
-              Nakon prijave vratit ćemo vas tamo gdje ste stali.
+              {copy.redirectHint}
             </p>
           </div>
         </div>
@@ -196,22 +229,22 @@ export function LoginForm() {
         <div className="absolute bottom-10 -right-10 w-40 h-40 bg-white rounded-full opacity-10" />
         <div className="relative text-center text-white p-12 max-w-md">
           <PawLogo className="h-16 w-16 mx-auto mb-6 opacity-90" />
-          <h2 className="text-3xl font-bold mb-4">Dobrodošli natrag</h2>
+          <h2 className="text-3xl font-bold mb-4">{copy.heroTitle}</h2>
           <p className="text-white/80 text-lg leading-relaxed">
-            Prijavite se da nastavite gdje ste stali — pregled profila, slanje upita i upravljanje rezervacijama na jednom mjestu.
+            {copy.heroBody}
           </p>
           <div className="mt-10 grid grid-cols-3 gap-6">
             <div>
-              <p className="text-2xl font-bold">Jasni profili</p>
-              <p className="text-sm text-white/70">Brže usporedbe i manje nagađanja</p>
+              <p className="text-2xl font-bold">{copy.trust1Title}</p>
+              <p className="text-sm text-white/70">{copy.trust1Text}</p>
             </div>
             <div>
-              <p className="text-2xl font-bold">Brži upiti</p>
-              <p className="text-sm text-white/70">Pošaljite zahtjev u par koraka</p>
+              <p className="text-2xl font-bold">{copy.trust2Title}</p>
+              <p className="text-sm text-white/70">{copy.trust2Text}</p>
             </div>
             <div>
-              <p className="text-2xl font-bold">Sve na jednom mjestu</p>
-              <p className="text-sm text-white/70">Poruke, rezervacije i profil</p>
+              <p className="text-2xl font-bold">{copy.trust3Title}</p>
+              <p className="text-sm text-white/70">{copy.trust3Text}</p>
             </div>
           </div>
         </div>
