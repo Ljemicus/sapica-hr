@@ -11,6 +11,7 @@ import { collectKpis } from '@/lib/kpi-digest';
 import { runOpsAudit } from '@/lib/ops-audit';
 import type { ProviderApplication } from '@/lib/types';
 import { FounderDashboardRefresh } from './founder-dashboard-refresh';
+import { FounderDashboardActions } from './founder-dashboard-actions';
 
 export const metadata: Metadata = {
   title: 'Founder Dashboard',
@@ -212,19 +213,22 @@ export default async function FounderDashboardPage() {
               Quick actions
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Button asChild>
-              <Link href="/admin">
-                Otvori admin panel
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/admin#providers">Provider applications</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/admin#identity">Verifications</Link>
-            </Button>
+          <CardContent className="space-y-3">
+            <FounderDashboardActions />
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Button asChild>
+                <Link href="/admin">
+                  Otvori admin panel
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/admin#providers">Provider applications</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/admin#identity">Verifications</Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </section>
