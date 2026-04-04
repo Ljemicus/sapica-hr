@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Users, ClipboardList, Shield, CheckCircle, XCircle, Search, MapPin, FileCheck, ShieldCheck, Eye, EyeOff } from 'lucide-react';
+import { Users, ClipboardList, Shield, CheckCircle, XCircle, Search, MapPin, FileCheck, ShieldCheck, Eye, EyeOff, LayoutDashboard, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -128,9 +129,18 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <div className="mb-8 animate-fade-in-up">
-        <h1 className="text-3xl font-bold tracking-tight">Admin panel</h1>
-        <p className="text-muted-foreground mt-1">Upravljajte korisnicima, rezervacijama i verifikacijama</p>
+      <div className="mb-8 animate-fade-in-up flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Admin panel</h1>
+          <p className="text-muted-foreground mt-1">Upravljajte korisnicima, rezervacijama i verifikacijama</p>
+        </div>
+        <Button asChild variant="outline" className="w-full md:w-auto">
+          <Link href="/admin/founder-dashboard">
+            <LayoutDashboard className="h-4 w-4 mr-2" />
+            Founder dashboard
+            <ArrowRight className="h-4 w-4 ml-2" />
+          </Link>
+        </Button>
       </div>
 
       {/* KPI Stats */}
