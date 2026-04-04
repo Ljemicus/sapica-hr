@@ -482,8 +482,10 @@ export interface Article {
   body: string;
   author: string;
   date: string;
+  updatedAt?: string;
   category: BlogCategory;
   emoji: string;
+  coverGradient?: string;
 }
 
 export interface BlogComment {

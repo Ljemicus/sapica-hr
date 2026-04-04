@@ -38,6 +38,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       siteName: 'PetPark',
       locale: 'hr_HR',
       publishedTime: article.date,
+      modifiedTime: article.updatedAt ?? article.date,
       authors: [article.author],
     },
     twitter: {
@@ -72,6 +73,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       name: article.author,
     },
     datePublished: article.date,
+    dateModified: article.updatedAt ?? article.date,
     publisher: {
       '@type': 'Organization',
       name: 'PetPark',

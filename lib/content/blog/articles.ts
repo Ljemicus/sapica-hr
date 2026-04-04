@@ -1143,22 +1143,83 @@ Pretjerano dahtanje: nije uvijek vrućina. Može biti znak boli, stresa ili srč
   },
 ]
 
+const CATEGORY_COVER_GRADIENTS: Record<BlogCategory, string> = {
+  zdravlje: 'from-emerald-500 via-teal-500 to-cyan-500',
+  prehrana: 'from-amber-500 via-orange-500 to-rose-500',
+  dresura: 'from-indigo-500 via-violet-500 to-fuchsia-500',
+  putovanje: 'from-sky-500 via-cyan-500 to-teal-500',
+  zabava: 'from-pink-500 via-orange-500 to-amber-500',
+  psi: 'from-orange-500 via-amber-500 to-yellow-500',
+  macke: 'from-slate-500 via-indigo-500 to-purple-500',
+};
+
+const CATEGORY_COMPANIONS: Record<BlogCategory, BlogCategory[]> = {
+  zdravlje: ['psi', 'macke', 'prehrana'],
+  prehrana: ['zdravlje', 'psi', 'macke'],
+  dresura: ['psi', 'zabava', 'putovanje'],
+  putovanje: ['psi', 'zabava', 'zdravlje'],
+  zabava: ['psi', 'macke', 'dresura'],
+  psi: ['dresura', 'zdravlje', 'putovanje'],
+  macke: ['zdravlje', 'prehrana', 'zabava'],
+};
+
+function withArticleDefaults(article: Article): Article {
+  return {
+    ...article,
+    updatedAt: article.updatedAt ?? article.date,
+    coverGradient: article.coverGradient ?? CATEGORY_COVER_GRADIENTS[article.category],
+  };
+}
+
+function sortByNewest(a: Article, b: Article) {
+  const aDate = new Date(a.updatedAt ?? a.date).getTime();
+  const bDate = new Date(b.updatedAt ?? b.date).getTime();
+  return bDate - aDate;
+}
+
 export function getArticleBySlug(slug: string) {
-  return blogArticles.find((a) => a.slug === slug) || null;
+  const article = blogArticles.find((a) => a.slug === slug);
+  return article ? withArticleDefaults(article) : null;
 }
 
 export function getArticles(category?: BlogCategory) {
   let result = [...blogArticles];
   if (category) result = result.filter((a) => a.category === category);
-  return result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return result.map(withArticleDefaults).sort(sortByNewest);
 }
 
 export function getRelatedArticles(slug: string, limit = 3) {
   const article = getArticleBySlug(slug);
   if (!article) return [];
-  return blogArticles
-    .filter((a) => a.slug !== slug && a.category === article.category)
-    .slice(0, limit)
-    .concat(blogArticles.filter((a) => a.slug !== slug && a.category !== article.category).slice(0, limit))
-    .slice(0, limit);
+
+  const sameCategory = blogArticles
+    .filter((candidate) => candidate.slug !== slug && candidate.category === article.category)
+    .map(withArticleDefaults)
+    .sort(sortByNewest);
+
+  const companionCategories = CATEGORY_COMPANIONS[article.category];
+  const companionArticles = blogArticles
+    .filter((candidate) => candidate.slug !== slug && companionCategories.includes(candidate.category))
+    .map(withArticleDefaults)
+    .sort((a, b) => {
+      const categoryDistance = companionCategories.indexOf(a.category) - companionCategories.indexOf(b.category);
+      if (categoryDistance !== 0) return categoryDistance;
+      return sortByNewest(a, b);
+    });
+
+  const fallbackArticles = blogArticles
+    .filter(
+      (candidate) =>
+        candidate.slug !== slug &&
+        candidate.category !== article.category &&
+        !companionCategories.includes(candidate.category)
+    )
+    .map(withArticleDefaults)
+    .sort(sortByNewest);
+
+  const deduped = [...sameCategory, ...companionArticles, ...fallbackArticles].filter(
+    (candidate, index, list) => list.findIndex((item) => item.slug === candidate.slug) === index
+  );
+
+  return deduped.slice(0, limit);
 }
