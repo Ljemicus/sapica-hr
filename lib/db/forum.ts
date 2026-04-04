@@ -34,6 +34,11 @@ function nameToInitial(name: string): string {
   return (name ?? '?').charAt(0).toUpperCase();
 }
 
+function isExpectedDynamicUsageError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error ?? '');
+  return message.includes('Dynamic server usage');
+}
+
 // ── Row types ─────────────────────────────────────────────────────────────────
 
 type TopicRow = {
@@ -145,7 +150,9 @@ export async function getTopics(category?: ForumCategorySlug): Promise<ForumTopi
 
     return (data as unknown as TopicRow[]).map(topicRowToForumTopic);
   } catch (err) {
-    appLogger.warn('forum', 'getTopics threw', { message: String(err) });
+    if (!isExpectedDynamicUsageError(err)) {
+      appLogger.warn('forum', 'getTopics threw', { message: String(err) });
+    }
     return [];
   }
 }

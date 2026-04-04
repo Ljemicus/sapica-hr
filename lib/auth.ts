@@ -41,6 +41,11 @@ export function isUserRecord(value: unknown): value is User {
   );
 }
 
+function isExpectedDynamicUsageError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error ?? '');
+  return message.includes('Dynamic server usage');
+}
+
 export function buildUserFromAuth(authUser: AuthIdentityUser): User {
   const meta = authUser.user_metadata;
 
@@ -100,9 +105,11 @@ export async function getAuthUser(): Promise<User | null> {
     });
     return buildUserFromAuth(authUser);
   } catch (error) {
-    appLogger.warn('auth', 'Failed to resolve authenticated user', {
-      message: error instanceof Error ? error.message : 'unknown',
-    });
+    if (!isExpectedDynamicUsageError(error)) {
+      appLogger.warn('auth', 'Failed to resolve authenticated user', {
+        message: error instanceof Error ? error.message : 'unknown',
+      });
+    }
     return null;
   }
 }
