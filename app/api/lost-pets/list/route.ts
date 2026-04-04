@@ -1,0 +1,20 @@
+import { NextResponse } from 'next/server';
+import { getLostPets } from '@/lib/db';
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const pets = await getLostPets({
+    city: searchParams.get('city') || undefined,
+    species: (searchParams.get('species') as 'pas' | 'macka' | 'ostalo' | null) || undefined,
+    status: (searchParams.get('status') as 'lost' | 'found' | null) || undefined,
+  });
+
+  const sanitized = pets.map((pet) => ({
+    ...pet,
+    contact_name: '',
+    contact_phone: '',
+    contact_email: '',
+  }));
+
+  return NextResponse.json(sanitized);
+}

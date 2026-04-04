@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { LostPet } from '@/lib/types';
 import { LOST_PET_STATUS_LABELS } from '@/lib/types';
+import { useLanguage } from '@/lib/i18n/context';
 
 const redIcon = L.icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
@@ -28,8 +29,8 @@ const greenIcon = L.icon({
   shadowSize: [41, 41],
 });
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('hr-HR', { day: 'numeric', month: 'long', year: 'numeric' });
+function formatDate(dateStr: string, locale: string) {
+  return new Date(dateStr).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 interface LostPetsMapProps {
@@ -37,6 +38,10 @@ interface LostPetsMapProps {
 }
 
 export default function LostPetsMap({ pets }: LostPetsMapProps) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const locale = isEn ? 'en-GB' : 'hr-HR';
+  const statusLabels = isEn ? { lost: 'Still missing', found: 'Found!' } : LOST_PET_STATUS_LABELS;
   const petsWithCoords = pets.filter(p => p.location_lat && p.location_lng);
 
   // Calculate bounds to fit all markers
@@ -67,17 +72,17 @@ export default function LostPetsMap({ pets }: LostPetsMapProps) {
               </div>
               <p className="font-bold text-sm">{pet.name}</p>
               <p className="text-xs text-gray-600">{pet.city}, {pet.neighborhood}</p>
-              <p className="text-xs text-gray-500">{formatDate(pet.date_lost)}</p>
+              <p className="text-xs text-gray-500">{formatDate(pet.date_lost, locale)}</p>
               <span className={`inline-block text-xs font-semibold mt-1 px-2 py-0.5 rounded ${
                 pet.status === 'lost' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
               }`}>
-                {LOST_PET_STATUS_LABELS[pet.status]}
+                {statusLabels[pet.status]}
               </span>
               <Link
                 href={`/izgubljeni/${pet.id}`}
                 className="block mt-2 text-center text-xs font-medium text-white bg-red-500 hover:bg-red-600 rounded py-1.5 transition-colors"
               >
-                Pogledaj detalje
+                {isEn ? 'View details' : 'Pogledaj detalje'}
               </Link>
             </div>
           </Popup>

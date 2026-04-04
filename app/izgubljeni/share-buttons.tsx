@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Check, Copy, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useLanguage } from '@/lib/i18n/context';
 
 interface ShareButtonsProps {
   petName: string;
@@ -13,11 +14,13 @@ interface ShareButtonsProps {
 }
 
 export function ShareButtons({ petName, city, petId, size = 'sm' }: ShareButtonsProps) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
   const [copied, setCopied] = useState(false);
 
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const url = `${baseUrl}/izgubljeni/${petId}`;
-  const text = `IZGUBLJEN: ${petName} u ${city}. Pomozi pronaći! 🐾`;
+  const text = isEn ? `MISSING: ${petName} in ${city}. Help bring them home! 🐾` : `IZGUBLJEN: ${petName} u ${city}. Pomozi pronaći! 🐾`
 
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text + '\n' + url)}`;
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
@@ -27,10 +30,10 @@ export function ShareButtons({ petName, city, petId, size = 'sm' }: ShareButtons
     try {
       await navigator.clipboard.writeText(`${text}\n${url}`);
       setCopied(true);
-      toast.success('Link kopiran!');
+      toast.success(isEn ? 'Link copied!' : 'Link kopiran!');
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error('Nije moguće kopirati link');
+      toast.error(isEn ? 'Unable to copy link' : 'Nije moguće kopirati link');
     }
   };
 
@@ -62,7 +65,7 @@ export function ShareButtons({ petName, city, petId, size = 'sm' }: ShareButtons
       )}
       <Button size={btnSize} variant="outline" onClick={handleCopy} className={`${isLarge ? 'flex-1 py-5 text-base font-bold' : ''}`}>
         {copied ? <Check className={iconSize} /> : <Copy className={`${iconSize} mr-1.5`} />}
-        {copied ? '' : (isLarge ? 'Kopiraj link' : '')}
+        {copied ? '' : (isLarge ? (isEn ? 'Copy link' : 'Kopiraj link') : '')}
       </Button>
     </div>
   );

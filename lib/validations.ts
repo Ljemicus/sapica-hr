@@ -238,6 +238,33 @@ export const resetPasswordSchema = z.object({
   path: ['confirmPassword'],
 });
 
+export const lostPetReportSchema = z.object({
+  name: z.string().trim().min(1, 'Ime ljubimca je obavezno').max(120),
+  species: z.enum(['pas', 'macka', 'ostalo'], { message: 'Odaberite vrstu' }),
+  breed: z.string().trim().max(120).optional().or(z.literal('')),
+  color: z.string().trim().min(1, 'Boja je obavezna').max(120),
+  sex: z.enum(['muško', 'žensko']).optional(),
+  description: z.string().trim().min(20, 'Opis mora imati najmanje 20 znakova').max(2000),
+  special_marks: z.string().trim().max(1000).optional().or(z.literal('')),
+  neighborhood: z.string().trim().min(1, 'Kvart ili ulica su obavezni').max(160),
+  city: z.string().trim().min(1, 'Grad je obavezan').max(120),
+  date_lost: z.string().min(1, 'Datum nestanka je obavezan'),
+  contact_name: z.string().trim().min(2, 'Kontakt ime je obavezno').max(120),
+  contact_phone: z.string().trim().min(6, 'Telefon je obavezan').max(40),
+  contact_email: z.string().email('Neispravan email').optional().or(z.literal('')),
+  has_microchip: z.boolean().optional().default(false),
+  has_collar: z.boolean().optional().default(false),
+  image_url: z.string().url('Neispravan URL slike').optional(),
+  gallery: z.array(z.string().url('Neispravan URL slike')).max(5, 'Najviše 5 slika').optional(),
+  location_lat: z.number().min(42).max(47),
+  location_lng: z.number().min(13).max(20),
+});
+
+export const lostPetSightingSchema = z.object({
+  location: z.string().trim().min(2, 'Lokacija je obavezna').max(200),
+  description: z.string().trim().min(2, 'Opis je obavezan').max(1000),
+});
+
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -248,3 +275,5 @@ export type BookingInput = z.infer<typeof bookingSchema>;
 export type ReviewInput = z.infer<typeof reviewSchema>;
 export type MessageInput = z.infer<typeof messageSchema>;
 export type BlogCommentInput = z.infer<typeof blogCommentSchema>;
+export type LostPetReportInput = z.infer<typeof lostPetReportSchema>;
+export type LostPetSightingInput = z.infer<typeof lostPetSightingSchema>;
