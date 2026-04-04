@@ -12,21 +12,11 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import {
   type PublisherProfile,
-  type PublisherProfileType,
   PUBLISHER_PROFILE_TYPE_LABELS,
   PUBLISHER_PROFILE_TYPE_EMOJI,
   CITIES,
 } from '@/lib/types';
-
-const DASHBOARD_ROUTES: Partial<Record<PublisherProfileType, string>> = {
-  vlasnik: '/dashboard/vlasnik',
-  čuvar: '/dashboard/sitter',
-  groomer: '/dashboard/groomer',
-  trener: '/dashboard/trainer',
-  uzgajivač: '/dashboard/profile',
-  veterinar: '/dashboard/profile',
-  udomljavanje: '/dashboard/adoption',
-};
+import { getDefaultDashboardForEffectiveKind } from '@/lib/effective-user-kind';
 
 export default function DashboardProfilePage() {
   const [profile, setProfile] = useState<PublisherProfile | null>(null);
@@ -110,7 +100,7 @@ export default function DashboardProfilePage() {
     <div className="min-h-screen bg-gray-50/60 py-10 px-4">
       <div className="max-w-3xl mx-auto space-y-8">
         <Link
-          href={DASHBOARD_ROUTES[profile.type] ?? '/dashboard/vlasnik'}
+          href={getDefaultDashboardForEffectiveKind(profile.type)}
           className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
         >
           &larr; Natrag na nadzornu ploču
