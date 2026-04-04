@@ -1,4 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { headers } from 'next/headers';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { appLogger } from '@/lib/logger';
 import type { User } from '@/lib/types';
@@ -63,7 +65,18 @@ export async function getAuthUser(): Promise<User | null> {
   }
 
   try {
-    const supabase = await createClient();
+    const headerStore = await headers();
+    const authHeader = headerStore.get('authorization');
+    const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : null;
+
+    const supabase = bearerToken
+      ? createSupabaseClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          { global: { headers: { Authorization: `Bearer ${bearerToken}` } } }
+        )
+      : await createClient();
+
     const { data, error } = await supabase.auth.getUser();
 
     if (error) {
@@ -74,7 +87,6 @@ export async function getAuthUser(): Promise<User | null> {
     const authUser = data.user;
     if (!authUser) return null;
 
-    // public.users is the canonical profile source when available
     const { data: profileData } = await supabase
       .from('users')
       .select('id, email, name, role, avatar_url, phone, city, created_at')
