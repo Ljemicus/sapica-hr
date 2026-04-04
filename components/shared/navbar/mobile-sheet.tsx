@@ -12,19 +12,21 @@ import {
   getMobileUtilityLinks,
 } from './config';
 import type { NavbarUser, TranslationFn } from './types';
+import type { Language } from '@/lib/i18n';
 
 interface MobileSheetProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   t: TranslationFn;
+  language?: Language;
   user?: NavbarUser | null;
   onLogout: () => Promise<void>;
 }
 
-export function MobileSheet({ open, setOpen, t, user, onLogout }: MobileSheetProps) {
-  const primaryLinks = getMobilePrimaryLinks(t);
+export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout }: MobileSheetProps) {
+  const primaryLinks = getMobilePrimaryLinks(t, language);
   const utilityLinks = getMobileUtilityLinks(t);
-  const communityLinks = getMobileCommunityLinks(t);
+  const communityLinks = getMobileCommunityLinks(t, language);
   const accountLinks = getMobileAccountLinks(t, user);
 
   const renderLink = (href: string, label: string, Icon?: React.ComponentType<{ className?: string }>, className?: string) => (

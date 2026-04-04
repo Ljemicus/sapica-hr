@@ -5,10 +5,18 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LanguageGate } from '@/components/shared/language-gate';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
   title: 'Verifikacija sittera | PetPark',
   description: 'Saznajte više o verifikacijskim razinama na PetParku — Basic, Verificiran i Premium sitter. Izgradite povjerenje i privucite više klijenata.',
+  openGraph: {
+    title: 'Verifikacija sittera | PetPark',
+    description: 'Saznajte više o verifikacijskim razinama na PetParku — Basic, Verificiran i Premium sitter.',
+    type: 'website',
+    ...buildLocaleOpenGraph('/verifikacija'),
+  },
+  alternates: buildLocaleAlternates('/verifikacija'),
 };
 
 const tiers = {
@@ -158,7 +166,7 @@ function VerificationBody({ language }: { language: 'hr' | 'en' }) {
               <p className="text-white/85 text-lg mb-8 max-w-xl mx-auto">{labels.ctaText}</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link href="/registracija?role=sitter"><Button size="lg" className="bg-white text-blue-600 hover:bg-white/90 shadow-xl shadow-black/10 rounded-xl font-bold text-lg px-10 h-14">{labels.ctaPrimary}<ArrowRight className="ml-2 h-5 w-5" /></Button></Link>
-                <Link href="/faq"><Button size="lg" variant="outline" className="border-2 border-white/40 text-white hover:bg-white/10 rounded-xl text-lg px-10 h-14">{labels.ctaSecondary}</Button></Link>
+                <Link href={language === 'en' ? '/faq/en' : '/faq'}><Button size="lg" variant="outline" className="border-2 border-white/40 text-white hover:bg-white/10 rounded-xl text-lg px-10 h-14">{labels.ctaSecondary}</Button></Link>
               </div>
             </div>
           </CardContent>
@@ -168,6 +176,10 @@ function VerificationBody({ language }: { language: 'hr' | 'en' }) {
   );
 }
 
-export default function VerifikacijaPage() {
+export function VerificationPageShell() {
   return <LanguageGate hr={<VerificationBody language="hr" />} en={<VerificationBody language="en" />} />;
+}
+
+export default function VerifikacijaPage() {
+  return <VerificationPageShell />;
 }

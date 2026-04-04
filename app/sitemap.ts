@@ -25,11 +25,18 @@ const LOCALIZED_STATIC_ROUTES = new Set([
   '/cuvanje-pasa-zagreb',
   '/cuvanje-pasa-split',
   '/cuvanje-pasa-rijeka',
+  '/grooming-zagreb',
   '/veterinari',
+  '/njega',
+  '/dresura',
   '/dog-friendly',
   '/izgubljeni',
   '/udomljavanje',
   '/uzgajivacnice',
+  '/pretraga',
+  '/forum',
+  '/faq',
+  '/verifikacija',
 ]);
 
 const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }> = [
@@ -47,6 +54,7 @@ const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitema
   { route: '/postani-sitter/oglas', changeFrequency: 'monthly', priority: 0.6 },
   { route: '/hitno', changeFrequency: 'weekly', priority: 0.6 },
   { route: '/faq', changeFrequency: 'monthly', priority: 0.5 },
+  { route: '/verifikacija', changeFrequency: 'monthly', priority: 0.5 },
   { route: '/veterinari', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/udomljavanje', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/dog-friendly', changeFrequency: 'weekly', priority: 0.6 },

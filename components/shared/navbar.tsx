@@ -48,9 +48,9 @@ export function Navbar() {
           </span>
         </Link>
 
-        <DesktopNav t={t} user={user} />
+        <DesktopNav t={t} user={user} language={language} />
         <DesktopActions t={t} user={user} loading={loading} signOut={signOut} />
-        <MobileSheet open={open} setOpen={setOpen} t={t} user={user} onLogout={handleLogout} />
+        <MobileSheet open={open} setOpen={setOpen} t={t} language={language} user={user} onLogout={handleLogout} />
       </div>
     </header>
   );

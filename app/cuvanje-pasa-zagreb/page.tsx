@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { InternalLinkSection } from '@/components/shared/internal-link-section';
 import { getCityServiceLinks, getSiblingCityLinks } from '@/lib/seo/internal-links';
-import { buildLocaleAlternates } from '@/lib/seo/locale-metadata';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -18,10 +18,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Čuvanje pasa u Zagrebu — pronađite pouzdanog sittera | PetPark',
     description: 'Pronađite verificirane pet sittere u Zagrebu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
-    url: `${BASE_URL}/cuvanje-pasa-zagreb`,
     siteName: 'PetPark',
-    locale: 'hr_HR',
     type: 'website',
+    ...buildLocaleOpenGraph('/cuvanje-pasa-zagreb'),
   },
   twitter: {
     card: 'summary_large_image',

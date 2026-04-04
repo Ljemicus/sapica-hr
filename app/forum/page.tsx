@@ -5,20 +5,34 @@ import { InternalLinkSection } from '@/components/shared/internal-link-section';
 import { LanguageGate } from '@/components/shared/language-gate';
 import { getTopics, getTrendingTopics } from '@/lib/db/content';
 import { SEARCH_DISCOVERY_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 import { ForumContent } from './forum-content';
 
-export const metadata: Metadata = {
-  title: 'Forum za ljubitelje životinja',
-  description: 'Pitanja, savjeti, priče i razgovori zajednice ljubitelja životinja. Pridružite se diskusiji na PetPark forumu!',
-  keywords: ['forum ljubimci', 'pitanja o psima', 'savjeti za mačke', 'zajednica ljubitelja životinja'],
-  openGraph: {
-    title: 'Forum za ljubitelje životinja | PetPark',
-    description: 'Pitanja, savjeti i razgovori zajednice ljubitelja životinja. Pridružite se!',
-    url: 'https://petpark.hr/forum',
-    type: 'website',
-  },
-  alternates: { canonical: 'https://petpark.hr/forum' },
-};
+export function buildForumMetadata(locale: 'hr' | 'en'): Metadata {
+  const isEn = locale === 'en';
+  const pathname = isEn ? '/forum/en' : '/forum';
+
+  return {
+    title: isEn ? 'Pet community forum' : 'Forum za ljubitelje životinja',
+    description: isEn
+      ? 'Questions, advice, stories, and conversations from the PetPark community. Browse the forum interface in English; topics stay in their original language.'
+      : 'Pitanja, savjeti, priče i razgovori zajednice ljubitelja životinja. Pridružite se diskusiji na PetPark forumu!',
+    keywords: isEn
+      ? ['pet forum croatia', 'pet community forum', 'dog questions', 'cat advice', 'petpark forum']
+      : ['forum ljubimci', 'pitanja o psima', 'savjeti za mačke', 'zajednica ljubitelja životinja'],
+    openGraph: {
+      title: isEn ? 'Pet community forum | PetPark' : 'Forum za ljubitelje životinja | PetPark',
+      description: isEn
+        ? 'Questions, advice, and community stories for pet owners. Interface available in English; user topics remain in their original language.'
+        : 'Pitanja, savjeti i razgovori zajednice ljubitelja životinja. Pridružite se!',
+      type: 'website',
+      ...buildLocaleOpenGraph(pathname),
+    },
+    alternates: buildLocaleAlternates(pathname),
+  };
+}
+
+export const metadata: Metadata = buildForumMetadata('hr');
 
 export default async function ForumPage() {
   const topics = await getTopics();
@@ -26,7 +40,6 @@ export default async function ForumPage() {
 
   return (
     <div>
-      {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-teal-50 via-white to-orange-50 dark:from-teal-950/20 dark:via-background dark:to-orange-950/20">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
         <div className="container mx-auto px-4 py-14 md:py-20 relative">

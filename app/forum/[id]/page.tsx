@@ -82,6 +82,8 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
 
   const locale = (await headers()).get(LOCALE_HEADER) === 'en' ? 'en' : 'hr';
   const isEn = locale === 'en';
+  const forumListingHref = isEn ? '/forum/en' : '/forum';
+
   const copy = {
     forum: isEn ? 'Forum' : 'Forum',
     back: isEn ? 'Back to forum' : 'Natrag na forum',
@@ -99,8 +101,8 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
   return (
     <div>
       <Breadcrumbs items={[
-        { label: copy.forum, href: '/forum' },
-        ...(cat ? [{ label: cat.name, href: `/forum?category=${topic.category_slug}` }] : []),
+        { label: copy.forum, href: forumListingHref },
+        ...(cat ? [{ label: cat.name, href: `${forumListingHref}?category=${topic.category_slug}` }] : []),
         { label: topic.title, href: `/forum/${id}` },
       ]} />
       {/* Category cover banner */}
@@ -118,7 +120,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
         <div className="container mx-auto px-4 py-10 md:py-16 relative">
           <div className="max-w-3xl mx-auto">
-            <Link href="/forum">
+            <Link href={forumListingHref}>
               <Button variant="ghost" className="mb-6 text-gray-600 hover:text-orange-500 hover:bg-orange-50 -ml-3">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {copy.back}

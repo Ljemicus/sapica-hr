@@ -10,10 +10,11 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { getDesktopLinks, getHksMenu, getServicesMenu } from './config';
 import type { NavbarUser, TranslationFn } from './types';
+import type { Language } from '@/lib/i18n';
 
-export function DesktopNav({ t, user }: { t: TranslationFn; user?: NavbarUser | null }) {
-  const desktopLinks = getDesktopLinks(t, user);
-  const servicesMenu = getServicesMenu(t);
+export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; user?: NavbarUser | null; language?: Language }) {
+  const desktopLinks = getDesktopLinks(t, user, language);
+  const servicesMenu = getServicesMenu(t, language);
   const hksMenu = getHksMenu();
 
   return (

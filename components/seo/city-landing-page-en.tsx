@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { getCityServiceLinks, getSiblingCityLinks } from '@/lib/seo/internal-links';
-import { buildLocaleAlternates } from '@/lib/seo/locale-metadata';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -106,10 +106,9 @@ export function buildEnglishCityMetadata(config: CityLandingEnConfig): Metadata 
     openGraph: {
       title: `${config.heroTitle} | PetPark`,
       description: config.openGraphDescription,
-      url: `${BASE_URL}${config.route}`,
       siteName: 'PetPark',
-      locale: 'en_US',
       type: 'website',
+      ...buildLocaleOpenGraph(config.route),
     },
     twitter: {
       card: 'summary_large_image',

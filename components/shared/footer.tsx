@@ -46,6 +46,22 @@ function TwitterIcon({ className }: { className?: string }) {
 
 export function Footer() {
   const { t, language } = useLanguage();
+  const localizedHref = (href: string) => {
+    if (language !== 'en') return href;
+
+    const localizedRoutes: Record<string, string> = {
+      '/njega': '/njega/en',
+      '/dresura': '/dresura/en',
+      '/veterinari': '/veterinari/en',
+      '/dog-friendly': '/dog-friendly/en',
+      '/udomljavanje': '/udomljavanje/en',
+      '/izgubljeni': '/izgubljeni/en',
+      '/uzgajivacnice': '/uzgajivacnice/en',
+      '/forum': '/forum/en',
+    };
+
+    return localizedRoutes[href] ?? href;
+  };
 
   return (
     <>
@@ -79,31 +95,31 @@ export function Footer() {
             <div>
               <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.services')}</h3>
               <ul className="space-y-3 text-sm">
-                <li><Link href="/pretraga" className="hover:text-orange-400 transition-colors">{t('footer.find_sitter')}</Link></li>
-                <li><Link href="/njega" className="hover:text-orange-400 transition-colors">{t('footer.grooming')}</Link></li>
-                <li><Link href="/dresura" className="hover:text-orange-400 transition-colors">{t('footer.training')}</Link></li>
-                <li><Link href="/veterinari" className="hover:text-orange-400 transition-colors">{t('footer.veterinarians')}</Link></li>
+                <li><Link href={language === 'en' ? '/pretraga/en' : '/pretraga'} className="hover:text-orange-400 transition-colors">{t('footer.find_sitter')}</Link></li>
+                <li><Link href={localizedHref('/njega')} className="hover:text-orange-400 transition-colors">{t('footer.grooming')}</Link></li>
+                <li><Link href={localizedHref('/dresura')} className="hover:text-orange-400 transition-colors">{t('footer.training')}</Link></li>
+                <li><Link href={localizedHref('/veterinari')} className="hover:text-orange-400 transition-colors">{t('footer.veterinarians')}</Link></li>
                 <li><Link href="/postani-sitter" className="hover:text-teal-400 transition-colors">{t('footer.become_sitter')}</Link></li>
                 <li><Link href="/hitno" className="hover:text-red-400 transition-colors font-medium">{t('footer.emergency')}</Link></li>
               </ul>
 
               <h4 className="font-semibold text-white mt-6 mb-3 text-xs uppercase tracking-wider">{t('footer.popular_cities')}</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="/cuvanje-pasa-zagreb" className="hover:text-orange-400 transition-colors">{language === 'en' ? 'Dog sitting Zagreb' : 'Čuvanje pasa Zagreb'}</Link></li>
-                <li><Link href="/cuvanje-pasa-split" className="hover:text-orange-400 transition-colors">{language === 'en' ? 'Dog sitting Split' : 'Čuvanje pasa Split'}</Link></li>
-                <li><Link href="/cuvanje-pasa-rijeka" className="hover:text-orange-400 transition-colors">{language === 'en' ? 'Dog sitting Rijeka' : 'Čuvanje pasa Rijeka'}</Link></li>
-                <li><Link href="/grooming-zagreb" className="hover:text-pink-400 transition-colors">{language === 'en' ? 'Grooming Zagreb' : 'Grooming Zagreb'}</Link></li>
+                <li><Link href={language === 'en' ? '/cuvanje-pasa-zagreb/en' : '/cuvanje-pasa-zagreb'} className="hover:text-orange-400 transition-colors">{language === 'en' ? 'Dog sitting Zagreb' : 'Čuvanje pasa Zagreb'}</Link></li>
+                <li><Link href={language === 'en' ? '/cuvanje-pasa-split/en' : '/cuvanje-pasa-split'} className="hover:text-orange-400 transition-colors">{language === 'en' ? 'Dog sitting Split' : 'Čuvanje pasa Split'}</Link></li>
+                <li><Link href={language === 'en' ? '/cuvanje-pasa-rijeka/en' : '/cuvanje-pasa-rijeka'} className="hover:text-orange-400 transition-colors">{language === 'en' ? 'Dog sitting Rijeka' : 'Čuvanje pasa Rijeka'}</Link></li>
+                <li><Link href={language === 'en' ? '/grooming-zagreb/en' : '/grooming-zagreb'} className="hover:text-pink-400 transition-colors">{language === 'en' ? 'Grooming Zagreb' : 'Grooming Zagreb'}</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.explore')}</h3>
               <ul className="space-y-3 text-sm">
                 <li><Link href="/blog" className="hover:text-orange-400 transition-colors">{t('nav.blog')}</Link></li>
-                <li><Link href="/forum" className="hover:text-orange-400 transition-colors">{t('nav.forum')}</Link></li>
-                <li><Link href="/dog-friendly" className="hover:text-green-400 transition-colors">{t('footer.dog_friendly')}</Link></li>
-                <li><Link href="/udomljavanje" className="hover:text-pink-400 transition-colors">{t('footer.adoption')}</Link></li>
-                <li><Link href="/izgubljeni" className="hover:text-red-400 transition-colors">{t('footer.lost_pets')}</Link></li>
-                <li><Link href="/uzgajivacnice" className="hover:text-orange-400 transition-colors">{t('footer.breeders')}</Link></li>
+                <li><Link href={localizedHref('/forum')} className="hover:text-orange-400 transition-colors">{t('nav.forum')}</Link></li>
+                <li><Link href={localizedHref('/dog-friendly')} className="hover:text-green-400 transition-colors">{t('footer.dog_friendly')}</Link></li>
+                <li><Link href={localizedHref('/udomljavanje')} className="hover:text-pink-400 transition-colors">{t('footer.adoption')}</Link></li>
+                <li><Link href={localizedHref('/izgubljeni')} className="hover:text-red-400 transition-colors">{t('footer.lost_pets')}</Link></li>
+                <li><Link href={localizedHref('/uzgajivacnice')} className="hover:text-orange-400 transition-colors">{t('footer.breeders')}</Link></li>
               </ul>
             </div>
             <div>

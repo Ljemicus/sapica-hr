@@ -55,6 +55,18 @@ const KNOWN_LOCALE_ROUTE_PAIRS = {
     hr: '/pretraga',
     en: '/pretraga/en',
   },
+  '/faq': {
+    hr: '/faq',
+    en: '/faq/en',
+  },
+  '/forum': {
+    hr: '/forum',
+    en: '/forum/en',
+  },
+  '/verifikacija': {
+    hr: '/verifikacija',
+    en: '/verifikacija/en',
+  },
 } as const satisfies Record<string, Partial<Record<Language, string>>>;
 
 /**

@@ -22,29 +22,50 @@ import {
   LogOut,
 } from 'lucide-react';
 import type { NavbarActionItem, NavbarLinkItem, NavbarMenuItem, NavbarUser, TranslationFn } from './types';
+import type { Language } from '@/lib/i18n';
+
+function localizeHref(href: string, language: Language) {
+  if (language !== 'en') return href;
+
+  const localizedRoutes: Record<string, string> = {
+    '/njega': '/njega/en',
+    '/dresura': '/dresura/en',
+    '/veterinari': '/veterinari/en',
+    '/dog-friendly': '/dog-friendly/en',
+    '/izgubljeni': '/izgubljeni/en',
+    '/udomljavanje': '/udomljavanje/en',
+    '/uzgajivacnice': '/uzgajivacnice/en',
+    '/faq': '/faq/en',
+    '/verifikacija': '/verifikacija/en',
+    '/forum': '/forum/en',
+  };
+
+  return localizedRoutes[href] ?? href;
+}
 
 export function getDashboardLink(user?: NavbarUser | null) {
   return user?.role === 'sitter' ? '/dashboard/sitter' : user?.role === 'admin' ? '/admin' : '/dashboard/vlasnik';
 }
 
-export function getDesktopLinks(t: TranslationFn, user?: NavbarUser | null): NavbarLinkItem[] {
+export function getDesktopLinks(t: TranslationFn, user?: NavbarUser | null, language: Language = 'hr'): NavbarLinkItem[] {
   return [
     { href: '/o-nama', label: t('nav.about') },
     { href: '/blog', label: t('nav.blog'), icon: BookOpen },
-    { href: '/izgubljeni', label: t('nav.lost'), icon: AlertTriangle, className: 'text-red-500 hover:text-red-600 transition-colors' },
+    { href: localizeHref('/forum', language), label: t('nav.forum'), icon: MessageSquare },
+    { href: localizeHref('/izgubljeni', language), label: t('nav.lost'), icon: AlertTriangle, className: 'text-red-500 hover:text-red-600 transition-colors' },
     ...(!user ? [{ href: '/postani-sitter', label: t('nav.become_sitter'), className: 'text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 transition-colors px-3 py-2 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-950/20' }] : []),
   ];
 }
 
-export function getServicesMenu(t: TranslationFn): NavbarMenuItem[] {
+export function getServicesMenu(t: TranslationFn, language: Language = 'hr'): NavbarMenuItem[] {
   return [
     { href: '/pretraga', label: t('nav.sitters'), icon: Search },
-    { href: '/njega', label: t('nav.grooming'), icon: Scissors },
-    { href: '/dresura', label: t('nav.training'), icon: GraduationCap },
-    { href: '/veterinari', label: t('nav.veterinarians'), icon: Stethoscope },
+    { href: localizeHref('/njega', language), label: t('nav.grooming'), icon: Scissors },
+    { href: localizeHref('/dresura', language), label: t('nav.training'), icon: GraduationCap },
+    { href: localizeHref('/veterinari', language), label: t('nav.veterinarians'), icon: Stethoscope },
     { href: '/hitno', label: t('nav.emergency'), icon: Siren, className: 'text-red-600 dark:text-red-400 font-medium' },
-    { href: '/uzgajivacnice', label: t('nav.breeders'), icon: Baby },
-    { href: '/dog-friendly', label: 'Dog-Friendly', icon: Dog },
+    { href: localizeHref('/uzgajivacnice', language), label: t('nav.breeders'), icon: Baby },
+    { href: localizeHref('/dog-friendly', language), label: 'Dog-Friendly', icon: Dog },
   ];
 }
 
@@ -87,13 +108,13 @@ export function getUserMenuItems(t: TranslationFn, user?: NavbarUser | null): Na
   return items;
 }
 
-export function getMobilePrimaryLinks(t: TranslationFn): NavbarLinkItem[] {
+export function getMobilePrimaryLinks(t: TranslationFn, language: Language = 'hr'): NavbarLinkItem[] {
   return [
     { href: '/o-nama', label: t('nav.about'), icon: Heart },
     { href: '/pretraga', label: t('nav.sitters'), icon: Search },
-    { href: '/njega', label: t('nav.grooming'), icon: Scissors },
-    { href: '/dresura', label: t('nav.training'), icon: GraduationCap },
-    { href: '/veterinari', label: t('nav.veterinarians'), icon: Stethoscope },
+    { href: localizeHref('/njega', language), label: t('nav.grooming'), icon: Scissors },
+    { href: localizeHref('/dresura', language), label: t('nav.training'), icon: GraduationCap },
+    { href: localizeHref('/veterinari', language), label: t('nav.veterinarians'), icon: Stethoscope },
     { href: '/hitno', label: t('nav.emergency'), icon: Siren, className: 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold' },
   ];
 }
@@ -103,14 +124,14 @@ export function getMobileUtilityLinks(_t: TranslationFn): NavbarLinkItem[] {
   ];
 }
 
-export function getMobileCommunityLinks(t: TranslationFn): NavbarLinkItem[] {
+export function getMobileCommunityLinks(t: TranslationFn, language: Language = 'hr'): NavbarLinkItem[] {
   return [
     { href: '/blog', label: t('nav.blog'), icon: BookOpen },
-    { href: '/forum', label: t('nav.forum'), icon: MessageSquare },
-    { href: '/dog-friendly', label: 'Dog-Friendly', icon: Dog, className: 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/20 font-medium' },
-    { href: '/izgubljeni', label: t('nav.lost'), icon: AlertTriangle, className: 'text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold' },
-    { href: '/udomljavanje', label: t('footer.adoption'), icon: HeartHandshake, className: 'text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-950/20 font-semibold' },
-    { href: '/uzgajivacnice', label: t('nav.breeders'), icon: PawPrint },
+    { href: localizeHref('/forum', language), label: t('nav.forum'), icon: MessageSquare },
+    { href: localizeHref('/dog-friendly', language), label: 'Dog-Friendly', icon: Dog, className: 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/20 font-medium' },
+    { href: localizeHref('/izgubljeni', language), label: t('nav.lost'), icon: AlertTriangle, className: 'text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold' },
+    { href: localizeHref('/udomljavanje', language), label: t('footer.adoption'), icon: HeartHandshake, className: 'text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-950/20 font-semibold' },
+    { href: localizeHref('/uzgajivacnice', language), label: t('nav.breeders'), icon: PawPrint },
   ];
 }
 

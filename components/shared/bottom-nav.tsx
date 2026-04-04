@@ -9,13 +9,15 @@ import { useLanguage } from '@/lib/i18n';
 export function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const forumHref = language === 'en' ? '/forum/en' : '/forum';
 
   const navItems = [
     { href: '/', icon: Home, label: t('common.home') },
     { href: '/pretraga', icon: Search, label: t('common.search') },
     { href: '/zajednica', icon: BookOpen, label: t('nav.blog') },
-    { href: '/forum', icon: MessageSquare, label: t('nav.forum') },
+    { href: forumHref, icon: MessageSquare, label: t('nav.forum') },
   ];
 
   const dashboardLink = user?.role === 'sitter'

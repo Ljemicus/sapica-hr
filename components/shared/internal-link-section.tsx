@@ -15,9 +15,10 @@ interface InternalLinkSectionProps {
   title: string;
   description?: string;
   items: InternalLinkItem[];
+  ctaLabel?: string;
 }
 
-export function InternalLinkSection({ eyebrow, title, description, items }: InternalLinkSectionProps) {
+export function InternalLinkSection({ eyebrow, title, description, items, ctaLabel = 'Otvori' }: InternalLinkSectionProps) {
   if (!items.length) return null;
 
   return (
@@ -57,7 +58,7 @@ export function InternalLinkSection({ eyebrow, title, description, items }: Inte
                       {item.description}
                     </p>
                     <div className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-orange-500">
-                      Otvori <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      {ctaLabel} <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </CardContent>
                 </Card>

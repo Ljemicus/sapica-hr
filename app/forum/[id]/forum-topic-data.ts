@@ -7,7 +7,7 @@ export async function getForumTopicPageData(id: string) {
     return { topic: null, comments: [], related: [], category: null };
   }
 
-  // increment view count non-blocking
+  // increment view count (non-blocking)
   incrementTopicView(id).catch(() => {});
 
   const comments = await getPosts(id);

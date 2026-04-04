@@ -169,7 +169,7 @@ interface FaqItem {
   a: string;
 }
 
-export function FAQJsonLd({ faqs }: { faqs: FaqItem[] }) {
+export function FAQJsonLd({ faqs }: { faqs: readonly FaqItem[] }) {
   return (
     <JsonLdScript
       data={{
