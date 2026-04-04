@@ -17,34 +17,16 @@ import {
   ADOPTION_SIZE_LABELS,
   CITIES,
 } from '@/lib/types';
+import { useLanguage } from '@/lib/i18n/context';
 
-const speciesFilters = [
-  { value: 'all', label: 'Sve', emoji: '' },
-  { value: 'dog', label: 'Psi', emoji: '🐕' },
-  { value: 'cat', label: 'Mačke', emoji: '🐈' },
-  { value: 'rabbit', label: 'Mali ljubimci', emoji: '🐰' },
-  { value: 'other', label: 'Ostalo', emoji: '🐾' },
-];
-
-const sizeFilters = [
-  { value: 'all', label: 'Svi' },
-  { value: 'small', label: 'Mali' },
-  { value: 'medium', label: 'Srednji' },
-  { value: 'large', label: 'Veliki' },
-];
-
-const genderFilters = [
-  { value: 'all', label: 'Svi' },
-  { value: 'male', label: 'Muški' },
-  { value: 'female', label: 'Ženski' },
-];
-
-function formatAge(months: number | null): string {
-  if (months == null) return 'Nepoznato';
-  if (months < 12) return `${months} mj.`;
+function formatAge(months: number | null, isEn: boolean): string {
+  if (months == null) return isEn ? 'Unknown' : 'Nepoznato';
+  if (months < 12) return isEn ? `${months} mo` : `${months} mj.`;
   const years = Math.floor(months / 12);
   const rem = months % 12;
-  return rem > 0 ? `${years} g. ${rem} mj.` : `${years} g.`;
+  return rem > 0
+    ? (isEn ? `${years} yr ${rem} mo` : `${years} g. ${rem} mj.`)
+    : (isEn ? `${years} yr` : `${years} g.`);
 }
 
 const SPECIES_GRADIENTS: Record<string, string> = {
@@ -55,6 +37,28 @@ const SPECIES_GRADIENTS: Record<string, string> = {
 };
 
 export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingCard[] }) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const speciesFilters = [
+    { value: 'all', label: isEn ? 'All' : 'Sve', emoji: '' },
+    { value: 'dog', label: isEn ? 'Dogs' : 'Psi', emoji: '🐕' },
+    { value: 'cat', label: isEn ? 'Cats' : 'Mačke', emoji: '🐈' },
+    { value: 'rabbit', label: isEn ? 'Small pets' : 'Mali ljubimci', emoji: '🐰' },
+    { value: 'other', label: isEn ? 'Other' : 'Ostalo', emoji: '🐾' },
+  ];
+  const sizeFilters = [
+    { value: 'all', label: isEn ? 'All' : 'Svi' },
+    { value: 'small', label: isEn ? 'Small' : 'Mali' },
+    { value: 'medium', label: isEn ? 'Medium' : 'Srednji' },
+    { value: 'large', label: isEn ? 'Large' : 'Veliki' },
+  ];
+  const genderFilters = [
+    { value: 'all', label: isEn ? 'All' : 'Svi' },
+    { value: 'male', label: isEn ? 'Male' : 'Muški' },
+    { value: 'female', label: isEn ? 'Female' : 'Ženski' },
+  ];
+  const genderLabels = isEn ? { male: 'Male', female: 'Female' } : ADOPTION_GENDER_LABELS;
+  const sizeLabels = isEn ? { small: 'Small', medium: 'Medium', large: 'Large' } : ADOPTION_SIZE_LABELS;
   const [speciesFilter, setSpeciesFilter] = useState('all');
   const [cityFilter, setCityFilter] = useState<string | null>('all');
   const [sizeFilter, setSizeFilter] = useState<string | null>('all');
@@ -99,13 +103,13 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6 text-sm font-medium">
               <Heart className="h-4 w-4 fill-white" />
-              {listings.length} {listings.length === 1 ? 'ljubimac čeka' : 'ljubimaca čeka'} dom
+              {listings.length} {isEn ? (listings.length === 1 ? 'pet waiting for a home' : 'pets waiting for a home') : (listings.length === 1 ? 'ljubimac čeka' : 'ljubimaca čeka')} 
             </div>
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 font-[var(--font-heading)]">
-              Udomite ljubimca
+              {isEn ? 'Adopt a pet' : 'Udomite ljubimca'}
             </h1>
             <p className="text-lg md:text-xl text-purple-100 mb-4 max-w-2xl mx-auto">
-              Dajte dom onima koji to najviše zaslužuju. Pregledajte pse, mačke i male ljubimce za udomljavanje diljem Hrvatske.
+              {isEn ? 'Give a home to the ones who need it most. Browse dogs, cats, and small pets available for adoption across Croatia.' : 'Dajte dom onima koji to najviše zaslužuju. Pregledajte pse, mačke i male ljubimce za udomljavanje diljem Hrvatske.'}
             </p>
           </div>
         </div>
@@ -116,18 +120,18 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
         <div className="bg-white dark:bg-card rounded-2xl shadow-lg border border-gray-100 dark:border-border p-4 md:p-6">
           <div className="flex items-center gap-2 mb-4">
             <Filter className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Filtriraj</span>
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{isEn ? 'Filter' : 'Filtriraj'}</span>
           </div>
 
           {/* Search bar */}
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Pretraži po imenu, pasmini, gradu..."
+              placeholder={isEn ? 'Search by name, breed, city...' : 'Pretraži po imenu, pasmini, gradu...'}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10"
-              aria-label="Pretraži oglase za udomljavanje"
+              aria-label={isEn ? 'Search adoption listings' : 'Pretraži oglase za udomljavanje'}
             />
           </div>
 
@@ -153,10 +157,10 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <Select value={cityFilter} onValueChange={setCityFilter}>
               <SelectTrigger>
-                <SelectValue placeholder="Svi gradovi" />
+                <SelectValue placeholder={isEn ? 'All cities' : 'Svi gradovi'} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Svi gradovi</SelectItem>
+                <SelectItem value="all">{isEn ? 'All cities' : 'Svi gradovi'}</SelectItem>
                 {CITIES.map((city) => (
                   <SelectItem key={city} value={city}>{city}</SelectItem>
                 ))}
@@ -165,7 +169,7 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
 
             <Select value={sizeFilter} onValueChange={setSizeFilter}>
               <SelectTrigger>
-                <SelectValue placeholder="Veličina" />
+                <SelectValue placeholder={isEn ? 'Size' : 'Veličina'} />
               </SelectTrigger>
               <SelectContent>
                 {sizeFilters.map((s) => (
@@ -176,7 +180,7 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
 
             <Select value={genderFilter} onValueChange={setGenderFilter}>
               <SelectTrigger>
-                <SelectValue placeholder="Spol" />
+                <SelectValue placeholder={isEn ? 'Gender' : 'Spol'} />
               </SelectTrigger>
               <SelectContent>
                 {genderFilters.map((g) => (
@@ -192,7 +196,7 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
               className="mt-3 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               <X className="h-3.5 w-3.5" />
-              Poništi filtere
+              {isEn ? 'Clear filters' : 'Poništi filtere'}
             </button>
           )}
         </div>
@@ -202,21 +206,21 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
       <section className="container mx-auto px-4 py-10">
         <div className="flex items-center justify-between mb-6">
           <p className="text-sm text-muted-foreground">
-            {filtered.length} {filtered.length === 1 ? 'ljubimac' : 'ljubimaca'} pronađeno
+            {filtered.length} {isEn ? (filtered.length === 1 ? 'pet found' : 'pets found') : (filtered.length === 1 ? 'ljubimac' : 'ljubimaca')} {isEn ? '' : 'pronađeno'}
           </p>
         </div>
 
         {filtered.length === 0 ? (
           <EmptyState
             icon={hasActiveFilters ? Search : HeartHandshake}
-            title={hasActiveFilters ? 'Nema rezultata' : 'Trenutno nema aktivnih oglasa'}
-            description={hasActiveFilters ? 'Pokušajte promijeniti filtere ili pojam pretrage.' : 'Novi oglasi za udomljavanje pojavljuju se čim budu objavljeni. Provjerite ponovno uskoro.'}
+            title={hasActiveFilters ? (isEn ? 'No results' : 'Nema rezultata') : (isEn ? 'No active listings right now' : 'Trenutno nema aktivnih oglasa')}
+            description={hasActiveFilters ? (isEn ? 'Try changing your filters or search term.' : 'Pokušajte promijeniti filtere ili pojam pretrage.') : (isEn ? 'New adoption listings appear as soon as they are published. Check back soon.' : 'Novi oglasi za udomljavanje pojavljuju se čim budu objavljeni. Provjerite ponovno uskoro.')}
             action={hasActiveFilters ? (
               <button
                 onClick={clearFilters}
                 className="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors"
               >
-                Poništi sve filtere
+                {isEn ? 'Clear all filters' : 'Poništi sve filtere'}
               </button>
             ) : undefined}
           />
@@ -254,7 +258,7 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
                           <div className="absolute top-3 left-3">
                             <Badge className="bg-red-500 text-white font-bold rounded-full flex items-center gap-1.5">
                               <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                              Hitno
+                              {isEn ? 'Urgent' : 'Hitno'}
                             </Badge>
                           </div>
                         )}
@@ -266,7 +270,7 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
                             e.stopPropagation();
                             toggleFavorite(listing.id);
                           }}
-                          aria-label={isFavorite(listing.id) ? `Ukloni ${listing.name} iz favorita` : `Dodaj ${listing.name} u favorite`}
+                          aria-label={isFavorite(listing.id) ? (isEn ? `Remove ${listing.name} from favorites` : `Ukloni ${listing.name} iz favorita`) : (isEn ? `Add ${listing.name} to favorites` : `Dodaj ${listing.name} u favorite`)}
                           className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${
                             isFavorite(listing.id)
                               ? 'bg-red-500 text-white shadow-lg shadow-red-200/50'
@@ -293,15 +297,15 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
                         <div className="flex flex-wrap gap-1.5 mb-3">
                           {listing.gender && (
                             <Badge variant="secondary" className="rounded-full text-xs">
-                              {ADOPTION_GENDER_LABELS[listing.gender]}
+                              {genderLabels[listing.gender]}
                             </Badge>
                           )}
                           <Badge variant="secondary" className="rounded-full text-xs">
-                            {formatAge(listing.age_months)}
+                            {formatAge(listing.age_months, isEn)}
                           </Badge>
                           {listing.size && (
                             <Badge variant="secondary" className="rounded-full text-xs">
-                              {ADOPTION_SIZE_LABELS[listing.size]}
+                              {sizeLabels[listing.size]}
                             </Badge>
                           )}
                         </div>
@@ -315,14 +319,14 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
                         {/* Publisher */}
                         {listing.publisher_display_name && (
                           <div className="rounded-lg bg-purple-50/70 dark:bg-purple-950/20 px-3 py-2">
-                            <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1">O njemu brine</p>
+                            <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1">{isEn ? 'Care provided by' : 'O njemu brine'}</p>
                             <p className="text-sm font-medium text-purple-700 dark:text-purple-300">{listing.publisher_display_name}</p>
                           </div>
                         )}
 
                         <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between">
                           <span className="text-sm font-semibold text-purple-600 dark:text-purple-400 flex items-center gap-1">
-                            Pogledaj profil ljubimca <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                            {isEn ? 'View pet profile' : 'Pogledaj profil ljubimca'} <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
                           </span>
                         </div>
                       </div>

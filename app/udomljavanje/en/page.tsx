@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 import AdoptionPage from '../page';
-import { buildLocaleAlternates } from '@/lib/seo/locale-metadata';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
   title: 'Adoption — dogs and cats looking for a home',
@@ -10,9 +10,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Adoption — dogs and cats looking for a home | PetPark',
     description: 'Give a home to pets that need it most. Browse dogs, cats and other pets available for adoption across Croatia.',
-    url: 'https://petpark.hr/udomljavanje/en',
-    locale: 'en_US',
     type: 'website',
+    ...buildLocaleOpenGraph('/udomljavanje/en'),
   },
   alternates: buildLocaleAlternates('/udomljavanje/en'),
 };

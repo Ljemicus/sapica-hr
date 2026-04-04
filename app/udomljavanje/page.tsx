@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getActiveAdoptionListings } from '@/lib/db/adoption-listings';
 import { AdoptionBrowseContent } from './adoption-browse-content';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
   title: 'Udomljavanje — psi i mačke traže dom',
@@ -9,12 +10,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Udomljavanje — psi i mačke traže dom | PetPark',
     description: 'Dajte dom onima koji to najviše zaslužuju. Pregledajte pse, mačke i druge životinje za udomljavanje diljem Hrvatske.',
-    url: 'https://petpark.hr/udomljavanje',
     type: 'website',
+    ...buildLocaleOpenGraph('/udomljavanje'),
   },
-  alternates: {
-    canonical: 'https://petpark.hr/udomljavanje',
-  },
+  alternates: buildLocaleAlternates('/udomljavanje'),
 };
 
 export default async function AdoptionPage() {
