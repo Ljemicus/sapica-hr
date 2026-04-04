@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { InternalLinkSection } from '@/components/shared/internal-link-section';
 import { getCityServiceLinks, getSiblingCityLinks } from '@/lib/seo/internal-links';
+import { buildLocaleAlternates } from '@/lib/seo/locale-metadata';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     description: 'Pronađite verificirane pet sittere u Rijeci. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     images: [`${BASE_URL}/opengraph-image`],
   },
-  alternates: { canonical: `${BASE_URL}/cuvanje-pasa-rijeka` },
+  alternates: buildLocaleAlternates('/cuvanje-pasa-rijeka'),
 };
 
 const FAQS = [
