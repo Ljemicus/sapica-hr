@@ -37,7 +37,13 @@ export type AuditAction =
   | 'lost_pet_hidden'
   | 'lost_pet_unhidden'
   | 'lost_pet_deleted'
-  | 'lost_pet_marked_found';
+  | 'lost_pet_marked_found'
+  | 'forum_topic_hidden'
+  | 'forum_topic_unhidden'
+  | 'forum_topic_deleted'
+  | 'forum_comment_hidden'
+  | 'forum_comment_unhidden'
+  | 'forum_comment_deleted';
 
 export interface ProviderVerification {
   id: string;

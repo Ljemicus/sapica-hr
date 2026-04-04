@@ -12,6 +12,7 @@ import { FORUM_CATEGORIES } from '@/lib/types';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { CommentForm } from './comment-form';
 import { ForumTopicActions } from './topic-actions';
+import { ForumModerateControls } from './moderate-controls';
 import { InternalLinkSection } from '@/components/shared/internal-link-section';
 import { SEARCH_DISCOVERY_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
 import { LOCALE_HEADER } from '@/lib/i18n';
@@ -124,6 +125,11 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
                   <Flame className="h-3 w-3 mr-1" /> {copy.hot}
                 </Badge>
               )}
+              {topic.status === 'hidden' && (
+                <Badge variant="outline" className="border-red-200 text-red-500 bg-red-50 dark:bg-red-950/30">
+                  Skriveno
+                </Badge>
+              )}
               {cat && (
                 <Badge variant="outline" className={cat.color}>
                   {cat.emoji} {cat.name}
@@ -165,6 +171,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
                     <MessageCircle className="h-3 w-3" />
                     {topic.comment_count} {copy.commentsCount}
                   </span>
+                  <ForumModerateControls targetType="topic" targetId={topic.id} status={topic.status ?? 'active'} />
                 </div>
               </div>
             </div>
@@ -182,7 +189,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
 
           <div className="space-y-4 mb-10">
             {comments.map((comment, i) => (
-              <Card key={comment.id} className={`border border-orange-100/60 dark:border-orange-900/20 shadow-sm rounded-2xl bg-white/95 dark:bg-background animate-fade-in-up delay-${((i % 5) + 1) * 100}`}>
+              <Card key={comment.id} className={`border border-orange-100/60 dark:border-orange-900/20 shadow-sm rounded-2xl bg-white/95 dark:bg-background animate-fade-in-up delay-${((i % 5) + 1) * 100} ${'status' in comment && comment.status === 'hidden' ? 'opacity-60' : ''}`}>
                 <CardContent className="p-5">
                   <div className="flex gap-3">
                     <Avatar className="h-9 w-9 flex-shrink-0">
@@ -194,6 +201,9 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
                       <div className="flex items-center gap-3 mb-2">
                         <span className="font-medium text-sm">{comment.author_name}</span>
                         <span className="text-xs text-muted-foreground">{timeAgo(comment.created_at)}</span>
+                        {'status' in comment && comment.status === 'hidden' && (
+                          <Badge variant="outline" className="text-xs border-red-200 text-red-500 bg-red-50 dark:bg-red-950/30">Skriveno</Badge>
+                        )}
                       </div>
                       <p className="text-sm md:text-[15px] text-foreground/85 leading-7">{comment.content}</p>
                       <div className="flex items-center gap-3 mt-3">
@@ -201,6 +211,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
                         <button className="text-xs text-muted-foreground hover:text-orange-500 transition-colors">
                           {copy.reply}
                         </button>
+                        <ForumModerateControls targetType="comment" targetId={comment.id} status={'status' in comment ? (comment.status as 'active' | 'hidden') ?? 'active' : 'active'} />
                       </div>
                     </div>
                   </div>

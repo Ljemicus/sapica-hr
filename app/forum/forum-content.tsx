@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Search, MessageCircle, Heart, Pin, Flame, Plus, TrendingUp, Clock, AlertTriangle, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -15,28 +14,33 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ImageUpload } from '@/components/shared/image-upload';
 import { FORUM_CATEGORIES, type ForumCategorySlug, type ForumTopic } from '@/lib/types';
-import { useLanguage } from '@/lib/i18n/context';
 import { toast } from 'sonner';
+import { useLanguage } from '@/lib/i18n/context';
+import { ForumModerateControls } from './[id]/moderate-controls';
 
-function timeAgo(dateStr: string, isEn: boolean) {
+function timeAgo(dateStr: string) {
   const now = new Date();
   const date = new Date(dateStr);
   const diff = now.getTime() - date.getTime();
   const minutes = Math.floor(diff / 60000);
-  if (minutes < 60) return isEn ? `${minutes} min ago` : `prije ${minutes} min`;
+  if (minutes < 60) return `prije ${minutes} min`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return isEn ? `${hours}h ago` : `prije ${hours}h`;
+  if (hours < 24) return `prije ${hours}h`;
   const days = Math.floor(hours / 24);
-  if (days === 1) return isEn ? 'yesterday' : 'jučer';
-  if (days < 7) return isEn ? `${days} days ago` : `prije ${days} dana`;
-  return new Date(dateStr).toLocaleDateString(isEn ? 'en-GB' : 'hr-HR', { day: 'numeric', month: 'short' });
+  if (days === 1) return 'jučer';
+  if (days < 7) return `prije ${days} dana`;
+  return new Date(dateStr).toLocaleDateString('hr-HR', { day: 'numeric', month: 'short' });
 }
 
-function NewPostForm({ onCreated }: { onCreated: (topic: ForumTopic) => void }) {
+interface NewPostFormProps {
+  onSuccess: (topic: ForumTopic) => void;
+}
+
+function NewPostForm({ onSuccess }: NewPostFormProps) {
   const { language } = useLanguage();
   const isEn = language === 'en';
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState<string | null>('');
+  const [category, setCategory] = useState<string>('');
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [, setUploadedImages] = useState<string[]>([]);
@@ -51,28 +55,28 @@ function NewPostForm({ onCreated }: { onCreated: (topic: ForumTopic) => void }) 
       const res = await fetch('/api/forum/topics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title,
-          category_slug: category,
-          body: content,
-        }),
+        body: JSON.stringify({ title, category_slug: category, body: content }),
       });
+
       if (res.status === 401) {
-        toast.error(isEn ? 'Please sign in to publish.' : 'Prijavite se da biste objavili temu.');
+        toast.error(isEn ? 'Please log in to post.' : 'Prijavite se da biste objavili post.');
         return;
       }
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data?.topic) {
-        throw new Error(data?.error || 'Create topic failed');
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error ?? 'Server error');
       }
-      onCreated(data.topic as ForumTopic);
+
+      const data = await res.json();
       toast.success(isEn ? 'Post published!' : 'Post je objavljen!');
       setTitle('');
       setCategory('');
       setContent('');
-    } catch (error) {
-      console.error('Forum create topic failed:', error);
-      toast.error(isEn ? 'Failed to publish post.' : 'Objava teme nije uspjela.');
+      onSuccess(data.topic as ForumTopic);
+    } catch (err) {
+      toast.error(isEn ? 'Failed to publish post.' : 'Greška pri objavi posta.');
+      console.error('NewPostForm error:', err);
     } finally {
       setSubmitting(false);
     }
@@ -82,13 +86,13 @@ function NewPostForm({ onCreated }: { onCreated: (topic: ForumTopic) => void }) 
     <div className="space-y-4 mt-4">
       <div>
         <Label htmlFor="post-title">{isEn ? 'Title' : 'Naslov'}</Label>
-        <Input id="post-title" placeholder={isEn ? 'Enter a post title...' : 'Unesite naslov posta...'} className="mt-1.5" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <Input id="post-title" placeholder={isEn ? 'Enter post title...' : 'Unesite naslov posta...'} className="mt-1.5" value={title} onChange={(e) => setTitle(e.target.value)} />
       </div>
       <div>
         <Label htmlFor="post-category">{isEn ? 'Category' : 'Kategorija'}</Label>
-        <Select value={category} onValueChange={setCategory}>
+        <Select value={category} onValueChange={(v) => setCategory(v ?? '')}>
           <SelectTrigger className="mt-1.5">
-            <SelectValue placeholder={isEn ? 'Choose a category' : 'Odaberite kategoriju'} />
+            <SelectValue placeholder={isEn ? 'Choose category' : 'Odaberite kategoriju'} />
           </SelectTrigger>
           <SelectContent>
             {FORUM_CATEGORIES.map(cat => (
@@ -124,17 +128,15 @@ interface ForumContentProps {
 export function ForumContent({ initialTopics, initialTrending }: ForumContentProps) {
   const { language } = useLanguage();
   const isEn = language === 'en';
-  const router = useRouter();
   const [activeCategory, setActiveCategory] = useState<ForumCategorySlug | 'sve'>('sve');
   const [searchQuery, setSearchQuery] = useState('');
-  const [topicsState, setTopicsState] = useState(initialTopics);
-  const [trendingState, setTrendingState] = useState(initialTrending);
-  const [postDialogOpen, setPostDialogOpen] = useState(false);
+  const [topics, setTopics] = useState<ForumTopic[]>(initialTopics);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-  const topics = useMemo(() => {
+  const filteredTopics = useMemo(() => {
     let result = activeCategory === 'sve'
-      ? topicsState
-      : topicsState.filter(t => t.category_slug === activeCategory);
+      ? topics
+      : topics.filter(t => t.category_slug === activeCategory);
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(t =>
@@ -143,25 +145,21 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
       );
     }
     return result;
-  }, [activeCategory, searchQuery, topicsState]);
+  }, [activeCategory, searchQuery, topics]);
 
-  const trending = trendingState;
-
-  const handleTopicCreated = (topic: ForumTopic) => {
-    setTopicsState((prev) => [topic, ...prev]);
-    setTrendingState((prev) => {
-      const next = [topic, ...prev.filter((item) => item.id !== topic.id)];
-      return next.slice(0, 5);
-    });
-    setPostDialogOpen(false);
-    router.refresh();
-  };
+  const trending = initialTrending;
 
   const getCategoryInfo = (slug: ForumCategorySlug) =>
     FORUM_CATEGORIES.find(c => c.slug === slug);
 
+  const handleNewTopic = (newTopic: ForumTopic) => {
+    setTopics(prev => [newTopic, ...prev]);
+    setDialogOpen(false);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 md:py-10">
+      {/* Lost Pets Banner */}
       <Link href="/izgubljeni" className="block mb-8 group">
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-500 to-orange-500 dark:from-red-600 dark:to-orange-600 p-5 md:p-6 text-white shadow-lg shadow-red-200/40 dark:shadow-red-900/30 hover:shadow-xl hover:shadow-red-200/50 dark:hover:shadow-red-900/40 transition-all">
           <div className="absolute top-0 right-0 w-32 h-32 md:w-48 md:h-48 opacity-10">
@@ -172,11 +170,9 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
               <AlertTriangle className="h-7 w-7 md:h-8 md:w-8" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg md:text-xl font-bold mb-1">{isEn ? '🔍 Lost pets' : '🔍 Izgubljeni ljubimci'}</h3>
+              <h3 className="text-lg md:text-xl font-bold mb-1">🔍 {isEn ? 'Lost pets' : 'Izgubljeni ljubimci'}</h3>
               <p className="text-sm md:text-base text-white/85">
-                {isEn
-                  ? 'Report a missing pet or help identify one. The map and reports are live, with more alerts coming later.'
-                  : 'Prijavite ili pronađite izgubljenog ljubimca. Mapa i dojave su aktivni, a dodatne obavijesti dolaze kasnije.'}
+                {isEn ? 'Report or find a lost pet. The map and reports are live, with more notifications coming later.' : 'Prijavite ili pronađite izgubljenog ljubimca. Mapa i dojave su aktivni, a dodatne obavijesti dolaze kasnije.'}
               </p>
             </div>
             <ArrowRight className="h-6 w-6 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
@@ -184,6 +180,7 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
         </div>
       </Link>
 
+      {/* Search + New Post */}
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
@@ -194,7 +191,7 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Dialog open={postDialogOpen} onOpenChange={setPostDialogOpen}>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger render={<Button className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 shadow-md shadow-orange-200/50 dark:shadow-orange-900/30 btn-hover rounded-xl font-semibold" />}>
             <Plus className="h-4 w-4 mr-2" />
             {isEn ? 'New post' : 'Novi post'}
@@ -203,11 +200,12 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
             <DialogHeader>
               <DialogTitle>{isEn ? 'New post' : 'Novi post'}</DialogTitle>
             </DialogHeader>
-            <NewPostForm onCreated={handleTopicCreated} />
+            <NewPostForm onSuccess={handleNewTopic} />
           </DialogContent>
         </Dialog>
       </div>
 
+      {/* Category pills */}
       <div className="flex flex-wrap gap-2 mb-8">
         <button onClick={() => setActiveCategory('sve')}>
           <Badge
@@ -234,35 +232,20 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Post list */}
         <div className="lg:col-span-2 space-y-3">
-          {topics.length === 0 && (
-            <Card className="border-0 shadow-sm rounded-3xl overflow-hidden bg-gradient-to-br from-orange-50 via-white to-teal-50 dark:from-orange-950/20 dark:via-background dark:to-teal-950/20">
-              <CardContent className="text-center py-14 px-6">
-                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-orange-100 dark:bg-background dark:ring-orange-900/40">
-                  <MessageCircle className="h-8 w-8 text-orange-500" />
-                </div>
-                <p className="text-xl font-bold text-foreground mb-2">
-                  {isEn ? 'This conversation space is waiting for its first post' : 'Ovaj kutak zajednice čeka svoju prvu objavu'}
-                </p>
-                <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto mb-6 leading-relaxed">
-                  {isEn
-                    ? 'Ask something useful, share a real tip, or start a casual pet story. The best communities usually begin with one honest question.'
-                    : 'Postavi konkretno pitanje, podijeli koristan savjet ili otvori laganu pet temu. Dobre zajednice obično krenu od jednog normalnog pitanja.'}
-                </p>
-                <div className="flex flex-wrap items-center justify-center gap-2 text-xs md:text-sm text-muted-foreground">
-                  <span className="rounded-full bg-white/80 px-3 py-1.5 shadow-sm ring-1 ring-border">{isEn ? 'Questions' : 'Pitanja'}</span>
-                  <span className="rounded-full bg-white/80 px-3 py-1.5 shadow-sm ring-1 ring-border">{isEn ? 'Advice' : 'Savjeti'}</span>
-                  <span className="rounded-full bg-white/80 px-3 py-1.5 shadow-sm ring-1 ring-border">{isEn ? 'Stories' : 'Priče'}</span>
-                  <span className="rounded-full bg-white/80 px-3 py-1.5 shadow-sm ring-1 ring-border">{isEn ? 'Lost pets' : 'Izgubljeni ljubimci'}</span>
-                </div>
-              </CardContent>
-            </Card>
+          {filteredTopics.length === 0 && (
+            <div className="text-center py-16 text-muted-foreground">
+              <MessageCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p className="text-lg font-medium">{isEn ? 'No posts yet' : 'Nema postova'}</p>
+              <p className="text-sm">{isEn ? 'Try a different category or search query' : 'Pokušajte s drugom kategorijom ili pretragom'}</p>
+            </div>
           )}
-          {topics.map((topic, i) => {
+          {filteredTopics.map((topic, i) => {
             const cat = getCategoryInfo(topic.category_slug);
             return (
               <Link key={topic.id} href={`/forum/${topic.id}`}>
-                <Card className={`group card-hover border border-orange-100/60 dark:border-orange-900/20 shadow-sm hover:shadow-lg hover:-translate-y-0.5 rounded-2xl overflow-hidden bg-white/95 dark:bg-background animate-fade-in-up delay-${((i % 5) + 1) * 100}`}>
+                <Card className={`group card-hover border-0 shadow-sm rounded-2xl overflow-hidden animate-fade-in-up delay-${((i % 5) + 1) * 100}`}>
                   <CardContent className="p-5">
                     <div className="flex gap-4">
                       <Avatar className="h-10 w-10 flex-shrink-0 mt-0.5">
@@ -278,6 +261,11 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
                           {topic.is_hot && (
                             <Flame className="h-3.5 w-3.5 text-red-500 flex-shrink-0" />
                           )}
+                          {topic.status === 'hidden' && (
+                            <Badge variant="outline" className="text-xs border-red-200 text-red-500 bg-red-50 dark:bg-red-950/30">
+                              Skriveno
+                            </Badge>
+                          )}
                           {cat && (
                             <Badge variant="outline" className={`text-xs ${cat.color}`}>
                               {cat.emoji} {cat.name}
@@ -287,16 +275,11 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
                         <h3 className="font-semibold text-base group-hover:text-orange-500 transition-colors line-clamp-1 mb-1.5">
                           {topic.title}
                         </h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mb-2 leading-relaxed">
-                          {isEn
-                            ? 'Open the discussion to read replies and join in.'
-                            : 'Otvori temu za cijelu raspravu i uključi se komentarom.'}
-                        </p>
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           <span className="font-medium text-foreground/80">{topic.author_name}</span>
                           <span className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            {timeAgo(topic.created_at, isEn)}
+                            {timeAgo(topic.created_at)}
                           </span>
                           <span className="flex items-center gap-1">
                             <MessageCircle className="h-3 w-3" />
@@ -306,6 +289,7 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
                             <Heart className="h-3 w-3" />
                             {topic.likes}
                           </span>
+                          <ForumModerateControls targetType="topic" targetId={topic.id} status={topic.status ?? 'active'} />
                         </div>
                       </div>
                     </div>
@@ -316,22 +300,15 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
           })}
         </div>
 
+        {/* Sidebar — Trending */}
         <div className="space-y-6">
-          <Card className="border border-orange-100/60 dark:border-orange-900/20 shadow-sm rounded-2xl overflow-hidden bg-white/95 dark:bg-background">
+          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
             <CardContent className="p-5">
               <h3 className="font-bold text-base mb-4 flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-orange-500" />
                 {isEn ? 'Trending' : 'Popularno'}
               </h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                {isEn ? 'Topics people are most likely to open first.' : 'Teme koje najviše vuku prvi klik i raspravu.'}
-              </p>
               <div className="space-y-3">
-                {trending.length === 0 && (
-                  <div className="rounded-2xl bg-orange-50/80 dark:bg-orange-950/20 px-4 py-5 text-sm text-muted-foreground">
-                    {isEn ? 'No trending topics yet — perfect moment for the first good one.' : 'Još nema popularnih tema — idealan trenutak za prvu dobru objavu.'}
-                  </div>
-                )}
                 {trending.map((topic, i) => {
                   const cat = getCategoryInfo(topic.category_slug);
                   return (
@@ -360,7 +337,8 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
             </CardContent>
           </Card>
 
-          <Card className="border border-orange-100/60 dark:border-orange-900/20 shadow-sm rounded-2xl overflow-hidden bg-white/95 dark:bg-background">
+          {/* Category overview */}
+          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
             <CardContent className="p-5">
               <h3 className="font-bold text-base mb-4">{isEn ? 'Categories' : 'Kategorije'}</h3>
               <div className="space-y-2">

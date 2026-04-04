@@ -122,10 +122,11 @@ export async function getTopics(category?: ForumCategorySlug): Promise<ForumTopi
 
   try {
     const supabase = await createClient();
+    // RLS enforces visibility: non-admins see only active topics, admins see all.
     let query = supabase
       .from('forum_topics')
       .select(TOPIC_SELECT)
-      .eq('status', 'active')
+      .in('status', ['active', 'hidden', 'locked'])
       .order('is_pinned', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(50);
@@ -175,7 +176,7 @@ export async function getPosts(topicId: string): Promise<(ForumPost | ForumComme
       .from('forum_comments')
       .select(COMMENT_SELECT)
       .eq('topic_id', topicId)
-      .eq('status', 'active')
+      .in('status', ['active', 'hidden'])
       .order('created_at', { ascending: true });
 
     if (error || !data) return [];
@@ -194,7 +195,7 @@ export async function getTrendingTopics(): Promise<ForumTopic[]> {
     const { data, error } = await supabase
       .from('forum_topics')
       .select(TOPIC_SELECT)
-      .eq('status', 'active')
+      .in('status', ['active', 'hidden', 'locked'])
       .order('likes', { ascending: false })
       .order('comment_count', { ascending: false })
       .limit(5);
