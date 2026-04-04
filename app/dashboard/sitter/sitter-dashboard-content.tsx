@@ -182,7 +182,23 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
     <div className="container mx-auto px-4 py-8 max-w-5xl">
       <div className="mb-8 animate-fade-in-up">
         <h1 className="text-3xl font-bold tracking-tight">Bok, {user.name.split(' ')[0]}!</h1>
-        <p className="text-muted-foreground mt-1">Upravljajte svojim sitter profilom</p>
+        <p className="text-muted-foreground mt-1">Upravljajte rezervacijama, dostupnošću i profilom bez lutanja po sekcijama.</p>
+      </div>
+
+      <div className="rounded-2xl border bg-gradient-to-r from-orange-50 to-amber-50 p-4 mb-6 animate-fade-in-up delay-300">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium text-foreground">Što traži pažnju?</p>
+            <p className="text-sm text-muted-foreground">Brzo reagirajte na nove upite, održavajte kalendar ažurnim i šaljite kratke updateove vlasnicima.</p>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>{pendingBookings.length} na čekanju</span>
+            <span>•</span>
+            <span>{upcomingBookings.length} nadolazećih</span>
+            <span>•</span>
+            <span>{reviews.length} recenzija</span>
+          </div>
+        </div>
       </div>
 
       <SitterDashboardStats profile={profile} totalEarnings={totalEarnings} pendingCount={pendingBookings.length} />

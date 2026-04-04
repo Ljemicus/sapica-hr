@@ -92,7 +92,7 @@ export function AdoptionDashboardClient({ initialListings }: AdoptionDashboardCl
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
         <div>
           <Link href="/dashboard/vlasnik" className="text-sm text-muted-foreground hover:underline">
             &larr; Nadzorna ploča
@@ -102,6 +102,22 @@ export function AdoptionDashboardClient({ initialListings }: AdoptionDashboardCl
         <Link href="/dashboard/adoption/new" className={buttonVariants({ variant: 'default' }) + ' bg-teal-600 hover:bg-teal-700'}>
           + Novi oglas
         </Link>
+      </div>
+
+      <div className="rounded-2xl border bg-gradient-to-r from-teal-50 to-emerald-50 p-4 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium text-foreground">Brzi pregled oglasa</p>
+            <p className="text-sm text-muted-foreground">Objavite, pauzirajte ili uredite oglase bez traženja po više ekrana.</p>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>{listings.length} ukupno</span>
+            <span>•</span>
+            <span>{listings.filter((l) => l.status === 'active').length} aktivnih</span>
+            <span>•</span>
+            <span>{listings.filter((l) => l.status === 'draft').length} skica</span>
+          </div>
+        </div>
       </div>
 
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>

@@ -162,7 +162,7 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8 animate-fade-in-up">
         <h1 className="text-3xl font-bold tracking-tight">Bok, {user.name.split(' ')[0]}!</h1>
-        <p className="text-muted-foreground mt-1">Upravljajte svojim ljubimcima i rezervacijama</p>
+        <p className="text-muted-foreground mt-1">Upravljajte svojim ljubimcima, rezervacijama i recenzijama na jednom mjestu.</p>
       </div>
 
       <OwnerDashboardStats
@@ -172,7 +172,23 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
         totalSpent={totalSpent}
       />
 
-      <div className="flex gap-3 mb-8 animate-fade-in-up delay-500">
+      <div className="rounded-2xl border bg-gradient-to-r from-orange-50 to-amber-50 p-4 mb-6 animate-fade-in-up delay-300">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium text-foreground">Brzi pregled</p>
+            <p className="text-sm text-muted-foreground">Dodajte ljubimca, pošaljite novi upit ili nastavite tamo gdje ste stali.</p>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>{pets.length} ljubimaca</span>
+            <span>•</span>
+            <span>{activeBookings} aktivnih rezervacija</span>
+            <span>•</span>
+            <span>{unreviewedBookings.length} recenzija čeka</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-3 mb-8 animate-fade-in-up delay-500 flex-wrap">
         <Button onClick={openAddPet} className="bg-orange-500 hover:bg-orange-600 btn-hover shadow-sm">
           <Plus className="h-4 w-4 mr-1" /> Dodaj ljubimca
         </Button>
