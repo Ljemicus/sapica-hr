@@ -135,8 +135,12 @@ export default function CheckoutPage({
       <h1 className="mb-6 text-2xl font-bold">Plaćanje</h1>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Detalji rezervacije</CardTitle>
+        <CardHeader className="space-y-3">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <CardTitle className="text-lg">Detalji rezervacije</CardTitle>
+            <Badge variant="secondary">Sigurno plaćanje</Badge>
+          </div>
+          <p className="text-sm text-muted-foreground">Plaćanje se otvara u sigurnom checkout koraku. Rezervacija ostaje zabilježena na vašem dashboardu.</p>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center justify-between">
@@ -181,6 +185,12 @@ export default function CheckoutPage({
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
+          <div className="w-full rounded-xl border bg-muted/30 p-4 text-sm text-muted-foreground space-y-1">
+            <p className="font-medium text-foreground">Što slijedi nakon plaćanja?</p>
+            <p>1. Otvara se Stripe checkout.</p>
+            <p>2. Nakon uspješnog plaćanja rezervacija prelazi u plaćeni status.</p>
+            <p>3. Potvrdu ćete vidjeti na svom dashboardu.</p>
+          </div>
           <Button
             className="w-full"
             size="lg"

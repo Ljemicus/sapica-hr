@@ -92,7 +92,7 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
         <DialogHeader>
           <DialogTitle>Pošalji upit za rezervaciju</DialogTitle>
           <DialogDescription>
-            Šaljete upit sitteru {profile.user?.name}. Termin vrijedi tek nakon potvrde.
+            Šaljete upit sitteru {profile.user?.name}. Termin vrijedi tek nakon potvrde, a detalje možete dogovoriti i kroz poruke.
           </DialogDescription>
         </DialogHeader>
 
@@ -213,6 +213,13 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
                   </div>
                 </div>
               )}
+
+              <div className="rounded-xl border bg-muted/30 p-4 text-sm text-muted-foreground space-y-1">
+                <p className="font-medium text-foreground">Što slijedi nakon slanja?</p>
+                <p>1. Sitter prima vaš upit.</p>
+                <p>2. Potvrđujete detalje i termin.</p>
+                <p>3. Rezervacija postaje vidljiva na vašem dashboardu.</p>
+              </div>
 
               <div className="flex gap-2">
                 <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(2)}>

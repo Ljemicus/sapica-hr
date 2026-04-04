@@ -119,7 +119,7 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
         <DialogHeader>
           <DialogTitle>Pošalji upit za trening</DialogTitle>
           <DialogDescription>
-            Šaljete upit treneru {trainer.name}. Termin vrijedi tek nakon potvrde.
+            Šaljete upit treneru {trainer.name}. Termin vrijedi tek nakon potvrde, a plan treninga možete doraditi nakon prvog odgovora.
           </DialogDescription>
         </DialogHeader>
 
@@ -305,6 +305,13 @@ export function TrainerBookingDialog({ open, onOpenChange, trainer, programs }: 
                   <p className="text-xs text-muted-foreground mt-1">Ljubimac: {petName}</p>
                 )}
               </div>
+              <div className="rounded-xl border bg-muted/30 p-4 text-sm text-muted-foreground space-y-1">
+                <p className="font-medium text-foreground">Što slijedi nakon slanja?</p>
+                <p>1. Trener pregledava vaš upit.</p>
+                <p>2. Potvrđujete termin i detalje programa.</p>
+                <p>3. Daljnji dogovor ostaje uredno povezan s rezervacijom.</p>
+              </div>
+
               <div className="flex gap-2">
                 <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(2)}>
                   Natrag

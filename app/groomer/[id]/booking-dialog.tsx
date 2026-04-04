@@ -145,7 +145,7 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Pošalji upit za termin</DialogTitle>
-          <DialogDescription>Šaljete upit groomeru {groomer.name}. Termin vrijedi tek nakon potvrde.</DialogDescription>
+          <DialogDescription>Šaljete upit groomeru {groomer.name}. Termin vrijedi tek nakon potvrde, a detalje usluge možete dodatno uskladiti nakon odgovora.</DialogDescription>
         </DialogHeader>
 
         {/* Step indicator */}
@@ -446,6 +446,13 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
               <p className="text-xs text-muted-foreground text-center">
                 Groomer prvo treba potvrditi termin. Dobit ćete obavijest čim odgovori.
               </p>
+              <div className="rounded-xl border bg-muted/30 p-4 text-sm text-muted-foreground space-y-1">
+                <p className="font-medium text-foreground">Što slijedi nakon slanja?</p>
+                <p>1. Groomer prima upit za termin.</p>
+                <p>2. Dobivate potvrdu ili prijedlog drugog termina.</p>
+                <p>3. Rezervacija se pojavljuje u vašim rezervacijama.</p>
+              </div>
+
               <div className="flex gap-2">
                 <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(3)}>
                   Natrag
