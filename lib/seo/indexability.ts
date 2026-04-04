@@ -39,9 +39,10 @@ export function shouldIndexGroomer(groomer: Groomer): boolean {
   const hasSubstantialBio = (groomer.bio?.trim().length ?? 0) >= MIN_BIO_LENGTH;
   const hasReviews = groomer.review_count > 0;
   const isVerified = groomer.verified === true;
+  const hasDirectoryContact = Boolean(groomer.phone?.trim() || groomer.email?.trim() || groomer.address?.trim());
 
-  // Index if: has bio AND (verified OR has at least 1 review)
-  return hasSubstantialBio && (isVerified || hasReviews);
+  // Account-based providers should have trust signals; directory entries can index if they have real bio + contact data.
+  return hasSubstantialBio && (isVerified || hasReviews || hasDirectoryContact);
 }
 
 // ── Trainer ─────────────────────────────────────────────────────────────────
@@ -59,8 +60,9 @@ export function shouldIndexTrainer(trainer: Trainer): boolean {
   const hasSubstantialBio = (trainer.bio?.trim().length ?? 0) >= MIN_BIO_LENGTH;
   const hasReviews = trainer.review_count > 0;
   const isCertified = trainer.certified === true;
+  const hasDirectoryContact = Boolean(trainer.phone?.trim() || trainer.email?.trim() || trainer.address?.trim());
 
-  return hasSubstantialBio && (isCertified || hasReviews);
+  return hasSubstantialBio && (isCertified || hasReviews || hasDirectoryContact);
 }
 
 // ── Adoption listing ────────────────────────────────────────────────────────
