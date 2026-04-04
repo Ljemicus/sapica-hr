@@ -59,7 +59,8 @@ export async function getTrustEligibilityByUserId(userId?: string | null): Promi
 
 export async function getTrustEligibilityForGroomer(groomer: Groomer): Promise<TrustEligibilityResult> {
   if (!groomer.user_id) {
-    return { eligible: groomer.verified === true };
+    const hasPublicDirectoryData = Boolean(groomer.name?.trim() && groomer.city?.trim() && groomer.bio?.trim());
+    return { eligible: hasPublicDirectoryData };
   }
 
   return getTrustEligibilityByUserId(groomer.user_id);
@@ -67,7 +68,8 @@ export async function getTrustEligibilityForGroomer(groomer: Groomer): Promise<T
 
 export async function getTrustEligibilityForTrainer(trainer: Trainer): Promise<TrustEligibilityResult> {
   if (!trainer.user_id) {
-    return { eligible: trainer.certified === true };
+    const hasPublicDirectoryData = Boolean(trainer.name?.trim() && trainer.city?.trim() && trainer.bio?.trim());
+    return { eligible: hasPublicDirectoryData };
   }
 
   return getTrustEligibilityByUserId(trainer.user_id);
