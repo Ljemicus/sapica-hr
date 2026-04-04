@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { dispatchAlert } from '@/lib/alerting';
+import { getRequestId, createScopedLogger } from '@/lib/request-context';
 import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { getProviderApplication, upsertProviderApplication } from '@/lib/db/provider-applications';
@@ -21,6 +23,8 @@ interface SubmitBody {
 }
 
 export async function POST(request: NextRequest) {
+  const reqId = getRequestId(request);
+  const log = createScopedLogger('provider.verification', reqId);
   try {
     const user = await getAuthUser();
     if (!user) {
@@ -64,6 +68,17 @@ export async function POST(request: NextRequest) {
     // Create or update verification record
     const verification = await upsertVerification(application.id, 'identity', 'pending');
     if (!verification) {
+      log.error( 'Verification record creation failed', {
+        userId: user.id,
+        applicationId: application.id,
+      });
+      dispatchAlert({
+        severity: 'P2',
+        service: 'provider.verification',
+        description: 'Identity verification record creation failed',
+        value: `applicationId=${application.id}`,
+        owner: 'platform',
+      });
       return apiError({ status: 500, code: 'VERIFICATION_FAILED', message: 'Nije moguće kreirati zahtjev za verifikaciju.' });
     }
 
@@ -83,6 +98,19 @@ export async function POST(request: NextRequest) {
 
     const failedDocs = docResults.filter(d => !d);
     if (failedDocs.length > 0) {
+      log.error( 'Some verification documents failed to save', {
+        userId: user.id,
+        verificationId: verification.id,
+        totalDocs: body.documents.length,
+        failedCount: failedDocs.length,
+      });
+      dispatchAlert({
+        severity: 'P2',
+        service: 'provider.verification',
+        description: 'Verification document save partially failed',
+        value: `verificationId=${verification.id}, failed=${failedDocs.length}/${body.documents.length}`,
+        owner: 'platform',
+      });
       return apiError({ status: 500, code: 'DOCUMENT_SAVE_FAILED', message: 'Neki dokumenti nisu uspješno spremljeni.' });
     }
 
@@ -91,17 +119,35 @@ export async function POST(request: NextRequest) {
       address: body.address.trim(),
     });
 
+    log.info( 'Identity verification submitted', {
+      userId: user.id,
+      applicationId: application.id,
+      verificationId: verification.id,
+      documentCount: body.documents.length,
+    });
+
     return NextResponse.json({
       verification,
       completeness,
       message: 'Zahtjev za verifikaciju identiteta je uspješno poslan.',
     });
   } catch (error) {
+    log.error( 'Verification submission failed unexpectedly', {
+      error: error instanceof Error ? error.message : 'unknown',
+    });
+    dispatchAlert({
+      severity: 'P1',
+      service: 'provider.verification',
+      description: 'Unhandled identity verification submission failure',
+      value: error instanceof Error ? error.message : 'unknown',
+      owner: 'platform',
+    });
     return apiError({ status: 500, code: 'INTERNAL_ERROR', message: error instanceof Error ? error.message : 'Internal error' });
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const log = createScopedLogger('provider.verification', getRequestId(request));
   try {
     const user = await getAuthUser();
     if (!user) {
@@ -115,7 +161,10 @@ export async function GET() {
 
     const verification = await getVerification(application.id, 'identity');
     return NextResponse.json({ verification });
-  } catch {
+  } catch (error) {
+    log.error('GET verification status failed', {
+      error: error instanceof Error ? error.message : 'unknown',
+    });
     return apiError({ status: 500, code: 'INTERNAL_ERROR', message: 'Internal error' });
   }
 }

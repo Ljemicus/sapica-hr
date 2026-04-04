@@ -2,7 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
-import { appLogger } from '@/lib/logger';
+import { dispatchAlert } from '@/lib/alerting';
+import { getRequestId, createScopedLogger } from '@/lib/request-context';
 import { rateLimit } from '@/lib/rate-limit';
 
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -16,6 +17,8 @@ function sanitizeSegment(value: string) {
 }
 
 export async function POST(request: NextRequest) {
+  const reqId = getRequestId(request);
+  const log = createScopedLogger('upload.image', reqId);
   try {
     const user = await getAuthUser();
     if (!user) {
@@ -24,6 +27,7 @@ export async function POST(request: NextRequest) {
 
     const ip = request.headers.get('x-forwarded-for') || 'unknown';
     if (!rateLimit(`upload:${user.id}:${ip}`, 10, 60_000)) {
+      log.warn( 'Rate limit hit', { userId: user.id, ip }, 'P3');
       return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše uploadova. Pokušajte kasnije.' });
     }
 
@@ -33,7 +37,7 @@ export async function POST(request: NextRequest) {
     const requestedFolder = ((formData.get('folder') as string) || 'uploads').trim();
 
     if (!file) {
-      appLogger.warn('upload.image', 'Upload rejected because file is missing');
+      log.warn( 'Upload rejected because file is missing');
       return apiError({ status: 400, code: 'FILE_MISSING', message: 'No file provided' });
     }
     const isPrivateBucket = PRIVATE_BUCKETS.has(requestedBucket);
@@ -51,6 +55,13 @@ export async function POST(request: NextRequest) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!supabaseUrl || !serviceRoleKey) {
+      log.error( 'Storage not configured — missing env vars');
+      dispatchAlert({
+        severity: 'P1',
+        service: 'upload.image',
+        description: 'Storage not configured — Supabase env vars missing',
+        owner: 'platform',
+      });
       return apiError({ status: 500, code: 'STORAGE_UNAVAILABLE', message: 'Storage not configured' });
     }
 
@@ -71,14 +82,29 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
-      appLogger.error('upload.image', 'Storage upload failed', {
+      log.error( 'Storage upload failed', {
         userId: user.id,
         bucket,
         path,
         reason: error.message,
       });
+      dispatchAlert({
+        severity: 'P2',
+        service: 'upload.image',
+        description: 'Storage upload failed',
+        value: `bucket=${bucket}, error=${error.message}`,
+        owner: 'platform',
+      });
       return apiError({ status: 500, code: 'UPLOAD_FAILED', message: error.message });
     }
+
+    log.info( 'Upload succeeded', {
+      userId: user.id,
+      bucket,
+      path,
+      fileSize: file.size,
+      fileType: file.type,
+    });
 
     if (isPrivateBucket) {
       return NextResponse.json({
@@ -100,8 +126,15 @@ export async function POST(request: NextRequest) {
       path,
     });
   } catch (error) {
-    appLogger.error('upload.image', 'Upload failed unexpectedly', {
+    log.error( 'Upload failed unexpectedly', {
       message: error instanceof Error ? error.message : 'unknown',
+    });
+    dispatchAlert({
+      severity: 'P1',
+      service: 'upload.image',
+      description: 'Unhandled upload failure',
+      value: error instanceof Error ? error.message : 'unknown',
+      owner: 'platform',
     });
     return apiError({ status: 500, code: 'UPLOAD_FAILED', message: 'Upload failed' });
   }
