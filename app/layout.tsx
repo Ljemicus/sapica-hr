@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { headers } from 'next/headers';
 import Script from 'next/script';
 import { Inter, Nunito } from 'next/font/google';
 import './globals.css';
@@ -7,11 +8,12 @@ import { Footer } from '@/components/shared/footer';
 import { BottomNav } from '@/components/shared/bottom-nav';
 import { AuthProvider } from '@/contexts/auth-context';
 import { CartProvider } from '@/lib/cart-context';
-import { LanguageProvider } from '@/lib/i18n';
+import { LanguageProvider, DEFAULT_LOCALE, LOCALE_HEADER } from '@/lib/i18n';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { DeferredUI } from '@/components/shared/deferred-ui';
 import { WebVitals } from '@/components/monitoring/web-vitals';
 import { SkipToContentLink } from '@/components/shared/skip-to-content-link';
+import { buildLocaleAlternates } from '@/lib/seo/locale-metadata';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -68,11 +70,7 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
   },
-  alternates: {
-    languages: {
-      'hr': 'https://petpark.hr',
-    },
-  },
+  alternates: buildLocaleAlternates('/'),
   icons: {
     icon: [
       { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
@@ -93,13 +91,16 @@ export const viewport: Viewport = {
   themeColor: '#f97316',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const headerStore = await headers();
+  const routeLocale = headerStore.get(LOCALE_HEADER) ?? DEFAULT_LOCALE;
+
   return (
-    <html lang="hr" className={`${inter.variable} ${nunito.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang={routeLocale} className={`${inter.variable} ${nunito.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />

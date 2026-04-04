@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { updateSession } from '@/lib/supabase/middleware';
 import { generateRequestId, REQUEST_ID_HEADER } from '@/lib/request-context';
+import { detectLocaleFromPathname, LOCALE_HEADER } from '@/lib/i18n/routing';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const TRAINER_DEMO_RE = /^trainer[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$/i;
@@ -41,11 +42,14 @@ export async function proxy(request: NextRequest) {
   // Assign a request ID for end-to-end correlation across logs.
   // Honour an existing header (e.g. from an upstream load-balancer).
   const requestId = request.headers.get(REQUEST_ID_HEADER) || generateRequestId();
+  const locale = detectLocaleFromPathname(request.nextUrl.pathname);
   request.headers.set(REQUEST_ID_HEADER, requestId);
+  request.headers.set(LOCALE_HEADER, locale);
 
   const forced404 = maybeHard404DynamicProfile(request);
   if (forced404) {
     forced404.headers.set(REQUEST_ID_HEADER, requestId);
+    forced404.headers.set(LOCALE_HEADER, locale);
     return forced404;
   }
 
@@ -129,6 +133,7 @@ export async function proxy(request: NextRequest) {
   }
 
   response.headers.set(REQUEST_ID_HEADER, requestId);
+  response.headers.set(LOCALE_HEADER, locale);
   return response;
 }
 

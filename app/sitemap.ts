@@ -5,6 +5,7 @@ import { getLostPets } from '@/lib/db/lost-pets';
 import { shouldIndexSitter, shouldIndexGroomer, shouldIndexTrainer, shouldIndexLostPet, shouldIndexAdoptionCard } from '@/lib/seo/indexability';
 import { appLogger } from '@/lib/logger';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { buildLanguageAlternates } from '@/lib/i18n/routing';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 const DEFAULT_LAST_MODIFIED = new Date('2026-04-01T00:00:00.000Z');
@@ -19,6 +20,17 @@ function toLastModified(value: unknown, fallback: Date = DEFAULT_LAST_MODIFIED):
 
   return fallback;
 }
+
+const LOCALIZED_STATIC_ROUTES = new Set([
+  '/cuvanje-pasa-zagreb',
+  '/cuvanje-pasa-split',
+  '/cuvanje-pasa-rijeka',
+  '/veterinari',
+  '/dog-friendly',
+  '/izgubljeni',
+  '/udomljavanje',
+  '/uzgajivacnice',
+]);
 
 const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }> = [
   { route: '', changeFrequency: 'daily', priority: 1 },
@@ -52,6 +64,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: DEFAULT_LAST_MODIFIED,
     changeFrequency,
     priority,
+    alternates: LOCALIZED_STATIC_ROUTES.has(route)
+      ? { languages: buildLanguageAlternates(route) }
+      : undefined,
   }));
 
   const admin = createAdminClient();
@@ -120,6 +135,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: toLastModified((p as { updated_at?: string; date_lost?: string; created_at?: string }).updated_at ?? (p as { date_lost?: string }).date_lost ?? (p as { created_at?: string }).created_at),
       changeFrequency: 'daily' as const,
       priority: 0.6,
+      alternates: { languages: buildLanguageAlternates(`/izgubljeni/${p.id}`) },
     }));
 
   const adoptionEntries: MetadataRoute.Sitemap = adoptionListings
@@ -129,6 +145,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: toLastModified((a as { updated_at?: string; created_at?: string }).updated_at ?? (a as { created_at?: string }).created_at),
     changeFrequency: 'weekly' as const,
     priority: 0.6,
+    alternates: { languages: buildLanguageAlternates(`/udomljavanje/${String(a.id)}`) },
   }));
 
   const all = [
