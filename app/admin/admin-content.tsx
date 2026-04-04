@@ -13,6 +13,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { STATUS_LABELS, SERVICE_LABELS, PROVIDER_APPLICATION_STATUS_LABELS, PROVIDER_APPLICATION_STATUS_COLORS, type User, type Booking, type SitterProfile, type BookingStatus, type ServiceType, type ProviderApplication, type ProviderApplicationStatus } from '@/lib/types';
 import type { PublicStatus } from '@/lib/types/trust';
+
+const PUBLIC_STATUS_LABELS: Record<PublicStatus, string> = {
+  draft: 'Skica',
+  pending_review: 'Na pregledu',
+  public: 'Javno',
+  hidden: 'Skriveno',
+  suspended: 'Suspendirano',
+};
 import { toast } from 'sonner';
 import { AdminVerificationQueue } from '@/components/admin-verification-queue';
 
@@ -101,6 +109,17 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
   };
 
   const pendingApplications = providerApplications.filter(a => a.status === 'pending_verification');
+
+  const sortedProviderApplications = [...providerApplications].sort((a, b) => {
+    const priority = (app: ProviderApplication) => {
+      if (app.status === 'pending_verification') return 0;
+      if (app.status === 'active' && app.public_status !== 'public') return 1;
+      if (app.public_status === 'public') return 2;
+      return 3;
+    };
+
+    return priority(a) - priority(b);
+  });
 
   const filteredUsers = users.filter(u =>
     u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -273,7 +292,7 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
             </Card>
           ) : (
             <div className="space-y-3">
-              {providerApplications.map((app) => (
+              {sortedProviderApplications.map((app) => (
                 <Card key={app.id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
                   <CardContent className="p-4 space-y-3">
                     <div className="flex items-start justify-between gap-4">
@@ -284,7 +303,7 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
                             {PROVIDER_APPLICATION_STATUS_LABELS[app.status]}
                           </Badge>
                           <Badge variant="outline" className="text-xs">
-                            Javno: {app.public_status}
+                            Javno: {PUBLIC_STATUS_LABELS[app.public_status]}
                           </Badge>
                           {app.stripe_onboarding_complete && (
                             <Badge className="bg-purple-50 text-purple-700 border border-purple-200 text-xs">Stripe OK</Badge>

@@ -133,19 +133,26 @@ export function AdminVerificationQueue() {
   };
 
   const pendingCount = verifications.filter(v => v.status === 'pending').length;
+  const approvedCount = verifications.filter(v => v.status === 'approved').length;
+  const rejectedCount = verifications.filter(v => v.status === 'rejected').length;
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          <Shield className="h-5 w-5 text-orange-500" />
-          Identity verifikacije
-          {pendingCount > 0 && (
-            <span className="inline-flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-yellow-500 text-white text-xs font-bold">
-              {pendingCount}
-            </span>
-          )}
-        </h3>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <Shield className="h-5 w-5 text-orange-500" />
+            Identity verifikacije
+            {pendingCount > 0 && (
+              <span className="inline-flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-yellow-500 text-white text-xs font-bold">
+                {pendingCount}
+              </span>
+            )}
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1">
+            Pending: {pendingCount} · Odobreno: {approvedCount} · Odbijeno: {rejectedCount}
+          </p>
+        </div>
       </div>
 
       <Tabs value={filter} onValueChange={setFilter}>
