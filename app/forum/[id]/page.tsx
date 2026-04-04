@@ -135,6 +135,18 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
               {topic.title}
             </h1>
 
+            {topic.body && (
+              <div className="mb-6 rounded-3xl border border-orange-100/70 dark:border-orange-900/30 bg-white/90 dark:bg-background/80 shadow-sm p-5 md:p-6 animate-fade-in-up delay-75">
+                <div className="flex items-center gap-2 mb-3 text-xs font-semibold uppercase tracking-wide text-orange-600 dark:text-orange-300">
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  Originalna objava
+                </div>
+                <p className="text-sm md:text-base leading-7 text-foreground/90 whitespace-pre-wrap">
+                  {topic.body}
+                </p>
+              </div>
+            )}
+
             <div className="flex items-center gap-4 animate-fade-in-up delay-100">
               <Avatar className="h-10 w-10">
                 <AvatarFallback className={`bg-gradient-to-br ${topic.author_gradient} text-white font-medium`}>
@@ -170,7 +182,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
 
           <div className="space-y-4 mb-10">
             {comments.map((comment, i) => (
-              <Card key={comment.id} className={`border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${((i % 5) + 1) * 100}`}>
+              <Card key={comment.id} className={`border border-orange-100/60 dark:border-orange-900/20 shadow-sm rounded-2xl bg-white/95 dark:bg-background animate-fade-in-up delay-${((i % 5) + 1) * 100}`}>
                 <CardContent className="p-5">
                   <div className="flex gap-3">
                     <Avatar className="h-9 w-9 flex-shrink-0">
@@ -183,7 +195,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
                         <span className="font-medium text-sm">{comment.author_name}</span>
                         <span className="text-xs text-muted-foreground">{timeAgo(comment.created_at)}</span>
                       </div>
-                      <p className="text-sm text-gray-700 leading-relaxed">{comment.content}</p>
+                      <p className="text-sm md:text-[15px] text-foreground/85 leading-7">{comment.content}</p>
                       <div className="flex items-center gap-3 mt-3">
                         <ForumTopicActions commentId={comment.id} initialLikes={comment.likes} compact />
                         <button className="text-xs text-muted-foreground hover:text-orange-500 transition-colors">
@@ -198,7 +210,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
           </div>
 
           {/* Reply form */}
-          <Card className="border-0 shadow-sm rounded-2xl">
+          <Card className="border border-orange-100/60 dark:border-orange-900/20 shadow-sm rounded-2xl bg-white/95 dark:bg-background">
             <CardContent className="p-5">
               <CommentForm topicId={id} />
             </CardContent>
@@ -216,7 +228,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
                   const relCat = FORUM_CATEGORIES.find(c => c.slug === t.category_slug);
                   return (
                     <Link key={t.id} href={`/forum/${t.id}`}>
-                      <Card className="group card-hover border-0 shadow-sm rounded-2xl">
+                      <Card className="group card-hover border border-orange-100/60 dark:border-orange-900/20 shadow-sm rounded-2xl bg-white/95 dark:bg-background">
                         <CardContent className="p-4 flex items-center gap-3">
                           <Avatar className="h-8 w-8 flex-shrink-0">
                             <AvatarFallback className={`bg-gradient-to-br ${t.author_gradient} text-white text-xs font-medium`}>
