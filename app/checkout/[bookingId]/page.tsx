@@ -24,6 +24,7 @@ export default function CheckoutPage({
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [providerPaymentReady, setProviderPaymentReady] = useState<boolean | null>(null);
 
   useEffect(() => {
     async function fetchBooking() {
@@ -32,6 +33,17 @@ export default function CheckoutPage({
         if (!res.ok) throw new Error('Greška pri dohvaćanju rezervacije');
         const found: BookingWithDetails = await res.json();
         setBooking(found);
+
+        const meRes = await fetch('/api/auth/me');
+        const me = meRes.ok ? await meRes.json() : null;
+        if (me?.id && found.sitter_id === me.id) {
+          setProviderPaymentReady(true);
+        } else if (found.sitter_id) {
+          const statusRes = await fetch(`/api/sitters/${found.sitter_id}`);
+          const sitter = statusRes.ok ? await statusRes.json() : null;
+          const isReady = Boolean(sitter?.stripe_onboarding_complete || sitter?.stripe_account_id || sitter?.verified_payment_provider);
+          setProviderPaymentReady(isReady);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Nepoznata greška');
       } finally {
@@ -191,13 +203,18 @@ export default function CheckoutPage({
             <p>2. Nakon uspješnog plaćanja rezervacija prelazi u plaćeni status.</p>
             <p>3. Potvrdu ćete vidjeti na svom dashboardu.</p>
           </div>
+          {providerPaymentReady === false && (
+            <div className="w-full rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Čuvar još nije povezao Stripe plaćanja. Rezervacija je prihvaćena, ali online naplata još nije dostupna dok ne dovrši povezivanje računa.
+            </div>
+          )}
           <Button
             className="w-full"
             size="lg"
             onClick={handlePay}
-            disabled={paying}
+            disabled={paying || providerPaymentReady === false}
           >
-            {paying ? 'Obrada...' : `Plati ${formatCurrency(totalCents)}`}
+            {paying ? 'Obrada...' : providerPaymentReady === false ? 'Plaćanje trenutno nije dostupno' : `Plati ${formatCurrency(totalCents)}`}
           </Button>
           <Button
             variant="ghost"
