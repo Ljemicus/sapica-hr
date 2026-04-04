@@ -60,6 +60,8 @@ const mainCards = [
   { href: '/njega', emoji: '✂️', title: 'Grooming', description: 'Kupanje, šišanje i njega', bg: 'from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-950/20', hover: 'hover:shadow-pink-200/40 dark:hover:shadow-pink-900/20', border: 'border-pink-100 dark:border-pink-900/30' },
   { href: '/dresura', emoji: '🎓', title: 'Školovanje pasa', description: 'Profesionalna obuka i trening', bg: 'from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/20', hover: 'hover:shadow-indigo-200/40 dark:hover:shadow-indigo-900/20', border: 'border-indigo-100 dark:border-indigo-900/30' },
   { href: '/veterinari', emoji: '🩺', title: 'Veterinari', description: 'Provjerene ordinacije i pomoć', bg: 'from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/20', hover: 'hover:shadow-teal-200/40 dark:hover:shadow-teal-900/20', border: 'border-teal-100 dark:border-teal-900/30' },
+  { href: '/forum', emoji: '💬', title: 'Forum', description: 'Pitanja, iskustva i savjeti zajednice', bg: 'from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/20', hover: 'hover:shadow-violet-200/40 dark:hover:shadow-violet-900/20', border: 'border-violet-100 dark:border-violet-900/30' },
+  { href: '/udomljavanje', emoji: '❤️', title: 'Udomljavanje', description: 'Psi i mačke koji traže dom', bg: 'from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/20', hover: 'hover:shadow-rose-200/40 dark:hover:shadow-rose-900/20', border: 'border-rose-100 dark:border-rose-900/30' },
 ];
 
 const services = [
@@ -118,7 +120,7 @@ export default async function HomePage() {
               <span className="text-teal-600 dark:text-teal-400">ljubimca.</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in-up delay-200 leading-relaxed">
-              Verificirani čuvari, groomeri i treneri u vašem gradu. Rezervirajte online brzo, jasno i bez stresa — uz recenzije stvarnih korisnika i podršku kad zatreba.
+              Pronađite provjerene sittere, groomere i trenere u svom gradu. Jasni profili, stvarne recenzije i brza rezervacija — bez natezanja i bez stresa.
             </p>
 
             <div className="mb-8 animate-fade-in-up delay-200 max-w-2xl mx-auto">
@@ -165,19 +167,19 @@ export default async function HomePage() {
             <div className="flex items-center justify-center gap-4 sm:gap-6 mt-8 text-sm text-muted-foreground animate-fade-in-up delay-400 flex-wrap">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4 text-teal-500" />
-                <span>Ručno verificirani profili</span>
+                <span>Provjereni i javni profili</span>
               </div>
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
-                <span>Recenzije stvarnih korisnika</span>
+                <span>Recenzije i jasni detalji usluge</span>
               </div>
               <div className="hidden sm:flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-blue-500" />
-                <span>Sigurno plaćanje</span>
+                <span>Jasna rezervacija i plaćanje</span>
               </div>
               <div className="hidden sm:flex items-center gap-2">
                 <PhoneCall className="h-4 w-4 text-rose-400" />
-                <span>Podrška pon–sub 8–20h</span>
+                <span>Podrška kad zapne</span>
               </div>
             </div>
           </div>
@@ -317,8 +319,8 @@ export default async function HomePage() {
             <div className="flex items-end justify-between gap-4 mb-10">
               <div>
                 <Badge variant="secondary" className="mb-4 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-semibold">Popularni sitteri</Badge>
-                <h2 className="text-3xl md:text-4xl font-extrabold mb-3 font-[var(--font-heading)]">Pouzdani čuvari koje vlasnici rado biraju</h2>
-                <p className="text-muted-foreground text-lg max-w-2xl">Istražite profile sittera s najboljim ocjenama i verifikacijom.</p>
+                <h2 className="text-3xl md:text-4xl font-extrabold mb-3 font-[var(--font-heading)]">Pouzdani sitteri koje vlasnici rado biraju</h2>
+                <p className="text-muted-foreground text-lg max-w-2xl">Istražite profile s dobrim recenzijama, jasnim opisima usluge i provjerenim podacima.</p>
               </div>
               <Link href="/pretraga" className="hidden md:inline-flex">
                 <Button variant="outline" className="rounded-full">
@@ -412,7 +414,7 @@ export default async function HomePage() {
               Vaš ljubimac zaslužuje pouzdanu brigu.
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
-              Pronađite sittera, groomera ili trenera u svom gradu — s jasnim profilima, recenzijama i podrškom ako zapne.
+              Pronađite uslugu za svog ljubimca u nekoliko klikova — od čuvanja i šetnji do groominga, školovanja i udomljavanja.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/pretraga">

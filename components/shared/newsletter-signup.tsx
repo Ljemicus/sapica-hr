@@ -12,8 +12,8 @@ export function NewsletterSignup() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    toast.info('Newsletter pretplata je uskoro dostupna!', {
-      description: 'Radimo na tome — hvala na interesu.',
+    toast.info('Hvala na interesu!', {
+      description: 'Uskoro ćemo omogućiti prijavu na newsletter. Za sada nas pratite kroz PetPark novosti na stranici i društvenim mrežama.',
     });
     setEmail('');
   };
@@ -32,7 +32,7 @@ export function NewsletterSignup() {
             Budite u toku s PetPark novostima
           </h2>
           <p className="text-white/80 mb-6 text-sm md:text-base">
-            Primajte savjete za brigu o ljubimcima, posebne ponude i novosti iz zajednice.
+            Savjeti za brigu o ljubimcima, posebne ponude i novosti iz zajednice — sve na jednom mjestu čim otvorimo prijave.
           </p>
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <Input
@@ -49,7 +49,7 @@ export function NewsletterSignup() {
             >
               <span className="flex items-center gap-2">
                 <Send className="h-4 w-4" />
-                Pretplatite se
+                Javi mi kad krene
               </span>
             </Button>
           </form>
