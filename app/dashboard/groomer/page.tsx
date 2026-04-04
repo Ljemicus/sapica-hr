@@ -23,18 +23,7 @@ export default async function GroomerDashboardPage() {
     .single();
 
   if (!groomer) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold mb-4">Nemate groomer profil</h1>
-        <p className="text-muted-foreground mb-6">Kreirajte svoj profil kako biste mogli upravljati terminima i primati rezervacije.</p>
-        <Link
-          href="/onboarding/publisher-type"
-          className="inline-flex items-center justify-center rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 transition-colors"
-        >
-          Kreiraj profil
-        </Link>
-      </div>
-    );
+    redirect('/onboarding/publisher-type');
   }
 
   // Fetch bookings

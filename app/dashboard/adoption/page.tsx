@@ -18,6 +18,10 @@ export default async function AdoptionDashboardPage() {
     redirect('/onboarding/publisher-type');
   }
 
+  if (publisher.type !== 'udomljavanje') {
+    redirect('/dashboard/profile');
+  }
+
   const listings = await getAdoptionListingsByPublisher(publisher.id);
 
   return <AdoptionDashboardClient initialListings={listings} />;
