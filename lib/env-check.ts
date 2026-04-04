@@ -11,6 +11,8 @@ type EnvVarRule = {
   prodOnly?: boolean;
   /** Regex that indicates the value is still a placeholder */
   placeholderPattern?: RegExp;
+  /** Missing value should degrade to warning instead of error */
+  severity?: 'error' | 'warning';
 };
 
 const RULES: EnvVarRule[] = [
@@ -31,9 +33,9 @@ const RULES: EnvVarRule[] = [
     placeholderPattern: /REPLACE/,
   },
 
-  // Alerting (required in prod for incident response)
-  { name: 'SLACK_INCIDENTS_WEBHOOK', prodOnly: true },
-  { name: 'SLACK_OPS_WEBHOOK', prodOnly: true },
+  // Alerting (important for ops, but should not mark app itself as unavailable)
+  { name: 'SLACK_INCIDENTS_WEBHOOK', prodOnly: true, severity: 'warning' },
+  { name: 'SLACK_OPS_WEBHOOK', prodOnly: true, severity: 'warning' },
 
   // Cron auth
   { name: 'CRON_SECRET', prodOnly: true },
@@ -43,12 +45,14 @@ export type EnvCheckResult = {
   status: 'ok' | 'warning' | 'error';
   missing: string[];
   placeholder: string[];
+  warnings: string[];
 };
 
 export function checkEnv(): EnvCheckResult {
   const isProd = process.env.NODE_ENV === 'production';
   const missing: string[] = [];
   const placeholder: string[] = [];
+  const warnings: string[] = [];
 
   for (const rule of RULES) {
     if (rule.prodOnly && !isProd) continue;
@@ -56,7 +60,11 @@ export function checkEnv(): EnvCheckResult {
     const value = process.env[rule.name];
 
     if (!value || value.trim() === '') {
-      missing.push(rule.name);
+      if (rule.severity === 'warning') {
+        warnings.push(rule.name);
+      } else {
+        missing.push(rule.name);
+      }
       continue;
     }
 
@@ -68,9 +76,9 @@ export function checkEnv(): EnvCheckResult {
   const status =
     missing.length > 0
       ? 'error'
-      : placeholder.length > 0
+      : placeholder.length > 0 || warnings.length > 0
         ? 'warning'
         : 'ok';
 
-  return { status, missing, placeholder };
+  return { status, missing, placeholder, warnings };
 }
