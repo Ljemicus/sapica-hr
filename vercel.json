@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/admin/kpi-digest?slack=true",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/admin/ops-audit?slack=true&alerts=true",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}
