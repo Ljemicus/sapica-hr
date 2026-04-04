@@ -65,15 +65,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getLostPets().catch(() => []),
   ]);
 
-  const sitters = sittersResult.data || [];
-  const groomers = groomersResult.data || [];
-  const trainers = trainersResult.data || [];
-  const adoptionListings = adoptionResult.data || [];
+  const sitters = (sittersResult.data || []) as Array<Record<string, unknown>>;
+  const groomers = (groomersResult.data || []) as Array<Record<string, unknown>>;
+  const trainers = (trainersResult.data || []) as Array<Record<string, unknown>>;
+  const adoptionListings = (adoptionResult.data || []) as Array<Record<string, unknown>>;
 
   const sitterEntries: MetadataRoute.Sitemap = sitters
-    .filter(shouldIndexSitter)
+    .filter((s) => shouldIndexSitter(s as never))
     .map((s) => ({
-      url: `${BASE_URL}/sitter/${s.user_id}`,
+      url: `${BASE_URL}/sitter/${String(s.user_id)}`,
       lastModified: toLastModified((s as { updated_at?: string; created_at?: string }).updated_at ?? (s as { created_at?: string }).created_at),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
@@ -81,18 +81,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Only include indexable (non-thin) profiles in the sitemap.
   const groomerEntries: MetadataRoute.Sitemap = groomers
-    .filter(shouldIndexGroomer)
+    .filter((g) => shouldIndexGroomer(g as never))
     .map((g) => ({
-      url: `${BASE_URL}/groomer/${g.id}`,
+      url: `${BASE_URL}/groomer/${String(g.id)}`,
       lastModified: toLastModified((g as { updated_at?: string; created_at?: string }).updated_at ?? (g as { created_at?: string }).created_at),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     }));
 
   const trainerEntries: MetadataRoute.Sitemap = trainers
-    .filter(shouldIndexTrainer)
+    .filter((t) => shouldIndexTrainer(t as never))
     .map((t) => ({
-      url: `${BASE_URL}/trener/${t.id}`,
+      url: `${BASE_URL}/trener/${String(t.id)}`,
       lastModified: toLastModified((t as { updated_at?: string; created_at?: string }).updated_at ?? (t as { created_at?: string }).created_at),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
@@ -123,9 +123,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
   const adoptionEntries: MetadataRoute.Sitemap = adoptionListings
-    .filter(shouldIndexAdoptionCard)
+    .filter((a) => shouldIndexAdoptionCard(a as never))
     .map((a) => ({
-    url: `${BASE_URL}/udomljavanje/${a.id}`,
+    url: `${BASE_URL}/udomljavanje/${String(a.id)}`,
     lastModified: toLastModified((a as { updated_at?: string; created_at?: string }).updated_at ?? (a as { created_at?: string }).created_at),
     changeFrequency: 'weekly' as const,
     priority: 0.6,
