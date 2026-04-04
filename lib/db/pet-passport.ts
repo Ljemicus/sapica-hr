@@ -1,11 +1,10 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
-import { getPetPassport as mockGetPassport } from '@/lib/mock-data';
 import type { PetPassport } from '@/lib/types';
 
 export async function getPassport(petId: string): Promise<PetPassport | null> {
   if (!isSupabaseConfigured()) {
-    return mockGetPassport(petId) ?? null;
+    return null;
   }
   try {
     const supabase = await createClient();

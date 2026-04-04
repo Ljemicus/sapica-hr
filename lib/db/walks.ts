@@ -1,16 +1,10 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
-import {
-  getWalkById as mockGetWalk,
-  getWalksForUser as mockGetWalksForUser,
-  getActiveWalksForSitter as mockGetActiveWalks,
-  mockWalks,
-} from '@/lib/mock-data';
 import type { Walk } from '@/lib/types';
 
 export async function getWalk(id: string): Promise<Walk | null> {
   if (!isSupabaseConfigured()) {
-    return mockGetWalk(id) ?? null;
+    return null;
   }
   try {
     const supabase = await createClient();
@@ -24,7 +18,7 @@ export async function getWalk(id: string): Promise<Walk | null> {
 
 export async function getWalksByBooking(bookingId: string): Promise<Walk[]> {
   if (!isSupabaseConfigured()) {
-    return mockWalks.filter((w) => w.booking_id === bookingId);
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -42,7 +36,7 @@ export async function getWalksByBooking(bookingId: string): Promise<Walk[]> {
 
 export async function getWalksForUser(userId: string): Promise<Walk[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetWalksForUser(userId);
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -87,7 +81,7 @@ export async function getWalksForUser(userId: string): Promise<Walk[]> {
 
 export async function getActiveWalksForSitter(sitterId: string): Promise<Walk[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetActiveWalks(sitterId);
+    return [];
   }
   try {
     const supabase = await createClient();

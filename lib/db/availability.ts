@@ -1,11 +1,10 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
-import { getAvailabilityForSitter as mockGetAvailability } from '@/lib/mock-data';
 import type { Availability } from '@/lib/types';
 
 export async function getAvailability(sitterId: string): Promise<Availability[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetAvailability(sitterId);
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -29,12 +28,7 @@ export async function setAvailability(
   available: boolean
 ): Promise<Availability[]> {
   if (!isSupabaseConfigured()) {
-    return dates.map((date, i) => ({
-      id: `mock-avail-${Date.now()}-${i}`,
-      sitter_id: sitterId,
-      date,
-      available,
-    }));
+    return [];
   }
   try {
     const supabase = await createClient();
