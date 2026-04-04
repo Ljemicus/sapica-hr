@@ -11,6 +11,7 @@ import { LanguageProvider } from '@/lib/i18n';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { DeferredUI } from '@/components/shared/deferred-ui';
 import { WebVitals } from '@/components/monitoring/web-vitals';
+import { SkipToContentLink } from '@/components/shared/skip-to-content-link';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -91,6 +92,7 @@ export const viewport: Viewport = {
   minimumScale: 1,
   themeColor: '#f97316',
 };
+
 export default function RootLayout({
   children,
 }: {
@@ -124,7 +126,7 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <LanguageProvider>
-              <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-orange-500 focus:text-white focus:rounded-lg">Preskoči na sadržaj</a>
+              <SkipToContentLink />
               <Navbar />
               <main id="main-content" className="flex-1 pb-16 md:pb-0">{children}</main>
               <Footer />

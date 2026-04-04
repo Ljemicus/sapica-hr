@@ -84,52 +84,52 @@ Slušajte svog ljubimca. On vam govori — samo na svoj način.`,
     emoji: `🩺`,
   },
   {
-    slug: `vakcinacija-pasa-macaka-vodic`,
-    title: `Vakcinacija pasa i mačaka: raspored, cijene i savjeti`,
-    excerpt: `Kompletan vodič kroz obavezne i preporučene vakcine za pse i mačke u Hrvatskoj — raspored, cijene i najčešća pitanja.`,
-    body: `Vakcinacija je jedan od najvažnijih koraka u brizi za zdravlje vašeg ljubimca. U Hrvatskoj postoji zakonska obveza cijepljenja pasa protiv bjesnoće, ali postoji i niz drugih vakcina koje štite vaše ljubimce od opasnih bolesti.
+    slug: `cijepljenje-pasa-macaka-vodic`,
+    title: `Cijepljenje pasa i mačaka: raspored, cijene i savjeti`,
+    excerpt: `Kompletan vodič kroz obvezna i preporučena cjepiva za pse i mačke u Hrvatskoj — raspored, cijene i najčešća pitanja.`,
+    body: `Cijepljenje je jedan od najvažnijih koraka u brizi za zdravlje vašeg ljubimca. U Hrvatskoj postoji zakonska obveza cijepljenja pasa protiv bjesnoće, ali postoji i niz drugih cjepiva koje štite vaše ljubimce od opasnih bolesti.
 
-VAKCINACIJA ŠTENADI
+CIJEPLJENJE ŠTENADI
 
-Štenad dobiva prva antitijela kroz majčino mlijeko, ali ta zaštita slabi oko 6.-8. tjedna života. Zato se s vakcinacijom počinje rano.
+Štenad dobiva prva antitijela kroz majčino mlijeko, ali ta zaštita slabi oko 6.-8. tjedna života. Zato se s cijepljenjem počinje rano.
 
-Raspored vakcinacije štenadi:
-- 6-8 tjedana: prva kombinirana vakcina (parvoviroza, štenetina, hepatitis)
-- 10-12 tjedana: druga kombinirana vakcina + leptospiroza
-- 14-16 tjedana: treća kombinirana vakcina + bjesnoća
-- Revakcinacija: godišnje ili svake tri godine, ovisno o vakcini
+Raspored cijepljenja štenadi:
+- 6-8 tjedana: prvo kombinirano cjepivo (parvoviroza, štenetina, hepatitis)
+- 10-12 tjedana: drugo kombinirano cjepivo + leptospiroza
+- 14-16 tjedana: treće kombinirano cjepivo + cjepivo protiv bjesnoće
+- Docjepljivanje: godišnje ili svake tri godine, ovisno o cjepivu
 
-Parvoviroza je posebno opasna i česta u Hrvatskoj. Ova bolest izaziva teški krvavi proljev i povraćanje, a smrtnost kod necijepljenih štenadi može biti i do 80%. Liječenje je skupo (200-500 EUR) i neizvjesno. Vakcinacija košta 20-30 EUR. Matematika je jasna.
+Parvoviroza je posebno opasna i česta u Hrvatskoj. Ova bolest izaziva teški krvavi proljev i povraćanje, a smrtnost kod necijepljenih štenadi može biti i do 80%. Liječenje je skupo (200-500 EUR) i neizvjesno. Cijepljenje stoji 20-30 EUR. Računica je jasna.
 
-VAKCINACIJA ODRASLIH PASA
+CIJEPLJENJE ODRASLIH PASA
 
-Odrasli psi trebaju godišnju revakcinaciju. Osnovne (core) vakcine uključuju: štenetinu, parvoviroza, adenovirus i bjesnoću. Neobavezne (non-core) vakcine ovise o stilu života psa — leptospiroza je preporučljiva za pse koji se kupaju u stajaćoj vodi, a kennel kašalj za pse koji posjećuju parkove za pse ili koriste usluge čuvanja.
+Odrasli psi trebaju godišnje docjepljivanje. Osnovna cjepiva uključuju: štenećak, parvovirozu, adenovirus i bjesnoću. Dodatna cjepiva ovise o stilu života psa — leptospiroza je preporučljiva za pse koji se kupaju u stajaćoj vodi, a zarazni kašalj za pse koji posjećuju parkove za pse ili koriste usluge čuvanja.
 
-Cijena godišnje revakcinacije u Hrvatskoj kreće se od 30 do 50 EUR, uključujući pregled.
+Cijena godišnjeg docjepljivanja u Hrvatskoj kreće se od 30 do 50 EUR, uključujući pregled.
 
-VAKCINACIJA MAČAKA
+CIJEPLJENJE MAČAKA
 
-Mačke se cijepe protiv kalicivirusa, herpes virusa i panleukpenije. Ove tri bolesti čine takozvanu kombiniranu vakcinu. Za mačke koje izlaze van, preporučuje se i vakcina protiv mačje leukemije (FeLV).
+Mačke se cijepe protiv kalicivirusa, herpes virusa i panleukpenije. Ove tri bolesti čine takozvano kombinirano cjepivo. Za mačke koje izlaze van, preporučuje se i cjepivo protiv mačje leukemije (FeLV).
 
 Raspored za mačiće:
-- 8-9 tjedana: prva kombinirana vakcina
-- 12 tjedana: druga kombinirana + FeLV (za mačke koje izlaze)
+- 8-9 tjedana: prvo kombinirano cjepivo
+- 12 tjedana: drugo kombinirano cjepivo + FeLV (za mačke koje izlaze)
 - 16 tjedana: treća doza
-- Revakcinacija: godišnje
+- Docjepljivanje: godišnje
 
 BJESNOĆA — ZAKONSKA OBVEZA
 
-U Hrvatskoj je vakcinacija pasa protiv bjesnoće obavezna po Zakonu o veterinarstvu. Prvo cijepljenje obavlja se s 3-4 mjeseca starosti, a revakcinacija je godišnja. Cijena vakcine protiv bjesnoće je 15-25 EUR. Za putovanje unutar EU potrebna je i EU putovnica za kućne ljubimce, koja košta oko 15-20 EUR.
+U Hrvatskoj je cijepljenje pasa protiv bjesnoće obvezno po Zakonu o veterinarstvu. Prvo cijepljenje obavlja se s 3-4 mjeseca starosti, a docjepljivanje je godišnje. Cijena cjepiva protiv bjesnoće je 15-25 EUR. Za putovanje unutar EU potrebna je i EU putovnica za kućne ljubimce, koja košta oko 15-20 EUR.
 
 ČESTA PITANJA
 
-Je li vakcinacija sigurna? Da. Nuspojave su rijetke i obično blage — lagana pospanost ili mali otok na mjestu uboda koji prolazi u dan-dva. Ozbiljne alergijske reakcije su iznimno rijetke.
+Je li cijepljenje sigurno? Da. Nuspojave su rijetke i obično blage — lagana pospanost ili mali otok na mjestu uboda koji prolazi u dan-dva. Ozbiljne alergijske reakcije su iznimno rijetke.
 
-Može li moj pas van prije svih vakcina? Veterinari preporučuju izbjegavanje kontakta s nepoznatim psima i javnih površina dok štenad ne primi barem dvije doze vakcine. No, rana socijalizacija je iznimno važna — organizirajte druženje s psima za koje znate da su cijepljeni.
+Može li moj pas van prije svih cjepiva? Veterinari preporučuju izbjegavanje kontakta s nepoznatim psima i javnih površina dok štenad ne primi barem dvije doze cjepiva. Međutim, rana socijalizacija je iznimno važna — organizirajte druženje s psima za koje znate da su cijepljeni.
 
-Koliko košta kompletan vakcinalni protokol za štene? Od prvog cijepljenja do bjesnoće, računajte na ukupno 80-150 EUR, ovisno o ambulanti i regiji.
+Koliko stoji kompletan protokol cijepljenja za štene? Od prvog cijepljenja do bjesnoće, računajte na ukupno 80-150 EUR, ovisno o ambulanti i regiji.
 
-Savjet: vodite evidenciju o cijepljenjima u zdravstvenoj knjižici vašeg ljubimca. Kad koristite usluge pet sittinga ili groominga, dokaz o cijepljenju često je obavezan — to je znak odgovornog vlasništva.`,
+Savjet: vodite evidenciju o cijepljenjima u zdravstvenoj knjižici vašeg ljubimca. Kad koristite usluge čuvanja ljubimaca ili groominga, dokaz o cijepljenju često je obvezan — to je znak odgovornog vlasništva.`,
     author: `PetPark Tim`,
     date: `2026-03-03`,
     category: `zdravlje` as BlogCategory,
@@ -199,7 +199,7 @@ Iznimno opasne — čak i male količine mogu uzrokovati akutno zatajenje bubreg
 
 3. LUK I ČEŠNJAK
 
-Svi članovi obitelji Allium (luk, češnjak, vlasac, poriluk) toksični su za pse i posebno za mačke. Uništavaju crvene krvne stanice i uzrokuju anemiju. Mačke su 3-4 puta osjetljivije od pasa. Oprez: luk se skriva u mnogim gotovim jelima, umacima i juhalama koje možda dajete ljubimcu kao ostatke.
+Svi članovi obitelji Allium (luk, češnjak, vlasac, poriluk) toksični su za pse i posebno za mačke. Uništavaju crvene krvne stanice i uzrokuju anemiju. Mačke su 3-4 puta osjetljivije od pasa. Oprez: luk se skriva u mnogim gotovim jelima, umacima i jelima koje možda dajete ljubimcu kao ostatke.
 
 4. KSILITOL (ZASLAĐIVAČ)
 
@@ -251,7 +251,7 @@ Prevencija je uvijek bolja od liječenja. Držite opasne namirnice izvan dohvata
     slug: `kako-odabrati-kvalitetnu-hranu-za-psa`,
     title: `Kako odabrati kvalitetnu hranu za psa: vodič kroz etikete`,
     excerpt: `Naučite čitati deklaracije na hrani za pse — što tražiti, što izbjegavati i kako ne baciti novac na nekvalitetnu hranu.`,
-    body: `Stojite u pet shopu, gledate 30 različitih vrećica hrane za pse i nemate pojma koju odabrati. Sve obećavaju "premium kvalitetu" i "prirodne sastojke". Zvuči poznato? Naučite čitati etikete i nikad više nećete pogriješiti.
+    body: `Stojite u trgovini za kućne ljubimce, gledate 30 različitih vrećica hrane za pse i nemate pojma koju odabrati. Sve obećavaju "premium kvalitetu" i "prirodne sastojke". Zvuči poznato? Naučite čitati etikete i nikad više nećete pogriješiti.
 
 PRAVILO BROJ 1: PRVI SASTOJAK JE NAJVAŽNIJI
 
@@ -265,15 +265,15 @@ Crvene zastave na deklaraciji: "mesne prerađevine" ili "nusproizvodi životinjs
 
 Umjetni konzervansi (BHA, BHT, etoksikvin), umjetne boje i pojačivači okusa nemaju što tražiti u kvalitetnoj hrani. Šećer — da, neki proizvođači dodaju šećer u hranu za pse. Izbjegavajte.
 
-RAZUMIJEVANJE GARANTIRANE ANALIZE
+RAZUMIJEVANJE GARANTIRAne ANALIZE
 
 Na svakoj vrećici naći ćete garantiranu analizu: sirovi protein, sirova mast, sirova vlakna, sirovi pepeo, vlaga.
 
 Za odraslog aktivnog psa tražite: protein minimalno 25-30%, mast 12-18%, vlakna do 5%, pepeo do 8%. Visok udio pepela (iznad 10%) često ukazuje na korištenje nekvalitetnih izvora proteina bogatih kostima.
 
-ŽITARICE — DA ILI NE?
+ŽITARICE — DA ILI ne?
 
-Grain-free trend zahvatio je i hrvatsko tržište. Istina: psi MOGU probaviti žitarice — oni nisu vukovi. Kvalitetne žitarice poput smeđe riže ili zobi su dobar izvor energije. Problem nastaje kad jeftini proizvođači koriste kukuruz i pšenicu kao glavne sastojke umjesto mesa.
+Grain-free trend zahvatio je i hrvatsko tržište. Istina: psi mogu probaviti žitarice — oni nisu vukovi. Kvalitetne žitarice poput smeđe riže ili zobi su dobar izvor energije. Problem nastaje kad jeftini proizvođači koriste kukuruz i pšenicu kao glavne sastojke umjesto mesa.
 
 Grain-free hrane često zamjenjuju žitarice krumpirom, batatom ili mahunarkama. To nije nužno bolje — američka FDA čak istražuje moguću povezanost grain-free dijeta s kardiomiopatijom kod pasa. Razgovarajte sa svojim veterinarom.
 
@@ -283,9 +283,9 @@ Premium segment (65-90 EUR za 12 kg): Orijen, Acana, Farmina N&D — visok udio 
 
 Srednji segment (40-65 EUR za 12 kg): Brit Care, Josera, Monge, Happy Dog — dobar omjer cijene i kvalitete, 30-50% mesa, kvalitetne žitarice.
 
-Ekonomski segment (20-35 EUR za 12 kg): Pedigree, Friskies, domaći brendovi — niži udio mesa, više žitarica i punila. Za pse bez posebnih zdravstvenih potreba mogu biti OK, ali dugoročno se isplati investirati u bolju hranu.
+Ekonomski segment (20-35 EUR za 12 kg): Pedigree, Friskies, domaći brendovi — niži udio mesa, više žitarica i punila. Za pse bez posebnih zdravstvenih potreba mogu biti u redu, ali dugoročno se isplati investirati u bolju hranu.
 
-KOLIKO HRANE DNEVNO?
+KOLIKO HRAne DneVNO?
 
 Svaka vrećica ima tablicu s preporučenim količinama prema težini psa. Koristite je kao polaznu točku, ali prilagodite prema kondiciji vašeg psa. Ako vidite rebra — dajte više. Ako ne možete napipati rebra — smanjite. Većina pasa u Hrvatskoj je preuhranjena, kažu veterinari.
 
@@ -305,7 +305,7 @@ Savjet s terena: nemojte mijenjati hranu svaka dva tjedna. Probavni sustav psa t
 
 Najlakša naredba za početi i temelj sve dresure. Većina pasa nauči ovu naredbu za 5-10 minuta.
 
-Kako: Držite poslasticu iznad psovog nosa i polako je pomičite prema natrag, iznad glave. Pas će prirodno sjesti jer prati pogledom. Čim sjedne — klik (ako koristite clicker) ili "DA!" i odmah poslastica. Ponovite 10-15 puta. Dodajte glasovnu naredbu "sjedni" tek kad pas pouzdano sjeda za poslasticom.
+Kako: Držite poslasticu iznad psovog nosa i polako je pomičite prema natrag, iznad glave. Pas će prirodno sjesti jer prati pogledom. Čim sjedne — klik (ako koristite klikera) ili "DA!" i odmah poslastica. Ponovite 10-15 puta. Dodajte glasovnu naredbu "sjedni" tek kad pas pouzdano sjeda za poslasticom.
 
 Tipična greška: guranje psa prema dolje u sjed. To stvara otpor i ne uči psa ništa. Neka sam ponudi ponašanje.
 
@@ -321,7 +321,7 @@ Ključ uspjeha: uvijek se vratite psu da ga nagradite. Nemojte ga zvati k sebi �
 
 Najvažnija naredba za sigurnost. Pas koji pouzdano dolazi na poziv može biti slobodan u parku, na plaži, u prirodi.
 
-Kako: Počnite u zatvorenom prostoru s dugim povodcem. Entuzijastično kažite ime psa + "dođi!" i pokažite poslasticu. Kad dođe — jackpot nagrada (više poslastica + pohvala + igra). Nikad ne koristite "dođi" za nešto neugodno (kupanje, odlazak kući iz parka). "Dođi" mora UVIJEK značiti nešto super.
+Kako: Počnite u zatvorenom prostoru s dugim povodcem. Entuzijastično izgovorite ime psa i naredbu „dođi!” te pokažite poslasticu. Kad dođe — posebno obilna nagrada (više poslastica, pohvala i igra). Nikad ne koristite naredbu „dođi” za nešto neugodno, poput kupanja ili odlaska kući iz parka. „Dođi” mora uvijek značiti nešto dobro.
 
 Savjet trenera: koristite najukusnije poslastice samo za recall. Komadići piletine, sira ili kobasice. Za ovu naredbu ne štedite.
 
@@ -391,11 +391,11 @@ Dramatični odlasci ("Joj, moj mali, moram ići, volim te, čuvaj se!") pogorša
 
 3. Sigurna zona
 
-Neki psi se bolje osjećaju u boksu (crate), drugi u jednoj prostoriji. Napravite to mjesto ugodnim — udoban ležaj, Kong igračka napunjena kikiriki maslacem ili paštetom (zamrznite je da duže traje), majica s vašim mirisom. Uključite radio ili TV — pozadinski zvuk smanjuje osjećaj izolacije.
+Neki psi se bolje osjećaju u boksu (boks), drugi u jednoj prostoriji. Napravite to mjesto ugodnim — udoban ležaj, Kong igračka napunjena kikiriki maslacem ili paštetom (zamrznite je da duže traje), majica s vašim mirisom. Uključite radio ili TV — pozadinski zvuk smanjuje osjećaj izolacije.
 
 4. Fizička i mentalna stimulacija PRIJE odlaska
 
-Umoran pas je miran pas. Jutarnja šetnja od 30-60 minuta prije odlaska čini ogromnu razliku. Dodajte njuškalice ili puzzle igračke za mentalnu stimulaciju.
+Umoran pas je miran pas. Jutarnja šetnja od 30-60 minuta prije odlaska čini ogromnu razliku. Dodajte njuškalice ili interaktivne igračke za mentalnu stimulaciju.
 
 5. Adaptil i prirodni suplementi
 
@@ -411,7 +411,7 @@ Ne kažnjavajte psa kad se vratite. Kažnjavanje nakon čina pas ne povezuje s p
 
 Ne uzimajte drugog psa kao rješenje. Anksioznost je vezana za VAS, ne za samoću. Drugi pas možda neće pomoći, a možda ćete imati dva anksiozna psa.
 
-Pet sitting kao kratkoročno rješenje može biti odličan — dok radite na desenzitizaciji, vaš pas ne mora ostajati sam. Na PetParku možete pronaći verificirane sittere koji imaju iskustvo s anksioznim psima.
+Čuvanje ljubimca kao kratkoročno rješenje može biti odlično — dok radite na desenzitizaciji, vaš pas ne mora ostajati sam. Na PetParku možete pronaći verificirane sittere koji imaju iskustvo s anksioznim psima.
 
 Strpljenje je ključ. Separacijska anksioznost ne prolazi preko noći. Ali uz dosljedan rad, većina pasa pokazuje značajno poboljšanje kroz 4-8 tjedana.`,
     author: `PetPark Tim`,
@@ -439,15 +439,15 @@ KRITIČNI PERIODI
 
 12-16 tjedana: prozor se polako zatvara. Štene postaje opreznije prema novim stvarima. Još uvijek možete raditi na socijalizaciji, ali zahtijeva više truda.
 
-CHECKLIST SOCIJALIZACIJE
+POPIS ZA SOCIJALIZACIJU
 
 Ljudi (cilj: 100 različitih ljudi u prvih 12 tjedana): muškarci i žene svih dobi, djeca, ljudi s bradom, naočalama, šeširima, hodačima, kolicima, uniformama, kišobranima. Svaki susret mora biti pozitivan — poslastice su vaš najbolji prijatelj.
 
-Drugi psi: organizirajte druženja s MIRNIM, CIJEPLJENIM psima svih veličina. Puppy playdate je idealan. Izbjegavajte parkove za pse dok štene nije potpuno cijepljeno i ima barem 16 tjedana.
+Drugi psi: organizirajte druženja s MIRNIM, CIJEPLJENIM psima svih veličina. Kontrolirano druženje šteneta s mirnim i cijepljenim psima idealno je. Izbjegavajte parkove za pse dok štene nije potpuno cijepljeno i ima barem 16 tjedana.
 
 Površine: trava, beton, šljunak, pijesak, metal, drvo, mokre površine, rešetke. Štene koje nikad nije hodalo po glatkom podu može razviti strah od njega.
 
-Zvukovi: promet, vatromet, grmljavina, usisavač, sušilo za kosu, zvonce na vratima, sirene. Postoje YouTube playlisteri sa zvukovima za desenzitizaciju — pustite ih tiho i postepeno pojačavajte.
+Zvukovi: promet, vatromet, grmljavina, usisavač, sušilo za kosu, zvonce na vratima, sirene. Postoje YouTube popisi za reprodukciju sa zvukovima za desenzitizaciju — pustite ih tiho i postepeno pojačavajte.
 
 Situacije: vožnja autom, posjet veterinaru (samo za poslastice, bez pregleda), tržnica, kafić, šetnja gradom, stepenice, lift. U Rijeci, šetnja po Korzu s štenetom je odlična socijalizacijska prilika — puno ljudi, zvukova i mirisa.
 
@@ -455,23 +455,23 @@ Rukovanje: naučite štene da prihvaća dodirivanje šapa, ušiju, repa, zuba. T
 
 KAKO SE SOCIJALIZACIJA RADI U PRAKSI
 
-Pravilo 3 sekunde: kad štene upoznaje novog čovjeka, neka čovjek ponudi ruku i broji do 3. Ako štene samo njuši — to je OK. Ako se primakne — odlično, neka ga pomazi. Ako se odmakne — respektirajte to. Nikad ne tjerajte štene u interakciju.
+Pravilo od 3 sekunde: kad štene upoznaje novog čovjeka, neka čovjek ponudi ruku i broji do 3. Ako štene samo njuši — to je u redu. Ako se primakne — odlično, neka ga pomazi. Ako se odmakne — respektirajte to. Nikad ne tjerajte štene u interakciju.
 
-Poslastice svuda: nosite poslastice UVIJEK. Prošao kamion i štene je mirno? Poslastica. Srelo drugog psa i nije reagiralo? Poslastica. Dozvolilo da ga stranac pomazi? Poslastica.
+Poslastice svuda: nosite poslastice uvijek. Prošao kamion i štene je mirno? Poslastica. Srelo drugog psa i nije reagiralo? Poslastica. Dozvolilo da ga stranac pomazi? Poslastica.
 
 Kratke sesije: 15-20 minuta socijalizacijske šetnje je dovoljno. Štene se brzo umara mentalno. Bolje kratko i pozitivno nego dugo i stresno.
 
-PUPPY ŠKOLA
+ŠKOLA ZA ŠTENCE
 
-U Hrvatskoj raste ponuda grupnih tečajeva za štence. Zagreb: Dog City, Paws Academy. Rijeka: nekoliko privatnih trenera nudi puppy socijalizaciju. Cijena: 80-150 EUR za program od 6-8 tjedana.
+U Hrvatskoj raste ponuda grupnih tečajeva za štence. Zagreb: Dog City, Paws Academy. Rijeka: nekoliko privatnih trenera nudi socijalizaciju štenadi. Cijena: 80-150 EUR za program od 6-8 tjedana.
 
-Dobra puppy škola fokusira se na socijalizaciju, ne na naredbe. Štene od 10 tjedana ne treba znati sjediti na naredbu — treba naučiti da su drugi psi, ljudi i situacije sigurne i zabavne.
+Dobra škola za štence fokusira se na socijalizaciju, ne na naredbe. Štene od 10 tjedana ne treba znati sjediti na naredbu — treba naučiti da su drugi psi, ljudi i situacije sigurne i zabavne.
 
 NAJČEŠĆE GREŠKE
 
-Preskačete socijalizaciju jer čekate cijepljenje: da, štene treba biti oprezno prije kompletne vakcinacije. Ali potpuna izolacija do 16. tjedna je GORA nego kontrolirano izlaganje. Nosite štene u naručju po gradu, organizirajte druženja s cijepljenim psima u čistim prostorima.
+Preskačete socijalizaciju jer čekate cijepljenje: da, štene treba biti oprezno prije kompletnog cijepljenja. Ali potpuna izolacija do 16. tjedna gora je od kontroliranog izlaganja. Nosite štene u naručju po gradu i organizirajte druženja s cijepljenim psima u čistim prostorima.
 
-Previše, prebrzo: ne vodite 10-tjednog štenca na koncert ili sajam. Gradijualno — počnite s mirnim sredinama i polako povećavajte intenzitet.
+Previše, prebrzo: ne vodite 10-tjednog štenca na koncert ili sajam. Postupno — počnite s mirnim sredinama i polako povećavajte intenzitet.
 
 Pretpostavljate da je pas "samo stidljiv": stidljivost koja se ne adresira pretvara se u strah, a strah u reaktivnost ili agresiju. Bolje je uložiti u socijalizaciju sad nego u biheviorista za godinu dana.
 
@@ -485,7 +485,7 @@ Ulaganje u prvih 6 mjeseci definira sljedećih 10-15 godina. To je najvažniji p
     slug: `putovanje-s-ljubimcem-vodic`,
     title: `Putovanje s ljubimcem autom i avionom: kompletni vodič`,
     excerpt: `Planirate putovanje s ljubimcem? Evo sve što trebate znati o prijevozu autom i avionom — dokumenti, pravila i savjeti.`,
-    body: `Ljeto se bliži i planirate godišnji odmor. Ali što s ljubimcem? Sve više vlasnika u Hrvatskoj odlučuje putovati SA svojim ljubimcima umjesto ih ostavljati kod kuće. Evo kompletnog vodiča za stres-free putovanje.
+    body: `Ljeto se bliži i planirate godišnji odmor. Ali što s ljubimcem? Sve više vlasnika u Hrvatskoj odlučuje putovati sa svojim ljubimcima umjesto da ih ostavljaju kod kuće. Evo kompletnog vodiča za putovanje bez stresa.
 
 PUTOVANJE AUTOM
 
@@ -505,19 +505,19 @@ Putovanje avionom zahtijeva više pripreme, ali je izvedivo.
 
 U kabini vs. u prtljažniku: mali psi (do 8 kg s transportkom) mogu putovati u kabini kod većine aviokompanija. Cijena: 35-75 EUR unutar Europe. Veći psi putuju u prtljažniku u IATA odobrenom boksu. Cijena: 75-200 EUR.
 
-Croatia Airlines: dozvoljava pse do 8 kg u kabini (transportka max 55x40x20 cm). Cijena: oko 35-50 EUR unutar Europe. Veći psi idu u teret. Rezervacija obavezna unaprijed — broj ljubimaca po letu je ograničen.
+Croatia Airlines dozvoljava pse do 8 kg u kabini (transportka max 55x40x20 cm). Cijena: oko 35-50 EUR unutar Europe. Veći psi idu u teretni prostor. Rezervacija je obvezna unaprijed — broj ljubimaca po letu je ograničen.
 
-Ryanair i Wizz Air: NE dozvoljavaju ljubimce (osim pasa vodiča). Ako letite low-costom, ljubimac ne ide s vama.
+Ryanair i Wizz Air: ne dozvoljavaju ljubimce (osim pasa vodiča). Ako letite niskobudžetnom aviokompanijom, ljubimac ne ide s vama.
 
-Lufthansa, Austrian, Turkish: imaju pet program, cijene variraju.
+Lufthansa, Austrian i Turkish Airlines imaju programe za prijevoz ljubimaca, a cijene se razlikuju.
 
 DOKUMENTI ZA PUTOVANJE UNUTAR EU
 
-EU pet putovnica: obavezna za putovanje unutar EU. Izdaje je ovlašteni veterinar. Cijena: 15-20 EUR. Sadrži podatke o mikročipu, vakcinaciji protiv bjesnoće i vlasničke podatke.
+EU putovnica za kućne ljubimce: obvezna za putovanje unutar EU. Izdaje je ovlašteni veterinar. Cijena: 15-20 EUR. Sadrži podatke o mikročipu, cijepljenju protiv bjesnoće i podatke o vlasniku.
 
-Mikročip: obavezan u Hrvatskoj za sve pse. Ako ga vaš pas nema — to je prioritet.
+Mikročip: obvezan u Hrvatskoj za sve pse. Ako ga vaš pas nema — to je prioritet.
 
-Vakcinacija protiv bjesnoće: mora biti napravljena barem 21 dan prije putovanja. Mora biti zabilježena u EU putovnici.
+Cijepljenje protiv bjesnoće: mora biti napravljena barem 21 dan prije putovanja. Mora biti zabilježena u EU putovnici.
 
 Za putovanje izvan EU (UK, Turska, Srbija): provjerite specifične zahtjeve svake zemlje. UK zahtijeva titar antitijela na bjesnoću — to je krvna pretraga koja košta 30-50 EUR i traje 3-4 tjedna za rezultate.
 
@@ -525,17 +525,17 @@ PUTOVANJE S MAČKOM
 
 Mačke su teritorijalne životinje i većina ne uživa u putovanju. Ako je moguće, ostavite mačku kod kuće uz posjete pet sittera. Ako morate putovati s mačkom: transportka s pokrivačem (smanjuje stres), Feliway sprej u transportku 30 min prije putovanja, ne otvarajte transportku u autu, i nikad ne puštajte mačku slobodno po autu.
 
-PET-FRIENDLY SMJEŠTAJ U HRVATSKOJ
+SMJEŠTAJ PRILAGOĐEN KUĆNIM LJUBIMCIMA U HRVATSKOJ
 
-Sve više hotela, apartmana i kampova u Hrvatskoj prima ljubimce. Cijene nadoplate: 5-15 EUR po noći. Istarski kampovi (Aminess, Maistra) posebno su pet-friendly s ograđenim zonama za pse i dog beach-evima.
+Sve više hotela, apartmana i kampova u Hrvatskoj prima ljubimce. Cijene nadoplate: 5-15 EUR po noći. Istarski kampovi (Aminess, Maistra) posebno su prilagođen kućnim ljubimcima s ograđenim zonama za pse i plaža za pse-evima.
 
-Aplikacije poput BringFido i PetTravel mogu pomoći u pronalaženju smještaja koji prima ljubimce.
+Servisi poput BringFidoa i PetTravela mogu pomoći u pronalaženju smještaja koji prima ljubimce.
 
-CHECKLIST ZA PUTOVANJE
+POPIS ZA PUTOVANJE
 
-Dokumenti: EU putovnica, potvrda o vakcinaciji, mikročip, osiguranje (ako imate)
+Dokumenti: EU putovnica, potvrda o cijepljenju, mikročip, osiguranje (ako imate)
 Oprema: transportka/boks, povodac, ogrlica s ID privjeskom, zdjelice za vodu i hranu
-Hrana: dovoljno za cijelo putovanje + 2 dana reserve (promjena hrane na putovanju = probavne smetnje)
+Hrana: dovoljno za cijelo putovanje + zaliha za još 2 dana (promjena hrane na putovanju = probavne smetnje)
 Zdravlje: redoviti lijekovi, antiparazitik, prva pomoć (zavoji, dezinficijens, pinceta za krpelje)
 Komfor: ležaj ili deka s poznatim mirisom, omiljena igračka
 Kontakt: broj veterinara na destinaciji
@@ -547,34 +547,34 @@ Putovanje s ljubimcem zahtijeva više planiranja, ali nagrade su neprocjenjive. 
     emoji: `✈️`,
   },
   {
-    slug: `pet-friendly-plaze-parkovi-hrvatska`,
-    title: `10 pet-friendly plaža i parkova u Hrvatskoj`,
+    slug: `prilagođen kućnim ljubimcima-plaze-parkovi-hrvatska`,
+    title: `10 prilagođen kućnim ljubimcima plaža i parkova u Hrvatskoj`,
     excerpt: `Od Istre do Dalmacije — najbolja mjesta gdje se vaš pas može slobodno kupati i trčati.`,
-    body: `Hrvatska ima prekrasnu obalu, ali pronaći plažu gdje je vaš pas dobrodošao može biti izazov. Sve više gradova prepoznaje potrebe vlasnika s ljubimcima i otvaraju designirane dog beach-eve. Evo 10 najboljih mjesta za uživanje s vašim ljubimcem.
+    body: `Hrvatska ima prekrasnu obalu, ali pronaći plažu gdje je vaš pas dobrodošao može biti izazov. Sve više gradova prepoznaje potrebe vlasnika s ljubimcima i otvaraju designirane plaža za pse-eve. Evo 10 najboljih mjesta za uživanje s vašim ljubimcem.
 
 1. PLAŽA SACCORGIANA — PULA
 
-Vjerojatno najpoznatija dog beach u Hrvatskoj. Smještena je između Pule i Medulina, ima šljunčanu podlogu i čisto more. Potpuno je legalna i označena za pse. U blizini ima parking i restoran. Ljeti je tu uvijek vesela ekipa pasa i vlasnika. Lokalni savjet: dođite ujutro prije 10h kad je manje gužve.
+Vjerojatno najpoznatija plaža za pse u Hrvatskoj. Smještena je između Pule i Medulina, ima šljunčanu podlogu i čisto more. Potpuno je legalna i označena za pse. U blizini ima parking i restoran. Ljeti je tu uvijek vesela ekipa pasa i vlasnika. Lokalni savjet: dođite ujutro prije 10h kad je manje gužve.
 
 2. PLAŽA KOSTANJ — RIJEKA
 
 Riječani obožavaju ovu malu plažu na Kostrenskom putu. Službeno je označena kao plaža za pse i ima betonski ulaz u more što olakšava izlazak. More je čisto, a pogled na Kvarner je fenomenalan. U blizini je i park za šetnju. Psi na povodcu do plaže, na plaži slobodno.
 
-3. DOG BEACH CRIKVENICA
+3. PLAŽA ZA PSE U CRIKVENICI
 
-Crikvenica je jedna od prvih destinacija u Hrvatskoj koja je otvorila službenu dog beach. Plaža je označena, održavana i ima kantice za smeće. Smještena je malo izvan centra, što znači manje gužve. More je plitko i toplo — idealno za pse koji tek uče plivati.
+Crikvenica je jedna od prvih destinacija u Hrvatskoj koja je otvorila službenu plaža za pse. Plaža je označena, održavana i ima kantice za smeće. Smještena je malo izvan centra, što znači manje gužve. More je plitko i toplo — idealno za pse koji tek uče plivati.
 
 4. PLAŽA ŽNJAN — SPLIT
 
-Na istočnom dijelu Žnjana nalazi se sekcija označena za pse. Split je općenito sve pet-friendlier grad — mnogi kafići na Rivi dozvoljavaju pse. Plaža je šljunčana, more je kristalno čisto, a u blizini su trgovine i kafići.
+Na istočnom dijelu Žnjana nalazi se sekcija označena za pse. Split je općenito sve sve otvoreniji prema kućnim ljubimcima grad — mnogi kafići na Rivi dozvoljavaju pse. Plaža je šljunčana, more je kristalno čisto, a u blizini su trgovine i kafići.
 
-5. PLAŽA SOLINE — BIOGRAD NA MORU
+5. PLAŽA SOLIne — BIOGRAD NA MORU
 
 Lijepa šljunčana plaža s plitkim ulazom u more. Označena zona za pse s kantama za otpad. Biograd je generalno miran i ugodan za odmor s ljubimcem.
 
 6. BUNDEK — ZAGREB
 
-Nije plaža u klasičnom smislu, ali je raj za pse u Zagrebu. Jezero Bundek ima ograđeni dog park s bazenom za pse, agility spravama i puno prostora za trčanje. Ljeti je pun pasa svih veličina. Potpuno besplatno i odlično održavano.
+Nije plaža u klasičnom smislu, ali je raj za pse u Zagrebu. Jezero Bundek ima ograđeni park za pse s bazenom za pse, agility spravama i puno prostora za trčanje. Ljeti je pun pasa svih veličina. Potpuno besplatno i odlično održavano.
 
 7. PARK MAKSIMIR — ZAGREB
 
@@ -582,7 +582,7 @@ Najveći park u Zagrebu s kilometrima staza kroz šumu. Psi moraju biti na povod
 
 8. PLAŽA ČIKAT — MALI LOŠINJ
 
-Lošinj je jedan od najljepšijeg otoka u Kvarnerskom zaljevu i ima designiranu dog beach u uvali Čikat, okruženu borovima. More je nevjerojatno čisto, a otok je generalno vrlo pet-friendly. Mnogi hoteli i apartmani primaju ljubimce.
+Lošinj je jedan od najljepšijeg otoka u Kvarnerskom zaljevu i ima designiranu plaža za pse u uvali Čikat, okruženu borovima. More je nevjerojatno čisto, a otok je generalno vrlo prilagođen kućnim ljubimcima. Mnogi hoteli i apartmani primaju ljubimce.
 
 9. ŠUMA MARJAN — SPLIT
 
@@ -594,13 +594,13 @@ Još jedna riječka opcija — plaža ispod bazena na Kantridi. Manje poznata, a
 
 PRAVILA PONAŠANJA NA PLAŽI
 
-Bez obzira na to koliko je vaš pas dobar, poštujte pravila: uvijek pokupite za sobom (nosite vrećice!), imajte svježu vodu za psa (morska voda izaziva proljev), ne dozvolite psu da uznemiruje druge kupače ili pse, ako pas nije siguran plivač — nabavite mu prsluk za spašavanje (20-35 EUR u pet shopovima).
+Bez obzira na to koliko je vaš pas dobar, poštujte pravila: uvijek pokupite za sobom (nosite vrećice!), imajte svježu vodu za psa (morska voda izaziva proljev), ne dopustite psu da uznemiruje druge kupače ili pse, a ako pas nije siguran plivač — nabavite mu prsluk za spašavanje (20-35 EUR u trgovinama za kućne ljubimce).
 
 Sunčanica i opekline: da, psi mogu dobiti sunčanicu! Psi svijetle dlake i kratke dlake posebno su ranjivi. Osigurajte sjenilo, svježu vodu i izbjegavajte plažu između 11 i 16 sati.
 
-Vruće šape: ljeti testirajte asfalt dlanom — ako je prevruć za vašu ruku, prevruć je za psove šape. Hodajte po travi ili nabavite zaštitne čizmice.
+Vruće šape: ljeti testirajte asfalt dlanom — ako je prevruć za vašu ruku, prevruć je za pseće šape. Hodajte po travi ili nabavite zaštitne čizmice.
 
-Hrvatska postaje sve pet-friendlier destinacija. Sa svakom sezonom otvara se novih plaža i parkova za ljubimce. Istražite svoju okolicu — možda imate dog beach na 10 minuta od kuće, a da ne znate!`,
+Hrvatska postaje sve sve otvoreniji prema kućnim ljubimcima destinacija. Sa svakom sezonom otvara se novih plaža i parkova za ljubimce. Istražite svoju okolicu — možda imate plaža za pse na 10 minuta od kuće, a da ne znate!`,
     author: `PetPark Tim`,
     date: `2026-03-11`,
     category: `putovanje` as BlogCategory,
@@ -616,7 +616,7 @@ Hrvatska postaje sve pet-friendlier destinacija. Sa svakom sezonom otvara se nov
 
 Potrebno: 3 stare majice ili ručnika. Izrežite ih na trake širine 5-7 cm, svežite na jednom kraju i spletnite u pletenicu. Zavežite drugi kraj. Gotovo! Imate igračku za potezanje koja je izdržljivija nego što izgleda. Bonus: možete je prati u perilici.
 
-2. KONG ALTERNATIVA — MUFFIN TIN PUZZLE
+2. ALTERNATIVA KONG IGRAČKI — ZAGONETKA S KALUPOM ZA MUFFINE
 
 Potrebno: kalup za muffine, teniske loptice, poslastice. Stavite poslastice u udubine kalupa, pokrijte tenisnim lopticama. Pas mora smisliti kako pomaknuti lopte da dođe do nagrade. Savršena mentalna stimulacija za 0 kuna.
 
@@ -624,7 +624,7 @@ Potrebno: kalup za muffine, teniske loptice, poslastice. Stavite poslastice u ud
 
 Potrebno: prazna plastična boca, stara čarapa. Stavite bocu u čarapu i zavežite. Pas obožava zvuk gnječenja boce, a čarapa sprečava da se ozlijedi. Kad boca pukne — zamijenite novom. Napomena: nadgledajte igru i uklonite kad se čarapa počne raspadati.
 
-4. ZAMRZNUTI KONG / ZDJELICA IZNENAĐENJA
+4. ZAMRZNUTI KONG / ZDJELICA IZneNAĐENJA
 
 Potrebno: Kong igračka ili silikonski kalup, kikiriki maslac (BEZ ksilitola!), komadići piletine, mrkve. Napunite Kong kikiriki maslacem i komadićima hrane, zamrznite 4-6 sati. Pas će se zabavljati 30-60 minuta pokušavajući izvaditi zamrznute poslastice. Savršeno za vruće ljetne dane.
 
@@ -632,23 +632,23 @@ Potrebno: Kong igračka ili silikonski kalup, kikiriki maslac (BEZ ksilitola!), 
 
 Potrebno: stari ručnik, suhe poslastice. Položite ručnik, rasporedite poslastice i zamotajte. Pas mora njušiti, gurkati i odmotavati da pronađe nagradu. Počnite lagano (labavo zamotan) i postepeno otežavajte (čvrsto zamotan, s čvorovima).
 
-6. PUZZLE S PLASTIČNIM ČAŠAMA
+6. IGRA POGAĐANJA S PLASTIČNIM ČAŠAMA
 
 Potrebno: 3-5 plastičnih čaša, poslastice. Stavite poslasticu pod jednu čašu dok pas gleda. Neka pogodi pod kojom je. Kad to savlada — dodajte više čaša i miješajte ih. Klasična igra tri čaše, ali za pse!
 
-7. FLIRT POLE (ŠTAP ZA IGRU)
+7. ŠTAP ZA IGRU S MAMCEM
 
 Potrebno: PVC cijev ili drveni štap (1-1.5m), uže, stara igračka ili komad tkanine. Privežite uže za štap, a na drugi kraj igračku. Krećite se, a pas juri igračku. Odlično za pse s visokim prey driveom (terijerima, hrtovima, ovčarima). 10 minuta ove igre umara psa kao sat šetnje.
 
-8. KARTONSKA KUTIJA IZNENAĐENJA
+8. KARTONSKA KUTIJA IZneNAĐENJA
 
 Potrebno: kartonska kutija, papir, poslastice. Napunite kutiju zgužvanim papirom, sakrije poslastice unutra. Pas ruje, cijepa i traži. Da, bit će nereda — ali pogledajte koliko se zabavlja. Reciklirajte ostatke.
 
-SIGURNOSNE NAPOMENE
+SIGURNOSne NAPOMEne
 
 Uvijek nadgledajte psa dok se igra s DIY igračkama. Uklonite male dijelove koje pas može progutati. Ne koristite materijale tretirane kemikalijama. Zamijenite igračku čim se počne raspadati. Prilagodite veličinu igračke veličini psa — mali dijelovi su opasnost od gušenja.
 
-Najskuplja igračka u pet shopu nije nužno najbolja. Psu je važna interakcija s vama, mentalna stimulacija i zabava — ne cijena igračke. Rotiraje igračke svaki dan da ostanu zanimljive. I zapamtite: 15 minuta igre s vama vrjednije je od sata sa samostalnom igračkom.`,
+Najskuplja igračka u trgovini za kućne ljubimce nije nužno najbolja. Psu je važna interakcija s vama, mentalna stimulacija i zabava — ne cijena igračke. Rotirajte igračke svaki dan kako bi ostale zanimljive. I zapamtite: 15 minuta igre s vama vrjednije je od sata sa samostalnom igračkom.`,
     author: `PetPark Tim`,
     date: `2026-03-12`,
     category: `zabava` as BlogCategory,
@@ -660,9 +660,9 @@ Najskuplja igračka u pet shopu nije nužno najbolja. Psu je važna interakcija 
     excerpt: `Kad vani pada kiša, zabava ne mora stati. Evo 10 kreativnih ideja za zabavne sate s ljubimcem bez izlaska iz kuće.`,
     body: `Kišni dan u Rijeci? To je gotovo pola godine. U Zagrebu? Jesen i proljeće znaju biti beskonačno sivi. A vaš pas i dalje ima energiju koju treba potrošiti. Srećom, postoji hrpa načina da se zabavite bez da se ijedan od vas smoči.
 
-1. INDOOR AGILITY PARCOURS
+1. KUĆNI AGILITY POLIGON
 
-Iskoristite namještaj. Stolice za preskakanje (stavite metlu između dviju stolica), tunel od deke prebačene preko stolova, slalom između boca vode. Vodite psa kroz parcours s poslasticama. Kad ga nauči, mjerite vrijeme — pas obožava kad osjeća da je postigao nešto.
+Iskoristite namještaj. Stolice za preskakanje (stavite metlu između dviju stolica), tunel od deke prebačene preko stolova, slalom između boca vode. Vodite psa kroz poligon s poslasticama. Kad ga nauči, mjerite vrijeme — pas obožava kad osjeća da je postigao nešto.
 
 2. IGRA SKRIVANJA
 
@@ -676,17 +676,17 @@ Kišni dan je savršen za dresuru. Psi uče brže kad su fokusirani, a kući nem
 
 Sakrije poslastice po stanu i pustite psa da ih traži. Počnite s lakim mjestima (na podu, iza noge stola) i postepeno otežavajte (na polici, u cipeli, pod jastukom). 15 minuta njušenja mentalno umara psa kao sat šetnje. Ozbiljno.
 
-5. PUZZLE IGRAČKE
+5. INTERAKTIVNE IGRAČKE
 
-Kong napunjen zamrznutim kikiriki maslacem, licki mat s jogurtom, Nina Ottosson puzzle ploče. Ako nemate kupovne — napravite DIY verziju s muffin kalupom i teniskim lopticama. Mentalna stimulacija iscrpljuje psa više nego fizička aktivnost.
+Kong napunjen zamrznutim kikiriki maslacem, licki mat s jogurtom, interaktivne ploče Nine Ottosson. Ako nemate kupovne — napravite DIY verziju s muffin kalupom i teniskim lopticama. Mentalna stimulacija iscrpljuje psa više nego fizička aktivnost.
 
 6. TUG OF WAR (POTEZANJE)
 
 Klasika koja nikad ne zastarijeva. Igra potezanja nije agresija — to je kooperativna igra. Pravila: pas mora pustiti na naredbu, igra se prekida ako pas zubima dotakne ruku, Vi odlučujete kad igra počinje i završava. Koristite pletenicu od starih majica ili kupovnu tug igračku.
 
-7. INDOOR FETCH S MEKIM IGRAČKAMA
+7. DONOŠENJE MEKIH IGRAČAKA U KUĆI
 
-Bacanje teniske loptice po stanu = razbijene vaze. Umjesto toga, koristite mekane igračke ili čarape smotane u loptu. Hodnik je savršena fetch staza. Kratke sesije od 5-10 bacanja, pa odmor.
+Bacanje teniske loptice po stanu = razbijene vaze. Umjesto toga, koristite mekane igračke ili čarape smotane u loptu. Hodnik je savršena donošenje igračke staza. Kratke sesije od 5-10 bacanja, pa odmor.
 
 8. MASAŽA ZA PSA
 
@@ -698,11 +698,11 @@ Napravite domaće poslastice! Jednostavan recept: 2 šalice zobenih pahuljica, 1
 
 10. OPUŠTANJE I CHILL
 
-Ponekad je OK ne raditi ništa. Stavite film, pustite psa na kauč (ako smije), i uživajte u zajedničkim ljenčarenjima. Psi su socijalne životinje — samog biti s vama je dovoljno za njihovu sreću.
+Ponekad je sasvim u redu ne raditi ništa. Stavite film, pustite psa na kauč (ako smije), i uživajte u zajedničkim ljenčarenjima. Psi su socijalne životinje — samo biti s vama dovoljno je za njihovu sreću.
 
-BONUS: ZA MAČKE
+DODATNO: ZA MAČKE
 
-Mačke na kišni dan: kartonska kutija labirint (spojite više kutija s rupama), laser pointer (ali uvijek završite s fizičkom igračkom koju mačka može uhvatiti — inače frustracija), perjanica na štapiću, papir od čokolade smotane u lopticu.
+Mačke na kišni dan: kartonska kutija labirint (spojite više kutija s rupama), laserska igračka (ali uvijek završite s fizičkom igračkom koju mačka može uhvatiti — inače frustracija), perjanica na štapiću, papir od čokolade smotane u lopticu.
 
 Kišni dani ne moraju biti dosadni. Zapravo, neki od najljepših trenutaka s ljubimcem događaju se upravo kad ste zatvoreni zajedno i nemate kuda. Iskoristite to.`,
     author: `PetPark Tim`,
@@ -714,7 +714,7 @@ Kišni dani ne moraju biti dosadni. Zapravo, neki od najljepših trenutaka s lju
     slug: `koja-pasmina-psa-vam-odgovara`,
     title: `Koja pasmina psa vam odgovara? Vodič za buduće vlasnike`,
     excerpt: `Labrador ili buldog? Stan ili kuća? Aktivan ili ležeran? Pomažemo vam pronaći savršenog psa za vaš životni stil.`,
-    body: `Želite psa. Prekrasno! Ali prije nego otrčite po prvog šteneta koji vam se svidi na oglasu, zastanite i razmislite. Odabir pasmine odluka je na 10-15 godina. Krijedan izbor znači sretan pas i sretan vlasnik. Krivi izbor znači frustraciju za oboje.
+    body: `Želite psa. Prekrasno! Ali prije nego otrčite po prvog šteneta koji vam se svidi na oglasu, zastanite i razmislite. Odabir pasmine odluka je na 10-15 godina. Krivi izbor znači sretan pas i sretan vlasnik. Krivi izbor znači frustraciju za oboje.
 
 PRVO PITANJE: KAKAV JE VAŠ ŽIVOTNI STIL?
 
@@ -734,7 +734,7 @@ Kuća s dvorištem: slobodniji ste u izboru, ali dvorište NIJE zamjena za šetn
 
 TREĆE PITANJE: IMATE LI DJECU?
 
-Pasmine odlične s djecom: labrador, zlatni retriver, beagle, kavalir, berner sennenhund. Strpljivi, tolerantni, nježni. Ali — SVAKI pas treba socijalizaciju s djecom i nikad ne ostavljajte malu djecu bez nadzora s psom, bez obzira na pasminu.
+Pasmine odlične s djecom: labrador, zlatni retriver, beagle, kavalir, berner sennenhund. Strpljivi, tolerantni, nježni. Ali svaki pas treba socijalizaciju s djecom i nikad ne ostavljajte malu djecu bez nadzora s psom, bez obzira na pasminu.
 
 Pasmine koje zahtijevaju oprez s malom djecom: čivava (premalena, lako se ozlijedi), akita (dominantna, zahtijeva iskustvo), dalmatinac (energičan, može srušiti dijete), jack russell (intenzivan, može grickati iz uzbuđenja).
 
@@ -783,7 +783,7 @@ Prednosti udomljavanja:
 
 Spašavate život. Doslovno. Mnogi azili su prekapacitirani i psi koji se ne udome suočavaju se s neizvjesnom budućnošću. Udomljavanjem otvarate mjesto za sljedećeg psa koji treba pomoć.
 
-Cijena: udomljavanje je besplatno ili uz minimalnu naknadu (30-100 EUR) koja pokriva sterilizaciju, čipiranje i osnovne vakcine. Usporedite to s 500-2000 EUR za čistokrvnog psa.
+Cijena: udomljavanje je besplatno ili uz minimalnu naknadu (30-100 EUR) koja pokriva sterilizaciju, čipiranje i osnovna cjepiva. Usporedite to s 500-2000 EUR za čistokrvnog psa.
 
 Odrasli psi: ako udomite odraslog psa, već znate njegovu veličinu, temperament i energiju. Nema iznenađenja poput kupili smo slatko štene, a naraslo je 45 kg.
 
@@ -801,7 +801,7 @@ Period prilagodbe: pravilo 3-3-3. Prvih 3 dana pas je u šoku. Prvih 3 tjedna se
 
 KUPOVINA
 
-Ako odlučite kupiti psa, napravite to odgovorno. Nažalost, Hrvatska ima problem s nelegitimnim uzgajivačima i puppy millovima koji drže pse u užasnim uvjetima samo za profit.
+Ako odlučite kupiti psa, napravite to odgovorno. Nažalost, Hrvatska ima problem s nelegitimnim uzgajivačima i ilegalnim uzgajalištima koji drže pse u užasnim uvjetima samo za profit.
 
 Prednosti kupovine:
 
@@ -815,7 +815,7 @@ Mane kupovine:
 
 Cijena: čistokrvni pas s papirima košta 500-2000 EUR, neke pasmine i više. Na to dodajte cijepljenja, sterilizaciju, opremu.
 
-Štene zahtijeva PUNO posla: buđenje noću, grickanje svega, učenje obavljanja nužde, socijalizacija, dresura. Prvih 6 mjeseci je intenzivno.
+Štene zahtijeva puno posla: buđenje noću, grickanje svega, učenje obavljanja nužde, socijalizacija, dresura. Prvih 6 mjeseci je intenzivno.
 
 Zdravstveni rizici pasmina: svaka pasmina ima predispozicije za određene bolesti. Buldozi ne mogu normalno disati, njemački ovčari imaju probleme s kukovima, kavaliri sa srcem.
 
@@ -823,7 +823,7 @@ KAKO PREPOZNATI ODGOVORNOG UZGAJIVAČA
 
 Poziva vas da posjetite štence u njegovom domu. Pokazuje vam roditelje (barem majku). Ima zdravstvene testove roditelja. Ne prodaje štence prije 8 tjedana. Daje ugovor o kupoprodaji. Pita VAS pitanja (o vašem iskustvu, prostoru, vremenu). Spreman je primiti psa natrag ako ne uspije.
 
-Crvene zastave: prodaje više pasmina, štence nudi na parkingu ili šalje poštom, nema dokumenate, cijena je previše niska, žuri s prodajom, ne dopušta posjet.
+Crvene zastave: prodaje više pasmina, štence nudi na parkingu ili šalje poštom, nema dokumente, cijena je previše niska, žuri s prodajom, ne dopušta posjet.
 
 ZAKLJUČAK
 
@@ -845,19 +845,19 @@ Na PetParku vjerujemo da svaki pas zaslužuje ljubav. Bez obzira odakle dolazi.`
 
 VERTIKALNI PROSTOR JE KLJUČ
 
-Mačke razmišljaju u tri dimenzije. Dok mi gledamo tlocrt stana, mačka gleda i strop. Dodajte vertikalne elemente: penjalica za mačke (cat tree) — investicija od 30-80 EUR koja transformira mačkin život. Zidne police na različitim visinama za hodanje i ležanje. Prozorski ležaj (window perch) — mačkin televizor. Gledanje ptica, prolaznika i prometa je beskonačna zabava.
+Mačke razmišljaju u tri dimenzije. Dok mi gledamo tlocrt stana, mačka gleda i strop. Dodajte vertikalne elemente: penjalica za mačke — investicija od 30-80 EUR koja transformira mačkin život. Zidne police na različitim visinama za hodanje i ležanje. Prozorski ležaj — mačkin televizor. Gledanje ptica, prolaznika i prometa je beskonačna zabava.
 
 Pravilo: svaka mačka treba barem jednu visoku točku u stanu s koje može promatrati prostor. To joj daje osjećaj kontrole i sigurnosti.
 
 LOVAČKI INSTINKT MORA BITI ZADOVOLJEN
 
-Mačka je predator. Čak i najlijenija mačka ima lovački instinkt koji treba izlaz. Interaktivna igra s perjanicama, mišićima na štapiću ili laser pointerom barem 15-20 minuta dnevno. Laser pointer: uvijek završite sesiju tako da mačka uhvati fizičku igračku — inače stvarate frustraciju jer nikad ne uhvati plijen.
+Mačka je predator. Čak i najlijenija mačka ima lovački instinkt koji treba izlaz. Interaktivna igra s perjanicama, mišićima na štapiću ili laserskom igračkom barem 15-20 minuta dnevno. Kod laserske igračke uvijek završite sesiju tako da mačka uhvati fizičku igračku — inače stvarate frustraciju jer nikad ne uhvati plijen.
 
-Puzzle feederi: umjesto da mačka jede iz zdjelice, napunite puzzle igračku hranom. Mora raditi da dođe do hrane — baš kao u prirodi. Doc and Phoebe Indoor Hunting Feeder ili jednostavan DIY od plastične boce s rupama.
+Interaktivne hranilice: umjesto da mačka jede iz zdjelice, napunite interaktivnu igračku hranom. Mora raditi da dođe do hrane — baš kao u prirodi. Doc and Phoebe Indoor Hunting Feeder ili jednostavan DIY od plastične boce s rupama.
 
 Rotacija igračaka: ne ostavljajte sve igračke vani. Rotirajte ih svaka 2-3 dana. Stara igračka koja se vrati nakon tjedan dana opet je nova i uzbudljiva.
 
-OGREBOTINA JE POTREBA, NE ZLA NAVIKA
+OGREBOTINA JE POTREBA, ne ZLA NAVIKA
 
 Mačke MORAJU grebati — to je instinkt za označavanje teritorija, istezanje mišića i održavanje pandži. Ako ne pružite alternativu, grebu namještaj.
 
@@ -879,9 +879,9 @@ Fontana za mačke (15-30 EUR) — tekuća voda potiče pijenje. Mnoge mačke pre
 
 OBOGAĆENJE OKRUŽENJA
 
-Cat TV: YouTube kanali s videima ptica i ribica — mačke su fascinirane. Cat grass (mačja trava): posijte u posudi na prozoru. Mačke je vole žvakati, a pomaže probavi. Sigurno je, za razliku od mnogih kućnih biljaka. Biljke za izbjegavati: ljiljani (smrtonosno otrovni za mačke!), filodendron, aloe vera, božićna zvijezda. Provjerite svaku biljku prije unošenja u stan.
+mačji TV sadržaj: YouTube kanali s videima ptica i ribica — mačke su fascinirane. Cat grass (mačja trava): posijte u posudi na prozoru. Mačke je vole žvakati, a pomaže probavi. Sigurno je, za razliku od mnogih kućnih biljaka. Biljke za izbjegavati: ljiljani (smrtonosno otrovni za mačke!), filodendron, aloe vera, božićna zvijezda. Provjerite svaku biljku prije unošenja u stan.
 
-Balkon: ako imate balkon, možete ga pretvoriti u catio (cat patio) s mrežom ili zaštitnom ogradom. Mačka dobiva svjež zrak i podražaje bez opasnosti. Mreže za balkone koštaju 20-50 EUR i lako se postavljaju.
+Balkon: ako imate balkon, možete ga pretvoriti u zaštićeni balkon za mačke (cat patio) s mrežom ili zaštitnom ogradom. Mačka dobiva svjež zrak i podražaje bez opasnosti. Mreže za balkone koštaju 20-50 EUR i lako se postavljaju.
 
 Mačka u stanu može biti potpuno sretna — ali samo ako vi uložite mali trud u prilagodbu prostora njenim potrebama. Gledajte stan očima mačke: ima li visina, skrovišta, mjesta za grebanje i lovačkih izazova? Ako da — imate sretnu mačku.`,
     author: `PetPark Tim`,
@@ -919,7 +919,7 @@ Frekvencije predenja (25-150 Hz) dokazano potiču osteogenezu (rast kostiju) i s
 
 4. Komunikacija između mame i mačića
 
-Mačići počinju presti s nekoliko dana starosti — prije nego mogu vidjeti ili čuti. Predenje signalizira mami da su živi i da je sve OK. Mama prede natrag kao signal sigurnosti dok ih doji.
+Mačići počinju presti s nekoliko dana starosti — prije nego mogu vidjeti ili čuti. Predenje signalizira majci da su živi i da je sve u redu. Mama prede natrag kao signal sigurnosti dok ih doji.
 
 5. Stres i anksioznost
 
@@ -929,7 +929,7 @@ ZANIMLJIVOSTI O PREDENJU
 
 Ne predu sve mačke: iako je rijetko, neke mačke nikad ne predu. To ne znači da su nesretne — jednostavno komuniciraju na druge načine.
 
-Veliki mačkovi: lavovi, leopardi i tigrovi ne mogu presti u klasičnom smislu. Oni imaju fleksibilniji hioidni apparat koji im omogućuje rikanje ali ne i predenje. Gepard, puma i ris MOGU presti, ali ne mogu rikati.
+Veliki mačkovi: lavovi, leopardi i tigrovi ne mogu presti u klasičnom smislu. Oni imaju fleksibilniji hioidni apparat koji im omogućuje rikanje ali ne i predenje. Gepard, puma i ris mogu presti, ali ne mogu rikati.
 
 Terapeutski učinak: istraživanja pokazuju da vlasnici mačaka imaju 40% manji rizik od srčanog udara. Predenje mačke snižava krvni tlak i smanjuje stres. Neke bolnice i starački domovi koriste terapiju s mačkama upravo zbog ovog učinka.
 
@@ -939,7 +939,7 @@ Mačke mogu presti i disati istovremeno jer se zvuk stvara i pri udahu i pri izd
 
 KAKO ČITATI PREDENJE VAŠE MAČKE
 
-Obratite pozornost na kontekst. Predenje + opušteno tijelo + poluzatvorene oči = sretan kot. Predenje + udaranje repom + napete uši = stres ili bol. Predenje + buljenje u vas + sjedenje pokraj zdjelice = hrani me, čovječe. Predenje + skrivanje + nejedenje = moguća bolest — posjetite veterinara.
+Obratite pozornost na kontekst. Predenje + opušteno tijelo + poluzatvorene oči = sretna mačka. Predenje + udaranje repom + napete uši = stres ili bol. Predenje + buljenje u vas + sjedenje pokraj zdjelice = hrani me, čovječe. Predenje + skrivanje + nejedenje = moguća bolest — posjetite veterinara.
 
 Vaša mačka s vama komunicira cijelim tijelom. Predenje je samo jedan dio tog sofisticiranog jezika. Naučite ga čitati i imat ćete dublje razumijevanje svog mačjeg suputnika.`,
     author: `PetPark Tim`,
@@ -950,7 +950,7 @@ Vaša mačka s vama komunicira cijelim tijelom. Predenje je samo jedan dio tog s
   {
     slug: `proljetne-opasnosti-za-ljubimce`,
     title: `Proljetne opasnosti za ljubimce: biljke, insekti i alergije`,
-    excerpt: `S prolježem dolaze i rizici za vaše ljubimce. Saznajte koje biljke, insekti i alergeni mogu ugroziti vašeg psa ili mačku.`,
+    excerpt: `S proljećem dolaze i rizici za vaše ljubimce. Saznajte koje biljke, insekti i alergeni mogu ugroziti vašeg psa ili mačku.`,
     body: `Proljeće je prekrasno — cvijeće cvjeta, temperatura raste, dani su dulji. Ali za vlasnike ljubimaca, proljeće donosi i specifične opasnosti. Evo na što paziti.
 
 OTROVNE BILJKE
@@ -985,7 +985,7 @@ ALERGIJE
 
 Da, psi i mačke imaju sezonske alergije — baš kao i ljudi. Pelud trava, stabala i korova izaziva atopijski dermatitis kod predisponiranih životinja.
 
-Simptomi kod pasa: pretjerano grebanje (posebno šape, uši, trbuh), crvenilo kože, česti ušni upale, lizanje šapa do promjene boje dlake (od sline postaje smeđa).
+Simptomi kod pasa: pretjerano grebanje (posebno šape, uši, trbuh), crvenilo kože, česte upale uha, lizanje šapa do promjene boje dlake (od sline postaje smeđa).
 
 Simptomi kod mačaka: pretjerano timarenje, gubitak dlake, miliarni dermatitis (male kvržice po koži), kihanje.
 
@@ -997,9 +997,9 @@ Proljeće je sezona uređivanja vrtova. Mnoga gnojiva, pesticidi i herbicidi su 
 
 Posebno opasni: metaldehid (otrov za puževe) — iznimno toksičan, može biti smrtonosan. Organofosforni insekticidi. Kakaov mulč — sadrži teobromin, isti toksin kao čokolada.
 
-Ako koristite gnojiva u vrtu: držite ljubimca podalje barem 24-48 sati nakon primjene. Čitajte etikete — mnogi proizvodi imaju upozorenja za ljubimce. Birajte pet-safe alternative kad god je moguće.
+Ako koristite gnojiva u vrtu: držite ljubimca podalje barem 24-48 sati nakon primjene. Čitajte etikete — mnogi proizvodi imaju upozorenja za ljubimce. Birajte sigurne za kućne ljubimce alternative kad god je moguće.
 
-PROLJETNA CHECKLIST
+PROLJETNI POPIS
 
 Ažurirajte antiparazitnu zaštitu. Provjerite biljke u vrtu i stanu. Pripremite se za alergijsku sezonu. Osigurajte da je ljubimac čipiran i da nosi ogrlicu s ID-jem — proljeće je sezona bijega (psi jure mačke, mačke jure ptice). Zapišite broj hitne veterinarske službe.
 
@@ -1039,7 +1039,7 @@ RECEPT 3: RIBA S POVRĆEM
 
 Odličan za zdravlje kože i dlake zahvaljujući omega-3 masnim kiselinama.
 
-Sastojci: 400g bijele ribe (oslić, brancin ili list — skinite sve kosti!), 1 šalica kuhane zobene kaše, 1 brokula (samo cvjetovi), 1 mrkva, 1 žlička ribljeg ulja. Priprema: ribu kuhajte na pari 10-12 minuta. Provjerite da nema NI JEDNE kosti — ovo je kritično. Brokulu i mrkvu blanširajte 3 minute. Pomiješajte s kuhanom zobenom kašom i dodajte riblje ulje.
+Sastojci: 400g bijele ribe (oslić, brancin ili list — skinite sve kosti!), 1 šalica kuhane zobene kaše, 1 brokula (samo cvjetovi), 1 mrkva, 1 žlička ribljeg ulja. Priprema: ribu kuhajte na pari 10-12 minuta. Provjerite da nema ni jedne kosti — ovo je kritično. Brokulu i mrkvu blanširajte 3 minute. Pomiješajte s kuhanom zobenom kašom i dodajte riblje ulje.
 
 Napomena: izbjegavajte tunu i lososa u velikim količinama zbog mogućnosti nakupljanja žive. Bijela riba je sigurnija za redovitu prehranu.
 
@@ -1047,7 +1047,7 @@ RECEPT 4: PURETINA S BUNDEVOM
 
 Idealan jesenski obrok, ali dobar cijelu godinu. Bundeva je fantastična za probavu.
 
-Sastojci: 500g mljevene puretine, 1 šalica kuhane bundeve (NE začinjena bundeva iz konzerve), 1 šalica kuhane quinoe, 1 jabuka (bez sjemenki i peteljke!), 1 žlica lanenog ulja. Priprema: puretinu pecite na tavi bez ulja. Bundeve kuhajte dok ne omekša ili koristite zamrznutu bundeve (ne iz konzerve sa začinima). Jabuku ogulite, uklonite sjemenke i nasjeckajte na sitne komadiće. Sve pomiješajte s kuhanom quinoom i dodajte laneno ulje.
+Sastojci: 500 g mljevene puretine, 1 šalica kuhane bundeve (nezačinjena bundeva iz konzerve), 1 šalica kuhane kvinoje, 1 jabuka (bez sjemenki i peteljke), 1 žlica lanenog ulja. Priprema: puretinu pecite na tavi bez ulja. Bundevu kuhajte dok ne omekša ili koristite zamrznutu bundevu (ne iz konzerve sa začinima). Jabuku ogulite, uklonite sjemenke i nasjeckajte na sitne komadiće. Sve pomiješajte s kuhanom kvinojom i dodajte laneno ulje.
 
 Zašto bundeva: regulira probavu (pomaže i kod proljeva i kod zatvora), nisko je kalorična i bogata vlaknima. Veterinari u Hrvatskoj često preporučuju kuhanu bundeve za pse s osjetljivim želucem.
 
@@ -1099,15 +1099,15 @@ KADA ŠETATI?
 
 Jutro (6-8h): idealno za prvu šetnju. Pas je pun energije nakon noći, temperatura je ugodna ljeti, i manje je gužve. Plus, jutarnja šetnja regulira psov WC raspored.
 
-Podne (12-14h): ljeti izbjegavajte! Asfalt može doseći 60°C na suncu i izazvati opekline šapa. Pravilo dlana: stavite dlan na asfalt i držite 5 sekundi. Ako vama peče — psu još više. Zimi je podne OK, čak i poželjno jer je najtoplije.
+Podne (12-14 h): ljeti izbjegavajte! Asfalt može doseći 60 °C na suncu i izazvati opekline šapa. Pravilo dlana: stavite dlan na asfalt i držite ga 5 sekundi. Ako vama peče — psu još više. Zimi je podne u redu, čak i poželjno jer je tada najtoplije.
 
 Večer (18-21h): druga glavna šetnja. Temperatura pada, pas potroši ostatak energije prije spavanja. Koristite reflektirajuću opremu kad je mrak.
 
 KAKO ŠETATI?
 
-Oprema: ovratnik ili prsnik (harness)? Za pse koji vuku — prsnik je bolji jer ne pritišće vrat. Front-clip prsnik (kopča ispred prsa) posebno je učinkovit za učenje hodanja bez vučenja. Za mirne pse koji ne vuku, obični ovratnik je OK.
+Oprema: ovratnik ili prsnik? Za pse koji vuku — prsnik je bolji jer ne pritišće vrat. Prsnik s prednjim kopčanjem posebno je učinkovit za učenje hodanja bez vučenja. Za mirne pse koji ne vuku, obični ovratnik je u redu.
 
-Povodac: 1.5-2 metra je idealna dužina. Izbjegavajte flexi povodce na prometnim mjestima — opasni su i ne daju vam kontrolu. Flexi je OK samo na otvorenim prostranstvima bez prometa.
+Povodac: 1.5-2 metra je idealna dužina. Izbjegavajte povodce na izvlačenje na prometnim mjestima — opasni su i ne daju vam kontrolu. Povodac na izvlačenje prihvatljiv je samo na otvorenim prostranstvima bez prometa.
 
 Pustite psa da NJUŠI! Ovo je najvažniji savjet u cijelom članku. Njušenje je za psa isto što i čitanje novina za nas. Putem njuha saznaje tko je tu bio, kad, u kakvom je raspoloženju bio, što je jeo. To je golema mentalna stimulacija.
 
@@ -1119,7 +1119,7 @@ Posebni izazovi urbane šetnje: promet, drugi psi, djeca, buka. U hrvatskim grad
 
 Reaktivni psi: ako vaš pas reagira na druge pse (laje, vuče, skače), povećajte distancu. Promijenite smjer kad vidite drugog psa. Nagradite psa kad mirno prođe pokraj distrakcije. Za ozbiljniju reaktivnost, potražite certificiranog trenera.
 
-Pokupite za sobom: ovo je zakon u Hrvatskoj. Kazne su 50-300 EUR. Nosite vrećice UVIJEK. Nema izgovora. Ni iza grma na livadi.
+Pokupite za sobom: to je zakonska obveza u Hrvatskoj. Kazne su 50-300 EUR. Nosite vrećice uvijek. Nema izgovora. Ni iza grma na livadi.
 
 ŠETNJA U PRIRODI
 
