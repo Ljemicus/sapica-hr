@@ -42,6 +42,9 @@ const PENDING_APP_STALE_HOURS = 48;
 const DRAFT_APP_STALE_HOURS = 168; // 7 days
 const VERIFICATION_STUCK_HOURS = 48;
 const BOOKING_PENDING_STALE_HOURS = 72;
+const SEED_TEST_BOOKING_IDS = new Set([
+  '00004444-4444-4444-4444-444444444444',
+]);
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -145,14 +148,16 @@ const checkStuckVerifications: CheckFn = async (db) => {
 /** Bookings stuck in pending status too long (no sitter response). */
 const checkStaleBookings: CheckFn = async (db) => {
   const cutoff = hoursAgo(BOOKING_PENDING_STALE_HOURS);
-  const { data, count } = await db
+  const { data } = await db
     .from('bookings')
-    .select('id, created_at', { count: 'exact' })
+    .select('id, created_at')
     .eq('status', 'pending')
     .lt('created_at', cutoff)
     .order('created_at', { ascending: true })
-    .limit(5);
+    .limit(50);
 
+  const realRows = (data ?? []).filter((row) => !SEED_TEST_BOOKING_IDS.has(row.id));
+  const count = realRows.length;
   if (!count) return null;
 
   return {
@@ -160,8 +165,8 @@ const checkStaleBookings: CheckFn = async (db) => {
     severity: count >= 10 ? 'critical' : 'warning',
     message: `${count} booking(s) pending sitter response for over ${BOOKING_PENDING_STALE_HOURS}h`,
     count,
-    oldestHours: data?.[0]?.created_at ? ageInHours(data[0].created_at) : undefined,
-    sampleIds: sampleIds(data),
+    oldestHours: realRows[0]?.created_at ? ageInHours(realRows[0].created_at) : undefined,
+    sampleIds: sampleIds(realRows),
   };
 };
 
