@@ -17,7 +17,7 @@ export function DesktopNav({ t, user }: { t: TranslationFn; user?: NavbarUser | 
   const hksMenu = getHksMenu();
 
   return (
-    <nav className="hidden md:flex items-center gap-1" aria-label="Glavna navigacija">
+    <nav className="hidden md:flex items-center gap-1" aria-label={t('common.main_navigation')}>
       {desktopLinks.slice(0, 1).map((item) => (
         <Link key={item.href} href={item.href} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-accent">
           {item.label}

@@ -29,8 +29,9 @@ export function getDashboardLink(user?: NavbarUser | null) {
 
 export function getDesktopLinks(t: TranslationFn, user?: NavbarUser | null): NavbarLinkItem[] {
   return [
-    { href: '/o-nama', label: 'O nama' },
+    { href: '/o-nama', label: t('nav.about') },
     { href: '/blog', label: t('nav.blog'), icon: BookOpen },
+    { href: '/izgubljeni', label: t('nav.lost'), icon: AlertTriangle, className: 'text-red-500 hover:text-red-600 transition-colors' },
     ...(!user ? [{ href: '/postani-sitter', label: t('nav.become_sitter'), className: 'text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 transition-colors px-3 py-2 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-950/20' }] : []),
   ];
 }
@@ -41,8 +42,8 @@ export function getServicesMenu(t: TranslationFn): NavbarMenuItem[] {
     { href: '/njega', label: t('nav.grooming'), icon: Scissors },
     { href: '/dresura', label: t('nav.training'), icon: GraduationCap },
     { href: '/veterinari', label: t('nav.veterinarians'), icon: Stethoscope },
-    { href: '/hitno', label: 'Hitna pomoć', icon: Siren, className: 'text-red-600 dark:text-red-400 font-medium' },
-    { href: '/uzgajivacnice', label: 'Uzgajivači', icon: Baby },
+    { href: '/hitno', label: t('nav.emergency'), icon: Siren, className: 'text-red-600 dark:text-red-400 font-medium' },
+    { href: '/uzgajivacnice', label: t('nav.breeders'), icon: Baby },
     { href: '/dog-friendly', label: 'Dog-Friendly', icon: Dog },
   ];
 }
@@ -76,7 +77,7 @@ export function getUserMenuItems(t: TranslationFn, user?: NavbarUser | null): Na
   }
 
   if (user && user.role !== 'admin') {
-    items.push({ href: '/dashboard/adoption', label: 'Oglasi za udomljavanje', icon: HeartHandshake, separatorBefore: user.role !== 'owner' });
+    items.push({ href: '/dashboard/adoption', label: t('nav.adoption_listings'), icon: HeartHandshake, separatorBefore: user.role !== 'owner' });
   }
 
   if (user?.role !== 'sitter') {
@@ -88,12 +89,12 @@ export function getUserMenuItems(t: TranslationFn, user?: NavbarUser | null): Na
 
 export function getMobilePrimaryLinks(t: TranslationFn): NavbarLinkItem[] {
   return [
-    { href: '/o-nama', label: 'O nama', icon: Heart },
+    { href: '/o-nama', label: t('nav.about'), icon: Heart },
     { href: '/pretraga', label: t('nav.sitters'), icon: Search },
     { href: '/njega', label: t('nav.grooming'), icon: Scissors },
     { href: '/dresura', label: t('nav.training'), icon: GraduationCap },
     { href: '/veterinari', label: t('nav.veterinarians'), icon: Stethoscope },
-    { href: '/hitno', label: 'Hitna pomoć', icon: Siren, className: 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold' },
+    { href: '/hitno', label: t('nav.emergency'), icon: Siren, className: 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold' },
   ];
 }
 
@@ -108,8 +109,8 @@ export function getMobileCommunityLinks(t: TranslationFn): NavbarLinkItem[] {
     { href: '/forum', label: t('nav.forum'), icon: MessageSquare },
     { href: '/dog-friendly', label: 'Dog-Friendly', icon: Dog, className: 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/20 font-medium' },
     { href: '/izgubljeni', label: t('nav.lost'), icon: AlertTriangle, className: 'text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold' },
-    { href: '/udomljavanje', label: 'Udomljavanje', icon: HeartHandshake, className: 'text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-950/20 font-semibold' },
-    { href: '/uzgajivacnice', label: 'Uzgajivači', icon: PawPrint },
+    { href: '/udomljavanje', label: t('footer.adoption'), icon: HeartHandshake, className: 'text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-950/20 font-semibold' },
+    { href: '/uzgajivacnice', label: t('nav.breeders'), icon: PawPrint },
   ];
 }
 
@@ -120,7 +121,7 @@ export function getMobileAccountLinks(t: TranslationFn, user?: NavbarUser | null
   ];
 
   if (user && user.role !== 'admin') {
-    items.push({ href: '/dashboard/adoption', label: 'Oglasi za udomljavanje', icon: HeartHandshake });
+    items.push({ href: '/dashboard/adoption', label: t('nav.adoption_listings'), icon: HeartHandshake });
   }
 
   if (user?.role !== 'sitter') {

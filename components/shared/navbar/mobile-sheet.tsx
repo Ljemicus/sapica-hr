@@ -37,7 +37,7 @@ export function MobileSheet({ open, setOpen, t, user, onLogout }: MobileSheetPro
   return (
     <div className="flex items-center gap-1.5 md:hidden">
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger render={<Button variant="ghost" size="icon" />} className="md:hidden rounded-xl" aria-label="Otvori izbornik">
+        <SheetTrigger render={<Button variant="ghost" size="icon" />} className="md:hidden rounded-xl" aria-label={t('common.open_menu')}>
           <Menu className="h-5 w-5" />
         </SheetTrigger>
         <SheetContent side="right" className="w-[300px] p-0">
@@ -77,7 +77,7 @@ export function MobileSheet({ open, setOpen, t, user, onLogout }: MobileSheetPro
               {primaryLinks.slice(1).map((item) => renderLink(item.href, item.label, item.icon, item.className))}
 
               <div className="border-t border-border/50 my-3" />
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Ogledni prikaz (Demo)</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">{t('common.demo')}</p>
               {utilityLinks.map((item) => (
                 <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors ${item.className || ''}`}>
                   {item.icon ? <item.icon className="h-5 w-5" /> : null}
@@ -87,13 +87,13 @@ export function MobileSheet({ open, setOpen, t, user, onLogout }: MobileSheetPro
               ))}
 
               <div className="border-t border-border/50 my-3" />
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Zajednica</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">{t('common.community')}</p>
               {communityLinks.map((item) => renderLink(item.href, item.label, item.icon, item.className))}
 
               {user ? (
                 <>
                   <div className="border-t border-border/50 my-3" />
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">Račun</p>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">{t('common.account')}</p>
                   {accountLinks.map((item) => renderLink(item.href, item.label, item.icon, item.className))}
                   <button
                     onClick={async () => {

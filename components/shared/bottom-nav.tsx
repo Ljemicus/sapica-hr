@@ -4,17 +4,19 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Search, BookOpen, MessageSquare, User } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
-
-const navItems = [
-  { href: '/', icon: Home, label: 'Početna' },
-  { href: '/pretraga', icon: Search, label: 'Pretraži' },
-  { href: '/zajednica', icon: BookOpen, label: 'Blog' },
-  { href: '/forum', icon: MessageSquare, label: 'Forum' },
-];
+import { useLanguage } from '@/lib/i18n';
 
 export function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuth();
+  const { t } = useLanguage();
+
+  const navItems = [
+    { href: '/', icon: Home, label: t('common.home') },
+    { href: '/pretraga', icon: Search, label: t('common.search') },
+    { href: '/zajednica', icon: BookOpen, label: t('nav.blog') },
+    { href: '/forum', icon: MessageSquare, label: t('nav.forum') },
+  ];
 
   const dashboardLink = user?.role === 'sitter'
     ? '/dashboard/sitter'
@@ -26,14 +28,14 @@ export function BottomNav() {
 
   const allItems = [
     ...navItems,
-    { href: dashboardLink, icon: User, label: user ? 'Profil' : 'Prijava' },
+    { href: dashboardLink, icon: User, label: user ? t('common.profile') : t('nav.login') },
   ];
 
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass-strong border-t border-border/50"
       role="navigation"
-      aria-label="Glavna mobilna navigacija"
+      aria-label={t('common.mobile_navigation')}
     >
       <div className="flex items-center justify-around h-16 px-2 max-w-lg mx-auto">
         {allItems.map((item) => {

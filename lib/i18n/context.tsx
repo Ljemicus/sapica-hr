@@ -22,9 +22,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const routeLanguage = document.documentElement.lang as Language | '';
     const stored = localStorage.getItem(STORAGE_KEY) as Language | null;
+    const pathname = window.location.pathname;
+    const hasExplicitEnRoute = pathname.endsWith('/en') || pathname.includes('/en/');
 
-    if (window.location.pathname.endsWith('/en') && routeLanguage === 'en') {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- route locale should win on explicit locale URLs
+    if (hasExplicitEnRoute && routeLanguage === 'en') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- explicit locale route should win over saved UI preference
       setLanguageState('en');
     } else if (stored && translations[stored]) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrating from localStorage on mount

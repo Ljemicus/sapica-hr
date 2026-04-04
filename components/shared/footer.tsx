@@ -1,6 +1,10 @@
+'use client';
+
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { MapPin, Mail } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n';
+
 const NewsletterSignup = dynamic(() => import('@/components/shared/newsletter-signup').then((mod) => mod.NewsletterSignup));
 
 function PawLogo({ className }: { className?: string }) {
@@ -41,95 +45,94 @@ function TwitterIcon({ className }: { className?: string }) {
 }
 
 export function Footer() {
+  const { t, language } = useLanguage();
+
   return (
     <>
-    <div className="hidden md:block">
-      <NewsletterSignup />
-    </div>
-    <footer className="bg-gray-900 dark:bg-gray-950 text-gray-300 mt-auto relative overflow-hidden">
-      <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
-      <div className="container mx-auto px-4 py-14 relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          <div>
-            <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl text-white mb-4 group">
-              <PawLogo className="h-7 w-7 text-orange-400 group-hover:scale-110 transition-transform" />
-              <span>
-                <span className="text-orange-400">Pet</span><span className="text-teal-400">Park</span>
-              </span>
-            </Link>
-            <p className="text-sm text-gray-400 leading-relaxed mb-6">
-              Pronađite pouzdane sittere, groomere i trenere u svom gradu.
-              Jasni profili, recenzije i sigurnija rezervacija za mirnije vlasnike.
-            </p>
-            <div className="flex items-center gap-3">
-              <a href="https://facebook.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Facebook">
-                <FacebookIcon className="h-4 w-4" />
-              </a>
-              <a href="https://instagram.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Instagram">
-                <InstagramIcon className="h-4 w-4" />
-              </a>
-              <a href="https://x.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Twitter">
-                <TwitterIcon className="h-4 w-4" />
-              </a>
-            </div>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Usluge</h3>
-            <ul className="space-y-3 text-sm">
-              <li><Link href="/pretraga" className="hover:text-orange-400 transition-colors">Pronađi sittera</Link></li>
-              <li><Link href="/njega" className="hover:text-orange-400 transition-colors">Grooming & Njega</Link></li>
-              <li><Link href="/dresura" className="hover:text-orange-400 transition-colors">Školovanje pasa</Link></li>
-              <li><Link href="/veterinari" className="hover:text-orange-400 transition-colors">Veterinari</Link></li>
-              <li><Link href="/postani-sitter" className="hover:text-teal-400 transition-colors">Postani sitter</Link></li>
-              <li><Link href="/hitno" className="hover:text-red-400 transition-colors font-medium">🚨 Hitna pomoć</Link></li>
-            </ul>
-
-            <h4 className="font-semibold text-white mt-6 mb-3 text-xs uppercase tracking-wider">Popularni gradovi</h4>
-            <ul className="space-y-2 text-sm text-gray-400">
-              <li><Link href="/cuvanje-pasa-zagreb" className="hover:text-orange-400 transition-colors">Čuvanje pasa Zagreb</Link></li>
-              <li><Link href="/cuvanje-pasa-split" className="hover:text-orange-400 transition-colors">Čuvanje pasa Split</Link></li>
-              <li><Link href="/cuvanje-pasa-rijeka" className="hover:text-orange-400 transition-colors">Čuvanje pasa Rijeka</Link></li>
-              <li><Link href="/grooming-zagreb" className="hover:text-pink-400 transition-colors">Grooming Zagreb</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Istraži</h3>
-            <ul className="space-y-3 text-sm">
-              <li><Link href="/blog" className="hover:text-orange-400 transition-colors">Blog</Link></li>
-              <li><Link href="/forum" className="hover:text-orange-400 transition-colors">Forum</Link></li>
-              <li><Link href="/dog-friendly" className="hover:text-green-400 transition-colors">Dog-Friendly lokacije</Link></li>
-              <li><Link href="/udomljavanje" className="hover:text-pink-400 transition-colors">Udomljavanje</Link></li>
-              <li><Link href="/izgubljeni" className="hover:text-red-400 transition-colors">Izgubljeni ljubimci</Link></li>
-              <li><Link href="/uzgajivacnice" className="hover:text-orange-400 transition-colors">Uzgajivači</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Kontakt</h3>
-            <ul className="space-y-3 text-sm">
-              <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-orange-400 flex-shrink-0" />
-                <span>info@petpark.hr</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <MapPin className="h-4 w-4 text-orange-400 flex-shrink-0 mt-0.5" />
-                <span>Rijeka, Hrvatska</span>
-              </li>
-            </ul>
-            <div className="mt-6 space-y-2 text-sm">
-              <Link href="/o-nama" className="block hover:text-orange-400 transition-colors">O nama</Link>
-            </div>
-          </div>
-        </div>
-        <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-          <p>&copy; 2026 PetPark d.o.o. Sva prava pridržana.</p>
-          <div className="flex items-center gap-4 text-xs">
-            <Link href="/privatnost" className="hover:text-orange-400 transition-colors">Privatnost</Link>
-            <Link href="/uvjeti" className="hover:text-orange-400 transition-colors">Uvjeti</Link>
-            <Link href="/kontakt" className="hover:text-orange-400 transition-colors">Kontakt</Link>
-          </div>
-        </div>
+      <div className="hidden md:block">
+        <NewsletterSignup />
       </div>
-    </footer>
+      <footer className="bg-gray-900 dark:bg-gray-950 text-gray-300 mt-auto relative overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+        <div className="container mx-auto px-4 py-14 relative">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            <div>
+              <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl text-white mb-4 group">
+                <PawLogo className="h-7 w-7 text-orange-400 group-hover:scale-110 transition-transform" />
+                <span>
+                  <span className="text-orange-400">Pet</span><span className="text-teal-400">Park</span>
+                </span>
+              </Link>
+              <p className="text-sm text-gray-400 leading-relaxed mb-6">{t('footer.tagline')}</p>
+              <div className="flex items-center gap-3">
+                <a href="https://facebook.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Facebook">
+                  <FacebookIcon className="h-4 w-4" />
+                </a>
+                <a href="https://instagram.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Instagram">
+                  <InstagramIcon className="h-4 w-4" />
+                </a>
+                <a href="https://x.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Twitter">
+                  <TwitterIcon className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+            <div>
+              <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.services')}</h3>
+              <ul className="space-y-3 text-sm">
+                <li><Link href="/pretraga" className="hover:text-orange-400 transition-colors">{t('footer.find_sitter')}</Link></li>
+                <li><Link href="/njega" className="hover:text-orange-400 transition-colors">{t('footer.grooming')}</Link></li>
+                <li><Link href="/dresura" className="hover:text-orange-400 transition-colors">{t('footer.training')}</Link></li>
+                <li><Link href="/veterinari" className="hover:text-orange-400 transition-colors">{t('footer.veterinarians')}</Link></li>
+                <li><Link href="/postani-sitter" className="hover:text-teal-400 transition-colors">{t('footer.become_sitter')}</Link></li>
+                <li><Link href="/hitno" className="hover:text-red-400 transition-colors font-medium">{t('footer.emergency')}</Link></li>
+              </ul>
+
+              <h4 className="font-semibold text-white mt-6 mb-3 text-xs uppercase tracking-wider">{t('footer.popular_cities')}</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="/cuvanje-pasa-zagreb" className="hover:text-orange-400 transition-colors">{language === 'en' ? 'Dog sitting Zagreb' : 'Čuvanje pasa Zagreb'}</Link></li>
+                <li><Link href="/cuvanje-pasa-split" className="hover:text-orange-400 transition-colors">{language === 'en' ? 'Dog sitting Split' : 'Čuvanje pasa Split'}</Link></li>
+                <li><Link href="/cuvanje-pasa-rijeka" className="hover:text-orange-400 transition-colors">{language === 'en' ? 'Dog sitting Rijeka' : 'Čuvanje pasa Rijeka'}</Link></li>
+                <li><Link href="/grooming-zagreb" className="hover:text-pink-400 transition-colors">{language === 'en' ? 'Grooming Zagreb' : 'Grooming Zagreb'}</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.explore')}</h3>
+              <ul className="space-y-3 text-sm">
+                <li><Link href="/blog" className="hover:text-orange-400 transition-colors">{t('nav.blog')}</Link></li>
+                <li><Link href="/forum" className="hover:text-orange-400 transition-colors">{t('nav.forum')}</Link></li>
+                <li><Link href="/dog-friendly" className="hover:text-green-400 transition-colors">{t('footer.dog_friendly')}</Link></li>
+                <li><Link href="/udomljavanje" className="hover:text-pink-400 transition-colors">{t('footer.adoption')}</Link></li>
+                <li><Link href="/izgubljeni" className="hover:text-red-400 transition-colors">{t('footer.lost_pets')}</Link></li>
+                <li><Link href="/uzgajivacnice" className="hover:text-orange-400 transition-colors">{t('footer.breeders')}</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.contact')}</h3>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-orange-400 flex-shrink-0" />
+                  <span>info@petpark.hr</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <MapPin className="h-4 w-4 text-orange-400 flex-shrink-0 mt-0.5" />
+                  <span>{language === 'en' ? 'Rijeka, Croatia' : 'Rijeka, Hrvatska'}</span>
+                </li>
+              </ul>
+              <div className="mt-6 space-y-2 text-sm">
+                <Link href="/o-nama" className="block hover:text-orange-400 transition-colors">{t('footer.about')}</Link>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+            <p>{t('footer.rights')}</p>
+            <div className="flex items-center gap-4 text-xs">
+              <Link href="/privatnost" className="hover:text-orange-400 transition-colors">{t('footer.privacy')}</Link>
+              <Link href="/uvjeti" className="hover:text-orange-400 transition-colors">{t('footer.terms')}</Link>
+              <Link href="/kontakt" className="hover:text-orange-400 transition-colors">{t('footer.contact')}</Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }

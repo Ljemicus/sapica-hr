@@ -12,7 +12,7 @@ import { MobileSheet } from '@/components/shared/navbar/mobile-sheet';
 
 export function Navbar() {
   const { user, loading, signOut } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -39,7 +39,7 @@ export function Navbar() {
       role="banner"
     >
       <div className="container mx-auto flex items-center justify-between px-4 h-full">
-        <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl group" aria-label="PetPark početna">
+        <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl group" aria-label={t('common.homepage')} lang={language}>
           <div className="relative">
             <PawLogo className="h-10 w-10 text-orange-500 group-hover:scale-110 transition-transform duration-200" />
           </div>
