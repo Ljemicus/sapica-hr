@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { format, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isToday, isBefore } from 'date-fns';
-import { hr } from 'date-fns/locale';
+import { enUS, hr } from 'date-fns/locale';
 import {
   ChevronRight, ChevronLeft, CheckCircle2, Scissors, Clock, Calendar, PawPrint, Loader2,
 } from 'lucide-react';
@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { GROOMING_SERVICE_LABELS, type Groomer, type GroomingServiceType, type GroomerAvailabilitySlot } from '@/lib/types';
+import { useLanguage } from '@/lib/i18n/context';
 import { toast } from 'sonner';
 
 interface GroomerBookingDialogProps {
@@ -22,6 +23,14 @@ interface GroomerBookingDialogProps {
   initialDate?: string;
   initialSlot?: GroomerAvailabilitySlot | null;
 }
+
+const GROOMING_SERVICE_LABELS_EN: Record<GroomingServiceType, string> = {
+  sisanje: 'Haircut',
+  kupanje: 'Bath',
+  trimanje: 'Hand stripping',
+  nokti: 'Nails',
+  cetkanje: 'Brushing',
+};
 
 export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate, initialSlot }: GroomerBookingDialogProps) {
   const [step, setStep] = useState(1);
@@ -36,10 +45,50 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
   const [submitting, setSubmitting] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(new Date());
   const router = useRouter();
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const locale = isEn ? enUS : hr;
+
+  const serviceLabel = (value: GroomingServiceType) => isEn ? GROOMING_SERVICE_LABELS_EN[value] : GROOMING_SERVICE_LABELS[value];
+
+  const copy = {
+    loadError: isEn ? 'Error loading time slots. Please try again.' : 'Greška pri učitavanju termina. Pokušajte ponovno.',
+    slotGoneTitle: isEn ? 'This slot is no longer available' : 'Termin više nije dostupan',
+    slotGoneDescription: isEn ? 'Choose another slot.' : 'Odaberite drugi termin.',
+    submitErrorTitle: isEn ? 'We could not send your request' : 'Nismo uspjeli poslati upit',
+    submitErrorDescription: isEn ? 'Please try again.' : 'Pokušajte ponovno.',
+    successTitle: isEn ? 'Your appointment request has been sent' : 'Upit za termin je poslan',
+    networkError: isEn ? 'Network error. Please try again.' : 'Mrežna greška. Pokušajte ponovno.',
+    steps: isEn ? ['Selection', 'Time slot', 'Details', 'Send'] : ['Odabir', 'Termin', 'Detalji', 'Slanje'],
+    title: isEn ? 'Send appointment request' : 'Pošalji upit za termin',
+    description: isEn ? `You are sending a request to groomer ${groomer.name}. The appointment is confirmed only after approval, and service details can still be adjusted after the reply.` : `Šaljete upit groomeru ${groomer.name}. Termin vrijedi tek nakon potvrde, a detalje usluge možete dodatno uskladiti nakon odgovora.`,
+    chooseService: isEn ? 'Choose a service' : 'Odaberi uslugu',
+    next: isEn ? 'Next' : 'Dalje',
+    loadingSlots: isEn ? 'Loading time slots...' : 'Učitavam termine...',
+    noSlotsTitle: isEn ? 'This groomer currently has no open slots.' : 'Groomer trenutno nema otvorene termine.',
+    noSlotsText: isEn ? 'Send a message or try another date.' : 'Pošaljite poruku ili pokušajte s drugim datumom.',
+    chooseDate: isEn ? 'Choose a date' : 'Odaberi datum',
+    weekdays: isEn ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] : ['Ned', 'Pon', 'Uto', 'Sri', 'Čet', 'Pet', 'Sub'],
+    freeSlots: isEn ? 'Available slots' : 'Slobodni termini',
+    back: isEn ? 'Back' : 'Natrag',
+    petName: isEn ? 'Pet name' : 'Ime ljubimca',
+    petNamePlaceholder: isEn ? 'e.g. Rex, Miki, Luna...' : 'npr. Rex, Miki, Luna...',
+    petType: isEn ? 'Pet type' : 'Vrsta ljubimca',
+    dog: isEn ? '🐕 Dog' : '🐕 Pas',
+    cat: isEn ? '🐈 Cat' : '🐈 Mačka',
+    note: isEn ? 'Note for the groomer (optional)' : 'Napomena za groomera (opcionalno)',
+    notePlaceholder: isEn ? 'E.g. size, skin sensitivity, allergies, special instructions...' : 'Npr. veličina, osjetljivost kože, alergije, posebne upute...',
+    firstConfirm: isEn ? 'The groomer needs to confirm this time slot first. You will get a notification as soon as they reply.' : 'Groomer prvo treba potvrditi termin. Dobit ćete obavijest čim odgovori.',
+    whatNext: isEn ? 'What happens after you send it?' : 'Što slijedi nakon slanja?',
+    next1: isEn ? '1. The groomer receives your request.' : '1. Groomer prima upit za termin.',
+    next2: isEn ? '2. You receive confirmation or a proposal for a different slot.' : '2. Dobivate potvrdu ili prijedlog drugog termina.',
+    next3: isEn ? '3. The booking appears in your bookings.' : '3. Rezervacija se pojavljuje u vašim rezervacijama.',
+    sending: isEn ? 'Sending request...' : 'Šaljem upit...',
+    send: isEn ? 'Send request' : 'Pošalji upit',
+  };
 
   const selectedPrice = service ? groomer.prices[service as GroomingServiceType] : 0;
 
-  // Fetch available slots
   useEffect(() => {
     if (!open) return;
     const fromDate = new Date().toISOString().split('T')[0];
@@ -50,10 +99,10 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
       .then((data) => setSlots(Array.isArray(data) ? data : []))
       .catch(() => {
         setSlots([]);
-        toast.error('Greška pri učitavanju termina. Pokušajte ponovno.');
+        toast.error(copy.loadError);
       })
       .finally(() => setLoading(false));
-  }, [open, groomer.id]);
+  }, [open, groomer.id, copy.loadError]);
 
   useEffect(() => {
     if (!open) return;
@@ -68,16 +117,9 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
     }
   }, [open, initialDate, initialSlot, service]);
 
-  // Available dates set
   const availableDates = useMemo(() => new Set(slots.map((s) => s.date)), [slots]);
+  const dateSlots = useMemo(() => slots.filter((s) => s.date === selectedDate), [slots, selectedDate]);
 
-  // Slots for selected date
-  const dateSlots = useMemo(
-    () => slots.filter((s) => s.date === selectedDate),
-    [slots, selectedDate]
-  );
-
-  // Calendar days
   const { days, startDay } = useMemo(() => {
     const monthStart = startOfMonth(calendarMonth);
     const monthEnd = endOfMonth(calendarMonth);
@@ -108,7 +150,7 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
       });
 
       if (res.status === 409) {
-        toast.error('Termin više nije dostupan', { description: 'Odaberite drugi termin.' });
+        toast.error(copy.slotGoneTitle, { description: copy.slotGoneDescription });
         setStep(2);
         setSelectedSlot(null);
         setSubmitting(false);
@@ -116,54 +158,43 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
       }
 
       if (!res.ok) {
-        toast.error('Nismo uspjeli poslati upit', { description: 'Pokušajte ponovno.' });
+        toast.error(copy.submitErrorTitle, { description: copy.submitErrorDescription });
         setSubmitting(false);
         return;
       }
 
-      toast.success('Upit za termin je poslan', {
-        description: `${GROOMING_SERVICE_LABELS[service as GroomingServiceType]} — ${format(new Date(selectedSlot.date + 'T00:00'), 'd. MMMM', { locale: hr })} u ${selectedSlot.start_time.slice(0, 5)}h`,
+      toast.success(copy.successTitle, {
+        description: `${serviceLabel(service as GroomingServiceType)} — ${format(new Date(selectedSlot.date + 'T00:00'), isEn ? 'MMMM d' : 'd. MMMM', { locale })} ${isEn ? 'at' : 'u'} ${selectedSlot.start_time.slice(0, 5)}h`,
       });
       onOpenChange(false);
       router.push('/dashboard/vlasnik/rezervacije');
     } catch {
-      toast.error('Mrežna greška. Pokušajte ponovno.');
+      toast.error(copy.networkError);
     } finally {
       setSubmitting(false);
     }
   };
 
   const steps = [
-    { num: 1, label: 'Odabir' },
-    { num: 2, label: 'Termin' },
-    { num: 3, label: 'Detalji' },
-    { num: 4, label: 'Slanje' },
+    { num: 1, label: copy.steps[0] },
+    { num: 2, label: copy.steps[1] },
+    { num: 3, label: copy.steps[2] },
+    { num: 4, label: copy.steps[3] },
   ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Pošalji upit za termin</DialogTitle>
-          <DialogDescription>Šaljete upit groomeru {groomer.name}. Termin vrijedi tek nakon potvrde, a detalje usluge možete dodatno uskladiti nakon odgovora.</DialogDescription>
+          <DialogTitle>{copy.title}</DialogTitle>
+          <DialogDescription>{copy.description}</DialogDescription>
         </DialogHeader>
 
-        {/* Step indicator */}
         <div className="flex items-center justify-center gap-1 mb-2">
           {steps.map((s, i) => (
             <div key={s.num} className="flex items-center">
-              <div
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                  step >= s.num ? 'bg-pink-100 text-pink-700' : 'bg-gray-100 text-gray-400'
-                }`}
-              >
-                {step > s.num ? (
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                ) : (
-                  <span className="w-4 h-4 rounded-full bg-current/10 flex items-center justify-center text-[10px]">
-                    {s.num}
-                  </span>
-                )}
+              <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-colors ${step >= s.num ? 'bg-pink-100 text-pink-700' : 'bg-gray-100 text-gray-400'}`}>
+                {step > s.num ? <CheckCircle2 className="h-3.5 w-3.5" /> : <span className="w-4 h-4 rounded-full bg-current/10 flex items-center justify-center text-[10px]">{s.num}</span>}
                 {s.label}
               </div>
               {i < steps.length - 1 && <ChevronRight className="h-3 w-3 text-gray-300 mx-0.5" />}
@@ -172,131 +203,73 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
         </div>
 
         <div className="space-y-4">
-          {/* ── Step 1: Service ── */}
           {step === 1 && (
             <div className="space-y-4 animate-fade-in">
               <div className="space-y-2">
-                <Label>Odaberi uslugu</Label>
+                <Label>{copy.chooseService}</Label>
                 <div className="space-y-2">
                   {groomer.services.map((s) => (
-                    <label
-                      key={s}
-                      className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${
-                        service === s
-                          ? 'border-pink-400 bg-pink-50 shadow-sm'
-                          : 'hover:border-pink-200 hover:bg-pink-50/50'
-                      }`}
-                    >
+                    <label key={s} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${service === s ? 'border-pink-400 bg-pink-50 shadow-sm' : 'hover:border-pink-200 hover:bg-pink-50/50'}`}>
                       <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="service"
-                          value={s}
-                          checked={service === s}
-                          onChange={(e) => setService(e.target.value)}
-                          className="accent-pink-500"
-                        />
-                        <span className="font-medium text-sm">{GROOMING_SERVICE_LABELS[s]}</span>
+                        <input type="radio" name="service" value={s} checked={service === s} onChange={(e) => setService(e.target.value)} className="accent-pink-500" />
+                        <span className="font-medium text-sm">{serviceLabel(s)}</span>
                       </div>
                       <span className="font-bold text-orange-500">{groomer.prices[s]}&euro;</span>
                     </label>
                   ))}
                 </div>
               </div>
-              <Button
-                type="button"
-                className="w-full bg-pink-500 hover:bg-pink-600"
-                onClick={() => setStep(2)}
-                disabled={!service}
-              >
-                Dalje <ChevronRight className="h-4 w-4 ml-1" />
+              <Button type="button" className="w-full bg-pink-500 hover:bg-pink-600" onClick={() => setStep(2)} disabled={!service}>
+                {copy.next} <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </div>
           )}
 
-          {/* ── Step 2: Date & Time ── */}
           {step === 2 && (
             <div className="space-y-4 animate-fade-in">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="h-6 w-6 animate-spin text-pink-500" />
-                  <span className="ml-2 text-muted-foreground">Učitavam termine...</span>
+                  <span className="ml-2 text-muted-foreground">{copy.loadingSlots}</span>
                 </div>
               ) : slots.length === 0 ? (
                 <div className="text-center py-8">
                   <Calendar className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                  <p className="text-muted-foreground">Groomer trenutno nema otvorene termine.</p>
-                  <p className="text-xs text-muted-foreground mt-1">Pošaljite poruku ili pokušajte s drugim datumom.</p>
+                  <p className="text-muted-foreground">{copy.noSlotsTitle}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{copy.noSlotsText}</p>
                 </div>
               ) : (
                 <>
-                  {/* Mini Calendar */}
                   <div>
                     <div className="flex items-center justify-between mb-3">
                       <Label className="flex items-center gap-1.5">
                         <Calendar className="h-4 w-4 text-orange-500" />
-                        Odaberi datum
+                        {copy.chooseDate}
                       </Label>
                       <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7"
-                          onClick={() =>
-                            setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1))
-                          }
-                        >
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1))}>
                           <ChevronLeft className="h-4 w-4" />
                         </Button>
                         <span className="text-sm font-medium min-w-[120px] text-center capitalize">
-                          {format(calendarMonth, 'LLLL yyyy.', { locale: hr })}
+                          {format(calendarMonth, isEn ? 'LLLL yyyy' : 'LLLL yyyy.', { locale })}
                         </span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7"
-                          onClick={() =>
-                            setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1))
-                          }
-                        >
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1))}>
                           <ChevronRight className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
                     <div className="grid grid-cols-7 gap-1 mb-1">
-                      {['Ned', 'Pon', 'Uto', 'Sri', 'Čet', 'Pet', 'Sub'].map((d) => (
-                        <div key={d} className="text-center text-[10px] font-semibold text-muted-foreground uppercase">
-                          {d}
-                        </div>
-                      ))}
+                      {copy.weekdays.map((d) => <div key={d} className="text-center text-[10px] font-semibold text-muted-foreground uppercase">{d}</div>)}
                     </div>
                     <div className="grid grid-cols-7 gap-1">
-                      {Array.from({ length: startDay }, (_, i) => (
-                        <div key={`empty-${i}`} />
-                      ))}
+                      {Array.from({ length: startDay }, (_, i) => <div key={`empty-${i}`} />)}
                       {days.map((day) => {
                         const dateStr = format(day, 'yyyy-MM-dd');
                         const hasSlots = availableDates.has(dateStr);
                         const isPast = isBefore(day, new Date()) && !isToday(day);
                         const isSelected = selectedDate === dateStr;
-
                         return (
-                          <button
-                            key={dateStr}
-                            type="button"
-                            disabled={!hasSlots || isPast}
-                            onClick={() => {
-                              setSelectedDate(dateStr);
-                              setSelectedSlot(null);
-                            }}
-                            className={`aspect-square rounded-lg flex items-center justify-center text-xs font-medium transition-all ${
-                              isSelected
-                                ? 'bg-pink-500 text-white shadow-md'
-                                : hasSlots && !isPast
-                                  ? 'bg-green-100 text-green-700 hover:bg-green-200 cursor-pointer'
-                                  : 'bg-gray-50 text-gray-300 cursor-not-allowed'
-                            } ${isToday(day) && !isSelected ? 'ring-1 ring-orange-400' : ''}`}
-                          >
+                          <button key={dateStr} type="button" disabled={!hasSlots || isPast} onClick={() => { setSelectedDate(dateStr); setSelectedSlot(null); }} className={`aspect-square rounded-lg flex items-center justify-center text-xs font-medium transition-all ${isSelected ? 'bg-pink-500 text-white shadow-md' : hasSlots && !isPast ? 'bg-green-100 text-green-700 hover:bg-green-200 cursor-pointer' : 'bg-gray-50 text-gray-300 cursor-not-allowed'} ${isToday(day) && !isSelected ? 'ring-1 ring-orange-400' : ''}`}>
                             {day.getDate()}
                           </button>
                         );
@@ -304,33 +277,19 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
                     </div>
                   </div>
 
-                  {/* Time Slots */}
                   {selectedDate && (
                     <div className="space-y-2">
                       <Label className="flex items-center gap-1.5">
                         <Clock className="h-4 w-4 text-orange-500" />
-                        Slobodni termini — {format(new Date(selectedDate + 'T00:00'), 'd. MMMM', { locale: hr })}
+                        {copy.freeSlots} — {format(new Date(selectedDate + 'T00:00'), isEn ? 'MMMM d' : 'd. MMMM', { locale })}
                       </Label>
                       <div className="grid grid-cols-3 gap-2">
                         {dateSlots.map((slot) => {
                           const isSelected = selectedSlot?.id === slot.id;
                           return (
-                            <button
-                              key={slot.id}
-                              type="button"
-                              onClick={() => setSelectedSlot(slot)}
-                              className={`p-3 rounded-xl border text-center transition-all ${
-                                isSelected
-                                  ? 'border-pink-400 bg-pink-50 shadow-sm'
-                                  : 'hover:border-pink-200 hover:bg-pink-50/50'
-                              }`}
-                            >
-                              <span className="font-semibold text-sm">
-                                {slot.start_time.slice(0, 5)}
-                              </span>
-                              <span className="text-[10px] text-muted-foreground block">
-                                — {slot.end_time.slice(0, 5)}
-                              </span>
+                            <button key={slot.id} type="button" onClick={() => setSelectedSlot(slot)} className={`p-3 rounded-xl border text-center transition-all ${isSelected ? 'border-pink-400 bg-pink-50 shadow-sm' : 'hover:border-pink-200 hover:bg-pink-50/50'}`}>
+                              <span className="font-semibold text-sm">{slot.start_time.slice(0, 5)}</span>
+                              <span className="text-[10px] text-muted-foreground block">— {slot.end_time.slice(0, 5)}</span>
                             </button>
                           );
                         })}
@@ -341,136 +300,77 @@ export function GroomerBookingDialog({ open, onOpenChange, groomer, initialDate,
               )}
 
               <div className="flex gap-2">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(1)}>
-                  Natrag
-                </Button>
-                <Button
-                  type="button"
-                  className="flex-1 bg-pink-500 hover:bg-pink-600"
-                  onClick={() => setStep(3)}
-                  disabled={!selectedSlot}
-                >
-                  Dalje <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
+                <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(1)}>{copy.back}</Button>
+                <Button type="button" className="flex-1 bg-pink-500 hover:bg-pink-600" onClick={() => setStep(3)} disabled={!selectedSlot}>{copy.next} <ChevronRight className="h-4 w-4 ml-1" /></Button>
               </div>
             </div>
           )}
 
-          {/* ── Step 3: Pet Details ── */}
           {step === 3 && (
             <div className="space-y-4 animate-fade-in">
               <div className="space-y-2">
-                <Label>Ime ljubimca</Label>
-                <Input
-                  placeholder="npr. Rex, Miki, Luna..."
-                  value={petName}
-                  onChange={(e) => setPetName(e.target.value)}
-                  className="focus:border-pink-300"
-                />
+                <Label>{copy.petName}</Label>
+                <Input placeholder={copy.petNamePlaceholder} value={petName} onChange={(e) => setPetName(e.target.value)} className="focus:border-pink-300" />
               </div>
               <div className="space-y-2">
-                <Label>Vrsta ljubimca</Label>
+                <Label>{copy.petType}</Label>
                 <div className="flex gap-3">
-                  {([['pas', '🐕 Pas'], ['macka', '🐈 Mačka']] as const).map(([val, label]) => (
-                    <label
-                      key={val}
-                      className={`flex-1 p-3 rounded-xl border text-center cursor-pointer transition-all ${
-                        petType === val ? 'border-pink-400 bg-pink-50 shadow-sm' : 'hover:border-pink-200'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="petType"
-                        value={val}
-                        checked={petType === val}
-                        onChange={() => setPetType(val)}
-                        className="sr-only"
-                      />
+                  {([['pas', copy.dog], ['macka', copy.cat]] as const).map(([val, label]) => (
+                    <label key={val} className={`flex-1 p-3 rounded-xl border text-center cursor-pointer transition-all ${petType === val ? 'border-pink-400 bg-pink-50 shadow-sm' : 'hover:border-pink-200'}`}>
+                      <input type="radio" name="petType" value={val} checked={petType === val} onChange={() => setPetType(val)} className="sr-only" />
                       <span className="font-medium">{label}</span>
                     </label>
                   ))}
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Napomena za groomera (opcionalno)</Label>
-                <Textarea
-                  placeholder="Npr. veličina, osjetljivost kože, alergije, posebne upute..."
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  className="focus:border-pink-300"
-                />
+                <Label>{copy.note}</Label>
+                <Textarea placeholder={copy.notePlaceholder} value={note} onChange={(e) => setNote(e.target.value)} className="focus:border-pink-300" />
               </div>
               <div className="flex gap-2">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(2)}>
-                  Natrag
-                </Button>
-                <Button type="button" className="flex-1 bg-pink-500 hover:bg-pink-600" onClick={() => setStep(4)}>
-                  Dalje <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
+                <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(2)}>{copy.back}</Button>
+                <Button type="button" className="flex-1 bg-pink-500 hover:bg-pink-600" onClick={() => setStep(4)}>{copy.next} <ChevronRight className="h-4 w-4 ml-1" /></Button>
               </div>
             </div>
           )}
 
-          {/* ── Step 4: Confirm ── */}
           {step === 4 && selectedSlot && (
             <div className="space-y-4 animate-fade-in">
               <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl p-6 border border-pink-100 space-y-3">
                 <div className="text-center">
                   <Scissors className="h-8 w-8 text-pink-500 mx-auto mb-2" />
-                  <p className="text-lg font-bold">{GROOMING_SERVICE_LABELS[service as GroomingServiceType]}</p>
+                  <p className="text-lg font-bold">{serviceLabel(service as GroomingServiceType)}</p>
                   <p className="text-3xl font-extrabold text-gradient mt-1">{selectedPrice}&euro;</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div className="bg-white/70 rounded-lg p-3 text-center">
                     <Calendar className="h-4 w-4 text-orange-500 mx-auto mb-1" />
-                    <p className="font-medium">
-                      {format(new Date(selectedSlot.date + 'T00:00'), 'd. MMMM yyyy.', { locale: hr })}
-                    </p>
+                    <p className="font-medium">{format(new Date(selectedSlot.date + 'T00:00'), isEn ? 'MMMM d, yyyy' : 'd. MMMM yyyy.', { locale })}</p>
                   </div>
                   <div className="bg-white/70 rounded-lg p-3 text-center">
                     <Clock className="h-4 w-4 text-orange-500 mx-auto mb-1" />
-                    <p className="font-medium">
-                      {selectedSlot.start_time.slice(0, 5)} — {selectedSlot.end_time.slice(0, 5)}
-                    </p>
+                    <p className="font-medium">{selectedSlot.start_time.slice(0, 5)} — {selectedSlot.end_time.slice(0, 5)}</p>
                   </div>
                 </div>
                 {petName && (
                   <div className="bg-white/70 rounded-lg p-3 text-center text-sm">
                     <PawPrint className="h-4 w-4 text-orange-500 mx-auto mb-1" />
-                    <p className="font-medium">
-                      {petName} ({petType === 'pas' ? '🐕 Pas' : '🐈 Mačka'})
-                    </p>
+                    <p className="font-medium">{petName} ({petType === 'pas' ? copy.dog : copy.cat})</p>
                   </div>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground text-center">
-                Groomer prvo treba potvrditi termin. Dobit ćete obavijest čim odgovori.
-              </p>
+              <p className="text-xs text-muted-foreground text-center">{copy.firstConfirm}</p>
               <div className="rounded-xl border bg-muted/30 p-4 text-sm text-muted-foreground space-y-1">
-                <p className="font-medium text-foreground">Što slijedi nakon slanja?</p>
-                <p>1. Groomer prima upit za termin.</p>
-                <p>2. Dobivate potvrdu ili prijedlog drugog termina.</p>
-                <p>3. Rezervacija se pojavljuje u vašim rezervacijama.</p>
+                <p className="font-medium text-foreground">{copy.whatNext}</p>
+                <p>{copy.next1}</p>
+                <p>{copy.next2}</p>
+                <p>{copy.next3}</p>
               </div>
 
               <div className="flex gap-2">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(3)}>
-                  Natrag
-                </Button>
-                <Button
-                  type="button"
-                  className="flex-1 bg-pink-500 hover:bg-pink-600 btn-hover"
-                  onClick={handleSubmit}
-                  disabled={submitting}
-                >
-                  {submitting ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Šaljem upit...
-                    </>
-                  ) : (
-                    'Pošalji upit'
-                  )}
+                <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(3)}>{copy.back}</Button>
+                <Button type="button" className="flex-1 bg-pink-500 hover:bg-pink-600 btn-hover" onClick={handleSubmit} disabled={submitting}>
+                  {submitting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{copy.sending}</> : copy.send}
                 </Button>
               </div>
             </div>
