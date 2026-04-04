@@ -12,7 +12,7 @@ interface BreederPageProps {
 
 export async function generateMetadata({ params }: BreederPageProps): Promise<Metadata> {
   const { id } = await params;
-  const breeder = getBreeder(id);
+  const breeder = await getBreeder(id);
   return {
     title: breeder ? `${breeder.name} — Uzgajivač u ${breeder.city}` : 'Uzgajivač profil',
     description: breeder ? `Pogledajte profil uzgajivača ${breeder.name} u ${breeder.city}. ${breeder.breeds.join(', ')}.` : '',
@@ -24,11 +24,11 @@ export async function generateMetadata({ params }: BreederPageProps): Promise<Me
 
 export default async function BreederPage({ params }: BreederPageProps) {
   const { id } = await params;
-  const breeder = getBreeder(id);
+  const breeder = await getBreeder(id);
   if (!breeder) return notFound();
 
   // Get related breeders (same species, different id)
-  const allBreeders = getBreeders();
+  const allBreeders = await getBreeders();
   const related = allBreeders
     .filter((b) => b.id !== breeder.id && (b.species === breeder.species || b.species === 'both'))
     .slice(0, 3);

@@ -27,7 +27,7 @@ interface UzgajivacnicePageProps {
 
 export default async function UzgajivacnicePage({ searchParams }: UzgajivacnicePageProps) {
   const params = await searchParams;
-  const breeders = getBreeders(params);
+  const breeders = await getBreeders(params);
 
   return (
     <div>
