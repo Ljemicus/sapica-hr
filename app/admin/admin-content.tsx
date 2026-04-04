@@ -134,13 +134,13 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
           <h1 className="text-3xl font-bold tracking-tight">Admin panel</h1>
           <p className="text-muted-foreground mt-1">Upravljajte korisnicima, rezervacijama i verifikacijama</p>
         </div>
-        <Button asChild variant="outline" className="w-full md:w-auto">
-          <Link href="/admin/founder-dashboard">
+        <Link href="/admin/founder-dashboard">
+          <Button variant="outline" className="w-full md:w-auto">
             <LayoutDashboard className="h-4 w-4 mr-2" />
             Founder dashboard
             <ArrowRight className="h-4 w-4 ml-2" />
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
 
       {/* KPI Stats */}

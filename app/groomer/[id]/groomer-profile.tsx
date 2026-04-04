@@ -41,7 +41,6 @@ import {
 } from '@/lib/types';
 import {
   formatAddress,
-  formatPriceRange,
   getActiveServices,
   getOrderedDays,
   formatWorkingHours,
@@ -99,6 +98,16 @@ const GROOMER_SPECIALIZATION_LABELS_EN: Record<GroomerSpecialization, string> = 
   oba: 'Dogs & cats',
 };
 
+const DAY_LABELS_EN: Record<string, string> = {
+  Pon: 'Mon',
+  Uto: 'Tue',
+  Sri: 'Wed',
+  'Čet': 'Thu',
+  Pet: 'Fri',
+  Sub: 'Sat',
+  Ned: 'Sun',
+};
+
 interface GroomerProfileProps {
   groomer: Groomer;
   reviews: GroomerReview[];
@@ -117,10 +126,24 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
   const { language } = useLanguage();
   const isEn = language === 'en';
   const locale = isEn ? enUS : hr;
+
   const gradient = gradients[groomer.name.charCodeAt(0) % gradients.length];
-  const lowestPrice = Math.min(...Object.values(groomer.prices).filter((p) => p > 0));
-  const serviceLabel = (v: GroomingServiceType) => (isEn ? GROOMING_SERVICE_LABELS_EN[v] : GROOMING_SERVICE_LABELS[v]);
-  const specializationLabel = isEn ? GROOMER_SPECIALIZATION_LABELS_EN[groomer.specialization] : GROOMER_SPECIALIZATION_LABELS[groomer.specialization];
+  const lowestPrice = Math.min(...Object.values(groomer.prices).filter((price) => price > 0));
+  const serviceLabel = (value: GroomingServiceType) =>
+    isEn ? GROOMING_SERVICE_LABELS_EN[value] : GROOMING_SERVICE_LABELS[value];
+  const specializationLabel = isEn
+    ? GROOMER_SPECIALIZATION_LABELS_EN[groomer.specialization]
+    : GROOMER_SPECIALIZATION_LABELS[groomer.specialization];
+  const formatPriceRangeLabel = (prices: Record<string, number>) => {
+    const valid = Object.values(prices).filter((price) => price > 0);
+    if (valid.length === 0) return isEn ? 'Price on request' : 'Cijena na upit';
+
+    const min = Math.min(...valid);
+    const max = Math.max(...valid);
+    return min === max ? `${min}\u00A0€` : `${min}\u00A0–\u00A0${max}\u00A0€`;
+  };
+  const dayLabel = (day: string) => (isEn ? DAY_LABELS_EN[day] || day : day);
+
   const copy = {
     linkCopied: isEn ? 'Link copied!' : 'Link kopiran!',
     copyFail: isEn ? 'Could not copy the link' : 'Nije moguće kopirati link',
@@ -147,8 +170,12 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
       : 'Usluge i cijene trenutno nisu navedene. Kontaktirajte za više informacija.',
     freeSlots: isEn ? 'Available slots' : 'Slobodni termini',
     loadingSlots: isEn ? 'Loading slots...' : 'Učitavam termine...',
-    chooseDate: isEn ? 'Click an available date above to see open slots.' : 'Klikni na slobodan datum iznad da vidiš termine.',
-    noDateSlots: isEn ? 'There are currently no open slots for the selected date.' : 'Za odabrani datum trenutno nema slobodnih termina.',
+    chooseDate: isEn
+      ? 'Click an available date above to see open slots.'
+      : 'Klikni na slobodan datum iznad da vidiš termine.',
+    noDateSlots: isEn
+      ? 'There are currently no open slots for the selected date.'
+      : 'Za odabrani datum trenutno nema slobodnih termina.',
     noReviews: isEn ? 'No reviews yet' : 'Još nema recenzija',
     beFirst: isEn ? 'Be the first to rate this groomer' : 'Budite prvi koji će ocijeniti ovog groomera',
     from: isEn ? 'from' : 'od',
@@ -168,10 +195,13 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
     const loadSlots = async () => {
       const fromDate = new Date().toISOString().split('T')[0];
       const toDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 60).toISOString().split('T')[0];
+
       setAvailabilityLoading(true);
       try {
-        const r = await fetch(`/api/groomer-availability?groomer_id=${groomer.id}&from_date=${fromDate}&to_date=${toDate}`);
-        const data = await r.json();
+        const response = await fetch(
+          `/api/groomer-availability?groomer_id=${groomer.id}&from_date=${fromDate}&to_date=${toDate}`
+        );
+        const data = await response.json();
         setAvailabilitySlots(Array.isArray(data) ? data : []);
       } catch {
         setAvailabilitySlots([]);
@@ -179,6 +209,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
         setAvailabilityLoading(false);
       }
     };
+
     loadSlots();
   }, [groomer.id]);
 
@@ -201,11 +232,20 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
       <div className="flex items-center justify-between mb-4">
-        <Button variant="ghost" onClick={() => router.back()} className="-ml-2 hover:bg-orange-50 hover:text-orange-600">
+        <Button
+          variant="ghost"
+          onClick={() => router.back()}
+          className="-ml-2 hover:bg-orange-50 hover:text-orange-600"
+        >
           <ChevronLeft className="h-4 w-4 mr-1" />
           {copy.back}
         </Button>
-        <Button variant="ghost" size="sm" onClick={handleShare} className="hover:bg-orange-50 hover:text-orange-600">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleShare}
+          className="hover:bg-orange-50 hover:text-orange-600"
+        >
           {copied ? <Check className="h-4 w-4 mr-1" /> : <Share2 className="h-4 w-4 mr-1" />}
           {copied ? copy.copied : copy.share}
         </Button>
@@ -214,18 +254,16 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <Card className="overflow-hidden border-0 shadow-sm">
-            <div className={`h-36 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
+            <div className={`h-32 bg-gradient-to-br ${gradient} relative`}>
               <div className="absolute inset-0 paw-pattern opacity-10" />
-              <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between text-white/90 text-sm font-medium">
-                <span>{groomer.city}</span>
-                <span className="rounded-full bg-white/90 px-3 py-1 text-pink-600 shadow-sm">{specializationLabel}</span>
-              </div>
             </div>
             <CardContent className="p-6 -mt-16 relative">
               <div className="flex flex-col sm:flex-row gap-6">
                 <div className="avatar-gradient-border w-fit h-fit flex-shrink-0">
                   <Avatar className="h-28 w-28 border-4 border-white shadow-lg">
-                    <AvatarFallback className="bg-white text-gray-700 text-3xl font-bold">{groomer.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback className="bg-white text-gray-700 text-3xl font-bold">
+                      {groomer.name.charAt(0)}
+                    </AvatarFallback>
                   </Avatar>
                 </div>
                 <div className="flex-1 pt-2 sm:pt-8">
@@ -244,17 +282,24 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                           {copy.verified}
                         </Badge>
                       )}
+                      <Badge className="bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-50 animate-fade-in delay-100">
+                        {specializationLabel}
+                      </Badge>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 mt-3 flex-wrap">
                     <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1 rounded-full">
                       <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                       <span className="font-semibold">{groomer.rating.toFixed(1)}</span>
-                      <span className="text-sm text-amber-700/70">({groomer.review_count} {copy.reviews})</span>
+                      <span className="text-sm text-amber-700/70">
+                        ({groomer.review_count} {copy.reviews})
+                      </span>
                     </div>
                     <div className="flex items-center gap-1.5 bg-pink-50 px-3 py-1 rounded-full">
                       <ClipboardList className="h-4 w-4 text-pink-500" />
-                      <span className="text-sm text-pink-700">{groomer.services.length} {copy.services}</span>
+                      <span className="text-sm text-pink-700">
+                        {groomer.services.length} {copy.services}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -279,7 +324,10 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
               <CardContent>
                 <div className="space-y-3">
                   {groomer.phone && (
-                    <a href={`tel:${groomer.phone}`} className="flex items-center gap-3 p-3 rounded-xl border bg-white hover:bg-orange-50 hover:border-orange-200 transition-colors group">
+                    <a
+                      href={`tel:${groomer.phone}`}
+                      className="flex items-center gap-3 p-3 rounded-xl border bg-white hover:bg-orange-50 hover:border-orange-200 transition-colors group"
+                    >
                       <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                         <Phone className="h-5 w-5 text-white" />
                       </div>
@@ -290,7 +338,10 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                     </a>
                   )}
                   {groomer.email && (
-                    <a href={`mailto:${groomer.email}`} className="flex items-center gap-3 p-3 rounded-xl border bg-white hover:bg-orange-50 hover:border-orange-200 transition-colors group">
+                    <a
+                      href={`mailto:${groomer.email}`}
+                      className="flex items-center gap-3 p-3 rounded-xl border bg-white hover:bg-orange-50 hover:border-orange-200 transition-colors group"
+                    >
                       <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                         <Mail className="h-5 w-5 text-white" />
                       </div>
@@ -329,7 +380,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg">{copy.servicesPricing}</CardTitle>
-                <span className="text-sm text-muted-foreground">{formatPriceRange(groomer.prices)}</span>
+                <span className="text-sm text-muted-foreground">{formatPriceRangeLabel(groomer.prices)}</span>
               </div>
             </CardHeader>
             <CardContent>
@@ -340,16 +391,24 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                   {getActiveServices(groomer).map((service) => {
                     const Icon = serviceIcons[service];
                     const color = serviceColors[service];
+
                     return (
-                      <div key={service} className="flex items-center justify-between p-4 rounded-xl border bg-white hover:shadow-md transition-shadow group">
+                      <div
+                        key={service}
+                        className="flex items-center justify-between p-4 rounded-xl border bg-white hover:shadow-md transition-shadow group"
+                      >
                         <div className="flex items-center gap-3">
-                          <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}>
+                          <div
+                            className={`h-10 w-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}
+                          >
                             <Icon className="h-5 w-5 text-white" />
                           </div>
-                          <span className="font-medium block">{serviceLabel(service)}</span>
+                          <div>
+                            <span className="font-medium block">{serviceLabel(service)}</span>
+                          </div>
                         </div>
                         <span className="font-bold text-lg text-orange-500 flex-shrink-0 ml-2">
-                          {copy.from} {groomer.prices[service]}&euro;
+                          {isEn ? 'from' : 'već od'} {groomer.prices[service]}&euro;
                         </span>
                       </div>
                     );
@@ -359,7 +418,11 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
             </CardContent>
           </Card>
 
-          <AvailabilityCalendar availableDates={availableDates} selectedDate={selectedDate} onSelectDate={setSelectedDate} />
+          <AvailabilityCalendar
+            availableDates={availableDates}
+            selectedDate={selectedDate}
+            onSelectDate={setSelectedDate}
+          />
 
           <Card className="border-0 shadow-sm">
             <CardHeader>
@@ -377,7 +440,11 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                 <p className="text-sm text-muted-foreground">{copy.noDateSlots}</p>
               ) : (
                 <div className="space-y-3">
-                  <p className="text-sm font-medium">{format(new Date(`${selectedDate}T00:00:00`), isEn ? 'MMMM d, yyyy' : 'd. MMMM yyyy.', { locale })}</p>
+                  <p className="text-sm font-medium">
+                    {format(new Date(`${selectedDate}T00:00:00`), isEn ? 'MMMM d, yyyy' : 'd. MMMM yyyy.', {
+                      locale,
+                    })}
+                  </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {selectedDateSlots.map((slot) => (
                       <button
@@ -390,7 +457,9 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                         }}
                       >
                         <div className="font-semibold text-sm text-orange-600">{slot.start_time.slice(0, 5)}</div>
-                        <div className="text-xs text-muted-foreground">{copy.until} {slot.end_time.slice(0, 5)}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {copy.until} {slot.end_time.slice(0, 5)}
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -403,7 +472,9 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 {isEn ? 'Reviews' : 'Recenzije'}
-                <Badge variant="secondary" className="bg-orange-50 text-orange-600">{reviews.length}</Badge>
+                <Badge variant="secondary" className="bg-orange-50 text-orange-600">
+                  {reviews.length}
+                </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -428,7 +499,11 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                             <span className="font-medium text-sm">{review.author_name}</span>
                             <StarRating rating={review.rating} size="sm" />
                           </div>
-                          <div className="text-xs text-muted-foreground">{format(new Date(review.created_at), isEn ? 'MMMM d, yyyy' : 'd. MMMM yyyy.', { locale })}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {format(new Date(review.created_at), isEn ? 'MMMM d, yyyy' : 'd. MMMM yyyy.', {
+                              locale,
+                            })}
+                          </div>
                         </div>
                       </div>
                       <p className="text-sm text-muted-foreground pl-12 leading-relaxed">{review.comment}</p>
@@ -445,7 +520,9 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
           <Card className="sticky top-20 border-0 shadow-sm">
             <CardContent className="p-6 space-y-5">
               <div className="text-center py-2">
-                <span className="text-4xl font-extrabold text-gradient">{copy.from} {lowestPrice}&euro;</span>
+                <span className="text-4xl font-extrabold text-gradient">
+                  {copy.from} {lowestPrice}&euro;
+                </span>
                 <span className="text-muted-foreground block text-sm mt-1">{copy.perService}</span>
               </div>
 
@@ -462,12 +539,20 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
 
               {user ? (
                 <>
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50" size="lg" onClick={() => setShowBooking(true)}>
+                  <Button
+                    className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50"
+                    size="lg"
+                    onClick={() => setShowBooking(true)}
+                  >
                     <Scissors className="h-4 w-4 mr-2" />
                     {copy.book}
                   </Button>
                   <Link href={`/poruke?groomer=${groomer.id}`}>
-                    <Button variant="outline" className="w-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200" size="lg">
+                    <Button
+                      variant="outline"
+                      className="w-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200"
+                      size="lg"
+                    >
                       <MessageCircle className="h-4 w-4 mr-2" />
                       {copy.contactBtn}
                     </Button>
@@ -475,7 +560,9 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                 </>
               ) : (
                 <Link href={`/prijava?redirect=/groomer/${groomer.id}`}>
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600 btn-hover" size="lg">{copy.signIn}</Button>
+                  <Button className="w-full bg-orange-500 hover:bg-orange-600 btn-hover" size="lg">
+                    {copy.signIn}
+                  </Button>
                 </Link>
               )}
 
@@ -492,7 +579,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                         const hours = groomer.working_hours?.[day];
                         return (
                           <div key={day} className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">{day}</span>
+                            <span className="text-muted-foreground">{dayLabel(day)}</span>
                             {hours ? (
                               <span className="font-medium">{formatWorkingHours(hours)}</span>
                             ) : (
@@ -519,16 +606,29 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                     date.setDate(date.getDate() + i);
                     const dateStr = date.toISOString().split('T')[0];
                     const available = availableDates.has(dateStr);
+
                     return (
                       <div
                         key={i}
-                        className={`aspect-square rounded-lg flex items-center justify-center text-xs font-medium transition-all ${available ? 'bg-green-100 text-green-700 shadow-sm' : 'bg-red-50 text-red-300'}`}
+                        className={`aspect-square rounded-lg flex items-center justify-center text-xs font-medium transition-all ${
+                          available ? 'bg-green-100 text-green-700 shadow-sm' : 'bg-red-50 text-red-300'
+                        }`}
                         title={`${format(date, 'd.M.')} — ${available ? copy.available : copy.unavailable}`}
                       >
                         {date.getDate()}
                       </div>
                     );
                   })}
+                </div>
+                <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded bg-green-100 border border-green-200" />
+                    <span>{copy.available}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded bg-red-50 border border-red-100" />
+                    <span>{copy.unavailable}</span>
+                  </div>
                 </div>
               </div>
             </CardContent>
