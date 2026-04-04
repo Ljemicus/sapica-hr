@@ -19,7 +19,9 @@ export default async function AdminPage() {
   const allBookings = await getAllBookings('admin-list');
   const providerApplications = await getAllProviderApplications();
   const forumTopics = await getTopics();
-  const forumComments = (await Promise.all(forumTopics.map((topic) => getPosts(topic.id)))).flat();
+  const forumComments = (await Promise.all(forumTopics.map((topic) => getPosts(topic.id))))
+    .flat()
+    .filter((item): item is Awaited<ReturnType<typeof getPosts>>[number] & { author_gradient: string } => 'author_gradient' in item);
 
   const bookings = allBookings.map(b => ({
     ...b,
