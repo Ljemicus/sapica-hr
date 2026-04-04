@@ -181,8 +181,8 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
           {trainers.length === 0 ? (
             <EmptyState
               icon={GraduationCap}
-              title="Nema pronađenih trenera"
-              description="Pokušajte promijeniti filtere ili pretražiti u drugom gradu."
+              title="Nema odgovarajućih trenera"
+              description="Promijenite filtere ili pokušajte pretragu bez grada kako biste vidjeli više profila."
               action={
                 <Button variant="outline" onClick={clearFilters} className="hover:bg-orange-50 hover:text-orange-600">
                   Poništi filtere

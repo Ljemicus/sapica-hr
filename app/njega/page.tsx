@@ -250,8 +250,8 @@ export default function GroomingPage() {
             {groomers.length === 0 && !loading && (
               <div className="text-center py-20">
                 <Scissors className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Nema pronađenih salona</h3>
-                <p className="text-muted-foreground mb-4">Pokušajte promijeniti filtere.</p>
+                <h3 className="text-lg font-semibold mb-2">Nema odgovarajućih salona</h3>
+                <p className="text-muted-foreground mb-4">Promijenite filtere ili pokušajte bez odabranog grada.</p>
                 <Button variant="outline" onClick={clearFilters} className="hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:text-orange-600 rounded-xl">
                   Poništi filtere
                 </Button>

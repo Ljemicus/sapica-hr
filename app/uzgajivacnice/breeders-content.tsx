@@ -150,8 +150,8 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
       {breeders.length === 0 ? (
         <EmptyState
           icon={Baby}
-          title="Nema pronađenih uzgajivača"
-          description="Pokušajte promijeniti filtere ili pretražiti drugu pasminu."
+          title="Nema odgovarajućih uzgajivača"
+          description="Promijenite filtere, odaberite drugi grad ili pokušajte bez naziva pasmine."
           action={
             <Button
               variant="outline"

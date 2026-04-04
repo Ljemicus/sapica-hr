@@ -209,8 +209,8 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
         {filtered.length === 0 ? (
           <EmptyState
             icon={hasActiveFilters ? Search : HeartHandshake}
-            title={hasActiveFilters ? 'Nema rezultata' : 'Trenutno nema oglasa'}
-            description={hasActiveFilters ? 'Pokušajte promijeniti filtere ili pojam pretrage.' : 'Još nema objavljenih oglasa za udomljavanje. Provjerite ponovo uskoro!'}
+            title={hasActiveFilters ? 'Nema rezultata' : 'Trenutno nema aktivnih oglasa'}
+            description={hasActiveFilters ? 'Pokušajte promijeniti filtere ili pojam pretrage.' : 'Novi oglasi za udomljavanje pojavljuju se čim budu objavljeni. Provjerite ponovno uskoro.'}
             action={hasActiveFilters ? (
               <button
                 onClick={clearFilters}

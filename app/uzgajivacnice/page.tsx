@@ -56,7 +56,7 @@ export default async function UzgajivacnicePage({ searchParams }: UzgajivacniceP
               <span className="text-gradient">uzgajivače</span>
             </h1>
             <p className="text-base md:text-lg text-muted-foreground mb-6 animate-fade-in-up delay-200 leading-relaxed max-w-xl mx-auto">
-              Imenik certificiranih uzgajivača u Hrvatskoj. Ovaj dio se trenutno priprema — uskoro dostupan.
+              Pregledajte uzgajivače pasa i mačaka u Hrvatskoj, usporedite profile i brzo pronađite kontakt koji vam odgovara.
             </p>
           </div>
         </div>
