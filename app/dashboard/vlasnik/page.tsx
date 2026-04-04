@@ -1,12 +1,16 @@
+import { unstable_noStore as noStore } from 'next/cache';
 import type { Metadata } from 'next';
 import { OwnerDashboardContent } from './owner-dashboard-content';
 import { getOwnerDashboardData } from './owner-dashboard-data';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Nadzorna ploča — Vlasnik',
 };
 
 export default async function OwnerDashboardPage() {
+  noStore();
   const { user, pets, bookings, reviewedBookingIds, activeWalks } = await getOwnerDashboardData();
 
   return (

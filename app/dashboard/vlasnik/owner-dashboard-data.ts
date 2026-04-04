@@ -10,7 +10,7 @@ function isOwnerDashboardBooking(value: Awaited<ReturnType<typeof getBookings>>[
 export async function getOwnerDashboardData(): Promise<OwnerDashboardProps> {
   const user = await getAuthUser();
   if (!user) redirect('/prijava');
-  if (user.role !== 'owner') redirect('/');
+  if (user.role !== 'owner') redirect('/dashboard/sitter');
 
   const pets = await getPetsByOwner(user.id);
   const bookings = (await getBookings(user.id, 'owner')).filter(isOwnerDashboardBooking);

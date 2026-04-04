@@ -21,7 +21,7 @@ function isSitterDashboardReview(value: Awaited<ReturnType<typeof getReviewsBySi
 export async function getSitterDashboardData(): Promise<SitterDashboardProps> {
   const user = await getAuthUser();
   if (!user) redirect('/prijava');
-  if (user.role !== 'sitter') redirect('/');
+  if (user.role !== 'sitter') redirect('/dashboard/vlasnik');
 
   const profile = await getSitter(user.id);
   const bookings = (await getBookings(user.id, 'sitter')).filter(isSitterDashboardBooking);
