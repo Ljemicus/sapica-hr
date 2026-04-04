@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getDogFriendlyLocations } from '@/lib/db/dog-friendly';
 import { DogFriendlyContent } from './dog-friendly-content';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
   title: 'Dog-Friendly lokacije u Hrvatskoj',
@@ -9,12 +10,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Dog-Friendly lokacije u Hrvatskoj | PetPark',
     description: 'Pronađite dog-friendly kafiće, restorane, plaže, parkove i hotele diljem Hrvatske.',
-    url: 'https://petpark.hr/dog-friendly',
     siteName: 'PetPark',
-    locale: 'hr_HR',
     type: 'website',
+    ...buildLocaleOpenGraph('/dog-friendly'),
   },
-  alternates: { canonical: 'https://petpark.hr/dog-friendly' },
+  alternates: buildLocaleAlternates('/dog-friendly'),
 };
 
 export default async function DogFriendlyPage() {

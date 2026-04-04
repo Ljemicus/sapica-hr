@@ -19,9 +19,21 @@ const KNOWN_LOCALE_ROUTE_PAIRS = {
     hr: '/cuvanje-pasa-rijeka',
     en: '/cuvanje-pasa-rijeka/en',
   },
+  '/grooming-zagreb': {
+    hr: '/grooming-zagreb',
+    en: '/grooming-zagreb/en',
+  },
   '/veterinari': {
     hr: '/veterinari',
     en: '/veterinari/en',
+  },
+  '/njega': {
+    hr: '/njega',
+    en: '/njega/en',
+  },
+  '/dresura': {
+    hr: '/dresura',
+    en: '/dresura/en',
   },
   '/dog-friendly': {
     hr: '/dog-friendly',
@@ -38,6 +50,10 @@ const KNOWN_LOCALE_ROUTE_PAIRS = {
   '/uzgajivacnice': {
     hr: '/uzgajivacnice',
     en: '/uzgajivacnice/en',
+  },
+  '/pretraga': {
+    hr: '/pretraga',
+    en: '/pretraga/en',
   },
 } as const satisfies Record<string, Partial<Record<Language, string>>>;
 

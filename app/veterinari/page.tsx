@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { VeterinariContent } from './veterinari-content';
 import { getVeterinarians } from '@/lib/db/veterinarians';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
   title: 'Veterinarske stanice i ambulante u Hrvatskoj',
@@ -9,10 +10,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Veterinarske stanice i ambulante u Hrvatskoj | PetPark',
     description: 'Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj s adresama i kontakt podacima.',
-    url: 'https://petpark.hr/veterinari',
     type: 'website',
+    ...buildLocaleOpenGraph('/veterinari'),
   },
-  alternates: { canonical: 'https://petpark.hr/veterinari' },
+  alternates: buildLocaleAlternates('/veterinari'),
 };
 
 export default async function VeterinariPage() {

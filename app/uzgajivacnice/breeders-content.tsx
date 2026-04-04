@@ -14,12 +14,8 @@ import { Input } from '@/components/ui/input';
 import { EmptyState } from '@/components/shared/empty-state';
 import { CITIES } from '@/lib/types';
 import type { Breeder } from '@/lib/db/breeders';
-
-const speciesTabs = [
-  { value: 'all', label: 'Sve', emoji: '' },
-  { value: 'dog', label: 'Psi', emoji: '🐕' },
-  { value: 'cat', label: 'Mačke', emoji: '🐈' },
-] as const;
+import { getLocaleSegment } from '@/lib/i18n/routing';
+import { useLanguage } from '@/lib/i18n/context';
 
 interface BreedersContentProps {
   breeders: Breeder[];
@@ -27,6 +23,15 @@ interface BreedersContentProps {
 }
 
 export function BreedersContent({ breeders, initialParams }: BreedersContentProps) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const localeSegment = getLocaleSegment(language);
+  const basePath = `/uzgajivacnice${localeSegment}`;
+  const speciesTabs = [
+    { value: 'all', label: isEn ? 'All' : 'Sve', emoji: '' },
+    { value: 'dog', label: isEn ? 'Dogs' : 'Psi', emoji: '🐕' },
+    { value: 'cat', label: isEn ? 'Cats' : 'Mačke', emoji: '🐈' },
+  ] as const;
   const router = useRouter();
   const [species, setSpecies] = useState(initialParams.species || 'all');
   const [city, setCity] = useState(initialParams.city || '');
@@ -43,8 +48,9 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
     if (c) params.set('city', c);
     if (b) params.set('breed', b);
     if (so && so !== 'rating') params.set('sort', so);
-    router.push(`/uzgajivacnice?${params.toString()}`);
-  }, [species, city, breed, sort, router]);
+    const query = params.toString();
+    router.push(query ? `${basePath}?${query}` : basePath);
+  }, [species, city, breed, sort, router, basePath]);
 
   const handleSpecies = (value: string) => {
     setSpecies(value);
@@ -79,12 +85,12 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
             <div>
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <Baby className="h-5 w-5 text-amber-500" />
-                Uzgajivači
+                {isEn ? 'Breeders' : 'Uzgajivači'}
               </h2>
               <p className="text-muted-foreground text-sm">
-                {breeders.length} {breeders.length === 1 ? 'uzgajivač pronađen' : 'uzgajivača pronađeno'}
-                {city && ` u gradu ${city}`}
-                {totalLitters > 0 && ` · ${totalLitters} dostupnih legala`}
+                {breeders.length} {isEn ? (breeders.length === 1 ? 'breeder found' : 'breeders found') : (breeders.length === 1 ? 'uzgajivač pronađen' : 'uzgajivača pronađeno')}
+                {city && (isEn ? ` in ${city}` : ` u gradu ${city}`)}
+                {totalLitters > 0 && ` · ${totalLitters} ${isEn ? 'available litters' : 'dostupnih legala'}`}
               </p>
             </div>
           </div>
@@ -115,7 +121,7 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
               onChange={(e) => handleCity(e.target.value)}
               className="h-9 rounded-lg border border-input bg-background px-3 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
             >
-              <option value="">Svi gradovi</option>
+              <option value="">{isEn ? 'All cities' : 'Svi gradovi'}</option>
               {CITIES.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
@@ -123,7 +129,7 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
 
             <div className="flex gap-1.5 flex-1 min-w-[180px] max-w-xs">
               <Input
-                placeholder="Pretraži pasminu..."
+                placeholder={isEn ? 'Search breed...' : 'Pretraži pasminu...'}
                 value={breed}
                 onChange={(e) => setBreed(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleBreedSearch()}
@@ -139,8 +145,8 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
               onChange={(e) => handleSort(e.target.value)}
               className="h-9 rounded-lg border border-input bg-background px-3 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
             >
-              <option value="rating">Po ocjeni</option>
-              <option value="name">Po imenu</option>
+              <option value="rating">{isEn ? 'By rating' : 'Po ocjeni'}</option>
+              <option value="name">{isEn ? 'By name' : 'Po imenu'}</option>
             </select>
           </div>
         </div>
@@ -150,8 +156,8 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
       {breeders.length === 0 ? (
         <EmptyState
           icon={Baby}
-          title="Nema odgovarajućih uzgajivača"
-          description="Promijenite filtere, odaberite drugi grad ili pokušajte bez naziva pasmine."
+          title={isEn ? 'No matching breeders' : 'Nema odgovarajućih uzgajivača'}
+          description={isEn ? 'Try changing filters, choosing another city, or searching without a breed name.' : 'Promijenite filtere, odaberite drugi grad ili pokušajte bez naziva pasmine.'}
           action={
             <Button
               variant="outline"
@@ -160,18 +166,18 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
                 setCity('');
                 setBreed('');
                 setSort('rating');
-                router.push('/uzgajivacnice');
+                router.push(basePath);
               }}
               className="hover:bg-amber-50 hover:text-amber-600"
             >
-              Poništi filtere
+              {isEn ? 'Clear filters' : 'Poništi filtere'}
             </Button>
           }
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 animate-fade-in">
           {breeders.map((breeder, i) => (
-            <BreederCard key={breeder.id} breeder={breeder} index={i} />
+            <BreederCard key={breeder.id} breeder={breeder} index={i} isEn={isEn} localeSegment={localeSegment} />
           ))}
         </div>
       )}
@@ -179,7 +185,7 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
   );
 }
 
-function BreederCard({ breeder, index }: { breeder: Breeder; index: number }) {
+function BreederCard({ breeder, index, isEn, localeSegment }: { breeder: Breeder; index: number; isEn: boolean; localeSegment: '' | '/en' }) {
   const availableCount = breeder.availableLitters.filter((l) => l.status === 'available').length;
 
   return (
@@ -191,7 +197,7 @@ function BreederCard({ breeder, index }: { breeder: Breeder; index: number }) {
           <div className="absolute inset-0 bg-black/10" />
           <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white/90 text-[11px] font-medium">
             <span>{breeder.city}</span>
-            <span className="rounded-full bg-white/90 px-2 py-1 text-amber-700 shadow-sm">Uzgajivač</span>
+            <span className="rounded-full bg-white/90 px-2 py-1 text-amber-700 shadow-sm">{isEn ? 'Breeder' : 'Uzgajivač'}</span>
           </div>
           <div className="text-center relative">
             <Avatar className="h-16 w-16 border-4 border-white shadow-lg mx-auto">
@@ -204,7 +210,7 @@ function BreederCard({ breeder, index }: { breeder: Breeder; index: number }) {
           <div className="absolute top-3 right-3 flex gap-1.5">
             {breeder.verified && (
               <Badge className="bg-white/90 text-green-600 text-[10px] shadow-sm hover:bg-white/90 rounded-full px-2">
-                <Shield className="h-2.5 w-2.5 mr-0.5" />Registriran
+                <Shield className="h-2.5 w-2.5 mr-0.5" />{isEn ? 'Registered' : 'Registriran'}
               </Badge>
             )}
             {breeder.fciRegistered && (
@@ -241,17 +247,17 @@ function BreederCard({ breeder, index }: { breeder: Breeder; index: number }) {
           <div className="flex flex-wrap gap-1.5 mb-4">
             {breeder.verified && (
               <Badge variant="outline" className="text-[10px] font-normal text-green-600 border-green-200">
-                <Shield className="h-2.5 w-2.5 mr-0.5" />Registriran uzgajivač
+                <Shield className="h-2.5 w-2.5 mr-0.5" />{isEn ? 'Registered breeder' : 'Registriran uzgajivač'}
               </Badge>
             )}
             {breeder.fciRegistered && (
               <Badge variant="outline" className="text-[10px] font-normal text-blue-600 border-blue-200">
-                <Award className="h-2.5 w-2.5 mr-0.5" />FCI registriran
+                <Award className="h-2.5 w-2.5 mr-0.5" />{isEn ? 'FCI registered' : 'FCI registriran'}
               </Badge>
             )}
             {breeder.certified && (
               <Badge variant="outline" className="text-[10px] font-normal text-purple-600 border-purple-200">
-                Certificiran
+                {isEn ? 'Certified' : 'Certificiran'}
               </Badge>
             )}
           </div>
@@ -259,17 +265,17 @@ function BreederCard({ breeder, index }: { breeder: Breeder; index: number }) {
           {/* Available litters */}
           {availableCount > 0 && (
             <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-3">
-              {availableCount} {availableCount === 1 ? 'dostupno leglo' : 'dostupnih legala'}
+              {availableCount} {isEn ? (availableCount === 1 ? 'available litter' : 'available litters') : (availableCount === 1 ? 'dostupno leglo' : 'dostupnih legala')}
             </p>
           )}
 
           {/* CTA */}
           <div className="pt-3 border-t border-border/50">
             <Link
-              href={`/uzgajivacnice/${breeder.id}`}
+              href={`/uzgajivacnice${localeSegment}/${breeder.id}`}
               className="text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors flex items-center gap-1"
             >
-              Pogledaj profil <ChevronRight className="h-3.5 w-3.5" />
+              {isEn ? 'View profile' : 'Pogledaj profil'} <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </div>

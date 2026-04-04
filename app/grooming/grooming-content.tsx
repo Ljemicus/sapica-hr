@@ -14,7 +14,22 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { EmptyState } from '@/components/shared/empty-state';
-import { CITIES, GROOMING_SERVICE_LABELS, GROOMER_SPECIALIZATION_LABELS, type Groomer, type GroomingServiceType } from '@/lib/types';
+import { useLanguage } from '@/lib/i18n/context';
+import { CITIES, GROOMING_SERVICE_LABELS, GROOMER_SPECIALIZATION_LABELS, type Groomer, type GroomerSpecialization, type GroomingServiceType } from '@/lib/types';
+
+const GROOMING_SERVICE_LABELS_EN: Record<GroomingServiceType, string> = {
+  sisanje: 'Haircut',
+  kupanje: 'Bath',
+  trimanje: 'Hand stripping',
+  nokti: 'Nails',
+  cetkanje: 'Brushing',
+};
+
+const GROOMER_SPECIALIZATION_LABELS_EN: Record<GroomerSpecialization, string> = {
+  psi: 'Dogs',
+  macke: 'Cats',
+  oba: 'Dogs & cats',
+};
 
 const gradients = [
   'from-pink-400 to-rose-300',
@@ -36,25 +51,29 @@ interface GroomingFilterPanelProps {
 }
 
 function GroomingFilterPanel({ city, service, activeFilterCount, onCityChange, onServiceChange, onApply, onClear }: GroomingFilterPanelProps) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const serviceLabel = (value: GroomingServiceType) => isEn ? GROOMING_SERVICE_LABELS_EN[value] : GROOMING_SERVICE_LABELS[value];
+
   return (
     <div className="space-y-6">
       <div>
-        <Label className="text-sm font-medium mb-2 block">Grad</Label>
+        <Label className="text-sm font-medium mb-2 block">{isEn ? 'City' : 'Grad'}</Label>
         <select
           value={city}
           onChange={(e) => onCityChange(e.target.value)}
           className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
         >
-          <option value="">Svi gradovi</option>
+          <option value="">{isEn ? 'All cities' : 'Svi gradovi'}</option>
           {CITIES.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
       </div>
       <div>
-        <Label className="text-sm font-medium mb-2 block">Vrsta usluge</Label>
+        <Label className="text-sm font-medium mb-2 block">{isEn ? 'Service type' : 'Vrsta usluge'}</Label>
         <div className="space-y-2">
-          {(Object.entries(GROOMING_SERVICE_LABELS) as [GroomingServiceType, string][]).map(([key, label]) => (
+          {(Object.entries(GROOMING_SERVICE_LABELS) as [GroomingServiceType, string][]).map(([key]) => (
             <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
               <input
                 type="radio"
@@ -64,12 +83,12 @@ function GroomingFilterPanel({ city, service, activeFilterCount, onCityChange, o
                 onChange={(e) => onServiceChange(e.target.value)}
                 className="accent-orange-500 w-4 h-4"
               />
-              <span className="text-sm group-hover:text-orange-600 transition-colors">{label}</span>
+              <span className="text-sm group-hover:text-orange-600 transition-colors">{serviceLabel(key)}</span>
             </label>
           ))}
           {service && (
             <button onClick={() => onServiceChange('')} className="text-xs text-orange-500 hover:underline mt-1">
-              Poništi odabir
+              {isEn ? 'Clear selection' : 'Poništi odabir'}
             </button>
           )}
         </div>
@@ -77,7 +96,7 @@ function GroomingFilterPanel({ city, service, activeFilterCount, onCityChange, o
       <Separator />
       <div className="flex gap-2">
         <Button onClick={onApply} className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover">
-          Primijeni filtere
+          {isEn ? 'Apply filters' : 'Primijeni filtere'}
         </Button>
         {activeFilterCount > 0 && (
           <Button variant="outline" onClick={onClear} className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
@@ -96,20 +115,27 @@ interface GroomingContentProps {
 
 export function GroomingContent({ groomers, initialParams }: GroomingContentProps) {
   const router = useRouter();
+  const { language } = useLanguage();
+  const isEn = language === 'en';
   const [city, setCity] = useState(initialParams.city || '');
   const [service, setService] = useState(initialParams.service || '');
+
+  const serviceLabel = (value: GroomingServiceType) => isEn ? GROOMING_SERVICE_LABELS_EN[value] : GROOMING_SERVICE_LABELS[value];
+  const specializationLabel = (value: GroomerSpecialization) => isEn ? GROOMER_SPECIALIZATION_LABELS_EN[value] : GROOMER_SPECIALIZATION_LABELS[value];
+  const basePath = isEn ? '/njega/en' : '/njega';
 
   const applyFilters = useCallback(() => {
     const params = new URLSearchParams();
     if (city) params.set('city', city);
     if (service) params.set('service', service);
-    router.push(`/grooming?${params.toString()}`);
-  }, [city, service, router]);
+    const query = params.toString();
+    router.push(query ? `${basePath}?${query}` : basePath);
+  }, [basePath, city, service, router]);
 
   const clearFilters = () => {
     setCity('');
     setService('');
-    router.push('/grooming');
+    router.push(basePath);
   };
 
   const activeFilterCount = [city, service].filter(Boolean).length;
@@ -124,14 +150,14 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
               Grooming
             </h1>
             <p className="text-muted-foreground text-sm">
-              {groomers.length} {groomers.length === 1 ? 'groomer pronađen' : 'groomera pronađeno'}
-              {city && ` u gradu ${city}`}
+              {groomers.length} {isEn ? (groomers.length === 1 ? 'groomer found' : 'groomers found') : (groomers.length === 1 ? 'groomer pronađen' : 'groomera pronađeno')}
+              {city && (isEn ? ` in ${city}` : ` u gradu ${city}`)}
             </p>
           </div>
           <Sheet>
             <SheetTrigger render={<Button variant="outline" size="sm" />} className="md:hidden relative">
               <SlidersHorizontal className="h-4 w-4 mr-1" />
-              Filteri
+              {isEn ? 'Filters' : 'Filteri'}
               {activeFilterCount > 0 && (
                 <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center bg-orange-500 text-xs">
                   {activeFilterCount}
@@ -139,7 +165,7 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
               )}
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] overflow-y-auto">
-              <SheetTitle className="mb-4">Filteri</SheetTitle>
+              <SheetTitle className="mb-4">{isEn ? 'Filters' : 'Filteri'}</SheetTitle>
               <GroomingFilterPanel city={city} service={service} activeFilterCount={activeFilterCount} onCityChange={setCity} onServiceChange={setService} onApply={applyFilters} onClear={clearFilters} />
             </SheetContent>
           </Sheet>
@@ -156,12 +182,12 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
           )}
           {service && (
             <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
-              {GROOMING_SERVICE_LABELS[service as GroomingServiceType]}
+              {serviceLabel(service as GroomingServiceType)}
               <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setService(''); applyFilters(); }} />
             </Badge>
           )}
           <button onClick={clearFilters} className="text-xs text-orange-500 hover:underline self-center ml-1">
-            Ukloni sve
+            {isEn ? 'Clear all' : 'Ukloni sve'}
           </button>
         </div>
       )}
@@ -171,7 +197,7 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
           <Card className="p-5 sticky top-32 border-0 shadow-sm rounded-2xl">
             <h2 className="font-semibold mb-4 flex items-center gap-2 text-sm uppercase tracking-wider text-muted-foreground">
               <Filter className="h-4 w-4" />
-              Filteri
+              {isEn ? 'Filters' : 'Filteri'}
             </h2>
             <GroomingFilterPanel city={city} service={service} activeFilterCount={activeFilterCount} onCityChange={setCity} onServiceChange={setService} onApply={applyFilters} onClear={clearFilters} />
           </Card>
@@ -181,11 +207,11 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
           {groomers.length === 0 ? (
             <EmptyState
               icon={Scissors}
-              title="Nema pronađenih groomera"
-              description="Pokušajte promijeniti filtere ili pretražiti u drugom gradu."
+              title={isEn ? 'No groomers found' : 'Nema pronađenih groomera'}
+              description={isEn ? 'Try changing the filters or searching in another city.' : 'Pokušajte promijeniti filtere ili pretražiti u drugom gradu.'}
               action={
                 <Button variant="outline" onClick={clearFilters} className="hover:bg-orange-50 hover:text-orange-600">
-                  Poništi filtere
+                  {isEn ? 'Reset filters' : 'Poništi filtere'}
                 </Button>
               }
             />
@@ -202,7 +228,7 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
                           <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors" />
                           <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white/90 text-xs font-medium">
                             <span>{groomer.city}</span>
-                            <span className="rounded-full bg-white/90 px-2.5 py-1 text-orange-600 shadow-sm">Njega i šišanje</span>
+                            <span className="rounded-full bg-white/90 px-2.5 py-1 text-orange-600 shadow-sm">{isEn ? 'Grooming' : 'Njega i šišanje'}</span>
                           </div>
                           <Avatar className="h-22 w-22 border-4 border-white shadow-lg group-hover:scale-110 transition-transform duration-300">
                             <AvatarFallback className="bg-white/90 text-gray-700 text-2xl font-bold">
@@ -213,7 +239,7 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
                             {groomer.verified && (
                               <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5">
                                 <Shield className="h-3 w-3 mr-1" />
-                                Verificiran
+                                {isEn ? 'Verified' : 'Verificiran'}
                               </Badge>
                             )}
                           </div>
@@ -239,16 +265,16 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
                           <div className="flex flex-wrap gap-1">
                             {groomer.services.map((s) => (
                               <Badge key={s} variant="secondary" className="text-xs font-normal bg-gray-50">
-                                {GROOMING_SERVICE_LABELS[s]}
+                                {serviceLabel(s)}
                               </Badge>
                             ))}
                           </div>
                           <div className="flex items-center justify-between pt-3 border-t">
                             <Badge variant="secondary" className="text-xs bg-orange-50 text-orange-700 border-0">
-                              {GROOMER_SPECIALIZATION_LABELS[groomer.specialization]}
+                              {specializationLabel(groomer.specialization)}
                             </Badge>
                             <div className="flex items-center gap-2">
-                              <span className="text-sm text-muted-foreground">Cijene na profilu</span>
+                              <span className="text-sm text-muted-foreground">{isEn ? 'Pricing on profile' : 'Cijene na profilu'}</span>
                               <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-orange-400 group-hover:translate-x-1 transition-all" />
                             </div>
                           </div>
@@ -261,7 +287,7 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
             </div>
           )}
           <p className="col-span-full text-center text-sm text-muted-foreground italic py-4">
-            Cijene određuju pružatelji usluga na svojim profilima
+            {isEn ? 'Pricing is set by each provider on their profile.' : 'Cijene određuju pružatelji usluga na svojim profilima'}
           </p>
         </div>
       </div>

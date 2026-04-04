@@ -5,6 +5,7 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { ServiceJsonLd } from '@/components/seo/json-ld';
 import { BreedersContent } from './breeders-content';
 import { getBreeders } from '@/lib/db/breeders';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
   title: 'Uzgajivači — Certificirani uzgajivači u Hrvatskoj',
@@ -13,12 +14,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Uzgajivači — Certificirani uzgajivači | PetPark',
     description: 'Pronađite certificirane uzgajivače pasa i mačaka u Hrvatskoj.',
-    url: 'https://petpark.hr/uzgajivacnice',
     type: 'website',
+    ...buildLocaleOpenGraph('/uzgajivacnice'),
   },
-  alternates: {
-    canonical: 'https://petpark.hr/uzgajivacnice',
-  },
+  alternates: buildLocaleAlternates('/uzgajivacnice'),
 };
 
 interface UzgajivacnicePageProps {

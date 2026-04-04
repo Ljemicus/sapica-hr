@@ -5,7 +5,7 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { ServiceJsonLd } from '@/components/seo/json-ld';
 import { BreedersContent } from '../breeders-content';
 import { getBreeders } from '@/lib/db/breeders';
-import { buildLocaleAlternates } from '@/lib/seo/locale-metadata';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
   title: 'Breeders — Certified dog and cat breeders in Croatia',
@@ -14,9 +14,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Breeders — Certified breeders | PetPark',
     description: 'Find certified dog and cat breeders in Croatia.',
-    url: 'https://petpark.hr/uzgajivacnice/en',
-    locale: 'en_US',
     type: 'website',
+    ...buildLocaleOpenGraph('/uzgajivacnice/en'),
   },
   alternates: buildLocaleAlternates('/uzgajivacnice/en'),
 };

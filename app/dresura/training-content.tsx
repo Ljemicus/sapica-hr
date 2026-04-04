@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { EmptyState } from '@/components/shared/empty-state';
+import { useLanguage } from '@/lib/i18n/context';
 import { CITIES, TRAINING_TYPE_LABELS, type Trainer, type TrainingType, type TrainingProgram } from '@/lib/types';
 
 const gradients = [
@@ -24,6 +25,14 @@ const gradients = [
   'from-teal-400 to-cyan-300',
   'from-rose-400 to-orange-300',
 ];
+
+const TRAINING_TYPE_LABELS_EN: Record<TrainingType, string> = {
+  osnovna: 'Basic obedience',
+  napredna: 'Advanced training',
+  agility: 'Agility',
+  ponasanje: 'Behaviour correction',
+  stenci: 'Puppies',
+};
 
 interface FilterPanelProps {
   city: string;
@@ -36,25 +45,29 @@ interface FilterPanelProps {
 }
 
 function FilterPanel({ city, type, activeFilterCount, onCityChange, onTypeChange, onApply, onClear }: FilterPanelProps) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const trainingLabel = (value: TrainingType) => isEn ? TRAINING_TYPE_LABELS_EN[value] : TRAINING_TYPE_LABELS[value];
+
   return (
     <div className="space-y-6">
       <div>
-        <Label className="text-sm font-medium mb-2 block">Grad</Label>
+        <Label className="text-sm font-medium mb-2 block">{isEn ? 'City' : 'Grad'}</Label>
         <select
           value={city}
           onChange={(e) => onCityChange(e.target.value)}
           className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
         >
-          <option value="">Svi gradovi</option>
+          <option value="">{isEn ? 'All cities' : 'Svi gradovi'}</option>
           {CITIES.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
       </div>
       <div>
-        <Label className="text-sm font-medium mb-2 block">Vrsta treninga</Label>
+        <Label className="text-sm font-medium mb-2 block">{isEn ? 'Training type' : 'Vrsta treninga'}</Label>
         <div className="space-y-2">
-          {(Object.entries(TRAINING_TYPE_LABELS) as [TrainingType, string][]).map(([key, label]) => (
+          {(Object.entries(TRAINING_TYPE_LABELS) as [TrainingType, string][]).map(([key]) => (
             <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
               <input
                 type="radio"
@@ -64,12 +77,12 @@ function FilterPanel({ city, type, activeFilterCount, onCityChange, onTypeChange
                 onChange={(e) => onTypeChange(e.target.value)}
                 className="accent-orange-500 w-4 h-4"
               />
-              <span className="text-sm group-hover:text-orange-600 transition-colors">{label}</span>
+              <span className="text-sm group-hover:text-orange-600 transition-colors">{trainingLabel(key)}</span>
             </label>
           ))}
           {type && (
             <button onClick={() => onTypeChange('')} className="text-xs text-orange-500 hover:underline mt-1">
-              Poništi odabir
+              {isEn ? 'Clear selection' : 'Poništi odabir'}
             </button>
           )}
         </div>
@@ -77,7 +90,7 @@ function FilterPanel({ city, type, activeFilterCount, onCityChange, onTypeChange
       <Separator />
       <div className="flex gap-2">
         <Button onClick={onApply} className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover">
-          Primijeni filtere
+          {isEn ? 'Apply filters' : 'Primijeni filtere'}
         </Button>
         {activeFilterCount > 0 && (
           <Button variant="outline" onClick={onClear} className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
@@ -96,20 +109,26 @@ interface TrainingContentProps {
 
 export function TrainingContent({ trainers, initialParams }: TrainingContentProps) {
   const router = useRouter();
+  const { language } = useLanguage();
+  const isEn = language === 'en';
   const [city, setCity] = useState(initialParams.city || '');
   const [type, setType] = useState(initialParams.type || '');
+
+  const trainingLabel = (value: TrainingType) => isEn ? TRAINING_TYPE_LABELS_EN[value] : TRAINING_TYPE_LABELS[value];
+  const basePath = isEn ? '/dresura/en' : '/dresura';
 
   const applyFilters = useCallback(() => {
     const params = new URLSearchParams();
     if (city) params.set('city', city);
     if (type) params.set('type', type);
-    router.push(`/dresura?${params.toString()}`);
-  }, [city, type, router]);
+    const query = params.toString();
+    router.push(query ? `${basePath}?${query}` : basePath);
+  }, [basePath, city, type, router]);
 
   const clearFilters = () => {
     setCity('');
     setType('');
-    router.push('/dresura');
+    router.push(basePath);
   };
 
   const activeFilterCount = [city, type].filter(Boolean).length;
@@ -121,17 +140,17 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <GraduationCap className="h-6 w-6 text-orange-500" />
-              Školovanje pasa
+              {isEn ? 'Dog training' : 'Školovanje pasa'}
             </h1>
             <p className="text-muted-foreground text-sm">
-              {trainers.length} {trainers.length === 1 ? 'trener pronađen' : 'trenera pronađeno'}
-              {city && ` u gradu ${city}`}
+              {trainers.length} {isEn ? (trainers.length === 1 ? 'trainer found' : 'trainers found') : (trainers.length === 1 ? 'trener pronađen' : 'trenera pronađeno')}
+              {city && (isEn ? ` in ${city}` : ` u gradu ${city}`)}
             </p>
           </div>
           <Sheet>
             <SheetTrigger render={<Button variant="outline" size="sm" />} className="md:hidden relative">
               <SlidersHorizontal className="h-4 w-4 mr-1" />
-              Filteri
+              {isEn ? 'Filters' : 'Filteri'}
               {activeFilterCount > 0 && (
                 <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center bg-orange-500 text-xs">
                   {activeFilterCount}
@@ -139,7 +158,7 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
               )}
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] overflow-y-auto">
-              <SheetTitle className="mb-4">Filteri</SheetTitle>
+              <SheetTitle className="mb-4">{isEn ? 'Filters' : 'Filteri'}</SheetTitle>
               <FilterPanel city={city} type={type} activeFilterCount={activeFilterCount} onCityChange={setCity} onTypeChange={setType} onApply={applyFilters} onClear={clearFilters} />
             </SheetContent>
           </Sheet>
@@ -156,12 +175,12 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
           )}
           {type && (
             <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
-              {TRAINING_TYPE_LABELS[type as TrainingType]}
+              {trainingLabel(type as TrainingType)}
               <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setType(''); applyFilters(); }} />
             </Badge>
           )}
           <button onClick={clearFilters} className="text-xs text-orange-500 hover:underline self-center ml-1">
-            Ukloni sve
+            {isEn ? 'Clear all' : 'Ukloni sve'}
           </button>
         </div>
       )}
@@ -171,7 +190,7 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
           <Card className="p-5 sticky top-32 border-0 shadow-sm rounded-2xl">
             <h2 className="font-semibold mb-4 flex items-center gap-2 text-sm uppercase tracking-wider text-muted-foreground">
               <Filter className="h-4 w-4" />
-              Filteri
+              {isEn ? 'Filters' : 'Filteri'}
             </h2>
             <FilterPanel city={city} type={type} activeFilterCount={activeFilterCount} onCityChange={setCity} onTypeChange={setType} onApply={applyFilters} onClear={clearFilters} />
           </Card>
@@ -181,11 +200,11 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
           {trainers.length === 0 ? (
             <EmptyState
               icon={GraduationCap}
-              title="Nema odgovarajućih trenera"
-              description="Promijenite filtere ili pokušajte pretragu bez grada kako biste vidjeli više profila."
+              title={isEn ? 'No matching trainers' : 'Nema odgovarajućih trenera'}
+              description={isEn ? 'Change the filters or try searching without a city to see more profiles.' : 'Promijenite filtere ili pokušajte pretragu bez grada kako biste vidjeli više profila.'}
               action={
                 <Button variant="outline" onClick={clearFilters} className="hover:bg-orange-50 hover:text-orange-600">
-                  Poništi filtere
+                  {isEn ? 'Reset filters' : 'Poništi filtere'}
                 </Button>
               }
             />
@@ -197,7 +216,7 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
             </div>
           )}
           <p className="text-center text-sm text-muted-foreground italic py-4">
-            Cijene određuju pružatelji usluga na svojim profilima
+            {isEn ? 'Pricing is set by each provider on their profile.' : 'Cijene određuju pružatelji usluga na svojim profilima'}
           </p>
         </div>
       </div>
@@ -210,6 +229,9 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
   const [programs, setPrograms] = useState<TrainingProgram[]>([]);
   const gradient = gradients[trainer.name.charCodeAt(0) % gradients.length];
   const isPremium = trainer.certified;
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const trainingLabel = (value: TrainingType) => isEn ? TRAINING_TYPE_LABELS_EN[value] : TRAINING_TYPE_LABELS[value];
 
   useEffect(() => {
     if (expanded && programs.length === 0) {
@@ -229,7 +251,7 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
             <div className="absolute inset-0 bg-black/10" />
             <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white/90 text-xs font-medium">
               <span>{trainer.city}</span>
-              <span className="rounded-full bg-white/90 px-2.5 py-1 text-indigo-600 shadow-sm">Školovanje</span>
+              <span className="rounded-full bg-white/90 px-2.5 py-1 text-indigo-600 shadow-sm">{isEn ? 'Training' : 'Školovanje'}</span>
             </div>
             <div className="text-center relative p-6">
               <Avatar className="h-24 w-24 border-4 border-white shadow-lg mx-auto mb-3">
@@ -240,7 +262,7 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
               <div className="flex gap-1.5 justify-center flex-wrap">
                 {trainer.certified && (
                   <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5">
-                    <Shield className="h-3 w-3 mr-1" />Certificiran
+                    <Shield className="h-3 w-3 mr-1" />{isEn ? 'Certified' : 'Certificiran'}
                   </Badge>
                 )}
                 {isPremium && (
@@ -264,7 +286,7 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
                   </span>
                 </div>
               </div>
-              <span className="text-sm text-muted-foreground">Cijene prema dogovoru</span>
+              <span className="text-sm text-muted-foreground">{isEn ? 'Pricing by arrangement' : 'Cijene prema dogovoru'}</span>
             </div>
 
             <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{trainer.bio}</p>
@@ -272,7 +294,7 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
             <div className="flex flex-wrap gap-1.5 mb-3">
               {trainer.specializations.map((s) => (
                 <Badge key={s} variant="secondary" className="text-xs font-normal bg-indigo-50 text-indigo-700">
-                  {TRAINING_TYPE_LABELS[s]}
+                  {trainingLabel(s)}
                 </Badge>
               ))}
             </div>
@@ -293,7 +315,7 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
                   onClick={() => setExpanded(!expanded)}
                   className="flex items-center gap-1 text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors"
                 >
-                  {expanded ? 'Sakrij' : 'Prikaži'} programe ({programs.length})
+                  {expanded ? (isEn ? 'Hide' : 'Sakrij') : (isEn ? 'Show' : 'Prikaži')} {isEn ? 'programs' : 'programe'} ({programs.length})
                   {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                 </button>
 
@@ -309,7 +331,7 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
 
             <div className="pt-3 mt-3 border-t border-border/50">
               <Link href={`/trener/${trainer.id}`} className="text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors flex items-center gap-1">
-                Pogledaj profil <ChevronDown className="h-3 w-3 rotate-[-90deg]" />
+                {isEn ? 'View profile' : 'Pogledaj profil'} <ChevronDown className="h-3 w-3 rotate-[-90deg]" />
               </Link>
             </div>
           </div>
@@ -320,21 +342,25 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
 }
 
 function ProgramCard({ program }: { program: TrainingProgram }) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const trainingLabel = (value: TrainingType) => isEn ? TRAINING_TYPE_LABELS_EN[value] : TRAINING_TYPE_LABELS[value];
+
   return (
     <div className="p-4 bg-accent rounded-xl border border-border/50">
       <div className="flex items-start justify-between mb-2">
         <div>
           <h4 className="font-semibold text-sm">{program.name}</h4>
           <Badge variant="secondary" className="text-xs mt-1 bg-indigo-50 text-indigo-600">
-            {TRAINING_TYPE_LABELS[program.type]}
+            {trainingLabel(program.type)}
           </Badge>
         </div>
-        <span className="text-sm text-muted-foreground">Cijena prema dogovoru</span>
+        <span className="text-sm text-muted-foreground">{isEn ? 'Pricing by arrangement' : 'Cijena prema dogovoru'}</span>
       </div>
       <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{program.description}</p>
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{program.duration_weeks} tjedana</span>
-        <span className="flex items-center gap-1"><Users className="h-3 w-3" />{program.sessions} sesija</span>
+        <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{program.duration_weeks} {isEn ? 'weeks' : 'tjedana'}</span>
+        <span className="flex items-center gap-1"><Users className="h-3 w-3" />{program.sessions} {isEn ? 'sessions' : 'sesija'}</span>
       </div>
     </div>
   );

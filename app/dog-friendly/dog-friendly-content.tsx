@@ -42,6 +42,7 @@ import {
   CITY_LIST,
 } from '@/lib/db/dog-friendly';
 import { toast } from 'sonner';
+import { useLanguage } from '@/lib/i18n/context';
 
 const CATEGORY_ICONS: Record<DogFriendlyLocation['category'], React.ReactNode> = {
   cafe: <Coffee className="h-3.5 w-3.5" />,
@@ -70,10 +71,28 @@ const ALL_CATEGORIES: DogFriendlyLocation['category'][] = [
   'shop',
 ];
 
+function getCategoryLabel(category: DogFriendlyLocation['category'], isEn: boolean) {
+  if (!isEn) return CATEGORY_LABELS[category];
+
+  const labels: Record<DogFriendlyLocation['category'], string> = {
+    cafe: '☕ Cafe',
+    restaurant: '🍽️ Restaurant',
+    beach: '🏖️ Beach',
+    park: '🌳 Park',
+    hotel: '🏨 Hotel',
+    shop: '🛍️ Shop',
+  };
+
+  return labels[category];
+}
+
 export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocation[] }) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
   const [search, setSearch] = useState('');
-  const [selectedCity, setSelectedCity] = useState<string>('Sve');
-  const [selectedCategory, setSelectedCategory] = useState<string>('Sve');
+  const allLabel = isEn ? 'All' : 'Sve';
+  const [selectedCity, setSelectedCity] = useState<string>(allLabel);
+  const [selectedCategory, setSelectedCategory] = useState<string>(allLabel);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [dialogOpen, setDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -86,8 +105,8 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
 
   const filteredLocations = useMemo(() => {
     return locations.filter((loc) => {
-      if (selectedCity !== 'Sve' && loc.city !== selectedCity) return false;
-      if (selectedCategory !== 'Sve' && loc.category !== selectedCategory) return false;
+      if (selectedCity !== allLabel && loc.city !== selectedCity) return false;
+      if (selectedCategory !== allLabel && loc.category !== selectedCategory) return false;
       if (search.trim()) {
         const q = search.toLowerCase();
         return (
@@ -100,7 +119,7 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
       }
       return true;
     });
-  }, [locations, search, selectedCity, selectedCategory]);
+  }, [allLabel, locations, search, selectedCity, selectedCategory]);
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) => {
@@ -116,10 +135,10 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
 
   const handleSubmitSuggestion = () => {
     if (!formData.name || !formData.city || !formData.category) {
-      toast.error('Molimo ispunite obavezna polja.');
+      toast.error(isEn ? 'Please fill in the required fields.' : 'Molimo ispunite obavezna polja.');
       return;
     }
-    toast.success('Hvala! Provjerit ćemo i dodati lokaciju.');
+    toast.success(isEn ? 'Thanks! We’ll review it and add the location.' : 'Hvala! Provjerit ćemo i dodati lokaciju.');
     setFormData({ name: '', city: '', category: '', address: '', whyDogFriendly: '' });
     setDialogOpen(false);
   };
@@ -141,8 +160,8 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'Dog-Friendly Lokacije u Hrvatskoj',
-    description: 'Kompletni vodič za dog-friendly lokacije u Hrvatskoj',
+    name: isEn ? 'Dog-Friendly Places in Croatia' : 'Dog-Friendly Lokacije u Hrvatskoj',
+    description: isEn ? 'Complete guide to dog-friendly places in Croatia' : 'Kompletni vodič za dog-friendly lokacije u Hrvatskoj',
     numberOfItems: locations.length,
     itemListElement: locations.map((loc, index) => ({
       '@type': 'ListItem',
@@ -187,16 +206,16 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
         <div className="container mx-auto px-4 text-center relative z-10">
           <Badge className="mb-6 bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2 text-sm">
             <PawPrint className="h-4 w-4 mr-2" />
-            35+ lokacija u 7 gradova
+            {isEn ? '35+ locations in 7 cities' : '35+ lokacija u 7 gradova'}
           </Badge>
 
           <h1 className="text-4xl md:text-6xl font-bold font-[var(--font-heading)] tracking-tight text-white mb-4">
             Dog-Friendly{' '}
-            <span className="text-gradient">Lokacije</span>
+            <span className="text-gradient">{isEn ? 'Places' : 'Lokacije'}</span>
           </h1>
 
           <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-10">
-            Pronađite mjesta koja vole pse koliko i vi
+            {isEn ? 'Find places that love dogs as much as you do' : 'Pronađite mjesta koja vole pse koliko i vi'}
           </p>
 
           {/* Search input */}
@@ -204,7 +223,7 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Pretraži lokacije, gradove, tagove..."
+              placeholder={isEn ? 'Search places, cities, tags...' : 'Pretraži lokacije, gradove, tagove...'}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-12 h-14 rounded-2xl bg-white/95 backdrop-blur-sm border-0 text-gray-900 placeholder:text-gray-400 shadow-lg text-base"
@@ -218,8 +237,8 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
         <div className="container mx-auto px-4 py-4">
           {/* City pills */}
           <div className="flex flex-wrap gap-2 mb-3">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider self-center mr-2">Grad:</span>
-            {['Sve', ...CITY_LIST].map((city) => (
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider self-center mr-2">{isEn ? 'City:' : 'Grad:'}</span>
+            {[allLabel, ...CITY_LIST].map((city) => (
               <button
                 key={city}
                 onClick={() => setSelectedCity(city)}
@@ -236,8 +255,8 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
 
           {/* Category pills */}
           <div className="flex flex-wrap gap-2">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider self-center mr-2">Vrsta:</span>
-            {['Sve', ...ALL_CATEGORIES].map((cat) => (
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider self-center mr-2">{isEn ? 'Type:' : 'Vrsta:'}</span>
+            {[allLabel, ...ALL_CATEGORIES].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
@@ -247,8 +266,8 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
                     : 'bg-white hover:bg-gray-50 text-gray-600 border border-gray-200'
                 }`}
               >
-                {cat !== 'Sve' && CATEGORY_ICONS[cat as DogFriendlyLocation['category']]}
-                {cat === 'Sve' ? 'Sve' : CATEGORY_LABELS[cat as DogFriendlyLocation['category']]}
+                {cat !== allLabel && CATEGORY_ICONS[cat as DogFriendlyLocation['category']]}
+                {cat === allLabel ? allLabel : getCategoryLabel(cat as DogFriendlyLocation['category'], isEn)}
               </button>
             ))}
           </div>
@@ -259,29 +278,29 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
       <section className="container mx-auto px-4 pt-8 pb-4">
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Pronađeno{' '}
+            {isEn ? 'Found ' : 'Pronađeno '}
             <span className="font-semibold text-foreground">{filteredLocations.length}</span>{' '}
-            {filteredLocations.length === 1 ? 'lokacija' : 'lokacija'}
+            {isEn ? 'locations' : filteredLocations.length === 1 ? 'lokacija' : 'lokacija'}
           </p>
 
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger render={<Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-5 shadow-md shadow-orange-200/50" />}>
               <Plus className="h-4 w-4 mr-2" />
-              Predloži lokaciju
+              {isEn ? 'Suggest a place' : 'Predloži lokaciju'}
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle className="font-[var(--font-heading)] text-xl">
-                  Predloži novu dog-friendly lokaciju
+                  {isEn ? 'Suggest a new dog-friendly place' : 'Predloži novu dog-friendly lokaciju'}
                 </DialogTitle>
               </DialogHeader>
 
               <div className="space-y-4 mt-4">
                 <div>
-                  <Label htmlFor="suggest-name">Naziv lokacije *</Label>
+                  <Label htmlFor="suggest-name">{isEn ? 'Place name *' : 'Naziv lokacije *'}</Label>
                   <Input
                     id="suggest-name"
-                    placeholder="npr. Cafe Mačak"
+                    placeholder={isEn ? 'e.g. Happy Paws Cafe' : 'npr. Cafe Mačak'}
                     value={formData.name}
                     onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
                     className="mt-1.5"
@@ -289,13 +308,13 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
                 </div>
 
                 <div>
-                  <Label htmlFor="suggest-city">Grad *</Label>
+                  <Label htmlFor="suggest-city">{isEn ? 'City *' : 'Grad *'}</Label>
                   <Select
                     value={formData.city}
                     onValueChange={(v) => setFormData((p) => ({ ...p, city: v ?? '' }))}
                   >
                     <SelectTrigger className="mt-1.5" id="suggest-city">
-                      <SelectValue placeholder="Odaberite grad" />
+                      <SelectValue placeholder={isEn ? 'Choose city' : 'Odaberite grad'} />
                     </SelectTrigger>
                     <SelectContent>
                       {CITY_LIST.map((city) => (
@@ -308,18 +327,18 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
                 </div>
 
                 <div>
-                  <Label htmlFor="suggest-category">Kategorija *</Label>
+                  <Label htmlFor="suggest-category">{isEn ? 'Category *' : 'Kategorija *'}</Label>
                   <Select
                     value={formData.category}
                     onValueChange={(v) => setFormData((p) => ({ ...p, category: v ?? '' }))}
                   >
                     <SelectTrigger className="mt-1.5" id="suggest-category">
-                      <SelectValue placeholder="Odaberite kategoriju" />
+                      <SelectValue placeholder={isEn ? 'Choose category' : 'Odaberite kategoriju'} />
                     </SelectTrigger>
                     <SelectContent>
                       {ALL_CATEGORIES.map((cat) => (
                         <SelectItem key={cat} value={cat}>
-                          {CATEGORY_LABELS[cat]}
+                          {getCategoryLabel(cat, isEn)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -327,10 +346,10 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
                 </div>
 
                 <div>
-                  <Label htmlFor="suggest-address">Adresa</Label>
+                  <Label htmlFor="suggest-address">{isEn ? 'Address' : 'Adresa'}</Label>
                   <Input
                     id="suggest-address"
-                    placeholder="npr. Ilica 50, Zagreb"
+                    placeholder={isEn ? 'e.g. Main Street 12, Zagreb' : 'npr. Ilica 50, Zagreb'}
                     value={formData.address}
                     onChange={(e) => setFormData((p) => ({ ...p, address: e.target.value }))}
                     className="mt-1.5"
@@ -338,10 +357,10 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
                 </div>
 
                 <div>
-                  <Label htmlFor="suggest-why">Zašto je dog-friendly?</Label>
+                  <Label htmlFor="suggest-why">{isEn ? 'Why is it dog-friendly?' : 'Zašto je dog-friendly?'}</Label>
                   <Textarea
                     id="suggest-why"
-                    placeholder="Opišite zašto je ovo mjesto super za pse..."
+                    placeholder={isEn ? 'Describe why this place is great for dogs...' : 'Opišite zašto je ovo mjesto super za pse...'}
                     value={formData.whyDogFriendly}
                     onChange={(e) => setFormData((p) => ({ ...p, whyDogFriendly: e.target.value }))}
                     className="mt-1.5"
@@ -353,7 +372,7 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
                   onClick={handleSubmitSuggestion}
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl"
                 >
-                  Pošalji prijedlog
+                  {isEn ? 'Send suggestion' : 'Pošalji prijedlog'}
                 </Button>
               </div>
             </DialogContent>
@@ -363,13 +382,13 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
 
       {/* Location Cards */}
       <section className="container mx-auto px-4 pb-16">
-        <h2 className="sr-only">Popularne dog-friendly lokacije</h2>
+        <h2 className="sr-only">{isEn ? 'Popular dog-friendly places' : 'Popularne dog-friendly lokacije'}</h2>
 
         {filteredLocations.length === 0 ? (
           <div className="text-center py-20">
             <PawPrint className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="text-lg text-muted-foreground font-medium">Nema rezultata za odabrane filtere.</p>
-            <p className="text-sm text-muted-foreground mt-1">Pokušajte promijeniti grad ili kategoriju.</p>
+            <p className="text-lg text-muted-foreground font-medium">{isEn ? 'No results for the selected filters.' : 'Nema rezultata za odabrane filtere.'}</p>
+            <p className="text-sm text-muted-foreground mt-1">{isEn ? 'Try changing the city or category.' : 'Pokušajte promijeniti grad ili kategoriju.'}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -390,7 +409,7 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
                       className={`${CATEGORY_COLORS[location.category]} border text-xs font-medium inline-flex items-center gap-1`}
                     >
                       {CATEGORY_ICONS[location.category]}
-                      {CATEGORY_LABELS[location.category]}
+                      {getCategoryLabel(location.category, isEn)}
                     </Badge>
                   </div>
 
@@ -413,7 +432,7 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
                     <div className="flex items-center gap-0.5">{renderStars(location.rating)}</div>
                     <span className="text-sm font-semibold text-foreground">{location.rating}</span>
                     <span className="text-xs text-muted-foreground">
-                      ({location.reviewCount} recenzija)
+                      ({location.reviewCount} {isEn ? 'reviews' : 'recenzija'})
                     </span>
                   </div>
 
@@ -443,7 +462,7 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
                       className="inline-flex items-center gap-1.5 text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors"
                     >
                       <MapPin className="h-4 w-4" />
-                      Otvori na karti
+                      {isEn ? 'Open map' : 'Otvori na karti'}
                       <ExternalLink className="h-3 w-3" />
                     </a>
 
@@ -473,8 +492,8 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
       <section className="bg-gray-50 py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold font-[var(--font-heading)] text-center mb-12">
-            Dog-friendly vodič po{' '}
-            <span className="text-gradient">gradovima</span>
+            {isEn ? 'Dog-friendly guide by ' : 'Dog-friendly vodič po '}
+            <span className="text-gradient">{isEn ? 'cities' : 'gradovima'}</span>
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -488,7 +507,7 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
                       {city}
                     </h3>
                     <p className="text-sm text-muted-foreground mb-3">
-                      {cityLocations.length} dog-friendly lokacija
+                      {cityLocations.length} {isEn ? 'dog-friendly locations' : 'dog-friendly lokacija'}
                     </p>
                     <div className="flex flex-wrap gap-1.5">
                       {categories.map((cat) => (
@@ -497,7 +516,7 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
                           variant="outline"
                           className={`${CATEGORY_COLORS[cat]} border text-xs`}
                         >
-                          {CATEGORY_LABELS[cat]}
+                          {getCategoryLabel(cat, isEn)}
                         </Badge>
                       ))}
                     </div>
@@ -506,11 +525,11 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
                       className="mt-4 text-teal-600 hover:text-teal-700 hover:bg-teal-50 p-0 h-auto font-medium text-sm"
                       onClick={() => {
                         setSelectedCity(city);
-                        setSelectedCategory('Sve');
+                        setSelectedCategory(allLabel);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                     >
-                      Pogledaj lokacije →
+                      {isEn ? 'View places →' : 'Pogledaj lokacije →'}
                     </Button>
                   </CardContent>
                 </Card>

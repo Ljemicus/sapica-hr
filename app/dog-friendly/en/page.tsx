@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 import DogFriendlyPage from '../page';
-import { buildLocaleAlternates } from '@/lib/seo/locale-metadata';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
   title: 'Dog-friendly places in Croatia',
@@ -10,10 +10,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Dog-friendly places in Croatia | PetPark',
     description: 'Find dog-friendly cafés, restaurants, beaches, parks and hotels across Croatia.',
-    url: 'https://petpark.hr/dog-friendly/en',
     siteName: 'PetPark',
-    locale: 'en_US',
     type: 'website',
+    ...buildLocaleOpenGraph('/dog-friendly/en'),
   },
   alternates: buildLocaleAlternates('/dog-friendly/en'),
 };

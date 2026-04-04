@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getVeterinarianEmergencyLabel, getVeterinarianPrimaryPhone, type Veterinarian } from '@/lib/db/veterinarian-helpers';
+import { useLanguage } from '@/lib/i18n/context';
 
 interface VeterinariContentProps {
   veterinarians: Veterinarian[];
@@ -27,6 +28,8 @@ function getEmergencyBadgeClass(mode: Veterinarian['emergency_mode']) {
 }
 
 export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
   const [selectedCity, setSelectedCity] = useState<string>('all');
   const [stationOnly, setStationOnly] = useState(false);
 
@@ -59,16 +62,18 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
         <div className="container mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 dark:bg-emerald-900/40 px-4 py-2 mb-6">
             <Stethoscope className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-            <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Službeni veterinarski imenik</span>
+            <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">{isEn ? 'Official veterinary directory' : 'Službeni veterinarski imenik'}</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-            Veterinarske{' '}
+            {isEn ? 'Veterinary ' : 'Veterinarske '}
             <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
-              stanice i ambulante
+              {isEn ? 'stations and clinics' : 'stanice i ambulante'}
             </span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj, uz posebno označene verificirane hitne kontakte gdje su potvrđeni.
+            {isEn
+              ? 'Official registry of veterinary stations and clinics in Croatia, with clearly marked verified emergency contacts where confirmed.'
+              : 'Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj, uz posebno označene verificirane hitne kontakte gdje su potvrđeni.'}
           </p>
         </div>
       </section>
@@ -79,10 +84,10 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
             <Search className="h-5 w-5 text-muted-foreground" />
             <Select value={selectedCity} onValueChange={(v) => setSelectedCity(v ?? 'all')}>
               <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Odaberite grad" />
+                <SelectValue placeholder={isEn ? 'Choose city' : 'Odaberite grad'} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Svi gradovi</SelectItem>
+                <SelectItem value="all">{isEn ? 'All cities' : 'Svi gradovi'}</SelectItem>
                 {cities.map((city) => (
                   <SelectItem key={city} value={city}>
                     {city}
@@ -100,7 +105,7 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
               className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
             />
             <Building2 className="h-4 w-4 text-emerald-600" />
-            <span className="text-sm font-medium">Samo veterinarske stanice</span>
+            <span className="text-sm font-medium">{isEn ? 'Veterinary stations only' : 'Samo veterinarske stanice'}</span>
           </label>
         </div>
       </section>
@@ -108,16 +113,16 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
       <section className="container mx-auto px-4 py-10">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
           <p className="text-sm text-muted-foreground">
-            Pronađeno <span className="font-semibold text-foreground">{filteredClinics.length}</span> unosa iz službenog registra i verificiranih hitnih dopuna.
+            {isEn ? 'Found ' : 'Pronađeno '}<span className="font-semibold text-foreground">{filteredClinics.length}</span>{isEn ? ' entries from the official registry and verified emergency additions.' : ' unosa iz službenog registra i verificiranih hitnih dopuna.'}
           </p>
           <div className="flex flex-wrap gap-2">
             <Badge variant="secondary" className="w-fit bg-emerald-50 text-emerald-700 border border-emerald-200">
               <ShieldCheck className="h-3.5 w-3.5 mr-1" />
-              Službeni izvor
+              {isEn ? 'Official source' : 'Službeni izvor'}
             </Badge>
             <Badge variant="secondary" className="w-fit bg-red-50 text-red-700 border border-red-200">
               <ShieldAlert className="h-3.5 w-3.5 mr-1" />
-              {emergencyCount} verificiranih hitnih oznaka
+              {emergencyCount} {isEn ? 'verified emergency labels' : 'verificiranih hitnih oznaka'}
             </Badge>
           </div>
         </div>
@@ -125,7 +130,7 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
         {filteredClinics.length === 0 ? (
           <div className="text-center py-16">
             <PawPrint className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
-            <p className="text-muted-foreground">Nema rezultata za odabrane filtere.</p>
+            <p className="text-muted-foreground">{isEn ? 'No results for the selected filters.' : 'Nema rezultata za odabrane filtere.'}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -147,12 +152,12 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
                         {clinic.type === 'veterinarska_stanica' ? (
                           <>
                             <Building2 className="h-3 w-3" />
-                            Stanica
+                            {isEn ? 'Station' : 'Stanica'}
                           </>
                         ) : (
                           <>
                             <Siren className="h-3 w-3" />
-                            Ambulanta
+                            {isEn ? 'Clinic' : 'Ambulanta'}
                           </>
                         )}
                       </Badge>
@@ -172,7 +177,7 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
                           {displayPhone}
                         </a>
                       ) : (
-                        <span>Kontakt nije naveden</span>
+                        <span>{isEn ? 'No contact listed' : 'Kontakt nije naveden'}</span>
                       )}
                     </div>
 
@@ -205,7 +210,7 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
                       )}
                       {clinic.verified && (
                         <Badge className="text-xs bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0">
-                          Službeno verificirano
+                          {isEn ? 'Officially verified' : 'Službeno verificirano'}
                         </Badge>
                       )}
                       {clinic.emergency_verified && emergencyLabel && (

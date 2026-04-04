@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { InternalLinkSection } from '@/components/shared/internal-link-section';
 import { GROOMING_HUB_LINKS, TRAINING_HUB_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -17,12 +18,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Grooming saloni u Zagrebu — pronađite salon za ljubimca | PetPark',
     description: 'Pronađite najbolje grooming salone u Zagrebu. Usporedite cijene, usluge i recenzije.',
-    url: `${BASE_URL}/grooming-zagreb`,
     siteName: 'PetPark',
-    locale: 'hr_HR',
     type: 'website',
+    ...buildLocaleOpenGraph('/grooming-zagreb'),
   },
-  alternates: { canonical: `${BASE_URL}/grooming-zagreb` },
+  alternates: buildLocaleAlternates('/grooming-zagreb'),
 };
 
 const GROOMING_SERVICES = [
