@@ -98,6 +98,22 @@ export function GroomerDashboardContent({ groomer, bookings, availability }: Gro
         </div>
       </div>
 
+      <div className="rounded-2xl border bg-gradient-to-r from-pink-50 to-rose-50 p-4 mb-6 animate-fade-in-up">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium text-foreground">Što traži pažnju?</p>
+            <p className="text-sm text-muted-foreground">Potvrdite nove termine, održavajte raspored punim i provjerite kako vaš profil izgleda novim klijentima.</p>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>{pendingBookings.length} na čekanju</span>
+            <span>•</span>
+            <span>{upcomingBookings.length} potvrđenih</span>
+            <span>•</span>
+            <span>{availability.length} otvorenih slotova</span>
+          </div>
+        </div>
+      </div>
+
       <GroomerDashboardStats
         pendingBookingsCount={pendingBookings.length}
         upcomingBookingsCount={upcomingBookings.length}

@@ -435,6 +435,22 @@ export function TrainerDashboardContent({ trainer, initialPrograms, initialAvail
         )}
       </div>
 
+      <div className="rounded-2xl border bg-gradient-to-r from-indigo-50 to-blue-50 p-4 mb-6 animate-fade-in-up">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium text-foreground">Brzi fokus</p>
+            <p className="text-sm text-muted-foreground">Uredite programe, održavajte dostupnost svježom i odgovorite na nove upite bez kašnjenja.</p>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>{pendingCount} na čekanju</span>
+            <span>•</span>
+            <span>{confirmedCount} potvrđenih</span>
+            <span>•</span>
+            <span>{programs.length} programa</span>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-3 gap-4 mb-6">
         <Card className="border-0 shadow-sm">
           <CardContent className="p-4 text-center">
