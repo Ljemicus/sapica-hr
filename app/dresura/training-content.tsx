@@ -224,8 +224,13 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
     <Card className={`group overflow-hidden border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${((index % 3) + 1) * 100}`}>
       <CardContent className="p-0">
         <div className="flex flex-col md:flex-row">
-          <div className={`relative w-full md:w-64 min-h-[200px] bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0`}>
+          <div className={`relative w-full md:w-64 min-h-[200px] bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 overflow-hidden`}>
             <div className="absolute inset-0 paw-pattern opacity-10" />
+            <div className="absolute inset-0 bg-black/10" />
+            <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white/90 text-xs font-medium">
+              <span>{trainer.city}</span>
+              <span className="rounded-full bg-white/90 px-2.5 py-1 text-indigo-600 shadow-sm">Školovanje</span>
+            </div>
             <div className="text-center relative p-6">
               <Avatar className="h-24 w-24 border-4 border-white shadow-lg mx-auto mb-3">
                 <AvatarFallback className="bg-white/90 text-gray-700 text-2xl font-bold">

@@ -218,11 +218,22 @@ function ProviderCard({ provider }: { provider: UnifiedProvider }) {
     <Link href={provider.profileUrl}>
       <Card className="group card-hover overflow-hidden cursor-pointer border-0 shadow-sm rounded-2xl">
         <CardContent className="p-0">
-          <div className={`relative h-44 bg-gradient-to-br ${gradients[gradientIndex]} flex items-center justify-center`}>
+          <div className={`relative h-44 bg-gradient-to-br ${gradients[gradientIndex]} flex items-center justify-center overflow-hidden`}>
             <div className="absolute inset-0 paw-pattern opacity-10" />
+            <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors" />
+            <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between pointer-events-none">
+              <div className="text-white/90 text-xs font-medium drop-shadow-sm">
+                {provider.city}
+              </div>
+              {provider.lowestPrice != null && (
+                <div className="rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-orange-600 shadow-sm">
+                  već od {provider.lowestPrice}&euro;
+                </div>
+              )}
+            </div>
             <Avatar className="h-22 w-22 border-4 border-white shadow-lg group-hover:scale-110 transition-transform duration-300">
               <AvatarImage src={provider.avatarUrl || ''} alt={provider.name} />
-              <AvatarFallback className="bg-white/90 text-gray-700 text-2xl font-bold">
+              <AvatarFallback className="bg-white/95 text-gray-700 text-2xl font-bold">
                 {provider.name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -293,16 +304,14 @@ function ProviderCard({ provider }: { provider: UnifiedProvider }) {
                   </>
                 ) : provider.certificates && provider.certificates.length > 0 ? (
                   <span className="text-xs text-indigo-600 font-medium">{provider.certificates[0]}</span>
+                ) : provider.verified ? (
+                  <span className="text-xs text-emerald-600 font-medium">Provjeren kontakt</span>
                 ) : (
-                  <span />
+                  <span className="text-xs text-muted-foreground">Pogledaj detalje</span>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                {provider.lowestPrice != null ? (
-                  <span className="text-xl font-extrabold text-orange-500">već od {provider.lowestPrice}&euro;</span>
-                ) : (
-                  <span className="text-sm text-muted-foreground">Pogledaj profil</span>
-                )}
+                <span className="text-sm font-semibold text-orange-500">Pogledaj profil</span>
                 <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-orange-400 group-hover:translate-x-1 transition-all" />
               </div>
             </div>

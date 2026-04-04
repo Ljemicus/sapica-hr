@@ -186,8 +186,13 @@ function BreederCard({ breeder, index }: { breeder: Breeder; index: number }) {
     <Card className={`group overflow-hidden border-0 shadow-sm rounded-2xl card-hover animate-fade-in-up delay-${((index % 3) + 1) * 100}`}>
       <CardContent className="p-0">
         {/* Gradient header */}
-        <div className={`relative h-32 bg-gradient-to-br ${breeder.gradient} flex items-center justify-center`}>
+        <div className={`relative h-32 bg-gradient-to-br ${breeder.gradient} flex items-center justify-center overflow-hidden`}>
           <div className="absolute inset-0 paw-pattern opacity-10" />
+          <div className="absolute inset-0 bg-black/10" />
+          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white/90 text-[11px] font-medium">
+            <span>{breeder.city}</span>
+            <span className="rounded-full bg-white/90 px-2 py-1 text-amber-700 shadow-sm">Uzgajivač</span>
+          </div>
           <div className="text-center relative">
             <Avatar className="h-16 w-16 border-4 border-white shadow-lg mx-auto">
               <AvatarFallback className="bg-white/90 text-gray-700 text-xl font-bold">

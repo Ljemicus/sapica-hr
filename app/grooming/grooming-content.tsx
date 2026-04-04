@@ -197,8 +197,13 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
                   <Link key={groomer.id} href={`/groomer/${groomer.id}`}>
                     <Card className={`group card-hover overflow-hidden cursor-pointer border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${(i + 1) * 100}`}>
                       <CardContent className="p-0">
-                        <div className={`relative h-44 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+                        <div className={`relative h-44 bg-gradient-to-br ${gradient} flex items-center justify-center overflow-hidden`}>
                           <div className="absolute inset-0 paw-pattern opacity-10" />
+                          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors" />
+                          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white/90 text-xs font-medium">
+                            <span>{groomer.city}</span>
+                            <span className="rounded-full bg-white/90 px-2.5 py-1 text-orange-600 shadow-sm">Njega i šišanje</span>
+                          </div>
                           <Avatar className="h-22 w-22 border-4 border-white shadow-lg group-hover:scale-110 transition-transform duration-300">
                             <AvatarFallback className="bg-white/90 text-gray-700 text-2xl font-bold">
                               {groomer.name.charAt(0)}
