@@ -164,9 +164,12 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
 
             {topic.body && (
               <div className="mb-6 rounded-3xl border border-orange-100/70 dark:border-orange-900/30 bg-white/90 dark:bg-background/80 shadow-sm p-5 md:p-6 animate-fade-in-up delay-75">
-                <div className="flex items-center gap-2 mb-3 text-xs font-semibold uppercase tracking-wide text-orange-600 dark:text-orange-300">
-                  <MessageCircle className="h-3.5 w-3.5" />
-                  Originalna objava
+                <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-orange-600 dark:text-orange-300">
+                    <MessageCircle className="h-3.5 w-3.5" />
+                    Originalna objava
+                  </div>
+                  <span className="text-xs text-muted-foreground">{topic.comment_count} komentara · {topic.likes} lajkova</span>
                 </div>
                 <p className="text-sm md:text-base leading-7 text-foreground/90 whitespace-pre-wrap">
                   {topic.body}
@@ -227,7 +230,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
                         )}
                       </div>
                       <p className="text-sm md:text-[15px] text-foreground/85 leading-7">{comment.content}</p>
-                      <div className="flex items-center gap-3 mt-3">
+                      <div className="flex items-center gap-3 mt-3 pt-3 border-t border-orange-100/60 dark:border-orange-900/20">
                         <ForumTopicActions commentId={comment.id} initialLikes={comment.likes} compact />
                         <button className="text-xs text-muted-foreground hover:text-orange-500 transition-colors">
                           {copy.reply}

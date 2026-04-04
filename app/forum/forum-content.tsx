@@ -237,18 +237,31 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
         {/* Post list */}
         <div className="lg:col-span-2 space-y-3">
           {filteredTopics.length === 0 && (
-            <div className="text-center py-16 text-muted-foreground">
-              <MessageCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-lg font-medium">{isEn ? 'No posts yet' : 'Nema postova'}</p>
-              <p className="text-sm">{isEn ? 'Try a different category or search query' : 'Pokušajte s drugom kategorijom ili pretragom'}</p>
-            </div>
+            <Card className="border-0 shadow-sm rounded-3xl overflow-hidden bg-gradient-to-br from-orange-50 via-white to-teal-50 dark:from-orange-950/20 dark:via-background dark:to-teal-950/20">
+              <CardContent className="text-center py-14 px-6">
+                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-orange-100 dark:bg-background dark:ring-orange-900/40">
+                  <MessageCircle className="h-8 w-8 text-orange-500" />
+                </div>
+                <p className="text-xl font-bold text-foreground mb-2">
+                  {isEn ? 'This corner of the community is ready for a fresh topic' : 'Ovaj kutak zajednice čeka svježu temu'}
+                </p>
+                <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto mb-6 leading-relaxed">
+                  {isEn ? 'Ask something useful, share a real-life tip, or open a fun pet story.' : 'Postavi korisno pitanje, podijeli stvarni savjet ili otvori zabavnu pet priču.'}
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-2 text-xs md:text-sm text-muted-foreground">
+                  <span className="rounded-full bg-white/80 px-3 py-1.5 shadow-sm ring-1 ring-border">{isEn ? 'Questions' : 'Pitanja'}</span>
+                  <span className="rounded-full bg-white/80 px-3 py-1.5 shadow-sm ring-1 ring-border">{isEn ? 'Advice' : 'Savjeti'}</span>
+                  <span className="rounded-full bg-white/80 px-3 py-1.5 shadow-sm ring-1 ring-border">{isEn ? 'Stories' : 'Priče'}</span>
+                </div>
+              </CardContent>
+            </Card>
           )}
           {filteredTopics.map((topic, i) => {
             const cat = getCategoryInfo(topic.category_slug);
             const cover = getCoverStyle(topic.category_slug);
             return (
               <Link key={topic.id} href={`/forum/${topic.id}`}>
-                <Card className={`group card-hover border-0 shadow-sm rounded-2xl overflow-hidden animate-fade-in-up delay-${((i % 5) + 1) * 100}`}>
+                <Card className={`group card-hover border border-orange-100/60 dark:border-orange-900/20 shadow-sm hover:shadow-lg hover:-translate-y-0.5 rounded-2xl overflow-hidden bg-white/95 dark:bg-background animate-fade-in-up delay-${((i % 5) + 1) * 100}`}>
                   {/* Cover image or category gradient strip */}
                   {topic.cover_image_url ? (
                     <div className="relative h-32 overflow-hidden">
@@ -289,6 +302,9 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
                         <h3 className="font-semibold text-base group-hover:text-orange-500 transition-colors line-clamp-1 mb-1.5">
                           {topic.title}
                         </h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2 mb-2 leading-relaxed">
+                          {topic.body || (isEn ? 'Open the discussion and join the replies.' : 'Otvori raspravu i uključi se u komentare.')}
+                        </p>
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           <span className="font-medium text-foreground/80">{topic.author_name}</span>
                           <span className="flex items-center gap-1">
@@ -316,13 +332,21 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
 
         {/* Sidebar — Trending */}
         <div className="space-y-6">
-          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
+          <Card className="border border-orange-100/60 dark:border-orange-900/20 shadow-sm rounded-2xl overflow-hidden bg-white/95 dark:bg-background">
             <CardContent className="p-5">
               <h3 className="font-bold text-base mb-4 flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-orange-500" />
                 {isEn ? 'Trending' : 'Popularno'}
               </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                {isEn ? 'Topics that already have enough pull to spark more replies.' : 'Teme koje već imaju dovoljno pulsa da povuku još odgovora.'}
+              </p>
               <div className="space-y-3">
+                {trending.length === 0 && (
+                  <div className="rounded-2xl bg-orange-50/80 dark:bg-orange-950/20 px-4 py-5 text-sm text-muted-foreground">
+                    {isEn ? 'Nothing is trending yet — ideal time to start the next good one.' : 'Još ništa ne trenda — idealan trenutak za sljedeću dobru temu.'}
+                  </div>
+                )}
                 {trending.map((topic, i) => {
                   const cat = getCategoryInfo(topic.category_slug);
                   return (
@@ -352,7 +376,7 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
           </Card>
 
           {/* Category overview */}
-          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
+          <Card className="border border-orange-100/60 dark:border-orange-900/20 shadow-sm rounded-2xl overflow-hidden bg-white/95 dark:bg-background">
             <CardContent className="p-5">
               <h3 className="font-bold text-base mb-4">{isEn ? 'Categories' : 'Kategorije'}</h3>
               <div className="space-y-2">
