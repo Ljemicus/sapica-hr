@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   Bell,
@@ -21,15 +21,60 @@ import { toast } from 'sonner';
 export default function PostavkePage() {
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [pushEnabled, setPushEnabled] = useState(true);
-  const [smsEnabled] = useState(false);
+  const [smsEnabled, setSmsEnabled] = useState(false);
 
   const [rezervacije, setRezervacije] = useState(true);
   const [poruke, setPoruke] = useState(true);
   const [promocije, setPromocije] = useState(true);
   const [izgubljeni, setIzgubljeni] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  function handleSave() {
-    toast.success('Postavke su spremljene!');
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/notification-preferences', { cache: 'no-store' });
+        if (!res.ok) throw new Error('load failed');
+        const data = await res.json();
+        setEmailEnabled(Boolean(data.email_enabled));
+        setPushEnabled(Boolean(data.push_enabled));
+        setSmsEnabled(Boolean(data.sms_enabled));
+        setRezervacije(Boolean(data.bookings_enabled));
+        setPoruke(Boolean(data.messages_enabled));
+        setPromocije(Boolean(data.promotions_enabled));
+        setIzgubljeni(Boolean(data.lost_pets_enabled));
+      } catch {
+        toast.error('Nije moguće učitati postavke.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  async function handleSave() {
+    try {
+      setSaving(true);
+      const res = await fetch('/api/notification-preferences', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email_enabled: emailEnabled,
+          push_enabled: pushEnabled,
+          sms_enabled: smsEnabled,
+          bookings_enabled: rezervacije,
+          messages_enabled: poruke,
+          promotions_enabled: promocije,
+          lost_pets_enabled: izgubljeni,
+        }),
+      });
+      if (!res.ok) throw new Error('save failed');
+      toast.success('Postavke su spremljene!');
+    } catch {
+      toast.error('Spremanje nije uspjelo.');
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
