@@ -543,6 +543,7 @@ export interface ForumTopic {
   last_reply_at?: string;
   last_reply_by?: string;
   tags?: string[];
+  cover_image_url?: string;
 }
 
 export interface ForumComment {

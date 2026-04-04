@@ -44,7 +44,7 @@ function NewPostForm({ onSuccess }: NewPostFormProps) {
   const [category, setCategory] = useState<string>('');
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [, setUploadedImages] = useState<string[]>([]);
+  const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     if (!title.trim() || !category || !content.trim()) {
@@ -56,7 +56,7 @@ function NewPostForm({ onSuccess }: NewPostFormProps) {
       const res = await fetch('/api/forum/topics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, category_slug: category, body: content }),
+        body: JSON.stringify({ title, category_slug: category, body: content, ...(coverImageUrl ? { cover_image_url: coverImageUrl } : {}) }),
       });
 
       if (res.status === 401) {
@@ -74,6 +74,7 @@ function NewPostForm({ onSuccess }: NewPostFormProps) {
       setTitle('');
       setCategory('');
       setContent('');
+      setCoverImageUrl(null);
       onSuccess(data.topic as ForumTopic);
     } catch (err) {
       toast.error(isEn ? 'Failed to publish post.' : 'Greška pri objavi posta.');
@@ -109,9 +110,9 @@ function NewPostForm({ onSuccess }: NewPostFormProps) {
         <Textarea id="post-content" placeholder={isEn ? 'Write your post...' : 'Napišite svoj post...'} className="mt-1.5 min-h-[120px]" value={content} onChange={(e) => setContent(e.target.value)} />
       </div>
       <div>
-        <Label>{isEn ? 'Image (optional)' : 'Slika (opcionalno)'}</Label>
+        <Label>{isEn ? 'Cover image (optional)' : 'Naslovna slika (opcionalno)'}</Label>
         <div className="mt-1.5">
-          <ImageUpload variant="dropzone" maxFiles={3} bucket="pet-photos" entityId="forum" onUploadComplete={(urls) => setUploadedImages(urls)} />
+          <ImageUpload variant="dropzone" maxFiles={1} bucket="pet-photos" entityId="forum" onUploadComplete={(urls) => setCoverImageUrl(urls[0] ?? null)} />
         </div>
       </div>
       <Button onClick={handleSubmit} disabled={submitting} className="w-full bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 rounded-xl font-semibold">
@@ -248,10 +249,17 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
             return (
               <Link key={topic.id} href={`/forum/${topic.id}`}>
                 <Card className={`group card-hover border-0 shadow-sm rounded-2xl overflow-hidden animate-fade-in-up delay-${((i % 5) + 1) * 100}`}>
-                  {/* Category cover strip */}
-                  <div className={`relative h-2 bg-gradient-to-r ${cover.gradient}`}>
-                    <div className="absolute inset-0 paw-pattern opacity-10" />
-                  </div>
+                  {/* Cover image or category gradient strip */}
+                  {topic.cover_image_url ? (
+                    <div className="relative h-32 overflow-hidden">
+                      <img src={topic.cover_image_url} alt="" className="w-full h-full object-cover" />
+                      <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${cover.gradient}`} />
+                    </div>
+                  ) : (
+                    <div className={`relative h-2 bg-gradient-to-r ${cover.gradient}`}>
+                      <div className="absolute inset-0 paw-pattern opacity-10" />
+                    </div>
+                  )}
                   <CardContent className="p-5">
                     <div className="flex gap-4">
                       <Avatar className="h-10 w-10 flex-shrink-0 mt-0.5">

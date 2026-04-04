@@ -34,14 +34,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  let body: { title?: string; category_slug?: string; body?: string };
+  let body: { title?: string; category_slug?: string; body?: string; cover_image_url?: string };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const { title, category_slug, body: content } = body;
+  const { title, category_slug, body: content, cover_image_url } = body;
 
   if (!title?.trim() || !category_slug || !content?.trim()) {
     return NextResponse.json({ error: 'title, category_slug and body are required' }, { status: 400 });
@@ -62,6 +62,7 @@ export async function POST(request: Request) {
     author_name: authorName,
     author_initial: nameToInitial(authorName),
     author_gradient: nameToGradient(authorName),
+    ...(typeof cover_image_url === 'string' && cover_image_url ? { cover_image_url } : {}),
   });
 
   if (!topic) {

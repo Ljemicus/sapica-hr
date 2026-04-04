@@ -54,6 +54,7 @@ type TopicRow = {
   view_count?: number;
   views?: number;
   created_at: string;
+  cover_image_url?: string | null;
 };
 
 type CommentRow = {
@@ -87,6 +88,7 @@ function topicRowToForumTopic(row: TopicRow): ForumTopic {
     is_pinned: row.is_pinned,
     is_hot: row.is_hot,
     is_solved: row.is_solved,
+    cover_image_url: row.cover_image_url ?? undefined,
   } as ForumTopic;
 }
 
@@ -106,7 +108,7 @@ function commentRowToForumComment(row: CommentRow): ForumComment {
 }
 
 const TOPIC_SELECT =
-  'id, user_id, category_slug, title, body, author_name, author_initial, author_gradient, is_pinned, is_hot, is_solved, status, likes, comment_count, view_count, created_at';
+  'id, user_id, category_slug, title, body, author_name, author_initial, author_gradient, is_pinned, is_hot, is_solved, status, likes, comment_count, view_count, created_at, cover_image_url';
 
 const COMMENT_SELECT =
   'id, topic_id, user_id, author_name, author_initial, author_gradient, content, likes, status, created_at';
@@ -216,6 +218,7 @@ export async function createTopic(params: {
   author_name: string;
   author_initial: string;
   author_gradient: string;
+  cover_image_url?: string;
 }): Promise<ForumTopic | null> {
   if (!isSupabaseConfigured()) return null;
 
@@ -231,6 +234,7 @@ export async function createTopic(params: {
         author_name: params.author_name,
         author_initial: params.author_initial,
         author_gradient: params.author_gradient,
+        ...(params.cover_image_url ? { cover_image_url: params.cover_image_url } : {}),
       })
       .select(TOPIC_SELECT)
       .single();

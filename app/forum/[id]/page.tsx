@@ -61,13 +61,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       description: `Diskusija: ${topic.title}`,
       url: `${BASE_URL}/forum/${id}`,
       type: 'article',
-      images: ['/opengraph-image'],
+      images: [topic.cover_image_url || '/opengraph-image'],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${topic.title} — Forum | PetPark`,
       description: `Diskusija: ${topic.title}`,
-      images: ['/opengraph-image'],
+      images: [topic.cover_image_url || '/opengraph-image'],
     },
     alternates: {
       canonical: `${BASE_URL}/forum/${id}`,
@@ -105,9 +105,17 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
         ...(cat ? [{ label: cat.name, href: `${forumListingHref}?category=${topic.category_slug}` }] : []),
         { label: topic.title, href: `/forum/${id}` },
       ]} />
-      {/* Category cover banner */}
+      {/* Cover image or category gradient banner */}
       {(() => {
         const cover = getCoverStyle(topic.category_slug);
+        if (topic.cover_image_url) {
+          return (
+            <div className="relative h-48 md:h-64 overflow-hidden">
+              <img src={topic.cover_image_url} alt="" className="w-full h-full object-cover" />
+              <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${cover.gradient}`} />
+            </div>
+          );
+        }
         return (
           <div className={`relative h-3 bg-gradient-to-r ${cover.gradient}`}>
             <div className="absolute inset-0 paw-pattern opacity-10" />
