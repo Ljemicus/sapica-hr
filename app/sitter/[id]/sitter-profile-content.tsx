@@ -67,7 +67,18 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
         <div className="lg:col-span-2 space-y-6">
           {/* Profile Header */}
           <Card className="overflow-hidden border-0 shadow-sm">
-            <div className={`h-32 bg-gradient-to-br ${gradient} relative`}>
+            <div className={`h-32 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
+              {profile.photos?.[0] ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={profile.photos[0]}
+                    alt={`${profile.user?.name} cover`}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/20" />
+                </>
+              ) : null}
               <div className="absolute inset-0 paw-pattern opacity-10" />
             </div>
             <CardContent className="p-6 -mt-16 relative">
@@ -129,15 +140,29 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
           {/* Photo Gallery Placeholder */}
           <Card className="border-0 shadow-sm overflow-hidden">
             <CardContent className="p-0">
-              <div className="grid grid-cols-4 gap-1 h-48">
-                {[gradient, 'from-gray-200 to-gray-300', 'from-gray-100 to-gray-200', 'from-gray-200 to-gray-100'].map((g, i) => (
-                  <div key={i} className={`bg-gradient-to-br ${g} flex items-center justify-center ${i === 0 ? 'col-span-2 row-span-1' : ''}`}>
-                    <span className="text-white/60 text-xs font-medium">
-                      {i === 0 ? `${profile.user?.name?.charAt(0)}` : ''}
-                    </span>
+              {profile.photos?.length ? (
+                <div className="grid grid-cols-4 gap-1 h-48">
+                  <div className="col-span-2 row-span-1 relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={profile.photos[0]} alt={profile.user?.name || 'Sitter photo'} className="h-full w-full object-cover" />
                   </div>
-                ))}
-              </div>
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className={`bg-gradient-to-br ${i % 2 === 0 ? 'from-gray-200 to-gray-300' : 'from-gray-100 to-gray-200'} flex items-center justify-center`}>
+                      <span className="text-gray-400 text-xs font-medium">PetPark</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-4 gap-1 h-48">
+                  {[gradient, 'from-gray-200 to-gray-300', 'from-gray-100 to-gray-200', 'from-gray-200 to-gray-100'].map((g, i) => (
+                    <div key={i} className={`bg-gradient-to-br ${g} flex items-center justify-center ${i === 0 ? 'col-span-2 row-span-1' : ''}`}>
+                      <span className="text-white/60 text-xs font-medium">
+                        {i === 0 ? `${profile.user?.name?.charAt(0)}` : ''}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
