@@ -75,13 +75,13 @@ export async function getAuthUser(): Promise<User | null> {
     if (!authUser) return null;
 
     // public.users is the canonical profile source when available
-    const { data } = await supabase
+    const { data: profileData } = await supabase
       .from('users')
       .select('id, email, name, role, avatar_url, phone, city, created_at')
       .eq('id', authUser.id)
       .single();
 
-    if (isUserRecord(data)) return data;
+    if (isUserRecord(profileData)) return profileData;
 
     appLogger.warn('auth', 'Falling back to auth metadata because public.users profile is missing', {
       userId: authUser.id,
