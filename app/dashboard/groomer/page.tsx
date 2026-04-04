@@ -1,5 +1,5 @@
+import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import { getAuthUser } from '@/lib/auth';
 import { GroomerDashboardContent } from './groomer-dashboard-content';
 import { createClient } from '@/lib/supabase/server';
@@ -11,6 +11,7 @@ export const metadata = {
 };
 
 export default async function GroomerDashboardPage() {
+  noStore();
   const user = await getAuthUser();
   if (!user) redirect('/prijava?redirect=%2Fdashboard%2Fgroomer');
 

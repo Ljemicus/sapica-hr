@@ -1,11 +1,15 @@
+import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getPublisherProfile } from '@/lib/db';
 import AdoptionListingForm from '../adoption-listing-form';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: 'Novi oglas za udomljavanje | PetPark' };
 
 export default async function NewAdoptionListingPage() {
+  noStore();
   const supabase = await createClient();
   const {
     data: { user },
