@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/shared/empty-state';
+import { PaymentButton } from '@/components/shared/payment-button';
 import { STATUS_LABELS, SERVICE_LABELS, type ServiceType } from '@/lib/types';
 import { statusColors, statusDotColors, type OwnerDashboardBooking } from './owner-dashboard-types';
 
@@ -58,8 +59,13 @@ export function OwnerBookingsTab({ bookings, onCancelBooking }: Props) {
                   <span className="text-muted-foreground">
                     {format(new Date(booking.start_date), 'd. MMM', { locale: hr })} — {format(new Date(booking.end_date), 'd. MMM yyyy.', { locale: hr })}
                   </span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap justify-end">
                     <span className="font-bold text-orange-500">{booking.total_price}€</span>
+                    {booking.status === 'accepted' && (booking as { payment_status?: string }).payment_status !== 'paid' && (
+                      <div className="w-[170px]">
+                        <PaymentButton bookingId={booking.id} amount={Math.round(booking.total_price * 100)} />
+                      </div>
+                    )}
                     {(booking.status === 'pending' || booking.status === 'accepted') && (
                       <Button variant="outline" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50 hover:border-red-200" onClick={() => onCancelBooking(booking.id)}>
                         Otkaži

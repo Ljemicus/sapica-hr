@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/shared/empty-state';
+import { PaymentButton } from '@/components/shared/payment-button';
 import { SERVICE_LABELS } from '@/lib/types';
 import { filterTabs, sitterGradients, statusConfig } from './booking-history-constants';
 import type { BookingRow, FilterTab } from './booking-history-types';
@@ -77,9 +78,14 @@ export function BookingHistorySittingTab({ activeFilter, onFilterChange, loading
                         {format(new Date(booking.start_date), 'd. MMM', { locale: hr })} — {format(new Date(booking.end_date), 'd. MMM yyyy.', { locale: hr })}
                       </div>
 
-                      <div className="flex items-center justify-between mt-3 pt-3 border-t">
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t gap-3 flex-wrap">
                         <span className="font-bold text-lg text-orange-500">{booking.total_price}€</span>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap justify-end">
+                          {booking.status === 'accepted' && (booking as { payment_status?: string }).payment_status !== 'paid' && (
+                            <div className="w-[170px]">
+                              <PaymentButton bookingId={booking.id} amount={Math.round(booking.total_price * 100)} />
+                            </div>
+                          )}
                           <Link href="/pretraga">
                             <Button variant="outline" size="sm" className="hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200">
                               <RefreshCw className="h-3.5 w-3.5 mr-1" /> Ponovi
