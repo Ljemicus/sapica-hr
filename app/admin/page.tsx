@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getAuthUser } from '@/lib/auth';
-import { getUsers, getAllBookings, getSitters, getAllProviderApplications } from '@/lib/db';
+import { getUsers, getAllBookings, getSitters, getAllProviderApplications, getTopics } from '@/lib/db';
+import { getPosts } from '@/lib/db/forum';
 import { AdminContent } from './admin-content';
 
 export const metadata: Metadata = {
@@ -17,6 +18,8 @@ export default async function AdminPage() {
   const sitters = await getSitters({ fields: 'admin-list' });
   const allBookings = await getAllBookings('admin-list');
   const providerApplications = await getAllProviderApplications();
+  const forumTopics = await getTopics();
+  const forumComments = (await Promise.all(forumTopics.map((topic) => getPosts(topic.id)))).flat();
 
   const bookings = allBookings.map(b => ({
     ...b,
@@ -30,6 +33,8 @@ export default async function AdminPage() {
       bookings={bookings}
       sitters={sitters}
       providerApplications={providerApplications}
+      forumTopics={forumTopics}
+      forumComments={forumComments}
     />
   );
 }

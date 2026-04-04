@@ -5,14 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Users, ClipboardList, Shield, CheckCircle, XCircle, Search, MapPin, FileCheck, ShieldCheck, Eye, EyeOff, LayoutDashboard, ArrowRight } from 'lucide-react';
+import { Users, ClipboardList, Shield, CheckCircle, XCircle, Search, MapPin, FileCheck, ShieldCheck, Eye, EyeOff, LayoutDashboard, ArrowRight, MessageSquare, Lock, Unlock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { STATUS_LABELS, SERVICE_LABELS, PROVIDER_APPLICATION_STATUS_LABELS, PROVIDER_APPLICATION_STATUS_COLORS, type User, type Booking, type SitterProfile, type BookingStatus, type ServiceType, type ProviderApplication, type ProviderApplicationStatus } from '@/lib/types';
+import { STATUS_LABELS, SERVICE_LABELS, PROVIDER_APPLICATION_STATUS_LABELS, PROVIDER_APPLICATION_STATUS_COLORS, type User, type Booking, type SitterProfile, type BookingStatus, type ServiceType, type ProviderApplication, type ProviderApplicationStatus, type ForumTopic, type ForumComment } from '@/lib/types';
 import type { PublicStatus } from '@/lib/types/trust';
 
 const PUBLIC_STATUS_LABELS: Record<PublicStatus, string> = {
@@ -50,9 +50,11 @@ interface Props {
   bookings: (Booking & { owner: { name: string }; sitter: { name: string } })[];
   sitters: (SitterProfile & { user: { name: string; email: string } })[];
   providerApplications: ProviderApplication[];
+  forumTopics: ForumTopic[];
+  forumComments: ForumComment[];
 }
 
-export function AdminContent({ users, bookings, sitters, providerApplications }: Props) {
+export function AdminContent({ users, bookings, sitters, providerApplications, forumTopics, forumComments }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [reviewingId, setReviewingId] = useState<string | null>(null);
   const [adminNotes, setAdminNotes] = useState<Record<string, string>>({});
@@ -111,6 +113,25 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
 
   const pendingApplications = providerApplications.filter(a => a.status === 'pending_verification');
 
+  const moderateForum = async (targetType: 'topic' | 'comment', targetId: string, action: 'hide' | 'unhide' | 'lock' | 'unlock') => {
+    setReviewingId(targetId);
+    try {
+      const response = await fetch('/api/admin/forum/moderate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetType, targetId, action }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(data?.error || 'Greška pri moderaciji foruma');
+      toast.success('Forum moderacija spremljena');
+      router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Greška pri moderaciji foruma');
+    } finally {
+      setReviewingId(null);
+    }
+  };
+
   const sortedProviderApplications = [...providerApplications].sort((a, b) => {
     const priority = (app: ProviderApplication) => {
       if (app.status === 'pending_verification') return 0;
@@ -168,7 +189,7 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
       </div>
 
       <Tabs defaultValue="users" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5 h-12">
+        <TabsList className="grid w-full grid-cols-6 h-12">
           <TabsTrigger value="users" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><Users className="h-4 w-4 mr-1.5" /> Korisnici</TabsTrigger>
           <TabsTrigger value="bookings" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><ClipboardList className="h-4 w-4 mr-1.5" /> Rezervacije</TabsTrigger>
           <TabsTrigger value="verification" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700"><Shield className="h-4 w-4 mr-1.5" /> Verifikacija</TabsTrigger>
@@ -182,6 +203,9 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
           </TabsTrigger>
           <TabsTrigger value="identity" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700">
             <ShieldCheck className="h-4 w-4 mr-1.5" /> Identitet
+          </TabsTrigger>
+          <TabsTrigger value="forum" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700">
+            <MessageSquare className="h-4 w-4 mr-1.5" /> Forum
           </TabsTrigger>
         </TabsList>
 
@@ -420,6 +444,81 @@ export function AdminContent({ users, bookings, sitters, providerApplications }:
 
         <TabsContent value="identity" className="space-y-4 animate-fade-in">
           <AdminVerificationQueue />
+        </TabsContent>
+
+        <TabsContent value="forum" className="space-y-4 animate-fade-in">
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="font-semibold">Forum teme</h3>
+                  <p className="text-sm text-muted-foreground">Brzo sakrij, otključaj ili zaključaš raspravu kad treba.</p>
+                </div>
+                <Badge variant="outline">{forumTopics.length} tema · {forumComments.length} komentara</Badge>
+              </div>
+              <div className="space-y-3">
+                {forumTopics.map((topic) => (
+                  <div key={topic.id} className="rounded-xl border p-4 bg-white">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm truncate">{topic.title}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {topic.author_name} · {topic.category_slug} · status: {topic.status || 'active'} · {topic.comment_count} komentara · {topic.likes} lajkova
+                        </p>
+                      </div>
+                      <div className="flex gap-2 flex-shrink-0">
+                        {topic.status !== 'hidden' ? (
+                          <Button size="sm" variant="outline" className="text-orange-500 hover:bg-orange-50" disabled={reviewingId === topic.id} onClick={() => moderateForum('topic', topic.id, 'hide')}>
+                            <EyeOff className="h-3 w-3 mr-1" /> Sakrij
+                          </Button>
+                        ) : (
+                          <Button size="sm" variant="outline" className="text-blue-600 hover:bg-blue-50" disabled={reviewingId === topic.id} onClick={() => moderateForum('topic', topic.id, 'unhide')}>
+                            <Eye className="h-3 w-3 mr-1" /> Vrati
+                          </Button>
+                        )}
+                        {topic.status !== 'locked' ? (
+                          <Button size="sm" variant="outline" className="text-red-500 hover:bg-red-50" disabled={reviewingId === topic.id} onClick={() => moderateForum('topic', topic.id, 'lock')}>
+                            <Lock className="h-3 w-3 mr-1" /> Lock
+                          </Button>
+                        ) : (
+                          <Button size="sm" variant="outline" className="text-green-600 hover:bg-green-50" disabled={reviewingId === topic.id} onClick={() => moderateForum('topic', topic.id, 'unlock')}>
+                            <Unlock className="h-3 w-3 mr-1" /> Unlock
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-5">
+              <h3 className="font-semibold mb-4">Zadnji komentari</h3>
+              <div className="space-y-3">
+                {forumComments.slice(-10).reverse().map((comment) => (
+                  <div key={comment.id} className="rounded-xl border p-4 bg-white flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-sm text-foreground/90 line-clamp-2">{comment.content}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{comment.author_name} · status: {comment.status || 'active'} · {comment.likes} lajkova</p>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0">
+                      {comment.status !== 'hidden' ? (
+                        <Button size="sm" variant="outline" className="text-orange-500 hover:bg-orange-50" disabled={reviewingId === comment.id} onClick={() => moderateForum('comment', comment.id, 'hide')}>
+                          <EyeOff className="h-3 w-3 mr-1" /> Sakrij
+                        </Button>
+                      ) : (
+                        <Button size="sm" variant="outline" className="text-blue-600 hover:bg-blue-50" disabled={reviewingId === comment.id} onClick={() => moderateForum('comment', comment.id, 'unhide')}>
+                          <Eye className="h-3 w-3 mr-1" /> Vrati
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
