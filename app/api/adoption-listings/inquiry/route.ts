@@ -61,8 +61,11 @@ export async function POST(request: Request) {
   });
 
   // Notify publisher via email (best-effort, don't block response)
+  let notificationSent = false;
+
   if (listing.contact_email) {
-    sendEmail({
+    try {
+      const emailResult = await sendEmail({
       to: listing.contact_email,
       subject: `Novi upit za udomljavanje: ${listing.name}`,
       html: `
@@ -79,13 +82,23 @@ export async function POST(request: Request) {
         <p style="background:#f5f5f5;padding:12px;border-radius:8px">${parsed.data.message}</p>
         <p style="color:#888;font-size:12px;margin-top:24px">Ovaj email je poslan putem PetPark platforme.</p>
       `.trim(),
-    }).catch((err) => {
+      });
+      notificationSent = Boolean(emailResult?.success);
+    } catch (err) {
       appLogger.error('adoption-inquiry', 'Failed to send notification email', {
         inquiry_id: inquiry.id,
         error: String(err),
       });
-    });
+    }
   }
 
-  return NextResponse.json({ success: true }, { status: 201 });
+  return NextResponse.json({
+    success: true,
+    inquiryId: inquiry.id,
+    delivery: {
+      stored: true,
+      emailNotificationRequested: Boolean(listing.contact_email),
+      emailNotificationSent: notificationSent,
+    },
+  }, { status: 201 });
 }
