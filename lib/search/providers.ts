@@ -113,8 +113,7 @@ export async function getUnifiedProviders(params: ProviderSearchParams): Promise
   const providers: UnifiedProvider[] = [];
 
   for (const s of sitters) {
-    const trust = await getTrustEligibilityByUserId(s.user_id);
-    if (!trust.eligible) continue;
+    if (!s.verified) continue;
     const prices = Object.values(s.prices).filter((p): p is number => typeof p === 'number');
     providers.push({
       id: s.user_id,
