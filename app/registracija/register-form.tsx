@@ -12,6 +12,8 @@ import { Label } from '@/components/ui/label';
 import { ImageUpload } from '@/components/shared/image-upload';
 import { createClient } from '@/lib/supabase/client';
 import { getAuthCallbackUrl, safeRedirectPath } from '@/lib/auth-redirect';
+import { useLanguage } from '@/lib/i18n/context';
+import { translateFormError } from '@/lib/i18n/form-errors';
 import { registerSchema, type RegisterInput } from '@/lib/validations';
 import { CITIES } from '@/lib/types';
 import { toast } from 'sonner';
@@ -30,6 +32,7 @@ function PawLogo({ className }: { className?: string }) {
 }
 
 export function RegisterForm() {
+  const { language } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -57,23 +60,23 @@ export function RegisterForm() {
       const payload = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        toast.error(payload.error || 'Registracija nije uspjela');
+        toast.error(payload.error || (language === 'en' ? 'Registration failed' : 'Registracija nije uspjela'));
         setLoading(false);
         return;
       }
 
       if (payload.session) {
-        toast.success('Registracija uspješna!');
+        toast.success(language === 'en' ? 'Registration successful!' : 'Registracija uspješna!');
         const target = redirect || (data.role === 'sitter' ? '/dashboard/sitter' : '/dashboard/vlasnik');
         router.push(target);
         router.refresh();
       } else {
-        toast.success('Registracija uspješna! Provjerite email za potvrdu.');
+        toast.success(language === 'en' ? 'Registration successful! Check your email to confirm your account.' : 'Registracija uspješna! Provjerite email za potvrdu.');
         const loginUrl = `/prijava${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`;
         router.push(loginUrl);
       }
     } catch {
-      toast.error('Mrežna greška. Provjerite internetsku vezu.');
+      toast.error(language === 'en' ? 'Network error. Check your internet connection.' : 'Mrežna greška. Provjerite internetsku vezu.');
     } finally {
       setLoading(false);
     }
@@ -91,7 +94,7 @@ export function RegisterForm() {
     });
 
     if (error) {
-      toast.error(`Greška pri registraciji putem ${provider === 'google' ? 'Googlea' : provider === 'apple' ? 'Applea' : 'Facebooka'}`);
+      toast.error(language === 'en' ? `Could not continue with ${provider === 'google' ? 'Google' : provider === 'apple' ? 'Apple' : 'Facebook'}` : `Greška pri registraciji putem ${provider === 'google' ? 'Googlea' : provider === 'apple' ? 'Applea' : 'Facebooka'}`);
       setLoading(false);
     }
   };
@@ -104,20 +107,20 @@ export function RegisterForm() {
         <div className="absolute top-10 -right-10 w-40 h-40 bg-white rounded-full opacity-10" />
         <div className="relative text-center text-white p-12 max-w-md">
           <PawLogo className="h-64 w-64 mx-auto mb-10 opacity-90" />
-          <h2 className="text-3xl font-bold mb-4">Pridružite se <span className="text-orange-500">Pet</span><span className="text-teal-600">Parku</span>!</h2>
+          <h2 className="text-3xl font-bold mb-4">{language === 'en' ? <>Join <span className="text-orange-500">Pet</span><span className="text-teal-600">Park</span>!</> : <>Pridružite se <span className="text-orange-500">Pet</span><span className="text-teal-600">Parku</span>!</>}</h2>
           <p className="text-white/80 text-lg leading-relaxed">
             {selectedRole === 'sitter'
-              ? 'Zarađujte radeći ono što volite — pružajte usluge u svom gradu i postanite dio naše zajednice.'
-              : 'Pronađite sve za vašeg ljubimca na jednom mjestu — čuvanje, njega, školovanje i više.'}
+              ? (language === 'en' ? 'Earn by doing what you love — offer services in your city and become part of our community.' : 'Zarađujte radeći ono što volite — pružajte usluge u svom gradu i postanite dio naše zajednice.')
+              : (language === 'en' ? 'Find everything your pet needs in one place — boarding, grooming, training, and more.' : 'Pronađite sve za vašeg ljubimca na jednom mjestu — čuvanje, njega, školovanje i više.')}
           </p>
           <div className="mt-10 flex items-center justify-center gap-8">
             <div className="text-center">
-              <p className="text-2xl font-bold">Besplatno</p>
-              <p className="text-sm text-white/70">Registracija</p>
+              <p className="text-2xl font-bold">{language === 'en' ? 'Free' : 'Besplatno'}</p>
+              <p className="text-sm text-white/70">{language === 'en' ? 'Registration' : 'Registracija'}</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold">2 min</p>
-              <p className="text-sm text-white/70">Postavljanje</p>
+              <p className="text-sm text-white/70">{language === 'en' ? 'Setup' : 'Postavljanje'}</p>
             </div>
           </div>
         </div>
@@ -127,12 +130,12 @@ export function RegisterForm() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8 animate-fade-in-up">
             <PawLogo className="h-12 w-12 text-orange-500 mx-auto mb-4 lg:hidden" />
-            <h1 className="text-3xl font-bold">Registracija</h1>
-            <p className="text-muted-foreground mt-2">Kreirajte svoj <span className="text-orange-500">Pet</span><span className="text-teal-600">Park</span> račun</p>
+            <h1 className="text-3xl font-bold">{language === 'en' ? 'Register' : 'Registracija'}</h1>
+            <p className="text-muted-foreground mt-2">{language === 'en' ? 'Create your ' : 'Kreirajte svoj '}<span className="text-orange-500">Pet</span><span className="text-teal-600">Park</span>{language === 'en' ? ' account' : ' račun'}</p>
           </div>
 
           <div className="space-y-2 mb-6 animate-fade-in-up delay-100">
-            <Label className="text-sm font-medium">Ja sam...</Label>
+            <Label className="text-sm font-medium">{language === 'en' ? 'I am...' : 'Ja sam...'}</Label>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
@@ -144,8 +147,8 @@ export function RegisterForm() {
                 }`}
               >
                 <Dog className={`h-8 w-8 mx-auto mb-2 ${selectedRole === 'owner' ? 'text-orange-500' : 'text-gray-400'}`} />
-                <p className="font-semibold text-sm">Vlasnik ljubimca</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Tražim čuvara</p>
+                <p className="font-semibold text-sm">{language === 'en' ? 'Pet owner' : 'Vlasnik ljubimca'}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{language === 'en' ? 'Care, grooming, training, adoption and more' : 'Čuvanje, njega, školovanje, udomljavanje i više'}</p>
               </button>
               <button
                 type="button"
@@ -157,11 +160,11 @@ export function RegisterForm() {
                 }`}
               >
                 <Heart className={`h-8 w-8 mx-auto mb-2 ${selectedRole === 'sitter' ? 'text-orange-500' : 'text-gray-400'}`} />
-                <p className="font-semibold text-sm">Pružatelj usluga</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Želim pružati usluge</p>
+                <p className="font-semibold text-sm">{language === 'en' ? 'Service provider' : 'Pružatelj usluga'}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{language === 'en' ? 'Sitting first, with more provider tools after onboarding' : 'Sitter odmah, a ostale vrste profila kroz onboarding nakon prijave'}</p>
               </button>
             </div>
-            {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
+            {errors.role && <p className="text-sm text-red-500">{translateFormError(errors.role.message, language)}</p>}
           </div>
 
           <div className="space-y-3 mb-6 animate-fade-in-up delay-150">
@@ -174,7 +177,7 @@ export function RegisterForm() {
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
               </svg>
-              Nastavi s Apple
+              {language === 'en' ? 'Continue with Apple' : 'Nastavi s Apple'}
             </button>
             <button
               type="button"
@@ -188,7 +191,7 @@ export function RegisterForm() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Nastavi s Google
+              {language === 'en' ? 'Continue with Google' : 'Nastavi s Google'}
             </button>
             <button
               type="button"
@@ -199,12 +202,12 @@ export function RegisterForm() {
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
               </svg>
-              Nastavi s Facebook
+              {language === 'en' ? 'Continue with Facebook' : 'Nastavi s Facebook'}
             </button>
 
             <div className="relative my-4">
               <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
-              <div className="relative flex justify-center text-sm"><span className="bg-white px-4 text-muted-foreground">ili s email-om</span></div>
+              <div className="relative flex justify-center text-sm"><span className="bg-white px-4 text-muted-foreground">{language === 'en' ? 'or with email' : 'ili s email-om'}</span></div>
             </div>
           </div>
 
@@ -218,28 +221,28 @@ export function RegisterForm() {
                 onUploadComplete={(urls) => setAvatarUrl(urls[0] || null)}
               />
             </div>
-            <p className="text-center text-xs text-muted-foreground -mt-2 mb-2">Dodajte profilnu sliku (opcionalno)</p>
+            <p className="text-center text-xs text-muted-foreground -mt-2 mb-2">{language === 'en' ? 'Add a profile photo (optional)' : 'Dodajte profilnu sliku (opcionalno)'}</p>
 
             <div className="space-y-2">
-              <Label htmlFor="name">Kako se zovete?</Label>
+              <Label htmlFor="name">{language === 'en' ? 'What is your name?' : 'Kako se zovete?'}</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input id="name" placeholder="Ime i prezime" className="pl-10 focus:border-orange-300" {...register('name')} />
+                <Input id="name" placeholder={language === 'en' ? 'Full name' : 'Ime i prezime'} className="pl-10 focus:border-orange-300" {...register('name')} />
               </div>
-              {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+              {errors.name && <p className="text-sm text-red-500">{translateFormError(errors.name.message, language)}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input id="email" type="email" placeholder="vas@email.com" className="pl-10 focus:border-orange-300" {...register('email')} />
+                <Input id="email" type="email" placeholder={language === 'en' ? 'you@email.com' : 'vas@email.com'} className="pl-10 focus:border-orange-300" {...register('email')} />
               </div>
-              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+              {errors.email && <p className="text-sm text-red-500">{translateFormError(errors.email.message, language)}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="city">U kojem ste gradu?</Label>
+              <Label htmlFor="city">{language === 'en' ? 'Which city are you in?' : 'U kojem ste gradu?'}</Label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <select
@@ -247,64 +250,64 @@ export function RegisterForm() {
                   className="flex h-10 w-full rounded-lg border border-input bg-background px-10 py-2 text-sm focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
                   {...register('city')}
                 >
-                  <option value="">Odaberite grad</option>
+                  <option value="">{language === 'en' ? 'Choose a city' : 'Odaberite grad'}</option>
                   {CITIES.map((city) => (
                     <option key={city} value={city}>{city}</option>
                   ))}
                 </select>
               </div>
-              {errors.city && <p className="text-sm text-red-500">{errors.city.message}</p>}
+              {errors.city && <p className="text-sm text-red-500">{translateFormError(errors.city.message, language)}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Odaberite lozinku</Label>
+              <Label htmlFor="password">{language === 'en' ? 'Choose a password' : 'Odaberite lozinku'}</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Najmanje 6 znakova"
+                  placeholder={language === 'en' ? 'At least 6 characters' : 'Najmanje 6 znakova'}
                   className="focus:border-orange-300"
                   {...register('password')}
                 />
                 <button
                   type="button"
-                  aria-label={showPassword ? 'Sakrij lozinku' : 'Prikaži lozinku'}
+                  aria-label={showPassword ? (language === 'en' ? 'Hide password' : 'Sakrij lozinku') : (language === 'en' ? 'Show password' : 'Prikaži lozinku')}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+              {errors.password && <p className="text-sm text-red-500">{translateFormError(errors.password.message, language)}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Ponovite lozinku</Label>
+              <Label htmlFor="confirmPassword">{language === 'en' ? 'Confirm password' : 'Ponovite lozinku'}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder="Ponovite lozinku"
+                placeholder={language === 'en' ? 'Repeat your password' : 'Ponovite lozinku'}
                 className="focus:border-orange-300"
                 {...register('confirmPassword')}
               />
-              {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>}
+              {errors.confirmPassword && <p className="text-sm text-red-500">{translateFormError(errors.confirmPassword.message, language)}</p>}
             </div>
 
             <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50 h-11" disabled={loading}>
-              {loading ? 'Otvaram račun...' : 'Otvori račun'}
+              {loading ? (language === 'en' ? 'Creating account...' : 'Otvaram račun...') : (language === 'en' ? 'Create account' : 'Otvori račun')}
             </Button>
           </form>
 
           <div className="text-center text-sm text-muted-foreground mt-6 space-y-2">
             <p>
-              Već imate račun?{' '}
+              {language === 'en' ? 'Already have an account?' : 'Već imate račun?'}{' '}
               <Link href={`/prijava${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className="text-orange-500 hover:underline font-semibold">
-                Prijavite se
+                {language === 'en' ? 'Sign in' : 'Prijavite se'}
               </Link>
             </p>
             {redirect && (
               <p className="text-xs text-muted-foreground">
-                Nakon otvaranja računa vratit ćemo vas tamo gdje ste stali.
+                {language === 'en' ? 'After creating your account, we’ll take you back to where you left off.' : 'Nakon otvaranja računa vratit ćemo vas tamo gdje ste stali.'}
               </p>
             )}
           </div>

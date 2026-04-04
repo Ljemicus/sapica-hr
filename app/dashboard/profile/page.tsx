@@ -22,6 +22,9 @@ const DASHBOARD_ROUTES: Partial<Record<PublisherProfileType, string>> = {
   vlasnik: '/dashboard/vlasnik',
   čuvar: '/dashboard/sitter',
   groomer: '/dashboard/groomer',
+  trener: '/dashboard/trainer',
+  uzgajivač: '/dashboard/profile',
+  veterinar: '/dashboard/profile',
   udomljavanje: '/dashboard/adoption',
 };
 

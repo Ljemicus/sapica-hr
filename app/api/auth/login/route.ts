@@ -4,11 +4,13 @@ import type { LoginSuccessResponse } from '@/lib/auth-responses';
 import { parseAuthRole } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { dispatchAlert } from '@/lib/alerting';
-import { appLogger } from '@/lib/logger';
+import { getRequestId, createScopedLogger } from '@/lib/request-context';
 import { rateLimit } from '@/lib/rate-limit';
 import { loginSchema } from '@/lib/validations';
 
 export async function POST(request: Request) {
+  const reqId = getRequestId(request);
+  const log = createScopedLogger('auth.login', reqId);
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
   if (!rateLimit(`login:${ip}`, 5, 60000)) {
     return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše pokušaja.' });
@@ -32,7 +34,7 @@ export async function POST(request: Request) {
   });
 
   if (error || !data.user) {
-    appLogger.warn('auth.login', 'Login failed', { email: parsed.data.email });
+    log.warn('Login failed', { email: parsed.data.email });
     dispatchAlert({
       severity: 'P2',
       service: 'auth.login',
@@ -49,10 +51,19 @@ export async function POST(request: Request) {
     .eq('id', data.user.id)
     .single();
 
+  const { data: publisherProfile } = await supabase
+    .from('publisher_profiles')
+    .select('type')
+    .eq('user_id', data.user.id)
+    .maybeSingle();
+
   const role = parseAuthRole(profile?.role || data.user.user_metadata?.role);
   const defaultRedirect =
-    role === 'sitter' ? '/dashboard/sitter' :
     role === 'admin' ? '/admin' :
+    role === 'sitter' ? '/dashboard/sitter' :
+    publisherProfile?.type === 'udomljavanje' ? '/dashboard/adoption' :
+    publisherProfile?.type === 'groomer' ? '/dashboard/groomer' :
+    publisherProfile?.type === 'trener' ? '/dashboard/trainer' :
     '/dashboard/vlasnik';
 
   const response: LoginSuccessResponse = { user: data.user, role, defaultRedirect };
