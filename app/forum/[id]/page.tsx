@@ -11,6 +11,7 @@ import { getForumTopicPageData } from './forum-topic-data';
 import { FORUM_CATEGORIES } from '@/lib/types';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { CommentForm } from './comment-form';
+import { ForumTopicActions } from './topic-actions';
 import { InternalLinkSection } from '@/components/shared/internal-link-section';
 import { SEARCH_DISCOVERY_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
 import { LOCALE_HEADER } from '@/lib/i18n';
@@ -147,10 +148,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
                     <Clock className="h-3 w-3" />
                     {timeAgo(topic.created_at)}
                   </span>
-                  <span className="flex items-center gap-1">
-                    <Heart className="h-3 w-3" />
-                    {topic.likes}
-                  </span>
+                  <ForumTopicActions topicId={topic.id} initialLikes={topic.likes} />
                   <span className="flex items-center gap-1">
                     <MessageCircle className="h-3 w-3" />
                     {topic.comment_count} {copy.commentsCount}
@@ -187,10 +185,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
                       </div>
                       <p className="text-sm text-gray-700 leading-relaxed">{comment.content}</p>
                       <div className="flex items-center gap-3 mt-3">
-                        <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-red-500 transition-colors">
-                          <Heart className="h-3.5 w-3.5" />
-                          {comment.likes}
-                        </button>
+                        <ForumTopicActions commentId={comment.id} initialLikes={comment.likes} compact />
                         <button className="text-xs text-muted-foreground hover:text-orange-500 transition-colors">
                           {copy.reply}
                         </button>
