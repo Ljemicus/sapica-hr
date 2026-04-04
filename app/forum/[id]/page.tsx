@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { getForumTopicPageData } from './forum-topic-data';
 import { FORUM_CATEGORIES } from '@/lib/types';
+import { getCoverStyle } from '@/lib/forum/cover-images';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { CommentForm } from './comment-form';
 import { ForumTopicActions } from './topic-actions';
@@ -102,6 +103,16 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
         ...(cat ? [{ label: cat.name, href: `/forum?category=${topic.category_slug}` }] : []),
         { label: topic.title, href: `/forum/${id}` },
       ]} />
+      {/* Category cover banner */}
+      {(() => {
+        const cover = getCoverStyle(topic.category_slug);
+        return (
+          <div className={`relative h-3 bg-gradient-to-r ${cover.gradient}`}>
+            <div className="absolute inset-0 paw-pattern opacity-10" />
+          </div>
+        );
+      })()}
+
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-pink-50">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />

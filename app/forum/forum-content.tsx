@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ImageUpload } from '@/components/shared/image-upload';
 import { FORUM_CATEGORIES, type ForumCategorySlug, type ForumTopic } from '@/lib/types';
+import { getCoverStyle } from '@/lib/forum/cover-images';
 import { toast } from 'sonner';
 import { useLanguage } from '@/lib/i18n/context';
 import { ForumModerateControls } from './[id]/moderate-controls';
@@ -243,9 +244,14 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
           )}
           {filteredTopics.map((topic, i) => {
             const cat = getCategoryInfo(topic.category_slug);
+            const cover = getCoverStyle(topic.category_slug);
             return (
               <Link key={topic.id} href={`/forum/${topic.id}`}>
                 <Card className={`group card-hover border-0 shadow-sm rounded-2xl overflow-hidden animate-fade-in-up delay-${((i % 5) + 1) * 100}`}>
+                  {/* Category cover strip */}
+                  <div className={`relative h-2 bg-gradient-to-r ${cover.gradient}`}>
+                    <div className="absolute inset-0 paw-pattern opacity-10" />
+                  </div>
                   <CardContent className="p-5">
                     <div className="flex gap-4">
                       <Avatar className="h-10 w-10 flex-shrink-0 mt-0.5">
