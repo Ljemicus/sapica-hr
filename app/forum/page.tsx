@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { MessageSquare } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { InternalLinkSection } from '@/components/shared/internal-link-section';
+import { LanguageGate } from '@/components/shared/language-gate';
 import { getTopics, getTrendingTopics } from '@/lib/db/content';
 import { SEARCH_DISCOVERY_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
 import { ForumContent } from './forum-content';
@@ -35,12 +36,10 @@ export default async function ForumPage() {
               Forum
             </Badge>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-5 animate-fade-in-up delay-100 font-[var(--font-heading)]">
-              Zajednica{' '}
-              <span className="text-gradient">ljubitelja životinja</span>
+              <LanguageGate hr={<>Zajednica <span className="text-gradient">ljubitelja životinja</span></>} en={<>A community of <span className="text-gradient">animal lovers</span></>} />
             </h1>
             <p className="text-base md:text-lg text-muted-foreground mb-6 animate-fade-in-up delay-200 leading-relaxed max-w-xl mx-auto">
-              Postavite pitanje, podijelite savjet ili ispričajte priču.
-              Ovdje smo jedni za druge — i za naše ljubimce.
+              <LanguageGate hr={<>Postavite pitanje, podijelite savjet ili ispričajte priču. Ovdje smo jedni za druge — i za naše ljubimce.</>} en={<>Ask a question, share advice, or tell a story. We’re here for each other — and for our pets.</>} />
             </p>
           </div>
         </div>

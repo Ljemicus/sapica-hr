@@ -1,5 +1,6 @@
 import { cache } from 'react';
 import Link from 'next/link';
+import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, MessageCircle, Heart, Clock, Pin, Flame } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +13,7 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { CommentForm } from './comment-form';
 import { InternalLinkSection } from '@/components/shared/internal-link-section';
 import { SEARCH_DISCOVERY_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
+import { LOCALE_HEADER } from '@/lib/i18n';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -75,10 +77,26 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
   const { topic, comments, related, category: cat } = await getForumTopicPageData(id);
   if (!topic) notFound();
 
+  const locale = (await headers()).get(LOCALE_HEADER) === 'en' ? 'en' : 'hr';
+  const isEn = locale === 'en';
+  const copy = {
+    forum: isEn ? 'Forum' : 'Forum',
+    back: isEn ? 'Back to forum' : 'Natrag na forum',
+    pinned: isEn ? 'Pinned' : 'Prikvačeno',
+    hot: isEn ? 'Trending' : 'Popularno',
+    commentsCount: isEn ? 'comments' : 'komentara',
+    commentsTitle: isEn ? 'Comments' : 'Komentari',
+    reply: isEn ? 'Reply' : 'Odgovori',
+    related: isEn ? 'Related topics' : 'Slične teme',
+    needHelpEyebrow: isEn ? 'Need concrete help?' : 'Trebate konkretnu pomoć?',
+    needHelpTitle: isEn ? 'From discussion to action' : 'Od rasprave do akcije',
+    needHelpDescription: isEn ? 'If you found what you needed in this topic, here is where to go next.' : 'Ako ste u temi pronašli ono što trebate — evo kako možete dalje.',
+  };
+
   return (
     <div>
       <Breadcrumbs items={[
-        { label: 'Forum', href: '/forum' },
+        { label: copy.forum, href: '/forum' },
         ...(cat ? [{ label: cat.name, href: `/forum?category=${topic.category_slug}` }] : []),
         { label: topic.title, href: `/forum/${id}` },
       ]} />
@@ -90,19 +108,19 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
             <Link href="/forum">
               <Button variant="ghost" className="mb-6 text-gray-600 hover:text-orange-500 hover:bg-orange-50 -ml-3">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Natrag na forum
+                {copy.back}
               </Button>
             </Link>
 
             <div className="flex items-center gap-2 mb-4 flex-wrap">
               {topic.is_pinned && (
                 <Badge className="bg-orange-100 text-orange-700 border-0">
-                  <Pin className="h-3 w-3 mr-1" /> Prikvačeno
+                  <Pin className="h-3 w-3 mr-1" /> {copy.pinned}
                 </Badge>
               )}
               {topic.is_hot && (
                 <Badge className="bg-red-100 text-red-700 border-0">
-                  <Flame className="h-3 w-3 mr-1" /> Popularno
+                  <Flame className="h-3 w-3 mr-1" /> {copy.hot}
                 </Badge>
               )}
               {cat && (
@@ -135,7 +153,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
                   </span>
                   <span className="flex items-center gap-1">
                     <MessageCircle className="h-3 w-3" />
-                    {topic.comment_count} komentara
+                    {topic.comment_count} {copy.commentsCount}
                   </span>
                 </div>
               </div>
@@ -149,7 +167,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
         <div className="max-w-3xl mx-auto">
           <h2 className="font-bold text-lg mb-6 flex items-center gap-2">
             <MessageCircle className="h-5 w-5 text-orange-500" />
-            Komentari ({comments.length})
+            {copy.commentsTitle} ({comments.length})
           </h2>
 
           <div className="space-y-4 mb-10">
@@ -174,7 +192,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
                           {comment.likes}
                         </button>
                         <button className="text-xs text-muted-foreground hover:text-orange-500 transition-colors">
-                          Odgovori
+                          {copy.reply}
                         </button>
                       </div>
                     </div>
@@ -187,7 +205,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
           {/* Reply form */}
           <Card className="border-0 shadow-sm rounded-2xl">
             <CardContent className="p-5">
-              <CommentForm />
+              <CommentForm topicId={id} />
             </CardContent>
           </Card>
 
@@ -196,7 +214,7 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
             <div className="mt-14 pt-10 border-t">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                 <MessageCircle className="h-5 w-5 text-orange-500" />
-                Slične teme
+                {copy.related}
               </h2>
               <div className="space-y-3">
                 {related.map(t => {
@@ -230,9 +248,9 @@ export default async function ForumTopicPage({ params }: { params: Promise<{ id:
       </div>
 
       <InternalLinkSection
-        eyebrow="Trebate konkretnu pomoć?"
-        title="Od rasprave do akcije"
-        description="Ako ste u temi pronašli ono što trebate — evo kako možete dalje."
+        eyebrow={copy.needHelpEyebrow}
+        title={copy.needHelpTitle}
+        description={copy.needHelpDescription}
         items={[
           ...SEARCH_DISCOVERY_LINKS.slice(0, 3),
           ...CONTENT_DISCOVERY_LINKS.slice(0, 2),
