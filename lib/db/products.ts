@@ -1,10 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
-import {
-  getProductBySlug as mockGetBySlug,
-  getProductReviews as mockGetReviews,
-  getRelatedProducts as mockGetRelated,
-} from '@/lib/mock-data';
 import type { Product, ProductCategory, ProductReview } from '@/lib/types';
 
 interface ProductFilters {
@@ -55,7 +50,7 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   if (!isSupabaseConfigured()) {
-    return mockGetBySlug(slug) ?? null;
+    return null;
   }
   try {
     const supabase = await createClient();
@@ -73,7 +68,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
 export async function getProductReviews(productId: string): Promise<ProductReview[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetReviews(productId);
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -102,7 +97,7 @@ export async function getRelatedProducts(
   limit: number = 4
 ): Promise<Product[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetRelated(productId, limit);
+    return [];
   }
   try {
     const supabase = await createClient();
