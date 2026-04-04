@@ -1,13 +1,10 @@
 import type { MetadataRoute } from 'next';
-import { getSitters } from '@/lib/db/sitters';
-import { getGroomers } from '@/lib/db/groomers';
-import { getTrainers } from '@/lib/db/trainers';
 import { getArticles } from '@/lib/db/blog';
 import { getTopics } from '@/lib/db/forum';
 import { getLostPets } from '@/lib/db/lost-pets';
-import { getActiveAdoptionListings } from '@/lib/db/adoption-listings';
 import { shouldIndexSitter, shouldIndexGroomer, shouldIndexTrainer, shouldIndexLostPet, shouldIndexAdoptionCard } from '@/lib/seo/indexability';
 import { appLogger } from '@/lib/logger';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 const DEFAULT_LAST_MODIFIED = new Date('2026-04-01T00:00:00.000Z');
@@ -57,16 +54,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority,
   }));
 
-  // Fetch all dynamic data in parallel
-  const [sitters, groomers, trainers, articles, topics, lostPets, adoptionListings] = await Promise.all([
-    getSitters().catch(() => []),
-    getGroomers().catch(() => []),
-    getTrainers().catch(() => []),
+  const admin = createAdminClient();
+  const [sittersResult, groomersResult, trainersResult, adoptionResult, articles, topics, lostPets] = await Promise.all([
+    admin.from('sitter_profiles').select('user_id, verified, city, services, prices, rating_avg, review_count, bio, created_at, user:users!user_id(id, email, name, role, avatar_url, phone, city, created_at)').eq('verified', true),
+    admin.from('groomers').select('id, name, city, services, prices, rating, review_count, bio, verified, specialization, user_id, phone, email, address, working_hours'),
+    admin.from('trainers').select('id, name, city, specializations, price_per_hour, certificates, rating, review_count, bio, certified, user_id, phone, email, address'),
+    admin.from('adoption_listings').select('id, status, name, species, breed, age_months, gender, size, city, images, is_urgent, published_at').eq('status', 'active').order('published_at', { ascending: false, nullsFirst: false }),
     getArticles().catch(() => []),
     getTopics().catch(() => []),
     getLostPets().catch(() => []),
-    getActiveAdoptionListings().catch(() => []),
   ]);
+
+  const sitters = sittersResult.data || [];
+  const groomers = groomersResult.data || [];
+  const trainers = trainersResult.data || [];
+  const adoptionListings = adoptionResult.data || [];
 
   const sitterEntries: MetadataRoute.Sitemap = sitters
     .filter(shouldIndexSitter)

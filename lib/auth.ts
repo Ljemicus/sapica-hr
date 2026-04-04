@@ -64,8 +64,14 @@ export async function getAuthUser(): Promise<User | null> {
 
   try {
     const supabase = await createClient();
-    const { data: { user: authUser } } = await supabase.auth.getUser();
+    const { data, error } = await supabase.auth.getUser();
 
+    if (error) {
+      appLogger.warn('auth', 'Supabase auth.getUser failed', { message: error.message });
+      return null;
+    }
+
+    const authUser = data.user;
     if (!authUser) return null;
 
     // public.users is the canonical profile source when available
@@ -81,8 +87,10 @@ export async function getAuthUser(): Promise<User | null> {
       userId: authUser.id,
     });
     return buildUserFromAuth(authUser);
-  } catch {
-    appLogger.error('auth', 'Failed to resolve authenticated user');
+  } catch (error) {
+    appLogger.warn('auth', 'Failed to resolve authenticated user', {
+      message: error instanceof Error ? error.message : 'unknown',
+    });
     return null;
   }
 }
