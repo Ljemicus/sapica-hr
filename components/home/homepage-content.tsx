@@ -9,7 +9,6 @@ import {
   PawPrint, ShieldCheck, CreditCard, PhoneCall, BadgeCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/lib/i18n';
@@ -52,30 +51,29 @@ type HowItWorksItem = {
 
 type MainCard = {
   href: string;
-  emoji: string;
+  icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
-  bg: string;
-  hover: string;
-  border: string;
+  accent: string;
+  iconBg: string;
 };
 
 const mainCards: Record<'hr' | 'en', MainCard[]> = {
   hr: [
-    { href: '/pretraga', emoji: '🐾', title: 'Sitteri', description: 'Pouzdani čuvari u vašem gradu', bg: 'from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/20', hover: 'hover:shadow-orange-200/40 dark:hover:shadow-orange-900/20', border: 'border-orange-100 dark:border-orange-900/30' },
-    { href: '/njega', emoji: '✂️', title: 'Grooming', description: 'Kupanje, šišanje i njega', bg: 'from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-950/20', hover: 'hover:shadow-pink-200/40 dark:hover:shadow-pink-900/20', border: 'border-pink-100 dark:border-pink-900/30' },
-    { href: '/dresura', emoji: '🎓', title: 'Školovanje pasa', description: 'Profesionalna obuka i trening', bg: 'from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/20', hover: 'hover:shadow-indigo-200/40 dark:hover:shadow-indigo-900/20', border: 'border-indigo-100 dark:border-indigo-900/30' },
-    { href: '/veterinari', emoji: '🩺', title: 'Veterinari', description: 'Provjerene ordinacije i pomoć', bg: 'from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/20', hover: 'hover:shadow-teal-200/40 dark:hover:shadow-teal-900/20', border: 'border-teal-100 dark:border-teal-900/30' },
-    { href: '/forum', emoji: '💬', title: 'Forum', description: 'Pitanja, iskustva i savjeti zajednice', bg: 'from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/20', hover: 'hover:shadow-violet-200/40 dark:hover:shadow-violet-900/20', border: 'border-violet-100 dark:border-violet-900/30' },
-    { href: '/udomljavanje', emoji: '❤️', title: 'Udomljavanje', description: 'Psi i mačke koji traže dom', bg: 'from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/20', hover: 'hover:shadow-rose-200/40 dark:hover:shadow-rose-900/20', border: 'border-rose-100 dark:border-rose-900/30' },
+    { href: '/pretraga', icon: PawPrint, title: 'Sitteri', description: 'Pouzdani čuvari u vašem gradu', accent: 'group-hover:text-orange-600 dark:group-hover:text-orange-400', iconBg: 'bg-orange-50 dark:bg-orange-950/40 text-orange-500' },
+    { href: '/njega', icon: Scissors, title: 'Grooming', description: 'Kupanje, šišanje i njega', accent: 'group-hover:text-pink-600 dark:group-hover:text-pink-400', iconBg: 'bg-pink-50 dark:bg-pink-950/40 text-pink-500' },
+    { href: '/dresura', icon: GraduationCap, title: 'Školovanje pasa', description: 'Profesionalna obuka i trening', accent: 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400', iconBg: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-500' },
+    { href: '/veterinari', icon: ShieldCheck, title: 'Veterinari', description: 'Provjerene ordinacije i pomoć', accent: 'group-hover:text-teal-600 dark:group-hover:text-teal-400', iconBg: 'bg-teal-50 dark:bg-teal-950/40 text-teal-500' },
+    { href: '/forum', icon: BookOpen, title: 'Forum', description: 'Pitanja, iskustva i savjeti zajednice', accent: 'group-hover:text-violet-600 dark:group-hover:text-violet-400', iconBg: 'bg-violet-50 dark:bg-violet-950/40 text-violet-500' },
+    { href: '/udomljavanje', icon: Heart, title: 'Udomljavanje', description: 'Psi i mačke koji traže dom', accent: 'group-hover:text-rose-600 dark:group-hover:text-rose-400', iconBg: 'bg-rose-50 dark:bg-rose-950/40 text-rose-500' },
   ],
   en: [
-    { href: '/pretraga', emoji: '🐾', title: 'Sitters', description: 'Trusted pet sitters in your city', bg: 'from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/20', hover: 'hover:shadow-orange-200/40 dark:hover:shadow-orange-900/20', border: 'border-orange-100 dark:border-orange-900/30' },
-    { href: '/njega', emoji: '✂️', title: 'Grooming', description: 'Bathing, trimming, and care', bg: 'from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-950/20', hover: 'hover:shadow-pink-200/40 dark:hover:shadow-pink-900/20', border: 'border-pink-100 dark:border-pink-900/30' },
-    { href: '/dresura', emoji: '🎓', title: 'Dog Training', description: 'Professional training and coaching', bg: 'from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/20', hover: 'hover:shadow-indigo-200/40 dark:hover:shadow-indigo-900/20', border: 'border-indigo-100 dark:border-indigo-900/30' },
-    { href: '/veterinari', emoji: '🩺', title: 'Veterinarians', description: 'Trusted clinics and help nearby', bg: 'from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/20', hover: 'hover:shadow-teal-200/40 dark:hover:shadow-teal-900/20', border: 'border-teal-100 dark:border-teal-900/30' },
-    { href: '/forum/en', emoji: '💬', title: 'Forum', description: 'Questions, advice, and community stories', bg: 'from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/20', hover: 'hover:shadow-violet-200/40 dark:hover:shadow-violet-900/20', border: 'border-violet-100 dark:border-violet-900/30' },
-    { href: '/udomljavanje', emoji: '❤️', title: 'Adoption', description: 'Dogs and cats looking for a home', bg: 'from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/20', hover: 'hover:shadow-rose-200/40 dark:hover:shadow-rose-900/20', border: 'border-rose-100 dark:border-rose-900/30' },
+    { href: '/pretraga', icon: PawPrint, title: 'Sitters', description: 'Trusted pet sitters in your city', accent: 'group-hover:text-orange-600 dark:group-hover:text-orange-400', iconBg: 'bg-orange-50 dark:bg-orange-950/40 text-orange-500' },
+    { href: '/njega', icon: Scissors, title: 'Grooming', description: 'Bathing, trimming, and care', accent: 'group-hover:text-pink-600 dark:group-hover:text-pink-400', iconBg: 'bg-pink-50 dark:bg-pink-950/40 text-pink-500' },
+    { href: '/dresura', icon: GraduationCap, title: 'Dog Training', description: 'Professional training and coaching', accent: 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400', iconBg: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-500' },
+    { href: '/veterinari', icon: ShieldCheck, title: 'Veterinarians', description: 'Trusted clinics and help nearby', accent: 'group-hover:text-teal-600 dark:group-hover:text-teal-400', iconBg: 'bg-teal-50 dark:bg-teal-950/40 text-teal-500' },
+    { href: '/forum/en', icon: BookOpen, title: 'Forum', description: 'Questions, advice, and community stories', accent: 'group-hover:text-violet-600 dark:group-hover:text-violet-400', iconBg: 'bg-violet-50 dark:bg-violet-950/40 text-violet-500' },
+    { href: '/udomljavanje', icon: Heart, title: 'Adoption', description: 'Dogs and cats looking for a home', accent: 'group-hover:text-rose-600 dark:group-hover:text-rose-400', iconBg: 'bg-rose-50 dark:bg-rose-950/40 text-rose-500' },
   ],
 };
 
@@ -129,9 +127,9 @@ const copy = {
     servicePlaceholder: 'Usluga (smještaj, šetnja, grooming...)',
     serviceAria: 'Vrsta usluge',
     searchButton: 'Pronađi sittera',
-    trustVerified: 'Provjereni i javni profili',
-    trustReviews: 'Recenzije i jasni detalji usluge',
-    trustPayments: 'Jasna rezervacija i plaćanje',
+    trustVerified: 'Verificirani profili',
+    trustReviews: 'Stvarne recenzije',
+    trustPayments: 'Sigurno plaćanje',
     trustSupport: 'Podrška kad zapne',
     servicesBadge: 'Usluge',
     servicesTitle: 'Sve što vaš ljubimac treba',
@@ -144,7 +142,7 @@ const copy = {
     trustSectionBadge: 'Sigurnost i povjerenje',
     trustSectionTitle: 'Zašto vlasnici biraju PetPark?',
     trustSectionDescription: 'Svaki korak je osmišljen da vaš ljubimac bude siguran, a vi mirni.',
-    trustCard1Title: 'Što znači “Verificiran”?',
+    trustCard1Title: 'Što znači "Verificiran"?',
     trustCard1Body: 'Verificirani profil znači da je prošla osnovna provjera identiteta i profila prije objave na PetParku.',
     trustCard2Title: 'Sigurno plaćanje',
     trustCard2Body: 'Plaćanje se odvija kroz platformu, a za probleme s rezervacijom možete se javiti podršci da zajedno riješimo slučaj.',
@@ -158,14 +156,14 @@ const copy = {
     featuredTitle: 'Pouzdani sitteri koje vlasnici rado biraju',
     featuredDescription: 'Istražite profile s dobrim recenzijama, jasnim opisima usluge i provjerenim podacima.',
     featuredViewAll: 'Pregledaj sve',
-    verifiedProfile: 'Verificiran profil',
+    verifiedProfile: 'Verificiran',
     topChoice: 'Top izbor',
     featuredFallbackBio: 'Pouzdan sitter za pse i mačke u vašem gradu.',
     viewProfile: 'Pogledaj profil',
     citiesBadge: 'Gradovi',
     citiesTitle: 'Pronađi usluge u svom gradu',
     citiesDescription: 'PetPark povezuje vlasnike ljubimaca s lokalnim sitterima, groomerima i trenerima diljem Hrvatske.',
-    cityCardCta: 'Istraži ponudu u gradu',
+    cityCardCta: 'Istraži ponudu',
     finalCtaBadge: 'Spremni za rezervaciju?',
     finalCtaTitle: 'Vaš ljubimac zaslužuje pouzdanu brigu.',
     finalCtaBody: 'Pronađite uslugu za svog ljubimca u nekoliko klikova — od čuvanja i šetnji do groominga, školovanja i udomljavanja.',
@@ -197,10 +195,10 @@ const copy = {
     servicePlaceholder: 'Service (boarding, walking, grooming...)',
     serviceAria: 'Service type',
     searchButton: 'Find a sitter',
-    trustVerified: 'Verified public profiles',
-    trustReviews: 'Reviews and clear service details',
-    trustPayments: 'Straightforward booking and payments',
-    trustSupport: 'Support when things get tricky',
+    trustVerified: 'Verified profiles',
+    trustReviews: 'Real reviews',
+    trustPayments: 'Secure payments',
+    trustSupport: 'Support when needed',
     servicesBadge: 'Services',
     servicesTitle: 'Everything your pet needs',
     servicesDescription: 'From boarding and walks to grooming and training — find the service that fits your pet best.',
@@ -212,28 +210,28 @@ const copy = {
     trustSectionBadge: 'Safety and trust',
     trustSectionTitle: 'Why pet owners choose PetPark',
     trustSectionDescription: 'Every step is designed to keep your pet safe and give you peace of mind.',
-    trustCard1Title: 'What does “Verified” mean?',
+    trustCard1Title: 'What does "Verified" mean?',
     trustCard1Body: 'A verified profile means it passed a basic identity and profile check before being published on PetPark.',
     trustCard2Title: 'Secure payment',
     trustCard2Body: 'Payments are handled through the platform, and if there is a booking issue you can contact support so we can help resolve it together.',
     trustCard3Title: 'Support Mon–Sat 8am–8pm',
     trustCard3Body: 'If something goes sideways, contact support and we will work with you to find the most reasonable solution.',
     trustCard4Title: 'Unfiltered reviews',
-    trustCard4Body: 'Reviews help you quickly assess a profile, communication style, and other owners’ experiences.',
+    trustCard4Body: 'Reviews help you quickly assess a profile, communication style, and other owners\' experiences.',
     trustBannerTitle: 'Support when plans change',
     trustBannerBody: 'If a booking does not go as planned, contact PetPark support. We review each case individually and help find a solution.',
     featuredBadge: 'Popular sitters',
     featuredTitle: 'Trusted sitters owners love to book',
     featuredDescription: 'Browse profiles with strong reviews, clear service descriptions, and verified details.',
     featuredViewAll: 'View all',
-    verifiedProfile: 'Verified profile',
+    verifiedProfile: 'Verified',
     topChoice: 'Top choice',
     featuredFallbackBio: 'A trusted sitter for dogs and cats in your city.',
     viewProfile: 'View profile',
     citiesBadge: 'Cities',
     citiesTitle: 'Find services in your city',
     citiesDescription: 'PetPark connects pet owners with local sitters, groomers, and trainers across Croatia.',
-    cityCardCta: 'Explore local options',
+    cityCardCta: 'Explore options',
     finalCtaBadge: 'Ready to book?',
     finalCtaTitle: 'Your pet deserves reliable care.',
     finalCtaBody: 'Find the right service for your pet in just a few clicks — from boarding and walks to grooming, training, and adoption.',
@@ -254,6 +252,23 @@ const copy = {
   },
 } as const;
 
+/* ── Shared section header ── */
+function SectionHeader({ badge, badgeClass, title, description, align = 'center' }: {
+  badge: string;
+  badgeClass: string;
+  title: string;
+  description: string;
+  align?: 'center' | 'left';
+}) {
+  return (
+    <div className={`mb-16 ${align === 'center' ? 'text-center' : ''}`}>
+      <Badge variant="secondary" className={`mb-5 border-0 rounded-full font-medium text-[13px] tracking-wide uppercase px-4 py-1.5 ${badgeClass}`}>{badge}</Badge>
+      <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-extrabold mb-4 font-[var(--font-heading)] leading-[1.15] tracking-tight">{title}</h2>
+      <p className={`text-muted-foreground text-lg leading-relaxed ${align === 'center' ? 'max-w-2xl mx-auto' : 'max-w-2xl'}`}>{description}</p>
+    </div>
+  );
+}
+
 export function HomePageContent({ featuredSitters, cities, newsletterSlot }: { featuredSitters: FeaturedSitter[]; cities: City[]; newsletterSlot?: React.ReactNode }) {
   const { language } = useLanguage();
   const locale = language === 'en' ? 'en' : 'hr';
@@ -264,81 +279,99 @@ export function HomePageContent({ featuredSitters, cities, newsletterSlot }: { f
 
   return (
     <div>
+      {/* ═══════════════════════════════════════════════════════
+          HERO — Premium, expansive, calm
+      ═══════════════════════════════════════════════════════ */}
       <section className="relative overflow-hidden hero-gradient" aria-label="Hero">
-        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
-        <div className="absolute top-10 left-10 w-80 h-80 bg-orange-300/20 dark:bg-orange-600/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" />
-        <div className="absolute top-40 right-20 w-64 h-64 bg-teal-200/15 dark:bg-teal-600/10 rounded-full mix-blend-multiply filter blur-3xl animate-float delay-200" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-amber-200/20 dark:bg-amber-600/10 rounded-full mix-blend-multiply filter blur-3xl animate-float delay-300" />
-        <div className="container mx-auto px-4 py-20 md:py-32 lg:py-40 relative">
-          <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-6 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/40 border-0 text-sm px-5 py-2 animate-fade-in-up shadow-sm rounded-full font-semibold">
-              <PawPrint className="h-3.5 w-3.5 mr-1.5" />
-              {t.heroBadge}
-            </Badge>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-heading)]">
-              {t.heroTitleStart} <span className="text-orange-500">{t.heroTitleAccent}</span> {t.heroTitleEnd}{' '}
+        {/* Ambient shapes — softer, fewer, more diffuse */}
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-orange-200/20 dark:bg-orange-700/10 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-teal-200/15 dark:bg-teal-700/8 rounded-full blur-[100px]" />
+
+        <div className="container mx-auto px-4 pt-24 pb-8 md:pt-36 md:pb-12 lg:pt-44 lg:pb-16 relative">
+          <div className="max-w-3xl mx-auto text-center">
+            {/* Badge — quieter, more refined */}
+            <div className="mb-8 animate-fade-in-up">
+              <Badge className="bg-orange-100/80 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 hover:bg-orange-100/80 border-0 text-[13px] px-5 py-2 rounded-full font-medium tracking-wide shadow-none">
+                <PawPrint className="h-3.5 w-3.5 mr-2 opacity-70" />
+                {t.heroBadge}
+              </Badge>
+            </div>
+
+            {/* Headline — larger, more refined tracking */}
+            <h1 className="text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.25rem] font-extrabold tracking-[-0.025em] mb-6 animate-fade-in-up delay-100 font-[var(--font-heading)] leading-[1.1]">
+              {t.heroTitleStart}{' '}
+              <span className="text-gradient">{t.heroTitleAccent}</span>
+              <br className="hidden sm:block" />
+              {' '}{t.heroTitleEnd}{' '}
               <span className="text-teal-600 dark:text-teal-400">{t.heroTitlePet}</span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in-up delay-200 leading-relaxed">
+
+            {/* Subline — more air, refined width */}
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-10 max-w-xl mx-auto animate-fade-in-up delay-200 leading-relaxed">
               {t.heroDescription}
             </p>
 
-            <div className="mb-8 animate-fade-in-up delay-200 max-w-2xl mx-auto">
-              <Image
-                src="/hero-pets.jpg"
-                alt={t.heroImageAlt}
-                width={672}
-                height={375}
-                sizes="(max-width: 672px) 100vw, 672px"
-                className="w-full h-44 md:h-60 lg:h-68 object-cover rounded-3xl shadow-xl shadow-orange-200/30 dark:shadow-orange-900/20 border-4 border-white/80 dark:border-white/10"
-                priority
-                fetchPriority="high"
-              />
+            {/* Hero image — premium treatment */}
+            <div className="mb-10 animate-fade-in-up delay-200 max-w-2xl mx-auto">
+              <div className="relative rounded-[1.25rem] overflow-hidden shadow-2xl shadow-black/8 dark:shadow-black/30 ring-1 ring-black/5 dark:ring-white/10">
+                <Image
+                  src="/hero-pets.jpg"
+                  alt={t.heroImageAlt}
+                  width={672}
+                  height={375}
+                  sizes="(max-width: 672px) 100vw, 672px"
+                  className="w-full h-48 md:h-64 lg:h-72 object-cover"
+                  priority
+                  fetchPriority="high"
+                />
+              </div>
             </div>
 
-            <div className="bg-white dark:bg-card rounded-2xl md:rounded-full shadow-2xl shadow-orange-200/30 dark:shadow-black/20 p-2.5 md:p-3 max-w-2xl mx-auto animate-fade-in-up delay-300 border border-orange-100/60 dark:border-orange-800/30">
-              <form action="/pretraga" className="flex flex-col md:flex-row gap-2">
+            {/* Search bar — premium surface */}
+            <div className="bg-white dark:bg-card rounded-2xl md:rounded-full shadow-xl shadow-black/5 dark:shadow-black/30 p-2 md:p-2.5 max-w-2xl mx-auto animate-fade-in-up delay-300 ring-1 ring-black/[0.04] dark:ring-white/10">
+              <form action="/pretraga" className="flex flex-col md:flex-row gap-1.5">
                 <div className="flex-1 relative">
-                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-orange-400" />
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-muted-foreground/50" />
                   <Input
                     name="city"
                     placeholder={t.cityPlaceholder}
-                    className="pl-11 h-12 md:h-13 border-0 bg-transparent focus:ring-0 text-base placeholder:text-muted-foreground/60 rounded-xl md:rounded-full"
+                    className="pl-11 h-12 md:h-[3.25rem] border-0 bg-transparent focus:ring-0 text-[15px] placeholder:text-muted-foreground/50 rounded-xl md:rounded-full"
                     aria-label={t.cityAria}
                   />
                 </div>
-                <div className="hidden md:block w-px bg-border my-2" />
+                <div className="hidden md:block w-px bg-border/60 my-2.5" />
                 <div className="flex-1 relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-teal-500" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-muted-foreground/50" />
                   <Input
                     name="service"
                     placeholder={t.servicePlaceholder}
-                    className="pl-11 h-12 md:h-13 border-0 bg-transparent focus:ring-0 text-base placeholder:text-muted-foreground/60 rounded-xl md:rounded-full"
+                    className="pl-11 h-12 md:h-[3.25rem] border-0 bg-transparent focus:ring-0 text-[15px] placeholder:text-muted-foreground/50 rounded-xl md:rounded-full"
                     aria-label={t.serviceAria}
                   />
                 </div>
-                <Button type="submit" size="lg" aria-label={t.searchButton} className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 h-12 md:h-13 px-8 rounded-xl md:rounded-full btn-hover shadow-lg shadow-orange-300/40 dark:shadow-orange-900/30 text-base font-semibold">
+                <Button type="submit" size="lg" aria-label={t.searchButton} className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 h-12 md:h-[3.25rem] px-7 rounded-xl md:rounded-full shadow-md shadow-orange-500/20 text-[15px] font-semibold transition-all duration-200">
                   <Search className="h-4 w-4 mr-2" />
                   {t.searchButton}
                 </Button>
               </form>
             </div>
 
-            <div className="flex items-center justify-center gap-4 sm:gap-6 mt-8 text-sm text-muted-foreground animate-fade-in-up delay-400 flex-wrap">
+            {/* Trust signals — quieter, more elegant */}
+            <div className="flex items-center justify-center gap-6 sm:gap-8 mt-10 text-[13px] text-muted-foreground/70 animate-fade-in-up delay-400 flex-wrap">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-teal-500" />
+                <ShieldCheck className="h-4 w-4 text-teal-500/70" />
                 <span>{t.trustVerified}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                <Star className="h-4 w-4 text-amber-400/70 fill-amber-400/70" />
                 <span>{t.trustReviews}</span>
               </div>
               <div className="hidden sm:flex items-center gap-2">
-                <CreditCard className="h-4 w-4 text-blue-500" />
+                <CreditCard className="h-4 w-4 text-blue-500/70" />
                 <span>{t.trustPayments}</span>
               </div>
               <div className="hidden sm:flex items-center gap-2">
-                <PhoneCall className="h-4 w-4 text-rose-400" />
+                <PhoneCall className="h-4 w-4 text-rose-400/70" />
                 <span>{t.trustSupport}</span>
               </div>
             </div>
@@ -346,183 +379,204 @@ export function HomePageContent({ featuredSitters, cities, newsletterSlot }: { f
         </div>
       </section>
 
-      <section className="py-4 relative z-10" aria-label={locale === 'en' ? 'Quick access' : 'Brzi pristup'}>
+      {/* ═══════════════════════════════════════════════════════
+          QUICK ACCESS — Refined icon cards, no emojis
+      ═══════════════════════════════════════════════════════ */}
+      <section className="py-6 relative z-10" aria-label={locale === 'en' ? 'Quick access' : 'Brzi pristup'}>
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 -mt-8 md:-mt-12">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 -mt-8 md:-mt-12">
             {localizedMainCards.map((card) => (
               <Link key={card.href} href={card.href}>
-                <Card className={`group card-hover cursor-pointer h-full border ${card.border} shadow-sm ${card.hover} hover:shadow-lg rounded-2xl overflow-hidden animate-fade-in-up bg-gradient-to-br ${card.bg}`}>
-                  <CardContent className="p-5 md:p-6 text-center flex flex-col items-center gap-2">
-                    <span className="text-3xl md:text-4xl group-hover:scale-110 transition-transform duration-200 block">{card.emoji}</span>
-                    <h3 className="font-bold text-base font-[var(--font-heading)] group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">{card.title}</h3>
-                    <p className="text-xs text-muted-foreground leading-snug hidden sm:block">{card.description}</p>
-                  </CardContent>
-                </Card>
+                <div className={`group relative bg-white dark:bg-card rounded-2xl p-5 md:p-6 text-center flex flex-col items-center gap-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/[0.06] dark:hover:shadow-black/20 ring-1 ring-black/[0.04] dark:ring-white/[0.08] shadow-sm`}>
+                  <div className={`w-11 h-11 rounded-xl ${card.iconBg} flex items-center justify-center transition-transform duration-200 group-hover:scale-110`}>
+                    <card.icon className="h-5 w-5" />
+                  </div>
+                  <h3 className={`font-bold text-[15px] font-[var(--font-heading)] transition-colors duration-200 ${card.accent}`}>{card.title}</h3>
+                  <p className="text-xs text-muted-foreground/70 leading-snug hidden sm:block">{card.description}</p>
+                </div>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16 md:py-24" aria-label={locale === 'en' ? 'Services' : 'Usluge'}>
+      {/* ═══════════════════════════════════════════════════════
+          SERVICES — Premium editorial grid
+      ═══════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-32" aria-label={locale === 'en' ? 'Services' : 'Usluge'}>
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-semibold">{t.servicesBadge}</Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">{t.servicesTitle}</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t.servicesDescription}</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {localizedServices.map((service, i) => (
+          <SectionHeader
+            badge={t.servicesBadge}
+            badgeClass="text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30"
+            title={t.servicesTitle}
+            description={t.servicesDescription}
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+            {localizedServices.map((service) => (
               <Link key={service.type} href={`/pretraga?service=${service.type}`}>
-                <Card className={`group overflow-hidden card-hover border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${Math.min((i + 1) * 100, 700)}`}>
-                  <div className="relative h-44 overflow-hidden">
-                    <Image src={service.image} alt={service.title} fill loading="lazy" decoding="async" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                    <div className={`absolute top-4 left-4 inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br ${service.color} text-white shadow-lg`}>
-                      <service.icon className="h-6 w-6" />
+                <div className="group relative bg-white dark:bg-card rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/[0.06] dark:hover:shadow-black/20 ring-1 ring-black/[0.04] dark:ring-white/[0.08] shadow-sm">
+                  <div className="relative h-48 overflow-hidden">
+                    <Image src={service.image} alt={service.title} fill loading="lazy" decoding="async" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover group-hover:scale-[1.03] transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+                    <div className={`absolute top-4 left-4 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br ${service.color} text-white shadow-lg shadow-black/10`}>
+                      <service.icon className="h-5 w-5" />
                     </div>
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="text-xl font-extrabold font-[var(--font-heading)]">{service.title}</h3>
+                      <h3 className="text-lg font-bold font-[var(--font-heading)] drop-shadow-sm">{service.title}</h3>
                     </div>
                   </div>
-                  <CardContent className="p-5">
+                  <div className="p-5">
                     <p className="text-sm text-muted-foreground leading-relaxed">{service.description}</p>
-                    <div className="mt-4 flex items-center text-sm font-semibold text-orange-600 dark:text-orange-400">
-                      {t.serviceCta} <ChevronRight className="h-4 w-4 ml-1" />
+                    <div className="mt-4 flex items-center text-sm font-medium text-orange-600 dark:text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      {t.serviceCta} <ChevronRight className="h-4 w-4 ml-0.5" />
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-warm-section relative overflow-hidden" aria-label={locale === 'en' ? 'How it works' : 'Kako funkcionira'}>
-        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+      {/* ═══════════════════════════════════════════════════════
+          HOW IT WORKS — Clean horizontal layout
+      ═══════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-32 bg-warm-section relative overflow-hidden" aria-label={locale === 'en' ? 'How it works' : 'Kako funkcionira'}>
         <div className="container mx-auto px-4 relative">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4 text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 border-0 rounded-full font-semibold">{t.howItWorksBadge}</Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">{t.howItWorksTitle}</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t.howItWorksDescription}</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {localizedHowItWorks.map((item, i) => (
-              <Card key={item.step} className={`relative overflow-hidden border-0 shadow-sm rounded-2xl card-hover animate-fade-in-up delay-${(i + 1) * 100}`}>
-                <CardContent className="p-6 md:p-7">
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.color} text-white flex items-center justify-center shadow-lg mb-5`}>
+          <SectionHeader
+            badge={t.howItWorksBadge}
+            badgeClass="text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30"
+            title={t.howItWorksTitle}
+            description={t.howItWorksDescription}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
+            {localizedHowItWorks.map((item) => (
+              <div key={item.step} className="relative text-center md:text-left">
+                {/* Step number — large, subtle watermark */}
+                <div className="absolute -top-2 right-4 md:right-auto md:left-0 text-[5rem] font-extrabold font-[var(--font-heading)] text-foreground/[0.04] dark:text-foreground/[0.06] leading-none select-none pointer-events-none">
+                  {item.step}
+                </div>
+                <div className="relative">
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.color} text-white flex items-center justify-center shadow-lg shadow-black/10 mb-6 mx-auto md:mx-0`}>
                     <item.icon className="h-6 w-6" />
                   </div>
-                  <Badge className="mb-3 bg-accent text-accent-foreground rounded-full border-0">{t.stepLabel} {item.step}</Badge>
+                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">{t.stepLabel} {item.step}</p>
                   <h3 className="text-xl font-bold mb-3 font-[var(--font-heading)]">{item.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{item.description}</p>
-                </CardContent>
-              </Card>
+                  <p className="text-muted-foreground leading-relaxed text-[15px]">{item.description}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-warm-section relative overflow-hidden" aria-label={locale === 'en' ? 'Safety and trust' : 'Sigurnost i povjerenje'}>
-        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
-        <div className="container mx-auto px-4 relative">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4 text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 border-0 rounded-full font-semibold">{t.trustSectionBadge}</Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">{t.trustSectionTitle}</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t.trustSectionDescription}</p>
+      {/* ═══════════════════════════════════════════════════════
+          TRUST & SAFETY — Elevated card surfaces
+      ═══════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-32" aria-label={locale === 'en' ? 'Safety and trust' : 'Sigurnost i povjerenje'}>
+        <div className="container mx-auto px-4">
+          <SectionHeader
+            badge={t.trustSectionBadge}
+            badgeClass="text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30"
+            title={t.trustSectionTitle}
+            description={t.trustSectionDescription}
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 max-w-5xl mx-auto mb-14">
+            {[
+              { icon: BadgeCheck, color: 'text-teal-600 dark:text-teal-400', bg: 'bg-teal-50 dark:bg-teal-950/40', title: t.trustCard1Title, body: t.trustCard1Body },
+              { icon: CreditCard, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/40', title: t.trustCard2Title, body: t.trustCard2Body },
+              { icon: PhoneCall, color: 'text-rose-500 dark:text-rose-400', bg: 'bg-rose-50 dark:bg-rose-950/40', title: t.trustCard3Title, body: t.trustCard3Body },
+              { icon: Star, color: 'text-amber-500 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-950/40', title: t.trustCard4Title, body: t.trustCard4Body },
+            ].map((card) => (
+              <div key={card.title} className="bg-white dark:bg-card rounded-2xl p-6 md:p-7 ring-1 ring-black/[0.04] dark:ring-white/[0.08] flex flex-col gap-4 shadow-sm">
+                <div className={`w-11 h-11 rounded-xl ${card.bg} flex items-center justify-center`}>
+                  <card.icon className={`h-5 w-5 ${card.color}`} />
+                </div>
+                <h3 className="font-bold text-[15px] font-[var(--font-heading)]">{card.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{card.body}</p>
+              </div>
+            ))}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto mb-12">
-            <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-teal-100/60 dark:border-teal-900/30 flex flex-col gap-3 animate-fade-in-up">
-              <div className="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-950/40 flex items-center justify-center">
-                <BadgeCheck className="h-6 w-6 text-teal-600" />
-              </div>
-              <h3 className="font-bold text-base font-[var(--font-heading)]">{t.trustCard1Title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{t.trustCard1Body}</p>
-            </div>
-            <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-blue-100/60 dark:border-blue-900/30 flex flex-col gap-3 animate-fade-in-up delay-100">
-              <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center">
-                <CreditCard className="h-6 w-6 text-blue-600" />
-              </div>
-              <h3 className="font-bold text-base font-[var(--font-heading)]">{t.trustCard2Title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{t.trustCard2Body}</p>
-            </div>
-            <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-rose-100/60 dark:border-rose-900/30 flex flex-col gap-3 animate-fade-in-up delay-200">
-              <div className="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center">
-                <PhoneCall className="h-6 w-6 text-rose-500" />
-              </div>
-              <h3 className="font-bold text-base font-[var(--font-heading)]">{t.trustCard3Title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{t.trustCard3Body}</p>
-            </div>
-            <div className="bg-white dark:bg-card rounded-2xl p-6 shadow-sm border border-amber-100/60 dark:border-amber-900/30 flex flex-col gap-3 animate-fade-in-up delay-300">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center">
-                <Star className="h-6 w-6 text-amber-500 fill-amber-500" />
-              </div>
-              <h3 className="font-bold text-base font-[var(--font-heading)]">{t.trustCard4Title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{t.trustCard4Body}</p>
-            </div>
-          </div>
-          <div className="max-w-3xl mx-auto bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl p-6 md:p-8 text-white text-center shadow-lg shadow-teal-200/40 dark:shadow-teal-900/20">
-            <Shield className="h-8 w-8 mx-auto mb-3 opacity-90" />
-            <h3 className="text-xl font-extrabold mb-2 font-[var(--font-heading)]">{t.trustBannerTitle}</h3>
-            <p className="text-white/85 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
+
+          {/* Trust banner — refined gradient, less saturated */}
+          <div className="max-w-3xl mx-auto bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl p-7 md:p-10 text-white text-center shadow-xl shadow-teal-500/15 dark:shadow-teal-900/20">
+            <Shield className="h-7 w-7 mx-auto mb-4 opacity-80" />
+            <h3 className="text-xl font-bold mb-2 font-[var(--font-heading)]">{t.trustBannerTitle}</h3>
+            <p className="text-white/80 text-[15px] leading-relaxed max-w-lg mx-auto">
               {t.trustBannerBody}
             </p>
           </div>
         </div>
       </section>
 
+      {/* ═══════════════════════════════════════════════════════
+          FEATURED SITTERS — Premium profile cards
+      ═══════════════════════════════════════════════════════ */}
       {featuredSitters.length > 0 && (
-        <section className="py-16 md:py-24" aria-label={locale === 'en' ? 'Popular sitters' : 'Popularni sitteri'}>
+        <section className="py-20 md:py-32 bg-warm-section" aria-label={locale === 'en' ? 'Popular sitters' : 'Popularni sitteri'}>
           <div className="container mx-auto px-4">
-            <div className="flex items-end justify-between gap-4 mb-10">
+            <div className="flex items-end justify-between gap-4 mb-14">
               <div>
-                <Badge variant="secondary" className="mb-4 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-semibold">{t.featuredBadge}</Badge>
-                <h2 className="text-3xl md:text-4xl font-extrabold mb-3 font-[var(--font-heading)]">{t.featuredTitle}</h2>
-                <p className="text-muted-foreground text-lg max-w-2xl">{t.featuredDescription}</p>
+                <Badge variant="secondary" className="mb-5 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 border-0 rounded-full font-medium text-[13px] tracking-wide uppercase px-4 py-1.5">{t.featuredBadge}</Badge>
+                <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-extrabold mb-3 font-[var(--font-heading)] leading-[1.15] tracking-tight">{t.featuredTitle}</h2>
+                <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed">{t.featuredDescription}</p>
               </div>
               <Link href="/pretraga" className="hidden md:inline-flex">
-                <Button variant="outline" className="rounded-full">
+                <Button variant="outline" className="rounded-full ring-1 ring-black/[0.08] dark:ring-white/[0.12] border-0 shadow-none hover:bg-accent px-6">
                   {t.featuredViewAll}
-                  <ChevronRight className="h-4 w-4 ml-2" />
+                  <ChevronRight className="h-4 w-4 ml-1.5" />
                 </Button>
               </Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {featuredSitters.map((sitter, i) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+              {featuredSitters.map((sitter) => (
                 <Link key={sitter.id} href={`/sitter/${sitter.id}`}>
-                  <Card className={`overflow-hidden border-0 shadow-sm rounded-2xl card-hover animate-fade-in-up delay-${Math.min((i + 1) * 100, 700)}`}>
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between gap-3 mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className={`h-12 w-12 rounded-2xl bg-gradient-to-br ${sitter.gradient} text-white font-bold flex items-center justify-center text-lg shadow-lg`}>
+                  <div className="group bg-white dark:bg-card rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/[0.06] dark:hover:shadow-black/20 ring-1 ring-black/[0.04] dark:ring-white/[0.08] shadow-sm">
+                    <div className="p-6 md:p-7">
+                      {/* Header row */}
+                      <div className="flex items-start justify-between gap-3 mb-5">
+                        <div className="flex items-center gap-3.5">
+                          <div className={`h-12 w-12 rounded-full bg-gradient-to-br ${sitter.gradient} text-white font-bold flex items-center justify-center text-lg shadow-md`}>
                             {sitter.initial}
                           </div>
                           <div>
-                            <h3 className="font-bold text-lg leading-tight font-[var(--font-heading)]">{sitter.name}</h3>
-                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                            <h3 className="font-bold text-[17px] leading-tight font-[var(--font-heading)]">{sitter.name}</h3>
+                            <div className="flex items-center gap-1.5 text-sm text-muted-foreground/70 mt-0.5">
                               <MapPin className="h-3.5 w-3.5" />
                               {sitter.city}
                             </div>
                           </div>
                         </div>
-                        {sitter.verified && <Badge className="bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-50">{t.verifiedProfile}</Badge>}
+                        {sitter.verified && (
+                          <Badge className="bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 border-0 text-xs font-medium px-2.5 py-1 rounded-lg">
+                            {t.verifiedProfile}
+                          </Badge>
+                        )}
                       </div>
-                      <div className="flex items-center gap-4 text-sm mb-4">
-                        <div className="flex items-center gap-1">
+
+                      {/* Rating */}
+                      <div className="flex items-center gap-3 text-sm mb-4">
+                        <div className="flex items-center gap-1.5">
                           <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                           <span className="font-semibold">{sitter.rating?.toFixed(1) || '—'}</span>
-                          <span className="text-muted-foreground">({sitter.reviews || 0})</span>
+                          <span className="text-muted-foreground/60">({sitter.reviews || 0})</span>
                         </div>
-                        {sitter.superhost && <Badge variant="secondary" className="rounded-full">{t.topChoice}</Badge>}
+                        {sitter.superhost && (
+                          <Badge variant="secondary" className="rounded-full text-xs font-medium">{t.topChoice}</Badge>
+                        )}
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-5">{sitter.bio || t.featuredFallbackBio}</p>
-                      <div className="flex items-center justify-end pt-4 border-t border-border/60">
-                        <span className="text-sm font-semibold text-orange-600 dark:text-orange-400 inline-flex items-center gap-1">
-                          {t.viewProfile} <ChevronRight className="h-4 w-4" />
+
+                      {/* Bio */}
+                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 mb-6">{sitter.bio || t.featuredFallbackBio}</p>
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-end pt-5 border-t border-border/40">
+                        <span className="text-sm font-medium text-orange-600 dark:text-orange-400 inline-flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                          {t.viewProfile} <ArrowRight className="h-3.5 w-3.5" />
                         </span>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 </Link>
               ))}
             </div>
@@ -530,59 +584,64 @@ export function HomePageContent({ featuredSitters, cities, newsletterSlot }: { f
         </section>
       )}
 
-      <section className="py-16 md:py-24" aria-label={locale === 'en' ? 'Cities' : 'Gradovi'}>
+      {/* ═══════════════════════════════════════════════════════
+          CITIES — Taller, cinematic cards
+      ═══════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-32" aria-label={locale === 'en' ? 'Cities' : 'Gradovi'}>
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4 text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 border-0 rounded-full font-semibold">{t.citiesBadge}</Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">{t.citiesTitle}</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t.citiesDescription}</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <SectionHeader
+            badge={t.citiesBadge}
+            badgeClass="text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30"
+            title={t.citiesTitle}
+            description={t.citiesDescription}
+          />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
             {cities.map((city) => (
               <Link key={city.name} href={city.landing ?? `/pretraga?city=${encodeURIComponent(city.name)}`}>
-                <Card className="group overflow-hidden rounded-2xl border-0 shadow-sm card-hover">
-                  <CardContent className="p-0">
-                    <div className="h-32 md:h-36 relative flex items-end p-4 overflow-hidden">
-                      <Image src={city.image} alt={city.name} fill loading="lazy" decoding="async" sizes="(min-width: 1024px) 16vw, (min-width: 768px) 30vw, 46vw" className="object-cover group-hover:scale-110 transition-transform duration-500" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/5" />
-                      <div className="relative">
-                        <h3 className="text-white font-extrabold text-lg leading-none drop-shadow-sm font-[var(--font-heading)]">{city.name}</h3>
-                        <p className="text-white/90 text-sm mt-1 font-medium">{t.cityCardCta}</p>
-                      </div>
+                <div className="group relative rounded-2xl overflow-hidden ring-1 ring-black/[0.04] dark:ring-white/[0.08] shadow-sm hover:shadow-lg hover:shadow-black/[0.06] dark:hover:shadow-black/20 transition-all duration-300 hover:-translate-y-0.5">
+                  <div className="h-40 md:h-48 relative flex items-end p-4 overflow-hidden">
+                    <Image src={city.image} alt={city.name} fill loading="lazy" decoding="async" sizes="(min-width: 1024px) 16vw, (min-width: 768px) 30vw, 46vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                    <div className="relative">
+                      <h3 className="text-white font-bold text-lg leading-none drop-shadow-sm font-[var(--font-heading)]">{city.name}</h3>
+                      <p className="text-white/70 text-xs mt-1.5 font-medium">{t.cityCardCta}</p>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Newsletter slot */}
       {newsletterSlot}
 
-      <section className="py-16 md:py-24 relative overflow-hidden" aria-label={locale === 'en' ? 'Final call to action' : 'Završni poziv na akciju'}>
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-white to-teal-50 dark:from-orange-950/20 dark:via-background dark:to-teal-950/20" />
-        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
+      {/* ═══════════════════════════════════════════════════════
+          FINAL CTA — Calm, editorial
+      ═══════════════════════════════════════════════════════ */}
+      <section className="py-24 md:py-36 relative overflow-hidden" aria-label={locale === 'en' ? 'Final call to action' : 'Završni poziv na akciju'}>
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-50/80 via-white to-teal-50/60 dark:from-orange-950/10 dark:via-background dark:to-teal-950/10" />
         <div className="container mx-auto px-4 relative">
-          <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-6 bg-orange-100 text-orange-700 hover:bg-orange-100 border-0 rounded-full font-semibold dark:bg-orange-900/30 dark:text-orange-300">
+          <div className="max-w-3xl mx-auto text-center">
+            <Badge className="mb-8 bg-orange-100/70 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 hover:bg-orange-100/70 border-0 rounded-full font-medium text-[13px] tracking-wide uppercase px-4 py-1.5 shadow-none">
               {t.finalCtaBadge}
             </Badge>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-5 font-[var(--font-heading)]">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-5 font-[var(--font-heading)] tracking-tight leading-[1.1]">
               {t.finalCtaTitle}
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
               {t.finalCtaBody}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/pretraga">
-                <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white px-8 rounded-xl shadow-lg shadow-orange-300/30">
+                <Button size="lg" className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 text-white px-8 rounded-xl shadow-lg shadow-orange-500/20 text-[15px] font-semibold transition-all duration-200">
                   {t.finalCtaPrimary}
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="ml-2 h-4.5 w-4.5" />
                 </Button>
               </Link>
               <Link href="/postani-sitter">
-                <Button size="lg" variant="outline" className="px-8 rounded-xl">
+                <Button size="lg" variant="outline" className="px-8 rounded-xl ring-1 ring-black/[0.08] dark:ring-white/[0.12] border-0 shadow-none text-[15px]">
                   {t.finalCtaSecondary}
                 </Button>
               </Link>
@@ -591,50 +650,53 @@ export function HomePageContent({ featuredSitters, cities, newsletterSlot }: { f
         </div>
       </section>
 
-      <section className="py-16 md:py-24 relative overflow-hidden" aria-label={locale === 'en' ? 'Call for sitters' : 'Poziv za sittere'}>
+      {/* ═══════════════════════════════════════════════════════
+          SITTER RECRUITMENT — Premium gradient section
+      ═══════════════════════════════════════════════════════ */}
+      <section className="py-24 md:py-36 relative overflow-hidden" aria-label={locale === 'en' ? 'Call for sitters' : 'Poziv za sittere'}>
         <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-orange-500 to-teal-500" />
-        <div className="absolute inset-0 paw-pattern opacity-[0.06]" />
-        <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-y-1/2 -translate-x-1/2 opacity-[0.06]" />
-        <div className="absolute bottom-0 right-0 w-72 h-72 bg-white rounded-full translate-y-1/2 translate-x-1/2 opacity-[0.06]" />
+        {/* Subtle ambient shapes */}
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-white/[0.04] rounded-full -translate-y-1/2 -translate-x-1/3 blur-2xl" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-white/[0.04] rounded-full translate-y-1/2 translate-x-1/3 blur-2xl" />
+
         <div className="container mx-auto px-4 text-center relative">
           <div className="max-w-2xl mx-auto">
-            <Badge className="mb-6 bg-white/20 text-white hover:bg-white/20 border-0 text-sm px-4 py-1.5 rounded-full font-semibold">
-              <Heart className="h-3.5 w-3.5 mr-1.5 fill-white" />
+            <Badge className="mb-8 bg-white/15 text-white hover:bg-white/15 border-0 text-[13px] px-5 py-2 rounded-full font-medium tracking-wide shadow-none">
+              <Heart className="h-3.5 w-3.5 mr-2 fill-white opacity-80" />
               {t.sitterCtaBadge}
             </Badge>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-8 text-white leading-tight font-[var(--font-heading)]">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold mb-8 text-white leading-[1.1] tracking-tight font-[var(--font-heading)]">
               {t.sitterCtaTitleTop}<br />{t.sitterCtaTitleBottom}
             </h2>
-            <p className="text-base md:text-lg text-white/80 mb-8 max-w-lg mx-auto leading-relaxed">
+            <p className="text-base md:text-lg text-white/75 mb-10 max-w-lg mx-auto leading-relaxed">
               {t.sitterCtaBody}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/registracija?role=sitter">
-                <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 shadow-xl shadow-black/10 text-base px-8 btn-hover font-bold rounded-xl">
+                <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 shadow-xl shadow-black/10 text-[15px] px-8 font-bold rounded-xl transition-all duration-200">
                   {t.sitterCtaPrimary}
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="ml-2 h-4.5 w-4.5" />
                 </Button>
               </Link>
               <Link href="/pretraga">
-                <Button size="lg" variant="outline" className="border-2 border-white/40 text-white hover:bg-white/10 text-base px-8 rounded-xl">
+                <Button size="lg" variant="outline" className="border-2 border-white/30 text-white hover:bg-white/10 text-[15px] px-8 rounded-xl transition-all duration-200">
                   {t.sitterCtaSecondary}
                 </Button>
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-14 max-w-3xl mx-auto text-white/85">
-              <div className="animate-fade-in-up">
-                <p className="text-sm uppercase tracking-[0.2em] text-white/60 mb-2">{t.sitterStat1}</p>
-                <p className="text-base font-semibold">{t.sitterStat1Body}</p>
-              </div>
-              <div className="animate-fade-in-up delay-200">
-                <p className="text-sm uppercase tracking-[0.2em] text-white/60 mb-2">{t.sitterStat2}</p>
-                <p className="text-base font-semibold">{t.sitterStat2Body}</p>
-              </div>
-              <div className="animate-fade-in-up delay-400">
-                <p className="text-sm uppercase tracking-[0.2em] text-white/60 mb-2">{t.sitterStat3}</p>
-                <p className="text-base font-semibold">{t.sitterStat3Body}</p>
-              </div>
+            {/* Stats — refined treatment */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-16 max-w-3xl mx-auto">
+              {[
+                { label: t.sitterStat1, body: t.sitterStat1Body },
+                { label: t.sitterStat2, body: t.sitterStat2Body },
+                { label: t.sitterStat3, body: t.sitterStat3Body },
+              ].map((stat) => (
+                <div key={stat.label} className="text-white/80">
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/50 mb-2">{stat.label}</p>
+                  <p className="text-[15px] font-medium leading-relaxed">{stat.body}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
