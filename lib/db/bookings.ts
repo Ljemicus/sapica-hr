@@ -86,82 +86,6 @@ function toOwnerHistoryBooking(row: OwnerHistoryRow): OwnerHistoryBooking {
   };
 }
 
-function pickMockBookingFields(bookings: Booking[], fields: 'walk-selector'): WalkSelectorBooking[];
-function pickMockBookingFields(bookings: Booking[], fields: 'owner-history'): OwnerHistoryBooking[];
-function pickMockBookingFields(bookings: Booking[], fields?: 'full'): Booking[];
-function pickMockBookingFields(bookings: Booking[], fields: BookingFields = 'full'): Booking[] | OwnerHistoryBooking[] | WalkSelectorBooking[] {
-  if (fields === 'full') return bookings;
-
-  if (fields === 'walk-selector') {
-    return bookings.map((booking) =>
-      toWalkSelectorBooking({
-        id: booking.id,
-        owner_id: booking.owner_id,
-        sitter_id: booking.sitter_id,
-        pet_id: booking.pet_id,
-        service_type: booking.service_type,
-        start_date: booking.start_date,
-        end_date: booking.end_date,
-        status: booking.status,
-        total_price: booking.total_price,
-        note: booking.note,
-        created_at: booking.created_at,
-        pet: booking.pet
-          ? {
-              id: booking.pet.id,
-              owner_id: booking.pet.owner_id,
-              name: booking.pet.name,
-              species: booking.pet.species,
-              breed: null,
-              age: null,
-              weight: null,
-              special_needs: null,
-              photo_url: null,
-              created_at: booking.pet.created_at,
-            }
-          : undefined,
-      })
-    );
-  }
-
-  return bookings.map((booking) =>
-    toOwnerHistoryBooking({
-      id: booking.id,
-      owner_id: booking.owner_id,
-      sitter_id: booking.sitter_id,
-      pet_id: booking.pet_id,
-      service_type: booking.service_type,
-      start_date: booking.start_date,
-      end_date: booking.end_date,
-      status: booking.status,
-      total_price: booking.total_price,
-      note: booking.note,
-      created_at: booking.created_at,
-      sitter: booking.sitter
-        ? {
-            id: booking.sitter.id,
-            name: booking.sitter.name,
-            avatar_url: booking.sitter.avatar_url,
-          }
-        : undefined,
-      pet: booking.pet
-        ? {
-            id: booking.pet.id,
-            owner_id: booking.pet.owner_id,
-            name: booking.pet.name,
-            species: booking.pet.species,
-            breed: null,
-            age: null,
-            weight: null,
-            special_needs: null,
-            photo_url: null,
-            created_at: booking.pet.created_at,
-          }
-        : undefined,
-    })
-  );
-}
-
 export async function getBookings(
   userId: string,
   role: 'owner' | 'sitter',
@@ -251,18 +175,9 @@ export async function getBookings(
 
 type AllBookingFields = 'full' | 'admin-list';
 
-function attachMockBookingRelations(bookings: Booking[]): Booking[] {
-  return bookings.map((booking) => ({
-    ...booking,
-    owner: getUserById(booking.owner_id),
-    sitter: getUserById(booking.sitter_id),
-    pet: mockPets.find((pet) => pet.id === booking.pet_id),
-  }));
-}
-
 export async function getAllBookings(fields: AllBookingFields = 'full'): Promise<Booking[]> {
   if (!isSupabaseConfigured()) {
-    return attachMockBookingRelations(mockBookings);
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -282,7 +197,7 @@ export async function getAllBookings(fields: AllBookingFields = 'full'): Promise
 
 export async function getBooking(id: string): Promise<Booking | null> {
   if (!isSupabaseConfigured()) {
-    return mockBookings.find((b) => b.id === id) ?? null;
+    return null;
   }
   try {
     const supabase = await createClient();
@@ -302,12 +217,7 @@ export async function createBooking(
   bookingData: Omit<Booking, 'id' | 'created_at' | 'owner' | 'sitter' | 'pet' | 'sitter_profile'>
 ): Promise<Booking | null> {
   if (!isSupabaseConfigured()) {
-    const mockBooking: Booking = {
-      ...bookingData,
-      id: `mock-${Date.now()}`,
-      created_at: new Date().toISOString(),
-    };
-    return mockBooking;
+    return null;
   }
   try {
     const supabase = await createClient();
