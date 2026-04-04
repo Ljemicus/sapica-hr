@@ -11,6 +11,8 @@ import { appLogger } from './logger';
 import { dispatchAlert, type Alert } from './alerting';
 import { isDemoBookingId } from './demo-data';
 
+type AuditBookingRow = { id: string; created_at: string; is_demo?: boolean | null };
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -148,13 +150,13 @@ const checkStaleBookings: CheckFn = async (db) => {
   const cutoff = hoursAgo(BOOKING_PENDING_STALE_HOURS);
   const { data } = await db
     .from('bookings')
-    .select('id, created_at')
+    .select('id, created_at, is_demo')
     .eq('status', 'pending')
     .lt('created_at', cutoff)
     .order('created_at', { ascending: true })
     .limit(50);
 
-  const realRows = (data ?? []).filter((row) => !isDemoBookingId(row.id));
+  const realRows = ((data ?? []) as AuditBookingRow[]).filter((row) => row.is_demo !== true && !isDemoBookingId(row.id));
   const count = realRows.length;
   if (!count) return null;
 

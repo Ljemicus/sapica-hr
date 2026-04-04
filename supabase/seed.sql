@@ -121,11 +121,11 @@ INSERT INTO public.pets (id, owner_id, name, species, breed, age, weight, specia
 ('00055555-5555-5555-5555-555555555555', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Buddy', 'dog', 'Zlatni retriver', 4, 32.0, NULL, '/images/pets/buddy.jpg');
 
 -- Bookings
-INSERT INTO public.bookings (id, owner_id, sitter_id, pet_id, service_type, start_date, end_date, status, total_price, note) VALUES
-('00001111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', '00011111-1111-1111-1111-111111111111', 'boarding', '2026-03-20', '2026-03-25', 'completed', 125.00, 'Rex voli šetnje ujutro'),
-('00002222-2222-2222-2222-222222222222', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '22222222-2222-2222-2222-222222222222', '00033333-3333-3333-3333-333333333333', 'boarding', '2026-03-28', '2026-04-02', 'accepted', 150.00, NULL),
-('00003333-3333-3333-3333-333333333333', '99999999-9999-9999-9999-999999999999', '33333333-3333-3333-3333-333333333333', '00011111-1111-1111-1111-111111111111', 'walking', '2026-03-22', '2026-03-22', 'completed', 8.00, NULL),
-('00004444-4444-4444-4444-444444444444', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '66666666-6666-6666-6666-666666666666', '00055555-5555-5555-5555-555555555555', 'daycare', '2026-04-01', '2026-04-01', 'pending', 20.00, 'Buddy se dobro slaže s drugim psima');
+INSERT INTO public.bookings (id, owner_id, sitter_id, pet_id, service_type, start_date, end_date, status, total_price, note, is_demo) VALUES
+('00001111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', '00011111-1111-1111-1111-111111111111', 'boarding', '2026-03-20', '2026-03-25', 'completed', 125.00, 'Rex voli šetnje ujutro', FALSE),
+('00002222-2222-2222-2222-222222222222', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '22222222-2222-2222-2222-222222222222', '00033333-3333-3333-3333-333333333333', 'boarding', '2026-03-28', '2026-04-02', 'accepted', 150.00, NULL, FALSE),
+('00003333-3333-3333-3333-333333333333', '99999999-9999-9999-9999-999999999999', '33333333-3333-3333-3333-333333333333', '00011111-1111-1111-1111-111111111111', 'walking', '2026-03-22', '2026-03-22', 'completed', 8.00, NULL, FALSE),
+('00004444-4444-4444-4444-444444444444', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '66666666-6666-6666-6666-666666666666', '00055555-5555-5555-5555-555555555555', 'daycare', '2026-04-01', '2026-04-01', 'pending', 20.00, 'Buddy se dobro slaže s drugim psima', TRUE);
 
 -- Reviews
 INSERT INTO public.reviews (booking_id, reviewer_id, reviewee_id, rating, comment) VALUES

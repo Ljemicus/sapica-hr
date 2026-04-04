@@ -81,6 +81,7 @@ export interface Booking {
   total_price: number;
   payment_status?: PaymentStatus;
   note: string | null;
+  is_demo?: boolean;
   created_at: string;
   owner?: User;
   sitter?: User;
