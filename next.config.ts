@@ -24,6 +24,7 @@ const nextConfig: NextConfig = {
       { source: '/groomers', destination: '/njega', permanent: true },
       { source: '/trainers', destination: '/dresura', permanent: true },
       // Duplicate content cleanup — canonical is /blog and /njega
+      { source: '/zajednica', destination: '/blog', permanent: true },
       { source: '/zajednica/:slug', destination: '/blog/:slug', permanent: true },
       { source: '/grooming', destination: '/njega', permanent: true },
     ];

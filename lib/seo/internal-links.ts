@@ -43,7 +43,7 @@ export function getCityServiceLinks(city: SupportedCity): InternalLinkItem[] {
       badge: 'Dresura',
     },
     {
-      href: '/zajednica',
+      href: '/blog',
       title: 'Savjeti iz zajednice',
       description: 'Vodiči i članci koji pomažu prije rezervacije ili odabira usluge.',
       badge: 'Sadržaj',
@@ -107,7 +107,7 @@ export const TRAINING_HUB_LINKS: InternalLinkItem[] = [
 
 export const CONTENT_DISCOVERY_LINKS: InternalLinkItem[] = [
   {
-    href: '/zajednica',
+    href: '/blog',
     title: 'Zajednica i vodiči',
     description: 'Članci i savjeti za vlasnike koji istražuju opcije prije odabira usluge.',
     badge: 'Blog',
@@ -218,7 +218,7 @@ export function getArticleActionLinks(category: BlogCategory): InternalLinkItem[
           badge: 'Pretraga',
         },
         {
-          href: '/zajednica',
+          href: '/blog',
           title: 'Još vodiča iz zajednice',
           description: 'Nastavite čitati teme koje vas zanimaju.',
           badge: 'Blog',
