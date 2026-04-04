@@ -58,9 +58,17 @@ export async function getTrustEligibilityByUserId(userId?: string | null): Promi
 }
 
 export async function getTrustEligibilityForGroomer(groomer: Groomer): Promise<TrustEligibilityResult> {
-  return getTrustEligibilityByUserId(groomer.user_id ?? null);
+  if (!groomer.user_id) {
+    return { eligible: groomer.verified === true };
+  }
+
+  return getTrustEligibilityByUserId(groomer.user_id);
 }
 
 export async function getTrustEligibilityForTrainer(trainer: Trainer): Promise<TrustEligibilityResult> {
-  return getTrustEligibilityByUserId(trainer.user_id ?? null);
+  if (!trainer.user_id) {
+    return { eligible: trainer.certified === true };
+  }
+
+  return getTrustEligibilityByUserId(trainer.user_id);
 }
