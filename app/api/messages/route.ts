@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { getConversation, getMessages, sendMessage } from '@/lib/db';
+import { createClient } from '@/lib/supabase/server';
 import { appLogger } from '@/lib/logger';
 import { messageSchema } from '@/lib/validations';
 
@@ -37,6 +38,26 @@ export async function POST(request: Request) {
 
   if (parsed.data.receiver_id === user.id) {
     return apiError({ status: 400, code: 'SELF_MESSAGE_NOT_ALLOWED', message: 'Ne možeš poslati poruku sam sebi.' });
+  }
+
+  const supabase = await createClient();
+  const { data: receiver, error: receiverError } = await supabase
+    .from('users')
+    .select('id')
+    .eq('id', parsed.data.receiver_id)
+    .maybeSingle();
+
+  if (receiverError) {
+    appLogger.error('messages.send', 'Receiver lookup failed', {
+      senderId: user.id,
+      receiverId: parsed.data.receiver_id,
+      reason: receiverError.message,
+    });
+    return apiError({ status: 500, code: 'MESSAGE_RECEIVER_LOOKUP_FAILED', message: 'Failed to validate receiver' });
+  }
+
+  if (!receiver) {
+    return apiError({ status: 404, code: 'MESSAGE_RECEIVER_NOT_FOUND', message: 'Primatelj nije pronađen.' });
   }
 
   const message = await sendMessage({

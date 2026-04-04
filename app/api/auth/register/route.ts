@@ -1,3 +1,4 @@
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { ensureSitterProfile, syncUserProfile, type AuthProfileSupabaseLike } from '@/lib/auth-profile';
 import { apiError } from '@/lib/api-errors';
@@ -99,10 +100,55 @@ export async function POST(request: Request) {
     }
   }
 
+  let session = data.session;
+  let needsEmailConfirmation = !session;
+
+  if (!session) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (supabaseUrl && supabaseAnonKey && serviceRoleKey) {
+      try {
+        const adminClient = createSupabaseClient(supabaseUrl, serviceRoleKey);
+        const { error: confirmError } = await adminClient.auth.admin.updateUserById(data.user.id, {
+          email_confirm: true,
+        });
+
+        if (!confirmError) {
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+            email: parsed.data.email,
+            password: parsed.data.password,
+          });
+
+          if (!signInError && signInData.session) {
+            session = signInData.session;
+            needsEmailConfirmation = false;
+          } else {
+            appLogger.warn('auth.register', 'Post-signup auto sign-in failed after admin confirmation', {
+              userId: data.user.id,
+              reason: signInError?.message || 'unknown',
+            });
+          }
+        } else {
+          appLogger.warn('auth.register', 'Admin email confirmation failed after sign up', {
+            userId: data.user.id,
+            reason: confirmError.message || 'unknown',
+          });
+        }
+      } catch (error) {
+        appLogger.warn('auth.register', 'Automatic confirmation flow threw after sign up', {
+          userId: data.user.id,
+          reason: error instanceof Error ? error.message : 'unknown',
+        });
+      }
+    }
+  }
+
   const response: RegisterSuccessResponse = {
     user: data.user,
-    session: data.session,
-    needsEmailConfirmation: !data.session,
+    session,
+    needsEmailConfirmation,
     role: parsed.data.role,
   };
 
