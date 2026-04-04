@@ -67,7 +67,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
         <div className="lg:col-span-2 space-y-6">
           {/* Profile Header */}
           <Card className="overflow-hidden border-0 shadow-sm">
-            <div className={`h-32 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
+            <div className={`h-36 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
               {profile.photos?.[0] ? (
                 <>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -80,6 +80,10 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                 </>
               ) : null}
               <div className="absolute inset-0 paw-pattern opacity-10" />
+              <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between text-white/90 text-sm font-medium">
+                <span>{profile.city}</span>
+                <span className="rounded-full bg-white/90 px-3 py-1 text-orange-600 shadow-sm">Provjeren sitter</span>
+              </div>
             </div>
             <CardContent className="p-6 -mt-16 relative">
               <div className="flex flex-col sm:flex-row gap-6">
@@ -263,6 +267,17 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                   već od {Math.min(...Object.values(profile.prices).filter((p): p is number => typeof p === 'number' && p > 0))}&euro;
                 </span>
                 <span className="text-muted-foreground block text-sm mt-1">ovisno o usluzi i terminu</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-xl bg-orange-50 px-3 py-2 text-center">
+                  <div className="text-lg font-bold text-orange-600">{profile.review_count}</div>
+                  <div className="text-xs text-muted-foreground">recenzija</div>
+                </div>
+                <div className="rounded-xl bg-teal-50 px-3 py-2 text-center">
+                  <div className="text-lg font-bold text-teal-600">{profile.experience_years}</div>
+                  <div className="text-xs text-muted-foreground">god. iskustva</div>
+                </div>
               </div>
 
               {user && user.role === 'owner' ? (

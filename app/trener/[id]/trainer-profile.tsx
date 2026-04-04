@@ -87,8 +87,12 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
         <div className="lg:col-span-2 space-y-6">
           {/* Profile Header */}
           <Card className="overflow-hidden border-0 shadow-sm">
-            <div className={`h-32 bg-gradient-to-br ${gradient} relative`}>
+            <div className={`h-36 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
               <div className="absolute inset-0 paw-pattern opacity-10" />
+              <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between text-white/90 text-sm font-medium">
+                <span>{trainer.city}</span>
+                <span className="rounded-full bg-white/90 px-3 py-1 text-indigo-600 shadow-sm">Trener pasa</span>
+              </div>
             </div>
             <CardContent className="p-6 -mt-16 relative">
               <div className="flex flex-col sm:flex-row gap-6">
@@ -346,6 +350,17 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
               <div className="text-center py-2">
                 <span className="text-4xl font-extrabold text-gradient">{trainer.price_per_hour}&euro;</span>
                 <span className="text-muted-foreground block text-sm mt-1">po satu</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-xl bg-indigo-50 px-3 py-2 text-center">
+                  <div className="text-lg font-bold text-indigo-600">{programs.length}</div>
+                  <div className="text-xs text-muted-foreground">programa</div>
+                </div>
+                <div className="rounded-xl bg-amber-50 px-3 py-2 text-center">
+                  <div className="text-lg font-bold text-amber-600">{trainer.review_count}</div>
+                  <div className="text-xs text-muted-foreground">recenzija</div>
+                </div>
               </div>
 
               {/* Quick stats */}
