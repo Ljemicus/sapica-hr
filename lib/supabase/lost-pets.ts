@@ -21,6 +21,7 @@ function mapDbToLostPet(row: Record<string, unknown>): LostPet {
     location_lng: Number(row.location_lng) || 15.982,
     date_lost: row.date_lost as string,
     status: row.status as LostPet['status'],
+    hidden: (row.hidden as boolean) || false,
     description: (row.description as string) || '',
     special_marks: (row.special_marks as string) || '',
     has_microchip: (row.has_microchip as boolean) || false,

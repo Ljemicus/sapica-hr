@@ -8,6 +8,7 @@ interface LostPetFilters {
   status?: LostPetStatus;
   limit?: number;
   fields?: 'full' | 'homepage-card';
+  includeHidden?: boolean;
 }
 
 function mapDbToLostPet(row: Record<string, unknown>): LostPet {
@@ -27,6 +28,7 @@ function mapDbToLostPet(row: Record<string, unknown>): LostPet {
     location_lng: Number(row.location_lng) || 15.982,
     date_lost: row.date_lost as string,
     status: row.status as LostPet['status'],
+    hidden: (row.hidden as boolean) || false,
     description: (row.description as string) || '',
     special_marks: (row.special_marks as string) || '',
     has_microchip: (row.has_microchip as boolean) || false,
@@ -51,6 +53,7 @@ export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> 
       .select('*')
       .order('created_at', { ascending: false });
 
+    if (!filters?.includeHidden) query = query.eq('hidden', false);
     if (filters?.city) query = query.eq('city', filters.city);
     if (filters?.species) query = query.eq('species', filters.species);
     if (filters?.status) query = query.eq('status', filters.status);
@@ -79,5 +82,59 @@ export async function getLostPet(id: string): Promise<LostPet | null> {
     return mapDbToLostPet(data as unknown as Record<string, unknown>);
   } catch {
     return null;
+  }
+}
+
+export async function updateLostPetStatus(id: string, status: LostPetStatus): Promise<LostPet | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .update({ status })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error || !data) return null;
+    return mapDbToLostPet(data as unknown as Record<string, unknown>);
+  } catch {
+    return null;
+  }
+}
+
+export async function updateLostPetHidden(id: string, hidden: boolean): Promise<LostPet | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .update({ hidden })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error || !data) return null;
+    return mapDbToLostPet(data as unknown as Record<string, unknown>);
+  } catch {
+    return null;
+  }
+}
+
+export async function deleteLostPet(id: string): Promise<boolean> {
+  if (!isSupabaseConfigured()) return false;
+
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from('lost_pets')
+      .delete()
+      .eq('id', id);
+
+    return !error;
+  } catch {
+    return false;
   }
 }

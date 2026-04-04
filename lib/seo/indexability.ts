@@ -122,6 +122,8 @@ export function shouldIndexAdoptionCard(
  * - Description must be meaningful
  */
 export function shouldIndexLostPet(pet: LostPet): boolean {
+  // Hidden by admin — must not be indexed
+  if (pet.hidden) return false;
   // Resolved cases — no longer actionable, don't waste crawl budget
   if (pet.status === 'found') return false;
 

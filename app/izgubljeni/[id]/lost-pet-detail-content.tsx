@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +16,7 @@ import type { LostPet } from '@/lib/types';
 import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS } from '@/lib/types';
 import { toast } from 'sonner';
 import { useLanguage } from '@/lib/i18n/context';
+import { useAuth } from '@/contexts/auth-context';
 
 const MapComponent = dynamic(() => import('./map-component'), { ssr: false });
 
@@ -35,6 +36,7 @@ function daysAgo(dateStr: string, isEn: boolean) {
 
 export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const { language } = useLanguage();
+  const { user } = useAuth();
   const isEn = language === 'en';
   const locale = isEn ? 'en-GB' : 'hr-HR';
   const statusLabels = isEn ? { lost: 'Still missing', found: 'Found!' } : LOST_PET_STATUS_LABELS;
@@ -46,6 +48,63 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const [sightingDescription, setSightingDescription] = useState('');
   const [submittingSighting, setSubmittingSighting] = useState(false);
   const [localSightings, setLocalSightings] = useState(pet.sightings);
+  const [localStatus, setLocalStatus] = useState(pet.status);
+  const [localHidden, setLocalHidden] = useState(pet.hidden);
+  const [actionLoading, setActionLoading] = useState(false);
+
+  const isOwner = user?.id === pet.user_id;
+  const isAdmin = user?.role === 'admin';
+
+  const handleMarkFound = async () => {
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/lost-pets/${pet.id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'found' }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.message || (isEn ? 'Failed to update status' : 'Greška pri ažuriranju statusa'));
+      } else {
+        setLocalStatus('found');
+        toast.success(isEn ? 'Marked as found! Great news!' : 'Označeno kao pronađeno! Sretne vijesti!');
+      }
+    } catch {
+      toast.error(isEn ? 'Failed to update status' : 'Greška pri ažuriranju statusa');
+    }
+    setActionLoading(false);
+  };
+
+  const handleAdminAction = async (action: 'hide' | 'unhide' | 'delete') => {
+    if (action === 'delete' && !confirm(isEn ? 'Are you sure you want to delete this listing?' : 'Jeste li sigurni da želite obrisati ovaj oglas?')) {
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const res = await fetch('/api/admin/lost-pets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ petId: pet.id, action }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.message || (isEn ? 'Action failed' : 'Akcija nije uspjela'));
+      } else if (action === 'delete') {
+        toast.success(isEn ? 'Listing deleted' : 'Oglas je obrisan');
+        window.location.href = '/izgubljeni';
+        return;
+      } else {
+        setLocalHidden(action === 'hide');
+        toast.success(action === 'hide'
+          ? (isEn ? 'Listing hidden' : 'Oglas je sakriven')
+          : (isEn ? 'Listing restored' : 'Oglas je vraćen'));
+      }
+    } catch {
+      toast.error(isEn ? 'Action failed' : 'Akcija nije uspjela');
+    }
+    setActionLoading(false);
+  };
 
   const handleSightingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,8 +140,18 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      {/* Hidden banner for moderated listings */}
+      {localHidden && (
+        <div className="bg-yellow-600 text-white py-3 px-4 text-center">
+          <div className="container mx-auto flex items-center justify-center gap-2 text-sm md:text-base font-bold">
+            <EyeOff className="h-5 w-5" />
+            {isEn ? 'This listing is hidden by an administrator' : 'Ovaj oglas je sakriven od strane administratora'}
+          </div>
+        </div>
+      )}
+
       {/* Urgent banner for lost pets */}
-      {pet.status === 'lost' && (
+      {localStatus === 'lost' && !localHidden && (
         <div className="bg-red-600 text-white py-3 px-4 text-center animate-pulse">
           <div className="container mx-auto flex items-center justify-center gap-2 text-sm md:text-base font-bold">
             <AlertTriangle className="h-5 w-5" />
@@ -113,11 +182,13 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               </div>
               <Badge className={`absolute top-4 left-4 text-base font-bold px-4 py-2 ${
-                pet.status === 'lost'
-                  ? 'bg-red-500 text-white'
-                  : 'bg-green-500 text-white'
+                localHidden
+                  ? 'bg-yellow-500 text-white'
+                  : localStatus === 'lost'
+                    ? 'bg-red-500 text-white'
+                    : 'bg-green-500 text-white'
               }`}>
-                {pet.status === 'lost' ? '🔴' : '🟢'} {statusLabels[pet.status]}
+                {localHidden ? <><EyeOff className="h-4 w-4 inline mr-1" />{isEn ? 'Hidden' : 'Skriveno'}</> : localStatus === 'lost' ? <>{'🔴'} {statusLabels[localStatus]}</> : <>{'🟢'} {statusLabels[localStatus]}</>}
               </Badge>
               <div className="absolute bottom-4 left-4 right-4">
                 <h1 className="text-3xl md:text-4xl font-extrabold text-white drop-shadow-lg mb-1">{pet.name}</h1>
@@ -128,7 +199,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
             </div>
 
             {/* Share Buttons - PROMINENT */}
-            <Card className={`border-2 ${pet.status === 'lost' ? 'border-red-200 bg-red-50/50' : 'border-green-200 bg-green-50/50'}`}>
+            <Card className={`border-2 ${localStatus === 'lost' ? 'border-red-200 bg-red-50/50' : 'border-green-200 bg-green-50/50'}`}>
               <CardContent className="p-4 md:p-6">
                 <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
                   <MessageCircle className="h-5 w-5 text-red-500" />
@@ -212,7 +283,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
             )}
 
             {/* Sighting Report Form */}
-            {pet.status === 'lost' && (
+            {localStatus === 'lost' && !localHidden && (
               <Card className="border-2 border-amber-300 bg-amber-50/50">
                 <CardContent className="p-4 md:p-6">
                   {!showSightingForm ? (
@@ -307,6 +378,66 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                   <h3 className="font-semibold mb-3">{isEn ? 'Share' : 'Podijeli'}</h3>
                   <ShareButtons petName={pet.name} city={pet.city} petId={pet.id} size="sm" />
                 </div>
+
+                {/* Owner actions */}
+                {isOwner && localStatus === 'lost' && (
+                  <div className="pt-4 border-t">
+                    <h3 className="font-semibold mb-3 flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      {isEn ? 'Your listing' : 'Vaš oglas'}
+                    </h3>
+                    <Button
+                      onClick={handleMarkFound}
+                      disabled={actionLoading}
+                      className="w-full bg-green-500 hover:bg-green-600 text-white font-medium"
+                    >
+                      {actionLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
+                      {isEn ? 'Mark as found' : 'Označi kao pronađeno'}
+                    </Button>
+                  </div>
+                )}
+
+                {/* Admin actions */}
+                {isAdmin && (
+                  <div className="pt-4 border-t">
+                    <h3 className="font-semibold mb-3 flex items-center gap-2">
+                      <ShieldAlert className="h-4 w-4 text-orange-500" />
+                      {isEn ? 'Admin actions' : 'Admin akcije'}
+                    </h3>
+                    <div className="space-y-2">
+                      {localHidden ? (
+                        <Button
+                          onClick={() => handleAdminAction('unhide')}
+                          disabled={actionLoading}
+                          variant="outline"
+                          className="w-full border-green-200 text-green-700 hover:bg-green-50"
+                        >
+                          {actionLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Eye className="h-4 w-4 mr-2" />}
+                          {isEn ? 'Unhide listing' : 'Prikaži oglas'}
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={() => handleAdminAction('hide')}
+                          disabled={actionLoading}
+                          variant="outline"
+                          className="w-full border-yellow-200 text-yellow-700 hover:bg-yellow-50"
+                        >
+                          {actionLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <EyeOff className="h-4 w-4 mr-2" />}
+                          {isEn ? 'Hide listing' : 'Sakrij oglas'}
+                        </Button>
+                      )}
+                      <Button
+                        onClick={() => handleAdminAction('delete')}
+                        disabled={actionLoading}
+                        variant="outline"
+                        className="w-full border-red-200 text-red-700 hover:bg-red-50"
+                      >
+                        {actionLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Trash2 className="h-4 w-4 mr-2" />}
+                        {isEn ? 'Delete listing' : 'Obriši oglas'}
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

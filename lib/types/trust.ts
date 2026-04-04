@@ -33,7 +33,11 @@ export type AuditAction =
   | 'provider_restored'
   | 'application_status_updated'
   | 'sitter_verification_updated'
-  | 'public_status_updated';
+  | 'public_status_updated'
+  | 'lost_pet_hidden'
+  | 'lost_pet_unhidden'
+  | 'lost_pet_deleted'
+  | 'lost_pet_marked_found';
 
 export interface ProviderVerification {
   id: string;
