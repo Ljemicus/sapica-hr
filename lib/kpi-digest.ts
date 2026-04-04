@@ -8,6 +8,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { appLogger } from './logger';
+import { isDemoBookingId } from './demo-data';
 
 export interface KpiSnapshot {
   period: { from: string; to: string };
@@ -38,6 +39,12 @@ function createServiceClient() {
   return createClient(url, key);
 }
 
+type KpiBookingRow = { id: string; is_demo?: boolean | null };
+
+function countRealBookings(rows: KpiBookingRow[] | null | undefined): number {
+  return (rows ?? []).filter((row) => row.is_demo !== true && !isDemoBookingId(row.id)).length;
+}
+
 export async function collectKpis(): Promise<KpiSnapshot> {
   const db = createServiceClient();
   const now = new Date();
@@ -60,10 +67,10 @@ export async function collectKpis(): Promise<KpiSnapshot> {
   ] = await Promise.all([
     db.from('users').select('id', { count: 'exact', head: true }).gte('created_at', since),
     db.from('users').select('id', { count: 'exact', head: true }),
-    db.from('bookings').select('id', { count: 'exact', head: true }).gte('created_at', since),
-    db.from('bookings').select('id', { count: 'exact', head: true }).eq('status', 'completed').gte('created_at', since),
-    db.from('bookings').select('id', { count: 'exact', head: true }).eq('status', 'cancelled').gte('created_at', since),
-    db.from('bookings').select('id', { count: 'exact', head: true }).in('status', ['pending', 'accepted']),
+    db.from('bookings').select('id, is_demo').gte('created_at', since),
+    db.from('bookings').select('id, is_demo').eq('status', 'completed').gte('created_at', since),
+    db.from('bookings').select('id, is_demo').eq('status', 'cancelled').gte('created_at', since),
+    db.from('bookings').select('id, is_demo').in('status', ['pending', 'accepted']),
     db.from('payments').select('amount, platform_fee').eq('status', 'succeeded').gte('created_at', since),
     db.from('provider_applications').select('id', { count: 'exact', head: true }).eq('status', 'pending_verification'),
     db.from('provider_applications').select('id', { count: 'exact', head: true }).eq('status', 'active'),
@@ -90,10 +97,10 @@ export async function collectKpis(): Promise<KpiSnapshot> {
       total: totalUsersRes.count ?? 0,
     },
     bookings: {
-      created: newBookingsRes.count ?? 0,
-      completed: completedBookingsRes.count ?? 0,
-      cancelled: cancelledBookingsRes.count ?? 0,
-      totalActive: activeBookingsRes.count ?? 0,
+      created: countRealBookings(newBookingsRes.data as KpiBookingRow[] | undefined),
+      completed: countRealBookings(completedBookingsRes.data as KpiBookingRow[] | undefined),
+      cancelled: countRealBookings(cancelledBookingsRes.data as KpiBookingRow[] | undefined),
+      totalActive: countRealBookings(activeBookingsRes.data as KpiBookingRow[] | undefined),
     },
     revenue: {
       totalCents,
