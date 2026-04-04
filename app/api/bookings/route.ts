@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { getBookings, createBooking, getSitter, getPet } from '@/lib/db';
+import { dispatchAlert } from '@/lib/alerting';
 import { appLogger } from '@/lib/logger';
 import { bookingSchema } from '@/lib/validations';
 import { SERVICE_LABELS, type ServiceType } from '@/lib/types';
@@ -98,6 +99,13 @@ export async function POST(request: Request) {
       sitterId: sitter_id,
       petId: pet_id,
     });
+    dispatchAlert({
+      severity: 'P1',
+      service: 'bookings.create',
+      description: 'Booking creation failed (DB write returned null)',
+      value: `owner=${user.id} sitter=${sitter_id}`,
+      owner: 'bookings',
+    }).catch(() => {});
     return apiError({ status: 500, code: 'BOOKING_CREATE_FAILED', message: 'Failed to create booking' });
   }
 

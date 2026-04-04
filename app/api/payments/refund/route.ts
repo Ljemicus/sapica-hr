@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { appLogger } from '@/lib/logger';
+import { dispatchAlert } from '@/lib/alerting';
 import { getAuthUser } from '@/lib/auth';
 import { createRefund, formatCurrency } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
@@ -172,6 +173,13 @@ export async function POST(request: Request) {
     });
   } catch (err) {
     appLogger.error('payments.refund', 'Refund creation failed', { error: String(err) });
+    dispatchAlert({
+      severity: 'P1',
+      service: 'payments.refund',
+      description: 'Stripe refund creation failed — user expecting money back',
+      value: `booking=${bookingId}, amount=${refundAmountCents}`,
+      owner: 'platform',
+    });
     return NextResponse.json(
       { error: 'Greška pri povratu sredstava. Pokušajte ponovo.' },
       { status: 500 }

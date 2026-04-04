@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { appLogger } from '@/lib/logger';
+import { dispatchAlert } from '@/lib/alerting';
 import { getAuthUser } from '@/lib/auth';
 import { createDashboardLink } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
@@ -36,7 +37,14 @@ export async function POST() {
     const url = await createDashboardLink(profile.stripe_account_id);
     return NextResponse.json({ url });
   } catch (err) {
-    appLogger.error('payments.dashboard-link', 'Stripe error', { error: String(err) });
+    appLogger.error('payments.dashboard-link', 'Stripe error', { error: String(err), userId: user.id });
+    dispatchAlert({
+      severity: 'P3',
+      service: 'payments.dashboard-link',
+      description: 'Stripe dashboard link generation failed — sitter cannot access payout dashboard',
+      value: `user=${user.id}, account=${profile.stripe_account_id}`,
+      owner: 'platform',
+    });
     return NextResponse.json(
       { error: 'Greška pri generiranju linka.' },
       { status: 500 }

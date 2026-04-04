@@ -3,6 +3,7 @@ import { apiError } from '@/lib/api-errors';
 import type { LoginSuccessResponse } from '@/lib/auth-responses';
 import { parseAuthRole } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
+import { dispatchAlert } from '@/lib/alerting';
 import { appLogger } from '@/lib/logger';
 import { rateLimit } from '@/lib/rate-limit';
 import { loginSchema } from '@/lib/validations';
@@ -32,6 +33,13 @@ export async function POST(request: Request) {
 
   if (error || !data.user) {
     appLogger.warn('auth.login', 'Login failed', { email: parsed.data.email });
+    dispatchAlert({
+      severity: 'P2',
+      service: 'auth.login',
+      description: 'Login authentication failure',
+      value: parsed.data.email,
+      owner: 'auth',
+    }).catch(() => {});
     return apiError({ status: 401, code: 'INVALID_CREDENTIALS', message: 'Pogrešan email ili lozinka.' });
   }
 

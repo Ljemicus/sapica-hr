@@ -5,6 +5,7 @@ import { getStripe } from '@/lib/stripe';
 import { calculateSitterPayout, calculatePlatformFee, formatCurrency } from '@/lib/payment';
 import { SERVICE_LABELS, type ServiceType } from '@/lib/types';
 import { appLogger } from '@/lib/logger';
+import { dispatchAlert } from '@/lib/alerting';
 import { sendEmail } from '@/lib/email';
 import { paymentConfirmationEmail, sitterPaymentNotificationEmail } from '@/lib/email-templates';
 import type Stripe from 'stripe';
@@ -33,6 +34,12 @@ export async function POST(request: Request) {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch {
     appLogger.error('payments.webhook', 'Signature verification failed');
+    dispatchAlert({
+      severity: 'P1',
+      service: 'payments.webhook',
+      description: 'Stripe signature verification failed — possible tampering or misconfigured secret',
+      owner: 'platform',
+    });
     return apiError({ status: 400, code: 'INVALID_SIGNATURE', message: 'Invalid signature' });
   }
 
@@ -108,6 +115,13 @@ export async function POST(request: Request) {
             sessionId: session.id,
             reason: bookingUpdateError.message,
           });
+          dispatchAlert({
+            severity: 'P1',
+            service: 'payments.webhook',
+            description: 'Failed to update booking after successful Stripe checkout',
+            value: `booking=${bookingId}`,
+            owner: 'platform',
+          });
           break;
         }
 
@@ -130,6 +144,13 @@ export async function POST(request: Request) {
             bookingId,
             sessionId: session.id,
             reason: paymentInsertError.message,
+          });
+          dispatchAlert({
+            severity: 'P2',
+            service: 'payments.webhook',
+            description: 'Failed to insert payment record — booking updated but payment log missing',
+            value: `booking=${bookingId}`,
+            owner: 'platform',
           });
         }
 
@@ -205,6 +226,22 @@ export async function POST(request: Request) {
           paymentIntentId: pi.id,
           reason: paymentFailedUpdateError.message,
         });
+        dispatchAlert({
+          severity: 'P1',
+          service: 'payments.webhook',
+          description: 'Failed to mark booking as payment_failed in DB after Stripe failure event',
+          value: `booking=${bookingId}, pi=${pi.id}`,
+          owner: 'platform',
+        });
+      } else {
+        // Payment failed is noteworthy even when DB update succeeds
+        dispatchAlert({
+          severity: 'P2',
+          service: 'payments.webhook',
+          description: 'Payment intent failed for booking',
+          value: `booking=${bookingId}, pi=${pi.id}`,
+          owner: 'platform',
+        });
       }
       break;
     }
@@ -235,6 +272,13 @@ export async function POST(request: Request) {
       appLogger.error('payments.webhook', 'Dispute created', {
         disputeId: dispute.id,
         amount: dispute.amount || 0,
+      });
+      dispatchAlert({
+        severity: 'P0',
+        service: 'payments.webhook',
+        description: 'Stripe dispute opened — immediate action required',
+        value: `dispute=${dispute.id}, amount=${dispute.amount || 0}`,
+        owner: 'founder',
       });
       break;
     }

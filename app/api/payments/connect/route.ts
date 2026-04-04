@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { appLogger } from '@/lib/logger';
+import { dispatchAlert } from '@/lib/alerting';
 import { getAuthUser } from '@/lib/auth';
 import { createConnectAccount, createAccountLink, getAccountStatus } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
@@ -93,7 +94,14 @@ export async function POST() {
 
     return NextResponse.json({ onboardingUrl, accountId });
   } catch (err) {
-    appLogger.error('payments.connect', 'Connect account creation failed', { error: String(err) });
+    appLogger.error('payments.connect', 'Connect account creation failed', { error: String(err), userId: user.id });
+    dispatchAlert({
+      severity: 'P2',
+      service: 'payments.connect',
+      description: 'Stripe Connect account creation/link failed — sitter cannot onboard',
+      value: `user=${user.id}`,
+      owner: 'platform',
+    });
     return NextResponse.json(
       { error: 'Greška pri kreiranju Stripe računa. Pokušajte ponovo.' },
       { status: 500 }

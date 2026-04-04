@@ -3,6 +3,7 @@ import { ensureSitterProfile, syncUserProfile, type AuthProfileSupabaseLike } fr
 import { apiError } from '@/lib/api-errors';
 import type { RegisterSuccessResponse } from '@/lib/auth-responses';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
+import { dispatchAlert } from '@/lib/alerting';
 import { appLogger } from '@/lib/logger';
 import { registerSchema } from '@/lib/validations';
 import { rateLimit } from '@/lib/rate-limit';
@@ -54,6 +55,13 @@ export async function POST(request: Request) {
       email: parsed.data.email,
       reason: error?.message || 'unknown',
     });
+    dispatchAlert({
+      severity: 'P3',
+      service: 'auth.register',
+      description: 'User registration failure',
+      value: error?.message || 'unknown',
+      owner: 'auth',
+    }).catch(() => {});
     return apiError({ status: 400, code: 'REGISTER_FAILED', message: error?.message || 'Registracija nije uspjela' });
   }
 

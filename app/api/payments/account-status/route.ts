@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { appLogger } from '@/lib/logger';
 import { getAuthUser } from '@/lib/auth';
 import { getAccountStatus } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
@@ -28,7 +29,11 @@ export async function GET() {
   try {
     const status = await getAccountStatus(profile.stripe_account_id);
     return NextResponse.json({ connected: true, ...status });
-  } catch {
+  } catch (err) {
+    appLogger.warn('payments.account-status', 'Stripe status lookup failed, using cached profile', {
+      error: String(err),
+      stripeAccountId: profile.stripe_account_id,
+    });
     return NextResponse.json({
       connected: true,
       chargesEnabled: profile.stripe_onboarding_complete || false,

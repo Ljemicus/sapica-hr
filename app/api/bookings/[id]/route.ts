@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { getBooking, updateBooking } from '@/lib/db';
 import type { Booking, BookingStatus } from '@/lib/types';
+import { dispatchAlert } from '@/lib/alerting';
 import { appLogger } from '@/lib/logger';
 import { sendEmail } from '@/lib/email';
 import { bookingAcceptedEmail, bookingRejectedEmail, bookingCancelledEmail } from '@/lib/email-templates';
@@ -75,7 +76,16 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 
   const updated = await updateBooking(id, { status });
-  if (!updated) return NextResponse.json<BookingRouteError>({ error: 'Booking update failed' }, { status: 500 });
+  if (!updated) {
+    dispatchAlert({
+      severity: 'P1',
+      service: 'bookings.update',
+      description: 'Booking status update failed (DB write returned null)',
+      value: `bookingId=${id} status=${status}`,
+      owner: 'bookings',
+    }).catch(() => {});
+    return NextResponse.json<BookingRouteError>({ error: 'Booking update failed' }, { status: 500 });
+  }
 
   // Best-effort: send status notification emails
   try {

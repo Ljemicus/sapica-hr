@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { appLogger } from '@/lib/logger';
+import { dispatchAlert } from '@/lib/alerting';
 import { createClient } from '@/lib/supabase/server';
 import { getAuthUser } from '@/lib/auth';
 import { rateLimit } from '@/lib/rate-limit';
@@ -46,6 +48,18 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
+      appLogger.error('support', 'Failed to insert support ticket', {
+        error: String(error),
+        email: parsed.data.email,
+        subject: parsed.data.subject,
+      });
+      dispatchAlert({
+        severity: 'P2',
+        service: 'support',
+        description: 'Support ticket creation failed — user message lost',
+        value: `subject=${parsed.data.subject}`,
+        owner: 'platform',
+      });
       return NextResponse.json({ error: 'Greška pri spremanju poruke.' }, { status: 500 });
     }
 

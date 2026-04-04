@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { createGroomerBooking, getUserGroomerBookings } from '@/lib/db';
 import { appLogger } from '@/lib/logger';
+import { dispatchAlert } from '@/lib/alerting';
 import type { GroomerBooking } from '@/lib/types';
 
 type GroomerBookingsGetResponse = GroomerBooking[];
@@ -58,7 +59,14 @@ export async function POST(request: Request) {
     });
 
     if (!booking) {
-      appLogger.warn('groomerBookings.create', 'slot conflict', { groomer_id, date, start_time });
+      appLogger.error('groomerBookings.create', 'DB write returned null', { groomer_id, user_id: user.id, date, start_time });
+      dispatchAlert({
+        severity: 'P1',
+        service: 'groomerBookings.create',
+        description: 'Groomer booking creation failed (DB write returned null)',
+        value: `groomer=${groomer_id} user=${user.id}`,
+        owner: 'bookings',
+      }).catch(() => {});
       return NextResponse.json(
         { error: 'Termin je zauzet. Odaberite drugi termin.' },
         { status: 409 }
@@ -68,6 +76,13 @@ export async function POST(request: Request) {
     return NextResponse.json(booking, { status: 201 });
   } catch (err) {
     appLogger.error('groomerBookings.create', 'unexpected error', { error: String(err) });
+    dispatchAlert({
+      severity: 'P1',
+      service: 'groomerBookings.create',
+      description: 'Unhandled error in groomer booking creation',
+      value: String(err),
+      owner: 'bookings',
+    }).catch(() => {});
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 }

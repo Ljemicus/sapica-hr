@@ -3,6 +3,7 @@ import { getAuthUser } from '@/lib/auth';
 import { updateTrainerBookingStatus, getTrainer } from '@/lib/db';
 import type { TrainerBookingStatus } from '@/lib/types';
 import { appLogger } from '@/lib/logger';
+import { dispatchAlert } from '@/lib/alerting';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -44,12 +45,26 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
     const result = await updateTrainerBookingStatus(id, status);
     if (!result) {
-      appLogger.warn('trainerBookings.update', 'status update failed – not found', { bookingId: id, status });
+      appLogger.error('trainerBookings.update', 'status update failed – DB returned null', { bookingId: id, status });
+      dispatchAlert({
+        severity: 'P1',
+        service: 'trainerBookings.update',
+        description: 'Trainer booking status update failed (DB write returned null)',
+        value: `bookingId=${id} status=${status}`,
+        owner: 'bookings',
+      }).catch(() => {});
       return NextResponse.json({ error: 'Could not update booking' }, { status: 404 });
     }
     return NextResponse.json(result);
   } catch (err) {
     appLogger.error('trainerBookings.update', 'unexpected error', { bookingId: id, error: String(err) });
+    dispatchAlert({
+      severity: 'P1',
+      service: 'trainerBookings.update',
+      description: 'Unhandled error in trainer booking status update',
+      value: `bookingId=${id} error=${String(err)}`,
+      owner: 'bookings',
+    }).catch(() => {});
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 }

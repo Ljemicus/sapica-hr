@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { appLogger } from '@/lib/logger';
+import { dispatchAlert } from '@/lib/alerting';
 import { getAuthUser } from '@/lib/auth';
 import { createCheckoutSession, calculatePlatformFee } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
@@ -105,6 +106,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ url, sessionId });
   } catch (err) {
     appLogger.error('payments.checkout', 'Checkout session creation failed', { error: String(err) });
+    dispatchAlert({
+      severity: 'P1',
+      service: 'payments.checkout',
+      description: 'Stripe checkout session creation failed — user cannot pay',
+      value: `booking=${bookingId}`,
+      owner: 'platform',
+    });
     return NextResponse.json(
       { error: 'Greška pri kreiranju plaćanja. Pokušajte ponovo.' },
       { status: 500 }

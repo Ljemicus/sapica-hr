@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { appLogger } from '@/lib/logger';
+import { dispatchAlert } from '@/lib/alerting';
 import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { getVerificationById, updateVerificationReview, getAllVerifications } from '@/lib/db/provider-verifications';
@@ -38,7 +40,8 @@ export async function GET(request: NextRequest) {
     );
 
     return NextResponse.json({ verifications: enriched });
-  } catch {
+  } catch (err) {
+    appLogger.error('admin.verifications', 'Failed to list verifications', { error: String(err) });
     return apiError({ status: 500, code: 'INTERNAL_ERROR', message: 'Internal error' });
   }
 }
@@ -86,6 +89,18 @@ export async function POST(request: NextRequest) {
     );
 
     if (!updated) {
+      appLogger.error('admin.verifications', 'Verification update returned null', {
+        verificationId,
+        action,
+        adminId: user.id,
+      });
+      dispatchAlert({
+        severity: 'P2',
+        service: 'admin.verifications',
+        description: 'Provider verification review update failed — admin action not persisted',
+        value: `verification=${verificationId}, action=${action}`,
+        owner: 'platform',
+      });
       return apiError({ status: 500, code: 'UPDATE_FAILED', message: 'Failed to update verification' });
     }
 
@@ -118,6 +133,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ verification: updated, message: 'Verifikacija ažurirana.' });
   } catch (error) {
+    appLogger.error('admin.verifications', 'Verification review failed', { error: String(error) });
     return apiError({ status: 500, code: 'INTERNAL_ERROR', message: error instanceof Error ? error.message : 'Internal error' });
   }
 }

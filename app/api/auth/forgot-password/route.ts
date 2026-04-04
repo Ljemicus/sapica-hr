@@ -1,6 +1,7 @@
 import { apiError } from '@/lib/api-errors';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { appLogger } from '@/lib/logger';
+import { dispatchAlert } from '@/lib/alerting';
 import { rateLimit } from '@/lib/rate-limit';
 import { forgotPasswordSchema } from '@/lib/validations';
 import { NextResponse } from 'next/server';
@@ -8,6 +9,7 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
   if (!rateLimit(`forgot-password:${ip}`, 3, 60000)) {
+    appLogger.warn('auth.forgot-password', 'Rate limit hit', { ip });
     return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše pokušaja. Pokušajte ponovno za minutu.' });
   }
 
@@ -18,6 +20,13 @@ export async function POST(request: Request) {
   }
 
   if (!isSupabaseConfigured()) {
+    appLogger.error('auth.forgot-password', 'Supabase not configured — auth unavailable');
+    dispatchAlert({
+      severity: 'P1',
+      service: 'auth.forgot-password',
+      description: 'Supabase auth unavailable — password reset broken for all users',
+      owner: 'platform',
+    }).catch(() => {});
     return apiError({ status: 503, code: 'AUTH_UNAVAILABLE', message: 'Autentifikacija nije dostupna.' });
   }
 
@@ -33,6 +42,13 @@ export async function POST(request: Request) {
 
   if (error) {
     appLogger.warn('auth.forgot-password', 'Reset email failed', { email: parsed.data.email, error: error.message });
+    dispatchAlert({
+      severity: 'P2',
+      service: 'auth.forgot-password',
+      description: 'Password reset email delivery failed via Supabase',
+      value: error.message,
+      owner: 'platform',
+    }).catch(() => {});
     // Don't reveal whether the email exists
   }
 

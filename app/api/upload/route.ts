@@ -6,7 +6,9 @@ import { appLogger } from '@/lib/logger';
 import { rateLimit } from '@/lib/rate-limit';
 
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
-const ALLOWED_BUCKETS = new Set(['avatars', 'pet-photos', 'pet-updates']);
+const VERIFICATION_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
+const ALLOWED_BUCKETS = new Set(['avatars', 'pet-photos', 'pet-updates', 'verification-docs']);
+const PRIVATE_BUCKETS = new Set(['verification-docs']);
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 function sanitizeSegment(value: string) {
@@ -34,8 +36,10 @@ export async function POST(request: NextRequest) {
       appLogger.warn('upload.image', 'Upload rejected because file is missing');
       return apiError({ status: 400, code: 'FILE_MISSING', message: 'No file provided' });
     }
-    if (!ALLOWED_TYPES.has(file.type)) {
-      return apiError({ status: 400, code: 'INVALID_FILE_TYPE', message: 'Dozvoljene su samo JPG, PNG i WebP slike.' });
+    const isPrivateBucket = PRIVATE_BUCKETS.has(requestedBucket);
+    const allowedTypes = isPrivateBucket ? VERIFICATION_TYPES : ALLOWED_TYPES;
+    if (!allowedTypes.has(file.type)) {
+      return apiError({ status: 400, code: 'INVALID_FILE_TYPE', message: isPrivateBucket ? 'Dozvoljeni su samo JPG, PNG, WebP i PDF dokumenti.' : 'Dozvoljene su samo JPG, PNG i WebP slike.' });
     }
     if (file.size <= 0 || file.size > MAX_FILE_SIZE) {
       return apiError({ status: 400, code: 'FILE_TOO_LARGE', message: 'Datoteka je prevelika. Max 5MB.' });
@@ -74,6 +78,16 @@ export async function POST(request: NextRequest) {
         reason: error.message,
       });
       return apiError({ status: 500, code: 'UPLOAD_FAILED', message: error.message });
+    }
+
+    if (isPrivateBucket) {
+      return NextResponse.json({
+        url: null,
+        fileName: file.name,
+        size: file.size,
+        bucket,
+        path,
+      });
     }
 
     const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);

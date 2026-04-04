@@ -3,6 +3,7 @@ import { ensureSitterProfile, syncUserProfile, type AuthProfileSupabaseLike } fr
 import { buildUserFromAuth, parseAuthRole } from '@/lib/auth';
 import { safeRedirectPath } from '@/lib/auth-redirect';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
+import { dispatchAlert } from '@/lib/alerting';
 import { appLogger } from '@/lib/logger';
 
 export async function GET(request: Request) {
@@ -70,5 +71,11 @@ export async function GET(request: Request) {
   }
 
   appLogger.warn('auth.callback', 'Auth callback fell through to login redirect');
+  dispatchAlert({
+    severity: 'P2',
+    service: 'auth.callback',
+    description: 'OAuth code exchange failed or missing code',
+    owner: 'auth',
+  }).catch(() => {});
   return NextResponse.redirect(`${origin}/prijava`);
 }

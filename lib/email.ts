@@ -1,4 +1,5 @@
 import { appLogger } from '@/lib/logger';
+import { dispatchAlert } from '@/lib/alerting';
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL = 'PetPark <noreply@petpark.hr>';
@@ -35,12 +36,26 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions) {
     if (!res.ok) {
       const error = await res.text();
       appLogger.error('email', 'Resend API error', { error });
+      dispatchAlert({
+        severity: 'P2',
+        service: 'email',
+        description: `Resend API returned ${res.status} — email delivery failed`,
+        value: `to=${to}, status=${res.status}`,
+        owner: 'platform',
+      });
       return { success: false, error };
     }
 
     return { success: true, data: await res.json() };
   } catch (err) {
     appLogger.error('email', 'Failed to send email', { error: String(err) });
+    dispatchAlert({
+      severity: 'P2',
+      service: 'email',
+      description: 'Email send threw exception — Resend API may be down',
+      value: `to=${to}`,
+      owner: 'platform',
+    });
     return { success: false, error: 'Failed to send email' };
   }
 }
