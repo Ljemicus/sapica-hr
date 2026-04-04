@@ -680,7 +680,7 @@ export interface ProductReview {
 
 // ── Publisher Profiles (Faza 1) ──
 
-export type PublisherProfileType = 'vlasnik' | 'čuvar' | 'groomer' | 'trener' | 'uzgajivač' | 'veterinar';
+export type PublisherProfileType = 'vlasnik' | 'čuvar' | 'groomer' | 'trener' | 'uzgajivač' | 'veterinar' | 'udomljavanje';
 
 export const PUBLISHER_PROFILE_TYPE_LABELS: Record<PublisherProfileType, string> = {
   'vlasnik': 'Vlasnik ljubimca',
@@ -689,6 +689,7 @@ export const PUBLISHER_PROFILE_TYPE_LABELS: Record<PublisherProfileType, string>
   'trener': 'Trener',
   'uzgajivač': 'Uzgajivač',
   'veterinar': 'Veterinar',
+  'udomljavanje': 'Udomljavanje',
 };
 
 export const PUBLISHER_PROFILE_TYPE_EMOJI: Record<PublisherProfileType, string> = {
@@ -698,6 +699,7 @@ export const PUBLISHER_PROFILE_TYPE_EMOJI: Record<PublisherProfileType, string> 
   'trener': '🎓',
   'uzgajivač': '🐕‍🦺',
   'veterinar': '🏥',
+  'udomljavanje': '❤️',
 };
 
 export const PUBLISHER_PROFILE_TYPE_DESCRIPTIONS: Record<PublisherProfileType, string> = {
@@ -707,6 +709,7 @@ export const PUBLISHER_PROFILE_TYPE_DESCRIPTIONS: Record<PublisherProfileType, s
   'trener': 'Nudim usluge treniranja',
   'uzgajivač': 'Uzgajam i prodajem ljubimce',
   'veterinar': 'Pružam veterinarske usluge',
+  'udomljavanje': 'Objavljujem ljubimce za udomljavanje',
 };
 
 export interface PublisherProfile {

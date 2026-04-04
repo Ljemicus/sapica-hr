@@ -19,6 +19,7 @@ const PROFILE_TYPES: PublisherProfileType[] = [
   'trener',
   'uzgajivač',
   'veterinar',
+  'udomljavanje',
 ];
 
 export default function PublisherTypePage() {

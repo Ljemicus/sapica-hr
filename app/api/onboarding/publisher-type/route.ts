@@ -4,7 +4,7 @@ import { createPublisherProfile, getPublisherProfile } from '@/lib/db/publisher-
 import type { PublisherProfileType } from '@/lib/types';
 
 const VALID_TYPES: PublisherProfileType[] = [
-  'vlasnik', 'čuvar', 'groomer', 'trener', 'uzgajivač', 'veterinar',
+  'vlasnik', 'čuvar', 'groomer', 'trener', 'uzgajivač', 'veterinar', 'udomljavanje',
 ];
 
 export async function POST(request: Request) {
