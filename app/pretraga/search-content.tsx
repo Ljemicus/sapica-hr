@@ -372,11 +372,13 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
   };
 
   const setCategory = (cat: ProviderCategory | 'all') => {
-    // When switching category, clear service filter as it's category-specific
+    // Service filter is category-specific, but keep city/price/rating context when switching.
     setService('');
     const params = new URLSearchParams();
     if (cat !== 'all') params.set('category', cat);
     if (city) params.set('city', city);
+    if (minPrice) params.set('min_price', minPrice);
+    if (maxPrice) params.set('max_price', maxPrice);
     if (minRating) params.set('min_rating', minRating);
     if (sort && sort !== 'rating') params.set('sort', sort);
     router.push(`/pretraga${params.toString() ? '?' + params.toString() : ''}`);
@@ -463,7 +465,7 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
             >
               <option value="rating">Najbolje ocijenjeni</option>
               <option value="reviews">Najviše recenzija</option>
-              <option value="price">Najpovoljniji prvo</option>
+              <option value="price">Najniža cijena prvo</option>
             </select>
 
             {/* View toggle */}
@@ -520,6 +522,18 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
             <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
               {minRating}+ ocjena
               <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMinRating(''); applyFilters(); }} />
+            </Badge>
+          )}
+          {minPrice && (
+            <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
+              od {minPrice}&euro;
+              <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMinPrice(''); applyFilters(); }} />
+            </Badge>
+          )}
+          {maxPrice && (
+            <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
+              do {maxPrice}&euro;
+              <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMaxPrice(''); applyFilters(); }} />
             </Badge>
           )}
           <button onClick={clearFilters} className="text-xs text-orange-500 hover:underline self-center ml-1">
