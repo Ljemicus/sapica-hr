@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -16,6 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { useAdoptionFavorites } from '@/hooks/use-adoption-favorites';
+import { useLanguage } from '@/lib/i18n/context';
 import type { AdoptionListing } from '@/lib/types';
 import {
   ADOPTION_SPECIES_LABELS,
@@ -24,12 +25,12 @@ import {
   ADOPTION_SIZE_LABELS,
 } from '@/lib/types';
 
-function formatAge(months: number | null): string {
-  if (months == null) return 'Nepoznato';
-  if (months < 12) return `${months} mj.`;
+function formatAge(months: number | null, isEn: boolean): string {
+  if (months == null) return isEn ? 'Unknown' : 'Nepoznato';
+  if (months < 12) return isEn ? `${months} mo` : `${months} mj.`;
   const years = Math.floor(months / 12);
   const rem = months % 12;
-  return rem > 0 ? `${years} g. ${rem} mj.` : `${years} g.`;
+  return rem > 0 ? (isEn ? `${years} yr ${rem} mo` : `${years} g. ${rem} mj.`) : (isEn ? `${years} yr` : `${years} g.`);
 }
 
 const SPECIES_GRADIENTS: Record<string, string> = {
@@ -40,20 +41,31 @@ const SPECIES_GRADIENTS: Record<string, string> = {
 };
 
 export function AdoptionDetailContent({ listing, relatedListings = [] }: { listing: AdoptionListing; relatedListings?: AdoptionListing[] }) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
   const { toggleFavorite, isFavorite } = useAdoptionFavorites();
+  const speciesLabels = isEn ? { dog: 'Dog', cat: 'Cat', rabbit: 'Rabbit', other: 'Other' } : ADOPTION_SPECIES_LABELS;
+  const genderLabels = isEn ? { male: 'Male', female: 'Female' } : ADOPTION_GENDER_LABELS;
+  const sizeLabels = isEn ? { small: 'Small', medium: 'Medium', large: 'Large' } : ADOPTION_SIZE_LABELS;
   const [copied, setCopied] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [currentImage, setCurrentImage] = useState(0);
+  const [submissionState, setSubmissionState] = useState<'idle' | 'success'>('idle');
 
   const images = listing.images ?? [];
   const gradient = SPECIES_GRADIENTS[listing.species] ?? SPECIES_GRADIENTS.other;
   const publisher = listing.publisher;
+  const inquiryHighlights = useMemo(() => [
+    isEn ? 'Predstavi zašto želiš baš ovog ljubimca.' : 'Predstavi zašto želiš baš ovog ljubimca.',
+    isEn ? 'Napiši imaš li iskustva i kakve uvjete nudiš.' : 'Napiši imaš li iskustva i kakve uvjete nudiš.',
+    isEn ? 'Udruga ili skrbnik javit će ti se nakon pregleda upita.' : 'Udruga ili skrbnik javit će ti se nakon pregleda upita.',
+  ], [isEn]);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
-    toast.success('Link kopiran!');
+    toast.success(isEn ? 'Link copied!' : 'Link kopiran!');
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -77,26 +89,31 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
+      const data = await res.json().catch(() => null);
       if (res.ok) {
-        toast.success('Vaš upit je poslan! Kontaktirat ćemo vas uskoro.');
+        setSubmissionState('success');
+        toast.success(isEn ? 'Your inquiry has been sent. We’ll contact you soon.' : 'Vaš upit je poslan! Kontaktirat ćemo vas uskoro.');
         e.currentTarget.reset();
         setFormOpen(false);
       } else {
-        toast.error('Greška pri slanju upita. Pokušajte ponovo.');
+        const validationErrors = data?.details
+          ? Object.values(data.details).flat().filter(Boolean).join(' · ')
+          : null;
+        toast.error(validationErrors || data?.error || (isEn ? 'There was an error sending your inquiry. Please try again.' : 'Greška pri slanju upita. Pokušajte ponovo.'));
       }
     } catch {
-      toast.error('Mrežna greška. Pokušajte ponovo.');
+      toast.error(isEn ? 'Network error. Please try again.' : 'Mrežna greška. Pokušajte ponovo.');
     } finally {
       setSubmitting(false);
     }
   };
 
   const statusBadges = [
-    { label: 'Steriliziran/a', active: listing.sterilized, icon: Scissors },
-    { label: 'Cijepljen/a', active: listing.vaccinated, icon: Syringe },
-    { label: 'Mikročipiran/a', active: listing.microchipped, icon: Cpu },
-    { label: 'Dobar s djecom', active: listing.good_with_kids, icon: Baby },
-    { label: 'Dobar s drugim ljubimcima', active: listing.good_with_pets, icon: PawPrint },
+    { label: isEn ? 'Spayed / neutered' : 'Steriliziran/a', active: listing.sterilized, icon: Scissors },
+    { label: isEn ? 'Vaccinated' : 'Cijepljen/a', active: listing.vaccinated, icon: Syringe },
+    { label: isEn ? 'Microchipped' : 'Mikročipiran/a', active: listing.microchipped, icon: Cpu },
+    { label: isEn ? 'Good with kids' : 'Dobar s djecom', active: listing.good_with_kids, icon: Baby },
+    { label: isEn ? 'Good with other pets' : 'Dobar s drugim ljubimcima', active: listing.good_with_pets, icon: PawPrint },
   ];
 
   return (
@@ -116,26 +133,26 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
             <>
               <button
                 onClick={() => setCurrentImage((p) => (p - 1 + images.length) % images.length)}
-                aria-label="Prethodna fotografija"
+                aria-label={isEn ? 'Previous photo' : 'Prethodna fotografija'}
                 className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
               <button
                 onClick={() => setCurrentImage((p) => (p + 1) % images.length)}
-                aria-label="Sljedeća fotografija"
+                aria-label={isEn ? 'Next photo' : 'Sljedeća fotografija'}
                 className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors"
               >
                 <ChevronRight className="h-5 w-5" />
               </button>
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" role="tablist" aria-label="Fotografije">
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" role="tablist" aria-label={isEn ? 'Photos' : 'Fotografije'}>
                 {images.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentImage(i)}
                     role="tab"
                     aria-selected={i === currentImage}
-                    aria-label={`Fotografija ${i + 1} od ${images.length}`}
+                    aria-label={isEn ? `Photo ${i + 1} of ${images.length}` : `Fotografija ${i + 1} od ${images.length}`}
                     className={`w-2 h-2 rounded-full transition-all ${
                       i === currentImage ? 'bg-white w-4' : 'bg-white/50'
                     }`}
@@ -148,7 +165,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
             <div className="absolute top-4 left-4">
               <Badge className="bg-red-500 text-white font-bold rounded-full flex items-center gap-1.5 text-sm px-3 py-1">
                 <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                Hitno traži dom
+                {isEn ? 'Urgently needs a home' : 'Hitno traži dom'}
               </Badge>
             </div>
           )}
@@ -161,7 +178,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
             <div className="absolute top-4 left-4">
               <Badge className="bg-red-500 text-white font-bold rounded-full flex items-center gap-1.5 text-sm px-3 py-1">
                 <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                Hitno traži dom
+                {isEn ? 'Urgently needs a home' : 'Hitno traži dom'}
               </Badge>
             </div>
           )}
@@ -176,7 +193,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
               <button
                 key={img.url}
                 onClick={() => setCurrentImage(i)}
-                aria-label={`Prikaži fotografiju ${i + 1}`}
+                aria-label={isEn ? `Show photo ${i + 1}` : `Prikaži fotografiju ${i + 1}`}
                 className={`relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${
                   i === currentImage ? 'border-purple-500 shadow-md' : 'border-white/80 opacity-70 hover:opacity-100'
                 }`}
@@ -192,7 +209,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
         {/* Back link */}
         <Link href="/udomljavanje" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
           <ArrowLeft className="h-4 w-4" />
-          Natrag na sve ljubimce
+          {isEn ? 'Back to all pets' : 'Natrag na sve ljubimce'}
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -212,7 +229,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => toggleFavorite(listing.id)}
-                  aria-label={isFavorite(listing.id) ? `Ukloni ${listing.name} iz favorita` : `Dodaj ${listing.name} u favorite`}
+                  aria-label={isFavorite(listing.id) ? (isEn ? `Remove ${listing.name} from favorites` : `Ukloni ${listing.name} iz favorita`) : (isEn ? `Add ${listing.name} to favorites` : `Dodaj ${listing.name} u favorite`)}
                   className={`p-2.5 rounded-full transition-all duration-200 ${
                     isFavorite(listing.id)
                       ? 'bg-red-500 text-white shadow-lg shadow-red-200/50'
@@ -223,7 +240,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
                 </button>
                 <button
                   onClick={handleCopyLink}
-                  aria-label={copied ? 'Link kopiran' : 'Kopiraj link'}
+                  aria-label={copied ? (isEn ? 'Link copied' : 'Link kopiran') : (isEn ? 'Copy link' : 'Kopiraj link')}
                   className="p-2.5 rounded-full bg-white text-gray-400 hover:text-purple-500 hover:bg-white shadow-sm border border-gray-200 transition-all"
                 >
                   {copied ? <Check className="h-5 w-5 text-green-500" /> : <Share2 className="h-5 w-5" />}
@@ -234,13 +251,13 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
             {/* Info grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
-                { label: 'Vrsta', value: ADOPTION_SPECIES_LABELS[listing.species] },
-                { label: 'Dob', value: formatAge(listing.age_months) },
-                listing.gender ? { label: 'Spol', value: ADOPTION_GENDER_LABELS[listing.gender] } : null,
-                listing.size ? { label: 'Veličina', value: ADOPTION_SIZE_LABELS[listing.size] } : null,
-                listing.weight_kg ? { label: 'Težina', value: `${listing.weight_kg} kg` } : null,
-                listing.color ? { label: 'Boja', value: listing.color } : null,
-                { label: 'Lokacija', value: listing.city },
+                { label: isEn ? 'Species' : 'Vrsta', value: speciesLabels[listing.species] },
+                { label: isEn ? 'Age' : 'Dob', value: formatAge(listing.age_months, isEn) },
+                listing.gender ? { label: isEn ? 'Gender' : 'Spol', value: genderLabels[listing.gender] } : null,
+                listing.size ? { label: isEn ? 'Size' : 'Veličina', value: sizeLabels[listing.size] } : null,
+                listing.weight_kg ? { label: isEn ? 'Weight' : 'Težina', value: `${listing.weight_kg} kg` } : null,
+                listing.color ? { label: isEn ? 'Color' : 'Boja', value: listing.color } : null,
+                { label: isEn ? 'Location' : 'Lokacija', value: listing.city },
               ].filter(Boolean).map((item) => (
                 <div key={item!.label} className="bg-white dark:bg-card rounded-xl p-3 border border-gray-100 dark:border-border">
                   <p className="text-xs text-muted-foreground mb-1">{item!.label}</p>
@@ -270,17 +287,17 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
             {/* Description */}
             <Card className="border-0 shadow-sm rounded-2xl">
               <CardContent className="p-6">
-                <h2 className="font-bold text-lg mb-3 font-[var(--font-heading)]">O {listing.name}</h2>
+                <h2 className="font-bold text-lg mb-3 font-[var(--font-heading)]">{isEn ? `About ${listing.name}` : `O ${listing.name}`}</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4 whitespace-pre-line">{listing.description}</p>
                 {listing.personality && (
                   <>
-                    <h3 className="font-semibold text-sm mb-2">Osobnost</h3>
+                    <h3 className="font-semibold text-sm mb-2">{isEn ? 'Personality' : 'Osobnost'}</h3>
                     <p className="text-muted-foreground text-sm leading-relaxed">{listing.personality}</p>
                   </>
                 )}
                 {listing.special_needs && (
                   <>
-                    <h3 className="font-semibold text-sm mb-2 mt-4 text-amber-600 dark:text-amber-400">Posebne potrebe</h3>
+                    <h3 className="font-semibold text-sm mb-2 mt-4 text-amber-600 dark:text-amber-400">{isEn ? 'Special needs' : 'Posebne potrebe'}</h3>
                     <p className="text-muted-foreground text-sm leading-relaxed">{listing.special_needs}</p>
                   </>
                 )}
@@ -288,46 +305,85 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
             </Card>
 
             {/* CTA */}
+            <Card className="border-0 shadow-sm rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20">
+              <CardContent className="p-6">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div>
+                    <h2 className="font-bold text-xl font-[var(--font-heading)] mb-2">{isEn ? `Interested in ${listing.name}?` : `Zanima te ${listing.name}?`}</h2>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      {isEn ? 'Send a short inquiry and explain what kind of home you can offer.' : 'Pošalji kratak upit i napiši kakav dom možeš ponuditi ovom ljubimcu.'}
+                    </p>
+                    <ul className="space-y-1 text-sm text-muted-foreground">
+                      {inquiryHighlights.map((item) => (
+                        <li key={item}>• {item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="flex flex-col gap-2 min-w-[220px]">
+                    <Button size="lg" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold shadow-xl shadow-purple-200/50 dark:shadow-purple-900/30 rounded-xl" onClick={() => setFormOpen(true)}>
+                      <Heart className="h-5 w-5 mr-2 fill-white" />
+                      {isEn ? 'Send adoption inquiry' : 'Pošalji upit za udomljavanje'}
+                    </Button>
+                    {publisher && (
+                      <Link
+                        href={`/udomljavanje/udruga/${publisher.id}`}
+                        className="inline-flex items-center justify-center rounded-xl border border-purple-200 px-4 py-3 text-sm font-medium text-purple-600 transition-colors hover:bg-purple-50 dark:border-purple-800 dark:text-purple-400 dark:hover:bg-purple-950/20"
+                      >
+                        {isEn ? 'View rescue profile' : 'Pogledaj udrugu'}
+                      </Link>
+                    )}
+                  </div>
+                </div>
+                {submissionState === 'success' && (
+                  <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/20 dark:text-emerald-300">
+                    {isEn ? 'Inquiry sent. If the pet is still available, the rescue or caregiver should contact you soon.' : 'Upit je poslan. Ako je ljubimac još dostupan, udruga ili skrbnik bi ti se trebali uskoro javiti.'}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
             <Dialog open={formOpen} onOpenChange={setFormOpen}>
               <DialogTrigger render={<Button size="lg" className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-lg py-6 shadow-xl shadow-purple-200/50 dark:shadow-purple-900/30 rounded-xl" />}>
                 <Heart className="h-5 w-5 mr-2 fill-white" />
-                Pošalji upit za udomljavanje
+                {isEn ? 'Send adoption inquiry' : 'Pošalji upit za udomljavanje'}
               </DialogTrigger>
               <DialogContent className="sm:max-w-md rounded-2xl">
                 <DialogHeader>
                   <DialogTitle className="font-[var(--font-heading)] text-xl">
-                    Upit za udomljavanje — {listing.name}
+                    {isEn ? `Adoption inquiry — ${listing.name}` : `Upit za udomljavanje — ${listing.name}`}
                   </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-2">
                   <div>
-                    <Label htmlFor="inquiry-name">Ime i prezime</Label>
-                    <Input id="inquiry-name" name="name" required placeholder="Vaše ime" className="mt-1" />
+                    <Label htmlFor="inquiry-name">{isEn ? 'Full name' : 'Ime i prezime'}</Label>
+                    <Input id="inquiry-name" name="name" required placeholder={isEn ? 'Your name' : 'Vaše ime'} className="mt-1" />
                   </div>
                   <div>
                     <Label htmlFor="inquiry-email">Email</Label>
                     <Input id="inquiry-email" name="email" type="email" required placeholder="vas@email.com" className="mt-1" />
                   </div>
                   <div>
-                    <Label htmlFor="inquiry-phone">Telefon</Label>
+                    <Label htmlFor="inquiry-phone">{isEn ? 'Phone' : 'Telefon'}</Label>
                     <Input id="inquiry-phone" name="phone" type="tel" required placeholder="+385 91 234 5678" className="mt-1" />
                   </div>
                   <div>
-                    <Label htmlFor="inquiry-message">Poruka (zašto želite udomiti)</Label>
-                    <Textarea id="inquiry-message" name="message" required minLength={10} placeholder="Opišite zašto želite udomiti ovog ljubimca..." className="mt-1" rows={3} />
+                    <Label htmlFor="inquiry-message">{isEn ? 'Message (why you want to adopt)' : 'Poruka (zašto želite udomiti)'}</Label>
+                    <Textarea id="inquiry-message" name="message" required minLength={10} placeholder={isEn ? 'Tell us why you would like to adopt this pet...' : 'Opišite zašto želite udomiti ovog ljubimca...'} className="mt-1" rows={3} />
                   </div>
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm">
                       <input type="checkbox" name="has_experience" className="rounded border-gray-300" />
-                      Imam iskustva s ljubimcima
+                      {isEn ? 'I have experience with pets' : 'Imam iskustva s ljubimcima'}
                     </label>
                     <label className="flex items-center gap-2 text-sm">
                       <input type="checkbox" name="has_yard" className="rounded border-gray-300" />
-                      Imam vrt/dvorište
+                      {isEn ? 'I have a yard / garden' : 'Imam vrt/dvorište'}
                     </label>
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    {isEn ? 'Your inquiry is stored in PetPark and forwarded to the rescue or caregiver responsible for this pet.' : 'Tvoj upit se sprema u PetPark i prosljeđuje udruzi ili skrbniku koji brine o ovom ljubimcu.'}
+                  </p>
                   <Button type="submit" disabled={submitting} className="w-full bg-purple-500 hover:bg-purple-600 font-semibold rounded-xl">
-                    {submitting ? 'Šaljem...' : 'Pošalji upit'}
+                    {submitting ? (isEn ? 'Sending...' : 'Šaljem...') : (isEn ? 'Send inquiry' : 'Pošalji upit')}
                   </Button>
                 </form>
               </DialogContent>
@@ -335,7 +391,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
             {publisher && relatedListings.length > 0 && (
               <Card className="border-0 shadow-sm rounded-2xl">
                 <CardContent className="p-6">
-                  <h2 className="font-bold text-lg mb-3 font-[var(--font-heading)]">Više ljubimaca iz ove udruge</h2>
+                  <h2 className="font-bold text-lg mb-3 font-[var(--font-heading)]">{isEn ? 'More pets from this rescue' : 'Više ljubimaca iz ove udruge'}</h2>
                   <div className="space-y-3">
                     {relatedListings.map((item) => (
                       <Link
@@ -346,7 +402,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
                         <div className="flex items-center justify-between gap-3">
                           <div>
                             <p className="font-semibold text-sm">{item.name}</p>
-                            <p className="text-xs text-muted-foreground">{item.breed || 'Ljubimac za udomljavanje'} · {item.city}</p>
+                            <p className="text-xs text-muted-foreground">{item.breed || (isEn ? 'Pet for adoption' : 'Ljubimac za udomljavanje')} · {item.city}</p>
                           </div>
                           <span className="text-lg">{ADOPTION_SPECIES_EMOJI[item.species]}</span>
                         </div>
@@ -356,7 +412,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
                       href={`/udomljavanje/udruga/${publisher.id}`}
                       className="inline-flex items-center text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
                     >
-                      Pogledaj sve ljubimce ove udruge
+                      {isEn ? 'View all pets from this rescue' : 'Pogledaj sve ljubimce ove udruge'}
                     </Link>
                   </div>
                 </CardContent>
@@ -369,7 +425,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
             {/* Publisher info — animal first, publisher as trust/support context */}
             <Card className="border-0 shadow-sm rounded-2xl">
               <CardContent className="p-6">
-                <h2 className="font-bold text-lg mb-4 font-[var(--font-heading)]">O životinji brine</h2>
+                <h2 className="font-bold text-lg mb-4 font-[var(--font-heading)]">{isEn ? 'Care provided by' : 'O životinji brine'}</h2>
                 <div className="space-y-3">
                   {publisher ? (
                     <>
@@ -387,7 +443,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
                         href={`/udomljavanje/udruga/${publisher.id}`}
                         className="inline-flex w-full items-center justify-center rounded-xl border border-purple-200 px-4 py-2 text-sm font-medium text-purple-600 transition-colors hover:bg-purple-50 dark:border-purple-800 dark:text-purple-400 dark:hover:bg-purple-950/20"
                       >
-                        Pogledaj udrugu
+                        {isEn ? 'View rescue profile' : 'Pogledaj udrugu'}
                       </Link>
                     </>
                   ) : (
@@ -397,7 +453,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
                     </div>
                   )}
                   <p className="text-xs text-muted-foreground">
-                    Pošaljite upit putem obrasca kako biste kontaktirali udrugu ili skrbnika koji brine o {listing.name}.
+                    {isEn ? `Send an inquiry through the form to contact the rescue or caregiver looking after ${listing.name}.` : `Pošaljite upit putem obrasca kako biste kontaktirali udrugu ili skrbnika koji brine o ${listing.name}.`}
                   </p>
                   <Button
                     variant="outline"
@@ -405,7 +461,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
                     onClick={() => setFormOpen(true)}
                   >
                     <Heart className="h-4 w-4 mr-2" />
-                    Pošalji upit
+                    {isEn ? 'Send inquiry' : 'Pošalji upit'}
                   </Button>
                 </div>
               </CardContent>
@@ -414,10 +470,10 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
             {/* Share */}
             <Card className="border-0 shadow-sm rounded-2xl">
               <CardContent className="p-6">
-                <h2 className="font-bold text-sm mb-3">Podijelite</h2>
+                <h2 className="font-bold text-sm mb-3">{isEn ? 'Share' : 'Podijelite'}</h2>
                 <Button variant="outline" onClick={handleCopyLink} className="w-full rounded-xl">
                   {copied ? <Check className="h-4 w-4 mr-2 text-green-500" /> : <Copy className="h-4 w-4 mr-2" />}
-                  {copied ? 'Kopirano!' : 'Kopiraj link'}
+                  {copied ? (isEn ? 'Copied!' : 'Kopirano!') : (isEn ? 'Copy link' : 'Kopiraj link')}
                 </Button>
               </CardContent>
             </Card>

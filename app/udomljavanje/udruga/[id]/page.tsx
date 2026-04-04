@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Heart, MapPin, ArrowLeft } from 'lucide-react';
+import { MapPin, ArrowLeft, Phone, ShieldCheck, PawPrint } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getPublisherProfileById } from '@/lib/db/publisher-profiles';
@@ -50,23 +50,52 @@ export default async function AdoptionPublisherPage({ params }: Props) {
           Natrag na udomljavanje
         </Link>
 
-        <Card className="border-0 shadow-sm rounded-2xl mb-6">
+        <Card className="border-0 shadow-sm rounded-2xl mb-6 overflow-hidden">
           <CardContent className="p-6 md:p-8">
-            <div className="flex items-start justify-between gap-4 flex-wrap">
-              <div>
+            <div className="flex items-start justify-between gap-4 flex-wrap mb-6">
+              <div className="max-w-3xl">
                 <Badge className="mb-3 bg-purple-100 text-purple-700 hover:bg-purple-100 border-0">Udruga / sklonište</Badge>
                 <h1 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] mb-2">{publisher.display_name}</h1>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                  <MapPin className="h-4 w-4 text-purple-400" />
-                  {publisher.city || 'Hrvatska'}
+                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-4">
+                  <span className="inline-flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-purple-400" />
+                    {publisher.city || 'Hrvatska'}
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                    Aktivni publisher za udomljavanje
+                  </span>
+                  {publisher.phone && (
+                    <span className="inline-flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-purple-400" />
+                      {publisher.phone}
+                    </span>
+                  )}
                 </div>
-                {publisher.bio && (
-                  <p className="text-muted-foreground leading-relaxed max-w-3xl">{publisher.bio}</p>
+                {publisher.bio ? (
+                  <p className="text-muted-foreground leading-relaxed">{publisher.bio}</p>
+                ) : (
+                  <p className="text-muted-foreground leading-relaxed">Ova organizacija objavljuje ljubimce koji traže siguran novi dom putem PetParka.</p>
                 )}
               </div>
               <div className="text-right min-w-40">
                 <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{activeListings.length}</div>
                 <div className="text-sm text-muted-foreground">aktivnih ljubimaca za udomljavanje</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="rounded-xl bg-purple-50/80 dark:bg-purple-950/20 p-4">
+                <div className="text-sm font-semibold mb-1">Što ovdje vidiš</div>
+                <p className="text-sm text-muted-foreground">Profil organizacije i ljubimce o kojima trenutno brine.</p>
+              </div>
+              <div className="rounded-xl bg-purple-50/80 dark:bg-purple-950/20 p-4">
+                <div className="text-sm font-semibold mb-1">Kako kontaktirati</div>
+                <p className="text-sm text-muted-foreground">Najbolje preko upita na profilu konkretnog ljubimca, kako bi kontekst odmah bio jasan.</p>
+              </div>
+              <div className="rounded-xl bg-purple-50/80 dark:bg-purple-950/20 p-4">
+                <div className="text-sm font-semibold mb-1">Sljedeći korak</div>
+                <p className="text-sm text-muted-foreground">Odaberi ljubimca i pošalji upit za udomljavanje kad pronađeš pravog matcha.</p>
               </div>
             </div>
           </CardContent>
@@ -99,8 +128,8 @@ export default async function AdoptionPublisherPage({ params }: Props) {
                       {listing.city}
                     </div>
                     <div className="pt-3 border-t border-border/50 flex items-center justify-between text-sm font-semibold text-purple-600 dark:text-purple-400">
-                      <span>Pogledaj profil</span>
-                      <Heart className="h-4 w-4" />
+                      <span>Pogledaj profil ljubimca</span>
+                      <PawPrint className="h-4 w-4" />
                     </div>
                   </CardContent>
                 </Card>

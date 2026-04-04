@@ -21,6 +21,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import type { Breeder } from '@/lib/db/breeders';
+import { getLocaleSegment } from '@/lib/i18n/routing';
+import { useLanguage } from '@/lib/i18n/context';
 
 interface BreederDetailContentProps {
   breeder: Breeder;
@@ -28,6 +30,9 @@ interface BreederDetailContentProps {
 }
 
 export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetailContentProps) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const localeSegment = getLocaleSegment(language);
   const [linkCopied, setLinkCopied] = useState(false);
 
   const handleShareLink = async () => {
@@ -50,18 +55,18 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
           {/* Back + Share row */}
           <div className="flex items-center justify-between mb-6">
             <Link
-              href="/uzgajivacnice"
+              href={`/uzgajivacnice${localeSegment}`}
               className="flex items-center gap-1.5 text-sm text-white/80 hover:text-white transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
-              Svi uzgajivači
+              {isEn ? 'All breeders' : 'Svi uzgajivači'}
             </Link>
             <button
               onClick={handleShareLink}
               className="flex items-center gap-1.5 text-sm text-white/80 hover:text-white transition-colors bg-white/20 rounded-full px-3 py-1.5"
             >
               {linkCopied ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
-              {linkCopied ? 'Kopirano!' : 'Kopiraj link'}
+              {linkCopied ? (isEn ? 'Copied!' : 'Kopirano!') : (isEn ? 'Copy link' : 'Kopiraj link')}
             </button>
           </div>
           <div className="flex flex-col md:flex-row items-center gap-6">
@@ -78,24 +83,24 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
                 <span className="flex items-center gap-1 text-sm"><MapPin className="h-4 w-4" />{breeder.city}</span>
                 <span className="flex items-center gap-1 text-sm">
                   <Star className="h-4 w-4 fill-amber-300 text-amber-300" />
-                  {breeder.rating.toFixed(1)} ({breeder.reviewCount} recenzija)
+                  {breeder.rating.toFixed(1)} ({breeder.reviewCount} {isEn ? 'reviews' : 'recenzija'})
                 </span>
-                <span className="flex items-center gap-1 text-sm"><Clock className="h-4 w-4" />{breeder.yearsExperience} god. iskustva</span>
+                <span className="flex items-center gap-1 text-sm"><Clock className="h-4 w-4" />{breeder.yearsExperience} {isEn ? 'yrs experience' : 'god. iskustva'}</span>
               </div>
               <div className="flex flex-wrap gap-2 mt-3 justify-center md:justify-start">
                 {breeder.verified && (
                   <Badge className="bg-white/90 text-green-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-3">
-                    <Shield className="h-3 w-3 mr-1" />Registriran uzgajivač
+                    <Shield className="h-3 w-3 mr-1" />{isEn ? 'Registered breeder' : 'Registriran uzgajivač'}
                   </Badge>
                 )}
                 {breeder.fciRegistered && (
                   <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-3">
-                    <Award className="h-3 w-3 mr-1" />FCI registriran
+                    <Award className="h-3 w-3 mr-1" />{isEn ? 'FCI registered' : 'FCI registriran'}
                   </Badge>
                 )}
                 {breeder.certified && (
                   <Badge className="bg-white/90 text-purple-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-3">
-                    Certificiran
+                    {isEn ? 'Certified' : 'Certificiran'}
                   </Badge>
                 )}
               </div>
@@ -111,7 +116,7 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
             {/* Bio */}
             <Card className="border-0 shadow-sm rounded-2xl">
               <CardContent className="p-6">
-                <h2 className="text-lg font-bold mb-3 font-[var(--font-heading)]">O uzgajivačnici</h2>
+                <h2 className="text-lg font-bold mb-3 font-[var(--font-heading)]">{isEn ? 'About the breeder' : 'O uzgajivačnici'}</h2>
                 <p className="text-muted-foreground leading-relaxed">{breeder.bio}</p>
               </CardContent>
             </Card>
@@ -119,7 +124,7 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
             {/* Breeds */}
             <Card className="border-0 shadow-sm rounded-2xl">
               <CardContent className="p-6">
-                <h2 className="text-lg font-bold mb-4 font-[var(--font-heading)]">Pasmine koje uzgajamo</h2>
+                <h2 className="text-lg font-bold mb-4 font-[var(--font-heading)]">{isEn ? 'Breeds we raise' : 'Pasmine koje uzgajamo'}</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {breeder.breeds.map((breedName) => (
                     <div key={breedName} className="rounded-xl overflow-hidden border border-border/50">
@@ -129,7 +134,7 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
                       <div className="p-4">
                         <h3 className="font-semibold text-sm">{breedName}</h3>
                         <p className="text-xs text-muted-foreground mt-1">
-                          {breeder.species === 'cat' ? 'Mačka' : 'Pas'}
+                          {breeder.species === 'cat' ? (isEn ? 'Cat' : 'Mačka') : (isEn ? 'Dog' : 'Pas')}
                         </p>
                       </div>
                     </div>
@@ -141,9 +146,9 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
             {/* Available litters */}
             <Card className="border-0 shadow-sm rounded-2xl">
               <CardContent className="p-6">
-                <h2 className="text-lg font-bold mb-4 font-[var(--font-heading)]">Dostupna legla</h2>
+                <h2 className="text-lg font-bold mb-4 font-[var(--font-heading)]">{isEn ? 'Available litters' : 'Dostupna legla'}</h2>
                 {breeder.availableLitters.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Trenutno nema dostupnih legala.</p>
+                  <p className="text-sm text-muted-foreground">{isEn ? 'There are currently no available litters.' : 'Trenutno nema dostupnih legala.'}</p>
                 ) : (
                   <div className="space-y-3">
                     {breeder.availableLitters.map((litter, i) => (
@@ -151,8 +156,8 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
                         <div>
                           <h3 className="font-semibold text-sm">{litter.breed}</h3>
                           <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
-                            <span>{litter.count} {breeder.species === 'cat' ? 'mačića' : 'štenaca'}</span>
-                            {litter.ageWeeks > 0 && <span>{litter.ageWeeks} tjedana</span>}
+                            <span>{litter.count} {breeder.species === 'cat' ? (isEn ? 'kittens' : 'mačića') : (isEn ? 'puppies' : 'štenaca')}</span>
+                            {litter.ageWeeks > 0 && <span>{litter.ageWeeks} {isEn ? 'weeks' : 'tjedana'}</span>}
                           </div>
                         </div>
                         <div className="text-right">
@@ -165,7 +170,7 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
                                   : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
                             }`}
                           >
-                            {litter.status === 'available' ? 'Dostupno' : litter.status === 'reserved' ? 'Rezervirano' : 'Uskoro'}
+                            {litter.status === 'available' ? (isEn ? 'Available' : 'Dostupno') : litter.status === 'reserved' ? (isEn ? 'Reserved' : 'Rezervirano') : (isEn ? 'Soon' : 'Uskoro')}
                           </Badge>
                           <p className="text-sm font-semibold mt-1">{litter.priceFrom}€ – {litter.priceTo}€</p>
                         </div>
@@ -179,7 +184,7 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
             {/* Gallery placeholder */}
             <Card className="border-0 shadow-sm rounded-2xl">
               <CardContent className="p-6">
-                <h2 className="text-lg font-bold mb-4 font-[var(--font-heading)]">Galerija</h2>
+                <h2 className="text-lg font-bold mb-4 font-[var(--font-heading)]">{isEn ? 'Gallery' : 'Galerija'}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {[...Array(6)].map((_, i) => (
                     <div key={i} className={`aspect-square rounded-xl bg-gradient-to-br ${breeder.gradient} opacity-40 flex items-center justify-center`}>
@@ -193,7 +198,7 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
             {/* Reviews */}
             <Card className="border-0 shadow-sm rounded-2xl">
               <CardContent className="p-6">
-                <h2 className="text-lg font-bold mb-4 font-[var(--font-heading)]">Recenzije</h2>
+                <h2 className="text-lg font-bold mb-4 font-[var(--font-heading)]">{isEn ? 'Reviews' : 'Recenzije'}</h2>
                 <div className="flex items-center gap-4 mb-6">
                   <div className="text-4xl font-bold">{breeder.rating.toFixed(1)}</div>
                   <div>
@@ -202,15 +207,31 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
                         <Star key={i} className={`h-5 w-5 ${i < Math.round(breeder.rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}`} />
                       ))}
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">{breeder.reviewCount} recenzija</p>
+                    <p className="text-sm text-muted-foreground mt-1">{breeder.reviewCount} {isEn ? 'reviews' : 'recenzija'}</p>
                   </div>
                 </div>
                 {/* Mock reviews */}
                 {[
-                  { name: 'Marko T.', rating: 5, text: 'Odličan uzgajivač! Naš štene je zdrav i dobro socijaliziran. Preporučujem svima.' },
-                  { name: 'Ana K.', rating: 5, text: 'Profesionalan pristup, odgovaraju na sva pitanja i pružaju podršku i nakon kupnje.' },
-                  { name: 'Ivan M.', rating: 4, text: 'Dobra komunikacija i zdravi ljubimci. Cijena je korektna za kvalitetu.' },
-                  { name: 'Petra S.', rating: 5, text: 'Uzgajivač s kojim smo odmah osjetili povjerenje. Štene je stiglo sa svim papirima i u odličnom zdravstvenom stanju.' },
+                  {
+                    name: 'Marko T.',
+                    rating: 5,
+                    text: isEn ? 'Excellent breeder. Our puppy is healthy and well socialized. Highly recommended.' : 'Odličan uzgajivač! Naš štene je zdrav i dobro socijaliziran. Preporučujem svima.',
+                  },
+                  {
+                    name: 'Ana K.',
+                    rating: 5,
+                    text: isEn ? 'Professional approach, answers every question, and provides support even after the purchase.' : 'Profesionalan pristup, odgovaraju na sva pitanja i pružaju podršku i nakon kupnje.',
+                  },
+                  {
+                    name: 'Ivan M.',
+                    rating: 4,
+                    text: isEn ? 'Good communication and healthy pets. The price is fair for the quality.' : 'Dobra komunikacija i zdravi ljubimci. Cijena je korektna za kvalitetu.',
+                  },
+                  {
+                    name: 'Petra S.',
+                    rating: 5,
+                    text: isEn ? 'We immediately felt trust with this breeder. The puppy arrived with all paperwork and in excellent health.' : 'Uzgajivač s kojim smo odmah osjetili povjerenje. Štene je stiglo sa svim papirima i u odličnom zdravstvenom stanju.',
+                  },
                 ].map((review) => (
                   <div key={review.name} className="py-4 border-b border-border/50 last:border-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -233,7 +254,7 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
             {/* Contact info */}
             <Card className="border-0 shadow-sm rounded-2xl sticky top-20">
               <CardContent className="p-6 space-y-4">
-                <h2 className="text-lg font-bold font-[var(--font-heading)]">Kontakt</h2>
+                <h2 className="text-lg font-bold font-[var(--font-heading)]">{isEn ? 'Contact' : 'Kontakt'}</h2>
                 <div className="space-y-3">
                   <a href={`tel:${breeder.phone}`} className="flex items-center gap-3 text-sm hover:text-orange-500 transition-colors">
                     <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 text-orange-500">
@@ -251,24 +272,24 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
                     <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 text-orange-500">
                       <MapPin className="h-4 w-4" />
                     </div>
-                    {breeder.city}, Hrvatska
+                    {breeder.city}, {isEn ? 'Croatia' : 'Hrvatska'}
                   </div>
                 </div>
 
-                <ContactFormDialog breeder={breeder} />
+                <ContactFormDialog breeder={breeder} isEn={isEn} />
 
                 <div className="pt-3 border-t border-border/50 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Iskustvo</span>
-                    <span className="font-medium">{breeder.yearsExperience} godina</span>
+                    <span className="text-muted-foreground">{isEn ? 'Experience' : 'Iskustvo'}</span>
+                    <span className="font-medium">{breeder.yearsExperience} {isEn ? 'years' : 'godina'}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Pasmine</span>
+                    <span className="text-muted-foreground">{isEn ? 'Breeds' : 'Pasmine'}</span>
                     <span className="font-medium">{breeder.breeds.length}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Vrsta</span>
-                    <span className="font-medium">{breeder.species === 'dog' ? 'Psi' : breeder.species === 'cat' ? 'Mačke' : 'Psi i mačke'}</span>
+                    <span className="text-muted-foreground">{isEn ? 'Species' : 'Vrsta'}</span>
+                    <span className="font-medium">{breeder.species === 'dog' ? (isEn ? 'Dogs' : 'Psi') : breeder.species === 'cat' ? (isEn ? 'Cats' : 'Mačke') : (isEn ? 'Dogs and cats' : 'Psi i mačke')}</span>
                   </div>
                 </div>
               </CardContent>
@@ -279,10 +300,10 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
         {/* Related breeders */}
         {relatedBreeders.length > 0 && (
           <section className="mt-12 pt-8 border-t border-border/50">
-            <h2 className="text-2xl font-extrabold mb-6 font-[var(--font-heading)]">Više uzgajivača</h2>
+            <h2 className="text-2xl font-extrabold mb-6 font-[var(--font-heading)]">{isEn ? 'More breeders' : 'Više uzgajivača'}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {relatedBreeders.map((b) => (
-                <Link key={b.id} href={`/uzgajivacnice/${b.id}`} className="group">
+                <Link key={b.id} href={`/uzgajivacnice${localeSegment}/${b.id}`} className="group">
                   <Card className="overflow-hidden border-0 shadow-sm rounded-2xl card-hover">
                     <CardContent className="p-0">
                       <div className={`h-24 bg-gradient-to-br ${b.gradient} flex items-center justify-center relative`}>
@@ -322,7 +343,7 @@ export function BreederDetailContent({ breeder, relatedBreeders }: BreederDetail
   );
 }
 
-function ContactFormDialog({ breeder }: { breeder: Breeder }) {
+function ContactFormDialog({ breeder, isEn }: { breeder: Breeder; isEn: boolean }) {
   const [sent, setSent] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -334,24 +355,24 @@ function ContactFormDialog({ breeder }: { breeder: Breeder }) {
     <Dialog>
       <DialogTrigger render={<Button className="w-full bg-orange-500 hover:bg-orange-600 btn-hover rounded-xl font-semibold" />}>
         <MessageSquare className="h-4 w-4 mr-2" />
-        Pošalji upit
+        {isEn ? 'Send inquiry' : 'Pošalji upit'}
       </DialogTrigger>
       <DialogContent className="sm:max-w-md rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="font-[var(--font-heading)]">Pošalji upit — {breeder.name}</DialogTitle>
+          <DialogTitle className="font-[var(--font-heading)]">{isEn ? `Send inquiry — ${breeder.name}` : `Pošalji upit — ${breeder.name}`}</DialogTitle>
         </DialogHeader>
         {sent ? (
           <div className="text-center py-8">
             <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mx-auto mb-4">
               <Send className="h-8 w-8 text-emerald-500" />
             </div>
-            <h3 className="font-bold text-lg mb-2">Upit poslan!</h3>
-            <p className="text-sm text-muted-foreground">Uzgajivač će vam odgovoriti u najkraćem roku.</p>
+            <h3 className="font-bold text-lg mb-2">{isEn ? 'Inquiry sent!' : 'Upit poslan!'}</h3>
+            <p className="text-sm text-muted-foreground">{isEn ? 'The breeder will get back to you as soon as possible.' : 'Uzgajivač će vam odgovoriti u najkraćem roku.'}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="contact-name" className="text-sm">Ime i prezime</Label>
+              <Label htmlFor="contact-name" className="text-sm">{isEn ? 'Full name' : 'Ime i prezime'}</Label>
               <Input id="contact-name" required className="mt-1 rounded-lg" />
             </div>
             <div>
@@ -359,11 +380,11 @@ function ContactFormDialog({ breeder }: { breeder: Breeder }) {
               <Input id="contact-email" type="email" required className="mt-1 rounded-lg" />
             </div>
             <div>
-              <Label htmlFor="contact-phone" className="text-sm">Telefon</Label>
+              <Label htmlFor="contact-phone" className="text-sm">{isEn ? 'Phone' : 'Telefon'}</Label>
               <Input id="contact-phone" type="tel" className="mt-1 rounded-lg" />
             </div>
             <div>
-              <Label htmlFor="contact-breed" className="text-sm">Koja pasmina vas zanima?</Label>
+              <Label htmlFor="contact-breed" className="text-sm">{isEn ? 'Which breed are you interested in?' : 'Koja pasmina vas zanima?'}</Label>
               <select id="contact-breed" className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm mt-1">
                 {breeder.breeds.map((b) => (
                   <option key={b} value={b}>{b}</option>
@@ -371,22 +392,22 @@ function ContactFormDialog({ breeder }: { breeder: Breeder }) {
               </select>
             </div>
             <div>
-              <Label htmlFor="contact-message" className="text-sm">Poruka</Label>
-              <Textarea id="contact-message" required rows={3} className="mt-1 rounded-lg" placeholder="Napišite vaš upit..." />
+              <Label htmlFor="contact-message" className="text-sm">{isEn ? 'Message' : 'Poruka'}</Label>
+              <Textarea id="contact-message" required rows={3} className="mt-1 rounded-lg" placeholder={isEn ? 'Write your inquiry...' : 'Napišite vaš upit...'} />
             </div>
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm cursor-pointer">
                 <input type="checkbox" className="rounded border-input accent-orange-500" />
-                Imam iskustva s pasminom
+                {isEn ? 'I have experience with this breed' : 'Imam iskustva s pasminom'}
               </label>
               <label className="flex items-center gap-2 text-sm cursor-pointer">
                 <input type="checkbox" className="rounded border-input accent-orange-500" />
-                Imam vrt/dvorište
+                {isEn ? 'I have a yard / garden' : 'Imam vrt/dvorište'}
               </label>
             </div>
             <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 btn-hover rounded-xl font-semibold">
               <Send className="h-4 w-4 mr-2" />
-              Pošalji upit
+              {isEn ? 'Send inquiry' : 'Pošalji upit'}
             </Button>
           </form>
         )}

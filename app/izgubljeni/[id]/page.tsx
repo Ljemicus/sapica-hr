@@ -3,8 +3,8 @@ import type { Metadata } from 'next';
 import { LostPetDetailContent } from './lost-pet-detail-content';
 import { getLostPet } from '@/lib/db';
 import { shouldIndexLostPet, robotsMeta } from '@/lib/seo/indexability';
+import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 interface LostPetPageProps {
   params: Promise<{ id: string }>;
@@ -34,6 +34,7 @@ export async function generateMetadata({ params }: LostPetPageProps): Promise<Me
       title: `${title} — PetPark`,
       description,
       type: 'article',
+      ...buildLocaleOpenGraph(`/izgubljeni/${id}`),
       images: pet.image_url ? [
         {
           url: pet.image_url,
@@ -49,9 +50,7 @@ export async function generateMetadata({ params }: LostPetPageProps): Promise<Me
       description,
       images: pet.image_url ? [pet.image_url] : [],
     },
-    alternates: indexable ? {
-      canonical: `${BASE_URL}/izgubljeni/${id}`,
-    } : undefined,
+    alternates: indexable ? buildLocaleAlternates(`/izgubljeni/${id}`) : undefined,
   };
 }
 
