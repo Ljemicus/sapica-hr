@@ -4,8 +4,8 @@ import { apiError } from '@/lib/api-errors';
 import { getStripe } from '@/lib/stripe';
 import { calculateSitterPayout, calculatePlatformFee, formatCurrency } from '@/lib/payment';
 import { SERVICE_LABELS, type ServiceType } from '@/lib/types';
-import { appLogger } from '@/lib/logger';
 import { dispatchAlert } from '@/lib/alerting';
+import { getRequestId, createScopedLogger } from '@/lib/request-context';
 import { sendEmail } from '@/lib/email';
 import { paymentConfirmationEmail, sitterPaymentNotificationEmail } from '@/lib/email-templates';
 import type Stripe from 'stripe';
@@ -14,6 +14,8 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  const reqId = getRequestId(request);
+  const log = createScopedLogger('payments.webhook', reqId);
   const stripe = getStripe();
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -25,7 +27,7 @@ export async function POST(request: Request) {
   const sig = request.headers.get('stripe-signature');
 
   if (!sig) {
-    appLogger.warn('payments.webhook', 'Missing stripe-signature header');
+    log.warn('Missing stripe-signature header');
     return apiError({ status: 400, code: 'SIGNATURE_MISSING', message: 'Missing stripe-signature header' });
   }
 
@@ -33,7 +35,7 @@ export async function POST(request: Request) {
   try {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch {
-    appLogger.error('payments.webhook', 'Signature verification failed');
+    log.error('Signature verification failed');
     dispatchAlert({
       severity: 'P1',
       service: 'payments.webhook',
@@ -47,7 +49,7 @@ export async function POST(request: Request) {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !serviceRoleKey) {
-    appLogger.error('payments.webhook', 'Supabase service role is not configured for webhook processing');
+    log.error('Supabase service role is not configured for webhook processing');
     return apiError({ status: 500, code: 'WEBHOOK_STORAGE_UNAVAILABLE', message: 'Webhook storage not configured' });
   }
 
@@ -59,7 +61,7 @@ export async function POST(request: Request) {
       const bookingId = session.metadata?.bookingId;
 
       if (!bookingId) {
-        appLogger.warn('payments.webhook', 'checkout.session.completed missing bookingId metadata', {
+        log.warn('checkout.session.completed missing bookingId metadata', {
           sessionId: session.id,
         });
         break;
@@ -67,7 +69,7 @@ export async function POST(request: Request) {
 
       const amountTotal = session.amount_total || 0;
       if (amountTotal <= 0) {
-        appLogger.error('payments.webhook', 'checkout.session.completed has invalid amount', {
+        log.error('checkout.session.completed has invalid amount', {
           sessionId: session.id,
           bookingId,
           amountTotal,
@@ -84,7 +86,7 @@ export async function POST(request: Request) {
           .single();
 
         if (existingBooking?.payment_status === 'paid') {
-          appLogger.info('payments.webhook', 'Skipping already-paid booking (duplicate webhook)', {
+          log.info('Skipping already-paid booking (duplicate webhook)', {
             bookingId,
             sessionId: session.id,
           });
@@ -110,7 +112,7 @@ export async function POST(request: Request) {
           .eq('id', bookingId);
 
         if (bookingUpdateError) {
-          appLogger.error('payments.webhook', 'Failed to update booking after checkout completion', {
+          log.error('Failed to update booking after checkout completion', {
             bookingId,
             sessionId: session.id,
             reason: bookingUpdateError.message,
@@ -140,7 +142,7 @@ export async function POST(request: Request) {
         });
 
         if (paymentInsertError) {
-          appLogger.error('payments.webhook', 'Failed to insert payment log after checkout completion', {
+          log.error('Failed to insert payment log after checkout completion', {
             bookingId,
             sessionId: session.id,
             reason: paymentInsertError.message,
@@ -176,7 +178,7 @@ export async function POST(request: Request) {
                 dates,
                 formatCurrency(amountTotal),
               ),
-            }).catch((err) => appLogger.error('payments.webhook', 'Failed to send owner payment email', { error: String(err) }));
+            }).catch((err) => log.error('Failed to send owner payment email', { error: String(err) }));
 
             if (bookingDetails.sitter?.email) {
               sendEmail({
@@ -190,11 +192,11 @@ export async function POST(request: Request) {
                   dates,
                   formatCurrency(sitterPayout),
                 ),
-              }).catch((err) => appLogger.error('payments.webhook', 'Failed to send sitter payment email', { error: String(err) }));
+              }).catch((err) => log.error('Failed to send sitter payment email', { error: String(err) }));
             }
           }
         } catch (emailErr) {
-          appLogger.error('payments.webhook', 'Failed to fetch booking details for email', { error: String(emailErr) });
+          log.error('Failed to fetch booking details for email', { error: String(emailErr) });
         }
       }
       break;
@@ -209,7 +211,7 @@ export async function POST(request: Request) {
       const bookingId = pi.metadata?.bookingId;
 
       if (!bookingId) {
-        appLogger.warn('payments.webhook', 'payment_intent.payment_failed missing bookingId metadata', {
+        log.warn('payment_intent.payment_failed missing bookingId metadata', {
           paymentIntentId: pi.id,
         });
         break;
@@ -221,7 +223,7 @@ export async function POST(request: Request) {
         .eq('id', bookingId);
 
       if (paymentFailedUpdateError) {
-        appLogger.error('payments.webhook', 'Failed to mark booking payment as failed', {
+        log.error('Failed to mark booking payment as failed', {
           bookingId,
           paymentIntentId: pi.id,
           reason: paymentFailedUpdateError.message,
@@ -259,7 +261,7 @@ export async function POST(request: Request) {
         .eq('stripe_account_id', account.id);
 
       if (accountUpdateError) {
-        appLogger.error('payments.webhook', 'Failed to update sitter onboarding status', {
+        log.error('Failed to update sitter onboarding status', {
           stripeAccountId: account.id,
           reason: accountUpdateError.message,
         });
@@ -269,7 +271,7 @@ export async function POST(request: Request) {
 
     case 'charge.dispute.created': {
       const dispute = event.data.object as Stripe.Dispute;
-      appLogger.error('payments.webhook', 'Dispute created', {
+      log.error('Dispute created', {
         disputeId: dispute.id,
         amount: dispute.amount || 0,
       });
