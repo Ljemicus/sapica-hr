@@ -125,10 +125,10 @@ const CATEGORY_CTA: Record<BlogCategory, {
   },
   prehrana: {
     kicker: 'Prehrana bez lutanja',
-    title: 'Usporedite proizvode i nastavite s boljom rutinom hranjenja',
-    text: 'Nakon vodiča o prehrani, sljedeći korak je odabrati proizvode i navike koje stvarno možete održati dugoročno.',
-    primary: { label: 'Pogledaj shop', href: '/shop' },
-    secondary: { label: 'Savjeti o zdravlju', href: '/blog?category=zdravlje' },
+    title: 'Nastavite s boljom rutinom hranjenja bez previše improvizacije',
+    text: 'Nakon vodiča o prehrani, najviše koristi donosi dobar plan, provjerene navike i dodatni sadržaj o zdravlju i rutini.',
+    primary: { label: 'Savjeti o zdravlju', href: '/blog?category=zdravlje' },
+    secondary: { label: 'Pogledaj zajednicu', href: '/forum' },
   },
   dresura: {
     kicker: 'Trening u praksi',
@@ -174,8 +174,8 @@ const CATEGORY_INTERNAL_LINKS: Record<BlogCategory, LinkItem[]> = {
     { title: 'Više članaka o zdravlju', href: '/blog?category=zdravlje', description: 'Nastavite kroz povezane teme bez vraćanja na početak.' },
   ],
   prehrana: [
-    { title: 'PetPark Shop', href: '/shop', description: 'Pregledajte proizvode i nastavite s konkretnim odabirom hrane i dodataka.' },
     { title: 'Članci o zdravlju', href: '/blog?category=zdravlje', description: 'Prehrana i zdravlje idu zajedno — ovdje je najlogičniji nastavak.' },
+    { title: 'Forum zajednica', href: '/forum', description: 'Pogledajte iskustva drugih vlasnika oko hrane, rutine i osjetljivih trbuha.' },
     { title: 'FAQ', href: '/faq', description: 'Brzi odgovori za česta pitanja oko platforme i usluga.' },
   ],
   dresura: [
