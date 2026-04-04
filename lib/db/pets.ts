@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
-import { mockPets, getPetsForOwner as mockGetPetsForOwner } from '@/lib/mock-data';
 import type { Pet, WalkLabelPet } from '@/lib/types';
 
 export interface PetCardData {
@@ -20,7 +19,7 @@ export interface PetCardData {
 
 export async function getPets(): Promise<Pet[]> {
   if (!isSupabaseConfigured()) {
-    return mockPets;
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -34,28 +33,11 @@ export async function getPets(): Promise<Pet[]> {
 
 type PetFields = 'full' | 'walk-label';
 
-function pickMockPetFields(pets: Pet[], fields: 'walk-label'): WalkLabelPet[];
-function pickMockPetFields(pets: Pet[], fields?: 'full'): Pet[];
-function pickMockPetFields(pets: Pet[], fields: PetFields = 'full'): Pet[] | WalkLabelPet[] {
-  if (fields === 'full') return pets;
-
-  return pets.map((pet) => ({
-    id: pet.id,
-    owner_id: pet.owner_id,
-    name: pet.name,
-    species: pet.species,
-    created_at: pet.created_at,
-  }));
-}
-
 export async function getPetsByOwner(ownerId: string, fields: 'walk-label'): Promise<WalkLabelPet[]>;
 export async function getPetsByOwner(ownerId: string, fields?: 'full'): Promise<Pet[]>;
 export async function getPetsByOwner(ownerId: string, fields: PetFields = 'full'): Promise<Pet[] | WalkLabelPet[]> {
   if (!isSupabaseConfigured()) {
-    const ownerPets = mockGetPetsForOwner(ownerId);
-    return fields === 'walk-label'
-      ? pickMockPetFields(ownerPets, 'walk-label')
-      : pickMockPetFields(ownerPets, 'full');
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -69,18 +51,16 @@ export async function getPetsByOwner(ownerId: string, fields: PetFields = 'full'
 }
 
 export async function getPet(id: string): Promise<Pet | null> {
-  const mockPet = mockPets.find((p) => p.id === id) ?? null;
-
   if (!isSupabaseConfigured()) {
-    return mockPet;
+    return null;
   }
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('pets').select('*').eq('id', id).single();
-    if (error || !data) return mockPet;
+    if (error || !data) return null;
     return data as Pet;
   } catch {
-    return mockPet;
+    return null;
   }
 }
 
@@ -111,25 +91,9 @@ export async function createPet(petData: {
   }
 }
 
-export async function getPetCardData(id: string): Promise<PetCardData | null> {
+export async function getPetCardData(_id: string): Promise<PetCardData | null> {
   if (!isSupabaseConfigured()) {
-    const pet = mockPets.find((p) => p.id === id);
-    if (!pet) return null;
-
-    return {
-      name: pet.name,
-      species: pet.species || 'dog',
-      breed: pet.breed || 'Nepoznata pasmina',
-      age: pet.age || 0,
-      weight: pet.weight || 0,
-      microchip: 'N/A',
-      ownerName: 'Vlasnik',
-      ownerPhone: 'N/A',
-      vetName: 'Veterinar',
-      vetPhone: 'N/A',
-      allergies: [],
-      specialNeeds: pet.special_needs || '',
-    };
+    return null;
   }
   return null;
 }

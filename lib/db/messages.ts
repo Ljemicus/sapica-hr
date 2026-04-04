@@ -1,8 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
-import { getMessagesForUser as mockGetMessages, getUserById } from '@/lib/mock-data';
 import type { Message } from '@/lib/types';
-
 
 export interface ConversationSummary {
   partnerId: string;
@@ -28,57 +26,9 @@ interface ConversationSummaryRow {
   unread_count: number | null;
 }
 
-function buildMockConversationSummaries(userId: string): ConversationSummary[] {
-  const allMessages = mockGetMessages(userId);
-  const partnerIds = [...new Set(allMessages.map((msg) => msg.sender_id === userId ? msg.receiver_id : msg.sender_id))];
-  const grouped = new Map<string, Message[]>();
-
-  for (const msg of allMessages) {
-    const partnerId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
-    const current = grouped.get(partnerId) || [];
-    current.push(msg);
-    grouped.set(partnerId, current);
-  }
-
-  return partnerIds.map((partnerId) => {
-    const partner = getUserById(partnerId);
-    const messages = (grouped.get(partnerId) || []).sort(
-      (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-    );
-    const lastMessage = messages[messages.length - 1] || null;
-    const unreadCount = messages.filter((m) => !m.read && m.receiver_id === userId).length;
-
-    return {
-      partnerId,
-      partnerName: partner?.name || 'Korisnik',
-      partnerAvatar: partner?.avatar_url || null,
-      messages,
-      lastMessage,
-      unreadCount,
-    };
-  }).sort((a, b) => {
-    const aTime = a.lastMessage ? new Date(a.lastMessage.created_at).getTime() : 0;
-    const bTime = b.lastMessage ? new Date(b.lastMessage.created_at).getTime() : 0;
-    return bTime - aTime;
-  });
-}
-
 export async function getConversations(userId: string): Promise<Message[]> {
   if (!isSupabaseConfigured()) {
-    const all = mockGetMessages(userId);
-    const seen = new Set<string>();
-    const conversations: Message[] = [];
-    const sorted = [...all].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-    for (const msg of sorted) {
-      const partnerId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
-      if (!seen.has(partnerId)) {
-        seen.add(partnerId);
-        conversations.push(msg);
-      }
-    }
-    return conversations;
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -107,7 +57,7 @@ export async function getConversations(userId: string): Promise<Message[]> {
 
 export async function getMessages(userId: string): Promise<Message[]> {
   if (!isSupabaseConfigured()) {
-    return mockGetMessages(userId);
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -128,12 +78,7 @@ export async function getConversation(
   userId2: string
 ): Promise<Message[]> {
   if (!isSupabaseConfigured()) {
-    const all = mockGetMessages(userId1);
-    return all.filter(
-      (m) =>
-        (m.sender_id === userId1 && m.receiver_id === userId2) ||
-        (m.sender_id === userId2 && m.receiver_id === userId1)
-    );
+    return [];
   }
   try {
     const supabase = await createClient();
@@ -157,12 +102,7 @@ export async function sendMessage(
   messageData: Omit<Message, 'id' | 'created_at' | 'sender'>
 ): Promise<Message | null> {
   if (!isSupabaseConfigured()) {
-    const mockMsg: Message = {
-      ...messageData,
-      id: `mock-msg-${Date.now()}`,
-      created_at: new Date().toISOString(),
-    };
-    return mockMsg;
+    return null;
   }
   try {
     const supabase = await createClient();
@@ -198,7 +138,7 @@ export async function markAsRead(
 
 export async function getConversationSummaries(userId: string): Promise<ConversationSummary[]> {
   if (!isSupabaseConfigured()) {
-    return buildMockConversationSummaries(userId);
+    return [];
   }
 
   try {
@@ -228,48 +168,34 @@ export async function getConversationSummaries(userId: string): Promise<Conversa
         unreadCount: row.unread_count ?? 0,
       }));
     }
-  } catch {
-    // fall through to compatibility path below
-  }
 
-  try {
-    const allMessages = await getMessages(userId);
-    const partnerIds = [...new Set(allMessages.map((msg) => msg.sender_id === userId ? msg.receiver_id : msg.sender_id))];
-
-    if (partnerIds.length === 0) return [];
-
-    const supabase = await createClient();
-    const { data: partners, error } = await supabase
-      .from('users')
-      .select('id, name, avatar_url')
-      .in('id', partnerIds);
-
-    if (error) return [];
-
-    const partnerMap = new Map((partners || []).map((partner) => [partner.id as string, partner]));
+    const messages = await getMessages(userId);
     const grouped = new Map<string, Message[]>();
 
-    for (const msg of allMessages) {
-      const partnerId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
-      const current = grouped.get(partnerId) || [];
-      current.push(msg);
-      grouped.set(partnerId, current);
+    for (const message of messages) {
+      const partnerId = message.sender_id === userId ? message.receiver_id : message.sender_id;
+      const existing = grouped.get(partnerId) || [];
+      existing.push(message);
+      grouped.set(partnerId, existing);
     }
 
     return Array.from(grouped.entries())
-      .map(([partnerId, messages]) => {
-        const partner = partnerMap.get(partnerId);
-        const sortedMessages = [...messages].sort(
-          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        );
-        const lastMessage = sortedMessages[sortedMessages.length - 1] || null;
-        const unreadCount = sortedMessages.filter((m) => !m.read && m.receiver_id === userId).length;
+      .map(([partnerId, convoMessages]) => {
+        const sorted = convoMessages.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        const lastMessage = sorted[sorted.length - 1] || null;
+        const partnerName = lastMessage?.sender_id === userId
+          ? 'Korisnik'
+          : (lastMessage?.sender?.name || 'Korisnik');
+        const partnerAvatar = lastMessage?.sender_id === userId
+          ? null
+          : (lastMessage?.sender?.avatar_url || null);
+        const unreadCount = sorted.filter((msg) => !msg.read && msg.receiver_id === userId).length;
 
         return {
           partnerId,
-          partnerName: (partner?.name as string | undefined) || 'Korisnik',
-          partnerAvatar: (partner?.avatar_url as string | null | undefined) || null,
-          messages: sortedMessages,
+          partnerName,
+          partnerAvatar,
+          messages: sorted,
           lastMessage,
           unreadCount,
         };

@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
-import { getBookingsForUser as mockGetBookings, getUserById, mockBookings, mockPets } from '@/lib/mock-data';
 import type { Booking, OwnerHistoryBooking, WalkSelectorBooking } from '@/lib/types';
 
 type BookingFields = 'full' | 'walk-selector' | 'owner-history';
@@ -184,11 +183,7 @@ export async function getBookings(
   fields: BookingFields = 'full'
 ): Promise<Booking[] | OwnerHistoryBooking[] | WalkSelectorBooking[]> {
   if (!isSupabaseConfigured()) {
-    return fields === 'walk-selector'
-      ? pickMockBookingFields(mockGetBookings(userId, role), 'walk-selector')
-      : fields === 'owner-history'
-      ? pickMockBookingFields(mockGetBookings(userId, role), 'owner-history')
-      : pickMockBookingFields(mockGetBookings(userId, role), 'full');
+    return [];
   }
   try {
     const supabase = await createClient();
