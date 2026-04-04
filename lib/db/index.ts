@@ -19,6 +19,13 @@ export { getTrainers, getTrainer, getPrograms, createProgram, updateProgram, del
 export { getTrainerAvailability, getTrainerAvailableDates, setTrainerAvailability, deleteTrainerAvailability } from './trainer-availability';
 export { getTrainerBookedSlots, getTrainerBookings, createTrainerBooking, updateTrainerBookingStatus } from './trainer-bookings';
 export { getArticles, getArticle, getRelatedArticles } from './blog';
+export {
+  getArticleComments,
+  getArticleCommentById,
+  createArticleComment,
+  reportArticleComment,
+  deleteArticleComment,
+} from './blog-comments';
 export { getCategories, getTopics, getTopic, getPosts, getTrendingTopics } from './forum';
 export { getLostPets, getLostPet } from './lost-pets';
 export { getProducts, getProductBySlug, getProductReviews, getRelatedProducts } from './products';

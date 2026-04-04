@@ -8,11 +8,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { BLOG_CATEGORY_LABELS, BLOG_CATEGORY_EMOJI, type Article } from '@/lib/types';
+import { BLOG_CATEGORY_LABELS, BLOG_CATEGORY_EMOJI, type Article, type BlogComment } from '@/lib/types';
+import { BlogComments } from './blog-comments';
 
 interface ArticleContentProps {
   article: Article;
   relatedArticles: Article[];
+  comments: BlogComment[];
+  currentUser: {
+    id: string;
+    name: string;
+    avatar_url: string | null;
+    role: 'owner' | 'sitter' | 'admin';
+  } | null;
 }
 
 function slugify(text: string): string {
@@ -77,7 +85,7 @@ function getAuthorBio(name: string): string {
   return `${name} je autor i ljubitelj životinja koji redovito piše za PetPark blog. Strastveno dijeli savjete i iskustva iz svijeta kućnih ljubimaca kako bi pomogao vlasnicima pružiti najbolju moguću skrb.`;
 }
 
-export function ArticleContent({ article, relatedArticles }: ArticleContentProps) {
+export function ArticleContent({ article, relatedArticles, comments, currentUser }: ArticleContentProps) {
   const router = useRouter();
   const [copied, setCopied] = useState(false);
 
@@ -255,6 +263,8 @@ export function ArticleContent({ article, relatedArticles }: ArticleContentProps
           </Button>
         </div>
       </div>
+
+      <BlogComments articleSlug={article.slug} initialComments={comments} currentUser={currentUser} />
 
       {/* Related articles */}
       {relatedArticles.length > 0 && (

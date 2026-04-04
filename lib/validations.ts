@@ -96,6 +96,11 @@ export const messageSchema = z.object({
   booking_id: z.string().uuid().optional(),
 });
 
+export const blogCommentSchema = z.object({
+  article_slug: z.string().min(1, 'Članak nije pronađen'),
+  content: z.string().trim().min(1, 'Komentar ne može biti prazan').max(1000, 'Komentar može imati najviše 1000 znakova'),
+});
+
 // ── Adoption Listing ──
 
 export const adoptionListingImageSchema = z.object({
@@ -242,3 +247,4 @@ export type SitterProfileInput = z.infer<typeof sitterProfileSchema>;
 export type BookingInput = z.infer<typeof bookingSchema>;
 export type ReviewInput = z.infer<typeof reviewSchema>;
 export type MessageInput = z.infer<typeof messageSchema>;
+export type BlogCommentInput = z.infer<typeof blogCommentSchema>;

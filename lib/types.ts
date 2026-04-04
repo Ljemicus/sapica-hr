@@ -486,6 +486,25 @@ export interface Article {
   emoji: string;
 }
 
+export interface BlogComment {
+  id: string;
+  article_slug: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  user?: Pick<User, 'id' | 'name' | 'avatar_url'>;
+}
+
+export interface BlogCommentReport {
+  id: string;
+  comment_id: string;
+  reporter_user_id: string;
+  article_slug: string;
+  reason: string | null;
+  created_at: string;
+}
+
 // ── Forum ──
 
 export type ForumCategorySlug = 'pitanja' | 'savjeti' | 'price' | 'izgubljeni' | 'slobodna';
