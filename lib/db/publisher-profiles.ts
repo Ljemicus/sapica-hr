@@ -20,6 +20,24 @@ export async function getPublisherProfile(userId: string): Promise<PublisherProf
   }
 }
 
+export async function getPublisherProfileById(id: string): Promise<PublisherProfile | null> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('publisher_profiles')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error || !data) return null;
+    return data as PublisherProfile;
+  } catch {
+    return null;
+  }
+}
+
 export async function createPublisherProfile(
   userId: string,
   type: PublisherProfileType,

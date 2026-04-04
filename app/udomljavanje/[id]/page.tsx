@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAdoptionListing } from '@/lib/db/adoption-listings';
+import { getAdoptionListing, getAdoptionListingsByPublisher } from '@/lib/db/adoption-listings';
 import { AdoptionDetailContent } from './adoption-detail-content';
 import { shouldIndexAdoption, robotsMeta } from '@/lib/seo/indexability';
 
@@ -43,5 +43,11 @@ export default async function AdoptionDetailPage({ params }: Props) {
     notFound();
   }
 
-  return <AdoptionDetailContent listing={listing} />;
+  const relatedListings = listing.publisher_id
+    ? (await getAdoptionListingsByPublisher(listing.publisher_id))
+        .filter((item) => item.status === 'active' && item.id !== listing.id)
+        .slice(0, 3)
+    : [];
+
+  return <AdoptionDetailContent listing={listing} relatedListings={relatedListings} />;
 }

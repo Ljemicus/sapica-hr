@@ -314,12 +314,15 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
 
                         {/* Publisher */}
                         {listing.publisher_display_name && (
-                          <p className="text-xs text-muted-foreground">{listing.publisher_display_name}</p>
+                          <div className="rounded-lg bg-purple-50/70 dark:bg-purple-950/20 px-3 py-2">
+                            <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1">O njemu brine</p>
+                            <p className="text-sm font-medium text-purple-700 dark:text-purple-300">{listing.publisher_display_name}</p>
+                          </div>
                         )}
 
                         <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between">
                           <span className="text-sm font-semibold text-purple-600 dark:text-purple-400 flex items-center gap-1">
-                            Saznaj više <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                            Pogledaj profil ljubimca <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
                           </span>
                         </div>
                       </div>

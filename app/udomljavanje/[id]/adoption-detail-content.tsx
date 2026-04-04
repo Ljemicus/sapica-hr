@@ -39,7 +39,7 @@ const SPECIES_GRADIENTS: Record<string, string> = {
   other: 'from-blue-300 to-indigo-400',
 };
 
-export function AdoptionDetailContent({ listing }: { listing: AdoptionListing }) {
+export function AdoptionDetailContent({ listing, relatedListings = [] }: { listing: AdoptionListing; relatedListings?: AdoptionListing[] }) {
   const { toggleFavorite, isFavorite } = useAdoptionFavorites();
   const [copied, setCopied] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
@@ -332,24 +332,72 @@ export function AdoptionDetailContent({ listing }: { listing: AdoptionListing })
                 </form>
               </DialogContent>
             </Dialog>
+            {publisher && relatedListings.length > 0 && (
+              <Card className="border-0 shadow-sm rounded-2xl">
+                <CardContent className="p-6">
+                  <h2 className="font-bold text-lg mb-3 font-[var(--font-heading)]">Više ljubimaca iz ove udruge</h2>
+                  <div className="space-y-3">
+                    {relatedListings.map((item) => (
+                      <Link
+                        key={item.id}
+                        href={`/udomljavanje/${item.id}`}
+                        className="block rounded-xl border border-border/60 p-3 hover:bg-muted/40 transition-colors"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="font-semibold text-sm">{item.name}</p>
+                            <p className="text-xs text-muted-foreground">{item.breed || 'Ljubimac za udomljavanje'} · {item.city}</p>
+                          </div>
+                          <span className="text-lg">{ADOPTION_SPECIES_EMOJI[item.species]}</span>
+                        </div>
+                      </Link>
+                    ))}
+                    <Link
+                      href={`/udomljavanje/udruga/${publisher.id}`}
+                      className="inline-flex items-center text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
+                    >
+                      Pogledaj sve ljubimce ove udruge
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Publisher info — contact details gated behind inquiry form */}
+            {/* Publisher info — animal first, publisher as trust/support context */}
             <Card className="border-0 shadow-sm rounded-2xl">
               <CardContent className="p-6">
-                <h2 className="font-bold text-lg mb-4 font-[var(--font-heading)]">Kontakt</h2>
+                <h2 className="font-bold text-lg mb-4 font-[var(--font-heading)]">O životinji brine</h2>
                 <div className="space-y-3">
-                  {publisher && (
-                    <p className="font-semibold text-purple-600 dark:text-purple-400">{publisher.display_name}</p>
+                  {publisher ? (
+                    <>
+                      <div>
+                        <p className="font-semibold text-purple-600 dark:text-purple-400">{publisher.display_name}</p>
+                        <div className="flex items-start gap-2 text-sm text-muted-foreground mt-1">
+                          <MapPin className="h-4 w-4 text-purple-400 flex-shrink-0 mt-0.5" />
+                          {publisher.city || listing.city}
+                        </div>
+                      </div>
+                      {publisher.bio && (
+                        <p className="text-sm text-muted-foreground leading-relaxed">{publisher.bio}</p>
+                      )}
+                      <Link
+                        href={`/udomljavanje/udruga/${publisher.id}`}
+                        className="inline-flex w-full items-center justify-center rounded-xl border border-purple-200 px-4 py-2 text-sm font-medium text-purple-600 transition-colors hover:bg-purple-50 dark:border-purple-800 dark:text-purple-400 dark:hover:bg-purple-950/20"
+                      >
+                        Pogledaj udrugu
+                      </Link>
+                    </>
+                  ) : (
+                    <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <MapPin className="h-4 w-4 text-purple-400 flex-shrink-0 mt-0.5" />
+                      {listing.city}
+                    </div>
                   )}
-                  <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4 text-purple-400 flex-shrink-0 mt-0.5" />
-                    {listing.city}
-                  </div>
                   <p className="text-xs text-muted-foreground">
-                    Pošaljite upit putem obrasca kako biste kontaktirali oglašivača.
+                    Pošaljite upit putem obrasca kako biste kontaktirali udrugu ili skrbnika koji brine o {listing.name}.
                   </p>
                   <Button
                     variant="outline"
