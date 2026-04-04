@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { appLogger } from '@/lib/logger';
 import { dispatchAlert } from '@/lib/alerting';
 import { apiError } from '@/lib/api-errors';
-import { getAuthUser } from '@/lib/auth';
+import { requireAdmin } from '@/lib/admin-guard';
 import { getVerificationById, updateVerificationReview, getAllVerifications } from '@/lib/db/provider-verifications';
 import { getDocumentsByVerification } from '@/lib/db/provider-documents';
 import { getProviderApplicationById, updateProviderApplicationStatus } from '@/lib/db/provider-applications';
@@ -18,10 +18,9 @@ const ALLOWED_ACTIONS: Record<string, { status: VerificationStatus; auditAction:
 
 export async function GET(request: NextRequest) {
   try {
-    const user = await getAuthUser();
-    if (!user || user.role !== 'admin') {
-      return apiError({ status: 403, code: 'FORBIDDEN', message: 'Admin access required' });
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const { user } = guard;
 
     const statusFilter = request.nextUrl.searchParams.get('status') as VerificationStatus | null;
     const verifications = await getAllVerifications(statusFilter || undefined);
@@ -48,10 +47,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getAuthUser();
-    if (!user || user.role !== 'admin') {
-      return apiError({ status: 403, code: 'FORBIDDEN', message: 'Admin access required' });
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
+    const { user } = guard;
 
     const body = await request.json();
     const { verificationId, action, rejectionReason, notesInternal } = body as {

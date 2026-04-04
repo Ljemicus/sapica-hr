@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { apiError } from '@/lib/api-errors';
-import { getAuthUser } from '@/lib/auth';
+import { requireAdmin } from '@/lib/admin-guard';
 import { getDocumentsByVerification } from '@/lib/db/provider-documents';
 
 export async function GET(request: NextRequest) {
   try {
-    const user = await getAuthUser();
-    if (!user || user.role !== 'admin') {
-      return apiError({ status: 403, code: 'FORBIDDEN', message: 'Admin access required' });
-    }
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
 
     const verificationId = request.nextUrl.searchParams.get('verificationId');
     if (!verificationId) {

@@ -30,7 +30,10 @@ export type AuditAction =
   | 'verification_rejected'
   | 'verification_resubmission_requested'
   | 'provider_hidden'
-  | 'provider_restored';
+  | 'provider_restored'
+  | 'application_status_updated'
+  | 'sitter_verification_updated'
+  | 'public_status_updated';
 
 export interface ProviderVerification {
   id: string;

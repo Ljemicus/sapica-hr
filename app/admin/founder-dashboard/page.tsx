@@ -216,18 +216,16 @@ export default async function FounderDashboardPage() {
           <CardContent className="space-y-3">
             <FounderDashboardActions />
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href="/admin">
-                <Button>
-                  Otvori admin panel
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
-              <Link href="/admin#providers">
-                <Button variant="outline">Provider applications</Button>
-              </Link>
-              <Link href="/admin#identity">
-                <Button variant="outline">Verifications</Button>
-              </Link>
+              <Button render={<Link href="/admin" />}>
+                Otvori admin panel
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+              <Button variant="outline" render={<Link href="/admin#providers" />}>
+                Provider applications
+              </Button>
+              <Button variant="outline" render={<Link href="/admin#identity" />}>
+                Verifications
+              </Button>
             </div>
           </CardContent>
         </Card>
