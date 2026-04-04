@@ -143,9 +143,22 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
       {/* Hidden banner for moderated listings */}
       {localHidden && (
         <div className="bg-yellow-600 text-white py-3 px-4 text-center">
-          <div className="container mx-auto flex items-center justify-center gap-2 text-sm md:text-base font-bold">
-            <EyeOff className="h-5 w-5" />
-            {isEn ? 'This listing is hidden by an administrator' : 'Ovaj oglas je sakriven od strane administratora'}
+          <div className="container mx-auto flex flex-col md:flex-row items-center justify-center gap-3 text-sm md:text-base font-bold">
+            <div className="flex items-center justify-center gap-2">
+              <EyeOff className="h-5 w-5" />
+              <span>{isEn ? 'This listing is hidden by an administrator' : 'Ovaj oglas je sakriven od strane administratora'}</span>
+            </div>
+            {isAdmin && (
+              <Button
+                onClick={() => handleAdminAction('unhide')}
+                disabled={actionLoading}
+                variant="secondary"
+                className="h-9 bg-white text-yellow-700 hover:bg-yellow-50"
+              >
+                {actionLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Eye className="h-4 w-4 mr-2" />}
+                {isEn ? 'Unhide listing' : 'Prikaži oglas'}
+              </Button>
+            )}
           </div>
         </div>
       )}
