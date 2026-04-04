@@ -14,13 +14,16 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Switch } from '@/components/ui/switch';
 import { CITIES } from '@/lib/types';
 import { useAuth } from '@/contexts/auth-context';
-import { insertLostPet, uploadLostPetImage } from '@/lib/supabase/lost-pets';
+import { uploadLostPetImage } from '@/lib/supabase/lost-pets';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import { useLanguage } from '@/lib/i18n/context';
 
 const ReportMapPicker = dynamic(() => import('./report-map-picker'), { ssr: false });
 
 export function ReportLostPetContent() {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
   const { user } = useAuth();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -36,6 +39,8 @@ export function ReportLostPetContent() {
   const [dragOver, setDragOver] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
+  const [cityError, setCityError] = useState('');
+  const [locationError, setLocationError] = useState('');
 
   const handleFilesSelected = (files: FileList | null) => {
     if (!files) return;
@@ -57,10 +62,24 @@ export function ReportLostPetContent() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setCityError('');
+    setLocationError('');
 
     if (!user) {
-      toast.error('Morate biti prijavljeni da biste prijavili nestanak.');
+      toast.error(isEn ? 'You must be logged in to report a missing pet.' : 'Morate biti prijavljeni da biste prijavili nestanak.');
       router.push('/prijava?redirect=/izgubljeni/prijavi');
+      return;
+    }
+
+    // Validate city
+    if (!city) {
+      setCityError(isEn ? 'City is required' : 'Grad je obavezan');
+      return;
+    }
+
+    // Validate location
+    if (!selectedPosition) {
+      setLocationError(isEn ? 'Mark the location on the map' : 'Označite lokaciju na karti');
       return;
     }
 
@@ -74,37 +93,44 @@ export function ReportLostPetContent() {
       if (url) imageUrls.push(url);
     }
 
-    const { error } = await insertLostPet({
-      user_id: user.id,
-      name: formData.get('name') as string,
-      species: species || 'pas',
-      breed: formData.get('breed') as string || undefined,
-      color: formData.get('color') as string,
-      sex: gender || undefined,
-      description: formData.get('description') as string || undefined,
-      special_marks: formData.get('marks') as string || undefined,
-      neighborhood: formData.get('neighborhood') as string || undefined,
-      city: city || 'Zagreb',
-      date_lost: formData.get('date_lost') as string,
-      contact_name: formData.get('contact_name') as string,
-      contact_phone: formData.get('contact_phone') as string,
-      contact_email: formData.get('contact_email') as string || undefined,
-      has_microchip: hasMicrochip,
-      has_collar: hasCollar,
-      image_url: imageUrls.length > 0 ? imageUrls[0] : undefined,
-      gallery: imageUrls.length > 0 ? imageUrls : undefined,
-      location_lat: selectedPosition?.lat,
-      location_lng: selectedPosition?.lng,
-    });
+    try {
+      const res = await fetch('/api/lost-pets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.get('name') as string,
+          species: species || 'pas',
+          breed: formData.get('breed') as string || '',
+          color: formData.get('color') as string,
+          sex: gender || undefined,
+          description: formData.get('description') as string,
+          special_marks: formData.get('marks') as string || '',
+          neighborhood: formData.get('neighborhood') as string,
+          city,
+          date_lost: formData.get('date_lost') as string,
+          contact_name: formData.get('contact_name') as string,
+          contact_phone: formData.get('contact_phone') as string,
+          contact_email: formData.get('contact_email') as string || '',
+          has_microchip: hasMicrochip,
+          has_collar: hasCollar,
+          image_url: imageUrls.length > 0 ? imageUrls[0] : undefined,
+          gallery: imageUrls.length > 0 ? imageUrls : undefined,
+          location_lat: selectedPosition.lat,
+          location_lng: selectedPosition.lng,
+        }),
+      });
 
-    if (error) {
-      toast.error('Greška pri slanju prijave. Pokušajte ponovo.');
-      setSubmitting(false);
-      return;
+      if (!res.ok) {
+        toast.error(isEn ? 'There was an error submitting the report. Please try again.' : 'Greška pri slanju prijave. Pokušajte ponovo.');
+        setSubmitting(false);
+        return;
+      }
+
+      toast.success(isEn ? 'Report submitted successfully! Your listing is now live.' : 'Prijava uspješno poslana! Vaš oglas je objavljen.');
+      setSubmitted(true);
+    } catch {
+      toast.error(isEn ? 'There was an error submitting the report. Please try again.' : 'Greška pri slanju prijave. Pokušajte ponovo.');
     }
-
-    toast.success('Prijava uspješno poslana! Vaš oglas je objavljen.');
-    setSubmitted(true);
     setSubmitting(false);
   };
 
@@ -116,14 +142,14 @@ export function ReportLostPetContent() {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
               <CheckCircle2 className="h-8 w-8 text-green-600" />
             </div>
-            <h2 className="text-2xl font-bold">Prijava poslana!</h2>
-            <p className="text-gray-600">Vaš oglas za izgubljenog ljubimca je objavljen. Podijelite ga na društvenim mrežama za veću vidljivost!</p>
+            <h2 className="text-2xl font-bold">{isEn ? 'Report submitted!' : 'Prijava poslana!'}</h2>
+            <p className="text-gray-600">{isEn ? 'Your lost-pet listing is live. Share it on social media for more visibility.' : 'Vaš oglas za izgubljenog ljubimca je objavljen. Podijelite ga na društvenim mrežama za veću vidljivost!'}</p>
             <div className="flex flex-col gap-2 pt-4">
               <Link href="/izgubljeni">
-                <Button className="w-full bg-red-500 hover:bg-red-600">Pogledaj sve oglase</Button>
+                <Button className="w-full bg-red-500 hover:bg-red-600">{isEn ? 'View all listings' : 'Pogledaj sve oglase'}</Button>
               </Link>
               <Link href="/">
-                <Button variant="outline" className="w-full">Povratak na početnu</Button>
+                <Button variant="outline" className="w-full">{isEn ? 'Back to homepage' : 'Povratak na početnu'}</Button>
               </Link>
             </div>
           </CardContent>
@@ -139,8 +165,8 @@ export function ReportLostPetContent() {
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center">
             <AlertTriangle className="h-10 w-10 mx-auto mb-4 text-red-200" />
-            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">Prijavi nestanak</h1>
-            <p className="text-red-100 text-lg">Ispunite podatke o vašem ljubimcu i pokrenite potragu</p>
+            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">{isEn ? 'Report a missing pet' : 'Prijavi nestanak'}</h1>
+            <p className="text-red-100 text-lg">{isEn ? "Fill in your pet's details and start the search" : 'Ispunite podatke o vašem ljubimcu i pokrenite potragu'}</p>
           </div>
         </div>
       </section>
@@ -148,13 +174,13 @@ export function ReportLostPetContent() {
       <div className="container mx-auto px-4 py-8 md:py-12">
         <Link href="/izgubljeni" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-red-500 mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
-          Natrag na listu
+          {isEn ? 'Back to list' : 'Natrag na listu'}
         </Link>
 
         {!user && (
           <div className="max-w-2xl mx-auto mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
             <p className="text-amber-800 text-sm font-medium">
-              Morate biti <Link href="/prijava?redirect=/izgubljeni/prijavi" className="text-amber-700 underline font-bold">prijavljeni</Link> da biste prijavili nestanak ljubimca.
+              {isEn ? 'You must be ' : 'Morate biti '}<Link href="/prijava?redirect=/izgubljeni/prijavi" className="text-amber-700 underline font-bold">{isEn ? 'logged in' : 'prijavljeni'}</Link>{isEn ? ' to report a missing pet.' : ' da biste prijavili nestanak ljubimca.'}
             </p>
           </div>
         )}
@@ -165,7 +191,7 @@ export function ReportLostPetContent() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Camera className="h-5 w-5 text-orange-500" />
-                Slike ljubimca
+                {isEn ? 'Pet photos' : 'Slike ljubimca'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -206,8 +232,8 @@ export function ReportLostPetContent() {
                 }}
               >
                 <Upload className="h-10 w-10 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-600 font-medium mb-1">Povucite slike ovdje ili kliknite za upload</p>
-                <p className="text-sm text-gray-400">JPG, PNG — do 5MB po slici (max 5 slika)</p>
+                <p className="text-gray-600 font-medium mb-1">{isEn ? 'Drag photos here or click to upload' : 'Povucite slike ovdje ili kliknite za upload'}</p>
+                <p className="text-sm text-gray-400">{isEn ? 'JPG, PNG — up to 5MB per image (max 5 images)' : 'JPG, PNG — do 5MB po slici (max 5 slika)'}</p>
                 <Button
                   type="button"
                   variant="outline"
@@ -216,7 +242,7 @@ export function ReportLostPetContent() {
                   disabled={selectedFiles.length >= 5}
                 >
                   <Camera className="h-4 w-4 mr-2" />
-                  Odaberi slike
+                  {isEn ? 'Choose photos' : 'Odaberi slike'}
                 </Button>
               </div>
             </CardContent>
@@ -225,40 +251,40 @@ export function ReportLostPetContent() {
           {/* Pet Info */}
           <Card>
             <CardHeader>
-              <CardTitle>Podaci o ljubimcu</CardTitle>
+              <CardTitle>{isEn ? 'Pet details' : 'Podaci o ljubimcu'}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">Ime ljubimca *</Label>
+                  <Label htmlFor="name">{isEn ? 'Pet name *' : 'Ime ljubimca *'}</Label>
                   <Input id="name" name="name" placeholder="npr. Rex" required />
                 </div>
                 <div>
-                  <Label>Vrsta *</Label>
+                  <Label>{isEn ? 'Species *' : 'Vrsta *'}</Label>
                   <Select value={species} onValueChange={setSpecies}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pas">Pas</SelectItem>
-                      <SelectItem value="macka">Mačka</SelectItem>
-                      <SelectItem value="ostalo">Ostalo</SelectItem>
+                      <SelectItem value="pas">{isEn ? 'Dog' : 'Pas'}</SelectItem>
+                      <SelectItem value="macka">{isEn ? 'Cat' : 'Mačka'}</SelectItem>
+                      <SelectItem value="ostalo">{isEn ? 'Other' : 'Ostalo'}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="breed">Pasmina</Label>
+                  <Label htmlFor="breed">{isEn ? 'Breed' : 'Pasmina'}</Label>
                   <Input id="breed" name="breed" placeholder="npr. Njemački ovčar" />
                 </div>
                 <div>
-                  <Label htmlFor="color">Boja *</Label>
+                  <Label htmlFor="color">{isEn ? 'Color *' : 'Boja *'}</Label>
                   <Input id="color" name="color" placeholder="npr. Crno-smeđi" required />
                 </div>
                 <div>
-                  <Label>Spol</Label>
+                  <Label>{isEn ? 'Sex' : 'Spol'}</Label>
                   <Select value={gender} onValueChange={setGender}>
-                    <SelectTrigger><SelectValue placeholder="Odaberi" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={isEn ? 'Choose' : 'Odaberi'} /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="muško">Muško</SelectItem>
-                      <SelectItem value="žensko">Žensko</SelectItem>
+                      <SelectItem value="muško">{isEn ? 'Male' : 'Muško'}</SelectItem>
+                      <SelectItem value="žensko">{isEn ? 'Female' : 'Žensko'}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -266,11 +292,11 @@ export function ReportLostPetContent() {
               <div className="flex flex-wrap gap-6 pt-2">
                 <div className="flex items-center gap-2">
                   <Switch checked={hasMicrochip} onCheckedChange={setHasMicrochip} />
-                  <Label>Ima mikročip</Label>
+                  <Label>{isEn ? 'Has microchip' : 'Ima mikročip'}</Label>
                 </div>
                 <div className="flex items-center gap-2">
                   <Switch checked={hasCollar} onCheckedChange={setHasCollar} />
-                  <Label>Ima ogrlicu s brojem</Label>
+                  <Label>{isEn ? 'Has collar with phone number' : 'Ima ogrlicu s brojem'}</Label>
                 </div>
               </div>
             </CardContent>
@@ -281,42 +307,38 @@ export function ReportLostPetContent() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-red-500" />
-                Lokacija nestanka
+                {isEn ? 'Last seen location' : 'Lokacija nestanka'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label>Grad *</Label>
-                  <Select value={city} onValueChange={setCity} required>
-                    <SelectTrigger><SelectValue placeholder="Odaberi grad" /></SelectTrigger>
+                  <Label>{isEn ? 'City *' : 'Grad *'}</Label>
+                  <Select value={city} onValueChange={(v) => { setCity(v); setCityError(''); }} required>
+                    <SelectTrigger><SelectValue placeholder={isEn ? 'Choose city' : 'Odaberi grad'} /></SelectTrigger>
                     <SelectContent>
                       {CITIES.map(c => (
                         <SelectItem key={c} value={c}>{c}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+                  {cityError && <p className="text-sm text-red-500 mt-1">{cityError}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="neighborhood">Kvart / Ulica *</Label>
+                  <Label htmlFor="neighborhood">{isEn ? 'Neighborhood / Street *' : 'Kvart / Ulica *'}</Label>
                   <Input id="neighborhood" name="neighborhood" placeholder="npr. Maksimir" required />
                 </div>
               </div>
               <div>
-                <Label>Označite lokaciju na karti</Label>
+                <Label>{isEn ? 'Mark the location on the map *' : 'Označite lokaciju na karti *'}</Label>
                 <div className="h-64 rounded-lg overflow-hidden border mt-2">
-                  <ReportMapPicker onPositionChange={setSelectedPosition} />
+                  <ReportMapPicker onPositionChange={(pos) => { setSelectedPosition(pos); setLocationError(''); }} />
                 </div>
+                {locationError && <p className="text-sm text-red-500 mt-1">{locationError}</p>}
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="date_lost">Datum nestanka *</Label>
-                  <Input id="date_lost" name="date_lost" type="date" required />
-                </div>
-                <div>
-                  <Label htmlFor="time_lost">Vrijeme nestanka</Label>
-                  <Input id="time_lost" name="time_lost" type="time" />
-                </div>
+              <div>
+                <Label htmlFor="date_lost">{isEn ? 'Date missing *' : 'Datum nestanka *'}</Label>
+                <Input id="date_lost" name="date_lost" type="date" required />
               </div>
             </CardContent>
           </Card>
@@ -324,16 +346,16 @@ export function ReportLostPetContent() {
           {/* Description */}
           <Card>
             <CardHeader>
-              <CardTitle>Opis i detalji</CardTitle>
+              <CardTitle>{isEn ? 'Description and details' : 'Opis i detalji'}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="description">Opis situacije *</Label>
-                <Textarea id="description" name="description" placeholder="Opišite okolnosti nestanka, gdje je zadnji put viđen..." rows={4} required />
+                <Label htmlFor="description">{isEn ? 'Situation description *' : 'Opis situacije *'}</Label>
+                <Textarea id="description" name="description" placeholder={isEn ? 'Describe the circumstances and where your pet was last seen...' : 'Opišite okolnosti nestanka, gdje je zadnji put viđen...'} rows={4} required />
               </div>
               <div>
-                <Label htmlFor="marks">Posebne oznake</Label>
-                <Textarea id="marks" name="marks" placeholder="Ožiljci, mrlje, posebne oznake na tijelu..." rows={2} />
+                <Label htmlFor="marks">{isEn ? 'Special markings' : 'Posebne oznake'}</Label>
+                <Textarea id="marks" name="marks" placeholder={isEn ? 'Scars, spots, or other distinctive markings...' : 'Ožiljci, mrlje, posebne oznake na tijelu...'} rows={2} />
               </div>
             </CardContent>
           </Card>
@@ -341,16 +363,16 @@ export function ReportLostPetContent() {
           {/* Contact */}
           <Card>
             <CardHeader>
-              <CardTitle>Kontakt podaci</CardTitle>
+              <CardTitle>{isEn ? 'Contact details' : 'Kontakt podaci'}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="contact_name">Vaše ime *</Label>
+                <Label htmlFor="contact_name">{isEn ? 'Your name *' : 'Vaše ime *'}</Label>
                 <Input id="contact_name" name="contact_name" placeholder="Ime i prezime" required defaultValue={user?.name || ''} />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="contact_phone">Telefon *</Label>
+                  <Label htmlFor="contact_phone">{isEn ? 'Phone *' : 'Telefon *'}</Label>
                   <Input id="contact_phone" name="contact_phone" type="tel" placeholder="+385 91 234 5678" required />
                 </div>
                 <div>
@@ -368,9 +390,9 @@ export function ReportLostPetContent() {
             disabled={submitting || !user}
           >
             {submitting ? (
-              <><Loader2 className="h-5 w-5 mr-2 animate-spin" /> Slanje prijave...</>
+              <><Loader2 className="h-5 w-5 mr-2 animate-spin" /> {isEn ? 'Submitting report...' : 'Slanje prijave...'}</>
             ) : (
-              <><AlertTriangle className="h-5 w-5 mr-2" /> Objavi oglas — Pokreni potragu!</>
+              <><AlertTriangle className="h-5 w-5 mr-2" /> {isEn ? 'Publish listing — start the search!' : 'Objavi oglas — Pokreni potragu!'}</>
             )}
           </Button>
         </form>

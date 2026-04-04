@@ -4,48 +4,57 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { Search, MapPin, Calendar, Phone, Mail, Eye, Plus, Filter, AlertTriangle, Map, List, Loader2 } from 'lucide-react';
+import { Search, MapPin, Calendar, Plus, Filter, AlertTriangle, Map, List, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import type { LostPet } from '@/lib/types';
 import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS, CITIES } from '@/lib/types';
-import { fetchLostPets } from '@/lib/supabase/lost-pets';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ShareButtons } from './share-buttons';
+import { useLanguage } from '@/lib/i18n/context';
 
 const LostPetsMap = dynamic(() => import('@/components/shared/lost-pets-map'), { ssr: false });
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('hr-HR', { day: 'numeric', month: 'long', year: 'numeric' });
+function formatDate(dateStr: string, locale: string) {
+  return new Date(dateStr).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-function daysAgo(dateStr: string) {
+function daysAgo(dateStr: string, isEn: boolean) {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
-  if (diff === 0) return 'Danas';
-  if (diff === 1) return 'Jučer';
-  return `Prije ${diff} dana`;
+  if (diff === 0) return isEn ? 'Today' : 'Danas';
+  if (diff === 1) return isEn ? 'Yesterday' : 'Jučer';
+  return isEn ? `${diff} days ago` : `Prije ${diff} dana`;
 }
 
 export function LostPetsContent() {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const locale = isEn ? 'en-GB' : 'hr-HR';
+  const statusLabels = isEn ? { lost: 'Still missing', found: 'Found!' } : LOST_PET_STATUS_LABELS;
+  const speciesLabels = isEn ? { pas: 'Dog', macka: 'Cat', ostalo: 'Other' } : LOST_PET_SPECIES_LABELS;
   const [pets, setPets] = useState<LostPet[]>([]);
   const [loading, setLoading] = useState(true);
   const [cityFilter, setCityFilter] = useState<string | null>('all');
   const [speciesFilter, setSpeciesFilter] = useState<string | null>('all');
   const [statusFilter, setStatusFilter] = useState<string | null>('all');
-  const [revealedContacts, setRevealedContacts] = useState<Set<string>>(new Set());
   const [view, setView] = useState<'list' | 'map'>('list');
 
   useEffect(() => {
     async function load() {
       setLoading(true);
-      const data = await fetchLostPets({
-        city: cityFilter && cityFilter !== 'all' ? cityFilter : undefined,
-        species: speciesFilter && speciesFilter !== 'all' ? speciesFilter : undefined,
-        status: statusFilter && statusFilter !== 'all' ? statusFilter : undefined,
-      });
-      setPets(data);
+      const params = new URLSearchParams();
+      if (cityFilter && cityFilter !== 'all') params.set('city', cityFilter);
+      if (speciesFilter && speciesFilter !== 'all') params.set('species', speciesFilter);
+      if (statusFilter && statusFilter !== 'all') params.set('status', statusFilter);
+      try {
+        const res = await fetch(`/api/lost-pets/list?${params.toString()}`);
+        const data = await res.json();
+        setPets(Array.isArray(data) ? data : []);
+      } catch {
+        setPets([]);
+      }
       setLoading(false);
     }
     load();
@@ -62,18 +71,18 @@ export function LostPetsContent() {
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6 text-sm font-medium">
               <AlertTriangle className="h-4 w-4" />
-              {loading ? '...' : `${lostCount} ljubimaca se trenutno traži`}
+              {loading ? '...' : (isEn ? `${lostCount} ${lostCount === 1 ? 'pet is currently missing' : 'pets are currently missing'}` : `${lostCount} ljubimaca se trenutno traži`)}
             </div>
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
-              Izgubljeni ljubimci
+              {isEn ? 'Lost pets' : 'Izgubljeni ljubimci'}
             </h1>
             <p className="text-lg md:text-xl text-red-100 mb-8 max-w-2xl mx-auto">
-              Svako dijeljenje povećava šansu da se ljubimac vrati kući. Pomozite — podijelite!
+              {isEn ? 'Every share increases the chance of a pet getting back home. Help by spreading the word.' : 'Svako dijeljenje povećava šansu da se ljubimac vrati kući. Pomozite — podijelite!'}
             </p>
             <Link href="/izgubljeni/prijavi">
               <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 font-bold text-lg px-8 py-6 shadow-xl">
                 <Plus className="h-5 w-5 mr-2" />
-                Prijavi nestanak ljubimca
+                {isEn ? 'Report a missing pet' : 'Prijavi nestanak ljubimca'}
               </Button>
             </Link>
           </div>
@@ -85,15 +94,15 @@ export function LostPetsContent() {
         <div className="bg-white dark:bg-card rounded-2xl shadow-lg border border-gray-100 dark:border-border p-4 md:p-6">
           <div className="flex items-center gap-2 mb-4">
             <Filter className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium text-muted-foreground">Filtriraj</span>
+            <span className="text-sm font-medium text-muted-foreground">{isEn ? 'Filter' : 'Filtriraj'}</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <Select value={cityFilter} onValueChange={setCityFilter}>
               <SelectTrigger>
-                <SelectValue placeholder="Svi gradovi" />
+                <SelectValue placeholder={isEn ? 'All cities' : 'Svi gradovi'} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Svi gradovi</SelectItem>
+                <SelectItem value="all">{isEn ? 'All cities' : 'Svi gradovi'}</SelectItem>
                 {CITIES.map(city => (
                   <SelectItem key={city} value={city}>{city}</SelectItem>
                 ))}
@@ -101,23 +110,23 @@ export function LostPetsContent() {
             </Select>
             <Select value={speciesFilter} onValueChange={setSpeciesFilter}>
               <SelectTrigger>
-                <SelectValue placeholder="Sve vrste" />
+                <SelectValue placeholder={isEn ? 'All species' : 'Sve vrste'} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Sve vrste</SelectItem>
-                <SelectItem value="pas">Pas</SelectItem>
-                <SelectItem value="macka">Mačka</SelectItem>
-                <SelectItem value="ostalo">Ostalo</SelectItem>
+                <SelectItem value="all">{isEn ? 'All species' : 'Sve vrste'}</SelectItem>
+                <SelectItem value="pas">{isEn ? 'Dog' : 'Pas'}</SelectItem>
+                <SelectItem value="macka">{isEn ? 'Cat' : 'Mačka'}</SelectItem>
+                <SelectItem value="ostalo">{isEn ? 'Other' : 'Ostalo'}</SelectItem>
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger>
-                <SelectValue placeholder="Svi statusi" />
+                <SelectValue placeholder={isEn ? 'All statuses' : 'Svi statusi'} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Svi statusi</SelectItem>
-                <SelectItem value="lost">Još se traži</SelectItem>
-                <SelectItem value="found">Pronađen!</SelectItem>
+                <SelectItem value="all">{isEn ? 'All statuses' : 'Svi statusi'}</SelectItem>
+                <SelectItem value="lost">{isEn ? 'Still missing' : 'Još se traži'}</SelectItem>
+                <SelectItem value="found">{isEn ? 'Found!' : 'Pronađen!'}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -134,7 +143,7 @@ export function LostPetsContent() {
             className={view === 'list' ? 'bg-red-500 hover:bg-red-600' : ''}
           >
             <List className="h-4 w-4 mr-2" />
-            Lista
+            {isEn ? 'List' : 'Lista'}
           </Button>
           <Button
             variant={view === 'map' ? 'default' : 'outline'}
@@ -143,10 +152,10 @@ export function LostPetsContent() {
             className={view === 'map' ? 'bg-red-500 hover:bg-red-600' : ''}
           >
             <Map className="h-4 w-4 mr-2" />
-            Mapa
+            {isEn ? 'Map' : 'Mapa'}
           </Button>
           <span className="text-sm text-muted-foreground ml-2">
-            {loading ? '...' : `${pets.length} rezultata`}
+            {loading ? '...' : `${pets.length} ${isEn ? 'results' : 'rezultata'}`}
           </span>
         </div>
       </section>
@@ -165,18 +174,18 @@ export function LostPetsContent() {
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="h-8 w-8 animate-spin text-red-400" />
-            <span className="ml-3 text-muted-foreground">Učitavanje...</span>
+            <span className="ml-3 text-muted-foreground">{isEn ? 'Loading...' : 'Učitavanje...'}</span>
           </div>
         ) : pets.length === 0 ? (
           <EmptyState
             icon={Search}
-            title="Nema rezultata"
-            description="Nema prijava za odabrane filtere. Pokušajte promijeniti grad, vrstu ili status."
+            title={isEn ? 'No results' : 'Nema rezultata'}
+            description={isEn ? 'There are no reports for the selected filters. Try another city, species, or status.' : 'Nema prijava za odabrane filtere. Pokušajte promijeniti grad, vrstu ili status.'}
             action={
               <Link href="/izgubljeni/prijavi">
                 <Button size="sm" className="bg-red-500 hover:bg-red-600 text-white">
                   <Plus className="h-4 w-4 mr-2" />
-                  Prijavi nestanak
+                  {isEn ? 'Report missing pet' : 'Prijavi nestanak'}
                 </Button>
               </Link>
             }
@@ -204,12 +213,12 @@ export function LostPetsContent() {
                       ? 'bg-red-500 text-white hover:bg-red-600'
                       : 'bg-green-500 text-white hover:bg-green-600'
                   }`}>
-                    {pet.status === 'lost' ? '🔴' : '🟢'} {LOST_PET_STATUS_LABELS[pet.status]}
+                    {pet.status === 'lost' ? '🔴' : '🟢'} {statusLabels[pet.status]}
                   </Badge>
                   <div className="absolute bottom-3 left-3 right-3">
                     <h3 className="text-xl font-bold text-white drop-shadow-lg">{pet.name}</h3>
                     <p className="text-sm text-white/90 drop-shadow">
-                      {LOST_PET_SPECIES_LABELS[pet.species]} • {pet.breed} • {pet.color}
+                      {speciesLabels[pet.species]} • {pet.breed} • {pet.color}
                     </p>
                   </div>
                 </div>
@@ -220,41 +229,13 @@ export function LostPetsContent() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Calendar className="h-4 w-4 text-gray-400 shrink-0" />
-                    <span>{formatDate(pet.date_lost)} ({daysAgo(pet.date_lost)})</span>
-                  </div>
-
-                  {/* Contact reveal */}
-                  <div className="pt-2 border-t">
-                    {revealedContacts.has(pet.id) ? (
-                      <div className="space-y-1.5">
-                        <div className="flex items-center gap-2 text-sm">
-                          <Phone className="h-3.5 w-3.5 text-green-500" />
-                          <a href={`tel:${pet.contact_phone}`} className="text-green-600 font-medium hover:underline">{pet.contact_phone}</a>
-                        </div>
-                        {pet.contact_email && (
-                          <div className="flex items-center gap-2 text-sm">
-                            <Mail className="h-3.5 w-3.5 text-blue-500" />
-                            <a href={`mailto:${pet.contact_email}`} className="text-blue-600 hover:underline">{pet.contact_email}</a>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => setRevealedContacts(prev => new Set(prev).add(pet.id))}
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        Pokaži kontakt
-                      </Button>
-                    )}
+                    <span>{formatDate(pet.date_lost, locale)} ({daysAgo(pet.date_lost, isEn)})</span>
                   </div>
 
                   {/* Share buttons */}
                   <div className="pt-2 border-t">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-gray-400">{pet.share_count} dijeljenja</span>
+                      <span className="text-xs text-gray-400">{pet.share_count} {isEn ? 'shares' : 'dijeljenja'}</span>
                     </div>
                     <ShareButtons
                       petName={pet.name}
@@ -267,7 +248,7 @@ export function LostPetsContent() {
                     <Button variant="outline" size="sm" className={`w-full mt-1 font-medium ${
                       pet.status === 'lost' ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-green-200 text-green-600 hover:bg-green-50'
                     }`}>
-                      Pogledaj detalje
+                      {isEn ? 'View details' : 'Pogledaj detalje'}
                     </Button>
                   </Link>
                 </CardContent>

@@ -14,26 +14,32 @@ import { Label } from '@/components/ui/label';
 import { ShareButtons } from '../share-buttons';
 import type { LostPet } from '@/lib/types';
 import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS } from '@/lib/types';
-import { addSighting } from '@/lib/supabase/lost-pets';
 import { toast } from 'sonner';
+import { useLanguage } from '@/lib/i18n/context';
 
 const MapComponent = dynamic(() => import('./map-component'), { ssr: false });
 
-function formatDateTime(dateStr: string) {
-  return new Date(dateStr).toLocaleString('hr-HR', {
+function formatDateTime(dateStr: string, locale: string) {
+  return new Date(dateStr).toLocaleString(locale, {
     day: 'numeric', month: 'long', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
   });
 }
 
-function daysAgo(dateStr: string) {
+function daysAgo(dateStr: string, isEn: boolean) {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
-  if (diff === 0) return 'Danas';
-  if (diff === 1) return 'Jučer';
-  return `Prije ${diff} dana`;
+  if (diff === 0) return isEn ? 'Today' : 'Danas';
+  if (diff === 1) return isEn ? 'Yesterday' : 'Jučer';
+  return isEn ? `${diff} days ago` : `Prije ${diff} dana`;
 }
 
 export function LostPetDetailContent({ pet }: { pet: LostPet }) {
+  const { language } = useLanguage();
+  const isEn = language === 'en';
+  const locale = isEn ? 'en-GB' : 'hr-HR';
+  const statusLabels = isEn ? { lost: 'Still missing', found: 'Found!' } : LOST_PET_STATUS_LABELS;
+  const speciesLabels = isEn ? { pas: 'Dog', macka: 'Cat', ostalo: 'Other' } : LOST_PET_SPECIES_LABELS;
+  const sexLabels = isEn ? { 'muško': 'Male', 'žensko': 'Female' } : { 'muško': 'Muško', 'žensko': 'Žensko' };
   const [contactRevealed, setContactRevealed] = useState(false);
   const [showSightingForm, setShowSightingForm] = useState(false);
   const [sightingLocation, setSightingLocation] = useState('');
@@ -45,25 +51,28 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
     e.preventDefault();
     setSubmittingSighting(true);
 
-    const { error } = await addSighting(pet.id, {
-      location: sightingLocation,
-      description: sightingDescription,
-    });
+    try {
+      const res = await fetch(`/api/lost-pets/${pet.id}/sightings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ location: sightingLocation, description: sightingDescription }),
+      });
 
-    if (error) {
-      toast.error('Greška pri slanju prijave. Pokušajte ponovo.');
+      if (!res.ok) {
+        toast.error(isEn ? 'There was an error submitting the sighting. Please try again.' : 'Greška pri slanju prijave. Pokušajte ponovo.');
+        setSubmittingSighting(false);
+        return;
+      }
+
+      const { sighting } = await res.json();
+      setLocalSightings(prev => [...prev, sighting]);
+    } catch {
+      toast.error(isEn ? 'There was an error submitting the sighting. Please try again.' : 'Greška pri slanju prijave. Pokušajte ponovo.');
       setSubmittingSighting(false);
       return;
     }
 
-    setLocalSightings(prev => [...prev, {
-      id: crypto.randomUUID(),
-      date: new Date().toISOString(),
-      location: sightingLocation,
-      description: sightingDescription,
-    }]);
-
-    toast.success('Hvala! Vaša prijava viđenja je zabilježena.');
+    toast.success(isEn ? 'Thanks! Your sighting has been recorded.' : 'Hvala! Vaša prijava viđenja je zabilježena.');
     setSightingLocation('');
     setSightingDescription('');
     setShowSightingForm(false);
@@ -77,7 +86,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
         <div className="bg-red-600 text-white py-3 px-4 text-center animate-pulse">
           <div className="container mx-auto flex items-center justify-center gap-2 text-sm md:text-base font-bold">
             <AlertTriangle className="h-5 w-5" />
-            HITNO: {pet.name} se još traži! Podijelite i pomozite!
+            {isEn ? `URGENT: ${pet.name} is still missing! Share to help!` : `HITNO: ${pet.name} se još traži! Podijelite i pomozite!`}
           </div>
         </div>
       )}
@@ -85,7 +94,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
       <div className="container mx-auto px-4 py-6 md:py-10">
         <Link href="/izgubljeni" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-red-500 mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
-          Natrag na listu
+          {isEn ? 'Back to list' : 'Natrag na listu'}
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
@@ -108,12 +117,12 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                   ? 'bg-red-500 text-white'
                   : 'bg-green-500 text-white'
               }`}>
-                {pet.status === 'lost' ? '🔴' : '🟢'} {LOST_PET_STATUS_LABELS[pet.status]}
+                {pet.status === 'lost' ? '🔴' : '🟢'} {statusLabels[pet.status]}
               </Badge>
               <div className="absolute bottom-4 left-4 right-4">
                 <h1 className="text-3xl md:text-4xl font-extrabold text-white drop-shadow-lg mb-1">{pet.name}</h1>
                 <p className="text-white/90 text-lg drop-shadow">
-                  {LOST_PET_SPECIES_LABELS[pet.species]} • {pet.breed} • {pet.color} • {pet.sex}
+                  {speciesLabels[pet.species]} • {pet.breed} • {pet.color} • {sexLabels[pet.sex]}
                 </p>
               </div>
             </div>
@@ -123,10 +132,10 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
               <CardContent className="p-4 md:p-6">
                 <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
                   <MessageCircle className="h-5 w-5 text-red-500" />
-                  Podijeli — svako dijeljenje pomaže!
+                  {isEn ? 'Share — every share helps!' : 'Podijeli — svako dijeljenje pomaže!'}
                 </h2>
                 <ShareButtons petName={pet.name} city={pet.city} petId={pet.id} size="lg" />
-                <p className="text-sm text-gray-500 mt-3 text-center">{pet.share_count} dijeljenja do sad</p>
+                <p className="text-sm text-gray-500 mt-3 text-center">{pet.share_count} {isEn ? 'shares so far' : 'dijeljenja do sad'}</p>
               </CardContent>
             </Card>
 
@@ -135,7 +144,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5 text-orange-500" />
-                  Opis
+                  {isEn ? 'Description' : 'Opis'}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -144,7 +153,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                     <h3 className="font-semibold text-amber-800 flex items-center gap-2 mb-1">
                       <Tag className="h-4 w-4" />
-                      Posebne oznake
+                      {isEn ? 'Special markings' : 'Posebne oznake'}
                     </h3>
                     <p className="text-amber-700">{pet.special_marks}</p>
                   </div>
@@ -152,12 +161,12 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                 <div className="flex flex-wrap gap-2">
                   {pet.has_microchip && (
                     <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50">
-                      <Shield className="h-3 w-3 mr-1" /> Ima mikročip
+                      <Shield className="h-3 w-3 mr-1" /> {isEn ? 'Has microchip' : 'Ima mikročip'}
                     </Badge>
                   )}
                   {pet.has_collar && (
                     <Badge variant="outline" className="border-purple-200 text-purple-700 bg-purple-50">
-                      Ima ogrlicu
+                      {isEn ? 'Has collar' : 'Ima ogrlicu'}
                     </Badge>
                   )}
                 </div>
@@ -169,7 +178,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="h-5 w-5 text-red-500" />
-                  Lokacija nestanka
+                  {isEn ? 'Last seen location' : 'Lokacija nestanka'}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -186,14 +195,14 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Eye className="h-5 w-5 text-amber-500" />
-                    Prijavljena viđenja
+                    {isEn ? 'Reported sightings' : 'Prijavljena viđenja'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     {localSightings.map(sighting => (
                       <div key={sighting.id} className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                        <p className="text-xs text-amber-600 mb-1">{formatDateTime(sighting.date)} — {sighting.location}</p>
+                        <p className="text-xs text-amber-600 mb-1">{formatDateTime(sighting.date, locale)} — {sighting.location}</p>
                         <p className="text-sm text-amber-800">{sighting.description}</p>
                       </div>
                     ))}
@@ -213,24 +222,24 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                       className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-6 text-lg"
                     >
                       <Eye className="h-5 w-5 mr-2" />
-                      Vidio/la sam ovog ljubimca!
+                      {isEn ? 'I saw this pet!' : 'Vidio/la sam ovog ljubimca!'}
                     </Button>
                   ) : (
                     <form onSubmit={handleSightingSubmit} className="space-y-4">
-                      <h3 className="text-lg font-bold text-amber-800">Prijavi viđenje</h3>
+                      <h3 className="text-lg font-bold text-amber-800">{isEn ? 'Report a sighting' : 'Prijavi viđenje'}</h3>
                       <div>
-                        <Label>Gdje ste vidjeli ljubimca? *</Label>
+                        <Label>{isEn ? 'Where did you see the pet? *' : 'Gdje ste vidjeli ljubimca? *'}</Label>
                         <Input
-                          placeholder="npr. Park Maksimir, kod jezera"
+                          placeholder={isEn ? 'e.g. Maksimir Park, near the lake' : 'npr. Park Maksimir, kod jezera'}
                           required
                           value={sightingLocation}
                           onChange={(e) => setSightingLocation(e.target.value)}
                         />
                       </div>
                       <div>
-                        <Label>Opis</Label>
+                        <Label>{isEn ? 'Description' : 'Opis'}</Label>
                         <Textarea
-                          placeholder="Opišite što ste vidjeli..."
+                          placeholder={isEn ? 'Describe what you saw...' : 'Opišite što ste vidjeli...'}
                           required
                           value={sightingDescription}
                           onChange={(e) => setSightingDescription(e.target.value)}
@@ -238,9 +247,9 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                       </div>
                       <div className="flex gap-2">
                         <Button type="submit" className="bg-amber-500 hover:bg-amber-600" disabled={submittingSighting}>
-                          {submittingSighting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Slanje...</> : 'Pošalji prijavu'}
+                          {submittingSighting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> {isEn ? 'Sending...' : 'Slanje...'}</> : (isEn ? 'Submit report' : 'Pošalji prijavu')}
                         </Button>
-                        <Button type="button" variant="outline" onClick={() => setShowSightingForm(false)}>Odustani</Button>
+                        <Button type="button" variant="outline" onClick={() => setShowSightingForm(false)}>{isEn ? 'Cancel' : 'Odustani'}</Button>
                       </div>
                     </form>
                   )}
@@ -261,7 +270,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <Calendar className="h-4 w-4 text-gray-400 shrink-0" />
-                    <span>{formatDateTime(pet.date_lost)} ({daysAgo(pet.date_lost)})</span>
+                    <span>{formatDateTime(pet.date_lost, locale)} ({daysAgo(pet.date_lost, isEn)})</span>
                   </div>
                 </div>
 
@@ -269,7 +278,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                 <div className="pt-4 border-t">
                   <h3 className="font-semibold mb-3 flex items-center gap-2">
                     <User className="h-4 w-4" />
-                    Kontakt vlasnika
+                    {isEn ? 'Owner contact' : 'Kontakt vlasnika'}
                   </h3>
                   {contactRevealed ? (
                     <div className="space-y-2">
@@ -288,14 +297,14 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                   ) : (
                     <Button onClick={() => setContactRevealed(true)} className="w-full" variant="outline">
                       <Eye className="h-4 w-4 mr-2" />
-                      Pokaži kontakt
+                      {isEn ? 'Show contact' : 'Pokaži kontakt'}
                     </Button>
                   )}
                 </div>
 
                 {/* Share */}
                 <div className="pt-4 border-t">
-                  <h3 className="font-semibold mb-3">Podijeli</h3>
+                  <h3 className="font-semibold mb-3">{isEn ? 'Share' : 'Podijeli'}</h3>
                   <ShareButtons petName={pet.name} city={pet.city} petId={pet.id} size="sm" />
                 </div>
               </CardContent>
