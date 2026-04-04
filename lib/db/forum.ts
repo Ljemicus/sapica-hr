@@ -72,8 +72,11 @@ type CommentRow = {
 function topicRowToForumTopic(row: TopicRow): ForumTopic {
   return {
     id: row.id,
+    user_id: row.user_id ?? undefined,
     category_slug: row.category_slug as ForumCategorySlug,
     title: row.title,
+    body: row.body,
+    status: row.status as 'active' | 'hidden' | 'locked' | undefined,
     author_name: row.author_name ?? 'Korisnik',
     author_initial: row.author_initial ?? nameToInitial(row.author_name ?? '?'),
     author_gradient: row.author_gradient ?? nameToGradient(row.author_name ?? '?'),
@@ -91,6 +94,8 @@ function commentRowToForumComment(row: CommentRow): ForumComment {
   return {
     id: row.id,
     topic_id: row.topic_id,
+    user_id: row.user_id ?? undefined,
+    status: row.status as 'active' | 'hidden' | undefined,
     author_name: row.author_name ?? 'Korisnik',
     author_initial: row.author_initial ?? nameToInitial(row.author_name ?? '?'),
     author_gradient: row.author_gradient ?? nameToGradient(row.author_name ?? '?'),

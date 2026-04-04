@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createComment, getPosts } from '@/lib/db/forum';
+import { createComment, getPosts, getTopic } from '@/lib/db/forum';
 import { getAuthUser } from '@/lib/auth';
 
 const gradients = [
@@ -42,6 +42,14 @@ export async function POST(
   }
 
   const authorName = user.name || user.email?.split('@')[0] || 'Korisnik';
+
+  const topic = await getTopic(id);
+  if (!topic) {
+    return NextResponse.json({ error: 'Topic not found' }, { status: 404 });
+  }
+  if ((topic as { status?: string }).status === 'locked') {
+    return NextResponse.json({ error: 'Topic is locked' }, { status: 403 });
+  }
 
   const comment = await createComment({
     topic_id: id,

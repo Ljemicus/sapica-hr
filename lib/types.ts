@@ -524,8 +524,11 @@ export interface ForumCategory {
 
 export interface ForumTopic {
   id: string;
+  user_id?: string;
   category_slug: ForumCategorySlug;
   title: string;
+  body?: string;
+  status?: 'active' | 'hidden' | 'locked';
   author_name: string;
   author_initial: string;
   author_gradient: string;
@@ -545,6 +548,8 @@ export interface ForumTopic {
 export interface ForumComment {
   id: string;
   topic_id: string;
+  user_id?: string;
+  status?: 'active' | 'hidden';
   author_name: string;
   author_initial: string;
   author_gradient: string;
@@ -625,6 +630,7 @@ export interface LostPet {
   location_lng: number;
   date_lost: string;
   status: LostPetStatus;
+  hidden: boolean;
   description: string;
   special_marks: string;
   has_microchip: boolean;
