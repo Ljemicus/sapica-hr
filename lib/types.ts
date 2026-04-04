@@ -3,7 +3,7 @@ export type VerificationLevel = 'basic' | 'verified' | 'premium';
 export type Species = 'dog' | 'cat' | 'other';
 export type ServiceType = 'boarding' | 'walking' | 'house-sitting' | 'drop-in' | 'daycare';
 export type BookingStatus = 'pending' | 'accepted' | 'rejected' | 'completed' | 'cancelled';
-export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
+export type PaymentStatus = 'unpaid' | 'pending' | 'paid' | 'failed' | 'refunded';
 
 export interface Payment {
   id: string;
@@ -19,6 +19,7 @@ export interface Payment {
 }
 
 export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
+  'unpaid': 'Nije plaćeno',
   'pending': 'Na čekanju',
   'paid': 'Plaćeno',
   'failed': 'Neuspjelo',
@@ -79,7 +80,9 @@ export interface Booking {
   end_date: string;
   status: BookingStatus;
   total_price: number;
+  platform_fee?: number;
   payment_status?: PaymentStatus;
+  currency?: string;
   note: string | null;
   is_demo?: boolean;
   created_at: string;

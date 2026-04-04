@@ -3,11 +3,12 @@ import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { getBookings, createBooking, getSitter, getPet } from '@/lib/db';
 import { dispatchAlert } from '@/lib/alerting';
-import { appLogger } from '@/lib/logger';
+import { getRequestId, createScopedLogger } from '@/lib/request-context';
 import { bookingSchema } from '@/lib/validations';
 import { SERVICE_LABELS, type ServiceType } from '@/lib/types';
 import { sendEmail } from '@/lib/email';
 import { newBookingRequestEmail } from '@/lib/email-templates';
+import { calculatePlatformFee } from '@/lib/payment';
 
 export async function GET(request: Request) {
   const user = await getAuthUser();
@@ -25,6 +26,8 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const reqId = getRequestId(request);
+  const log = createScopedLogger('bookings.create', reqId);
   const user = await getAuthUser();
   if (!user) return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
 
@@ -36,7 +39,7 @@ export async function POST(request: Request) {
   }
   const parsed = bookingSchema.safeParse(body);
   if (!parsed.success) {
-    appLogger.warn('bookings.create', 'Booking validation failed');
+    log.warn( 'Booking validation failed');
     return apiError({ status: 400, code: 'INVALID_INPUT', message: 'Neispravan booking payload.', details: parsed.error.flatten() });
   }
 
@@ -68,7 +71,7 @@ export async function POST(request: Request) {
 
   const sitterProfile = await getSitter(sitter_id);
   if (!sitterProfile) {
-    appLogger.warn('bookings.create', 'Sitter profile missing', { sitterId: sitter_id });
+    log.warn( 'Sitter profile missing', { sitterId: sitter_id });
     return apiError({ status: 404, code: 'SITTER_NOT_FOUND', message: 'Sitter not found' });
   }
 
@@ -80,6 +83,7 @@ export async function POST(request: Request) {
 
   const days = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
   const total_price = pricePerDay * days;
+  const platform_fee = calculatePlatformFee(Math.round(total_price * 100)) / 100;
 
   const booking = await createBooking({
     owner_id: user.id,
@@ -89,12 +93,15 @@ export async function POST(request: Request) {
     start_date,
     end_date,
     total_price,
+    platform_fee,
+    payment_status: 'unpaid',
+    currency: 'EUR',
     note: note || null,
     status: 'pending',
   });
 
   if (!booking) {
-    appLogger.error('bookings.create', 'Failed to create booking', {
+    log.error( 'Failed to create booking', {
       ownerId: user.id,
       sitterId: sitter_id,
       petId: pet_id,
@@ -126,10 +133,10 @@ export async function POST(request: Request) {
           serviceName,
           dates,
         ),
-      }).catch((err) => appLogger.error('bookings.create', 'Failed to send booking request email', { error: String(err) }));
+      }).catch((err) => log.error( 'Failed to send booking request email', { error: String(err) }));
     }
   } catch (emailErr) {
-    appLogger.error('bookings.create', 'Email notification error', { error: String(emailErr) });
+    log.error( 'Email notification error', { error: String(emailErr) });
   }
 
   return NextResponse.json(booking, { status: 201 });
