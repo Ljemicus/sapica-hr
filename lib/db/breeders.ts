@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { isSupabaseConfigured } from './helpers';
 
 export interface AvailableLitter {
@@ -89,7 +89,11 @@ export async function getBreeders(filters?: { city?: string; species?: string; b
   if (!isSupabaseConfigured()) return [];
 
   try {
-    const supabase = await createClient();
+    const supabase = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
     let query = supabase
       .from('publisher_profiles')
       .select('id, display_name, bio, city, phone, type, user:users!user_id(email)')
