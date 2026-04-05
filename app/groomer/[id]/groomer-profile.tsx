@@ -6,26 +6,12 @@ import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { enUS, hr } from 'date-fns/locale';
 import {
-  Star,
-  MapPin,
-  Shield,
-  ChevronLeft,
-  Scissors,
-  Droplets,
-  Sparkles,
-  Calendar,
-  MessageCircle,
-  Share2,
-  Check,
-  Clock,
-  Phone,
-  Mail,
-  MapPinned,
-  ClipboardList,
+  Star, MapPin, Shield, ChevronLeft, Scissors, Droplets, Sparkles,
+  Calendar, MessageCircle, Share2, Check, Clock, Phone, Mail,
+  MapPinned, ClipboardList, ArrowRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
@@ -77,12 +63,13 @@ const serviceColors: Record<GroomingServiceType, string> = {
   cetkanje: 'from-teal-500 to-emerald-500',
 };
 
-const gradients = [
-  'from-pink-400 to-rose-300',
-  'from-purple-400 to-pink-300',
-  'from-orange-400 to-amber-300',
-  'from-teal-400 to-cyan-300',
-];
+const serviceColorsBg: Record<GroomingServiceType, string> = {
+  sisanje: 'bg-pink-50 dark:bg-pink-950/20 text-pink-600 dark:text-pink-400',
+  kupanje: 'bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400',
+  trimanje: 'bg-purple-50 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400',
+  nokti: 'bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400',
+  cetkanje: 'bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400',
+};
 
 const GROOMING_SERVICE_LABELS_EN: Record<GroomingServiceType, string> = {
   sisanje: 'Haircut',
@@ -99,13 +86,7 @@ const GROOMER_SPECIALIZATION_LABELS_EN: Record<GroomerSpecialization, string> = 
 };
 
 const DAY_LABELS_EN: Record<string, string> = {
-  Pon: 'Mon',
-  Uto: 'Tue',
-  Sri: 'Wed',
-  'Čet': 'Thu',
-  Pet: 'Fri',
-  Sub: 'Sat',
-  Ned: 'Sun',
+  Pon: 'Mon', Uto: 'Tue', Sri: 'Wed', 'Čet': 'Thu', Pet: 'Fri', Sub: 'Sat', Ned: 'Sun',
 };
 
 interface GroomerProfileProps {
@@ -127,21 +108,12 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
   const isEn = language === 'en';
   const locale = isEn ? enUS : hr;
 
-  const gradient = gradients[groomer.name.charCodeAt(0) % gradients.length];
   const lowestPrice = Math.min(...Object.values(groomer.prices).filter((price) => price > 0));
   const serviceLabel = (value: GroomingServiceType) =>
     isEn ? GROOMING_SERVICE_LABELS_EN[value] : GROOMING_SERVICE_LABELS[value];
   const specializationLabel = isEn
     ? GROOMER_SPECIALIZATION_LABELS_EN[groomer.specialization]
     : GROOMER_SPECIALIZATION_LABELS[groomer.specialization];
-  const formatPriceRangeLabel = (prices: Record<string, number>) => {
-    const valid = Object.values(prices).filter((price) => price > 0);
-    if (valid.length === 0) return isEn ? 'Price on request' : 'Cijena na upit';
-
-    const min = Math.min(...valid);
-    const max = Math.max(...valid);
-    return min === max ? `${min}\u00A0€` : `${min}\u00A0–\u00A0${max}\u00A0€`;
-  };
   const dayLabel = (day: string) => (isEn ? DAY_LABELS_EN[day] || day : day);
 
   const copy = {
@@ -153,10 +125,12 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
     verified: isEn ? 'Verified profile' : 'Verificiran profil',
     reviews: isEn ? 'reviews' : 'recenzija',
     services: isEn ? 'services' : 'usluga',
+    aboutKicker: isEn ? 'Get to know' : 'Upoznajte',
     about: isEn ? 'About the groomer' : 'O groomeru',
     aboutFallback: isEn
       ? 'This groomer has not added a bio yet. Contact them directly for more information about their services.'
       : 'Ovaj groomer još nije dodao opis. Kontaktirajte ga izravno za više informacija o uslugama.',
+    contactKicker: isEn ? 'Reach out' : 'Kontaktirajte nas',
     contact: isEn ? 'Contact information' : 'Kontakt informacije',
     phone: isEn ? 'Phone' : 'Telefon',
     email: 'Email',
@@ -164,10 +138,12 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
     noContact: isEn
       ? 'No contact details listed yet. Use the contact button to send an inquiry.'
       : 'Kontakt informacije nisu navedene. Koristite gumb "Kontaktiraj" za upit.',
-    servicesPricing: isEn ? 'Services and estimated pricing' : 'Usluge i okvirne cijene',
+    servicesKicker: isEn ? 'What we offer' : 'Što nudimo',
+    servicesPricing: isEn ? 'Services & pricing' : 'Usluge i cijene',
     noServices: isEn
       ? 'Services and pricing are not listed yet. Contact the groomer for more information.'
       : 'Usluge i cijene trenutno nisu navedene. Kontaktirajte za više informacija.',
+    slotsKicker: isEn ? 'Book a time' : 'Rezervirajte termin',
     freeSlots: isEn ? 'Available slots' : 'Slobodni termini',
     loadingSlots: isEn ? 'Loading slots...' : 'Učitavam termine...',
     chooseDate: isEn
@@ -176,26 +152,30 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
     noDateSlots: isEn
       ? 'There are currently no open slots for the selected date.'
       : 'Za odabrani datum trenutno nema slobodnih termina.',
+    reviewsKicker: isEn ? 'What others say' : 'Što kažu drugi',
+    reviewsTitle: isEn ? 'Reviews' : 'Recenzije',
     noReviews: isEn ? 'No reviews yet' : 'Još nema recenzija',
-    beFirst: isEn ? 'Be the first to rate this groomer' : 'Budite prvi koji će ocijeniti ovog groomera',
-    from: isEn ? 'from' : 'od',
+    beFirst: isEn ? 'Be the first to rate this groomer.' : 'Budite prvi koji će ocijeniti ovog groomera.',
+    from: isEn ? 'from' : 'već od',
+    depending: isEn ? 'depending on service and pet size' : 'ovisno o usluzi i veličini ljubimca',
     perService: isEn ? 'per service' : 'po usluzi',
     book: isEn ? 'Book appointment' : 'Zakaži termin',
-    contactBtn: isEn ? 'Contact' : 'Kontaktiraj',
+    contactBtn: isEn ? 'Send a message' : 'Pošalji poruku',
     signIn: isEn ? 'Sign in to book' : 'Prijavi se za zakazivanje',
     workingHours: isEn ? 'Working hours' : 'Radno vrijeme',
     closed: isEn ? 'Closed' : 'Zatvoreno',
-    next14: isEn ? 'Availability (next 14 days)' : 'Dostupnost (sljedećih 14 dana)',
+    next14: isEn ? 'Next 14 days' : 'Idućih 14 dana',
     available: isEn ? 'Available' : 'Dostupan',
     unavailable: isEn ? 'Unavailable' : 'Nedostupan',
     until: isEn ? 'until' : 'do',
+    ratingLabel: isEn ? 'Rating' : 'Ocjena',
+    servicesLabel: isEn ? 'Services' : 'Usluge',
   };
 
   useEffect(() => {
     const loadSlots = async () => {
       const fromDate = new Date().toISOString().split('T')[0];
       const toDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 60).toISOString().split('T')[0];
-
       setAvailabilityLoading(true);
       try {
         const response = await fetch(
@@ -209,7 +189,6 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
         setAvailabilityLoading(false);
       }
     };
-
     loadSlots();
   }, [groomer.id]);
 
@@ -230,358 +209,385 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <div className="flex items-center justify-between mb-4">
-        <Button
-          variant="ghost"
-          onClick={() => router.back()}
-          className="-ml-2 hover:bg-orange-50 hover:text-orange-600"
-        >
-          <ChevronLeft className="h-4 w-4 mr-1" />
-          {copy.back}
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleShare}
-          className="hover:bg-orange-50 hover:text-orange-600"
-        >
-          {copied ? <Check className="h-4 w-4 mr-1" /> : <Share2 className="h-4 w-4 mr-1" />}
-          {copied ? copy.copied : copy.share}
-        </Button>
-      </div>
+    <div className="concept-zero">
+      {/* ── Cinematic Hero ── */}
+      <section className="relative overflow-hidden min-h-[70vh] md:min-h-[75vh] flex flex-col">
+        <div className="absolute inset-0 detail-hero-gradient" />
+        <div className="absolute inset-0 paw-pattern opacity-[0.04]" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="overflow-hidden border-0 shadow-sm">
-            <div className={`h-32 bg-gradient-to-br ${gradient} relative`}>
-              <div className="absolute inset-0 paw-pattern opacity-10" />
+        {/* Navigation bar */}
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 relative z-10 pt-6 md:pt-8">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              onClick={() => router.back()}
+              className="rounded-full h-10 px-4 text-foreground/70 hover:text-foreground hover:bg-foreground/5"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              {copy.back}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleShare}
+              className="rounded-full h-10 px-4 text-foreground/70 hover:text-foreground hover:bg-foreground/5"
+            >
+              {copied ? <Check className="h-4 w-4 mr-1" /> : <Share2 className="h-4 w-4 mr-1" />}
+              {copied ? copy.copied : copy.share}
+            </Button>
+          </div>
+        </div>
+
+        {/* Hero content — pushed to bottom */}
+        <div className="flex-1" />
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 relative z-10 pb-12 md:pb-16 lg:pb-20">
+          <div className="max-w-3xl">
+            {/* Badges */}
+            <div className="flex flex-wrap gap-2 mb-5 animate-fade-in-up">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold rounded-full px-3.5 py-1.5 shadow-sm bg-warm-peach text-orange-700 dark:bg-warm-orange/20 dark:text-orange-400">
+                <Scissors className="h-3 w-3" />
+                {specializationLabel}
+              </span>
+              {groomer.verified && (
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold rounded-full px-3.5 py-1.5 shadow-sm bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400">
+                  <Shield className="h-3 w-3" />
+                  {copy.verified}
+                </span>
+              )}
             </div>
-            <CardContent className="p-6 -mt-16 relative">
-              <div className="flex flex-col sm:flex-row gap-6">
-                <div className="avatar-gradient-border w-fit h-fit flex-shrink-0">
-                  <Avatar className="h-28 w-28 border-4 border-white shadow-lg">
-                    <AvatarFallback className="bg-white text-gray-700 text-3xl font-bold">
-                      {groomer.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
+
+            {/* Identity */}
+            <div className="flex items-end gap-5 md:gap-6 animate-fade-in-up delay-100">
+              <div className="avatar-gradient-border flex-shrink-0 animate-scale-in">
+                <Avatar className="h-24 w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 border-4 border-white shadow-2xl">
+                  <AvatarFallback className="bg-white text-gray-700 text-3xl md:text-4xl font-bold">
+                    {groomer.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="pb-1">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-[var(--font-heading)] leading-[1.05] mb-3">
+                  {groomer.name}
+                </h1>
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4 flex-shrink-0" />
+                    {groomer.city}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    {groomer.rating.toFixed(1)}
+                    <span className="opacity-70">({groomer.review_count})</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <ClipboardList className="h-4 w-4 flex-shrink-0" />
+                    {groomer.services.length} {copy.services}
+                  </span>
                 </div>
-                <div className="flex-1 pt-2 sm:pt-8">
-                  <div className="flex items-start justify-between flex-wrap gap-2">
-                    <div>
-                      <h1 className="text-2xl font-bold">{groomer.name}</h1>
-                      <div className="flex items-center gap-2 text-muted-foreground mt-1">
-                        <MapPin className="h-4 w-4" />
-                        <span>{groomer.city}</span>
-                      </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Content Grid ── */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16 lg:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
+
+          {/* ── Main Content ── */}
+          <div className="lg:col-span-2 space-y-10 md:space-y-12">
+
+            {/* About */}
+            <section className="animate-fade-in-up">
+              <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-3 font-semibold">{copy.aboutKicker}</p>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] leading-tight mb-5">{copy.about}</h2>
+              <div className="detail-section-card p-7 md:p-8">
+                <p className="text-muted-foreground leading-relaxed text-[15px] md:text-base">{groomer.bio || copy.aboutFallback}</p>
+
+                {/* Inline stats strip */}
+                <div className="grid grid-cols-3 gap-4 mt-7 pt-6 border-t border-border/30">
+                  <div className="text-center">
+                    <div className="text-2xl md:text-3xl font-extrabold text-gradient font-[var(--font-heading)]">
+                      {groomer.rating.toFixed(1)}
                     </div>
-                    <div className="flex gap-2">
-                      {groomer.verified && (
-                        <Badge className="bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-50 animate-fade-in">
-                          <Shield className="h-3 w-3 mr-1" />
-                          {copy.verified}
-                        </Badge>
-                      )}
-                      <Badge className="bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-50 animate-fade-in delay-100">
-                        {specializationLabel}
-                      </Badge>
-                    </div>
+                    <div className="text-xs text-muted-foreground font-medium mt-1">{copy.ratingLabel}</div>
                   </div>
-                  <div className="flex items-center gap-3 mt-3 flex-wrap">
-                    <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1 rounded-full">
-                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                      <span className="font-semibold">{groomer.rating.toFixed(1)}</span>
-                      <span className="text-sm text-amber-700/70">
-                        ({groomer.review_count} {copy.reviews})
-                      </span>
+                  <div className="text-center">
+                    <div className="text-2xl md:text-3xl font-extrabold text-gradient font-[var(--font-heading)]">
+                      {groomer.services.length}
                     </div>
-                    <div className="flex items-center gap-1.5 bg-pink-50 px-3 py-1 rounded-full">
-                      <ClipboardList className="h-4 w-4 text-pink-500" />
-                      <span className="text-sm text-pink-700">
-                        {groomer.services.length} {copy.services}
-                      </span>
+                    <div className="text-xs text-muted-foreground font-medium mt-1">{copy.servicesLabel}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl md:text-3xl font-extrabold text-gradient font-[var(--font-heading)]">
+                      {groomer.review_count}
                     </div>
+                    <div className="text-xs text-muted-foreground font-medium mt-1">{copy.reviews}</div>
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </section>
 
-          <Card className="border-0 shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg">{copy.about}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground leading-relaxed">{groomer.bio || copy.aboutFallback}</p>
-            </CardContent>
-          </Card>
-
-          {hasContactInfo(groomer) ? (
-            <Card className="border-0 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg">{copy.contact}</CardTitle>
-              </CardHeader>
-              <CardContent>
+            {/* Contact */}
+            <section className="animate-fade-in-up delay-100">
+              <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-3 font-semibold">{copy.contactKicker}</p>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] leading-tight mb-6">{copy.contact}</h2>
+              {hasContactInfo(groomer) ? (
                 <div className="space-y-3">
                   {groomer.phone && (
-                    <a
-                      href={`tel:${groomer.phone}`}
-                      className="flex items-center gap-3 p-3 rounded-xl border bg-white hover:bg-orange-50 hover:border-orange-200 transition-colors group"
-                    >
-                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                    <a href={`tel:${groomer.phone}`} className="detail-section-card p-5 flex items-center gap-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer">
+                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-500">
                         <Phone className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <div className="text-xs text-muted-foreground">{copy.phone}</div>
-                        <span className="font-medium">{groomer.phone}</span>
+                        <div className="text-xs text-muted-foreground font-medium">{copy.phone}</div>
+                        <span className="font-semibold">{groomer.phone}</span>
                       </div>
                     </a>
                   )}
                   {groomer.email && (
-                    <a
-                      href={`mailto:${groomer.email}`}
-                      className="flex items-center gap-3 p-3 rounded-xl border bg-white hover:bg-orange-50 hover:border-orange-200 transition-colors group"
-                    >
-                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                    <a href={`mailto:${groomer.email}`} className="detail-section-card p-5 flex items-center gap-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer">
+                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-500">
                         <Mail className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <div className="text-xs text-muted-foreground">{copy.email}</div>
-                        <span className="font-medium">{groomer.email}</span>
+                        <div className="text-xs text-muted-foreground font-medium">{copy.email}</div>
+                        <span className="font-semibold">{groomer.email}</span>
                       </div>
                     </a>
                   )}
                   {(groomer.address || groomer.city) && (
-                    <div className="flex items-center gap-3 p-3 rounded-xl border bg-white">
-                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-sm">
+                    <div className="detail-section-card p-5 flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-sm">
                         <MapPinned className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <div className="text-xs text-muted-foreground">{copy.address}</div>
-                        <span className="font-medium">{formatAddress(groomer.address, groomer.city)}</span>
+                        <div className="text-xs text-muted-foreground font-medium">{copy.address}</div>
+                        <span className="font-semibold">{formatAddress(groomer.address, groomer.city)}</span>
                       </div>
                     </div>
                   )}
                 </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="border-0 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg">{copy.contact}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">{copy.noContact}</p>
-              </CardContent>
-            </Card>
-          )}
-
-          <Card className="border-0 shadow-sm">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{copy.servicesPricing}</CardTitle>
-                <span className="text-sm text-muted-foreground">{formatPriceRangeLabel(groomer.prices)}</span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {getActiveServices(groomer).length === 0 ? (
-                <p className="text-sm text-muted-foreground py-4 text-center">{copy.noServices}</p>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="detail-section-card p-10 md:p-12 text-center">
+                  <div className="inline-flex h-16 w-16 rounded-full bg-warm-peach dark:bg-warm-orange/15 items-center justify-center mb-5">
+                    <Mail className="h-7 w-7 text-warm-orange" />
+                  </div>
+                  <p className="text-foreground font-bold text-lg font-[var(--font-heading)] mb-2">{copy.contact}</p>
+                  <p className="text-sm text-muted-foreground max-w-xs mx-auto">{copy.noContact}</p>
+                </div>
+              )}
+            </section>
+
+            {/* Services & Pricing */}
+            <section className="animate-fade-in-up delay-200">
+              <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-3 font-semibold">{copy.servicesKicker}</p>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] leading-tight mb-6">{copy.servicesPricing}</h2>
+              {getActiveServices(groomer).length === 0 ? (
+                <div className="detail-section-card p-10 md:p-12 text-center">
+                  <div className="inline-flex h-16 w-16 rounded-full bg-warm-peach dark:bg-warm-orange/15 items-center justify-center mb-5">
+                    <Scissors className="h-7 w-7 text-warm-orange" />
+                  </div>
+                  <p className="text-foreground font-bold text-lg font-[var(--font-heading)] mb-2">{copy.servicesPricing}</p>
+                  <p className="text-sm text-muted-foreground max-w-xs mx-auto">{copy.noServices}</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {getActiveServices(groomer).map((service) => {
                     const Icon = serviceIcons[service];
                     const color = serviceColors[service];
-
+                    const bgColor = serviceColorsBg[service];
                     return (
                       <div
                         key={service}
-                        className="flex items-center justify-between p-4 rounded-xl border bg-white hover:shadow-md transition-shadow group"
+                        className="detail-section-card p-6 group cursor-default"
                       >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`h-10 w-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}
-                          >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className={`h-12 w-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-500`}>
                             <Icon className="h-5 w-5 text-white" />
                           </div>
-                          <div>
-                            <span className="font-medium block">{serviceLabel(service)}</span>
+                          <div className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ${bgColor}`}>
+                            {groomer.prices[service]}&euro; {copy.perService}
                           </div>
                         </div>
-                        <span className="font-bold text-lg text-orange-500 flex-shrink-0 ml-2">
-                          {isEn ? 'from' : 'već od'} {groomer.prices[service]}&euro;
-                        </span>
+                        <h3 className="font-bold text-base font-[var(--font-heading)]">{serviceLabel(service)}</h3>
                       </div>
                     );
                   })}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </section>
 
-          <AvailabilityCalendar
-            availableDates={availableDates}
-            selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
-          />
+            {/* Availability Calendar */}
+            <div className="animate-fade-in-up delay-200">
+              <AvailabilityCalendar
+                availableDates={availableDates}
+                selectedDate={selectedDate}
+                onSelectDate={setSelectedDate}
+              />
+            </div>
 
-          <Card className="border-0 shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Clock className="h-5 w-5 text-orange-500" />
+            {/* Time Slots */}
+            <section className="animate-fade-in-up delay-300">
+              <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-3 font-semibold">{copy.slotsKicker}</p>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] leading-tight flex items-center gap-3 mb-6">
+                <Clock className="h-6 w-6 text-warm-orange" />
                 {copy.freeSlots}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {availabilityLoading ? (
-                <p className="text-sm text-muted-foreground">{copy.loadingSlots}</p>
-              ) : !selectedDate ? (
-                <p className="text-sm text-muted-foreground">{copy.chooseDate}</p>
-              ) : selectedDateSlots.length === 0 ? (
-                <p className="text-sm text-muted-foreground">{copy.noDateSlots}</p>
-              ) : (
-                <div className="space-y-3">
-                  <p className="text-sm font-medium">
-                    {format(new Date(`${selectedDate}T00:00:00`), isEn ? 'MMMM d, yyyy' : 'd. MMMM yyyy.', {
-                      locale,
-                    })}
-                  </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {selectedDateSlots.map((slot) => (
-                      <button
-                        key={slot.id}
-                        type="button"
-                        className="rounded-xl border bg-white p-3 text-left hover:border-orange-300 hover:bg-orange-50 transition-all"
-                        onClick={() => {
-                          setPreselectedSlot(slot);
-                          setShowBooking(true);
-                        }}
-                      >
-                        <div className="font-semibold text-sm text-orange-600">{slot.start_time.slice(0, 5)}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {copy.until} {slot.end_time.slice(0, 5)}
-                        </div>
-                      </button>
-                    ))}
+              </h2>
+              <div className="detail-section-card p-7 md:p-8">
+                {availabilityLoading ? (
+                  <p className="text-sm text-muted-foreground">{copy.loadingSlots}</p>
+                ) : !selectedDate ? (
+                  <p className="text-sm text-muted-foreground">{copy.chooseDate}</p>
+                ) : selectedDateSlots.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">{copy.noDateSlots}</p>
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-sm font-semibold">
+                      {format(new Date(`${selectedDate}T00:00:00`), isEn ? 'MMMM d, yyyy' : 'd. MMMM yyyy.', { locale })}
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {selectedDateSlots.map((slot) => (
+                        <button
+                          key={slot.id}
+                          type="button"
+                          className="rounded-xl border border-border/30 bg-white dark:bg-card p-4 text-left hover:border-orange-300 hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group"
+                          onClick={() => { setPreselectedSlot(slot); setShowBooking(true); }}
+                        >
+                          <div className="font-bold text-sm text-orange-600 dark:text-orange-400 group-hover:text-orange-700">{slot.start_time.slice(0, 5)}</div>
+                          <div className="text-xs text-muted-foreground mt-0.5">{copy.until} {slot.end_time.slice(0, 5)}</div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                )}
+              </div>
+            </section>
 
-          <Card className="border-0 shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                {isEn ? 'Reviews' : 'Recenzije'}
-                <Badge variant="secondary" className="bg-orange-50 text-orange-600">
+            {/* Reviews */}
+            <section className="animate-fade-in-up delay-300">
+              <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-3 font-semibold">{copy.reviewsKicker}</p>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] leading-tight flex items-center gap-3 mb-6">
+                {copy.reviewsTitle}
+                <Badge className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border-0 text-sm px-3 py-0.5">
                   {reviews.length}
                 </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </h2>
+
               {reviews.length === 0 ? (
-                <div className="text-center py-8">
-                  <Star className="h-10 w-10 text-gray-200 mx-auto mb-3" />
-                  <p className="text-muted-foreground font-medium">{copy.noReviews}</p>
-                  <p className="text-sm text-muted-foreground/70 mt-1">{copy.beFirst}</p>
+                <div className="detail-section-card p-10 md:p-12 text-center">
+                  <div className="inline-flex h-16 w-16 rounded-full bg-warm-peach dark:bg-warm-orange/15 items-center justify-center mb-5">
+                    <Star className="h-7 w-7 text-warm-orange" />
+                  </div>
+                  <p className="text-foreground font-bold text-lg font-[var(--font-heading)] mb-2">{copy.noReviews}</p>
+                  <p className="text-sm text-muted-foreground max-w-xs mx-auto">{copy.beFirst}</p>
                 </div>
               ) : (
-                <div className="space-y-5">
+                <div className="space-y-0">
                   {reviews.map((review, i) => (
-                    <div key={review.id} className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-9 w-9">
-                          <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-xs">
+                    <div key={review.id} className={`detail-section-card p-6 md:p-7 ${i > 0 ? 'mt-4' : ''}`}>
+                      <div className="flex items-start gap-4">
+                        <Avatar className="h-11 w-11 border-2 border-border/20 flex-shrink-0">
+                          <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm font-semibold">
                             {review.author_initial}
                           </AvatarFallback>
                         </Avatar>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-sm">{review.author_name}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <span className="font-bold text-sm">{review.author_name}</span>
                             <StarRating rating={review.rating} size="sm" />
                           </div>
-                          <div className="text-xs text-muted-foreground">
-                            {format(new Date(review.created_at), isEn ? 'MMMM d, yyyy' : 'd. MMMM yyyy.', {
-                              locale,
-                            })}
+                          <div className="text-xs text-muted-foreground mb-3">
+                            {format(new Date(review.created_at), isEn ? 'MMM d, yyyy' : 'd. MMM yyyy.', { locale })}
                           </div>
+                          <p className="text-[15px] text-muted-foreground leading-relaxed">{review.comment}</p>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground pl-12 leading-relaxed">{review.comment}</p>
-                      {i < reviews.length - 1 && <Separator className="mt-4" />}
                     </div>
                   ))}
                 </div>
               )}
-            </CardContent>
-          </Card>
-        </div>
+            </section>
+          </div>
 
-        <div className="space-y-4">
-          <Card className="sticky top-20 border-0 shadow-sm">
-            <CardContent className="p-6 space-y-5">
-              <div className="text-center py-2">
-                <span className="text-4xl font-extrabold text-gradient">
-                  {copy.from} {lowestPrice}&euro;
-                </span>
-                <span className="text-muted-foreground block text-sm mt-1">{copy.perService}</span>
+          {/* ── Premium Sidebar ── */}
+          <div className="space-y-6">
+            <div className="detail-sidebar-panel sticky top-20 p-7 md:p-8 space-y-7">
+
+              {/* Price hero */}
+              <div className="text-center">
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium mb-2">{copy.from}</p>
+                <div className="text-5xl md:text-6xl font-extrabold text-gradient font-[var(--font-heading)] leading-none">
+                  {lowestPrice}&euro;
+                </div>
+                <p className="text-muted-foreground text-xs mt-2.5">{copy.depending}</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div className="rounded-xl bg-pink-50 px-3 py-2 text-center">
-                  <div className="text-lg font-bold text-pink-600">{groomer.services.length}</div>
-                  <div className="text-xs text-muted-foreground">{copy.services}</div>
-                </div>
-                <div className="rounded-xl bg-amber-50 px-3 py-2 text-center">
-                  <div className="text-lg font-bold text-amber-600">{groomer.review_count}</div>
-                  <div className="text-xs text-muted-foreground">{copy.reviews}</div>
-                </div>
-              </div>
-
+              {/* Primary CTA */}
               {user ? (
-                <>
+                <div className="space-y-3">
                   <Button
-                    className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50"
+                    className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-lg shadow-orange-200/50 dark:shadow-orange-900/20 rounded-full h-13 text-[15px] font-bold"
                     size="lg"
                     onClick={() => setShowBooking(true)}
                   >
                     <Scissors className="h-4 w-4 mr-2" />
                     {copy.book}
+                    <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
-                  <Link href={`/poruke?groomer=${groomer.id}`}>
+                  <Link href={`/poruke?groomer=${groomer.id}`} className="block">
                     <Button
                       variant="outline"
-                      className="w-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200"
+                      className="w-full hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:text-orange-600 hover:border-orange-300 rounded-full h-12 text-[15px] font-semibold"
                       size="lg"
                     >
                       <MessageCircle className="h-4 w-4 mr-2" />
                       {copy.contactBtn}
                     </Button>
                   </Link>
-                </>
+                </div>
               ) : (
-                <Link href={`/prijava?redirect=/groomer/${groomer.id}`}>
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600 btn-hover" size="lg">
+                <Link href={`/prijava?redirect=/groomer/${groomer.id}`} className="block">
+                  <Button
+                    className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-lg shadow-orange-200/50 dark:shadow-orange-900/20 rounded-full h-13 text-[15px] font-bold"
+                    size="lg"
+                  >
                     {copy.signIn}
+                    <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </Link>
               )}
 
+              <Separator className="opacity-50" />
+
+              {/* Quick stats */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-2xl bg-warm-peach dark:bg-warm-orange/15 px-4 py-4 text-center">
+                  <div className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 font-[var(--font-heading)]">{groomer.services.length}</div>
+                  <div className="text-[11px] text-muted-foreground font-medium mt-1 uppercase tracking-wider">{copy.services}</div>
+                </div>
+                <div className="rounded-2xl bg-teal-50 dark:bg-teal-900/20 px-4 py-4 text-center">
+                  <div className="text-2xl font-extrabold text-teal-600 dark:text-teal-400 font-[var(--font-heading)]">{groomer.review_count}</div>
+                  <div className="text-[11px] text-muted-foreground font-medium mt-1 uppercase tracking-wider">{copy.reviews}</div>
+                </div>
+              </div>
+
+              {/* Working Hours */}
               {hasWorkingHours(groomer) && (
                 <>
-                  <Separator />
+                  <Separator className="opacity-50" />
                   <div>
-                    <h3 className="font-medium text-sm mb-3 flex items-center gap-1.5">
-                      <Clock className="h-4 w-4 text-orange-500" />
-                      {copy.workingHours}
+                    <h3 className="font-bold text-sm mb-4 flex items-center gap-2 font-[var(--font-heading)]">
+                      <Clock className="h-4 w-4 text-warm-orange" />{copy.workingHours}
                     </h3>
-                    <div className="space-y-1.5">
+                    <div className="space-y-2.5">
                       {getOrderedDays().map((day) => {
                         const hours = groomer.working_hours?.[day];
                         return (
                           <div key={day} className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground">{dayLabel(day)}</span>
                             {hours ? (
-                              <span className="font-medium">{formatWorkingHours(hours)}</span>
+                              <span className="font-semibold">{formatWorkingHours(hours)}</span>
                             ) : (
                               <span className="text-muted-foreground/50">{copy.closed}</span>
                             )}
@@ -593,11 +599,12 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                 </>
               )}
 
-              <Separator />
+              <Separator className="opacity-50" />
 
+              {/* Mini 14-day calendar */}
               <div>
-                <h3 className="font-medium text-sm mb-3 flex items-center gap-1.5">
-                  <Calendar className="h-4 w-4 text-orange-500" />
+                <h3 className="font-bold text-sm mb-4 flex items-center gap-2 font-[var(--font-heading)]">
+                  <Calendar className="h-4 w-4 text-warm-orange" />
                   {copy.next14}
                 </h3>
                 <div className="grid grid-cols-7 gap-1.5">
@@ -605,44 +612,42 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                     const date = new Date();
                     date.setDate(date.getDate() + i);
                     const dateStr = date.toISOString().split('T')[0];
-                    const available = availableDates.has(dateStr);
-
+                    const isAvailable = availableDates.has(dateStr);
                     return (
                       <div
                         key={i}
-                        className={`aspect-square rounded-lg flex items-center justify-center text-xs font-medium transition-all ${
-                          available ? 'bg-green-100 text-green-700 shadow-sm' : 'bg-red-50 text-red-300'
+                        className={`aspect-square rounded-lg flex items-center justify-center text-xs font-semibold transition-all duration-200 ${
+                          isAvailable
+                            ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-200 dark:ring-emerald-800/50'
+                            : 'bg-gray-50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-600'
                         }`}
-                        title={`${format(date, 'd.M.')} — ${available ? copy.available : copy.unavailable}`}
+                        title={`${format(date, 'd.M.')} — ${isAvailable ? copy.available : copy.unavailable}`}
                       >
                         {date.getDate()}
                       </div>
                     );
                   })}
                 </div>
-                <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                <div className="flex items-center gap-4 mt-3 text-[11px] text-muted-foreground">
                   <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded bg-green-100 border border-green-200" />
+                    <div className="w-2.5 h-2.5 rounded-sm bg-emerald-50 dark:bg-emerald-900/30 ring-1 ring-emerald-200 dark:ring-emerald-800" />
                     <span>{copy.available}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded bg-red-50 border border-red-100" />
+                    <div className="w-2.5 h-2.5 rounded-sm bg-gray-50 dark:bg-gray-800/50 ring-1 ring-gray-200 dark:ring-gray-700" />
                     <span>{copy.unavailable}</span>
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
 
       {showBooking && (
         <GroomerBookingDialog
           open={showBooking}
-          onOpenChange={(open) => {
-            setShowBooking(open);
-            if (!open) setPreselectedSlot(null);
-          }}
+          onOpenChange={(open) => { setShowBooking(open); if (!open) setPreselectedSlot(null); }}
           groomer={groomer}
           initialDate={selectedDate || undefined}
           initialSlot={preselectedSlot}
