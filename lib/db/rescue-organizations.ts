@@ -174,6 +174,141 @@ interface ReviewRescueOrganizationInput {
   adminNotes?: string | null;
 }
 
+export async function getRescueOrganizationsByCity(city: string): Promise<RescueOrganization[]> {
+  if (!isSupabaseConfigured()) return [];
+
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('rescue_organizations')
+      .select('*')
+      .eq('status', 'active')
+      .eq('city', city)
+      .order('created_at', { ascending: false });
+
+    if (error || !data) return [];
+    return data as RescueOrganization[];
+  } catch {
+    return [];
+  }
+}
+
+export async function getVerifiedRescueOrganizations(): Promise<RescueOrganization[]> {
+  if (!isSupabaseConfigured()) return [];
+
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('rescue_organizations')
+      .select('*')
+      .eq('status', 'active')
+      .eq('verification_status', 'approved')
+      .order('created_at', { ascending: false });
+
+    if (error || !data) return [];
+    return data as RescueOrganization[];
+  } catch {
+    return [];
+  }
+}
+
+export async function getPendingRescueOrganizations(): Promise<RescueOrganization[]> {
+  if (!isSupabaseConfigured()) return [];
+
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('rescue_organizations')
+      .select('*')
+      .or('status.eq.pending_review,review_state.eq.pending,review_state.eq.in_review,verification_status.eq.pending,external_donation_url_status.eq.pending_review')
+      .order('updated_at', { ascending: false });
+
+    if (error || !data) return [];
+    return data as RescueOrganization[];
+  } catch {
+    return [];
+  }
+}
+
+export interface RescueStats {
+  totalOrganizations: number;
+  activeOrganizations: number;
+  pendingOrganizations: number;
+  totalAppeals: number;
+  activeAppeals: number;
+  pendingVerifications: number;
+  pendingDonationLinks: number;
+}
+
+export async function getRescueStats(): Promise<RescueStats> {
+  if (!isSupabaseConfigured()) {
+    return {
+      totalOrganizations: 0,
+      activeOrganizations: 0,
+      pendingOrganizations: 0,
+      totalAppeals: 0,
+      activeAppeals: 0,
+      pendingVerifications: 0,
+      pendingDonationLinks: 0,
+    };
+  }
+
+  try {
+    const supabase = await createClient();
+
+    // Get organization counts
+    const { data: orgs, error: orgsError } = await supabase
+      .from('rescue_organizations')
+      .select('status,verification_status,external_donation_url_status');
+
+    if (orgsError || !orgs) {
+      throw orgsError;
+    }
+
+    // Get appeal counts
+    const { data: appeals, error: appealsError } = await supabase
+      .from('rescue_appeals')
+      .select('status');
+
+    if (appealsError || !appeals) {
+      throw appealsError;
+    }
+
+    const totalOrganizations = orgs.length;
+    const activeOrganizations = orgs.filter(o => o.status === 'active').length;
+    const pendingOrganizations = orgs.filter(o => 
+      o.status === 'pending_review' || 
+      o.verification_status === 'pending' ||
+      o.external_donation_url_status === 'pending_review'
+    ).length;
+    const pendingVerifications = orgs.filter(o => o.verification_status === 'pending').length;
+    const pendingDonationLinks = orgs.filter(o => o.external_donation_url_status === 'pending_review').length;
+
+    const totalAppeals = appeals.length;
+    const activeAppeals = appeals.filter(a => a.status === 'active').length;
+
+    return {
+      totalOrganizations,
+      activeOrganizations,
+      pendingOrganizations,
+      totalAppeals,
+      activeAppeals,
+      pendingVerifications,
+      pendingDonationLinks,
+    };
+  } catch {
+    return {
+      totalOrganizations: 0,
+      activeOrganizations: 0,
+      pendingOrganizations: 0,
+      totalAppeals: 0,
+      activeAppeals: 0,
+      pendingVerifications: 0,
+      pendingDonationLinks: 0,
+    };
+  }
+}
+
 export async function reviewRescueOrganization(
   input: ReviewRescueOrganizationInput
 ): Promise<RescueOrganization | null> {

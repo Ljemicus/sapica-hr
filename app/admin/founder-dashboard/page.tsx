@@ -1,12 +1,24 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { AlertTriangle, ArrowRight, CheckCircle2, ClipboardList, FileCheck, HeartPulse, ShieldAlert, Users } from 'lucide-react';
+import { 
+  AlertTriangle, 
+  ArrowRight, 
+  CheckCircle2, 
+  ClipboardList, 
+  FileCheck, 
+  HeartHandshake,
+  HeartPulse, 
+  ShieldAlert, 
+  ShieldCheck,
+  Target,
+  Users 
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getAuthUser } from '@/lib/auth';
-import { getUsers, getAllBookings, getAllProviderApplications, getPendingVerifications, getRescueOrganizations, getRescueVerificationDocuments } from '@/lib/db';
+import { getUsers, getAllBookings, getAllProviderApplications, getPendingVerifications, getRescueOrganizations, getRescueVerificationDocuments, getRescueStats } from '@/lib/db';
 import { collectKpis } from '@/lib/kpi-digest';
 import { runOpsAudit } from '@/lib/ops-audit';
 import type { ProviderApplication } from '@/lib/types';
@@ -30,7 +42,7 @@ export default async function FounderDashboardPage() {
   if (!user) redirect('/prijava?redirect=%2Fadmin%2Ffounder-dashboard');
   if (user.role !== 'admin') redirect('/');
 
-  const [users, bookings, providerApplications, pendingVerifications, kpi, ops, rescueOrganizations] = await Promise.all([
+  const [users, bookings, providerApplications, pendingVerifications, kpi, ops, rescueOrganizations, rescueStats] = await Promise.all([
     getUsers('admin-list'),
     getAllBookings('admin-list'),
     getAllProviderApplications(),
@@ -38,6 +50,7 @@ export default async function FounderDashboardPage() {
     collectKpis(),
     runOpsAudit(),
     getRescueOrganizations(),
+    getRescueStats(),
   ]);
 
   const rescueDocsPerOrg = await Promise.all(
@@ -79,6 +92,7 @@ export default async function FounderDashboardPage() {
         </div>
       </div>
 
+      {/* Main Stats Row */}
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[
           { label: 'Korisnici', value: users.length, icon: Users },
@@ -99,6 +113,110 @@ export default async function FounderDashboardPage() {
           </Card>
         ))}
       </section>
+
+      {/* Rescue Stats Section */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-semibold flex items-center gap-2">
+              <HeartHandshake className="h-5 w-5 text-emerald-600" />
+              Rescue Ecosystem
+            </h2>
+            <p className="text-sm text-muted-foreground">Pregled rescue organizacija i apelacija u sustavu.</p>
+          </div>
+          <Link href="/admin/rescue">
+            <Button variant="outline" size="sm">Upravljaj rescue</Button>
+          </Link>
+        </div>
+        
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                  <HeartHandshake className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{rescueStats.totalOrganizations}</p>
+                  <p className="text-xs text-muted-foreground">Ukupno organizacija</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center">
+                  <CheckCircle2 className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{rescueStats.activeOrganizations}</p>
+                  <p className="text-xs text-muted-foreground">Aktivnih organizacija</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                  <Target className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{rescueStats.totalAppeals}</p>
+                  <p className="text-xs text-muted-foreground">Ukupno apelacija</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                  <ShieldCheck className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{rescueStats.activeAppeals}</p>
+                  <p className="text-xs text-muted-foreground">Aktivnih apelacija</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Pending Reviews Alert */}
+      {(rescueStats.pendingVerifications > 0 || rescueStats.pendingDonationLinks > 0) && (
+        <section>
+          <Card className="border-0 shadow-sm bg-gradient-to-r from-amber-50 to-orange-50">
+            <CardContent className="p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
+                    <AlertTriangle className="h-5 w-5 text-amber-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-amber-900">Rescue na čekanju</h3>
+                    <p className="text-sm text-amber-800/80">
+                      {rescueStats.pendingVerifications > 0 && `${rescueStats.pendingVerifications} verifikacija na čekanju`}
+                      {rescueStats.pendingVerifications > 0 && rescueStats.pendingDonationLinks > 0 && ' • '}
+                      {rescueStats.pendingDonationLinks > 0 && `${rescueStats.pendingDonationLinks} donation linkova na čekanju`}
+                    </p>
+                  </div>
+                </div>
+                <Link href="#rescue-queue">
+                  <Button variant="outline" className="border-amber-200 text-amber-700 hover:bg-amber-100">
+                    Pogledaj queue
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      )}
 
       <section className="grid gap-6 lg:grid-cols-2">
         <Card className="border-0 shadow-sm">
@@ -225,12 +343,15 @@ export default async function FounderDashboardPage() {
         </Card>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-2">
+      <section id="rescue-queue" className="grid gap-6 lg:grid-cols-2">
         <Card className="border-0 shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <ShieldAlert className="h-5 w-5 text-rose-600" />
+              <ShieldCheck className="h-5 w-5 text-rose-600" />
               Rescue verification queue
+              {rescueReviewQueue.length > 0 && (
+                <Badge className="bg-rose-100 text-rose-700 border-0 ml-2">{rescueReviewQueue.length}</Badge>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">

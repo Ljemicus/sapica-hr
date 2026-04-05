@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, HeartHandshake, MapPin, Search, X, SortAsc, SortDesc, Dog, Cat } from 'lucide-react';
+import { ArrowRight, BadgeCheck, HeartHandshake, MapPin, RefreshCw, Search, Shield, X, Dog, Cat, Filter } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { EmptyState } from '@/components/shared/empty-state';
-import { CITIES } from '@/lib/types';
+import { CITIES, getAppealProgressPct } from '@/lib/types';
 import type { RescueOrganization, RescueAppeal } from '@/lib/types';
 
 interface RescueOrganizationsContentProps {
@@ -37,15 +37,26 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
   const [cityFilter, setCityFilter] = useState<string>('all');
   const [speciesFilter, setSpeciesFilter] = useState<SpeciesFilter>('all');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullStartY, setPullStartY] = useState<number | null>(null);
+  const [pullDistance, setPullDistance] = useState(0);
 
   // Build appeal count map and species map (inferred from appeals)
-  const { appealCountByOrg, speciesByOrg } = useMemo(() => {
+  const { appealCountByOrg, appealGoalsByOrg, speciesByOrg } = useMemo(() => {
     const countMap = new Map<string, number>();
+    const goalMap = new Map<string, { raised: number; target: number }>();
     const speciesMap = new Map<string, Set<string>>();
     
     for (const appeal of activeAppeals) {
       // Count appeals
       countMap.set(appeal.organization_id, (countMap.get(appeal.organization_id) ?? 0) + 1);
+      
+      // Track goal progress
+      const current = goalMap.get(appeal.organization_id) ?? { raised: 0, target: 0 };
+      goalMap.set(appeal.organization_id, {
+        raised: current.raised + appeal.raised_amount_cents,
+        target: current.target + appeal.target_amount_cents,
+      });
       
       // Track species from appeals
       if (appeal.species) {
@@ -55,7 +66,7 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
       }
     }
     
-    return { appealCountByOrg: countMap, speciesByOrg: speciesMap };
+    return { appealCountByOrg: countMap, appealGoalsByOrg: goalMap, speciesByOrg: speciesMap };
   }, [activeAppeals]);
 
   // Get unique cities from organizations that have a city
@@ -128,8 +139,84 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
     setSortBy('newest');
   };
 
+  // Pull-to-refresh handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (window.scrollY === 0) {
+      setPullStartY(e.touches[0].clientY);
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (pullStartY !== null && window.scrollY === 0) {
+      const distance = e.touches[0].clientY - pullStartY;
+      if (distance > 0 && distance < 150) {
+        setPullDistance(distance);
+      }
+    }
+  }, [pullStartY]);
+
+  const handleTouchEnd = useCallback(() => {
+    if (pullDistance > 80) {
+      setIsRefreshing(true);
+      window.location.reload();
+    }
+    setPullStartY(null);
+    setPullDistance(0);
+  }, [pullDistance]);
+
+  // Keyboard shortcut for refresh
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'r') {
+        e.preventDefault();
+        setIsRefreshing(true);
+        window.location.reload();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const getVerificationBadge = (org: RescueOrganization) => {
+    if (org.verification_status === 'approved') {
+      return (
+        <Badge className="shrink-0 bg-blue-50 text-blue-700 border-0 gap-1">
+          <BadgeCheck className="h-3 w-3" />
+          Verificirana
+        </Badge>
+      );
+    }
+    if (org.verification_status === 'pending') {
+      return (
+        <Badge variant="outline" className="shrink-0 gap-1 text-amber-600 border-amber-200">
+          <Shield className="h-3 w-3" />
+          U provjeri
+        </Badge>
+      );
+    }
+    return null;
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50/60 via-white to-cyan-50/40">
+    <div 
+      className="min-h-screen bg-gradient-to-b from-emerald-50/60 via-white to-cyan-50/40"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Pull-to-refresh indicator */}
+      <div 
+        className="fixed top-0 left-0 right-0 z-40 flex justify-center pointer-events-none transition-transform duration-200 md:hidden"
+        style={{ transform: `translateY(${Math.min(pullDistance - 60, 0)}px)` }}
+      >
+        <div className="bg-white rounded-full shadow-lg p-3 flex items-center gap-2">
+          <RefreshCw className={`h-5 w-5 text-emerald-600 ${pullDistance > 80 ? 'animate-spin' : ''}`} />
+          <span className="text-sm font-medium text-emerald-700">
+            {pullDistance > 80 ? 'Otpusti za osvježavanje...' : 'Povuci za osvježavanje...'}
+          </span>
+        </div>
+      </div>
+
       <div className="container mx-auto max-w-6xl px-4 py-10">
         {/* Header */}
         <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -155,7 +242,7 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
 
         {/* Search and Filter Section */}
         <Card className="mb-8 border-0 shadow-sm">
-          <CardContent className="p-5 space-y-4">
+          <CardContent className="p-4 md:p-5 space-y-4">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -164,63 +251,75 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
                 placeholder="Pretraži po nazivu organizacije, opisu, gradu..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-11 h-11"
+                className="pl-11 h-12 text-base"
                 aria-label="Pretraži organizacije"
               />
               {search && (
                 <button
                   onClick={() => setSearch('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-muted min-w-[40px] min-h-[40px] flex items-center justify-center"
                 >
                   <X className="h-4 w-4 text-muted-foreground" />
                 </button>
               )}
             </div>
 
-            {/* Filters Row */}
+            {/* Filters Row - Mobile optimized touch targets */}
             <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
               {/* City Filter */}
-              <select
-                value={cityFilter}
-                onChange={(e) => setCityFilter(e.target.value)}
-                className="h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                <option value="all">Svi gradovi</option>
-                {availableCities.map((city) => (
-                  <option key={city} value={city}>{city}</option>
-                ))}
-              </select>
+              <div className="relative min-w-[140px]">
+                <select
+                  value={cityFilter}
+                  onChange={(e) => setCityFilter(e.target.value)}
+                  className="h-12 min-h-[48px] w-full px-4 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 appearance-none cursor-pointer"
+                  style={{ touchAction: 'manipulation' }}
+                >
+                  <option value="all">🏙️ Svi gradovi</option>
+                  {availableCities.map((city) => (
+                    <option key={city} value={city}>{city}</option>
+                  ))}
+                </select>
+                <Filter className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              </div>
 
               {/* Species Filter */}
-              <select
-                value={speciesFilter}
-                onChange={(e) => setSpeciesFilter(e.target.value as SpeciesFilter)}
-                className="h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                <option value="all">🐾 Sve vrste</option>
-                <option value="dog">🐕 Psi</option>
-                <option value="cat">🐈 Mačke</option>
-                <option value="other">🐰 Ostalo</option>
-              </select>
+              <div className="relative min-w-[140px]">
+                <select
+                  value={speciesFilter}
+                  onChange={(e) => setSpeciesFilter(e.target.value as SpeciesFilter)}
+                  className="h-12 min-h-[48px] w-full px-4 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 appearance-none cursor-pointer"
+                  style={{ touchAction: 'manipulation' }}
+                >
+                  <option value="all">🐾 Sve vrste</option>
+                  <option value="dog">🐕 Psi</option>
+                  <option value="cat">🐈 Mačke</option>
+                  <option value="other">🐰 Ostalo</option>
+                </select>
+                <Filter className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              </div>
 
               {/* Sort Dropdown */}
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                <option value="newest">Najnovije prvo</option>
-                <option value="alphabetical">A-Z (abecedno)</option>
-                <option value="alphabetical-desc">Z-A (obratno)</option>
-              </select>
+              <div className="relative min-w-[140px]">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOption)}
+                  className="h-12 min-h-[48px] w-full px-4 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 appearance-none cursor-pointer"
+                  style={{ touchAction: 'manipulation' }}
+                >
+                  <option value="newest">📅 Najnovije prvo</option>
+                  <option value="alphabetical">🔤 A-Z (abecedno)</option>
+                  <option value="alphabetical-desc">🔤 Z-A (obratno)</option>
+                </select>
+                <Filter className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              </div>
 
-              {/* Clear Filters */}
+              {/* Clear Filters - Desktop */}
               {hasActiveFilters && (
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="default"
                   onClick={clearFilters}
-                  className="gap-1.5 text-muted-foreground hover:text-foreground"
+                  className="gap-1.5 text-muted-foreground hover:text-foreground h-12 min-h-[48px]"
                 >
                   <X className="h-3.5 w-3.5" />
                   Poništi filtere
@@ -250,7 +349,7 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
             }
             action={
               hasActiveFilters ? (
-                <Button variant="outline" onClick={clearFilters} className="gap-2">
+                <Button variant="outline" onClick={clearFilters} className="gap-2 h-12">
                   <X className="h-4 w-4" />
                   Poništi filtere
                 </Button>
@@ -261,20 +360,44 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {filteredOrganizations.map((organization) => {
               const appealCount = appealCountByOrg.get(organization.id) ?? 0;
+              const goalData = appealGoalsByOrg.get(organization.id);
               const orgSpecies = speciesByOrg.get(organization.id);
+              const isVerified = organization.verification_status === 'approved';
+              
+              // Calculate progress if there are goals
+              const progress = goalData && goalData.target > 0 
+                ? Math.min(100, Math.round((goalData.raised / goalData.target) * 100))
+                : null;
 
               return (
                 <Card key={organization.id} className="h-full border-0 shadow-sm hover:shadow-md transition-shadow">
-                  <CardContent className="flex h-full flex-col p-6">
+                  <CardContent className="flex h-full flex-col p-5 md:p-6">
+                    {/* Header with verification badge */}
                     <div className="mb-4 flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <h2 className="text-xl font-semibold font-[var(--font-heading)] truncate">{organization.display_name}</h2>
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <h2 className="text-xl font-semibold font-[var(--font-heading)] truncate">{organization.display_name}</h2>
+                          {isVerified && (
+                            <span title="Verificirana organizacija">
+                              <BadgeCheck className="h-5 w-5 text-blue-500 shrink-0" />
+                            </span>
+                          )}
+                        </div>
                         <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-muted-foreground">
                           <MapPin className="h-4 w-4 text-emerald-600 shrink-0" />
                           <span className="truncate">{organization.city ?? 'Lokacija uskoro'}</span>
                         </p>
                       </div>
-                      <Badge variant="outline" className="shrink-0">{appealCount} live apelacija</Badge>
+                    </div>
+
+                    {/* Verification & Status Badges */}
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {getVerificationBadge(organization)}
+                      {appealCount > 0 && (
+                        <Badge variant="outline" className="shrink-0 bg-emerald-50 text-emerald-700 border-emerald-200">
+                          {appealCount} {appealCount === 1 ? 'apelacija' : 'apelacije'}
+                        </Badge>
+                      )}
                     </div>
 
                     {/* Species badges */}
@@ -296,6 +419,25 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
                       {organization.description ?? 'Organizacija još nije popunila javni opis.'}
                     </p>
 
+                    {/* Goal Progress Bar */}
+                    {progress !== null && progress > 0 && (
+                      <div className="mb-4 rounded-xl bg-emerald-50 p-3">
+                        <div className="flex items-center justify-between text-xs mb-1">
+                          <span className="font-medium text-emerald-800">Skupljeno</span>
+                          <span className="text-emerald-700">{progress}%</span>
+                        </div>
+                        <div className="h-2 w-full rounded-full bg-emerald-100 overflow-hidden">
+                          <div 
+                            className="h-full rounded-full bg-emerald-500 transition-all"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                        <p className="mt-1 text-xs text-emerald-600">
+                          {formatCurrency(goalData?.raised ?? 0)} od {formatCurrency(goalData?.target ?? 0)}
+                        </p>
+                      </div>
+                    )}
+
                     <div className="mb-6 rounded-xl bg-muted/50 p-4 text-sm text-muted-foreground">
                       <p className="font-medium text-foreground">Kontakt</p>
                       <p className="mt-1 truncate">{organization.email ?? 'Email uskoro'}{organization.phone ? (" · " + organization.phone) : ""}</p>
@@ -303,7 +445,7 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
 
                     <div className="mt-auto flex items-center justify-between gap-3">
                       <Link href={"/udruge/" + organization.slug}>
-                        <Button>Profil organizacije</Button>
+                        <Button className="h-11 px-4">Profil organizacije</Button>
                       </Link>
                       <Link href={`/apelacije`} className="text-sm font-medium text-emerald-700 hover:underline shrink-0">
                         Sve apelacije
@@ -329,7 +471,7 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
               </p>
             </div>
             <Link href="/dashboard/rescue">
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 h-11">
                 Otvori dashboard <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -338,4 +480,12 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
       </div>
     </div>
   );
+}
+
+function formatCurrency(amountCents: number): string {
+  return new Intl.NumberFormat('hr-HR', { 
+    style: 'currency', 
+    currency: 'EUR',
+    maximumFractionDigits: 0 
+  }).format(amountCents / 100);
 }

@@ -93,9 +93,14 @@ export {
   getRescueOrganizationByOwner,
   getRescueOrganizationBySlug,
   getRescueOrganizations,
+  getRescueOrganizationsByCity,
+  getVerifiedRescueOrganizations,
+  getPendingRescueOrganizations,
+  getRescueStats,
   createRescueOrganization,
   updateRescueOrganization,
   reviewRescueOrganization,
+  type RescueStats,
 } from './rescue-organizations';
 export {
   getRescueAppeal,

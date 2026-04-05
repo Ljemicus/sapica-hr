@@ -59,6 +59,8 @@ const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitema
   { route: '/udomljavanje', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/dog-friendly', changeFrequency: 'weekly', priority: 0.6 },
   { route: '/uzgajivacnice', changeFrequency: 'monthly', priority: 0.4 },
+  { route: '/udruge', changeFrequency: 'weekly', priority: 0.7 },
+  { route: '/apelacije', changeFrequency: 'daily', priority: 0.7 },
   // /blog and /grooming are 301-redirected to /zajednica and /njega — excluded from sitemap
   { route: '/cuvanje-pasa-zagreb', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/cuvanje-pasa-split', changeFrequency: 'weekly', priority: 0.7 },
@@ -78,7 +80,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const admin = createAdminClient();
-  const [sittersResult, groomersResult, trainersResult, adoptionResult, articles, topics, lostPets] = await Promise.all([
+  const [sittersResult, groomersResult, trainersResult, adoptionResult, articles, topics, lostPets, rescueOrgsResult, rescueAppealsResult] = await Promise.all([
     admin.from('sitter_profiles').select('user_id, verified, city, services, prices, rating_avg, review_count, bio, created_at, user:users!user_id(id, email, name, role, avatar_url, phone, city, created_at)').eq('verified', true),
     admin.from('groomers').select('id, name, city, services, prices, rating, review_count, bio, verified, specialization, user_id, phone, email, address, working_hours'),
     admin.from('trainers').select('id, name, city, specializations, price_per_hour, certificates, rating, review_count, bio, certified, user_id, phone, email, address'),
@@ -86,6 +88,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getArticles().catch(() => []),
     getTopics().catch(() => []),
     getLostPets().catch(() => []),
+    admin.from('rescue_organizations').select('id, slug, status, updated_at, created_at').eq('status', 'active'),
+    admin.from('rescue_appeals').select('id, slug, status, updated_at, created_at').eq('status', 'active'),
   ]);
 
   const sitters = (sittersResult.data || []) as Array<Record<string, unknown>>;
@@ -156,6 +160,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     alternates: { languages: buildLanguageAlternates(`/udomljavanje/${String(a.id)}`) },
   }));
 
+  const rescueOrganizations = (rescueOrgsResult.data || []) as Array<{ id: string; slug: string; status: string; updated_at?: string; created_at?: string }>;
+  const rescueAppeals = (rescueAppealsResult.data || []) as Array<{ id: string; slug: string; status: string; updated_at?: string; created_at?: string }>;
+
+  const rescueOrgEntries: MetadataRoute.Sitemap = rescueOrganizations.map((org) => ({
+    url: `${BASE_URL}/udruge/${org.slug}`,
+    lastModified: toLastModified(org.updated_at ?? org.created_at),
+    changeFrequency: 'weekly' as const,
+    priority: 0.6,
+  }));
+
+  const rescueAppealEntries: MetadataRoute.Sitemap = rescueAppeals.map((appeal) => ({
+    url: `${BASE_URL}/apelacije/${appeal.slug}`,
+    lastModified: toLastModified(appeal.updated_at ?? appeal.created_at),
+    changeFrequency: 'daily' as const,
+    priority: 0.6,
+  }));
+
   const all = [
     ...staticEntries,
     ...sitterEntries,
@@ -165,6 +186,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...forumEntries,
     ...lostPetEntries,
     ...adoptionEntries,
+    ...rescueOrgEntries,
+    ...rescueAppealEntries,
   ];
 
   appLogger.info('sitemap.generate', 'Sitemap generated', {
@@ -177,6 +200,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     forum: forumEntries.length,
     lostPets: lostPetEntries.length,
     adoption: adoptionEntries.length,
+    rescueOrgs: rescueOrgEntries.length,
+    rescueAppeals: rescueAppealEntries.length,
   });
 
   return all;

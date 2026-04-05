@@ -21,6 +21,8 @@ const urgencyLabels = {
   critical: 'Kritično',
 } as const;
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const appeal = await getRescueAppealBySlug(slug);
@@ -41,6 +43,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       type: 'article',
       url: `/apelacije/${slug}`,
+      siteName: 'PetPark',
+      locale: 'hr_HR',
       images: imageUrl.startsWith('http') 
         ? [{ url: imageUrl, width: 1200, height: 630, alt: appeal.title }]
         : [{ url: imageUrl, width: 1200, height: 630, alt: appeal.title }],
@@ -50,6 +54,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       images: imageUrl.startsWith('http') ? [imageUrl] : [imageUrl],
+    },
+    alternates: {
+      canonical: `${BASE_URL}/apelacije/${slug}`,
     },
   };
 }

@@ -16,12 +16,29 @@ export function Navbar() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [pendingRescueCount, setPendingRescueCount] = useState(0);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Fetch pending rescue count for admin users
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      fetch('/api/admin/rescue-pending-count')
+        .then(res => res.json())
+        .then(data => {
+          if (data.count) {
+            setPendingRescueCount(data.count);
+          }
+        })
+        .catch(() => {
+          // Silently fail - badge just won't show
+        });
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     await signOut();
@@ -49,8 +66,22 @@ export function Navbar() {
         </Link>
 
         <DesktopNav t={t} user={user} language={language} />
-        <DesktopActions t={t} user={user} loading={loading} signOut={signOut} />
-        <MobileSheet open={open} setOpen={setOpen} t={t} language={language} user={user} onLogout={handleLogout} />
+        <DesktopActions 
+          t={t} 
+          user={user} 
+          loading={loading} 
+          signOut={signOut}
+          pendingRescueCount={pendingRescueCount}
+        />
+        <MobileSheet 
+          open={open} 
+          setOpen={setOpen} 
+          t={t} 
+          language={language} 
+          user={user} 
+          onLogout={handleLogout}
+          pendingRescueCount={pendingRescueCount}
+        />
       </div>
     </header>
   );
