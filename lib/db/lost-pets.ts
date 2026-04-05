@@ -4,7 +4,7 @@ import { isSupabaseConfigured } from './helpers';
 import type { LostPet, LostPetFoundMethod, LostPetSighting, LostPetSightingStatus, LostPetSpecies, LostPetStatus, LostPetUpdate, LostPetUpdateCategory } from '@/lib/types';
 import { LOST_PET_LISTING_DURATION_DAYS, LOST_PET_EXPIRY_WARN_DAYS } from '@/lib/types';
 
-interface LostPetFilters {
+export interface LostPetFilters {
   city?: string;
   species?: LostPetSpecies;
   status?: LostPetStatus;
@@ -12,6 +12,13 @@ interface LostPetFilters {
   fields?: 'full' | 'homepage-card';
   includeHidden?: boolean;
   excludeExpired?: boolean;
+  // Lead/sighting filters
+  hasUnreviewedSightings?: boolean;
+  minSightingCount?: number;
+  maxSightingCount?: number;
+  // Sorting
+  sortBy?: 'created_at' | 'last_sighting_date' | 'sighting_count';
+  sortOrder?: 'asc' | 'desc';
 }
 
 const LOST_PET_UPDATE_LIMIT = 50;
@@ -114,6 +121,19 @@ function mapDbToLostPet(row: Record<string, unknown>): LostPet {
   };
 }
 
+/** Helper to get the last sighting date from a lost pet */
+function getLastSightingDate(pet: LostPet): string | null {
+  if (!pet.sightings || pet.sightings.length === 0) return null;
+  return pet.sightings[0].date; // Already sorted by date desc
+}
+
+/** Helper to count unreviewed sightings (status === 'new') */
+function getUnreviewedSightingCount(pet: LostPet): number {
+  if (!pet.sightings) return 0;
+  return pet.sightings.filter(s => s.status === 'new').length;
+}
+
+
 export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> {
   if (!isSupabaseConfigured()) return [];
 
@@ -121,19 +141,68 @@ export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> 
     const supabase = await createClient();
     let query = supabase
       .from('lost_pets')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('*');
 
     if (!filters?.includeHidden) query = query.eq('hidden', false);
     if (filters?.city) query = query.eq('city', filters.city);
     if (filters?.species) query = query.eq('species', filters.species);
     if (filters?.status) query = query.eq('status', filters.status);
     if (filters?.excludeExpired) query = query.neq('status', 'expired');
-    if (filters?.limit) query = query.limit(filters.limit);
 
     const { data, error } = await query;
     if (error || !data) return [];
-    return data.map((row) => mapDbToLostPet(row as unknown as Record<string, unknown>));
+    
+    let pets = data.map((row) => mapDbToLostPet(row as unknown as Record<string, unknown>));
+
+    // Apply lead/sighting filters (post-query filtering since sightings are JSONB)
+    if (filters?.hasUnreviewedSightings !== undefined) {
+      pets = pets.filter(pet => {
+        const hasUnreviewed = getUnreviewedSightingCount(pet) > 0;
+        return filters.hasUnreviewedSightings ? hasUnreviewed : !hasUnreviewed;
+      });
+    }
+
+    if (filters?.minSightingCount !== undefined) {
+      pets = pets.filter(pet => (pet.sightings?.length || 0) >= filters.minSightingCount!);
+    }
+
+    if (filters?.maxSightingCount !== undefined) {
+      pets = pets.filter(pet => (pet.sightings?.length || 0) <= filters.maxSightingCount!);
+    }
+
+    // Apply sorting
+    const sortBy = filters?.sortBy || 'created_at';
+    const sortOrder = filters?.sortOrder || 'desc';
+    const sortMultiplier = sortOrder === 'asc' ? 1 : -1;
+
+    pets.sort((a, b) => {
+      switch (sortBy) {
+        case 'sighting_count': {
+          const countA = a.sightings?.length || 0;
+          const countB = b.sightings?.length || 0;
+          return (countA - countB) * sortMultiplier;
+        }
+        case 'last_sighting_date': {
+          const dateA = getLastSightingDate(a);
+          const dateB = getLastSightingDate(b);
+          if (!dateA && !dateB) return 0;
+          if (!dateA) return 1 * sortMultiplier;
+          if (!dateB) return -1 * sortMultiplier;
+          return (new Date(dateA).getTime() - new Date(dateB).getTime()) * sortMultiplier;
+        }
+        case 'created_at':
+        default: {
+          return (new Date(a.created_at).getTime() - new Date(b.created_at).getTime()) * sortMultiplier;
+        }
+      }
+    });
+
+    // Apply limit after sorting
+    if (filters?.limit) {
+      pets = pets.slice(0, filters.limit);
+    }
+
+    return pets;
   } catch {
     return [];
   }
@@ -430,6 +499,82 @@ export async function getNewlyRemindedListings(): Promise<LostPet[]> {
   }
 }
 
+
+/** Get lost pets for a specific user (owner-facing list) */
+export async function getLostPetsByUser(
+  userId: string,
+  filters?: Omit<LostPetFilters, 'city' | 'species'>
+): Promise<LostPet[]> {
+  if (!isSupabaseConfigured() || !userId) return [];
+
+  try {
+    const supabase = await createClient();
+    let query = supabase
+      .from('lost_pets')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (filters?.status) query = query.eq('status', filters.status);
+    if (filters?.excludeExpired) query = query.neq('status', 'expired');
+
+    const { data, error } = await query;
+    if (error || !data) return [];
+    
+    let pets = data.map((row) => mapDbToLostPet(row as unknown as Record<string, unknown>));
+
+    // Apply lead/sighting filters (post-query filtering since sightings are JSONB)
+    if (filters?.hasUnreviewedSightings !== undefined) {
+      pets = pets.filter(pet => {
+        const hasUnreviewed = getUnreviewedSightingCount(pet) > 0;
+        return filters.hasUnreviewedSightings ? hasUnreviewed : !hasUnreviewed;
+      });
+    }
+
+    if (filters?.minSightingCount !== undefined) {
+      pets = pets.filter(pet => (pet.sightings?.length || 0) >= filters.minSightingCount!);
+    }
+
+    if (filters?.maxSightingCount !== undefined) {
+      pets = pets.filter(pet => (pet.sightings?.length || 0) <= filters.maxSightingCount!);
+    }
+
+    // Apply sorting
+    const sortBy = filters?.sortBy || 'created_at';
+    const sortOrder = filters?.sortOrder || 'desc';
+    const sortMultiplier = sortOrder === 'asc' ? 1 : -1;
+
+    pets.sort((a, b) => {
+      switch (sortBy) {
+        case 'sighting_count': {
+          const countA = a.sightings?.length || 0;
+          const countB = b.sightings?.length || 0;
+          return (countA - countB) * sortMultiplier;
+        }
+        case 'last_sighting_date': {
+          const dateA = getLastSightingDate(a);
+          const dateB = getLastSightingDate(b);
+          if (!dateA && !dateB) return 0;
+          if (!dateA) return 1 * sortMultiplier;
+          if (!dateB) return -1 * sortMultiplier;
+          return (new Date(dateA).getTime() - new Date(dateB).getTime()) * sortMultiplier;
+        }
+        case 'created_at':
+        default: {
+          return (new Date(a.created_at).getTime() - new Date(b.created_at).getTime()) * sortMultiplier;
+        }
+      }
+    });
+
+    // Apply limit after sorting
+    if (filters?.limit) {
+      pets = pets.slice(0, filters.limit);
+    }
+
+    return pets;
+  } catch {
+    return [];
+  }
+}
 /** Extend a listing's expiry by the given number of days (admin use). */
 export async function extendLostPetExpiry(id: string, days: number): Promise<LostPet | null> {
   if (!isSupabaseConfigured()) return null;
