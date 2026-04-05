@@ -159,27 +159,23 @@ export interface AlertDispatchResult {
 }
 
 /**
- * Get listings that need alert dispatch (created recently, not yet dispatched).
- * Marks them as dispatched atomically.
- * Returns the listings for the caller to send emails.
+ * Get listings that need alert dispatch (not yet dispatched).
+ * Does NOT mark them — call {@link markListingDispatched} after emails succeed.
  */
-export async function claimUndispatchedListings(): Promise<
+export async function getUndispatchedListings(): Promise<
   Array<{ id: string; name: string; species: LostPetSpecies; city: string; neighborhood: string; image_url: string; user_id: string | null }>
 > {
   if (!isSupabaseConfigured()) return [];
 
   try {
     const supabase = createAdminClient();
-    const now = new Date().toISOString();
 
-    // Find active lost listings without alerts_dispatched_at
     const { data, error } = await supabase
       .from('lost_pets')
-      .update({ alerts_dispatched_at: now })
+      .select('id, name, species, city, neighborhood, image_url, user_id')
       .eq('status', 'lost')
       .eq('hidden', false)
-      .is('alerts_dispatched_at', null)
-      .select('id, name, species, city, neighborhood, image_url, user_id');
+      .is('alerts_dispatched_at', null);
 
     if (error || !data) return [];
 
@@ -194,5 +190,25 @@ export async function claimUndispatchedListings(): Promise<
     }));
   } catch {
     return [];
+  }
+}
+
+/**
+ * Mark a single listing as dispatched. Call only after all subscriber
+ * emails for this listing have been sent (or attempted).
+ */
+export async function markListingDispatched(listingId: string): Promise<boolean> {
+  if (!isSupabaseConfigured()) return false;
+
+  try {
+    const supabase = createAdminClient();
+    const { error } = await supabase
+      .from('lost_pets')
+      .update({ alerts_dispatched_at: new Date().toISOString() })
+      .eq('id', listingId);
+
+    return !error;
+  } catch {
+    return false;
   }
 }

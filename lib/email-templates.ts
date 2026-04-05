@@ -312,3 +312,23 @@ export function lostPetAlertEmail(
   `;
   return baseLayout(content, `Nestao ${speciesLabel} "${petName}" u gradu ${city}`);
 }
+
+export function lostPetSightingEmail(
+  ownerName: string,
+  petName: string,
+  sightingLocation: string,
+  sightingDescription: string,
+  listingId: string,
+): string {
+  const listingUrl = `https://petpark.hr/izgubljeni/${listingId}`;
+
+  const content = `
+    ${heading('Novo viđenje vašeg ljubimca! &#128064;')}
+    ${paragraph(`Pozdrav ${ownerName},`)}
+    ${paragraph(`Netko je prijavio viđenje vašeg ljubimca <strong>${petName}</strong>!`)}
+    ${infoBox(`&#128205; Lokacija: ${sightingLocation}<br>&#128221; Opis: ${sightingDescription}`)}
+    ${paragraph('Pogledajte prijavu i sve detalje na stranici oglasa.')}
+    ${ctaButton('Pogledaj oglas', listingUrl)}
+  `;
+  return baseLayout(content, `Novo viđenje ljubimca "${petName}"`);
+}

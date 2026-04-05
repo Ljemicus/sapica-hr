@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { claimUndispatchedListings, getSubscribersForListing } from '@/lib/db/lost-pet-alerts';
+import { getUndispatchedListings, markListingDispatched, getSubscribersForListing } from '@/lib/db/lost-pet-alerts';
 import type { AlertDispatchResult } from '@/lib/db/lost-pet-alerts';
 import { sendEmail } from '@/lib/email';
 import { lostPetAlertEmail } from '@/lib/email-templates';
@@ -33,10 +33,13 @@ export async function GET(request: Request) {
   };
 
   try {
-    const listings = await claimUndispatchedListings();
+    const listings = await getUndispatchedListings();
     result.listingsProcessed = listings.length;
 
     for (const listing of listings) {
+      let listingEmailsFailed = 0;
+      let listingEmailsSent = 0;
+
       try {
         const subscribers = await getSubscribersForListing(
           listing.city,
@@ -65,16 +68,25 @@ export async function GET(request: Request) {
               throw new Error(emailResult.error || 'Unknown email delivery failure');
             }
 
+            listingEmailsSent++;
             result.emailsSent++;
           } catch (err) {
+            listingEmailsFailed++;
             const msg = `email to ${sub.email} for listing ${listing.id}: ${err instanceof Error ? err.message : String(err)}`;
             result.errors.push(msg);
             appLogger.error('lost-pet-alerts', 'Failed to send alert email', { error: msg });
           }
         }
+
+        // Only mark dispatched if at least some emails succeeded or there were no subscribers.
+        // If ALL emails failed, leave undispatched so next cron run retries.
+        if (listingEmailsFailed === 0 || listingEmailsSent > 0) {
+          await markListingDispatched(listing.id);
+        }
       } catch (err) {
         const msg = `subscribers for listing ${listing.id}: ${err instanceof Error ? err.message : String(err)}`;
         result.errors.push(msg);
+        // Don't mark dispatched — subscriber lookup itself failed, retry next run
       }
     }
 
