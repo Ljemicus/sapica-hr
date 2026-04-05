@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { Search, MapPin, Calendar, Plus, AlertTriangle, Map, List, Loader2, CheckCircle2, Heart, Clock, ArrowRight, Bell } from 'lucide-react';
+import { Search, MapPin, Calendar, Plus, AlertTriangle, Map, List, Loader2, CheckCircle2, Heart, Clock, ArrowRight, Bell, Eye, Filter, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { LostPet } from '@/lib/types';
@@ -44,7 +44,29 @@ function isRecentActivity(dateStr: string | null, days = 3) {
   return Date.now() - new Date(dateStr).getTime() <= days * 24 * 60 * 60 * 1000;
 }
 
-export function LostPetsContent() {
+function getUnreviewedSightingsCount(pet: LostPet): number {
+  return pet.sightings.filter(s => s.status === 'new').length;
+}
+
+function getTotalSightingsCount(pet: LostPet): number {
+  return pet.sightings.length;
+}
+
+function hasActiveSightings(pet: LostPet): boolean {
+  return pet.sightings.some(s => s.status === 'new' || s.status === 'helpful');
+}
+
+type SortOption = 'newest' | 'most_leads' | 'most_unreviewed' | 'recent_activity' | 'oldest';
+type LeadFilterOption = 'all' | 'has_leads' | 'unreviewed' | 'no_leads';
+
+interface LostPetsContentProps {
+  /** Optional user ID to filter for user's own listings */
+  userId?: string;
+  /** Optional flag to show only listings with unreviewed leads */
+  showNeedsReviewOnly?: boolean;
+}
+
+export function LostPetsContent({ userId, showNeedsReviewOnly = false }: LostPetsContentProps = {}) {
   const { language } = useLanguage();
   const isEn = language === 'en';
   const locale = isEn ? 'en-GB' : 'hr-HR';
@@ -52,10 +74,13 @@ export function LostPetsContent() {
   const speciesLabels = isEn ? { pas: 'Dog', macka: 'Cat', ostalo: 'Other' } : LOST_PET_SPECIES_LABELS;
   const [pets, setPets] = useState<LostPet[]>([]);
   const [loading, setLoading] = useState(true);
-  const [cityFilter, setCityFilter] = useState<string | null>('all');
-  const [speciesFilter, setSpeciesFilter] = useState<string | null>('all');
-  const [statusFilter, setStatusFilter] = useState<string | null>('all');
+  const [cityFilter, setCityFilter] = useState<string>('all');
+  const [speciesFilter, setSpeciesFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [leadFilter, setLeadFilter] = useState<LeadFilterOption>(showNeedsReviewOnly ? 'unreviewed' : 'all');
+  const [sortBy, setSortBy] = useState<SortOption>(showNeedsReviewOnly ? 'most_unreviewed' : 'newest');
   const [view, setView] = useState<'list' | 'map'>('list');
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -64,6 +89,7 @@ export function LostPetsContent() {
       if (cityFilter && cityFilter !== 'all') params.set('city', cityFilter);
       if (speciesFilter && speciesFilter !== 'all') params.set('species', speciesFilter);
       if (statusFilter && statusFilter !== 'all') params.set('status', statusFilter);
+      if (userId) params.set('userId', userId);
       try {
         const res = await fetch(`/api/lost-pets/list?${params.toString()}`);
         const data = await res.json();
@@ -74,9 +100,87 @@ export function LostPetsContent() {
       setLoading(false);
     }
     load();
-  }, [cityFilter, speciesFilter, statusFilter]);
+  }, [cityFilter, speciesFilter, statusFilter, userId]);
+
+  // Calculate lead statistics for filter indicators
+  const leadStats = useMemo(() => {
+    const stats = {
+      withUnreviewed: 0,
+      withLeads: 0,
+      withoutLeads: 0,
+    };
+    pets.forEach(pet => {
+      const unreviewed = getUnreviewedSightingsCount(pet);
+      const total = getTotalSightingsCount(pet);
+      if (unreviewed > 0) stats.withUnreviewed++;
+      if (total > 0) stats.withLeads++;
+      else stats.withoutLeads++;
+    });
+    return stats;
+  }, [pets]);
+
+  // Filter and sort pets
+  const filteredAndSortedPets = useMemo(() => {
+    let result = [...pets];
+
+    // Apply lead filter
+    if (leadFilter !== 'all') {
+      result = result.filter(pet => {
+        const unreviewedCount = getUnreviewedSightingsCount(pet);
+        const totalCount = getTotalSightingsCount(pet);
+        
+        switch (leadFilter) {
+          case 'has_leads':
+            return totalCount > 0;
+          case 'unreviewed':
+            return unreviewedCount > 0;
+          case 'no_leads':
+            return totalCount === 0;
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Apply sorting
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case 'oldest':
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        case 'most_leads': {
+          const aLeads = getTotalSightingsCount(a);
+          const bLeads = getTotalSightingsCount(b);
+          if (bLeads !== aLeads) return bLeads - aLeads;
+          // Secondary sort by unreviewed leads
+          return getUnreviewedSightingsCount(b) - getUnreviewedSightingsCount(a);
+        }
+        case 'most_unreviewed': {
+          const aUnreviewed = getUnreviewedSightingsCount(a);
+          const bUnreviewed = getUnreviewedSightingsCount(b);
+          if (bUnreviewed !== aUnreviewed) return bUnreviewed - aUnreviewed;
+          // Secondary sort by total leads
+          return getTotalSightingsCount(b) - getTotalSightingsCount(a);
+        }
+        case 'recent_activity': {
+          const aDate = getLatestActivityDate(a);
+          const bDate = getLatestActivityDate(b);
+          if (!aDate && !bDate) return 0;
+          if (!aDate) return 1;
+          if (!bDate) return -1;
+          return new Date(bDate).getTime() - new Date(aDate).getTime();
+        }
+        default:
+          return 0;
+      }
+    });
+
+    return result;
+  }, [pets, leadFilter, sortBy]);
 
   const lostCount = pets.filter(p => p.status === 'lost').length;
+  const totalUnreviewedLeads = pets.reduce((sum, pet) => sum + getUnreviewedSightingsCount(pet), 0);
 
   const speciesFilters = [
     { value: 'all', label: isEn ? 'All' : 'Sve', emoji: '' },
@@ -90,6 +194,30 @@ export function LostPetsContent() {
     { value: 'lost', label: isEn ? 'Still missing' : 'Još se traži' },
     { value: 'found', label: isEn ? 'Found' : 'Pronađen' },
   ];
+
+  const leadFilters: { value: LeadFilterOption; label: string; count?: number }[] = [
+    { value: 'all', label: isEn ? 'All listings' : 'Svi oglasi' },
+    { value: 'has_leads', label: isEn ? 'Has leads' : 'Ima tragove', count: leadStats.withLeads },
+    { value: 'unreviewed', label: isEn ? 'Unreviewed leads' : 'Nepregledani tragovi', count: leadStats.withUnreviewed },
+    { value: 'no_leads', label: isEn ? 'No leads yet' : 'Još nema tragova', count: leadStats.withoutLeads },
+  ];
+
+  const sortOptions: { value: SortOption; label: string }[] = [
+    { value: 'newest', label: isEn ? 'Newest first' : 'Najnovije' },
+    { value: 'oldest', label: isEn ? 'Oldest first' : 'Najstarije' },
+    { value: 'most_leads', label: isEn ? 'Most leads' : 'Najviše tragova' },
+    { value: 'most_unreviewed', label: isEn ? 'Most unreviewed' : 'Najviše nepregledanih' },
+    { value: 'recent_activity', label: isEn ? 'Recent activity' : 'Nedavna aktivnost' },
+  ];
+
+  const activeFiltersCount = [
+    cityFilter !== 'all',
+    speciesFilter !== 'all',
+    statusFilter !== 'all',
+    leadFilter !== 'all',
+  ].filter(Boolean).length;
+
+  const needsReviewActive = leadFilter === 'unreviewed';
 
   return (
     <div className="min-h-screen bg-background">
@@ -156,10 +284,10 @@ export function LostPetsContent() {
             ))}
           </div>
 
-          {/* Dropdown filters */}
+          {/* Primary filters row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <select
-              value={cityFilter || 'all'}
+              value={cityFilter}
               onChange={(e) => setCityFilter(e.target.value)}
               className="premium-select"
             >
@@ -170,7 +298,7 @@ export function LostPetsContent() {
             </select>
 
             <select
-              value={statusFilter || 'all'}
+              value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="premium-select"
             >
@@ -205,11 +333,134 @@ export function LostPetsContent() {
             </div>
           </div>
 
+          {/* Quick lead filters - NEW */}
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              onClick={() => setLeadFilter(needsReviewActive ? 'all' : 'unreviewed')}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                needsReviewActive
+                  ? 'bg-violet-500 text-white shadow-md shadow-violet-500/20'
+                  : 'bg-violet-50 dark:bg-violet-950/30 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800 hover:bg-violet-100 dark:hover:bg-violet-950/50'
+              }`}
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              {isEn ? 'Needs Review' : 'Treba pregled'}
+              {!loading && leadStats.withUnreviewed > 0 && (
+                <Badge variant="secondary" className={`ml-1 text-xs ${needsReviewActive ? 'bg-violet-400 text-white' : 'bg-violet-200 text-violet-800'}`}>
+                  {leadStats.withUnreviewed}
+                </Badge>
+              )}
+            </button>
+            
+            <button
+              onClick={() => setLeadFilter(leadFilter === 'has_leads' ? 'all' : 'has_leads')}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                leadFilter === 'has_leads'
+                  ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20'
+                  : 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-950/50'
+              }`}
+            >
+              <Eye className="h-3.5 w-3.5" />
+              {isEn ? 'Has Leads' : 'Ima tragove'}
+              {!loading && leadStats.withLeads > 0 && (
+                <Badge variant="secondary" className={`ml-1 text-xs ${leadFilter === 'has_leads' ? 'bg-blue-400 text-white' : 'bg-blue-200 text-blue-800'}`}>
+                  {leadStats.withLeads}
+                </Badge>
+              )}
+            </button>
+
+            <button
+              onClick={() => setLeadFilter(leadFilter === 'no_leads' ? 'all' : 'no_leads')}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                leadFilter === 'no_leads'
+                  ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20'
+                  : 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-950/50'
+              }`}
+            >
+              <Bell className="h-3.5 w-3.5" />
+              {isEn ? 'No Leads Yet' : 'Još nema tragova'}
+              {!loading && leadStats.withoutLeads > 0 && (
+                <Badge variant="secondary" className={`ml-1 text-xs ${leadFilter === 'no_leads' ? 'bg-amber-400 text-white' : 'bg-amber-200 text-amber-800'}`}>
+                  {leadStats.withoutLeads}
+                </Badge>
+              )}
+            </button>
+          </div>
+
+          {/* Advanced filters toggle */}
+          <div className="mt-4 pt-4 border-t border-border/30">
+            <button
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              {isEn ? 'Advanced filters' : 'Napredni filteri'}
+              {activeFiltersCount > 0 && (
+                <Badge variant="secondary" className="ml-1 text-xs">
+                  {activeFiltersCount}
+                </Badge>
+              )}
+              <span className={`ml-auto transform transition-transform ${showAdvancedFilters ? 'rotate-180' : ''}`}>
+                ▼
+              </span>
+            </button>
+
+            {/* Advanced filters panel */}
+            {showAdvancedFilters && (
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 animate-fade-in-up">
+                <select
+                  value={leadFilter}
+                  onChange={(e) => setLeadFilter(e.target.value as LeadFilterOption)}
+                  className="premium-select"
+                >
+                  {leadFilters.map((f) => (
+                    <option key={f.value} value={f.value}>
+                      {f.label}{f.count !== undefined && f.count > 0 ? ` (${f.count})` : ''}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOption)}
+                  className="premium-select"
+                >
+                  {sortOptions.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+
           {/* Result count */}
           <div className="mt-4 pt-4 border-t border-border/30 flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              {loading ? '...' : `${pets.length} ${isEn ? 'results' : 'rezultata'}`}
+              {loading 
+                ? (isEn ? 'Loading...' : 'Učitavanje...')
+                : `${filteredAndSortedPets.length} ${isEn ? 'results' : 'rezultata'}`
+              }
+              {!loading && totalUnreviewedLeads > 0 && (
+                <span className="ml-2 text-warm-coral font-medium">
+                  · {totalUnreviewedLeads} {isEn ? 'unreviewed leads total' : 'ukupno nepregledanih tragova'}
+                </span>
+              )}
             </p>
+            
+            {/* Clear filters */}
+            {activeFiltersCount > 0 && (
+              <button
+                onClick={() => {
+                  setCityFilter('all');
+                  setSpeciesFilter('all');
+                  setStatusFilter('all');
+                  setLeadFilter('all');
+                }}
+                className="text-sm text-muted-foreground hover:text-warm-coral transition-colors"
+              >
+                {isEn ? 'Clear filters' : 'Očisti filtere'}
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -218,7 +469,7 @@ export function LostPetsContent() {
       {view === 'map' && (
         <section className="container mx-auto px-6 md:px-10 lg:px-16 mt-8">
           <div className="h-[500px] rounded-2xl overflow-hidden community-section-card">
-            <LostPetsMap pets={pets} />
+            <LostPetsMap pets={filteredAndSortedPets} />
           </div>
         </section>
       )}
@@ -230,28 +481,50 @@ export function LostPetsContent() {
             <Loader2 className="h-8 w-8 animate-spin text-warm-coral" />
             <span className="ml-3 text-muted-foreground">{isEn ? 'Loading...' : 'Učitavanje...'}</span>
           </div>
-        ) : pets.length === 0 ? (
+        ) : filteredAndSortedPets.length === 0 ? (
           <EmptyState
             icon={Search}
             title={isEn ? 'No results' : 'Nema rezultata'}
-            description={isEn ? 'There are no reports for the selected filters. Try another city, species, or status.' : 'Nema prijava za odabrane filtere. Pokušajte promijeniti grad, vrstu ili status.'}
+            description={isEn ? 'There are no reports for the selected filters. Try adjusting your filters or check back later.' : 'Nema prijava za odabrane filtere. Pokušajte prilagoditi filtere ili provjerite kasnije.'}
             action={
-              <Link href="/izgubljeni/prijavi">
-                <Button size="sm" className="bg-warm-coral hover:bg-warm-coral/90 text-white rounded-full px-6 btn-hover">
-                  <Plus className="h-4 w-4 mr-2" />
-                  {isEn ? 'Report missing pet' : 'Prijavi nestanak'}
-                </Button>
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-3">
+                {activeFiltersCount > 0 && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => {
+                      setCityFilter('all');
+                      setSpeciesFilter('all');
+                      setStatusFilter('all');
+                      setLeadFilter('all');
+                    }}
+                    className="rounded-full px-6"
+                  >
+                    <Filter className="h-4 w-4 mr-2" />
+                    {isEn ? 'Clear filters' : 'Očisti filtere'}
+                  </Button>
+                )}
+                <Link href="/izgubljeni/prijavi">
+                  <Button size="sm" className="bg-warm-coral hover:bg-warm-coral/90 text-white rounded-full px-6 btn-hover">
+                    <Plus className="h-4 w-4 mr-2" />
+                    {isEn ? 'Report missing pet' : 'Prijavi nestanak'}
+                  </Button>
+                </Link>
+              </div>
             }
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {pets.map((pet, index) => {
+            {filteredAndSortedPets.map((pet, index) => {
               const expired = isLostPetExpired(pet);
               const expiringSoon = isLostPetExpiringSoon(pet);
               const daysLeft = lostPetDaysUntilExpiry(pet);
               const latestActivity = getLatestActivityDate(pet);
               const showRecentActivity = pet.status === 'lost' && isRecentActivity(latestActivity);
+              const unreviewedCount = getUnreviewedSightingsCount(pet);
+              const totalSightings = getTotalSightingsCount(pet);
+              const hasLeads = totalSightings > 0;
+              
               return (
                 <div
                   key={pet.id}
@@ -295,6 +568,28 @@ export function LostPetsContent() {
                       </Badge>
                     )}
 
+                    {/* Unreviewed leads badge - prominent */}
+                    {unreviewedCount > 0 && (
+                      <Badge className="absolute top-4 right-4 bg-violet-500 text-white font-semibold px-3 py-1.5 rounded-full text-xs backdrop-blur-sm shadow-lg animate-pulse">
+                        <Eye className="h-3 w-3 mr-1.5 inline" />
+                        {unreviewedCount} {isEn 
+                          ? (unreviewedCount === 1 ? 'unreviewed lead' : 'unreviewed leads')
+                          : (unreviewedCount === 1 ? 'nepregledan trag' : 'nepregledana traga')
+                        }
+                      </Badge>
+                    )}
+
+                    {/* Total leads badge (when no unreviewed but has leads) */}
+                    {unreviewedCount === 0 && hasLeads && pet.status === 'lost' && (
+                      <Badge className="absolute top-4 right-4 bg-blue-500/90 text-white font-medium px-2.5 py-1 rounded-full text-xs backdrop-blur-sm">
+                        <Eye className="h-3 w-3 mr-1 inline" />
+                        {totalSightings} {isEn 
+                          ? (totalSightings === 1 ? 'lead' : 'leads')
+                          : (totalSightings === 1 ? 'trag' : 'traga')
+                        }
+                      </Badge>
+                    )}
+
                     {showRecentActivity && latestActivity && (
                       <Badge className="absolute bottom-16 left-4 bg-white/90 text-foreground font-medium px-2.5 py-1 rounded-full text-xs backdrop-blur-sm hover:bg-white/90">
                         <Bell className="h-3 w-3 mr-1 inline text-warm-coral" />
@@ -329,6 +624,40 @@ export function LostPetsContent() {
                       </div>
                     )}
 
+                    {/* Lead summary for lost pets */}
+                    {pet.status === 'lost' && hasLeads && (
+                      <div className={`rounded-xl p-3 flex items-start gap-2.5 ${
+                        unreviewedCount > 0 
+                          ? 'bg-violet-50 dark:bg-violet-950/20 border border-violet-200/60 dark:border-violet-800/40'
+                          : 'bg-blue-50 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-800/40'
+                      }`}>
+                        <Eye className={`h-4 w-4 mt-0.5 shrink-0 ${
+                          unreviewedCount > 0 ? 'text-violet-500' : 'text-blue-500'
+                        }`} />
+                        <div className="min-w-0 flex-1">
+                          <p className={`text-xs font-semibold ${
+                            unreviewedCount > 0 
+                              ? 'text-violet-700 dark:text-violet-400'
+                              : 'text-blue-700 dark:text-blue-400'
+                          }`}>
+                            {unreviewedCount > 0 
+                              ? (isEn 
+                                ? `${unreviewedCount} of ${totalSightings} leads need review`
+                                : `${unreviewedCount} od ${totalSightings} traga treba pregled`)
+                              : (isEn 
+                                ? `${totalSightings} ${totalSightings === 1 ? 'lead' : 'leads'} reviewed`
+                                : `${totalSightings} ${totalSightings === 1 ? 'trag pregledan' : 'traga pregledano'`)
+                            }
+                          </p>
+                          {unreviewedCount > 0 && (
+                            <p className="text-xs text-violet-600 dark:text-violet-400/80 mt-0.5">
+                              {isEn ? 'Click to view and review' : 'Kliknite za pregled'}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="h-4 w-4 text-warm-coral shrink-0" />
                       <span className="font-medium text-foreground">{pet.city}{pet.neighborhood ? `, ${pet.neighborhood}` : ''}</span>
@@ -348,11 +677,16 @@ export function LostPetsContent() {
                         <button className={`w-full flex items-center justify-center gap-2 h-10 rounded-xl text-sm font-semibold transition-all ${
                           pet.status === 'found'
                             ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/30'
-                            : 'bg-warm-coral/10 dark:bg-warm-coral/20 text-warm-coral hover:bg-warm-coral/15 dark:hover:bg-warm-coral/25'
+                            : unreviewedCount > 0
+                              ? 'bg-violet-500 text-white hover:bg-violet-600 shadow-md shadow-violet-500/20'
+                              : 'bg-warm-coral/10 dark:bg-warm-coral/20 text-warm-coral hover:bg-warm-coral/15 dark:hover:bg-warm-coral/25'
                         }`}>
                           {pet.status === 'found'
                             ? (isEn ? 'Read reunion story' : 'Pročitajte priču')
-                            : (isEn ? 'View details' : 'Pogledaj detalje')}
+                            : unreviewedCount > 0
+                              ? (isEn ? 'Review leads' : 'Pregledaj tragove')
+                              : (isEn ? 'View details' : 'Pogledaj detalje')
+                          }
                           <ArrowRight className="h-3.5 w-3.5" />
                         </button>
                       </Link>
