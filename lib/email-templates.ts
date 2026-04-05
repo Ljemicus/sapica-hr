@@ -296,16 +296,18 @@ export function lostPetAlertEmail(
   city: string,
   neighborhood: string,
   listingId: string,
+  distanceKm?: number,
 ): string {
   const listingUrl = `https://petpark.hr/izgubljeni/${listingId}`;
   const speciesLabel = species === 'pas' ? 'pas' : species === 'macka' ? 'mačka' : 'ljubimac';
   const locationText = neighborhood ? `${neighborhood}, ${city}` : city;
+  const distanceText = distanceKm !== undefined ? ` (${distanceKm} km od vaše lokacije)` : '';
 
   const content = `
     ${heading('Novi oglas za nestanak! &#128680;')}
     ${paragraph(`Pozdrav ${recipientName},`)}
-    ${paragraph(`U vašem gradu je prijavljen nestanak: <strong>${petName}</strong> (${speciesLabel}).`)}
-    ${infoBox(`&#128205; Lokacija: ${locationText}`)}
+    ${paragraph(`U vašoj blizini je prijavljen nestanak: <strong>${petName}</strong> (${speciesLabel}).`)}
+    ${infoBox(`&#128205; Lokacija: ${locationText}${distanceText}`)}
     ${paragraph('Ako ste vidjeli ovog ljubimca, svaka informacija pomaže!')}
     ${ctaButton('Pogledaj oglas', listingUrl)}
     ${paragraph('<small style="color: #9ca3af;">Primili ste ovaj email jer ste pretplaćeni na obavijesti o nestalim ljubimcima. Možete upravljati pretplatama u postavkama.</small>')}

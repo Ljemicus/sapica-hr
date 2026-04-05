@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     return apiError({ status: 400, code: 'INVALID_INPUT', message: 'Neispravni podaci.', details: parsed.error.flatten() });
   }
 
-  const alert = await upsertAlert(user.id, parsed.data.city, parsed.data.species);
+  const alert = await upsertAlert(user.id, parsed.data);
   if (!alert) {
     return apiError({ status: 500, code: 'ALERT_CREATE_FAILED', message: 'Pretplata nije spremljena.' });
   }

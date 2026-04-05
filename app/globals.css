@@ -740,6 +740,157 @@ textarea:focus {
   }
 }
 
+/* ── Lost Pets & Adoption — Premium Redesign ── */
+
+/* Lost pets hero — warm urgency gradient */
+.lost-pets-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.96 0.03 30) 0%, oklch(0.94 0.05 40) 40%, oklch(0.97 0.02 55) 100%);
+}
+
+.dark .lost-pets-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.16 0.03 30) 0%, oklch(0.14 0.04 40) 50%, oklch(0.13 0.02 50) 100%);
+}
+
+/* Adoption hero — warm, hopeful gradient */
+.adoption-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.97 0.02 55) 0%, oklch(0.95 0.04 45) 40%, oklch(0.98 0.01 85) 100%);
+}
+
+.dark .adoption-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.16 0.02 55) 0%, oklch(0.14 0.03 45) 50%, oklch(0.13 0.01 50) 100%);
+}
+
+/* Lost pet card — editorial hover with warm urgency */
+.lost-pet-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lost-pet-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.07), 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Adoption card — premium hover */
+.adoption-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.adoption-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* Community sidebar — glass panel for lost pets / adoption detail */
+.community-sidebar-panel {
+  @apply rounded-2xl border border-border/30;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.dark .community-sidebar-panel {
+  background: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Urgency pulse badge */
+.urgency-pulse {
+  position: relative;
+}
+.urgency-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: oklch(0.68 0.18 30 / 0.3);
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+/* Community section card — shared between lost pets and adoption */
+.community-section-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.3s ease;
+}
+
+.community-section-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* Filter pill — premium toggle for species/status filters */
+.filter-pill {
+  @apply px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.filter-pill:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+.filter-pill[data-active="true"] {
+  box-shadow: 0 4px 16px oklch(0.7 0.17 55 / 0.25);
+}
+
+/* ── Rescue Dashboard — Premium Redesign ── */
+
+/* Rescue hero — warm, trustworthy gradient */
+.rescue-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.97 0.02 145) 0%, oklch(0.95 0.03 140) 40%, oklch(0.98 0.01 85) 100%);
+}
+
+.dark .rescue-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.16 0.02 145) 0%, oklch(0.14 0.03 140) 50%, oklch(0.13 0.01 50) 100%);
+}
+
+/* Rescue stat card — premium glass effect */
+.rescue-stat-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card p-5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rescue-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* Rescue form card — elevated surface */
+.rescue-form-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+/* Rescue sidebar panel — glass morphism */
+.rescue-sidebar-panel {
+  @apply rounded-2xl border border-border/30;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.dark .rescue-sidebar-panel {
+  background: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Rescue section kicker */
+.rescue-section-kicker {
+  @apply text-xs uppercase tracking-[0.2em] font-semibold text-warm-orange mb-2;
+}
+
+/* Rescue status badge variants */
+.rescue-badge-pending {
+  @apply bg-amber-100 text-amber-800 border-0;
+}
+.rescue-badge-approved {
+  @apply bg-emerald-100 text-emerald-800 border-0;
+}
+.rescue-badge-review {
+  @apply bg-blue-100 text-blue-800 border-0;
+}
+
 /* Lost-pet flyer print styles */
 @media print {
   /* Hide app shell */

@@ -11,6 +11,11 @@ function mapDbToAlert(row: Record<string, unknown>): LostPetAlert {
     species: row.species as LostPetAlertSpecies,
     active: (row.active as boolean) ?? true,
     created_at: row.created_at as string,
+    use_radius: (row.use_radius as boolean) ?? false,
+    radius_km: (row.radius_km as number | null) ?? null,
+    location_lat: (row.location_lat as number | null) ?? null,
+    location_lng: (row.location_lng as number | null) ?? null,
+    address: (row.address as string | null) ?? null,
   };
 }
 
@@ -34,10 +39,19 @@ export async function getUserAlerts(userId: string): Promise<LostPetAlert[]> {
   }
 }
 
+export interface UpsertAlertInput {
+  city: string;
+  species: LostPetAlertSpecies;
+  use_radius?: boolean;
+  radius_km?: number | null;
+  location_lat?: number | null;
+  location_lng?: number | null;
+  address?: string | null;
+}
+
 export async function upsertAlert(
   userId: string,
-  city: string,
-  species: LostPetAlertSpecies,
+  input: UpsertAlertInput,
 ): Promise<LostPetAlert | null> {
   if (!isSupabaseConfigured()) return null;
 
@@ -46,7 +60,17 @@ export async function upsertAlert(
     const { data, error } = await supabase
       .from('lost_pet_alerts')
       .upsert(
-        { user_id: userId, city, species, active: true },
+        {
+          user_id: userId,
+          city: input.city,
+          species: input.species,
+          active: true,
+          use_radius: input.use_radius ?? false,
+          radius_km: input.radius_km ?? null,
+          location_lat: input.location_lat ?? null,
+          location_lng: input.location_lng ?? null,
+          address: input.address ?? null,
+        },
         { onConflict: 'user_id,city,species' },
       )
       .select('*')

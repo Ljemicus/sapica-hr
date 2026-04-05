@@ -689,6 +689,12 @@ export interface LostPetAlert {
   species: LostPetAlertSpecies;
   active: boolean;
   created_at: string;
+  // Geo-fencing (radius-based alerts)
+  use_radius: boolean;
+  radius_km: number | null;
+  location_lat: number | null;
+  location_lng: number | null;
+  address: string | null;
 }
 
 export type LostPetAlertSubscription = LostPetAlert;

@@ -130,6 +130,7 @@ export function getMobileCommunityLinks(t: TranslationFn, language: Language = '
   return [
     { href: '/blog', label: t('nav.blog'), icon: BookOpen },
     { href: localizeHref('/forum', language), label: t('nav.forum'), icon: MessageSquare },
+    { href: '/udruge', label: t('nav.rescue_orgs') || 'Udruge', icon: HeartHandshake, className: 'text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/20 font-medium' },
     { href: localizeHref('/dog-friendly', language), label: 'Dog-Friendly', icon: Dog, className: 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/20 font-medium' },
     { href: localizeHref('/izgubljeni', language), label: t('nav.lost'), icon: AlertTriangle, className: 'text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 font-semibold' },
     { href: localizeHref('/udomljavanje', language), label: t('footer.adoption'), icon: HeartHandshake, className: 'text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-950/20 font-semibold' },

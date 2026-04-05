@@ -6,12 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getAuthUser } from '@/lib/auth';
-import { getUsers, getAllBookings, getAllProviderApplications, getPendingVerifications } from '@/lib/db';
+import { getUsers, getAllBookings, getAllProviderApplications, getPendingVerifications, getRescueOrganizations, getRescueVerificationDocuments } from '@/lib/db';
 import { collectKpis } from '@/lib/kpi-digest';
 import { runOpsAudit } from '@/lib/ops-audit';
 import type { ProviderApplication } from '@/lib/types';
 import { FounderDashboardRefresh } from './founder-dashboard-refresh';
 import { FounderDashboardActions } from './founder-dashboard-actions';
+import { RescueReviewQueue } from './rescue-review-queue';
 
 export const metadata: Metadata = {
   title: 'Founder Dashboard',
@@ -29,19 +30,38 @@ export default async function FounderDashboardPage() {
   if (!user) redirect('/prijava?redirect=%2Fadmin%2Ffounder-dashboard');
   if (user.role !== 'admin') redirect('/');
 
-  const [users, bookings, providerApplications, pendingVerifications, kpi, ops] = await Promise.all([
+  const [users, bookings, providerApplications, pendingVerifications, kpi, ops, rescueOrganizations] = await Promise.all([
     getUsers('admin-list'),
     getAllBookings('admin-list'),
     getAllProviderApplications(),
     getPendingVerifications(),
     collectKpis(),
     runOpsAudit(),
+    getRescueOrganizations(),
   ]);
+
+  const rescueDocsPerOrg = await Promise.all(
+    rescueOrganizations.map(async (organization) => ({
+      organization,
+      documents: await getRescueVerificationDocuments(organization.id),
+    }))
+  );
 
   const activeBookings = bookings.filter((b) => b.status === 'pending' || b.status === 'accepted').length;
   const pendingApplications = providerApplications.filter((app) => app.status === 'pending_verification').length;
   const liveProviders = providerApplications.filter((app) => app.status === 'active' && app.public_status === 'public').length;
   const priorityApplications = getPriorityApplications(providerApplications);
+  const rescueReviewQueue = rescueDocsPerOrg
+    .filter(({ organization, documents }) => (
+      organization.status === 'pending_review'
+      || organization.review_state === 'pending'
+      || organization.review_state === 'in_review'
+      || organization.verification_status === 'pending'
+      || organization.external_donation_url_status === 'pending_review'
+      || documents.some((document) => document.review_status === 'pending')
+    ))
+    .sort((a, b) => new Date(b.organization.updated_at).getTime() - new Date(a.organization.updated_at).getTime())
+    .slice(0, 5);
 
   return (
     <div className="container mx-auto max-w-6xl px-4 py-8 space-y-8">
@@ -205,7 +225,19 @@ export default async function FounderDashboardPage() {
         </Card>
       </section>
 
-      <section>
+      <section className="grid gap-6 lg:grid-cols-2">
+        <Card className="border-0 shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <ShieldAlert className="h-5 w-5 text-rose-600" />
+              Rescue verification queue
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <RescueReviewQueue items={rescueReviewQueue} />
+          </CardContent>
+        </Card>
+
         <Card className="border-0 shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">

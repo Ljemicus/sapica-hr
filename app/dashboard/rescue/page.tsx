@@ -2,17 +2,17 @@ import { unstable_noStore as noStore, revalidatePath } from 'next/cache';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { AlertCircle, ArrowRight, BadgeCheck, ClipboardCheck, ClipboardList, HeartHandshake, LayoutDashboard, Link2, Plus, ShieldCheck, Upload } from 'lucide-react';
+import { AlertCircle, ArrowRight, BadgeCheck, ClipboardCheck, ClipboardList, HeartHandshake, LayoutDashboard, Link2, Plus, ShieldCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { RescueVerificationDocumentsCard } from '@/components/rescue/rescue-verification-documents-card';
 import { createClient } from '@/lib/supabase/server';
 import {
   createRescueOrganization,
-  createRescueVerificationDocument,
   getPublisherProfile,
   getRescueAppealsByOrganization,
   getRescueOrganizationByOwner,
@@ -22,10 +22,8 @@ import {
 import {
   RESCUE_DONATION_LINK_STATUS_LABELS,
   RESCUE_ORGANIZATION_STATUS_LABELS,
-  RESCUE_VERIFICATION_DOCUMENT_REVIEW_STATUS_LABELS,
-  RESCUE_VERIFICATION_DOCUMENT_TYPE_LABELS,
+  RESCUE_REVIEW_STATE_LABELS,
   RESCUE_VERIFICATION_STATUS_LABELS,
-  type RescueVerificationDocumentType,
 } from '@/lib/types';
 import { getAppealPublishReadiness, getRescueOrganizationCompletion, getRescueVerificationReadiness, hasApprovedExternalDonationLink, slugifyRescueValue } from '@/lib/rescue-utils';
 
@@ -110,6 +108,7 @@ export default async function RescueDashboardPage() {
       donation_contact_name: donationContactName || null,
       bank_account_iban: bankAccountIban || null,
       verification_status: existing?.verification_status ?? 'not_submitted',
+      review_state: intent === 'submit' ? 'pending' as const : existing?.review_state ?? 'not_started' as const,
       verification_submitted_at: existing?.verification_submitted_at ?? null,
     };
 
@@ -121,6 +120,7 @@ export default async function RescueDashboardPage() {
         ...basePatch,
         status: intent === 'submit' && reviewReady ? 'pending_review' : existing.status,
         verification_status: intent === 'submit' && reviewReady ? 'pending' : basePatch.verification_status,
+        review_state: intent === 'submit' && reviewReady ? 'pending' : basePatch.review_state,
         verification_submitted_at: intent === 'submit' && reviewReady ? new Date().toISOString() : basePatch.verification_submitted_at,
       });
     } else {
@@ -147,6 +147,7 @@ export default async function RescueDashboardPage() {
           saved = await updateRescueOrganization(saved.id, {
             status: 'pending_review',
             verification_status: 'pending',
+            review_state: 'pending',
             verification_submitted_at: new Date().toISOString(),
           });
         }
@@ -157,48 +158,6 @@ export default async function RescueDashboardPage() {
 
     revalidatePath('/dashboard/rescue');
     redirect(`/dashboard/rescue?saved=org${intent === 'submit' ? '&submitted=1' : ''}`);
-  }
-
-  async function uploadVerificationDocumentAction(formData: FormData) {
-    'use server';
-
-    const { user } = await requireRescueOwner();
-    const existing = await getRescueOrganizationByOwner(user.id);
-    if (!existing) redirect('/dashboard/rescue?error=org_missing');
-
-    const documentType = String(formData.get('document_type') ?? 'other') as RescueVerificationDocumentType;
-    const documentNotes = String(formData.get('document_notes') ?? '').trim();
-    const uploadedFile = formData.get('document_file');
-
-    if (!(uploadedFile instanceof File) || uploadedFile.size <= 0) {
-      redirect('/dashboard/rescue?error=document_required');
-    }
-
-    const safeName = uploadedFile.name.replace(/[^a-zA-Z0-9._-]+/g, '-');
-    const placeholderPath = `orgs/${existing.id}/pending-review/${Date.now()}-${safeName}`;
-
-    const created = await createRescueVerificationDocument({
-      organization_id: existing.id,
-      document_type: documentType,
-      storage_bucket: 'rescue-verification-docs',
-      storage_path: placeholderPath,
-      uploaded_by: user.id,
-      original_filename: uploadedFile.name || null,
-      mime_type: uploadedFile.type || null,
-      file_size_bytes: uploadedFile.size,
-      document_notes: documentNotes || null,
-    });
-
-    if (!created) redirect('/dashboard/rescue?error=document_save_failed');
-
-    await updateRescueOrganization(existing.id, {
-      verification_status: existing.verification_status === 'approved' ? 'approved' : 'pending',
-      status: existing.status === 'active' ? 'active' : 'pending_review',
-      verification_submitted_at: existing.verification_submitted_at ?? new Date().toISOString(),
-    });
-
-    revalidatePath('/dashboard/rescue');
-    redirect('/dashboard/rescue?uploaded=1');
   }
 
   return (
@@ -320,9 +279,18 @@ export default async function RescueDashboardPage() {
                     </div>
                   </div>
                   {organization && (
-                    <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                      <Badge variant="outline">Link status: {RESCUE_DONATION_LINK_STATUS_LABELS[organization.external_donation_url_status]}</Badge>
-                      <Badge variant="outline">Verification: {RESCUE_VERIFICATION_STATUS_LABELS[organization.verification_status]}</Badge>
+                    <div className="mt-4 space-y-3">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                        <Badge variant="outline">Link status: {RESCUE_DONATION_LINK_STATUS_LABELS[organization.external_donation_url_status]}</Badge>
+                        <Badge variant="outline">Verification: {RESCUE_VERIFICATION_STATUS_LABELS[organization.verification_status]}</Badge>
+                        <Badge variant="outline">Review state: {RESCUE_REVIEW_STATE_LABELS[organization.review_state]}</Badge>
+                      </div>
+                      {organization.admin_notes && (
+                        <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-950">
+                          <p className="font-semibold">Admin note</p>
+                          <p className="mt-1 text-amber-900/80">{organization.admin_notes}</p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -338,57 +306,7 @@ export default async function RescueDashboardPage() {
           </Card>
 
           <div className="space-y-6">
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold font-[var(--font-heading)]">Verification docs</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Upload trenutno sprema review-ready metadata zapis. Binarni storage hookup može doći kasnije bez mijenjanja javnog flowa.</p>
-
-                {organization ? (
-                  <form action={uploadVerificationDocumentAction} className="mt-5 space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="document_type">Tip dokumenta</Label>
-                      <select id="document_type" name="document_type" defaultValue="registration_certificate" className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                        {Object.entries(RESCUE_VERIFICATION_DOCUMENT_TYPE_LABELS).map(([value, label]) => (
-                          <option key={value} value={value}>{label}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="document_file">Dokument</Label>
-                      <Input id="document_file" name="document_file" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="document_notes">Napomena za admin review</Label>
-                      <Textarea id="document_notes" name="document_notes" rows={3} placeholder="Primjer: IBAN potvrda izdana 03/2026." />
-                    </div>
-                    <Button type="submit" variant="outline" className="gap-2">
-                      <Upload className="h-4 w-4" /> Dodaj dokument
-                    </Button>
-                  </form>
-                ) : (
-                  <div className="mt-4 rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">Prvo spremi organizaciju pa se otvara verification docs queue.</div>
-                )}
-
-                <div className="mt-6 space-y-3">
-                  {verificationDocuments.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">Još nema dokumenata za review.</div>
-                  ) : (
-                    verificationDocuments.map((document) => (
-                      <div key={document.id} className="rounded-2xl border p-4 text-sm">
-                        <div className="flex flex-wrap items-start justify-between gap-3">
-                          <div>
-                            <p className="font-medium">{RESCUE_VERIFICATION_DOCUMENT_TYPE_LABELS[document.document_type]}</p>
-                            <p className="mt-1 text-muted-foreground">{document.original_filename ?? 'Bez naziva'}{document.file_size_bytes ? ` · ${Math.max(1, Math.round(document.file_size_bytes / 1024))} KB` : ''}</p>
-                            {document.document_notes && <p className="mt-2 text-muted-foreground">{document.document_notes}</p>}
-                          </div>
-                          <Badge variant="outline">{RESCUE_VERIFICATION_DOCUMENT_REVIEW_STATUS_LABELS[document.review_status]}</Badge>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <RescueVerificationDocumentsCard organizationId={organization?.id} documents={verificationDocuments} />
 
             <Card className="border-0 shadow-sm">
               <CardContent className="p-6">
@@ -398,7 +316,7 @@ export default async function RescueDashboardPage() {
                     <p className="font-medium text-foreground">Što radi već sad</p>
                     <ul className="mt-2 space-y-2">
                       <li>• spremanje organizacije i vanjskog donation linka u bazu</li>
-                      <li>• upload verification dokumenata kao review queue metadata</li>
+                      <li>• upload verification dokumenata u privatni storage + metadata zapis u bazu</li>
                       <li>• apelacije mogu ići live tek kad postoji approved donation link</li>
                     </ul>
                   </div>

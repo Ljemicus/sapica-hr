@@ -13,7 +13,9 @@ import { requireAdminOrCron } from '@/lib/admin-guard';
  * for new lost-pet listings to matching subscribers.
  *
  * 1. Reads listings without alerts_dispatched_at.
- * 2. For each listing, finds matching subscribers (city + species).
+ * 2. For each listing, finds matching subscribers:
+ *    - City-based: exact city match + species match
+ *    - Radius-based: haversine distance within subscriber's radius + species match
  * 3. Sends one email per subscriber per listing.
  * 4. Marks the listing as dispatched only when delivery completes without failures.
  *
@@ -41,14 +43,18 @@ export async function GET(request: Request) {
       let listingEmailsFailed = 0;
 
       try {
+        // Pass listing coordinates for radius-based matching
         const subscribers = await getSubscribersForListing(
           listing.city,
           listing.species,
           listing.user_id,
+          listing.location_lat,
+          listing.location_lng,
         );
 
         for (const sub of subscribers) {
           try {
+            // Include distance in email if it's a radius-based alert
             const html = lostPetAlertEmail(
               sub.name,
               listing.name,
@@ -56,11 +62,16 @@ export async function GET(request: Request) {
               listing.city,
               listing.neighborhood,
               listing.id,
+              sub.distance_km,
             );
+
+            const subject = sub.distance_km 
+              ? `Nestao ljubimac "${listing.name}" u blizini (${sub.distance_km} km)`
+              : `Nestao ljubimac "${listing.name}" u gradu ${listing.city}`;
 
             const emailResult = await sendEmail({
               to: sub.email,
-              subject: `Nestao ljubimac "${listing.name}" u gradu ${listing.city}`,
+              subject,
               html,
             });
 

@@ -116,6 +116,8 @@ export function Footer() {
               <ul className="space-y-3 text-sm">
                 <li><Link href="/blog" className="hover:text-orange-400 transition-colors">{t('nav.blog')}</Link></li>
                 <li><Link href={localizedHref('/forum')} className="hover:text-orange-400 transition-colors">{t('nav.forum')}</Link></li>
+                <li><Link href="/udruge" className="hover:text-teal-400 transition-colors">{t('footer.rescue_orgs') || 'Udruge'}</Link></li>
+                <li><Link href="/apelacije" className="hover:text-teal-400 transition-colors">{t('footer.appeals') || 'Apelacije'}</Link></li>
                 <li><Link href={localizedHref('/dog-friendly')} className="hover:text-green-400 transition-colors">{t('footer.dog_friendly')}</Link></li>
                 <li><Link href={localizedHref('/udomljavanje')} className="hover:text-pink-400 transition-colors">{t('footer.adoption')}</Link></li>
                 <li><Link href={localizedHref('/izgubljeni')} className="hover:text-red-400 transition-colors">{t('footer.lost_pets')}</Link></li>

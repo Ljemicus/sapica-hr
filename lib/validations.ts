@@ -305,6 +305,12 @@ export const markLostPetFoundSchema = z.object({
 export const lostPetAlertSchema = z.object({
   city: z.string().trim().min(1, 'Grad je obavezan').max(120),
   species: z.enum(['pas', 'macka', 'ostalo', 'sve'], { message: 'Odaberite vrstu' }),
+  // Geo-fencing fields (optional - for radius-based alerts)
+  use_radius: z.boolean().optional(),
+  radius_km: z.number().min(1).max(100).optional().nullable(),
+  location_lat: z.number().min(-90).max(90).optional().nullable(),
+  location_lng: z.number().min(-180).max(180).optional().nullable(),
+  address: z.string().trim().max(500).optional().nullable(),
 });
 
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;

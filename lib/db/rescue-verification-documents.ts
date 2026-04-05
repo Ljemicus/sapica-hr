@@ -48,6 +48,26 @@ export async function createRescueVerificationDocument(
   }
 }
 
+export async function getRescueVerificationDocument(
+  documentId: string
+): Promise<RescueVerificationDocument | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('rescue_verification_documents')
+      .select('*')
+      .eq('id', documentId)
+      .single();
+
+    if (error || !data) return null;
+    return data as RescueVerificationDocument;
+  } catch {
+    return null;
+  }
+}
+
 export async function getRescueVerificationDocuments(
   organizationId: string
 ): Promise<RescueVerificationDocument[]> {

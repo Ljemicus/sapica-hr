@@ -532,7 +532,7 @@ export function LostPetsContent({ userId, showNeedsReviewOnly = false }: LostPet
                   style={{ animationDelay: `${Math.min(index * 80, 400)}ms` }}
                 >
                   <div className="relative">
-                    <Link href={`/izgubljeni/${pet.id}`}>
+                    <Link href={"/izgubljeni/" + pet.id}>
                       <div className="relative h-56 bg-muted">
                         <Image
                           src={pet.image_url}
@@ -660,7 +660,7 @@ export function LostPetsContent({ userId, showNeedsReviewOnly = false }: LostPet
 
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="h-4 w-4 text-warm-coral shrink-0" />
-                      <span className="font-medium text-foreground">{pet.city}{pet.neighborhood ? `, ${pet.neighborhood}` : ''}</span>
+                      <span className="font-medium text-foreground">{pet.city}{pet.neighborhood ? (", " + pet.neighborhood) : ""}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="h-4 w-4 shrink-0" />
@@ -673,14 +673,13 @@ export function LostPetsContent({ userId, showNeedsReviewOnly = false }: LostPet
                         <span className="text-xs text-muted-foreground">{pet.share_count} {isEn ? 'shares' : 'dijeljenja'}</span>
                       </div>
                       <ShareButtons petName={pet.name} city={pet.city} petId={pet.id} />
-                      <Link href={`/izgubljeni/${pet.id}`} className="block">
-                        <button className={`w-full flex items-center justify-center gap-2 h-10 rounded-xl text-sm font-semibold transition-all ${
-                          pet.status === 'found'
-                            ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/30'
+                      <Link href={"/izgubljeni/" + pet.id} className="block">
+                        <button className={pet.status === 'found'
+                            ? 'w-full flex items-center justify-center gap-2 h-10 rounded-xl text-sm font-semibold transition-all bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/30'
                             : unreviewedCount > 0
-                              ? 'bg-violet-500 text-white hover:bg-violet-600 shadow-md shadow-violet-500/20'
-                              : 'bg-warm-coral/10 dark:bg-warm-coral/20 text-warm-coral hover:bg-warm-coral/15 dark:hover:bg-warm-coral/25'
-                        }`}>
+                              ? 'w-full flex items-center justify-center gap-2 h-10 rounded-xl text-sm font-semibold transition-all bg-violet-500 text-white hover:bg-violet-600 shadow-md shadow-violet-500/20'
+                              : 'w-full flex items-center justify-center gap-2 h-10 rounded-xl text-sm font-semibold transition-all bg-warm-coral/10 dark:bg-warm-coral/20 text-warm-coral hover:bg-warm-coral/15 dark:hover:bg-warm-coral/25'
+                        }>
                           {pet.status === 'found'
                             ? (isEn ? 'Read reunion story' : 'Pročitajte priču')
                             : unreviewedCount > 0
