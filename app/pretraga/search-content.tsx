@@ -288,7 +288,7 @@ function ProviderCard({ provider }: { provider: UnifiedProvider }) {
 
   return (
     <Link href={provider.profileUrl}>
-      <article className="group provider-card overflow-hidden cursor-pointer rounded-2xl bg-white dark:bg-card border border-border/30">
+      <article className="community-section-card group overflow-hidden cursor-pointer">
         {/* Card header — gradient with avatar */}
         <div className={`relative h-48 bg-gradient-to-br ${gradients[gradientIndex]} flex items-center justify-center overflow-hidden`}>
           <div className="absolute inset-0 paw-pattern opacity-[0.07]" />
@@ -557,7 +557,7 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
         <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
         <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24 relative">
           <div className="max-w-2xl">
-            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-5 font-semibold animate-fade-in-up">
+            <p className="section-kicker animate-fade-in-up">
               {copy.heroKicker}
             </p>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-6 font-[var(--font-heading)] whitespace-pre-line animate-fade-in-up delay-100">
@@ -574,17 +574,18 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
           CATEGORY TABS
           ══════════════════════════════════════════ */}
       <div className="container mx-auto px-6 md:px-10 lg:px-16 -mt-5 relative z-10">
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex flex-wrap justify-center gap-2">
           {CATEGORY_TABS.map((tab) => {
             const isActive = activeCategory === tab.key;
             return (
               <button
                 key={tab.key}
                 onClick={() => setCategory(tab.key)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 ${
+                data-active={isActive}
+                className={`filter-pill flex items-center gap-2 whitespace-nowrap ${
                   isActive
-                    ? 'bg-foreground text-background shadow-lg'
-                    : 'bg-white dark:bg-card text-muted-foreground hover:text-foreground border border-border/50 hover:border-border shadow-sm'
+                    ? 'bg-warm-orange text-white'
+                    : 'bg-white dark:bg-card border border-border/40 text-foreground hover:border-warm-orange/30'
                 }`}
               >
                 <span>{tab.emoji}</span>
@@ -785,7 +786,7 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
       <section className="py-16 md:py-24 bg-warm-section">
         <div className="container mx-auto px-6 md:px-10 lg:px-16">
           <div className="mb-10">
-            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-4 font-semibold">
+            <p className="section-kicker">
               {copy.exploreCities}
             </p>
             <p className="text-base text-muted-foreground max-w-lg">

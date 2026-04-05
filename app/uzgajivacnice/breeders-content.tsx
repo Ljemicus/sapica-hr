@@ -4,12 +4,11 @@ import { useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  Star, MapPin, Shield, Award, Baby, Search, ChevronRight, Dog, Cat,
+  Star, MapPin, Shield, Award, Baby, ChevronRight, Dog, Cat,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/shared/empty-state';
 import { CITIES } from '@/lib/types';
 import type { Breeder } from '@/lib/db/breeders';
@@ -46,11 +45,6 @@ const CAT_BREEDS_EN = [
   'Turkish Angora', 'Sphynx', 'Munchkin', 'Siberian', 'Exotic Shorthair',
   'Scottish Fold', 'Birman', 'Oriental', 'Devon Rex', 'Cornish Rex',
 ];
-
-interface BreedersContentProps {
-  breeders: Breeder[];
-  initialParams: { species?: string; city?: string; breed?: string; sort?: string };
-}
 
 interface BreedersContentProps {
   breeders: Breeder[];
@@ -102,7 +96,6 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
 
   const handleSpecies = (value: string) => {
     setSpecies(value);
-    // Reset breed when changing species to avoid invalid combinations
     setBreed('');
     applyFilters({ species: value, breed: '' });
   };
@@ -128,117 +121,140 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Filter bar */}
-      <div className="sticky top-14 z-30 -mx-4 px-4 py-4 glass-strong border-b border-border/50 mb-6 -mt-2">
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <Baby className="h-5 w-5 text-amber-500" />
-                {isEn ? 'Breeders' : 'Uzgajivači'}
-              </h2>
-              <p className="text-muted-foreground text-sm">
-                {breeders.length} {isEn ? (breeders.length === 1 ? 'breeder found' : 'breeders found') : (breeders.length === 1 ? 'uzgajivač pronađen' : 'uzgajivača pronađeno')}
-                {city && (isEn ? ` in ${city}` : ` u gradu ${city}`)}
-                {totalLitters > 0 && ` · ${totalLitters} ${isEn ? 'available litters' : 'dostupnih legala'}`}
-              </p>
-            </div>
+    <div className="min-h-screen bg-background">
+      {/* ══════════════════════════════════════════
+          EDITORIAL HERO
+          ══════════════════════════════════════════ */}
+      <section className="relative breeders-hero-gradient overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24 relative">
+          <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
+            <p className="section-kicker">{isEn ? 'Breeders' : 'Uzgajivači'}</p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 font-[var(--font-heading)] leading-[1.05]">
+              {isEn ? 'Registered breeders\nyou can trust.' : 'Registrirani uzgajivači\nkojima možete vjerovati.'}
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+              {isEn
+                ? 'Browse verified breeders across Croatia. Every profile is reviewed for quality and animal welfare standards.'
+                : 'Pretražite verificirane uzgajivače diljem Hrvatske. Svaki profil je provjeren prema standardima kvalitete i dobrobiti životinja.'}
+            </p>
           </div>
+        </div>
+      </section>
 
-          {/* Species pills */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex gap-1.5">
-              {speciesTabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.value}
-                    onClick={() => handleSpecies(tab.value)}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
-                      species === tab.value
-                        ? 'bg-amber-500 text-white shadow-sm'
-                        : 'bg-accent hover:bg-amber-100 dark:hover:bg-amber-900/30 text-foreground'
-                    }`}
-                  >
-                    {Icon && <Icon className="h-3.5 w-3.5" />}
-                    {tab.label}
-                  </button>
-                );
-              })}
+      {/* ══════════════════════════════════════════
+          SPECIES FILTER PILLS
+          ══════════════════════════════════════════ */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-16 -mt-5 relative z-10">
+        <div className="flex flex-wrap justify-center gap-2">
+          {speciesTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = species === tab.value;
+            return (
+              <button
+                key={tab.value}
+                onClick={() => handleSpecies(tab.value)}
+                data-active={isActive}
+                className={`filter-pill flex items-center gap-1.5 ${
+                  isActive
+                    ? 'bg-warm-orange text-white'
+                    : 'bg-white dark:bg-card border border-border/40 text-foreground hover:border-warm-orange/30'
+                }`}
+              >
+                {Icon && <Icon className="h-3.5 w-3.5" />}
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════
+          TOOLBAR
+          ══════════════════════════════════════════ */}
+      <div className="sticky top-14 z-30 glass-strong border-b border-border/50">
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">{breeders.length}</span>{' '}
+              {isEn ? (breeders.length === 1 ? 'breeder found' : 'breeders found') : (breeders.length === 1 ? 'uzgajivač pronađen' : 'uzgajivača pronađeno')}
+              {city && <span className="text-warm-orange"> · {city}</span>}
+              {totalLitters > 0 && ` · ${totalLitters} ${isEn ? 'available litters' : 'dostupnih legala'}`}
+            </p>
+            <div className="flex items-center gap-3">
+              <select
+                value={city}
+                onChange={(e) => handleCity(e.target.value)}
+                className="premium-select"
+              >
+                <option value="">{isEn ? 'All cities' : 'Svi gradovi'}</option>
+                {CITIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+
+              <select
+                value={breed}
+                onChange={(e) => handleBreedChange(e.target.value)}
+                disabled={species === 'all' && availableBreeds.length === 0}
+                className="premium-select disabled:opacity-50 disabled:cursor-not-allowed min-w-[160px]"
+              >
+                <option value="">
+                  {species === 'all'
+                    ? (isEn ? 'First select species' : 'Prvo odaberite vrstu')
+                    : (isEn ? 'All breeds' : 'Sve pasmine')}
+                </option>
+                {availableBreeds.map((b) => (
+                  <option key={b} value={b}>{b}</option>
+                ))}
+              </select>
+
+              <select
+                value={sort}
+                onChange={(e) => handleSort(e.target.value)}
+                className="premium-select"
+              >
+                <option value="rating">{isEn ? 'By rating' : 'Po ocjeni'}</option>
+                <option value="name">{isEn ? 'By name' : 'Po imenu'}</option>
+              </select>
             </div>
-
-            <div className="h-6 w-px bg-border hidden sm:block" />
-
-            <select
-              value={city}
-              onChange={(e) => handleCity(e.target.value)}
-              className="h-9 rounded-lg border border-input bg-background px-3 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
-            >
-              <option value="">{isEn ? 'All cities' : 'Svi gradovi'}</option>
-              {CITIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-
-            {/* Species-dependent breed dropdown */}
-            <select
-              value={breed}
-              onChange={(e) => handleBreedChange(e.target.value)}
-              disabled={species === 'all' && availableBreeds.length === 0}
-              className="h-9 rounded-lg border border-input bg-background px-3 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200 disabled:opacity-50 disabled:cursor-not-allowed min-w-[160px]"
-            >
-              <option value="">
-                {species === 'all'
-                  ? (isEn ? 'First select species' : 'Prvo odaberite vrstu')
-                  : (isEn ? 'All breeds' : 'Sve pasmine')}
-              </option>
-              {availableBreeds.map((b) => (
-                <option key={b} value={b}>{b}</option>
-              ))}
-            </select>
-
-            <select
-              value={sort}
-              onChange={(e) => handleSort(e.target.value)}
-              className="h-9 rounded-lg border border-input bg-background px-3 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
-            >
-              <option value="rating">{isEn ? 'By rating' : 'Po ocjeni'}</option>
-              <option value="name">{isEn ? 'By name' : 'Po imenu'}</option>
-            </select>
           </div>
         </div>
       </div>
 
-      {/* Breeder cards grid */}
-      {breeders.length === 0 ? (
-        <EmptyState
-          icon={Baby}
-          title={isEn ? 'No matching breeders' : 'Nema odgovarajućih uzgajivača'}
-          description={isEn ? 'Try changing filters, choosing another city, or searching without a breed name.' : 'Promijenite filtere, odaberite drugi grad ili pokušajte bez naziva pasmine.'}
-          action={
-            <Button
-              variant="outline"
-              onClick={() => {
-                setSpecies('all');
-                setCity('');
-                setBreed('');
-                setSort('rating');
-                router.push(basePath);
-              }}
-              className="hover:bg-amber-50 hover:text-amber-600"
-            >
-              {isEn ? 'Clear filters' : 'Poništi filtere'}
-            </Button>
-          }
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 animate-fade-in">
-          {breeders.map((breeder, i) => (
-            <BreederCard key={breeder.id} breeder={breeder} index={i} isEn={isEn} localeSegment={localeSegment} />
-          ))}
-        </div>
-      )}
+      {/* ══════════════════════════════════════════
+          BREEDER CARDS GRID
+          ══════════════════════════════════════════ */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-16 py-10">
+        {breeders.length === 0 ? (
+          <EmptyState
+            icon={Baby}
+            title={isEn ? 'No matching breeders' : 'Nema odgovarajućih uzgajivača'}
+            description={isEn ? 'Try changing filters, choosing another city, or searching without a breed name.' : 'Promijenite filtere, odaberite drugi grad ili pokušajte bez naziva pasmine.'}
+            action={
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSpecies('all');
+                  setCity('');
+                  setBreed('');
+                  setSort('rating');
+                  router.push(basePath);
+                }}
+                className="border-warm-orange/30 text-warm-orange hover:bg-warm-orange/5 rounded-xl"
+              >
+                {isEn ? 'Clear filters' : 'Poništi filtere'}
+              </Button>
+            }
+          />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 animate-fade-in">
+            {breeders.map((breeder, i) => (
+              <BreederCard key={breeder.id} breeder={breeder} index={i} isEn={isEn} localeSegment={localeSegment} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -247,62 +263,75 @@ function BreederCard({ breeder, index, isEn, localeSegment }: { breeder: Breeder
   const availableCount = breeder.availableLitters.filter((l) => l.status === 'available').length;
 
   return (
-    <Card className={`group overflow-hidden border-0 shadow-sm rounded-2xl card-hover animate-fade-in-up delay-${((index % 3) + 1) * 100}`}>
-      <CardContent className="p-0">
+    <Link href={`/uzgajivacnice${localeSegment}/${breeder.id}`}>
+      <div
+        className="community-section-card group cursor-pointer overflow-hidden h-full animate-fade-in-up"
+        style={{ animationDelay: `${((index % 3) + 1) * 100}ms` }}
+      >
         {/* Gradient header */}
-        <div className={`relative h-32 bg-gradient-to-br ${breeder.gradient} flex items-center justify-center overflow-hidden`}>
+        <div className={`relative h-40 bg-gradient-to-br ${breeder.gradient} flex items-center justify-center overflow-hidden`}>
           <div className="absolute inset-0 paw-pattern opacity-10" />
-          <div className="absolute inset-0 bg-black/10" />
-          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white/90 text-[11px] font-medium">
-            <span>{breeder.city}</span>
-            <span className="rounded-full bg-white/90 px-2 py-1 text-amber-700 shadow-sm">{isEn ? 'Breeder' : 'Uzgajivač'}</span>
-          </div>
-          <div className="text-center relative">
-            <Avatar className="h-16 w-16 border-4 border-white shadow-lg mx-auto">
-              <AvatarFallback className="bg-white/90 text-gray-700 text-xl font-bold">
-                {breeder.name.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          </div>
-          {/* Badges on header */}
-          <div className="absolute top-3 right-3 flex gap-1.5">
+          <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-500" />
+
+          {/* Avatar */}
+          <Avatar className="h-20 w-20 border-4 border-white shadow-xl group-hover:scale-105 transition-transform duration-500">
+            <AvatarFallback className="bg-white/90 text-gray-700 text-2xl font-bold">
+              {breeder.name.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+
+          {/* Badges — top right */}
+          <div className="absolute top-4 right-4 flex gap-1.5">
             {breeder.verified && (
-              <Badge className="bg-white/90 text-green-600 text-[10px] shadow-sm hover:bg-white/90 rounded-full px-2">
+              <span className="inline-flex items-center bg-white/90 text-green-600 text-[10px] font-medium shadow-sm rounded-full px-2.5 py-1">
                 <Shield className="h-2.5 w-2.5 mr-0.5" />{isEn ? 'Registered' : 'Registriran'}
-              </Badge>
+              </span>
             )}
             {breeder.fciRegistered && (
-              <Badge className="bg-white/90 text-blue-600 text-[10px] shadow-sm hover:bg-white/90 rounded-full px-2">
+              <span className="inline-flex items-center bg-white/90 text-blue-600 text-[10px] font-medium shadow-sm rounded-full px-2.5 py-1">
                 FCI
-              </Badge>
+              </span>
             )}
+          </div>
+
+          {/* Bottom info — city + tag */}
+          <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between pointer-events-none">
+            <span className="text-white/90 text-xs font-medium drop-shadow-sm flex items-center gap-1">
+              <MapPin className="h-3 w-3" />
+              {breeder.city}
+            </span>
+            <span className="rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-warm-orange shadow-sm">
+              {isEn ? 'Breeder' : 'Uzgajivač'}
+            </span>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-5">
-          <h3 className="font-semibold text-base mb-1 font-[var(--font-heading)]">{breeder.name}</h3>
-          <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
-            <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{breeder.city}</span>
-            <span className="flex items-center gap-1">
+        <div className="p-5 space-y-3">
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="font-bold text-lg font-[var(--font-heading)] group-hover:text-warm-orange transition-colors">
+              {breeder.name}
+            </h3>
+            <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/30 px-2.5 py-1 rounded-full">
               <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-              {breeder.rating.toFixed(1)} ({breeder.reviewCount})
-            </span>
+              <span className="text-sm font-bold text-amber-700 dark:text-amber-400">{breeder.rating.toFixed(1)}</span>
+              <span className="text-xs text-amber-600/60 dark:text-amber-500/60">({breeder.reviewCount})</span>
+            </div>
           </div>
 
-          <p className="text-sm text-muted-foreground mb-3 leading-relaxed line-clamp-2">{breeder.bio}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{breeder.bio}</p>
 
           {/* Breed badges */}
-          <div className="flex flex-wrap gap-1.5 mb-3">
+          <div className="flex flex-wrap gap-1.5">
             {breeder.breeds.map((b) => (
-              <Badge key={b} variant="secondary" className="text-xs font-normal bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300">
+              <Badge key={b} variant="secondary" className="text-xs font-normal bg-warm-peach/30 text-warm-orange dark:bg-amber-950/30 dark:text-amber-300">
                 {b}
               </Badge>
             ))}
           </div>
 
           {/* Certification badges */}
-          <div className="flex flex-wrap gap-1.5 mb-4">
+          <div className="flex flex-wrap gap-1.5">
             {breeder.verified && (
               <Badge variant="outline" className="text-[10px] font-normal text-green-600 border-green-200">
                 <Shield className="h-2.5 w-2.5 mr-0.5" />{isEn ? 'Registered breeder' : 'Registriran uzgajivač'}
@@ -322,22 +351,25 @@ function BreederCard({ breeder, index, isEn, localeSegment }: { breeder: Breeder
 
           {/* Available litters */}
           {availableCount > 0 && (
-            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-3">
+            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
               {availableCount} {isEn ? (availableCount === 1 ? 'available litter' : 'available litters') : (availableCount === 1 ? 'dostupno leglo' : 'dostupnih legala')}
             </p>
           )}
 
           {/* CTA */}
-          <div className="pt-3 border-t border-border/50">
-            <Link
-              href={`/uzgajivacnice${localeSegment}/${breeder.id}`}
-              className="text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors flex items-center gap-1"
-            >
-              {isEn ? 'View profile' : 'Pogledaj profil'} <ChevronRight className="h-3.5 w-3.5" />
-            </Link>
+          <div className="flex items-center justify-between pt-3 border-t border-border/30">
+            <div className="text-xs text-muted-foreground">
+              {breeder.verified && (
+                <span className="text-emerald-600 dark:text-emerald-400 font-medium">{isEn ? 'Trusted breeder' : 'Pouzdani uzgajivač'}</span>
+              )}
+            </div>
+            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-warm-orange group-hover:gap-2.5 transition-all">
+              {isEn ? 'View profile' : 'Pogledaj profil'}
+              <ChevronRight className="h-4 w-4" />
+            </span>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </Link>
   );
 }
