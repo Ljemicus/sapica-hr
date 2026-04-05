@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isSupabaseConfigured } from './helpers';
-import type { LostPet, LostPetFoundMethod, LostPetSpecies, LostPetStatus } from '@/lib/types';
+import type { LostPet, LostPetFoundMethod, LostPetSpecies, LostPetStatus, LostPetUpdate, LostPetUpdateCategory } from '@/lib/types';
 import { LOST_PET_LISTING_DURATION_DAYS, LOST_PET_EXPIRY_WARN_DAYS } from '@/lib/types';
 
 interface LostPetFilters {
@@ -12,6 +12,34 @@ interface LostPetFilters {
   fields?: 'full' | 'homepage-card';
   includeHidden?: boolean;
   excludeExpired?: boolean;
+}
+
+const LOST_PET_UPDATE_LIMIT = 50;
+const LOST_PET_UPDATE_CATEGORIES: LostPetUpdateCategory[] = ['search', 'sighting', 'status', 'note'];
+
+function mapLostPetUpdates(value: unknown): LostPetUpdate[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((entry) => {
+      if (!entry || typeof entry !== 'object') return null;
+      const row = entry as Record<string, unknown>;
+      const date = typeof row.date === 'string' && row.date ? row.date : null;
+      const text = typeof row.text === 'string' ? row.text.trim() : '';
+      if (!date || !text) return null;
+      const category = typeof row.category === 'string' && LOST_PET_UPDATE_CATEGORIES.includes(row.category as LostPetUpdateCategory)
+        ? row.category as LostPetUpdateCategory
+        : undefined;
+
+      return {
+        id: typeof row.id === 'string' && row.id ? row.id : crypto.randomUUID(),
+        date,
+        text,
+        ...(category ? { category } : {}),
+      } satisfies LostPetUpdate;
+    })
+    .filter((entry): entry is LostPetUpdate => Boolean(entry))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 function mapDbToLostPet(row: Record<string, unknown>): LostPet {
@@ -46,7 +74,7 @@ function mapDbToLostPet(row: Record<string, unknown>): LostPet {
     expires_at: (row.expires_at as string) || null,
     reminder_sent_at: (row.reminder_sent_at as string) || null,
     alerts_dispatched_at: (row.alerts_dispatched_at as string) || null,
-    updates: (row.updates as LostPet['updates']) || [],
+    updates: mapLostPetUpdates(row.updates),
     sightings: (row.sightings as LostPet['sightings']) || [],
     created_at: row.created_at as string,
   };
@@ -114,6 +142,8 @@ export async function updateLostPetStatus(id: string, status: LostPetStatus): Pr
   }
 }
 
+
+
 export async function markLostPetFound(
   id: string,
   details: { found_method: LostPetFoundMethod; reunion_message?: string },
@@ -171,6 +201,46 @@ export async function renewLostPet(id: string): Promise<LostPet | null> {
     const { data, error } = await supabase
       .from('lost_pets')
       .update({ expires_at: newExpiry, status: 'lost' as LostPetStatus })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error || !data) return null;
+    return mapDbToLostPet(data as unknown as Record<string, unknown>);
+  } catch {
+    return null;
+  }
+}
+
+export async function addLostPetOwnerUpdate(
+  id: string,
+  input: { text: string; category?: LostPetUpdateCategory },
+): Promise<LostPet | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+    const { data: pet, error: fetchError } = await supabase
+      .from('lost_pets')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchError || !pet) return null;
+
+    const currentUpdates = mapLostPetUpdates(pet.updates);
+    const nextUpdate: LostPetUpdate = {
+      id: crypto.randomUUID(),
+      date: new Date().toISOString(),
+      text: input.text.trim(),
+      ...(input.category ? { category: input.category } : {}),
+    };
+
+    const nextUpdates = [nextUpdate, ...currentUpdates].slice(0, LOST_PET_UPDATE_LIMIT);
+
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .update({ updates: nextUpdates })
       .eq('id', id)
       .select('*')
       .single();

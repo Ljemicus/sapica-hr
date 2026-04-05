@@ -592,6 +592,7 @@ export type LostPetStatus = 'lost' | 'found' | 'expired';
 export type LostPetSpecies = 'pas' | 'macka' | 'ostalo';
 export type LostPetAlertSpecies = LostPetSpecies | 'sve';
 export type LostPetFoundMethod = 'sighting' | 'returned_home' | 'shelter' | 'other';
+export type LostPetUpdateCategory = 'search' | 'sighting' | 'status' | 'note';
 
 export const LOST_PET_STATUS_LABELS: Record<LostPetStatus, string> = {
   'lost': 'Još se traži',
@@ -619,6 +620,13 @@ export const LOST_PET_ALERT_SPECIES_LABELS: Record<LostPetAlertSpecies, string> 
   'sve': 'Sve vrste',
 };
 
+export const LOST_PET_UPDATE_CATEGORY_LABELS: Record<LostPetUpdateCategory, string> = {
+  search: 'Potraga',
+  sighting: 'Novo viđenje',
+  status: 'Status',
+  note: 'Bilješka',
+};
+
 export interface LostPetSighting {
   id: string;
   date: string;
@@ -631,6 +639,7 @@ export interface LostPetUpdate {
   id: string;
   date: string;
   text: string;
+  category?: LostPetUpdateCategory;
 }
 
 export interface LostPet {
