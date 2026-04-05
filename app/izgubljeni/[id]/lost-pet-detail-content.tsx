@@ -346,7 +346,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
     setRelayError(null);
 
     try {
-      const res = await fetch(`/api/lost-pets/${pet.id}/contact`, {
+      const res = await fetch(`/api/lost-pets/${pet.id}/relay`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
