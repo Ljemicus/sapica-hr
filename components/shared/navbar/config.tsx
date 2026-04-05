@@ -24,7 +24,7 @@ import {
 import type { NavbarActionItem, NavbarLinkItem, NavbarMenuItem, NavbarUser, TranslationFn } from './types';
 import type { Language } from '@/lib/i18n';
 
-function localizeHref(href: string, language: Language) {
+export function localizeHref(href: string, language: Language) {
   if (language !== 'en') return href;
 
   const localizedRoutes: Record<string, string> = {
@@ -42,6 +42,8 @@ function localizeHref(href: string, language: Language) {
 
   return localizedRoutes[href] ?? href;
 }
+
+export const localizeHrefForLocale = localizeHref;
 
 export function getDashboardLink(user?: NavbarUser | null) {
   return user?.role === 'sitter' ? '/dashboard/sitter' : user?.role === 'admin' ? '/admin' : '/dashboard/vlasnik';
