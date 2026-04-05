@@ -8,7 +8,7 @@ import { rateLimit } from '@/lib/rate-limit';
 
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const VERIFICATION_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
-const ALLOWED_BUCKETS = new Set(['avatars', 'pet-photos', 'pet-updates', 'verification-docs']);
+const ALLOWED_BUCKETS = new Set(['avatars', 'pet-photos', 'pet-updates', 'verification-docs', 'sighting-photos']);
 const PRIVATE_BUCKETS = new Set(['verification-docs']);
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 

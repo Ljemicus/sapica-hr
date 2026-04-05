@@ -35,6 +35,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       date: new Date().toISOString(),
       location: parsed.data.location,
       description: parsed.data.description,
+      ...(parsed.data.photo_url && { photo_url: parsed.data.photo_url }),
     };
 
     const { error } = await supabase

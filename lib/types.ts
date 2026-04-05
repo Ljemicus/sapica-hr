@@ -607,6 +607,7 @@ export interface LostPetSighting {
   date: string;
   location: string;
   description: string;
+  photo_url?: string;
 }
 
 export interface LostPetUpdate {
