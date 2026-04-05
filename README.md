@@ -70,6 +70,27 @@ npm run dev
 
 Otvori [http://localhost:3000](http://localhost:3000).
 
+### 5. Produkcijski cronovi za lost-pets
+
+`vercel.json` već ima raspored za lost-pets cron rute:
+
+- `/api/cron/lost-pets-alerts` — svakih 10 min
+- `/api/cron/lost-pets-expiry` — svaki dan u 03:00
+
+Da to stvarno radi u produkciji, obavezno postavi ove varijable u Vercelu:
+
+- `CRON_SECRET`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `RESEND_API_KEY` *(ako želiš email alertove, inače će dispatch endpoint samo logirati failure)*
+
+`CRON_SECRET` štiti cron rute, a service-role ključ je potreban jer cron nema korisničku sesiju i mora raditi nad `lost_pets` / `lost_pet_alerts` tablicama server-side.
+
+Ako ne deployaš na Vercel, pozovi iste endpointove iz vanjskog schedulera i pošalji header:
+
+```
+Authorization: Bearer <CRON_SECRET>
+```
+
 ### 5. (Opcionalno) Google OAuth
 
 1. U Google Cloud Console kreiraj OAuth 2.0 credentials

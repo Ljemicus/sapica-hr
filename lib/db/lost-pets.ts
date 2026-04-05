@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { isSupabaseConfigured } from './helpers';
 import type { LostPet, LostPetFoundMethod, LostPetSpecies, LostPetStatus } from '@/lib/types';
 import { LOST_PET_LISTING_DURATION_DAYS, LOST_PET_EXPIRY_WARN_DAYS } from '@/lib/types';
@@ -218,7 +219,7 @@ export async function processLostPetExpiry(): Promise<ExpiryProcessResult> {
   if (!isSupabaseConfigured()) return result;
 
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const now = new Date().toISOString();
 
     // 1. Expire overdue listings
@@ -267,7 +268,7 @@ export async function getNewlyRemindedListings(): Promise<LostPet[]> {
   if (!isSupabaseConfigured()) return [];
 
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const fiveMinAgo = new Date(Date.now() - 5 * 60_000).toISOString();
 
     const { data, error } = await supabase
