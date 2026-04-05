@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { getAppealUpdates, getRescueAppealBySlug } from '@/lib/db';
 import { APPEAL_STATUS_LABELS, RESCUE_DONATION_LINK_STATUS_LABELS, RESCUE_VERIFICATION_STATUS_LABELS } from '@/lib/types';
 import { hasApprovedExternalDonationLink } from '@/lib/rescue-utils';
+import { ShareButtons } from './share-buttons';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -28,9 +29,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Apelacija nije pronađena', robots: { index: false, follow: false } };
   }
 
+  const title = `${appeal.title} | Apelacija za pomoć`;
+  const description = appeal.summary || appeal.story?.slice(0, 160) || 'Pomozite udruzi u njihovoj misiji spašavanja životinja.';
+  const imageUrl = appeal.cover_image_url || '/opengraph-image';
+
   return {
-    title: `${appeal.title} | PetPark`,
-    description: appeal.summary,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      url: `/apelacije/${slug}`,
+      images: imageUrl.startsWith('http') 
+        ? [{ url: imageUrl, width: 1200, height: 630, alt: appeal.title }]
+        : [{ url: imageUrl, width: 1200, height: 630, alt: appeal.title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: imageUrl.startsWith('http') ? [imageUrl] : [imageUrl],
+    },
   };
 }
 
@@ -145,32 +165,40 @@ export default async function RescueAppealDetailPage({ params }: Props) {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm">
-            <CardContent className="p-6">
-              <h2 className="text-xl font-semibold font-[var(--font-heading)]">Javni updatei</h2>
-              {updates.length === 0 ? (
-                <p className="mt-4 text-sm text-muted-foreground">Još nema javno objavljenih updatea za ovu apelaciju.</p>
-              ) : (
-                <ul className="mt-4 space-y-4">
-                  {updates.map((update) => (
-                    <li key={update.id} className="rounded-2xl bg-muted/40 p-4 text-sm">
-                      {update.title && <p className="font-semibold">{update.title}</p>}
-                      <p className="mt-2 text-muted-foreground">{update.body}</p>
-                      <p className="mt-3 text-xs text-muted-foreground">{formatDate(update.published_at ?? update.created_at)}</p>
-                    </li>
-                  ))}
-                </ul>
-              )}
+          <div className="space-y-6">
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-6">
+                <h2 className="text-xl font-semibold font-[var(--font-heading)]">Javni updatei</h2>
+                {updates.length === 0 ? (
+                  <p className="mt-4 text-sm text-muted-foreground">Još nema javno objavljenih updatea za ovu apelaciju.</p>
+                ) : (
+                  <ul className="mt-4 space-y-4">
+                    {updates.map((update) => (
+                      <li key={update.id} className="rounded-2xl bg-muted/40 p-4 text-sm">
+                        {update.title && <p className="font-semibold">{update.title}</p>}
+                        <p className="mt-2 text-muted-foreground">{update.body}</p>
+                        <p className="mt-3 text-xs text-muted-foreground">{formatDate(update.published_at ?? update.created_at)}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
 
-              <div className="mt-6 rounded-2xl bg-rose-50 p-4 text-sm text-rose-900">
-                <p className="inline-flex items-center gap-2 font-semibold">
-                  <ShieldCheck className="h-4 w-4" />
-                  Production-safe note
-                </p>
-                <p className="mt-2 text-rose-800/80">Prikazujemo samo active apelacije s realnim podacima i verified external donation gatingom. Nema platform-native checkouta u ovom laneu.</p>
-              </div>
-            </CardContent>
-          </Card>
+                <div className="mt-6 rounded-2xl bg-rose-50 p-4 text-sm text-rose-900">
+                  <p className="inline-flex items-center gap-2 font-semibold">
+                    <ShieldCheck className="h-4 w-4" />
+                    Production-safe note
+                  </p>
+                  <p className="mt-2 text-rose-800/80">Prikazujemo samo active apelacije s realnim podacima i verified external donation gatingom. Nema platform-native checkouta u ovom laneu.</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-6">
+                <ShareButtons title={appeal.title} description={appeal.summary || appeal.story || undefined} />
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

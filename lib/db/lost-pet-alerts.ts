@@ -11,6 +11,7 @@ function mapDbToAlert(row: Record<string, unknown>): LostPetAlert {
     species: row.species as LostPetAlertSpecies,
     active: (row.active as boolean) ?? true,
     created_at: row.created_at as string,
+    use_radius: (row.use_radius as boolean) ?? false,
     radius_km: (row.radius_km as number | null) ?? null,
     location_lat: (row.location_lat as number | null) ?? null,
     location_lng: (row.location_lng as number | null) ?? null,

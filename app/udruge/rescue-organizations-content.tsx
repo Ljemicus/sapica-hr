@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowRight, HeartHandshake, MapPin, Search, X, SortAsc, SortDesc } from 'lucide-react';
+import { ArrowRight, HeartHandshake, MapPin, Search, X, SortAsc, SortDesc, Dog, Cat } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,19 +17,45 @@ interface RescueOrganizationsContentProps {
 }
 
 type SortOption = 'newest' | 'alphabetical' | 'alphabetical-desc';
+type SpeciesFilter = 'all' | 'dog' | 'cat' | 'other';
+
+const SPECIES_LABELS: Record<SpeciesFilter, string> = {
+  all: 'Sve vrste',
+  dog: 'Psi',
+  cat: 'Mačke',
+  other: 'Ostalo',
+};
+
+const SPECIES_EMOJI: Record<Exclude<SpeciesFilter, 'all'>, string> = {
+  dog: '🐕',
+  cat: '🐈',
+  other: '🐾',
+};
 
 export function RescueOrganizationsContent({ organizations, activeAppeals }: RescueOrganizationsContentProps) {
   const [search, setSearch] = useState('');
   const [cityFilter, setCityFilter] = useState<string>('all');
+  const [speciesFilter, setSpeciesFilter] = useState<SpeciesFilter>('all');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
 
-  // Build appeal count map
-  const appealCountByOrg = useMemo(() => {
-    const map = new Map<string, number>();
+  // Build appeal count map and species map (inferred from appeals)
+  const { appealCountByOrg, speciesByOrg } = useMemo(() => {
+    const countMap = new Map<string, number>();
+    const speciesMap = new Map<string, Set<string>>();
+    
     for (const appeal of activeAppeals) {
-      map.set(appeal.organization_id, (map.get(appeal.organization_id) ?? 0) + 1);
+      // Count appeals
+      countMap.set(appeal.organization_id, (countMap.get(appeal.organization_id) ?? 0) + 1);
+      
+      // Track species from appeals
+      if (appeal.species) {
+        const orgSpecies = speciesMap.get(appeal.organization_id) ?? new Set<string>();
+        orgSpecies.add(appeal.species.toLowerCase());
+        speciesMap.set(appeal.organization_id, orgSpecies);
+      }
     }
-    return map;
+    
+    return { appealCountByOrg: countMap, speciesByOrg: speciesMap };
   }, [activeAppeals]);
 
   // Get unique cities from organizations that have a city
@@ -62,6 +88,21 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
       result = result.filter((org) => org.city === cityFilter);
     }
 
+    // Apply species filter (inferred from appeals)
+    if (speciesFilter !== 'all') {
+      result = result.filter((org) => {
+        const orgSpecies = speciesByOrg.get(org.id);
+        if (!orgSpecies) return false;
+        
+        if (speciesFilter === 'other') {
+          // For "other", match if there's any species that's not dog or cat
+          return Array.from(orgSpecies).some(s => s !== 'dog' && s !== 'cat');
+        }
+        
+        return orgSpecies.has(speciesFilter);
+      });
+    }
+
     // Apply sorting
     switch (sortBy) {
       case 'newest':
@@ -76,13 +117,14 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
     }
 
     return result;
-  }, [organizations, search, cityFilter, sortBy]);
+  }, [organizations, search, cityFilter, speciesFilter, sortBy, speciesByOrg]);
 
-  const hasActiveFilters = search.trim() !== '' || cityFilter !== 'all';
+  const hasActiveFilters = search.trim() !== '' || cityFilter !== 'all' || speciesFilter !== 'all';
 
   const clearFilters = () => {
     setSearch('');
     setCityFilter('all');
+    setSpeciesFilter('all');
     setSortBy('newest');
   };
 
@@ -136,7 +178,7 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
             </div>
 
             {/* Filters Row */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
               {/* City Filter */}
               <select
                 value={cityFilter}
@@ -147,6 +189,18 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
                 {availableCities.map((city) => (
                   <option key={city} value={city}>{city}</option>
                 ))}
+              </select>
+
+              {/* Species Filter */}
+              <select
+                value={speciesFilter}
+                onChange={(e) => setSpeciesFilter(e.target.value as SpeciesFilter)}
+                className="h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              >
+                <option value="all">🐾 Sve vrste</option>
+                <option value="dog">🐕 Psi</option>
+                <option value="cat">🐈 Mačke</option>
+                <option value="other">🐰 Ostalo</option>
               </select>
 
               {/* Sort Dropdown */}
@@ -207,6 +261,7 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {filteredOrganizations.map((organization) => {
               const appealCount = appealCountByOrg.get(organization.id) ?? 0;
+              const orgSpecies = speciesByOrg.get(organization.id);
 
               return (
                 <Card key={organization.id} className="h-full border-0 shadow-sm hover:shadow-md transition-shadow">
@@ -221,6 +276,21 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
                       </div>
                       <Badge variant="outline" className="shrink-0">{appealCount} live apelacija</Badge>
                     </div>
+
+                    {/* Species badges */}
+                    {orgSpecies && orgSpecies.size > 0 && (
+                      <div className="mb-3 flex flex-wrap gap-1.5">
+                        {Array.from(orgSpecies).slice(0, 3).map((species) => (
+                          <Badge 
+                            key={species} 
+                            variant="secondary" 
+                            className="text-xs bg-emerald-50 text-emerald-700 border-0"
+                          >
+                            {SPECIES_EMOJI[species as Exclude<SpeciesFilter, 'all'>] || '🐾'} {species === 'dog' ? 'Psi' : species === 'cat' ? 'Mačke' : species}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
 
                     <p className="mb-4 text-sm leading-6 text-muted-foreground line-clamp-3">
                       {organization.description ?? 'Organizacija još nije popunila javni opis.'}

@@ -1,21 +1,56 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  Star, MapPin, Shield, Award, Baby, Search, ChevronRight,
+  Star, MapPin, Shield, Award, Baby, Search, ChevronRight, Dog, Cat,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
 import { EmptyState } from '@/components/shared/empty-state';
 import { CITIES } from '@/lib/types';
 import type { Breeder } from '@/lib/db/breeders';
 import { getLocaleSegment } from '@/lib/i18n/routing';
 import { useLanguage } from '@/lib/i18n/context';
+
+// Breed lists by species
+const DOG_BREEDS_HR = [
+  'Labrador retriver', 'Zlatni retriver', 'Njemački ovčar', 'Francuski buldog',
+  'Maltezer', 'Dalmatinac', 'Sibirski husky', 'Border collie',
+  'Bernski planinski pas', 'Cavalier King Charles', 'Mješanac', 'Chihuahua',
+  'Beagle', 'Jack Russell terijer', 'Šar planinac', 'Rotvajler', 'Doberman',
+  'Bokser', 'Džek rasel terijer', 'Pudl', 'Jorkširski terijer', 'Buldok',
+];
+
+const CAT_BREEDS_HR = [
+  'Britanska kratkodlaka', 'Maine Coon', 'Ragdoll', 'Sijamska mačka',
+  'Perzijska mačka', 'Bengalska mačka', 'Ruska plava', 'Norveška šumska',
+  'Turska angora', 'Sphynx', 'Munchkin', 'Sibirska mačka', 'Egzotična kratkodlaka',
+  'Škotska krivouha', 'Birman', 'Orientalna', 'Devon rex', 'Cornish rex',
+];
+
+const DOG_BREEDS_EN = [
+  'Labrador Retriever', 'Golden Retriever', 'German Shepherd', 'French Bulldog',
+  'Maltese', 'Dalmatian', 'Siberian Husky', 'Border Collie',
+  'Bernese Mountain Dog', 'Cavalier King Charles', 'Mixed', 'Chihuahua',
+  'Beagle', 'Jack Russell Terrier', 'Šarplaninac', 'Rottweiler', 'Doberman',
+  'Boxer', 'Jack Russell', 'Poodle', 'Yorkshire Terrier', 'Bulldog',
+];
+
+const CAT_BREEDS_EN = [
+  'British Shorthair', 'Maine Coon', 'Ragdoll', 'Siamese',
+  'Persian', 'Bengal', 'Russian Blue', 'Norwegian Forest',
+  'Turkish Angora', 'Sphynx', 'Munchkin', 'Siberian', 'Exotic Shorthair',
+  'Scottish Fold', 'Birman', 'Oriental', 'Devon Rex', 'Cornish Rex',
+];
+
+interface BreedersContentProps {
+  breeders: Breeder[];
+  initialParams: { species?: string; city?: string; breed?: string; sort?: string };
+}
 
 interface BreedersContentProps {
   breeders: Breeder[];
@@ -27,16 +62,29 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
   const isEn = language === 'en';
   const localeSegment = getLocaleSegment(language);
   const basePath = `/uzgajivacnice${localeSegment}`;
+
+  // Breed lists based on language
+  const dogBreeds = isEn ? DOG_BREEDS_EN : DOG_BREEDS_HR;
+  const catBreeds = isEn ? CAT_BREEDS_EN : CAT_BREEDS_HR;
+
   const speciesTabs = [
-    { value: 'all', label: isEn ? 'All' : 'Sve', emoji: '' },
-    { value: 'dog', label: isEn ? 'Dogs' : 'Psi', emoji: '🐕' },
-    { value: 'cat', label: isEn ? 'Cats' : 'Mačke', emoji: '🐈' },
+    { value: 'all', label: isEn ? 'All' : 'Sve', icon: null },
+    { value: 'dog', label: isEn ? 'Dogs' : 'Psi', icon: Dog },
+    { value: 'cat', label: isEn ? 'Cats' : 'Mačke', icon: Cat },
   ] as const;
+
   const router = useRouter();
   const [species, setSpecies] = useState(initialParams.species || 'all');
   const [city, setCity] = useState(initialParams.city || '');
   const [breed, setBreed] = useState(initialParams.breed || '');
   const [sort, setSort] = useState(initialParams.sort || 'rating');
+
+  // Available breeds based on selected species
+  const availableBreeds = useMemo(() => {
+    if (species === 'dog') return dogBreeds;
+    if (species === 'cat') return catBreeds;
+    return [...dogBreeds, ...catBreeds].sort();
+  }, [species, dogBreeds, catBreeds]);
 
   const applyFilters = useCallback((overrides?: Partial<typeof initialParams>) => {
     const params = new URLSearchParams();
@@ -54,7 +102,9 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
 
   const handleSpecies = (value: string) => {
     setSpecies(value);
-    applyFilters({ species: value });
+    // Reset breed when changing species to avoid invalid combinations
+    setBreed('');
+    applyFilters({ species: value, breed: '' });
   };
 
   const handleCity = (value: string) => {
@@ -67,8 +117,9 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
     applyFilters({ sort: value });
   };
 
-  const handleBreedSearch = () => {
-    applyFilters();
+  const handleBreedChange = (value: string) => {
+    setBreed(value);
+    applyFilters({ breed: value });
   };
 
   const totalLitters = breeders.reduce(
@@ -98,20 +149,23 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
           {/* Species pills */}
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex gap-1.5">
-              {speciesTabs.map((tab) => (
-                <button
-                  key={tab.value}
-                  onClick={() => handleSpecies(tab.value)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-                    species === tab.value
-                      ? 'bg-amber-500 text-white shadow-sm'
-                      : 'bg-accent hover:bg-amber-100 dark:hover:bg-amber-900/30 text-foreground'
-                  }`}
-                >
-                  {tab.emoji && <span className="mr-1">{tab.emoji}</span>}
-                  {tab.label}
-                </button>
-              ))}
+              {speciesTabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.value}
+                    onClick={() => handleSpecies(tab.value)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
+                      species === tab.value
+                        ? 'bg-amber-500 text-white shadow-sm'
+                        : 'bg-accent hover:bg-amber-100 dark:hover:bg-amber-900/30 text-foreground'
+                    }`}
+                  >
+                    {Icon && <Icon className="h-3.5 w-3.5" />}
+                    {tab.label}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="h-6 w-px bg-border hidden sm:block" />
@@ -127,18 +181,22 @@ export function BreedersContent({ breeders, initialParams }: BreedersContentProp
               ))}
             </select>
 
-            <div className="flex gap-1.5 flex-1 min-w-[180px] max-w-xs">
-              <Input
-                placeholder={isEn ? 'Search breed...' : 'Pretraži pasminu...'}
-                value={breed}
-                onChange={(e) => setBreed(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleBreedSearch()}
-                className="h-9 rounded-lg text-sm"
-              />
-              <Button size="sm" variant="outline" onClick={handleBreedSearch} className="h-9 px-3">
-                <Search className="h-4 w-4" />
-              </Button>
-            </div>
+            {/* Species-dependent breed dropdown */}
+            <select
+              value={breed}
+              onChange={(e) => handleBreedChange(e.target.value)}
+              disabled={species === 'all' && availableBreeds.length === 0}
+              className="h-9 rounded-lg border border-input bg-background px-3 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200 disabled:opacity-50 disabled:cursor-not-allowed min-w-[160px]"
+            >
+              <option value="">
+                {species === 'all'
+                  ? (isEn ? 'First select species' : 'Prvo odaberite vrstu')
+                  : (isEn ? 'All breeds' : 'Sve pasmine')}
+              </option>
+              {availableBreeds.map((b) => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
 
             <select
               value={sort}
