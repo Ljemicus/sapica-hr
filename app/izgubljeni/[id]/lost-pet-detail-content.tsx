@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert, Camera, X, Heart, PartyPopper, Clock, RefreshCw } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert, Camera, X, Heart, PartyPopper, Clock, RefreshCw, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -690,6 +690,16 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                 <div className="pt-4 border-t">
                   <h3 className="font-semibold mb-3">{isEn ? 'Share' : 'Podijeli'}</h3>
                   <ShareButtons petName={pet.name} city={pet.city} petId={pet.id} size="sm" />
+                </div>
+
+                {/* Print flyer */}
+                <div className="pt-4 border-t">
+                  <Link href={`/izgubljeni/${pet.id}/letak`} target="_blank">
+                    <Button variant="outline" className="w-full gap-2">
+                      <Printer className="h-4 w-4" />
+                      {isEn ? 'Print flyer' : 'Isprintaj letak'}
+                    </Button>
+                  </Link>
                 </div>
 
                 {/* Owner expiry info */}
