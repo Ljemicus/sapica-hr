@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { ShareButtons } from '../share-buttons';
-import type { LostPet, LostPetFoundMethod, LostPetUpdate } from '@/lib/types';
+import type { LostPet, LostPetFoundMethod, LostPetSightingStatus, LostPetUpdate } from '@/lib/types';
 import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS, LOST_PET_FOUND_METHOD_LABELS, isLostPetExpired, isLostPetExpiringSoon, lostPetDaysUntilExpiry, LOST_PET_LISTING_DURATION_DAYS } from '@/lib/types';
 import { toast } from 'sonner';
 import { useLanguage } from '@/lib/i18n/context';
@@ -59,6 +59,18 @@ function getUpdateAccent(category: LostPetUpdate['category'] | 'sighting' | 'fou
     default:
       return 'bg-muted text-foreground';
   }
+}
+
+const LEAD_STATUS_META: Record<LostPetSightingStatus, { hr: string; en: string; className: string }> = {
+  new: { hr: 'Nova dojava', en: 'New lead', className: 'bg-slate-100 text-slate-700 dark:bg-slate-900/60 dark:text-slate-300' },
+  helpful: { hr: 'Korisna', en: 'Helpful', className: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300' },
+  false_lead: { hr: 'Lažna dojava', en: 'False lead', className: 'bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-300' },
+  resolved: { hr: 'Obrađeno', en: 'Resolved', className: 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300' },
+};
+
+function getLeadStatusMeta(status: LostPetSightingStatus | undefined, isEn: boolean) {
+  const meta = LEAD_STATUS_META[status || 'new'];
+  return { label: isEn ? meta.en : meta.hr, className: meta.className };
 }
 
 function getUpdateLabel(category: LostPetUpdate['category'] | 'sighting' | 'found', isEn: boolean) {
@@ -110,6 +122,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const [renewLoading, setRenewLoading] = useState(false);
   const [ownerUpdateText, setOwnerUpdateText] = useState('');
   const [ownerUpdateSubmitting, setOwnerUpdateSubmitting] = useState(false);
+  const [leadActionLoadingId, setLeadActionLoadingId] = useState<string | null>(null);
 
   const [markFoundOpen, setMarkFoundOpen] = useState(false);
   const [reunionMessageInput, setReunionMessageInput] = useState('');
@@ -145,6 +158,8 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
       text: sighting.description,
       location: sighting.location,
       photo_url: sighting.photo_url,
+      lead_status: sighting.status,
+      reviewed_at: sighting.reviewed_at,
     })),
     ...(localFoundAt
       ? [{
@@ -291,6 +306,31 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
     setSightingPhotoFile(null);
     setSightingPhotoPreview(null);
     setSightingPhotoError(null);
+  };
+
+  const handleLeadStatusUpdate = async (sightingId: string, leadStatus: LostPetSightingStatus) => {
+    setLeadActionLoadingId(sightingId);
+    try {
+      const res = await fetch(`/api/lost-pets/${pet.id}/sightings/${sightingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: leadStatus }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.message || (isEn ? 'Could not update lead status' : 'Status dojave nije spremljen'));
+        return;
+      }
+
+      const data = await res.json();
+      if (Array.isArray(data.sightings)) setLocalSightings(data.sightings);
+      toast.success(isEn ? 'Lead status updated' : 'Status dojave je ažuriran');
+    } catch {
+      toast.error(isEn ? 'Could not update lead status' : 'Status dojave nije spremljen');
+    } finally {
+      setLeadActionLoadingId(null);
+    }
   };
 
   const handleSightingSubmit = async (e: React.FormEvent) => {
@@ -665,7 +705,19 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                         {'location' in item && item.location ? (
                           <p className="text-xs font-medium text-muted-foreground mb-1.5">{item.location}</p>
                         ) : null}
-                        <p className="text-sm text-muted-foreground leading-relaxed">{item.text}</p>
+                        {'lead_status' in item ? (
+                          <div className="mt-2 flex flex-wrap items-center gap-2">
+                            <Badge className={`${getLeadStatusMeta(item.lead_status, isEn).className} border-0 rounded-full px-2.5 py-0.5 text-[11px]`}>
+                              {getLeadStatusMeta(item.lead_status, isEn).label}
+                            </Badge>
+                            {item.reviewed_at ? (
+                              <span className="text-[11px] text-muted-foreground">
+                                {isEn ? 'Reviewed' : 'Obrađeno'} {formatDateTime(item.reviewed_at, locale)}
+                              </span>
+                            ) : null}
+                          </div>
+                        ) : null}
+                        <p className="text-sm text-muted-foreground leading-relaxed mt-2">{item.text}</p>
                         {'photo_url' in item && item.photo_url ? (
                           <div className="mt-3 relative w-full max-w-xs h-40 rounded-xl overflow-hidden border border-border/50">
                             <Image src={item.photo_url} alt={isEn ? 'Timeline photo' : 'Fotografija u tijeku događaja'} fill className="object-cover" />
@@ -681,22 +733,67 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
             {/* Sightings */}
             {localSightings.length > 0 && (
               <div className="community-section-card p-6 md:p-8">
-                <h2 className="text-lg font-bold font-[var(--font-heading)] flex items-center gap-2 mb-4">
-                  <Eye className="h-5 w-5 text-amber-500" />
-                  {isEn ? 'Reported sightings' : 'Prijavljena viđenja'} ({localSightings.length})
-                </h2>
-                <div className="space-y-3">
-                  {localSightings.map(sighting => (
-                    <div key={sighting.id} className="bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-800/40 rounded-xl p-4">
-                      <p className="text-xs text-amber-600 dark:text-amber-400/80 mb-1.5 font-medium">{formatDateTime(sighting.date, locale)} — {sighting.location}</p>
-                      <p className="text-sm text-amber-800 dark:text-amber-300">{sighting.description}</p>
-                      {sighting.photo_url && (
-                        <div className="mt-3 relative w-full max-w-xs h-40 rounded-xl overflow-hidden border border-amber-300/50">
-                          <Image src={sighting.photo_url} alt={isEn ? 'Sighting photo' : 'Fotografija viđenja'} fill className="object-cover" />
+                <div className="flex flex-col gap-2 mb-5 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <h2 className="text-lg font-bold font-[var(--font-heading)] flex items-center gap-2">
+                      <Eye className="h-5 w-5 text-amber-500" />
+                      {isEn ? 'Reported sightings & leads' : 'Prijavljena viđenja i dojave'} ({localSightings.length})
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {isEn ? 'Owners can quickly mark which community leads were useful, false alarms, or already handled.' : 'Vlasnik može brzo označiti koje su dojave korisne, lažne ili već obrađene.'}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  {localSightings.map((sighting) => {
+                    const statusMeta = getLeadStatusMeta(sighting.status, isEn);
+                    const isUpdatingThis = leadActionLoadingId === sighting.id;
+                    return (
+                      <div key={sighting.id} className="rounded-2xl border border-amber-200/60 bg-amber-50/70 p-4 dark:border-amber-800/40 dark:bg-amber-950/20">
+                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                          <div className="space-y-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="text-xs font-medium text-amber-700 dark:text-amber-400/90">{formatDateTime(sighting.date, locale)} — {sighting.location}</p>
+                              <Badge className={`${statusMeta.className} border-0 rounded-full`}>{statusMeta.label}</Badge>
+                              {sighting.reviewed_at ? (
+                                <span className="text-[11px] text-muted-foreground">
+                                  {isEn ? 'Reviewed' : 'Obrađeno'} {formatDateTime(sighting.reviewed_at, locale)}
+                                </span>
+                              ) : null}
+                            </div>
+                            <p className="text-sm text-amber-900 dark:text-amber-200">{sighting.description}</p>
+                          </div>
+                          {isOwner && localStatus === 'lost' && !localHidden && !expired ? (
+                            <div className="flex flex-wrap gap-2 md:max-w-[18rem] md:justify-end">
+                              {[
+                                { value: 'helpful' as const, label: isEn ? 'Helpful' : 'Korisna' },
+                                { value: 'false_lead' as const, label: isEn ? 'False lead' : 'Lažna dojava' },
+                                { value: 'resolved' as const, label: isEn ? 'Resolved' : 'Obrađeno' },
+                              ].map((option) => (
+                                <Button
+                                  key={option.value}
+                                  type="button"
+                                  size="sm"
+                                  variant={sighting.status === option.value ? 'default' : 'outline'}
+                                  className="rounded-full"
+                                  disabled={isUpdatingThis}
+                                  onClick={() => handleLeadStatusUpdate(sighting.id, option.value)}
+                                >
+                                  {isUpdatingThis && sighting.status !== option.value ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
+                                  {option.label}
+                                </Button>
+                              ))}
+                            </div>
+                          ) : null}
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        {sighting.photo_url ? (
+                          <div className="mt-3 relative w-full max-w-xs h-40 rounded-xl overflow-hidden border border-amber-300/50">
+                            <Image src={sighting.photo_url} alt={isEn ? 'Sighting photo' : 'Fotografija viđenja'} fill className="object-cover" />
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
