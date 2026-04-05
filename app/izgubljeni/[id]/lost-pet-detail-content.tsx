@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, EyeOff, AlertTriangle, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, Camera, X, Heart, PartyPopper, Clock, RefreshCw, Printer, Megaphone, Sparkles } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Eye, EyeOff, AlertTriangle, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, Camera, X, Heart, PartyPopper, Clock, RefreshCw, Printer, Megaphone, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
@@ -81,9 +81,15 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
     ? { sighting: 'Community sighting', returned_home: 'Returned home on their own', shelter: 'Found at a shelter', other: 'Other' }
     : LOST_PET_FOUND_METHOD_LABELS;
 
-  const [contactRevealed, setContactRevealed] = useState(false);
-  const [contactLoading, setContactLoading] = useState(false);
-  const [contactData, setContactData] = useState<{ contact_name: string; contact_phone: string; contact_email: string } | null>(null);
+  const [relayName, setRelayName] = useState('');
+  const [relayPhone, setRelayPhone] = useState('');
+  const [relayEmail, setRelayEmail] = useState('');
+  const [relayLocationHint, setRelayLocationHint] = useState('');
+  const [relayMessage, setRelayMessage] = useState('');
+  const [relayQuickLead, setRelayQuickLead] = useState(false);
+  const [relaySubmitting, setRelaySubmitting] = useState(false);
+  const [relaySubmitted, setRelaySubmitted] = useState(false);
+  const [relayError, setRelayError] = useState<string | null>(null);
   const [showSightingForm, setShowSightingForm] = useState(false);
   const [sightingLocation, setSightingLocation] = useState('');
   const [sightingDescription, setSightingDescription] = useState('');
@@ -334,6 +340,54 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
     setShowSightingForm(false);
     setSubmittingSighting(false);
   };
+  const handleRelaySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setRelaySubmitting(true);
+    setRelayError(null);
+
+    try {
+      const res = await fetch(`/api/lost-pets/${pet.id}/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: relayName,
+          phone: relayPhone,
+          email: relayEmail,
+          location_hint: relayLocationHint,
+          message: relayMessage,
+          quick_lead: relayQuickLead,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        const validationErrors = data?.details
+          ? Object.values(data.details).flat().filter(Boolean).join(' · ')
+          : null;
+        const message = validationErrors || data?.message || (isEn ? 'Could not send your report right now.' : 'Dojava se trenutačno ne može poslati.');
+        setRelayError(message);
+        toast.error(message);
+        setRelaySubmitting(false);
+        return;
+      }
+
+      setRelaySubmitted(true);
+      setRelayName('');
+      setRelayPhone('');
+      setRelayEmail('');
+      setRelayLocationHint('');
+      setRelayMessage('');
+      setRelayQuickLead(false);
+      toast.success(isEn ? 'Your report was forwarded to the owner.' : 'Vaša dojava je proslijeđena vlasniku.');
+    } catch {
+      const message = isEn ? 'Network error. Please try again.' : 'Mrežna greška. Pokušajte ponovno.';
+      setRelayError(message);
+      toast.error(message);
+    }
+
+    setRelaySubmitting(false);
+  };
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -757,49 +811,89 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                 )}
               </div>
 
-              {/* Contact */}
-              <div className="pt-5 border-t border-border/30">
-                <h3 className="text-sm uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-3">
-                  {isEn ? 'Owner contact' : 'Kontakt vlasnika'}
-                </h3>
-                {contactRevealed && contactData ? (
-                  <div className="space-y-2.5">
-                    <p className="font-semibold text-sm">{contactData.contact_name}</p>
-                    <a href={`tel:${contactData.contact_phone}`} className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 font-medium transition-colors">
-                      <Phone className="h-4 w-4" />
-                      {contactData.contact_phone}
-                    </a>
-                    {contactData.contact_email && (
-                      <a href={`mailto:${contactData.contact_email}`} className="flex items-center gap-2 text-sm text-warm-teal hover:text-warm-teal/80 transition-colors">
-                        <Mail className="h-4 w-4" />
-                        {contactData.contact_email}
-                      </a>
-                    )}
+              {/* Contact relay */}
+              <div className="pt-5 border-t border-border/30 space-y-4">
+                <div>
+                  <h3 className="text-sm uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-2">
+                    {isEn ? 'Send a report to the owner' : 'Pošalji dojavu vlasniku'}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {isEn
+                      ? 'Your message is forwarded through PetPark so the owner can reply without exposing private contact details publicly.'
+                      : 'Poruka ide preko PetParka tako da vlasnik može dobiti dojavu bez javnog otkrivanja privatnih kontakata.'}
+                  </p>
+                </div>
+
+                {relaySubmitted ? (
+                  <div className="rounded-2xl border border-emerald-200/70 bg-emerald-50/80 dark:border-emerald-900/60 dark:bg-emerald-950/20 p-4 space-y-3">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-semibold text-emerald-800 dark:text-emerald-300">
+                          {isEn ? 'Report sent' : 'Dojava poslana'}
+                        </p>
+                        <p className="text-sm text-emerald-700/90 dark:text-emerald-300/80 mt-1">
+                          {isEn
+                            ? 'The owner received your message. If you left a phone number or email, they can contact you directly.'
+                            : 'Vlasnik je dobio tvoju poruku. Ako si ostavio/la telefon ili email, može ti se javiti direktno.'}
+                        </p>
+                      </div>
+                    </div>
+                    <Button type="button" variant="outline" className="w-full rounded-xl" onClick={() => { setRelaySubmitted(false); setRelayError(null); }}>
+                      {isEn ? 'Send another update' : 'Pošalji novu dojavu'}
+                    </Button>
                   </div>
                 ) : (
-                  <Button
-                    onClick={async () => {
-                      setContactLoading(true);
-                      try {
-                        const res = await fetch(`/api/lost-pets/${pet.id}/contact`);
-                        if (res.ok) {
-                          const data = await res.json();
-                          setContactData(data);
-                          setContactRevealed(true);
-                        } else {
-                          toast.error(isEn ? 'Could not load contact info' : 'Kontakt nije dostupan');
-                        }
-                      } catch {
-                        toast.error(isEn ? 'Could not load contact info' : 'Kontakt nije dostupan');
-                      }
-                      setContactLoading(false);
-                    }}
-                    className="w-full rounded-xl bg-warm-coral hover:bg-warm-coral/90 text-white font-semibold btn-hover"
-                    disabled={contactLoading}
-                  >
-                    {contactLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Eye className="h-4 w-4 mr-2" />}
-                    {isEn ? 'Show contact' : 'Pokaži kontakt'}
-                  </Button>
+                  <form onSubmit={handleRelaySubmit} className="space-y-3.5">
+                    <div className="grid grid-cols-1 gap-3">
+                      <div>
+                        <Label htmlFor="relay-name">{isEn ? 'Your name (optional)' : 'Vaše ime (opcionalno)'}</Label>
+                        <Input id="relay-name" value={relayName} onChange={(e) => setRelayName(e.target.value)} className="mt-1 rounded-xl" placeholder={isEn ? 'So the owner knows who is calling' : 'Da vlasnik zna tko se javlja'} maxLength={120} />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <Label htmlFor="relay-phone">{isEn ? 'Phone' : 'Telefon'}</Label>
+                          <Input id="relay-phone" type="tel" value={relayPhone} onChange={(e) => setRelayPhone(e.target.value)} className="mt-1 rounded-xl" placeholder={isEn ? 'Required if no email' : 'Obavezno ako nema emaila'} maxLength={40} />
+                        </div>
+                        <div>
+                          <Label htmlFor="relay-email">Email</Label>
+                          <Input id="relay-email" type="email" value={relayEmail} onChange={(e) => setRelayEmail(e.target.value)} className="mt-1 rounded-xl" placeholder={isEn ? 'Required if no phone' : 'Obavezno ako nema telefona'} maxLength={255} />
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="relay-location">{isEn ? 'Where did you see them? (optional)' : 'Gdje ste ga/je vidjeli? (opcionalno)'}</Label>
+                        <Input id="relay-location" value={relayLocationHint} onChange={(e) => setRelayLocationHint(e.target.value)} className="mt-1 rounded-xl" placeholder={isEn ? 'Street, park, beach, neighbourhood…' : 'Ulica, park, plaža, kvart…'} maxLength={160} />
+                      </div>
+                      <div>
+                        <Label htmlFor="relay-message">{isEn ? 'Message' : 'Poruka'}</Label>
+                        <Textarea id="relay-message" value={relayMessage} onChange={(e) => setRelayMessage(e.target.value)} className="mt-1 min-h-[120px] rounded-2xl" placeholder={isEn ? 'Write what you saw, when, and any useful detail…' : 'Napišite što ste vidjeli, kada i sve korisne detalje…'} maxLength={2000} required />
+                      </div>
+                      <label className="flex items-start gap-3 rounded-2xl border border-border/60 bg-background/70 px-3.5 py-3 cursor-pointer">
+                        <input type="checkbox" checked={relayQuickLead} onChange={(e) => setRelayQuickLead(e.target.checked)} className="mt-1 h-4 w-4 rounded border-border" />
+                        <span className="text-sm text-muted-foreground leading-relaxed">
+                          <span className="block font-medium text-foreground">{isEn ? 'This is a quick lead' : 'Ovo je brza dojava'}</span>
+                          {isEn ? 'Tick this if the owner should react fast because the sighting is very fresh.' : 'Uključite ako bi vlasnik trebao reagirati odmah jer je viđenje jako svježe.'}
+                        </span>
+                      </label>
+                    </div>
+
+                    {relayError && (
+                      <div className="rounded-xl border border-red-200 bg-red-50 px-3.5 py-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/20 dark:text-red-300">
+                        {relayError}
+                      </div>
+                    )}
+
+                    <div className="rounded-2xl border border-border/60 bg-muted/40 px-4 py-3 text-xs text-muted-foreground flex items-start gap-2.5">
+                      <Shield className="h-4 w-4 shrink-0 mt-0.5 text-warm-coral" />
+                      <span>
+                        {isEn ? 'Private contacts stay hidden on the page. The owner only receives the details you choose to share in this form.' : 'Privatni kontakti ostaju skriveni na stranici. Vlasnik dobiva samo podatke koje ovdje odlučite ostaviti.'}
+                      </span>
+                    </div>
+
+                    <Button type="submit" className="w-full rounded-xl bg-warm-coral hover:bg-warm-coral/90 text-white font-semibold btn-hover" disabled={relaySubmitting}>
+                      {relaySubmitting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> {isEn ? 'Sending report...' : 'Slanje dojave...'}</> : <><MessageCircle className="h-4 w-4 mr-2" />{isEn ? 'Send report to owner' : 'Pošalji dojavu vlasniku'}</>}
+                    </Button>
+                  </form>
                 )}
               </div>
 

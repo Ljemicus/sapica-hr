@@ -118,12 +118,15 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     return apiError({ status: 400, code: 'SELF_CONTACT_NOT_ALLOWED', message: 'Ne možete poslati poruku sami sebi.' });
   }
 
-  if (user?.email && user.email.toLowerCase() !== parsed.data.email.toLowerCase()) {
+  const normalizedInputEmail = parsed.data.email?.trim() || '';
+  const effectiveSenderEmail = normalizedInputEmail || user?.email || '';
+
+  if (user?.email && normalizedInputEmail && user.email.toLowerCase() !== normalizedInputEmail.toLowerCase()) {
     return apiError({ status: 403, code: 'EMAIL_MISMATCH', message: 'Email se mora podudarati s prijavljenim računom.' });
   }
 
-  const senderName = escapeHtml(parsed.data.name);
-  const senderEmail = escapeHtml(parsed.data.email);
+  const senderName = escapeHtml(parsed.data.name?.trim() || 'Anonimni prolaznik');
+  const senderEmail = effectiveSenderEmail ? escapeHtml(effectiveSenderEmail) : 'Nije ostavljen';
   const senderPhone = escapeHtml(parsed.data.phone?.trim() || 'Nije ostavljen');
   const senderMessage = escapeHtml(parsed.data.message).replace(/\n/g, '<br />');
   const locationHint = parsed.data.location_hint?.trim();
@@ -140,6 +143,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
         <tr><td style="padding:4px 12px 4px 0;font-weight:bold">Ime:</td><td>${senderName}</td></tr>
         <tr><td style="padding:4px 12px 4px 0;font-weight:bold">Email:</td><td>${senderEmail}</td></tr>
         <tr><td style="padding:4px 12px 4px 0;font-weight:bold">Telefon:</td><td>${senderPhone}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;font-weight:bold">Brza dojava:</td><td>${parsed.data.quick_lead ? 'Da' : 'Ne'}</td></tr>
         ${escapedLocationHint ? `<tr><td style="padding:4px 12px 4px 0;font-weight:bold">Lokacija / trag:</td><td>${escapedLocationHint}</td></tr>` : ''}
       </table>
       <p><strong>Poruka:</strong></p>
@@ -156,7 +160,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       listingId: pet.id,
       ownerId: pet.user_id,
       to: pet.contact_email,
-      senderEmail: parsed.data.email,
+      senderEmail: effectiveSenderEmail || null,
       ip,
     });
     return apiError({ status: 502, code: 'DELIVERY_FAILED', message: 'Poruku trenutno nismo uspjeli isporučiti. Pokušajte ponovno uskoro.' });
@@ -165,7 +169,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   appLogger.info('lost-pet-contact-relay', 'Lost-pet relay email sent', {
     listingId: pet.id,
     ownerId: pet.user_id,
-    senderEmail: parsed.data.email,
+    senderEmail: effectiveSenderEmail || null,
     senderUserId: user?.id ?? null,
     ip,
   });

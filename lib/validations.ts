@@ -102,13 +102,19 @@ export const blogCommentSchema = z.object({
 });
 
 export const lostPetContactRelaySchema = z.object({
-  name: z.string().trim().min(2, 'Ime mora imati najmanje 2 znaka').max(120, 'Ime može imati najviše 120 znakova'),
-  email: z.string().trim().email('Unesite valjanu email adresu').max(255, 'Email je predug'),
+  name: z.string().trim().max(120, 'Ime može imati najviše 120 znakova').optional().or(z.literal('')),
+  email: z.union([
+    z.literal(''),
+    z.string().trim().email('Unesite valjanu email adresu').max(255, 'Email je predug'),
+  ]),
   phone: z.string().trim().max(40, 'Telefon može imati najviše 40 znakova').optional().or(z.literal('')),
   message: z.string().trim().min(10, 'Poruka mora imati najmanje 10 znakova').max(2000, 'Poruka može imati najviše 2000 znakova'),
   location_hint: z.string().trim().max(160, 'Lokacija može imati najviše 160 znakova').optional().or(z.literal('')),
   quick_lead: z.boolean().optional().default(false),
   website: z.string().optional(),
+}).refine((data) => Boolean(data.email?.trim() || data.phone?.trim()), {
+  message: 'Unesite email ili broj telefona',
+  path: ['email'],
 });
 
 // ── Adoption Listing ──
