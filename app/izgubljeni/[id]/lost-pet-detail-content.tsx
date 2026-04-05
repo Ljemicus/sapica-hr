@@ -43,6 +43,8 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const speciesLabels = isEn ? { pas: 'Dog', macka: 'Cat', ostalo: 'Other' } : LOST_PET_SPECIES_LABELS;
   const sexLabels = isEn ? { 'muško': 'Male', 'žensko': 'Female' } : { 'muško': 'Muško', 'žensko': 'Žensko' };
   const [contactRevealed, setContactRevealed] = useState(false);
+  const [contactLoading, setContactLoading] = useState(false);
+  const [contactData, setContactData] = useState<{ contact_name: string; contact_phone: string; contact_email: string } | null>(null);
   const [showSightingForm, setShowSightingForm] = useState(false);
   const [sightingLocation, setSightingLocation] = useState('');
   const [sightingDescription, setSightingDescription] = useState('');
@@ -364,23 +366,43 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                     <User className="h-4 w-4" />
                     {isEn ? 'Owner contact' : 'Kontakt vlasnika'}
                   </h3>
-                  {contactRevealed ? (
+                  {contactRevealed && contactData ? (
                     <div className="space-y-2">
-                      <p className="font-medium">{pet.contact_name}</p>
-                      <a href={`tel:${pet.contact_phone}`} className="flex items-center gap-2 text-sm text-green-600 hover:underline font-medium">
+                      <p className="font-medium">{contactData.contact_name}</p>
+                      <a href={`tel:${contactData.contact_phone}`} className="flex items-center gap-2 text-sm text-green-600 hover:underline font-medium">
                         <Phone className="h-4 w-4" />
-                        {pet.contact_phone}
+                        {contactData.contact_phone}
                       </a>
-                      {pet.contact_email && (
-                        <a href={`mailto:${pet.contact_email}`} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
+                      {contactData.contact_email && (
+                        <a href={`mailto:${contactData.contact_email}`} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
                           <Mail className="h-4 w-4" />
-                          {pet.contact_email}
+                          {contactData.contact_email}
                         </a>
                       )}
                     </div>
                   ) : (
-                    <Button onClick={() => setContactRevealed(true)} className="w-full" variant="outline">
-                      <Eye className="h-4 w-4 mr-2" />
+                    <Button
+                      onClick={async () => {
+                        setContactLoading(true);
+                        try {
+                          const res = await fetch(`/api/lost-pets/${pet.id}/contact`);
+                          if (res.ok) {
+                            const data = await res.json();
+                            setContactData(data);
+                            setContactRevealed(true);
+                          } else {
+                            toast.error(isEn ? 'Could not load contact info' : 'Kontakt nije dostupan');
+                          }
+                        } catch {
+                          toast.error(isEn ? 'Could not load contact info' : 'Kontakt nije dostupan');
+                        }
+                        setContactLoading(false);
+                      }}
+                      className="w-full"
+                      variant="outline"
+                      disabled={contactLoading}
+                    >
+                      {contactLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Eye className="h-4 w-4 mr-2" />}
                       {isEn ? 'Show contact' : 'Pokaži kontakt'}
                     </Button>
                   )}

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { LostPetDetailContent } from './lost-pet-detail-content';
 import { getLostPet } from '@/lib/db';
+import { getAuthUser } from '@/lib/auth';
 import { shouldIndexLostPet, robotsMeta } from '@/lib/seo/indexability';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
@@ -62,5 +63,18 @@ export default async function LostPetDetailPage({ params }: LostPetPageProps) {
     notFound();
   }
 
-  return <LostPetDetailContent pet={pet} />;
+  // Block hidden/moderated listings for non-admin, non-owner visitors
+  if (pet.hidden) {
+    const user = await getAuthUser();
+    const isOwner = user?.id === pet.user_id;
+    const isAdmin = user?.role === 'admin';
+    if (!isOwner && !isAdmin) {
+      notFound();
+    }
+  }
+
+  // Strip contact PII from the SSR payload — client fetches on demand
+  const { contact_name: _, contact_phone: __, contact_email: ___, ...safePet } = pet;
+
+  return <LostPetDetailContent pet={{ ...safePet, contact_name: '', contact_phone: '', contact_email: '' }} />;
 }
