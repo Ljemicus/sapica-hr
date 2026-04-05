@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Clock, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,13 +12,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ShareButtons } from '../share-buttons';
-import type { LostPet } from '@/lib/types';
+import type { LostPet, LostPetSighting } from '@/lib/types';
 import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS } from '@/lib/types';
 import { toast } from 'sonner';
 import { useLanguage } from '@/lib/i18n/context';
+import { localizeHrefForLocale } from '@/lib/i18n';
 import { useAuth } from '@/contexts/auth-context';
 
 const MapComponent = dynamic(() => import('./map-component'), { ssr: false });
+const SightingMapPicker = dynamic(() => import('./sighting-map-picker'), { ssr: false });
 
 function formatDateTime(dateStr: string, locale: string) {
   return new Date(dateStr).toLocaleString(locale, {
@@ -39,18 +41,33 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const { user } = useAuth();
   const isEn = language === 'en';
   const locale = isEn ? 'en-GB' : 'hr-HR';
+  const lostPetsHref = localizeHrefForLocale('/izgubljeni', language);
   const statusLabels = isEn ? { lost: 'Still missing', found: 'Found!' } : LOST_PET_STATUS_LABELS;
   const speciesLabels = isEn ? { pas: 'Dog', macka: 'Cat', ostalo: 'Other' } : LOST_PET_SPECIES_LABELS;
   const sexLabels = isEn ? { 'muško': 'Male', 'žensko': 'Female' } : { 'muško': 'Muško', 'žensko': 'Žensko' };
-  const [contactRevealed, setContactRevealed] = useState(false);
+  const [contactState, setContactState] = useState<{
+    status: 'hidden' | 'loading' | 'revealed' | 'error';
+    data?: { contact_name: string; contact_phone: string; contact_email: string };
+  }>({ status: 'hidden' });
   const [showSightingForm, setShowSightingForm] = useState(false);
   const [sightingLocation, setSightingLocation] = useState('');
   const [sightingDescription, setSightingDescription] = useState('');
+  const [sightingCoords, setSightingCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [sightingSeenAt, setSightingSeenAt] = useState('');
   const [submittingSighting, setSubmittingSighting] = useState(false);
-  const [localSightings, setLocalSightings] = useState(pet.sightings);
+  const [localSightings, setLocalSightings] = useState<LostPetSighting[]>([]);
+  const [sightingsLoading, setSightingsLoading] = useState(true);
   const [localStatus, setLocalStatus] = useState(pet.status);
   const [localHidden, setLocalHidden] = useState(pet.hidden);
   const [actionLoading, setActionLoading] = useState(false);
+
+  useEffect(() => {
+    fetch(`/api/lost-pets/${pet.id}/sightings`)
+      .then((res) => (res.ok ? res.json() : { sightings: [] }))
+      .then(({ sightings }) => setLocalSightings(sightings))
+      .catch(() => {})
+      .finally(() => setSightingsLoading(false));
+  }, [pet.id]);
 
   const isOwner = user?.id === pet.user_id;
   const isAdmin = user?.role === 'admin';
@@ -92,7 +109,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
         toast.error(err.message || (isEn ? 'Action failed' : 'Akcija nije uspjela'));
       } else if (action === 'delete') {
         toast.success(isEn ? 'Listing deleted' : 'Oglas je obrisan');
-        window.location.href = '/izgubljeni';
+        window.location.href = lostPetsHref;
         return;
       } else {
         setLocalHidden(action === 'hide');
@@ -106,15 +123,46 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
     setActionLoading(false);
   };
 
+  const handleContactReveal = async () => {
+    setContactState({ status: 'loading' });
+    try {
+      const res = await fetch(`/api/lost-pets/${pet.id}/contact`);
+      if (!res.ok) {
+        setContactState({ status: 'error' });
+        toast.error(isEn ? 'Could not load contact info. Try again.' : 'Nije moguće učitati kontakt. Pokušajte ponovo.');
+        return;
+      }
+      const data = await res.json();
+      setContactState({ status: 'revealed', data });
+    } catch {
+      setContactState({ status: 'error' });
+      toast.error(isEn ? 'Could not load contact info. Try again.' : 'Nije moguće učitati kontakt. Pokušajte ponovo.');
+    }
+  };
+
   const handleSightingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmittingSighting(true);
+
+    if (!sightingSeenAt) {
+      toast.error(isEn ? 'Please enter when you saw the pet.' : 'Unesite kada ste vidjeli ljubimca.');
+      setSubmittingSighting(false);
+      return;
+    }
+
+    const payload: Record<string, unknown> = {
+      location_label: sightingLocation,
+      description: sightingDescription,
+      seen_at: new Date(sightingSeenAt).toISOString(),
+      lat: sightingCoords?.lat ?? null,
+      lng: sightingCoords?.lng ?? null,
+    };
 
     try {
       const res = await fetch(`/api/lost-pets/${pet.id}/sightings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ location: sightingLocation, description: sightingDescription }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -134,6 +182,8 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
     toast.success(isEn ? 'Thanks! Your sighting has been recorded.' : 'Hvala! Vaša prijava viđenja je zabilježena.');
     setSightingLocation('');
     setSightingDescription('');
+    setSightingCoords(null);
+    setSightingSeenAt('');
     setShowSightingForm(false);
     setSubmittingSighting(false);
   };
@@ -174,7 +224,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
       )}
 
       <div className="container mx-auto px-4 py-6 md:py-10">
-        <Link href="/izgubljeni" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-red-500 mb-6 transition-colors">
+        <Link href={lostPetsHref} className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-red-500 mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
           {isEn ? 'Back to list' : 'Natrag na listu'}
         </Link>
@@ -274,23 +324,54 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
             </Card>
 
             {/* Sightings */}
-            {localSightings.length > 0 && (
+            {(sightingsLoading || localSightings.length > 0) && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Eye className="h-5 w-5 text-amber-500" />
-                    {isEn ? 'Reported sightings' : 'Prijavljena viđenja'}
+                    {sightingsLoading
+                      ? (isEn ? 'Reported sightings' : 'Prijavljena viđenja')
+                      : (isEn ? `Reported sightings (${localSightings.length})` : `Prijavljena viđenja (${localSightings.length})`)}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
+                  {sightingsLoading ? (
+                    <div className="flex items-center justify-center py-6 text-amber-600">
+                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                      {isEn ? 'Loading sightings...' : 'Učitavanje viđenja...'}
+                    </div>
+                  ) : (
+                  <div className="space-y-4">
                     {localSightings.map(sighting => (
-                      <div key={sighting.id} className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                        <p className="text-xs text-amber-600 mb-1">{formatDateTime(sighting.date, locale)} — {sighting.location}</p>
+                      <div key={sighting.id} className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-amber-600 mb-2">
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {isEn ? 'Seen' : 'Viđeno'}: {formatDateTime(sighting.seen_at, locale)}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            {sighting.location_label}
+                          </span>
+                        </div>
                         <p className="text-sm text-amber-800">{sighting.description}</p>
+                        {sighting.photo_url && (
+                          <div className="mt-3 relative h-40 rounded-md overflow-hidden">
+                            <Image src={sighting.photo_url} alt={isEn ? 'Sighting photo' : 'Fotografija viđenja'} fill className="object-cover" />
+                          </div>
+                        )}
+                        {sighting.lat != null && sighting.lng != null && (
+                          <div className="mt-3 h-40 rounded-md overflow-hidden border">
+                            <MapComponent lat={sighting.lat} lng={sighting.lng} name={sighting.location_label} />
+                          </div>
+                        )}
+                        <p className="text-xs text-amber-400 mt-2">
+                          {isEn ? 'Reported' : 'Prijavljeno'}: {formatDateTime(sighting.created_at, locale)}
+                        </p>
                       </div>
                     ))}
                   </div>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -321,7 +402,34 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                         />
                       </div>
                       <div>
-                        <Label>{isEn ? 'Description' : 'Opis'}</Label>
+                        <Label>{isEn ? 'When did you see the pet? *' : 'Kada ste vidjeli ljubimca? *'}</Label>
+                        <Input
+                          type="datetime-local"
+                          required
+                          value={sightingSeenAt}
+                          onChange={(e) => setSightingSeenAt(e.target.value)}
+                          max={new Date().toISOString().slice(0, 16)}
+                        />
+                      </div>
+                      <div>
+                        <Label className="flex items-center gap-1">
+                          <MapPin className="h-3.5 w-3.5" />
+                          {isEn ? 'Pin location on map (optional)' : 'Označite lokaciju na karti (opcionalno)'}
+                        </Label>
+                        <div className="h-48 rounded-lg overflow-hidden border mt-1">
+                          <SightingMapPicker
+                            initialCenter={{ lat: pet.location_lat, lng: pet.location_lng }}
+                            onPositionChange={setSightingCoords}
+                          />
+                        </div>
+                        {sightingCoords && (
+                          <p className="text-xs text-amber-600 mt-1">
+                            {isEn ? 'Location pinned' : 'Lokacija označena'} ({sightingCoords.lat.toFixed(4)}, {sightingCoords.lng.toFixed(4)})
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <Label>{isEn ? 'Description *' : 'Opis *'}</Label>
                         <Textarea
                           placeholder={isEn ? 'Describe what you saw...' : 'Opišite što ste vidjeli...'}
                           required
@@ -364,24 +472,32 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                     <User className="h-4 w-4" />
                     {isEn ? 'Owner contact' : 'Kontakt vlasnika'}
                   </h3>
-                  {contactRevealed ? (
+                  {contactState.status === 'revealed' && contactState.data ? (
                     <div className="space-y-2">
-                      <p className="font-medium">{pet.contact_name}</p>
-                      <a href={`tel:${pet.contact_phone}`} className="flex items-center gap-2 text-sm text-green-600 hover:underline font-medium">
+                      <p className="font-medium">{contactState.data.contact_name}</p>
+                      <a href={`tel:${contactState.data.contact_phone}`} className="flex items-center gap-2 text-sm text-green-600 hover:underline font-medium">
                         <Phone className="h-4 w-4" />
-                        {pet.contact_phone}
+                        {contactState.data.contact_phone}
                       </a>
-                      {pet.contact_email && (
-                        <a href={`mailto:${pet.contact_email}`} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
+                      {contactState.data.contact_email && (
+                        <a href={`mailto:${contactState.data.contact_email}`} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
                           <Mail className="h-4 w-4" />
-                          {pet.contact_email}
+                          {contactState.data.contact_email}
                         </a>
                       )}
                     </div>
                   ) : (
-                    <Button onClick={() => setContactRevealed(true)} className="w-full" variant="outline">
-                      <Eye className="h-4 w-4 mr-2" />
-                      {isEn ? 'Show contact' : 'Pokaži kontakt'}
+                    <Button
+                      onClick={handleContactReveal}
+                      className="w-full"
+                      variant="outline"
+                      disabled={contactState.status === 'loading'}
+                    >
+                      {contactState.status === 'loading' ? (
+                        <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> {isEn ? 'Loading...' : 'Učitavanje...'}</>
+                      ) : (
+                        <><Eye className="h-4 w-4 mr-2" /> {contactState.status === 'error' ? (isEn ? 'Retry' : 'Pokušaj ponovo') : (isEn ? 'Show contact' : 'Pokaži kontakt')}</>
+                      )}
                     </Button>
                   )}
                 </div>
