@@ -101,6 +101,16 @@ export const blogCommentSchema = z.object({
   content: z.string().trim().min(1, 'Komentar ne može biti prazan').max(1000, 'Komentar može imati najviše 1000 znakova'),
 });
 
+export const lostPetContactRelaySchema = z.object({
+  name: z.string().trim().min(2, 'Ime mora imati najmanje 2 znaka').max(120, 'Ime može imati najviše 120 znakova'),
+  email: z.string().trim().email('Unesite valjanu email adresu').max(255, 'Email je predug'),
+  phone: z.string().trim().max(40, 'Telefon može imati najviše 40 znakova').optional().or(z.literal('')),
+  message: z.string().trim().min(10, 'Poruka mora imati najmanje 10 znakova').max(2000, 'Poruka može imati najviše 2000 znakova'),
+  location_hint: z.string().trim().max(160, 'Lokacija može imati najviše 160 znakova').optional().or(z.literal('')),
+  quick_lead: z.boolean().optional().default(false),
+  website: z.string().optional(),
+});
+
 // ── Adoption Listing ──
 
 export const adoptionListingImageSchema = z.object({
