@@ -602,11 +602,25 @@ export const LOST_PET_SPECIES_LABELS: Record<LostPetSpecies, string> = {
   'ostalo': 'Ostalo',
 };
 
-export interface LostPetSighting {
+/** Legacy shape stored in lost_pets.sightings JSONB (read-only). */
+export interface LostPetSightingLegacy {
   id: string;
   date: string;
   location: string;
   description: string;
+}
+
+/** Normalized row from lost_pet_sightings table. */
+export interface LostPetSighting {
+  id: string;
+  lost_pet_id: string;
+  location_label: string;
+  lat: number | null;
+  lng: number | null;
+  seen_at: string;
+  photo_url: string | null;
+  description: string;
+  created_at: string;
 }
 
 export interface LostPetUpdate {

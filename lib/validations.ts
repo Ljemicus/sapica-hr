@@ -261,8 +261,12 @@ export const lostPetReportSchema = z.object({
 });
 
 export const lostPetSightingSchema = z.object({
-  location: z.string().trim().min(2, 'Lokacija je obavezna').max(200),
+  location_label: z.string().trim().min(2, 'Lokacija je obavezna').max(200),
   description: z.string().trim().min(2, 'Opis je obavezan').max(1000),
+  lat: z.number().min(42).max(47).nullable().optional(),
+  lng: z.number().min(13).max(20).nullable().optional(),
+  seen_at: z.string().min(1, 'Vrijeme viđenja je obavezno'),
+  photo_url: z.string().url().nullable().optional(),
 });
 
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
