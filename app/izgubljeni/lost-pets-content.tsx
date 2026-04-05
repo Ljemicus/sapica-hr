@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { Search, MapPin, Calendar, Plus, Filter, AlertTriangle, Map, List, Loader2 } from 'lucide-react';
+import { Search, MapPin, Calendar, Plus, Filter, AlertTriangle, Map, List, Loader2, CheckCircle2, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -223,6 +223,23 @@ export function LostPetsContent() {
                   </div>
                 </div>
                 <CardContent className="p-4 space-y-3">
+                  {/* Found reunion summary */}
+                  {pet.status === 'found' && pet.found_at && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-2.5 flex items-start gap-2">
+                      <Heart className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-green-700">
+                          {isEn
+                            ? `Found after ${Math.max(1, Math.floor((new Date(pet.found_at).getTime() - new Date(pet.date_lost).getTime()) / 86400000))} days`
+                            : `Pronađen/a nakon ${Math.max(1, Math.floor((new Date(pet.found_at).getTime() - new Date(pet.date_lost).getTime()) / 86400000))} dana`}
+                        </p>
+                        {pet.reunion_message && (
+                          <p className="text-xs text-green-600 mt-0.5 line-clamp-2 italic">&ldquo;{pet.reunion_message}&rdquo;</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <MapPin className="h-4 w-4 text-red-400 shrink-0" />
                     <span className="font-medium">{pet.city}{pet.neighborhood ? `, ${pet.neighborhood}` : ''}</span>
@@ -248,7 +265,9 @@ export function LostPetsContent() {
                     <Button variant="outline" size="sm" className={`w-full mt-1 font-medium ${
                       pet.status === 'lost' ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-green-200 text-green-600 hover:bg-green-50'
                     }`}>
-                      {isEn ? 'View details' : 'Pogledaj detalje'}
+                      {pet.status === 'found'
+                        ? (isEn ? 'Read reunion story' : 'Pročitajte priču')
+                        : (isEn ? 'View details' : 'Pogledaj detalje')}
                     </Button>
                   </Link>
                 </CardContent>

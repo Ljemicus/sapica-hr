@@ -4,16 +4,18 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert, Camera, X } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert, Camera, X, Heart, PartyPopper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { ShareButtons } from '../share-buttons';
-import type { LostPet } from '@/lib/types';
-import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS } from '@/lib/types';
+import type { LostPet, LostPetFoundMethod } from '@/lib/types';
+import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS, LOST_PET_FOUND_METHOD_LABELS } from '@/lib/types';
 import { toast } from 'sonner';
 import { useLanguage } from '@/lib/i18n/context';
 import { useAuth } from '@/contexts/auth-context';
@@ -28,11 +30,21 @@ function formatDateTime(dateStr: string, locale: string) {
   });
 }
 
+function formatDate(dateStr: string, locale: string) {
+  return new Date(dateStr).toLocaleDateString(locale, {
+    day: 'numeric', month: 'long', year: 'numeric',
+  });
+}
+
 function daysAgo(dateStr: string, isEn: boolean) {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
   if (diff === 0) return isEn ? 'Today' : 'Danas';
   if (diff === 1) return isEn ? 'Yesterday' : 'Jučer';
   return isEn ? `${diff} days ago` : `Prije ${diff} dana`;
+}
+
+function daysBetween(from: string, to: string) {
+  return Math.max(1, Math.floor((new Date(to).getTime() - new Date(from).getTime()) / (1000 * 60 * 60 * 24)));
 }
 
 export function LostPetDetailContent({ pet }: { pet: LostPet }) {
@@ -43,6 +55,10 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const statusLabels = isEn ? { lost: 'Still missing', found: 'Found!' } : LOST_PET_STATUS_LABELS;
   const speciesLabels = isEn ? { pas: 'Dog', macka: 'Cat', ostalo: 'Other' } : LOST_PET_SPECIES_LABELS;
   const sexLabels = isEn ? { 'muško': 'Male', 'žensko': 'Female' } : { 'muško': 'Muško', 'žensko': 'Žensko' };
+  const foundMethodLabels: Record<LostPetFoundMethod, string> = isEn
+    ? { sighting: 'Community sighting', returned_home: 'Returned home on their own', shelter: 'Found at a shelter', other: 'Other' }
+    : LOST_PET_FOUND_METHOD_LABELS;
+
   const [contactRevealed, setContactRevealed] = useState(false);
   const [contactLoading, setContactLoading] = useState(false);
   const [contactData, setContactData] = useState<{ contact_name: string; contact_phone: string; contact_email: string } | null>(null);
@@ -56,26 +72,53 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const [sightingPhotoError, setSightingPhotoError] = useState<string | null>(null);
   const [localSightings, setLocalSightings] = useState(pet.sightings);
   const [localStatus, setLocalStatus] = useState(pet.status);
+  const [localFoundAt, setLocalFoundAt] = useState(pet.found_at);
+  const [localFoundMethod, setLocalFoundMethod] = useState(pet.found_method);
+  const [localReunionMessage, setLocalReunionMessage] = useState(pet.reunion_message);
   const [localHidden, setLocalHidden] = useState(pet.hidden);
   const [actionLoading, setActionLoading] = useState(false);
+
+  // Mark-as-found dialog state
+  const [markFoundOpen, setMarkFoundOpen] = useState(false);
+  const [reunionMessageInput, setReunionMessageInput] = useState('');
+  const [foundMethodInput, setFoundMethodInput] = useState<LostPetFoundMethod | ''>('');
 
   const isOwner = user?.id === pet.user_id;
   const isAdmin = user?.role === 'admin';
 
+  const daysMissing = localFoundAt
+    ? daysBetween(pet.date_lost, localFoundAt)
+    : null;
+
   const handleMarkFound = async () => {
+    if (!foundMethodInput) {
+      toast.error(isEn ? 'Please select how the pet was found' : 'Odaberite način pronalaska');
+      return;
+    }
     setActionLoading(true);
     try {
       const res = await fetch(`/api/lost-pets/${pet.id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'found' }),
+        body: JSON.stringify({
+          status: 'found',
+          found_method: foundMethodInput,
+          reunion_message: reunionMessageInput.trim() || undefined,
+        }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         toast.error(err.message || (isEn ? 'Failed to update status' : 'Greška pri ažuriranju statusa'));
       } else {
+        const { pet: updated } = await res.json();
         setLocalStatus('found');
-        toast.success(isEn ? 'Marked as found! Great news!' : 'Označeno kao pronađeno! Sretne vijesti!');
+        setLocalFoundAt(updated.found_at);
+        setLocalFoundMethod(updated.found_method);
+        setLocalReunionMessage(updated.reunion_message);
+        setMarkFoundOpen(false);
+        setReunionMessageInput('');
+        setFoundMethodInput('');
+        toast.success(isEn ? 'Wonderful news! So glad they\'re home!' : 'Divne vijesti! Drago nam je da je kod kuće!');
       }
     } catch {
       toast.error(isEn ? 'Failed to update status' : 'Greška pri ažuriranju statusa');
@@ -217,6 +260,26 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
         </div>
       )}
 
+      {/* Celebration banner for found pets */}
+      {localStatus === 'found' && !localHidden && (
+        <div className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white py-4 px-4 text-center">
+          <div className="container mx-auto flex flex-col items-center gap-1">
+            <div className="flex items-center gap-2 text-lg md:text-xl font-bold">
+              <PartyPopper className="h-6 w-6" />
+              {isEn ? `${pet.name} has been found!` : `${pet.name} je pronađen/a!`}
+              <Heart className="h-5 w-5" />
+            </div>
+            {daysMissing !== null && (
+              <p className="text-green-100 text-sm">
+                {isEn
+                  ? `Reunited after ${daysMissing} ${daysMissing === 1 ? 'day' : 'days'}`
+                  : `Ponovno zajedno nakon ${daysMissing} ${daysMissing === 1 ? 'dana' : 'dana'}`}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="container mx-auto px-4 py-6 md:py-10">
         <Link href="/izgubljeni" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-red-500 mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
@@ -255,12 +318,46 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
               </div>
             </div>
 
-            {/* Share Buttons - PROMINENT */}
+            {/* Reunion Story Card — shown when pet is found */}
+            {localStatus === 'found' && (localReunionMessage || localFoundMethod) && (
+              <Card className="border-2 border-green-300 bg-gradient-to-br from-green-50 to-emerald-50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-green-800">
+                    <Heart className="h-5 w-5 text-green-600" />
+                    {isEn ? 'Reunion story' : 'Priča o ponovnom susretu'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {localFoundMethod && (
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="border-green-300 text-green-700 bg-green-100">
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        {foundMethodLabels[localFoundMethod]}
+                      </Badge>
+                      {localFoundAt && (
+                        <span className="text-sm text-green-600">
+                          {formatDate(localFoundAt, locale)}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  {localReunionMessage && (
+                    <blockquote className="border-l-4 border-green-300 pl-4 italic text-green-800 leading-relaxed">
+                      &ldquo;{localReunionMessage}&rdquo;
+                    </blockquote>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Share Buttons */}
             <Card className={`border-2 ${localStatus === 'lost' ? 'border-red-200 bg-red-50/50' : 'border-green-200 bg-green-50/50'}`}>
               <CardContent className="p-4 md:p-6">
                 <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5 text-red-500" />
-                  {isEn ? 'Share — every share helps!' : 'Podijeli — svako dijeljenje pomaže!'}
+                  <MessageCircle className={`h-5 w-5 ${localStatus === 'lost' ? 'text-red-500' : 'text-green-500'}`} />
+                  {localStatus === 'lost'
+                    ? (isEn ? 'Share — every share helps!' : 'Podijeli — svako dijeljenje pomaže!')
+                    : (isEn ? 'Share the good news!' : 'Podijelite dobre vijesti!')}
                 </h2>
                 <ShareButtons petName={pet.name} city={pet.city} petId={pet.id} size="lg" />
                 <p className="text-sm text-gray-500 mt-3 text-center">{pet.share_count} {isEn ? 'shares so far' : 'dijeljenja do sad'}</p>
@@ -323,7 +420,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Eye className="h-5 w-5 text-amber-500" />
-                    {isEn ? 'Reported sightings' : 'Prijavljena viđenja'}
+                    {isEn ? 'Reported sightings' : 'Prijavljena viđenja'} ({localSightings.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -440,6 +537,21 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                     <Calendar className="h-4 w-4 text-gray-400 shrink-0" />
                     <span>{formatDateTime(pet.date_lost, locale)} ({daysAgo(pet.date_lost, isEn)})</span>
                   </div>
+                  {localStatus === 'found' && localFoundAt && (
+                    <div className="flex items-center gap-3 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                      <span className="text-green-700 font-medium">
+                        {isEn ? 'Found' : 'Pronađen/a'}: {formatDate(localFoundAt, locale)}
+                        {daysMissing !== null && (
+                          <span className="text-green-600 font-normal">
+                            {' '}({isEn
+                              ? `after ${daysMissing} ${daysMissing === 1 ? 'day' : 'days'}`
+                              : `nakon ${daysMissing} ${daysMissing === 1 ? 'dana' : 'dana'}`})
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Contact */}
@@ -496,21 +608,90 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                   <ShareButtons petName={pet.name} city={pet.city} petId={pet.id} size="sm" />
                 </div>
 
-                {/* Owner actions */}
+                {/* Owner actions — Mark as Found dialog */}
                 {isOwner && localStatus === 'lost' && (
                   <div className="pt-4 border-t">
                     <h3 className="font-semibold mb-3 flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-green-500" />
                       {isEn ? 'Your listing' : 'Vaš oglas'}
                     </h3>
-                    <Button
-                      onClick={handleMarkFound}
-                      disabled={actionLoading}
-                      className="w-full bg-green-500 hover:bg-green-600 text-white font-medium"
-                    >
-                      {actionLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
-                      {isEn ? 'Mark as found' : 'Označi kao pronađeno'}
-                    </Button>
+                    <Dialog open={markFoundOpen} onOpenChange={setMarkFoundOpen}>
+                      <DialogTrigger
+                        render={
+                          <Button className="w-full bg-green-500 hover:bg-green-600 text-white font-medium">
+                            <CheckCircle2 className="h-4 w-4 mr-2" />
+                            {isEn ? 'Mark as found' : 'Označi kao pronađeno'}
+                          </Button>
+                        }
+                      />
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>
+                            {isEn ? `Great news about ${pet.name}!` : `Sretne vijesti o ${pet.name}!`}
+                          </DialogTitle>
+                          <DialogDescription>
+                            {isEn
+                              ? 'Tell the community how your pet was found. This helps others and gives your story a happy ending.'
+                              : 'Recite zajednici kako je vaš ljubimac pronađen. To pomaže drugima i daje vašoj priči sretan kraj.'}
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="space-y-4 py-2">
+                          <div>
+                            <Label className="mb-1.5 block">{isEn ? 'How was the pet found? *' : 'Kako je ljubimac pronađen? *'}</Label>
+                            <Select value={foundMethodInput || undefined} onValueChange={(v) => setFoundMethodInput(v as LostPetFoundMethod)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder={isEn ? 'Select...' : 'Odaberite...'} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="sighting">{foundMethodLabels.sighting}</SelectItem>
+                                <SelectItem value="returned_home">{foundMethodLabels.returned_home}</SelectItem>
+                                <SelectItem value="shelter">{foundMethodLabels.shelter}</SelectItem>
+                                <SelectItem value="other">{foundMethodLabels.other}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label className="mb-1.5 block">
+                              {isEn ? 'Reunion message (optional)' : 'Poruka o ponovnom susretu (opcionalno)'}
+                            </Label>
+                            <Textarea
+                              placeholder={isEn
+                                ? 'e.g. "A kind neighbor found her hiding under the porch. So grateful to everyone who shared!"'
+                                : 'npr. "Susjed ga je pronašao ispod trijema. Hvala svima koji su dijelili!"'}
+                              value={reunionMessageInput}
+                              onChange={(e) => setReunionMessageInput(e.target.value)}
+                              rows={3}
+                              maxLength={500}
+                            />
+                            <p className="text-xs text-muted-foreground mt-1 text-right">{reunionMessageInput.length}/500</p>
+                          </div>
+                        </div>
+
+                        <DialogFooter>
+                          <Button
+                            onClick={handleMarkFound}
+                            disabled={actionLoading || !foundMethodInput}
+                            className="bg-green-500 hover:bg-green-600 text-white font-medium"
+                          >
+                            {actionLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Heart className="h-4 w-4 mr-2" />}
+                            {isEn ? 'Confirm — pet is home!' : 'Potvrdi — ljubimac je kod kuće!'}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                )}
+
+                {/* Owner badge for found pets */}
+                {isOwner && localStatus === 'found' && (
+                  <div className="pt-4 border-t">
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                      <CheckCircle2 className="h-5 w-5 text-green-500 mx-auto mb-1" />
+                      <p className="text-sm font-medium text-green-800">
+                        {isEn ? 'This listing is resolved' : 'Ovaj oglas je zatvoren'}
+                      </p>
+                    </div>
                   </div>
                 )}
 
