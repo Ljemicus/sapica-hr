@@ -36,37 +36,40 @@ export function LostPetsContent({ initialPets = [] }: LostPetsContentProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero */}
-      <section className="relative bg-gradient-to-br from-rose-500 via-orange-400 to-amber-300 py-20">
-        <div className="container mx-auto px-6 text-center">
-          <Badge className="mb-4 bg-white/20 text-white">Community</Badge>
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-            {isEn ? 'Lost Pets' : 'Izgubljeni ljubimci'}
-          </h1>
-          <p className="text-lg text-white/90 max-w-xl mx-auto">
-            {isEn ? 'Help reunite pets with their families.' : 'Pomozite vratiti ljubimce njihovim obiteljima.'}
-          </p>
+      {/* Editorial Hero */}
+      <section className="relative lost-pets-hero-gradient overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-20 md:py-28 relative">
+          <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
+            <p className="section-kicker">Community</p>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold font-[var(--font-heading)] leading-[1.05] tracking-tight mb-6">
+              {isEn ? 'Lost Pets' : 'Izgubljeni ljubimci'}
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+              {isEn ? 'Help reunite pets with their families. Every sighting matters.' : 'Pomozite vratiti ljubimce njihovim obiteljima. Svako viđenje je važno.'}
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Filters */}
-      <section className="container mx-auto px-6 py-6">
-        <div className="bg-white rounded-xl p-4 shadow-sm space-y-4">
-          <div className="flex gap-2 flex-wrap">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <section className="container mx-auto px-6 md:px-10 lg:px-16 -mt-8 relative z-10">
+        <div className="community-section-card p-5 md:p-6">
+          <div className="flex gap-3 flex-wrap">
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
                 placeholder={isEn ? 'Search by name, breed...' : 'Pretraži po imenu, pasmini...'}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-lg border"
+                className="forum-search-input"
               />
             </div>
             <select
               value={cityFilter}
               onChange={(e) => setCityFilter(e.target.value)}
-              className="px-3 py-2 rounded-lg border"
+              className="premium-select h-12"
             >
               <option value="all">{isEn ? 'All cities' : 'Svi gradovi'}</option>
               {CITIES.map((city) => (
@@ -78,7 +81,7 @@ export function LostPetsContent({ initialPets = [] }: LostPetsContentProps) {
       </section>
 
       {/* Results */}
-      <section className="container mx-auto px-6 py-8">
+      <section className="container mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16">
         {filteredPets.length === 0 ? (
           <EmptyState
             icon={Search}
@@ -86,18 +89,21 @@ export function LostPetsContent({ initialPets = [] }: LostPetsContentProps) {
             description={isEn ? 'Try changing your filters.' : 'Pokušajte promijeniti filtere.'}
           />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPets.map((pet) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {filteredPets.map((pet, index) => (
               <Link key={pet.id} href={"/izgubljeni/" + pet.id}>
-                <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="h-48 bg-gradient-to-br from-rose-100 to-orange-100 flex items-center justify-center">
-                    <span className="text-6xl">{(pet.species as string) === 'dog' ? '🐕' : (pet.species as string) === 'cat' ? '🐈' : '🐾'}</span>
+                <div 
+                  className="lost-pet-card overflow-hidden animate-fade-in-up"
+                  style={{ animationDelay: `${Math.min(index * 80, 400)}ms` }}
+                >
+                  <div className="h-52 bg-gradient-to-br from-rose-50 to-orange-50 flex items-center justify-center border-b border-border/10">
+                    <span className="text-7xl">{(pet.species as string) === 'dog' ? '🐕' : (pet.species as string) === 'cat' ? '🐈' : '🐾'}</span>
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-bold text-lg">{pet.name}</h3>
-                    <p className="text-sm text-muted-foreground">{pet.breed}</p>
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground mt-2">
-                      <MapPin className="h-3.5 w-3.5" />
+                  <div className="p-5">
+                    <h3 className="font-bold text-lg font-[var(--font-heading)]">{pet.name}</h3>
+                    <p className="text-sm text-muted-foreground mt-1">{pet.breed}</p>
+                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-3">
+                      <MapPin className="h-4 w-4 text-warm-orange/70" />
                       {pet.city}
                     </div>
                   </div>
@@ -109,17 +115,22 @@ export function LostPetsContent({ initialPets = [] }: LostPetsContentProps) {
       </section>
 
       {/* CTA */}
-      <section className="bg-gray-50 py-16">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-2xl font-bold mb-4">
-            {isEn ? 'Lost your pet?' : 'Izgubili ste ljubimca?'}
-          </h2>
-          <Link href="/izgubljeni/prijavi">
-            <Button size="lg" className="bg-rose-500 hover:bg-rose-600">
-              <Plus className="h-5 w-5 mr-2" />
-              {isEn ? 'Report missing pet' : 'Prijavi nestanak'}
-            </Button>
-          </Link>
+      <section className="py-16 md:py-20">
+        <div className="container mx-auto px-6 md:px-10 lg:px-16">
+          <div className="appeal-card p-8 md:p-12 text-center">
+            <h2 className="text-2xl md:text-3xl font-bold font-[var(--font-heading)] mb-4">
+              {isEn ? 'Lost your pet?' : 'Izgubili ste ljubimca?'}
+            </h2>
+            <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+              {isEn ? 'Create a listing and get notified when someone spots your pet.' : 'Kreirajte oglas i primite obavijest kad netko primijeti vašeg ljubimca.'}
+            </p>
+            <Link href="/izgubljeni/prijavi">
+              <Button size="lg" className="bg-warm-orange hover:bg-warm-orange/90 text-white h-12 px-8">
+                <Plus className="h-5 w-5 mr-2" />
+                {isEn ? 'Report missing pet' : 'Prijavi nestanak'}
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
     </div>
