@@ -273,6 +273,11 @@ export const markLostPetFoundSchema = z.object({
   reunion_message: z.string().trim().max(2000).optional().or(z.literal('')),
 });
 
+export const lostPetAlertSchema = z.object({
+  city: z.string().trim().min(1, 'Grad je obavezan').max(120),
+  species: z.enum(['pas', 'macka', 'ostalo', 'sve'], { message: 'Odaberite vrstu' }),
+});
+
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -286,3 +291,4 @@ export type BlogCommentInput = z.infer<typeof blogCommentSchema>;
 export type LostPetReportInput = z.infer<typeof lostPetReportSchema>;
 export type LostPetSightingInput = z.infer<typeof lostPetSightingSchema>;
 export type MarkLostPetFoundInput = z.infer<typeof markLostPetFoundSchema>;
+export type LostPetAlertInput = z.infer<typeof lostPetAlertSchema>;

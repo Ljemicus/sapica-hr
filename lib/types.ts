@@ -590,6 +590,7 @@ export const FORUM_CATEGORY_LABELS: Record<ForumCategorySlug, string> = {
 
 export type LostPetStatus = 'lost' | 'found' | 'expired';
 export type LostPetSpecies = 'pas' | 'macka' | 'ostalo';
+export type LostPetAlertSpecies = LostPetSpecies | 'sve';
 export type LostPetFoundMethod = 'sighting' | 'returned_home' | 'shelter' | 'other';
 
 export const LOST_PET_STATUS_LABELS: Record<LostPetStatus, string> = {
@@ -609,6 +610,13 @@ export const LOST_PET_FOUND_METHOD_LABELS: Record<LostPetFoundMethod, string> = 
   returned_home: 'Vratio se kući sam',
   shelter: 'Pronađen u skloništu',
   other: 'Drugo',
+};
+
+export const LOST_PET_ALERT_SPECIES_LABELS: Record<LostPetAlertSpecies, string> = {
+  'pas': 'Pas',
+  'macka': 'Mačka',
+  'ostalo': 'Ostalo',
+  'sve': 'Sve vrste',
 };
 
 export interface LostPetSighting {
@@ -655,10 +663,22 @@ export interface LostPet {
   reunion_message: string | null;
   expires_at: string | null;
   reminder_sent_at: string | null;
+  alerts_dispatched_at: string | null;
   updates: LostPetUpdate[];
   sightings: LostPetSighting[];
   created_at: string;
 }
+
+export interface LostPetAlert {
+  id: string;
+  user_id: string;
+  city: string;
+  species: LostPetAlertSpecies;
+  active: boolean;
+  created_at: string;
+}
+
+export type LostPetAlertSubscription = LostPetAlert;
 
 /** How many days before expiry a listing is considered "expiring soon". */
 export const LOST_PET_EXPIRY_WARN_DAYS = 3;
@@ -987,3 +1007,27 @@ export const CITIES = [
   'Varaždin',
   'Šibenik',
 ];
+
+export type {
+  AppealDonationStatus,
+  AppealStatus,
+  AppealUpdateType,
+  AppealUrgency,
+  RescueAppeal,
+  RescueAppealDonation,
+  RescueAppealUpdate,
+  RescueOrganization,
+  RescueOrganizationKind,
+  RescueOrganizationStatus,
+  RescueVerificationDocument,
+  RescueVerificationDocumentType,
+  RescueVerificationStatus,
+} from '@/lib/types/rescue';
+
+export {
+  APPEAL_STATUS_LABELS,
+  RESCUE_ORGANIZATION_STATUS_LABELS,
+  canTransitionAppealStatus,
+  getAppealProgressPct,
+  isAppealLive,
+} from '@/lib/types/rescue';
