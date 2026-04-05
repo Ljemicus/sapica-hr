@@ -160,7 +160,7 @@ export interface AlertDispatchResult {
 
 /**
  * Get listings that need alert dispatch (not yet dispatched).
- * Does NOT mark them — call {@link markListingDispatched} after emails succeed.
+ * Does NOT mark them — call {@link markListingDispatched} only after delivery succeeds.
  */
 export async function getUndispatchedListings(): Promise<
   Array<{ id: string; name: string; species: LostPetSpecies; city: string; neighborhood: string; image_url: string; user_id: string | null }>
@@ -202,12 +202,15 @@ export async function markListingDispatched(listingId: string): Promise<boolean>
 
   try {
     const supabase = createAdminClient();
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('lost_pets')
       .update({ alerts_dispatched_at: new Date().toISOString() })
-      .eq('id', listingId);
+      .eq('id', listingId)
+      .is('alerts_dispatched_at', null)
+      .select('id')
+      .maybeSingle();
 
-    return !error;
+    return !error && Boolean(data);
   } catch {
     return false;
   }

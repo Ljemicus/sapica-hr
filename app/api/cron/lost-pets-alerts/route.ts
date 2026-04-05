@@ -12,9 +12,10 @@ import { requireAdminOrCron } from '@/lib/admin-guard';
  * Cron-friendly endpoint that dispatches community alert emails
  * for new lost-pet listings to matching subscribers.
  *
- * 1. Claims all listings without alerts_dispatched_at (atomic).
+ * 1. Reads listings without alerts_dispatched_at.
  * 2. For each listing, finds matching subscribers (city + species).
  * 3. Sends one email per subscriber per listing.
+ * 4. Marks the listing as dispatched only when delivery completes without failures.
  *
  * Secured by CRON_SECRET bearer token (for Vercel Cron) or admin session.
  */
@@ -38,7 +39,6 @@ export async function GET(request: Request) {
 
     for (const listing of listings) {
       let listingEmailsFailed = 0;
-      let listingEmailsSent = 0;
 
       try {
         const subscribers = await getSubscribersForListing(
@@ -68,7 +68,6 @@ export async function GET(request: Request) {
               throw new Error(emailResult.error || 'Unknown email delivery failure');
             }
 
-            listingEmailsSent++;
             result.emailsSent++;
           } catch (err) {
             listingEmailsFailed++;
@@ -78,10 +77,15 @@ export async function GET(request: Request) {
           }
         }
 
-        // Only mark dispatched if at least some emails succeeded or there were no subscribers.
-        // If ALL emails failed, leave undispatched so next cron run retries.
-        if (listingEmailsFailed === 0 || listingEmailsSent > 0) {
-          await markListingDispatched(listing.id);
+        // Only mark dispatched when there were no delivery failures.
+        // This favors safe retry over silently dropping a listing after partial failure.
+        if (listingEmailsFailed === 0) {
+          const marked = await markListingDispatched(listing.id);
+          if (!marked) {
+            const msg = `mark dispatched for listing ${listing.id}: listing was not updated`;
+            result.errors.push(msg);
+            appLogger.error('lost-pet-alerts', 'Failed to mark listing as dispatched', { listingId: listing.id });
+          }
         }
       } catch (err) {
         const msg = `subscribers for listing ${listing.id}: ${err instanceof Error ? err.message : String(err)}`;
