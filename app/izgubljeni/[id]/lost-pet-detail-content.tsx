@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert, Camera, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +17,7 @@ import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS } from '@/lib/types';
 import { toast } from 'sonner';
 import { useLanguage } from '@/lib/i18n/context';
 import { useAuth } from '@/contexts/auth-context';
+import { uploadSightingPhoto, validateFile, createPreviewUrl, UPLOAD_ACCEPTED_TYPES } from '@/lib/upload';
 
 const MapComponent = dynamic(() => import('./map-component'), { ssr: false });
 
@@ -49,6 +50,10 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const [sightingLocation, setSightingLocation] = useState('');
   const [sightingDescription, setSightingDescription] = useState('');
   const [submittingSighting, setSubmittingSighting] = useState(false);
+  const [sightingPhotoFile, setSightingPhotoFile] = useState<File | null>(null);
+  const [sightingPhotoPreview, setSightingPhotoPreview] = useState<string | null>(null);
+  const [sightingPhotoUploading, setSightingPhotoUploading] = useState(false);
+  const [sightingPhotoError, setSightingPhotoError] = useState<string | null>(null);
   const [localSightings, setLocalSightings] = useState(pet.sightings);
   const [localStatus, setLocalStatus] = useState(pet.status);
   const [localHidden, setLocalHidden] = useState(pet.hidden);
@@ -108,15 +113,51 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
     setActionLoading(false);
   };
 
+  const handleSightingPhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSightingPhotoError(null);
+    const validationError = validateFile(file);
+    if (validationError) {
+      setSightingPhotoError(validationError);
+      return;
+    }
+    if (sightingPhotoPreview) URL.revokeObjectURL(sightingPhotoPreview);
+    setSightingPhotoFile(file);
+    setSightingPhotoPreview(createPreviewUrl(file));
+  };
+
+  const handleSightingPhotoRemove = () => {
+    if (sightingPhotoPreview) URL.revokeObjectURL(sightingPhotoPreview);
+    setSightingPhotoFile(null);
+    setSightingPhotoPreview(null);
+    setSightingPhotoError(null);
+  };
+
   const handleSightingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmittingSighting(true);
+
+    let photo_url: string | undefined;
+    if (sightingPhotoFile) {
+      setSightingPhotoUploading(true);
+      try {
+        const result = await uploadSightingPhoto(sightingPhotoFile);
+        photo_url = result.url;
+      } catch {
+        setSightingPhotoError(isEn ? 'Photo upload failed. You can submit without the photo.' : 'Upload slike nije uspio. Možete poslati prijavu bez slike.');
+        setSightingPhotoUploading(false);
+        setSubmittingSighting(false);
+        return;
+      }
+      setSightingPhotoUploading(false);
+    }
 
     try {
       const res = await fetch(`/api/lost-pets/${pet.id}/sightings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ location: sightingLocation, description: sightingDescription }),
+        body: JSON.stringify({ location: sightingLocation, description: sightingDescription, ...(photo_url ? { photo_url } : {}) }),
       });
 
       if (!res.ok) {
@@ -136,6 +177,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
     toast.success(isEn ? 'Thanks! Your sighting has been recorded.' : 'Hvala! Vaša prijava viđenja je zabilježena.');
     setSightingLocation('');
     setSightingDescription('');
+    handleSightingPhotoRemove();
     setShowSightingForm(false);
     setSubmittingSighting(false);
   };
@@ -290,6 +332,11 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                       <div key={sighting.id} className="bg-amber-50 border border-amber-200 rounded-lg p-3">
                         <p className="text-xs text-amber-600 mb-1">{formatDateTime(sighting.date, locale)} — {sighting.location}</p>
                         <p className="text-sm text-amber-800">{sighting.description}</p>
+                        {sighting.photo_url && (
+                          <div className="mt-2 relative w-full max-w-xs h-40 rounded-lg overflow-hidden border border-amber-300">
+                            <Image src={sighting.photo_url} alt={isEn ? 'Sighting photo' : 'Fotografija viđenja'} fill className="object-cover" />
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -331,11 +378,46 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                           onChange={(e) => setSightingDescription(e.target.value)}
                         />
                       </div>
+                      <div>
+                        <Label>{isEn ? 'Photo (optional)' : 'Fotografija (opcionalno)'}</Label>
+                        {sightingPhotoPreview ? (
+                          <div className="relative w-full max-w-xs h-40 mt-1 rounded-lg overflow-hidden border border-amber-300">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={sightingPhotoPreview} alt={isEn ? 'Preview' : 'Pregled'} className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={handleSightingPhotoRemove}
+                              className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 hover:bg-black/80"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                            {sightingPhotoUploading && (
+                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                <Loader2 className="h-6 w-6 text-white animate-spin" />
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <label className="mt-1 flex items-center gap-2 cursor-pointer text-sm text-amber-700 hover:text-amber-900 transition-colors">
+                            <Camera className="h-4 w-4" />
+                            {isEn ? 'Add a photo' : 'Dodaj fotografiju'}
+                            <input
+                              type="file"
+                              className="sr-only"
+                              accept={UPLOAD_ACCEPTED_TYPES.join(',')}
+                              onChange={handleSightingPhotoSelect}
+                            />
+                          </label>
+                        )}
+                        {sightingPhotoError && (
+                          <p className="text-xs text-red-600 mt-1">{sightingPhotoError}</p>
+                        )}
+                      </div>
                       <div className="flex gap-2">
-                        <Button type="submit" className="bg-amber-500 hover:bg-amber-600" disabled={submittingSighting}>
+                        <Button type="submit" className="bg-amber-500 hover:bg-amber-600" disabled={submittingSighting || sightingPhotoUploading}>
                           {submittingSighting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> {isEn ? 'Sending...' : 'Slanje...'}</> : (isEn ? 'Submit report' : 'Pošalji prijavu')}
                         </Button>
-                        <Button type="button" variant="outline" onClick={() => setShowSightingForm(false)}>{isEn ? 'Cancel' : 'Odustani'}</Button>
+                        <Button type="button" variant="outline" onClick={() => { setShowSightingForm(false); handleSightingPhotoRemove(); }}>{isEn ? 'Cancel' : 'Odustani'}</Button>
                       </div>
                     </form>
                   )}
