@@ -76,6 +76,13 @@ export async function uploadMessageAttachment(userId: string, file: File): Promi
 }
 
 /**
+ * Upload fotografije viđenja izgubljenog ljubimca u 'lost-pet-images/sightings' bucket.
+ */
+export async function uploadSightingPhoto(file: File): Promise<UploadResult> {
+  return uploadViaAPI(file, 'lost-pet-images', 'sightings');
+}
+
+/**
  * Mock upload — simulira Supabase Storage upload.
  * Generira fake URL i čeka 1-2 sekunde za realističnost.
  */

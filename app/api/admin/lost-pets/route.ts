@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-guard';
 import { apiError } from '@/lib/api-errors';
-import { getLostPet, updateLostPetHidden, deleteLostPet } from '@/lib/db';
+import { getLostPet, updateLostPetHidden, updateLostPetStatus, deleteLostPet, extendLostPetExpiry } from '@/lib/db';
 import { logAdminAction } from '@/lib/db/audit-logs';
 
-type AdminAction = 'hide' | 'unhide' | 'delete';
+type AdminAction = 'hide' | 'unhide' | 'delete' | 'expire' | 'extend';
 
 /**
  * POST /api/admin/lost-pets
@@ -16,10 +16,10 @@ export async function POST(request: Request) {
   const { user } = guard;
 
   const body = await request.json().catch(() => null);
-  const { petId, action } = (body || {}) as { petId?: string; action?: AdminAction };
+  const { petId, action, days } = (body || {}) as { petId?: string; action?: AdminAction; days?: number };
 
-  if (!petId || !action || !['hide', 'unhide', 'delete'].includes(action)) {
-    return apiError({ status: 400, code: 'INVALID_REQUEST', message: 'petId and valid action (hide|unhide|delete) required' });
+  if (!petId || !action || !['hide', 'unhide', 'delete', 'expire', 'extend'].includes(action)) {
+    return apiError({ status: 400, code: 'INVALID_REQUEST', message: 'petId and valid action (hide|unhide|delete|expire|extend) required' });
   }
 
   const pet = await getLostPet(petId);
@@ -57,6 +57,40 @@ export async function POST(request: Request) {
       targetType: 'lost_pet',
       targetId: petId,
       action: 'lost_pet_unhidden',
+    });
+    return NextResponse.json({ pet: updated });
+  }
+
+  if (action === 'expire') {
+    if (pet.status !== 'lost') {
+      return apiError({ status: 400, code: 'NOT_LOST', message: 'Only active lost listings can be expired' });
+    }
+    const updated = await updateLostPetStatus(petId, 'expired');
+    if (!updated) {
+      return apiError({ status: 500, code: 'UPDATE_FAILED', message: 'Failed to expire listing' });
+    }
+    await logAdminAction({
+      actorUserId: user.id,
+      targetType: 'lost_pet',
+      targetId: petId,
+      action: 'lost_pet_expired',
+      metadata: { pet_name: pet.name, pet_city: pet.city },
+    });
+    return NextResponse.json({ pet: updated });
+  }
+
+  if (action === 'extend') {
+    const extendDays = days && days > 0 && days <= 90 ? days : 30;
+    const updated = await extendLostPetExpiry(petId, extendDays);
+    if (!updated) {
+      return apiError({ status: 500, code: 'UPDATE_FAILED', message: 'Failed to extend listing' });
+    }
+    await logAdminAction({
+      actorUserId: user.id,
+      targetType: 'lost_pet',
+      targetId: petId,
+      action: 'lost_pet_extended',
+      metadata: { pet_name: pet.name, days: extendDays },
     });
     return NextResponse.json({ pet: updated });
   }

@@ -155,7 +155,7 @@ export async function SearchPageView({ searchParams, locale }: SearchPageProps &
         areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
       />
       <Breadcrumbs items={[{ label: copy.breadcrumbLabel, href: pathname }]} />
-      <Suspense fallback={<div className="container mx-auto px-4 py-8">{copy.loadingLabel}</div>}>
+      <Suspense fallback={<div className="container mx-auto px-6 md:px-10 lg:px-16 py-16">{copy.loadingLabel}</div>}>
         <SearchContent providers={providers} initialParams={params} />
       </Suspense>
       <InternalLinkSection

@@ -19,9 +19,10 @@ interface DesktopActionsProps {
   user?: NavbarUser | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  pendingRescueCount?: number;
 }
 
-export function DesktopActions({ t, user, loading, signOut }: DesktopActionsProps) {
+export function DesktopActions({ t, user, loading, signOut, pendingRescueCount = 0 }: DesktopActionsProps) {
   const router = useRouter();
   const actions = getHeaderActions(t);
   const userMenuItems = getUserMenuItems(t, user);
@@ -35,6 +36,28 @@ export function DesktopActions({ t, user, loading, signOut }: DesktopActionsProp
   return (
     <div className="hidden md:flex items-center gap-2">
       <LanguageSwitcher />
+      
+      {/* Admin notification badge */}
+      {user?.role === 'admin' && pendingRescueCount > 0 && (
+        <Link href="/admin/founder-dashboard" className="relative">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="hover:bg-accent rounded-xl relative" 
+            aria-label={`${pendingRescueCount} rescue na čekanju`}
+          >
+            <span className="relative">
+              <svg className="h-5 w-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-rose-500 text-white text-[10px] flex items-center justify-center font-medium">
+                {pendingRescueCount > 9 ? '9+' : pendingRescueCount}
+              </span>
+            </span>
+          </Button>
+        </Link>
+      )}
+      
       {actions.map((action) => {
         const Icon = action.icon;
         return (
@@ -45,6 +68,7 @@ export function DesktopActions({ t, user, loading, signOut }: DesktopActionsProp
           </Link>
         );
       })}
+      
       {loading ? (
         <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />
       ) : user ? (
@@ -57,6 +81,10 @@ export function DesktopActions({ t, user, loading, signOut }: DesktopActionsProp
                   {user.name?.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
+              {/* Admin badge on avatar */}
+              {user.role === 'admin' && pendingRescueCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-rose-500 border-2 border-white dark:border-background" />
+              )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 rounded-xl">
               <div className="flex items-center gap-2 p-3">
@@ -74,6 +102,12 @@ export function DesktopActions({ t, user, loading, signOut }: DesktopActionsProp
                     <DropdownMenuItem render={<Link href={item.href} />} className={`cursor-pointer rounded-lg ${item.className || ''}`}>
                       {Icon ? <Icon className="mr-2 h-4 w-4" /> : null}
                       {item.label}
+                      {/* Show badge for admin founder dashboard link */}
+                      {user.role === 'admin' && item.href === '/admin' && pendingRescueCount > 0 && (
+                        <span className="ml-auto h-5 min-w-[20px] rounded-full bg-rose-500 text-white text-[10px] flex items-center justify-center px-1.5 font-medium">
+                          {pendingRescueCount > 9 ? '9+' : pendingRescueCount}
+                        </span>
+                      )}
                     </DropdownMenuItem>
                   </div>
                 );

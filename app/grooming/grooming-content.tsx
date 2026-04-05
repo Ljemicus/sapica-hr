@@ -11,7 +11,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { EmptyState } from '@/components/shared/empty-state';
 import { useLanguage } from '@/lib/i18n/context';
@@ -56,13 +55,13 @@ function GroomingFilterPanel({ city, service, activeFilterCount, onCityChange, o
   const serviceLabel = (value: GroomingServiceType) => isEn ? GROOMING_SERVICE_LABELS_EN[value] : GROOMING_SERVICE_LABELS[value];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       <div>
-        <Label className="text-sm font-medium mb-2 block">{isEn ? 'City' : 'Grad'}</Label>
+        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{isEn ? 'City' : 'Grad'}</Label>
         <select
           value={city}
           onChange={(e) => onCityChange(e.target.value)}
-          className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
+          className="premium-select"
         >
           <option value="">{isEn ? 'All cities' : 'Svi gradovi'}</option>
           {CITIES.map((c) => (
@@ -71,10 +70,10 @@ function GroomingFilterPanel({ city, service, activeFilterCount, onCityChange, o
         </select>
       </div>
       <div>
-        <Label className="text-sm font-medium mb-2 block">{isEn ? 'Service type' : 'Vrsta usluge'}</Label>
-        <div className="space-y-2">
+        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{isEn ? 'Service type' : 'Vrsta usluge'}</Label>
+        <div className="space-y-1">
           {(Object.entries(GROOMING_SERVICE_LABELS) as [GroomingServiceType, string][]).map(([key]) => (
-            <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
+            <label key={key} className="premium-radio-option group">
               <input
                 type="radio"
                 name="grooming-service"
@@ -83,25 +82,24 @@ function GroomingFilterPanel({ city, service, activeFilterCount, onCityChange, o
                 onChange={(e) => onServiceChange(e.target.value)}
                 className="accent-orange-500 w-4 h-4"
               />
-              <span className="text-sm group-hover:text-orange-600 transition-colors">{serviceLabel(key)}</span>
+              <span className="text-sm group-hover:text-foreground transition-colors">{serviceLabel(key)}</span>
             </label>
           ))}
           {service && (
-            <button onClick={() => onServiceChange('')} className="text-xs text-orange-500 hover:underline mt-1">
+            <button onClick={() => onServiceChange('')} className="text-xs text-warm-orange hover:underline mt-2 pl-3">
               {isEn ? 'Clear selection' : 'Poništi odabir'}
             </button>
           )}
         </div>
       </div>
-      <Separator />
-      <div className="flex gap-2">
-        <Button onClick={onApply} className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover">
+      <div className="pt-2">
+        <Button onClick={onApply} className="w-full bg-orange-500 hover:bg-orange-600 btn-hover rounded-xl h-11 font-semibold">
           {isEn ? 'Apply filters' : 'Primijeni filtere'}
         </Button>
         {activeFilterCount > 0 && (
-          <Button variant="outline" onClick={onClear} className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
-            <X className="h-4 w-4" />
-          </Button>
+          <button onClick={onClear} className="w-full text-center text-xs text-muted-foreground hover:text-warm-orange mt-3 transition-colors">
+            {isEn ? 'Clear all filters' : 'Očisti sve filtere'}
+          </button>
         )}
       </div>
     </div>
@@ -141,154 +139,199 @@ export function GroomingContent({ groomers, initialParams }: GroomingContentProp
   const activeFilterCount = [city, service].filter(Boolean).length;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="sticky top-14 z-30 -mx-4 px-4 py-4 bg-white/95 backdrop-blur-sm border-b border-gray-100 mb-6 -mt-2">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Scissors className="h-6 w-6 text-orange-500" />
-              Grooming
+    <div>
+      {/* ══════════════════════════════════════════
+          EDITORIAL HERO
+          ══════════════════════════════════════════ */}
+      <section className="relative browse-hero-gradient overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24 relative">
+          <div className="max-w-2xl">
+            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-5 font-semibold animate-fade-in-up">
+              {isEn ? 'Grooming' : 'Njega ljubimaca'}
+            </p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-6 font-[var(--font-heading)] animate-fade-in-up delay-100">
+              {isEn ? 'Professional grooming\nyour pet deserves.' : 'Profesionalna njega\nkoju vaš ljubimac zaslužuje.'}
             </h1>
-            <p className="text-muted-foreground text-sm">
-              {groomers.length} {isEn ? (groomers.length === 1 ? 'groomer found' : 'groomers found') : (groomers.length === 1 ? 'groomer pronađen' : 'groomera pronađeno')}
-              {city && (isEn ? ` in ${city}` : ` u gradu ${city}`)}
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg animate-fade-in-up delay-200">
+              {isEn
+                ? 'Expert coat care, bathing, and styling from verified groomers across Croatia.'
+                : 'Stručna njega dlake, kupanje i styling od verificiranih groomera diljem Hrvatske.'}
             </p>
           </div>
-          <Sheet>
-            <SheetTrigger render={<Button variant="outline" size="sm" />} className="md:hidden relative">
-              <SlidersHorizontal className="h-4 w-4 mr-1" />
-              {isEn ? 'Filters' : 'Filteri'}
-              {activeFilterCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center bg-orange-500 text-xs">
-                  {activeFilterCount}
-                </Badge>
-              )}
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] overflow-y-auto">
-              <SheetTitle className="mb-4">{isEn ? 'Filters' : 'Filteri'}</SheetTitle>
-              <GroomingFilterPanel city={city} service={service} activeFilterCount={activeFilterCount} onCityChange={setCity} onServiceChange={setService} onApply={applyFilters} onClear={clearFilters} />
-            </SheetContent>
-          </Sheet>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          TOOLBAR
+          ══════════════════════════════════════════ */}
+      <div className="sticky top-14 z-30 glass-strong border-b border-border/50">
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">{groomers.length}</span>{' '}
+              {isEn ? (groomers.length === 1 ? 'groomer found' : 'groomers found') : (groomers.length === 1 ? 'groomer pronađen' : 'groomera pronađeno')}
+              {city && <span className="text-warm-orange"> · {city}</span>}
+            </p>
+            <Sheet>
+              <SheetTrigger render={<Button variant="outline" size="sm" />} className="md:hidden relative rounded-xl">
+                <SlidersHorizontal className="h-4 w-4 mr-1.5" />
+                {isEn ? 'Filters' : 'Filteri'}
+                {activeFilterCount > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center bg-orange-500 text-xs">
+                    {activeFilterCount}
+                  </Badge>
+                )}
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] overflow-y-auto">
+                <SheetTitle className="mb-6 font-[var(--font-heading)]">{isEn ? 'Filters' : 'Filteri'}</SheetTitle>
+                <GroomingFilterPanel city={city} service={service} activeFilterCount={activeFilterCount} onCityChange={setCity} onServiceChange={setService} onApply={applyFilters} onClear={clearFilters} />
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
 
+      {/* ══════════════════════════════════════════
+          ACTIVE FILTERS
+          ══════════════════════════════════════════ */}
       {activeFilterCount > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6 animate-fade-in">
-          {city && (
-            <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
-              <MapPin className="h-3 w-3" />{city}
-              <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setCity(''); applyFilters(); }} />
-            </Badge>
-          )}
-          {service && (
-            <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
-              {serviceLabel(service as GroomingServiceType)}
-              <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setService(''); applyFilters(); }} />
-            </Badge>
-          )}
-          <button onClick={clearFilters} className="text-xs text-orange-500 hover:underline self-center ml-1">
-            {isEn ? 'Clear all' : 'Ukloni sve'}
-          </button>
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 pt-6">
+          <div className="flex flex-wrap gap-2 animate-fade-in">
+            {city && (
+              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
+                <MapPin className="h-3 w-3" />{city}
+                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setCity(''); applyFilters(); }} />
+              </Badge>
+            )}
+            {service && (
+              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
+                {serviceLabel(service as GroomingServiceType)}
+                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setService(''); applyFilters(); }} />
+              </Badge>
+            )}
+            <button onClick={clearFilters} className="text-xs text-warm-orange hover:underline self-center ml-1">
+              {isEn ? 'Clear all' : 'Ukloni sve'}
+            </button>
+          </div>
         </div>
       )}
 
-      <div className="flex gap-8">
-        <aside className="hidden md:block w-64 flex-shrink-0">
-          <Card className="p-5 sticky top-32 border-0 shadow-sm rounded-2xl">
-            <h2 className="font-semibold mb-4 flex items-center gap-2 text-sm uppercase tracking-wider text-muted-foreground">
-              <Filter className="h-4 w-4" />
-              {isEn ? 'Filters' : 'Filteri'}
-            </h2>
-            <GroomingFilterPanel city={city} service={service} activeFilterCount={activeFilterCount} onCityChange={setCity} onServiceChange={setService} onApply={applyFilters} onClear={clearFilters} />
-          </Card>
-        </aside>
+      {/* ══════════════════════════════════════════
+          MAIN CONTENT
+          ══════════════════════════════════════════ */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-16 py-10">
+        <div className="flex gap-10">
+          {/* Desktop filter sidebar */}
+          <aside className="hidden md:block w-64 flex-shrink-0">
+            <div className="sticky top-32 filter-panel rounded-2xl p-6 border border-border/30 shadow-sm">
+              <h2 className="font-bold mb-6 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                <Filter className="h-3.5 w-3.5" />
+                {isEn ? 'Filters' : 'Filteri'}
+              </h2>
+              <GroomingFilterPanel city={city} service={service} activeFilterCount={activeFilterCount} onCityChange={setCity} onServiceChange={setService} onApply={applyFilters} onClear={clearFilters} />
+            </div>
+          </aside>
 
-        <div className="flex-1 min-w-0">
-          {groomers.length === 0 ? (
-            <EmptyState
-              icon={Scissors}
-              title={isEn ? 'No groomers found' : 'Nema pronađenih groomera'}
-              description={isEn ? 'Try changing the filters or searching in another city.' : 'Pokušajte promijeniti filtere ili pretražiti u drugom gradu.'}
-              action={
-                <Button variant="outline" onClick={clearFilters} className="hover:bg-orange-50 hover:text-orange-600">
-                  {isEn ? 'Reset filters' : 'Poništi filtere'}
-                </Button>
-              }
-            />
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-              {groomers.map((groomer, i) => {
-                const gradient = gradients[groomer.name.charCodeAt(0) % gradients.length];
-                return (
-                  <Link key={groomer.id} href={`/groomer/${groomer.id}`}>
-                    <Card className={`group card-hover overflow-hidden cursor-pointer border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${(i + 1) * 100}`}>
-                      <CardContent className="p-0">
-                        <div className={`relative h-44 bg-gradient-to-br ${gradient} flex items-center justify-center overflow-hidden`}>
-                          <div className="absolute inset-0 paw-pattern opacity-10" />
-                          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors" />
-                          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white/90 text-xs font-medium">
-                            <span>{groomer.city}</span>
-                            <span className="rounded-full bg-white/90 px-2.5 py-1 text-orange-600 shadow-sm">{isEn ? 'Grooming' : 'Njega i šišanje'}</span>
-                          </div>
-                          <Avatar className="h-22 w-22 border-4 border-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            <AvatarFallback className="bg-white/90 text-gray-700 text-2xl font-bold">
+          {/* Results */}
+          <div className="flex-1 min-w-0">
+            {groomers.length === 0 ? (
+              <EmptyState
+                icon={Scissors}
+                title={isEn ? 'No groomers found' : 'Nema pronađenih groomera'}
+                description={isEn ? 'Try changing the filters or searching in another city.' : 'Pokušajte promijeniti filtere ili pretražiti u drugom gradu.'}
+                action={
+                  <Button variant="outline" onClick={clearFilters} className="hover:bg-orange-50 hover:text-orange-600 rounded-xl">
+                    {isEn ? 'Reset filters' : 'Poništi filtere'}
+                  </Button>
+                }
+              />
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 animate-fade-in">
+                {groomers.map((groomer) => {
+                  const gradient = gradients[groomer.name.charCodeAt(0) % gradients.length];
+                  return (
+                    <Link key={groomer.id} href={`/groomer/${groomer.id}`}>
+                      <article className="group provider-card overflow-hidden cursor-pointer rounded-2xl bg-white dark:bg-card border border-border/30">
+                        {/* Card header */}
+                        <div className={`relative h-48 bg-gradient-to-br ${gradient} flex items-center justify-center overflow-hidden`}>
+                          <div className="absolute inset-0 paw-pattern opacity-[0.07]" />
+                          <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-500" />
+
+                          <Avatar className="h-24 w-24 border-4 border-white shadow-xl group-hover:scale-105 transition-transform duration-500">
+                            <AvatarFallback className="bg-white text-gray-700 text-2xl font-bold">
                               {groomer.name.charAt(0)}
                             </AvatarFallback>
                           </Avatar>
-                          <div className="absolute top-3 right-3 flex gap-1.5">
+
+                          {/* Bottom info */}
+                          <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between text-white/90 text-xs font-medium">
+                            <span className="flex items-center gap-1 drop-shadow-sm">
+                              <MapPin className="h-3 w-3" />
+                              {groomer.city}
+                            </span>
+                            <span className="rounded-full bg-white/95 px-3 py-1.5 text-pink-600 font-bold shadow-sm">
+                              <Scissors className="h-3 w-3 inline mr-1" />
+                              {isEn ? 'Grooming' : 'Njega'}
+                            </span>
+                          </div>
+
+                          {/* Trust badges */}
+                          <div className="absolute top-4 right-4 flex gap-1.5">
                             {groomer.verified && (
-                              <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5">
+                              <span className="inline-flex items-center bg-white/90 text-blue-600 text-xs font-medium shadow-sm rounded-full px-2.5 py-1">
                                 <Shield className="h-3 w-3 mr-1" />
                                 {isEn ? 'Verified' : 'Verificiran'}
-                              </Badge>
+                              </span>
                             )}
                           </div>
                         </div>
-                        <div className="p-5 space-y-3">
+
+                        {/* Card body */}
+                        <div className="p-6 space-y-4">
                           <div>
                             <div className="flex items-center justify-between mb-1">
-                              <h3 className="font-semibold text-lg group-hover:text-orange-500 transition-colors">
+                              <h3 className="font-bold text-lg font-[var(--font-heading)] group-hover:text-warm-orange transition-colors">
                                 {groomer.name}
                               </h3>
-                              <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-full">
+                              <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/30 px-2.5 py-1 rounded-full">
                                 <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                                <span className="text-sm font-semibold text-amber-700">{groomer.rating.toFixed(1)}</span>
-                                <span className="text-xs text-amber-600/70">({groomer.review_count})</span>
+                                <span className="text-sm font-bold text-amber-700 dark:text-amber-400">{groomer.rating.toFixed(1)}</span>
+                                <span className="text-xs text-amber-600/60 dark:text-amber-500/60">({groomer.review_count})</span>
                               </div>
                             </div>
-                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                              <MapPin className="h-3.5 w-3.5" />
-                              {groomer.city}
-                            </div>
                           </div>
-                          <p className="text-sm text-muted-foreground line-clamp-2">{groomer.bio}</p>
-                          <div className="flex flex-wrap gap-1">
+
+                          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{groomer.bio}</p>
+
+                          <div className="flex flex-wrap gap-1.5">
                             {groomer.services.map((s) => (
-                              <Badge key={s} variant="secondary" className="text-xs font-normal bg-gray-50">
+                              <span key={s} className="inline-flex items-center text-xs font-medium bg-accent dark:bg-accent/50 text-accent-foreground px-2.5 py-1 rounded-lg">
                                 {serviceLabel(s)}
-                              </Badge>
+                              </span>
                             ))}
                           </div>
-                          <div className="flex items-center justify-between pt-3 border-t">
-                            <Badge variant="secondary" className="text-xs bg-orange-50 text-orange-700 border-0">
+
+                          <div className="flex items-center justify-between pt-4 border-t border-border/40">
+                            <span className="inline-flex items-center text-xs font-medium bg-pink-50 dark:bg-pink-950/30 text-pink-700 dark:text-pink-400 px-2.5 py-1 rounded-lg">
                               {specializationLabel(groomer.specialization)}
-                            </Badge>
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-muted-foreground">{isEn ? 'Pricing on profile' : 'Cijene na profilu'}</span>
-                              <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-orange-400 group-hover:translate-x-1 transition-all" />
-                            </div>
+                            </span>
+                            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-warm-orange group-hover:gap-2.5 transition-all">
+                              {isEn ? 'View profile' : 'Pogledaj profil'}
+                              <ArrowRight className="h-4 w-4" />
+                            </span>
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-          <p className="col-span-full text-center text-sm text-muted-foreground italic py-4">
-            {isEn ? 'Pricing is set by each provider on their profile.' : 'Cijene određuju pružatelji usluga na svojim profilima'}
-          </p>
+                      </article>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+            <p className="text-center text-sm text-muted-foreground italic py-6 mt-4">
+              {isEn ? 'Pricing is set by each provider on their profile.' : 'Cijene određuju pružatelji usluga na svojim profilima'}
+            </p>
+          </div>
         </div>
       </div>
     </div>

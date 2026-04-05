@@ -3,6 +3,7 @@ import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { LanguageSwitcher } from '@/components/shared/language-switcher';
 import { PawLogo } from './paw-logo';
 import {
@@ -21,25 +22,31 @@ interface MobileSheetProps {
   language?: Language;
   user?: NavbarUser | null;
   onLogout: () => Promise<void>;
+  pendingRescueCount?: number;
 }
 
-export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout }: MobileSheetProps) {
+export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout, pendingRescueCount = 0 }: MobileSheetProps) {
   const primaryLinks = getMobilePrimaryLinks(t, language);
   const utilityLinks = getMobileUtilityLinks(t);
   const communityLinks = getMobileCommunityLinks(t, language);
   const accountLinks = getMobileAccountLinks(t, user);
 
-  const renderLink = (href: string, label: string, Icon?: React.ComponentType<{ className?: string }>, className?: string) => (
-    <Link href={href} onClick={() => setOpen(false)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors ${className || ''}`}>
-      {Icon ? <Icon className="h-5 w-5" /> : null}
-      {label}
+  const renderLink = (href: string, label: string, Icon?: React.ComponentType<{ className?: string }>, className?: string, badge?: number) => (
+    <Link href={href} onClick={() => setOpen(false)} className={`flex items-center gap-3 px-3 py-3 rounded-xl text-foreground hover:bg-accent transition-colors min-h-[48px] ${className || ''}`}>
+      {Icon ? <Icon className="h-5 w-5 shrink-0" /> : null}
+      <span className="flex-1">{label}</span>
+      {badge && badge > 0 ? (
+        <Badge className="bg-rose-500 text-white border-0 text-xs px-2 py-0.5">
+          {badge > 9 ? '9+' : badge}
+        </Badge>
+      ) : null}
     </Link>
   );
 
   return (
     <div className="flex items-center gap-1.5 md:hidden">
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger render={<Button variant="ghost" size="icon" />} className="md:hidden rounded-xl" aria-label={t('common.open_menu')}>
+        <SheetTrigger render={<Button variant="ghost" size="icon" />} className="md:hidden rounded-xl min-w-[44px] min-h-[44px]" aria-label={t('common.open_menu')}>
           <Menu className="h-5 w-5" />
         </SheetTrigger>
         <SheetContent side="right" className="w-[300px] p-0">
@@ -53,9 +60,9 @@ export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout 
                       {user.name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1">
-                    <p className="font-semibold">{user.name}</p>
-                    <p className="text-sm text-muted-foreground">{user.email}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold truncate">{user.name}</p>
+                    <p className="text-sm text-muted-foreground truncate">{user.email}</p>
                   </div>
                   <LanguageSwitcher />
                 </div>
@@ -81,9 +88,9 @@ export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout 
               <div className="border-t border-border/50 my-3" />
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">{t('common.demo')}</p>
               {utilityLinks.map((item) => (
-                <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-accent transition-colors ${item.className || ''}`}>
-                  {item.icon ? <item.icon className="h-5 w-5" /> : null}
-                  {item.label}
+                <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className={`flex items-center gap-3 px-3 py-3 rounded-xl text-foreground hover:bg-accent transition-colors min-h-[48px] ${item.className || ''}`}>
+                  {item.icon ? <item.icon className="h-5 w-5 shrink-0" /> : null}
+                  <span className="flex-1">{item.label}</span>
                   {item.demo ? <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 border border-amber-200 font-medium">Demo</span> : null}
                 </Link>
               ))}
@@ -96,16 +103,22 @@ export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout 
                 <>
                   <div className="border-t border-border/50 my-3" />
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">{t('common.account')}</p>
-                  {accountLinks.map((item) => renderLink(item.href, item.label, item.icon, item.className))}
+                  {accountLinks.map((item) => {
+                    // Show badge on admin/founder dashboard link
+                    const badge = (user.role === 'admin' && (item.href === '/admin' || item.href === '/admin/founder-dashboard')) 
+                      ? pendingRescueCount 
+                      : undefined;
+                    return renderLink(item.href, item.label, item.icon, item.className, badge);
+                  })}
                   <button
                     onClick={async () => {
                       await onLogout();
                       setOpen(false);
                     }}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors w-full text-left"
+                    className="flex items-center gap-3 px-3 py-3 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors w-full text-left min-h-[48px]"
                   >
-                    <span className="h-5 w-5 flex items-center justify-center">↩</span>
-                    {t('nav.logout')}
+                    <span className="h-5 w-5 flex items-center justify-center shrink-0">↩</span>
+                    <span>{t('nav.logout')}</span>
                   </button>
                 </>
               ) : null}
@@ -114,10 +127,10 @@ export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout 
             {!user ? (
               <div className="p-4 border-t border-border/50 space-y-2">
                 <Link href="/prijava" onClick={() => setOpen(false)}>
-                  <Button variant="outline" className="w-full rounded-xl">{t('nav.login')}</Button>
+                  <Button variant="outline" className="w-full rounded-xl min-h-[48px]">{t('nav.login')}</Button>
                 </Link>
                 <Link href="/registracija" onClick={() => setOpen(false)}>
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600 rounded-xl font-semibold">{t('nav.register')}</Button>
+                  <Button className="w-full bg-orange-500 hover:bg-orange-600 rounded-xl font-semibold min-h-[48px]">{t('nav.register')}</Button>
                 </Link>
               </div>
             ) : null}

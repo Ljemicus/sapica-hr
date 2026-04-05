@@ -3,11 +3,8 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, HeartHandshake, MapPin, Filter, ArrowRight, Search, X } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Heart, HeartHandshake, MapPin, ArrowRight, Search, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { useAdoptionFavorites } from '@/hooks/use-adoption-favorites';
 import { EmptyState } from '@/components/shared/empty-state';
 import type { AdoptionListingCard } from '@/lib/types';
@@ -29,13 +26,6 @@ function formatAge(months: number | null, isEn: boolean): string {
     : (isEn ? `${years} yr` : `${years} g.`);
 }
 
-const SPECIES_GRADIENTS: Record<string, string> = {
-  dog: 'from-amber-300 to-orange-400',
-  cat: 'from-purple-300 to-pink-400',
-  rabbit: 'from-green-300 to-teal-400',
-  other: 'from-blue-300 to-indigo-400',
-};
-
 export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingCard[] }) {
   const { language } = useLanguage();
   const isEn = language === 'en';
@@ -47,13 +37,13 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
     { value: 'other', label: isEn ? 'Other' : 'Ostalo', emoji: '🐾' },
   ];
   const sizeFilters = [
-    { value: 'all', label: isEn ? 'All' : 'Svi' },
+    { value: 'all', label: isEn ? 'All sizes' : 'Sve veličine' },
     { value: 'small', label: isEn ? 'Small' : 'Mali' },
     { value: 'medium', label: isEn ? 'Medium' : 'Srednji' },
     { value: 'large', label: isEn ? 'Large' : 'Veliki' },
   ];
   const genderFilters = [
-    { value: 'all', label: isEn ? 'All' : 'Svi' },
+    { value: 'all', label: isEn ? 'All genders' : 'Svi spolovi' },
     { value: 'male', label: isEn ? 'Male' : 'Muški' },
     { value: 'female', label: isEn ? 'Female' : 'Ženski' },
   ];
@@ -95,121 +85,121 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
   }, [listings, speciesFilter, cityFilter, sizeFilter, genderFilter, search]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50/50 via-white to-pink-50/30 dark:from-purple-950/10 dark:via-background dark:to-pink-950/10">
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-pink-500 to-rose-500 text-white">
-        <div className="absolute inset-0 paw-pattern opacity-[0.05]" />
-        <div className="container mx-auto px-4 py-16 md:py-20 relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6 text-sm font-medium">
-              <Heart className="h-4 w-4 fill-white" />
-              {listings.length} {isEn ? (listings.length === 1 ? 'pet waiting for a home' : 'pets waiting for a home') : (listings.length === 1 ? 'ljubimac čeka' : 'ljubimaca čeka')} 
-            </div>
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 font-[var(--font-heading)]">
+    <div className="min-h-screen bg-background">
+      {/* Editorial Hero */}
+      <section className="relative adoption-hero-gradient overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-20 md:py-28 relative">
+          <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
+            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange font-semibold mb-4">
+              {isEn ? 'Give a home' : 'Udomljavanje'}
+            </p>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold font-[var(--font-heading)] leading-[1.05] tracking-tight mb-6">
               {isEn ? 'Adopt a pet' : 'Udomite ljubimca'}
             </h1>
-            <p className="text-lg md:text-xl text-purple-100 mb-4 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-8">
               {isEn ? 'Give a home to the ones who need it most. Browse dogs, cats, and small pets available for adoption across Croatia.' : 'Dajte dom onima koji to najviše zaslužuju. Pregledajte pse, mačke i male ljubimce za udomljavanje diljem Hrvatske.'}
             </p>
+            <div className="inline-flex items-center gap-2 bg-warm-orange/10 dark:bg-warm-orange/20 rounded-full px-6 py-3">
+              <Heart className="h-4 w-4 text-warm-orange fill-warm-orange" />
+              <span className="text-sm font-semibold text-foreground">
+                {listings.length} {isEn ? (listings.length === 1 ? 'pet waiting for a home' : 'pets waiting for a home') : (listings.length === 1 ? 'ljubimac čeka dom' : 'ljubimaca čeka dom')}
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Filters */}
-      <section className="container mx-auto px-4 -mt-6 relative z-10">
-        <div className="bg-white dark:bg-card rounded-2xl shadow-lg border border-gray-100 dark:border-border p-4 md:p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Filter className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{isEn ? 'Filter' : 'Filtriraj'}</span>
-          </div>
-
-          {/* Search bar */}
-          <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
+      <section className="container mx-auto px-6 md:px-10 lg:px-16 -mt-8 relative z-10">
+        <div className="community-section-card p-5 md:p-7">
+          {/* Search */}
+          <div className="relative mb-5">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
               placeholder={isEn ? 'Search by name, breed, city...' : 'Pretraži po imenu, pasmini, gradu...'}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10"
+              className="forum-search-input"
               aria-label={isEn ? 'Search adoption listings' : 'Pretraži oglase za udomljavanje'}
             />
           </div>
 
           {/* Species pills */}
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-5">
             {speciesFilters.map((s) => (
               <button
                 key={s.value}
                 onClick={() => setSpeciesFilter(s.value)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                data-active={speciesFilter === s.value}
+                className={`filter-pill ${
                   speciesFilter === s.value
-                    ? 'bg-purple-500 text-white shadow-md'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-900/30'
+                    ? 'bg-warm-orange text-white'
+                    : 'bg-white dark:bg-card border border-border/40 text-foreground hover:border-warm-orange/30'
                 }`}
               >
-                {s.emoji && <span className="mr-1">{s.emoji}</span>}
+                {s.emoji && <span className="mr-1.5">{s.emoji}</span>}
                 {s.label}
               </button>
             ))}
           </div>
 
           {/* Dropdown filters */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <Select value={cityFilter} onValueChange={setCityFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder={isEn ? 'All cities' : 'Svi gradovi'} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{isEn ? 'All cities' : 'Svi gradovi'}</SelectItem>
-                {CITIES.map((city) => (
-                  <SelectItem key={city} value={city}>{city}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <select
+              value={cityFilter || 'all'}
+              onChange={(e) => setCityFilter(e.target.value)}
+              className="premium-select"
+            >
+              <option value="all">{isEn ? 'All cities' : 'Svi gradovi'}</option>
+              {CITIES.map((city) => (
+                <option key={city} value={city}>{city}</option>
+              ))}
+            </select>
 
-            <Select value={sizeFilter} onValueChange={setSizeFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder={isEn ? 'Size' : 'Veličina'} />
-              </SelectTrigger>
-              <SelectContent>
-                {sizeFilters.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <select
+              value={sizeFilter || 'all'}
+              onChange={(e) => setSizeFilter(e.target.value)}
+              className="premium-select"
+            >
+              {sizeFilters.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
 
-            <Select value={genderFilter} onValueChange={setGenderFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder={isEn ? 'Gender' : 'Spol'} />
-              </SelectTrigger>
-              <SelectContent>
-                {genderFilters.map((g) => (
-                  <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <select
+              value={genderFilter || 'all'}
+              onChange={(e) => setGenderFilter(e.target.value)}
+              className="premium-select"
+            >
+              {genderFilters.map((g) => (
+                <option key={g.value} value={g.value}>{g.label}</option>
+              ))}
+            </select>
           </div>
 
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="mt-3 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="mt-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               <X className="h-3.5 w-3.5" />
               {isEn ? 'Clear filters' : 'Poništi filtere'}
             </button>
           )}
+
+          {/* Result count */}
+          <div className="mt-4 pt-4 border-t border-border/30">
+            <p className="text-sm text-muted-foreground">
+              {filtered.length} {isEn ? (filtered.length === 1 ? 'pet found' : 'pets found') : (filtered.length === 1 ? 'ljubimac' : 'ljubimaca')} {isEn ? '' : 'pronađeno'}
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Results */}
-      <section className="container mx-auto px-4 py-10">
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-muted-foreground">
-            {filtered.length} {isEn ? (filtered.length === 1 ? 'pet found' : 'pets found') : (filtered.length === 1 ? 'ljubimac' : 'ljubimaca')} {isEn ? '' : 'pronađeno'}
-          </p>
-        </div>
-
+      <section className="container mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16">
         {filtered.length === 0 ? (
           <EmptyState
             icon={hasActiveFilters ? Search : HeartHandshake}
@@ -218,125 +208,147 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
             action={hasActiveFilters ? (
               <button
                 onClick={clearFilters}
-                className="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors"
+                className="text-sm font-semibold text-warm-orange hover:text-warm-orange/80 transition-colors"
               >
                 {isEn ? 'Clear all filters' : 'Poništi sve filtere'}
               </button>
             ) : undefined}
           />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-            {filtered.map((listing) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {filtered.map((listing, index) => {
               const primaryImage = listing.images?.find((img) => img.is_primary) ?? listing.images?.[0];
-              const gradient = SPECIES_GRADIENTS[listing.species] ?? SPECIES_GRADIENTS.other;
 
               return (
                 <Link key={listing.id} href={`/udomljavanje/${listing.id}`}>
-                  <Card className="group card-hover cursor-pointer overflow-hidden border-0 shadow-sm rounded-2xl h-full">
-                    <CardContent className="p-0">
-                      {/* Image */}
-                      <div className={`relative h-48 ${primaryImage ? 'bg-gray-100' : `bg-gradient-to-br ${gradient}`} flex items-center justify-center`}>
-                        {primaryImage ? (
-                          <Image
-                            src={primaryImage.url}
-                            alt={primaryImage.alt || listing.name}
-                            fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          <>
-                            <div className="absolute inset-0 paw-pattern opacity-10" />
-                            <span className="text-6xl group-hover:scale-110 transition-transform duration-300">
-                              {ADOPTION_SPECIES_EMOJI[listing.species]}
-                            </span>
-                          </>
-                        )}
-
-                        {/* Urgent badge */}
-                        {listing.is_urgent && (
-                          <div className="absolute top-3 left-3">
-                            <Badge className="bg-red-500 text-white font-bold rounded-full flex items-center gap-1.5">
-                              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                              {isEn ? 'Urgent' : 'Hitno'}
-                            </Badge>
-                          </div>
-                        )}
-
-                        {/* Favorite button */}
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            toggleFavorite(listing.id);
-                          }}
-                          aria-label={isFavorite(listing.id) ? (isEn ? `Remove ${listing.name} from favorites` : `Ukloni ${listing.name} iz favorita`) : (isEn ? `Add ${listing.name} to favorites` : `Dodaj ${listing.name} u favorite`)}
-                          className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${
-                            isFavorite(listing.id)
-                              ? 'bg-red-500 text-white shadow-lg shadow-red-200/50'
-                              : 'bg-white/90 text-gray-400 hover:text-red-500 hover:bg-white shadow-sm'
-                          }`}
-                        >
-                          <Heart className={`h-4 w-4 ${isFavorite(listing.id) ? 'fill-white' : ''}`} />
-                        </button>
-                      </div>
-
-                      {/* Info */}
-                      <div className="p-5">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-bold text-lg group-hover:text-purple-500 transition-colors font-[var(--font-heading)]">
-                            {listing.name}
-                          </h3>
-                          <span className="text-sm">{ADOPTION_SPECIES_EMOJI[listing.species]}</span>
-                        </div>
-                        {listing.breed && (
-                          <p className="text-sm text-muted-foreground mb-3">{listing.breed}</p>
-                        )}
-
-                        {/* Badges */}
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                          {listing.gender && (
-                            <Badge variant="secondary" className="rounded-full text-xs">
-                              {genderLabels[listing.gender]}
-                            </Badge>
-                          )}
-                          <Badge variant="secondary" className="rounded-full text-xs">
-                            {formatAge(listing.age_months, isEn)}
-                          </Badge>
-                          {listing.size && (
-                            <Badge variant="secondary" className="rounded-full text-xs">
-                              {sizeLabels[listing.size]}
-                            </Badge>
-                          )}
-                        </div>
-
-                        {/* Location */}
-                        <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
-                          <MapPin className="h-3.5 w-3.5 text-purple-400" />
-                          {listing.city}
-                        </div>
-
-                        {/* Publisher */}
-                        {listing.publisher_display_name && (
-                          <div className="rounded-lg bg-purple-50/70 dark:bg-purple-950/20 px-3 py-2">
-                            <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1">{isEn ? 'Care provided by' : 'O njemu brine'}</p>
-                            <p className="text-sm font-medium text-purple-700 dark:text-purple-300">{listing.publisher_display_name}</p>
-                          </div>
-                        )}
-
-                        <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between">
-                          <span className="text-sm font-semibold text-purple-600 dark:text-purple-400 flex items-center gap-1">
-                            {isEn ? 'View pet profile' : 'Pogledaj profil ljubimca'} <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                  <div
+                    className="adoption-card group cursor-pointer overflow-hidden h-full animate-fade-in-up"
+                    style={{ animationDelay: `${Math.min(index * 80, 400)}ms` }}
+                  >
+                    {/* Image */}
+                    <div className={`relative h-52 ${primaryImage ? 'bg-muted' : 'bg-gradient-to-br from-warm-peach to-warm-orange/30'} flex items-center justify-center overflow-hidden`}>
+                      {primaryImage ? (
+                        <Image
+                          src={primaryImage.url}
+                          alt={primaryImage.alt || listing.name}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <>
+                          <div className="absolute inset-0 paw-pattern opacity-10" />
+                          <span className="text-6xl group-hover:scale-110 transition-transform duration-300">
+                            {ADOPTION_SPECIES_EMOJI[listing.species]}
                           </span>
+                        </>
+                      )}
+
+                      {/* Gradient overlay */}
+                      {primaryImage && <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />}
+
+                      {/* Urgent badge */}
+                      {listing.is_urgent && (
+                        <div className="absolute top-3.5 left-3.5">
+                          <Badge className="bg-warm-coral text-white font-bold rounded-full flex items-center gap-1.5 px-3 py-1 hover:bg-warm-coral">
+                            <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                            {isEn ? 'Urgent' : 'Hitno'}
+                          </Badge>
                         </div>
+                      )}
+
+                      {/* Favorite button */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleFavorite(listing.id);
+                        }}
+                        aria-label={isFavorite(listing.id) ? (isEn ? `Remove ${listing.name} from favorites` : `Ukloni ${listing.name} iz favorita`) : (isEn ? `Add ${listing.name} to favorites` : `Dodaj ${listing.name} u favorite`)}
+                        className={`absolute top-3.5 right-3.5 p-2.5 rounded-full transition-all duration-200 ${
+                          isFavorite(listing.id)
+                            ? 'bg-warm-coral text-white shadow-lg shadow-warm-coral/30'
+                            : 'bg-white/90 dark:bg-card/90 text-muted-foreground hover:text-warm-coral hover:bg-white shadow-sm backdrop-blur-sm'
+                        }`}
+                      >
+                        <Heart className={`h-4 w-4 ${isFavorite(listing.id) ? 'fill-white' : ''}`} />
+                      </button>
+                    </div>
+
+                    {/* Info */}
+                    <div className="p-5">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <h3 className="font-bold text-lg group-hover:text-warm-orange transition-colors font-[var(--font-heading)]">
+                          {listing.name}
+                        </h3>
+                        <span className="text-sm">{ADOPTION_SPECIES_EMOJI[listing.species]}</span>
                       </div>
-                    </CardContent>
-                  </Card>
+                      {listing.breed && (
+                        <p className="text-sm text-muted-foreground mb-3">{listing.breed}</p>
+                      )}
+
+                      {/* Badges */}
+                      <div className="flex flex-wrap gap-1.5 mb-3">
+                        {listing.gender && (
+                          <Badge className="bg-secondary text-secondary-foreground hover:bg-secondary border-0 rounded-full text-xs font-medium">
+                            {genderLabels[listing.gender]}
+                          </Badge>
+                        )}
+                        <Badge className="bg-secondary text-secondary-foreground hover:bg-secondary border-0 rounded-full text-xs font-medium">
+                          {formatAge(listing.age_months, isEn)}
+                        </Badge>
+                        {listing.size && (
+                          <Badge className="bg-secondary text-secondary-foreground hover:bg-secondary border-0 rounded-full text-xs font-medium">
+                            {sizeLabels[listing.size]}
+                          </Badge>
+                        )}
+                      </div>
+
+                      {/* Location */}
+                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-3">
+                        <MapPin className="h-3.5 w-3.5 text-warm-orange" />
+                        {listing.city}
+                      </div>
+
+                      {/* Publisher */}
+                      {listing.publisher_display_name && (
+                        <div className="rounded-xl bg-warm-peach/30 dark:bg-warm-peach/10 px-3.5 py-2.5">
+                          <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground mb-0.5">{isEn ? 'Care provided by' : 'O njemu brine'}</p>
+                          <p className="text-sm font-semibold text-warm-orange">{listing.publisher_display_name}</p>
+                        </div>
+                      )}
+
+                      <div className="mt-4 pt-3 border-t border-border/30 flex items-center justify-between">
+                        <span className="text-sm font-semibold text-warm-orange flex items-center gap-1.5">
+                          {isEn ? 'View pet profile' : 'Pogledaj profil ljubimca'} <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </Link>
               );
             })}
           </div>
         )}
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="bg-warm-section">
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-20 md:py-28">
+          <div className="max-w-2xl mx-auto text-center animate-fade-in-up">
+            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange font-semibold mb-4">
+              {isEn ? 'Every pet deserves love' : 'Svaki ljubimac zaslužuje ljubav'}
+            </p>
+            <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] leading-[1.1] mb-6">
+              {isEn ? 'Open your heart and home' : 'Otvorite srce i dom'}
+            </h2>
+            <p className="text-muted-foreground leading-relaxed">
+              {isEn
+                ? 'Browse pets waiting for adoption. When you find the right match, send an inquiry and take the first step.'
+                : 'Pregledajte ljubimce koji čekaju udomljavanje. Kad pronađete pravog, pošaljite upit i napravite prvi korak.'}
+            </p>
+          </div>
+        </div>
       </section>
     </div>
   );

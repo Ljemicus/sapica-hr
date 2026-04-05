@@ -507,6 +507,225 @@ textarea:focus {
   }
 }
 
+/* ── Concept Zero — Premium Homepage ── */
+
+.concept-zero {
+  /* Slightly tighter letter-spacing for editorial feel */
+  letter-spacing: -0.01em;
+}
+
+/* CTA gradient — warm orange to deep coral to teal */
+.cz-cta-gradient {
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 30%, #0d9488 100%);
+}
+
+.dark .cz-cta-gradient {
+  background: linear-gradient(135deg, oklch(0.35 0.12 35) 0%, oklch(0.30 0.10 55) 30%, oklch(0.25 0.08 185) 100%);
+}
+
+/* Service cards — subtle reveal on hover */
+.cz-service-card {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.5s ease, transform 0.5s ease;
+}
+.cz-service-card:hover {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Sitter cards — refined hover state */
+.cz-sitter-card {
+  transition: all 0.3s ease;
+}
+
+/* Bounce subtle for scroll indicator */
+@keyframes bounce-subtle-cz {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(6px); opacity: 0.4; }
+}
+.animate-bounce-subtle {
+  animation: bounce-subtle-cz 2s ease-in-out infinite;
+}
+
+/* ── Browse Pages — Premium Redesign ── */
+
+/* Browse hero gradient — warm, editorial */
+.browse-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.97 0.015 85) 0%, oklch(0.95 0.025 65) 40%, oklch(0.97 0.015 85) 100%);
+}
+
+.dark .browse-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.16 0.01 50) 0%, oklch(0.18 0.02 55) 40%, oklch(0.16 0.01 50) 100%);
+}
+
+/* Premium filter panel */
+.filter-panel {
+  background: linear-gradient(180deg, oklch(0.98 0.01 85) 0%, oklch(0.99 0.005 85) 100%);
+}
+
+.dark .filter-panel {
+  background: linear-gradient(180deg, oklch(0.18 0.01 50) 0%, oklch(0.16 0.01 50) 100%);
+}
+
+/* Premium select styling */
+.premium-select {
+  @apply h-11 w-full rounded-xl border border-border/60 bg-white dark:bg-card px-4 py-2.5 text-sm transition-all;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.premium-select:focus {
+  border-color: oklch(0.7 0.17 55 / 0.5);
+  box-shadow: 0 0 0 3px oklch(0.7 0.17 55 / 0.1), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* Premium radio option */
+.premium-radio-option {
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all;
+}
+.premium-radio-option:hover {
+  background: oklch(0.97 0.015 85);
+}
+.dark .premium-radio-option:hover {
+  background: oklch(0.22 0.01 50);
+}
+
+/* Provider card — editorial hover */
+.provider-card {
+  @apply transition-all duration-500 ease-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+.provider-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08), 0 12px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* Card image overlay — subtle warm tint */
+.card-image-overlay {
+  background: linear-gradient(180deg, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+/* ── Provider Detail — Premium Redesign ── */
+
+/* Detail page hero — warm editorial gradient */
+.detail-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.96 0.02 65) 0%, oklch(0.94 0.03 60) 50%, oklch(0.97 0.015 85) 100%);
+}
+
+.dark .detail-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.17 0.02 55) 0%, oklch(0.15 0.025 50) 50%, oklch(0.14 0.01 50) 100%);
+}
+
+/* Detail sidebar — elevated glass panel */
+.detail-sidebar-panel {
+  @apply rounded-2xl border border-border/30;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.dark .detail-sidebar-panel {
+  background: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Detail section card — refined surface */
+.detail-section-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.3s ease;
+}
+
+.detail-section-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* ── Forum Community — Premium Redesign ── */
+
+/* Forum hero gradient — warm editorial */
+.forum-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.97 0.02 65) 0%, oklch(0.95 0.03 55) 50%, oklch(0.98 0.01 85) 100%);
+}
+
+.dark .forum-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.16 0.02 55) 0%, oklch(0.14 0.025 50) 50%, oklch(0.13 0.01 50) 100%);
+}
+
+/* Forum topic card — editorial hover */
+.forum-topic-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.forum-topic-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.07), 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Forum sidebar — glass panel */
+.forum-sidebar-panel {
+  @apply rounded-2xl border border-border/30;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.dark .forum-sidebar-panel {
+  background: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Forum comment card — refined surface */
+.forum-comment-card {
+  @apply rounded-2xl border border-border/20 bg-white dark:bg-card;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.3s ease;
+}
+.forum-comment-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* Forum category pill — premium toggle */
+.forum-category-pill {
+  @apply px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.forum-category-pill:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+.forum-category-pill[data-active="true"] {
+  box-shadow: 0 4px 16px oklch(0.7 0.17 55 / 0.25);
+}
+
+/* Forum trending rank number */
+.forum-trending-rank {
+  @apply flex items-center justify-center h-8 w-8 rounded-full text-sm font-bold;
+  background: linear-gradient(135deg, oklch(0.96 0.02 55) 0%, oklch(0.94 0.04 65) 100%);
+  color: oklch(0.5 0.15 55);
+}
+
+.dark .forum-trending-rank {
+  background: linear-gradient(135deg, oklch(0.22 0.03 55) 0%, oklch(0.20 0.04 65) 100%);
+  color: oklch(0.75 0.15 55);
+}
+
+/* Forum detail — original post card */
+.forum-original-post {
+  @apply rounded-3xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+/* Forum search — premium input */
+.forum-search-input {
+  @apply h-12 w-full rounded-xl border border-border/60 bg-white dark:bg-card px-4 pl-11 text-sm transition-all;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.forum-search-input:focus {
+  border-color: oklch(0.7 0.17 55 / 0.5);
+  box-shadow: 0 0 0 3px oklch(0.7 0.17 55 / 0.1), 0 1px 2px rgba(0, 0, 0, 0.04);
+  outline: none;
+}
+
 /* ── Mobile touch-target enforcement ── */
 /* Ensure interactive elements meet 44×44px minimum on touch devices */
 @media (pointer: coarse) {
@@ -518,5 +737,265 @@ textarea:focus {
   .touch-auto {
     min-height: auto;
     min-width: auto;
+  }
+}
+
+/* ── Lost Pets & Adoption — Premium Redesign ── */
+
+/* Lost pets hero — warm urgency gradient */
+.lost-pets-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.96 0.03 30) 0%, oklch(0.94 0.05 40) 40%, oklch(0.97 0.02 55) 100%);
+}
+
+.dark .lost-pets-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.16 0.03 30) 0%, oklch(0.14 0.04 40) 50%, oklch(0.13 0.02 50) 100%);
+}
+
+/* Adoption hero — warm, hopeful gradient */
+.adoption-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.97 0.02 55) 0%, oklch(0.95 0.04 45) 40%, oklch(0.98 0.01 85) 100%);
+}
+
+.dark .adoption-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.16 0.02 55) 0%, oklch(0.14 0.03 45) 50%, oklch(0.13 0.01 50) 100%);
+}
+
+/* Lost pet card — editorial hover with warm urgency */
+.lost-pet-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lost-pet-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.07), 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Adoption card — premium hover */
+.adoption-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.adoption-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* Community sidebar — glass panel for lost pets / adoption detail */
+.community-sidebar-panel {
+  @apply rounded-2xl border border-border/30;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.dark .community-sidebar-panel {
+  background: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Urgency pulse badge */
+.urgency-pulse {
+  position: relative;
+}
+.urgency-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: oklch(0.68 0.18 30 / 0.3);
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+/* Community section card — shared between lost pets and adoption */
+.community-section-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.3s ease;
+}
+
+.community-section-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* Filter pill — premium toggle for species/status filters */
+.filter-pill {
+  @apply px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.filter-pill:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+.filter-pill[data-active="true"] {
+  box-shadow: 0 4px 16px oklch(0.7 0.17 55 / 0.25);
+}
+
+/* ── Rescue Dashboard — Premium Redesign ── */
+
+/* Rescue hero — warm, trustworthy gradient */
+.rescue-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.97 0.02 145) 0%, oklch(0.95 0.03 140) 40%, oklch(0.98 0.01 85) 100%);
+}
+
+.dark .rescue-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.16 0.02 145) 0%, oklch(0.14 0.03 140) 50%, oklch(0.13 0.01 50) 100%);
+}
+
+/* Rescue stat card — premium glass effect */
+.rescue-stat-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card p-5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rescue-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* Rescue form card — elevated surface */
+.rescue-form-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+/* Rescue sidebar panel — glass morphism */
+.rescue-sidebar-panel {
+  @apply rounded-2xl border border-border/30;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.dark .rescue-sidebar-panel {
+  background: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Rescue section kicker */
+.rescue-section-kicker {
+  @apply text-xs uppercase tracking-[0.2em] font-semibold text-warm-orange mb-2;
+}
+
+/* Rescue status badge variants */
+.rescue-badge-pending {
+  @apply bg-amber-100 text-amber-800 border-0;
+}
+.rescue-badge-approved {
+  @apply bg-emerald-100 text-emerald-800 border-0;
+}
+.rescue-badge-review {
+  @apply bg-blue-100 text-blue-800 border-0;
+}
+
+/* ── Appeals & Organizations — Premium Redesign ── */
+
+/* Appeals hero — warm, urgent but hopeful */
+.appeals-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.96 0.03 25) 0%, oklch(0.94 0.04 35) 40%, oklch(0.97 0.02 55) 100%);
+}
+
+.dark .appeals-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.16 0.03 25) 0%, oklch(0.14 0.04 35) 50%, oklch(0.13 0.02 50) 100%);
+}
+
+/* Organizations hero — trustworthy, community */
+.organizations-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.97 0.02 140) 0%, oklch(0.95 0.03 135) 40%, oklch(0.98 0.01 85) 100%);
+}
+
+.dark .organizations-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.16 0.02 140) 0%, oklch(0.14 0.03 135) 50%, oklch(0.13 0.01 50) 100%);
+}
+
+/* Appeal card — emotional but premium */
+.appeal-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card overflow-hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.appeal-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08), 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Organization card — trustworthy hover */
+.organization-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card overflow-hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.organization-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.07), 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Progress bar — premium appeal progress */
+.appeal-progress-bar {
+  @apply h-2 rounded-full bg-muted overflow-hidden;
+}
+.appeal-progress-fill {
+  @apply h-full rounded-full bg-gradient-to-r from-warm-peach to-warm-orange;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Urgency badge — subtle pulse for critical */
+.urgency-badge-critical {
+  @apply bg-rose-100 text-rose-800 border-0;
+  position: relative;
+}
+.urgency-badge-critical::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: oklch(0.65 0.18 25 / 0.25);
+  animation: pulse-ring 2s ease-out infinite;
+  z-index: -1;
+}
+
+/* Info panel — glass sidebar for appeals/orgs */
+.info-panel {
+  @apply rounded-2xl border border-border/30;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.dark .info-panel {
+  background: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Section kicker — editorial style */
+.section-kicker {
+  @apply text-xs uppercase tracking-[0.25em] font-semibold text-warm-orange mb-3;
+}
+
+/* Lost-pet flyer print styles */
+@media print {
+  /* Hide app shell */
+  nav, footer, .bottom-nav, #bottom-nav {
+    display: none !important;
+  }
+  body {
+    min-height: auto;
+    padding: 0;
+    margin: 0;
+  }
+  main {
+    padding-bottom: 0 !important;
+  }
+  .flyer-page {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  @page {
+    size: A4;
+    margin: 10mm;
   }
 }

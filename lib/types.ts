@@ -588,12 +588,18 @@ export const FORUM_CATEGORY_LABELS: Record<ForumCategorySlug, string> = {
 
 // ── Lost Pets ──
 
-export type LostPetStatus = 'lost' | 'found';
+export type LostPetStatus = 'lost' | 'found' | 'expired';
 export type LostPetSpecies = 'pas' | 'macka' | 'ostalo';
+export type LostPetAlertSpecies = LostPetSpecies | 'sve';
+export type LostPetFoundMethod = 'sighting' | 'returned_home' | 'shelter' | 'other';
+export type LostPetUpdateCategory = 'search' | 'sighting' | 'status' | 'note';
+export type LostPetLeadStatus = 'new' | 'helpful' | 'false_lead' | 'resolved';
+export type LostPetSightingStatus = 'new' | 'helpful' | 'false_lead' | 'resolved';
 
 export const LOST_PET_STATUS_LABELS: Record<LostPetStatus, string> = {
   'lost': 'Još se traži',
   'found': 'Pronađen!',
+  'expired': 'Oglas istekao',
 };
 
 export const LOST_PET_SPECIES_LABELS: Record<LostPetSpecies, string> = {
@@ -602,17 +608,42 @@ export const LOST_PET_SPECIES_LABELS: Record<LostPetSpecies, string> = {
   'ostalo': 'Ostalo',
 };
 
+export const LOST_PET_FOUND_METHOD_LABELS: Record<LostPetFoundMethod, string> = {
+  sighting: 'Viđenje iz zajednice',
+  returned_home: 'Vratio se kući sam',
+  shelter: 'Pronađen u skloništu',
+  other: 'Drugo',
+};
+
+export const LOST_PET_ALERT_SPECIES_LABELS: Record<LostPetAlertSpecies, string> = {
+  'pas': 'Pas',
+  'macka': 'Mačka',
+  'ostalo': 'Ostalo',
+  'sve': 'Sve vrste',
+};
+
+export const LOST_PET_UPDATE_CATEGORY_LABELS: Record<LostPetUpdateCategory, string> = {
+  search: 'Potraga',
+  sighting: 'Novo viđenje',
+  status: 'Status',
+  note: 'Bilješka',
+};
+
 export interface LostPetSighting {
   id: string;
   date: string;
   location: string;
   description: string;
+  status: LostPetSightingStatus;
+  reviewed_at?: string;
+  photo_url?: string;
 }
 
 export interface LostPetUpdate {
   id: string;
   date: string;
   text: string;
+  category?: LostPetUpdateCategory;
 }
 
 export interface LostPet {
@@ -640,9 +671,56 @@ export interface LostPet {
   contact_phone: string;
   contact_email: string;
   share_count: number;
+  found_at: string | null;
+  found_method: LostPetFoundMethod | null;
+  reunion_message: string | null;
+  expires_at: string | null;
+  reminder_sent_at: string | null;
+  alerts_dispatched_at: string | null;
   updates: LostPetUpdate[];
   sightings: LostPetSighting[];
   created_at: string;
+}
+
+export interface LostPetAlert {
+  id: string;
+  user_id: string;
+  city: string;
+  species: LostPetAlertSpecies;
+  active: boolean;
+  created_at: string;
+  // Geo-fencing (radius-based alerts)
+  use_radius: boolean;
+  radius_km: number | null;
+  location_lat: number | null;
+  location_lng: number | null;
+  address: string | null;
+}
+
+export type LostPetAlertSubscription = LostPetAlert;
+
+/** How many days before expiry a listing is considered "expiring soon". */
+export const LOST_PET_EXPIRY_WARN_DAYS = 3;
+/** Default listing duration in days. */
+export const LOST_PET_LISTING_DURATION_DAYS = 30;
+
+export function isLostPetExpired(pet: LostPet): boolean {
+  if (pet.status === 'found') return false;
+  if (!pet.expires_at) return false;
+  return new Date(pet.expires_at).getTime() < Date.now();
+}
+
+export function isLostPetExpiringSoon(pet: LostPet): boolean {
+  if (pet.status === 'found') return false;
+  if (!pet.expires_at) return false;
+  const msLeft = new Date(pet.expires_at).getTime() - Date.now();
+  return msLeft > 0 && msLeft < LOST_PET_EXPIRY_WARN_DAYS * 86_400_000;
+}
+
+export function lostPetDaysUntilExpiry(pet: LostPet): number | null {
+  if (!pet.expires_at) return null;
+  const days = Math.ceil((new Date(pet.expires_at).getTime() - Date.now()) / 86_400_000);
+  return days;
 }
 
 // ── Shop / Webshop ──
@@ -948,3 +1026,35 @@ export const CITIES = [
   'Varaždin',
   'Šibenik',
 ];
+
+export type {
+  AppealDonationStatus,
+  AppealStatus,
+  AppealUpdateType,
+  AppealUrgency,
+  RescueAppeal,
+  RescueAppealDonation,
+  RescueAppealUpdate,
+  RescueDonationLinkStatus,
+  RescueOrganization,
+  RescueOrganizationKind,
+  RescueOrganizationStatus,
+  RescueReviewState,
+  RescueVerificationDocument,
+  RescueVerificationDocumentReviewStatus,
+  RescueVerificationDocumentType,
+  RescueVerificationStatus,
+} from '@/lib/types/rescue';
+
+export {
+  APPEAL_STATUS_LABELS,
+  RESCUE_DONATION_LINK_STATUS_LABELS,
+  RESCUE_ORGANIZATION_STATUS_LABELS,
+  RESCUE_REVIEW_STATE_LABELS,
+  RESCUE_VERIFICATION_DOCUMENT_REVIEW_STATUS_LABELS,
+  RESCUE_VERIFICATION_DOCUMENT_TYPE_LABELS,
+  RESCUE_VERIFICATION_STATUS_LABELS,
+  canTransitionAppealStatus,
+  getAppealProgressPct,
+  isAppealLive,
+} from '@/lib/types/rescue';

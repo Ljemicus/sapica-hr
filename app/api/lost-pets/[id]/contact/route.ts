@@ -1,19 +1,32 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthUser } from '@/lib/auth';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
-    const supabase = await createClient();
+    const user = await getAuthUser();
+
+    if (!user) {
+      return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
+    }
+
+    const supabase = createAdminClient();
     const { data, error } = await supabase
       .from('lost_pets')
-      .select('contact_name, contact_phone, contact_email')
+      .select('contact_name, contact_phone, contact_email, hidden, user_id')
       .eq('id', id)
       .single();
 
     if (error || !data) {
       return apiError({ status: 404, code: 'LOST_PET_NOT_FOUND', message: 'Oglas nije pronađen.' });
+    }
+
+    const isOwner = user.id === data.user_id;
+    const isAdmin = user.role === 'admin';
+    if (!isOwner && !isAdmin) {
+      return apiError({ status: 403, code: 'FORBIDDEN', message: 'Kontakt nije javno dostupan.' });
     }
 
     return NextResponse.json({
@@ -24,4 +37,12 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
   } catch {
     return apiError({ status: 500, code: 'CONTACT_FETCH_FAILED', message: 'Kontakt nije dostupan.' });
   }
+}
+
+export async function POST(_request: NextRequest, _context: { params: Promise<{ id: string }> }) {
+  return apiError({
+    status: 405,
+    code: 'METHOD_NOT_ALLOWED',
+    message: 'Javni relay koristi /api/lost-pets/[id]/relay. Direktni kontakt ostaje dostupan samo vlasniku ili adminu.',
+  });
 }

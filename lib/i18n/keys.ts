@@ -12,6 +12,7 @@ export type TranslationKey =
   | 'nav.emergency'
   | 'nav.breeders'
   | 'nav.adoption_listings'
+  | 'nav.rescue_orgs'
   // Navbar dropdown - services
   | 'nav.sitters'
   | 'nav.grooming'
@@ -44,6 +45,8 @@ export type TranslationKey =
   | 'common.homepage'
   | 'common.main_navigation'
   // Footer
+  | 'footer.rescue_orgs'
+  | 'footer.appeals'
   | 'footer.tagline'
   | 'footer.services'
   | 'footer.find_sitter'

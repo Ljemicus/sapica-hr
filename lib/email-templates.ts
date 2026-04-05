@@ -288,3 +288,49 @@ export function welcomeEmail(userName: string): string {
   `;
   return baseLayout(content, `Dobrodošli na PetPark, ${userName}!`);
 }
+
+export function lostPetAlertEmail(
+  recipientName: string,
+  petName: string,
+  species: string,
+  city: string,
+  neighborhood: string,
+  listingId: string,
+  distanceKm?: number,
+): string {
+  const listingUrl = `https://petpark.hr/izgubljeni/${listingId}`;
+  const speciesLabel = species === 'pas' ? 'pas' : species === 'macka' ? 'mačka' : 'ljubimac';
+  const locationText = neighborhood ? `${neighborhood}, ${city}` : city;
+  const distanceText = distanceKm !== undefined ? ` (${distanceKm} km od vaše lokacije)` : '';
+
+  const content = `
+    ${heading('Novi oglas za nestanak! &#128680;')}
+    ${paragraph(`Pozdrav ${recipientName},`)}
+    ${paragraph(`U vašoj blizini je prijavljen nestanak: <strong>${petName}</strong> (${speciesLabel}).`)}
+    ${infoBox(`&#128205; Lokacija: ${locationText}${distanceText}`)}
+    ${paragraph('Ako ste vidjeli ovog ljubimca, svaka informacija pomaže!')}
+    ${ctaButton('Pogledaj oglas', listingUrl)}
+    ${paragraph('<small style="color: #9ca3af;">Primili ste ovaj email jer ste pretplaćeni na obavijesti o nestalim ljubimcima. Možete upravljati pretplatama u postavkama.</small>')}
+  `;
+  return baseLayout(content, `Nestao ${speciesLabel} "${petName}" u gradu ${city}`);
+}
+
+export function lostPetSightingEmail(
+  ownerName: string,
+  petName: string,
+  sightingLocation: string,
+  sightingDescription: string,
+  listingId: string,
+): string {
+  const listingUrl = `https://petpark.hr/izgubljeni/${listingId}`;
+
+  const content = `
+    ${heading('Novo viđenje vašeg ljubimca! &#128064;')}
+    ${paragraph(`Pozdrav ${ownerName},`)}
+    ${paragraph(`Netko je prijavio viđenje vašeg ljubimca <strong>${petName}</strong>!`)}
+    ${infoBox(`&#128205; Lokacija: ${sightingLocation}<br>&#128221; Opis: ${sightingDescription}`)}
+    ${paragraph('Pogledajte prijavu i sve detalje na stranici oglasa.')}
+    ${ctaButton('Pogledaj oglas', listingUrl)}
+  `;
+  return baseLayout(content, `Novo viđenje ljubimca "${petName}"`);
+}

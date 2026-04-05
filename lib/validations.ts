@@ -101,6 +101,22 @@ export const blogCommentSchema = z.object({
   content: z.string().trim().min(1, 'Komentar ne može biti prazan').max(1000, 'Komentar može imati najviše 1000 znakova'),
 });
 
+export const lostPetContactRelaySchema = z.object({
+  name: z.string().trim().max(120, 'Ime može imati najviše 120 znakova').optional().or(z.literal('')),
+  email: z.union([
+    z.literal(''),
+    z.string().trim().email('Unesite valjanu email adresu').max(255, 'Email je predug'),
+  ]),
+  phone: z.string().trim().max(40, 'Telefon može imati najviše 40 znakova').optional().or(z.literal('')),
+  message: z.string().trim().min(10, 'Poruka mora imati najmanje 10 znakova').max(2000, 'Poruka može imati najviše 2000 znakova'),
+  location_hint: z.string().trim().max(160, 'Lokacija može imati najviše 160 znakova').optional().or(z.literal('')),
+  quick_lead: z.boolean().optional().default(false),
+  website: z.string().optional(),
+}).refine((data) => Boolean(data.email?.trim() || data.phone?.trim()), {
+  message: 'Unesite email ili broj telefona',
+  path: ['email'],
+});
+
 // ── Adoption Listing ──
 
 export const adoptionListingImageSchema = z.object({
@@ -263,6 +279,38 @@ export const lostPetReportSchema = z.object({
 export const lostPetSightingSchema = z.object({
   location: z.string().trim().min(2, 'Lokacija je obavezna').max(200),
   description: z.string().trim().min(2, 'Opis je obavezan').max(1000),
+  photo_url: z.string().url('Neispravan URL slike').optional(),
+});
+
+export const lostPetSightingStatusSchema = z.enum(['new', 'helpful', 'false_lead', 'resolved'], {
+  message: 'Odaberite ispravan status dojave',
+});
+
+export const lostPetSightingStatusUpdateSchema = z.object({
+  status: lostPetSightingStatusSchema,
+});
+
+export const lostPetOwnerUpdateSchema = z.object({
+  text: z.string().trim().min(2, 'Ažuriranje mora imati barem 2 znaka').max(280, 'Ažuriranje može imati najviše 280 znakova'),
+  category: z.enum(['search', 'sighting', 'status', 'note']).optional().default('note'),
+});
+
+export const markLostPetFoundSchema = z.object({
+  found_method: z.enum(['sighting', 'returned_home', 'shelter', 'other'], {
+    message: 'Odaberite način pronalaska',
+  }),
+  reunion_message: z.string().trim().max(2000).optional().or(z.literal('')),
+});
+
+export const lostPetAlertSchema = z.object({
+  city: z.string().trim().min(1, 'Grad je obavezan').max(120),
+  species: z.enum(['pas', 'macka', 'ostalo', 'sve'], { message: 'Odaberite vrstu' }),
+  // Geo-fencing fields (optional - for radius-based alerts)
+  use_radius: z.boolean().optional(),
+  radius_km: z.number().min(1).max(100).optional().nullable(),
+  location_lat: z.number().min(-90).max(90).optional().nullable(),
+  location_lng: z.number().min(-180).max(180).optional().nullable(),
+  address: z.string().trim().max(500).optional().nullable(),
 });
 
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
@@ -277,3 +325,8 @@ export type MessageInput = z.infer<typeof messageSchema>;
 export type BlogCommentInput = z.infer<typeof blogCommentSchema>;
 export type LostPetReportInput = z.infer<typeof lostPetReportSchema>;
 export type LostPetSightingInput = z.infer<typeof lostPetSightingSchema>;
+export type LostPetSightingStatusInput = z.infer<typeof lostPetSightingStatusSchema>;
+export type LostPetSightingStatusUpdateInput = z.infer<typeof lostPetSightingStatusUpdateSchema>;
+export type LostPetOwnerUpdateInput = z.infer<typeof lostPetOwnerUpdateSchema>;
+export type MarkLostPetFoundInput = z.infer<typeof markLostPetFoundSchema>;
+export type LostPetAlertInput = z.infer<typeof lostPetAlertSchema>;

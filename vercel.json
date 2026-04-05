@@ -7,6 +7,10 @@
     {
       "path": "/api/admin/ops-audit?slack=true&alerts=true",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/lost-pets-expiry",
+      "schedule": "0 3 * * *"
     }
   ]
 }

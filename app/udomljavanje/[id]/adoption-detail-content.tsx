@@ -117,7 +117,7 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50/50 via-white to-pink-50/30 dark:from-purple-950/10 dark:via-background dark:to-pink-950/10">
+    <div className="min-h-screen bg-background">
       {/* Image gallery / hero */}
       {images.length > 0 ? (
         <div className="relative h-72 md:h-96 bg-gray-100">
@@ -205,9 +205,9 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
         </div>
       )}
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-6 md:px-10 lg:px-16 py-8">
         {/* Back link */}
-        <Link href="/udomljavanje" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+        <Link href="/udomljavanje" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-warm-orange transition-colors mb-6">
           <ArrowLeft className="h-4 w-4" />
           {isEn ? 'Back to all pets' : 'Natrag na sve ljubimce'}
         </Link>
@@ -232,8 +232,8 @@ export function AdoptionDetailContent({ listing, relatedListings = [] }: { listi
                   aria-label={isFavorite(listing.id) ? (isEn ? `Remove ${listing.name} from favorites` : `Ukloni ${listing.name} iz favorita`) : (isEn ? `Add ${listing.name} to favorites` : `Dodaj ${listing.name} u favorite`)}
                   className={`p-2.5 rounded-full transition-all duration-200 ${
                     isFavorite(listing.id)
-                      ? 'bg-red-500 text-white shadow-lg shadow-red-200/50'
-                      : 'bg-white text-gray-400 hover:text-red-500 hover:bg-white shadow-sm border border-gray-200'
+                      ? 'bg-warm-coral text-white shadow-lg shadow-warm-coral/30'
+                      : 'bg-white text-muted-foreground hover:text-warm-coral hover:bg-white shadow-sm border border-border'
                   }`}
                 >
                   <Heart className={`h-5 w-5 ${isFavorite(listing.id) ? 'fill-white' : ''}`} />

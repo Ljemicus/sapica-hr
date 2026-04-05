@@ -1,14 +1,86 @@
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { isSupabaseConfigured } from './helpers';
-import type { LostPet, LostPetSpecies, LostPetStatus } from '@/lib/types';
+import type { LostPet, LostPetFoundMethod, LostPetSighting, LostPetSightingStatus, LostPetSpecies, LostPetStatus, LostPetUpdate, LostPetUpdateCategory } from '@/lib/types';
+import { LOST_PET_LISTING_DURATION_DAYS, LOST_PET_EXPIRY_WARN_DAYS } from '@/lib/types';
 
-interface LostPetFilters {
+export interface LostPetFilters {
   city?: string;
   species?: LostPetSpecies;
   status?: LostPetStatus;
   limit?: number;
   fields?: 'full' | 'homepage-card';
   includeHidden?: boolean;
+  excludeExpired?: boolean;
+  // Lead/sighting filters
+  hasUnreviewedSightings?: boolean;
+  minSightingCount?: number;
+  maxSightingCount?: number;
+  // Sorting
+  sortBy?: 'created_at' | 'last_sighting_date' | 'sighting_count';
+  sortOrder?: 'asc' | 'desc';
+}
+
+const LOST_PET_UPDATE_LIMIT = 50;
+const LOST_PET_SIGHTING_LIMIT = 50;
+const LOST_PET_UPDATE_CATEGORIES: LostPetUpdateCategory[] = ['search', 'sighting', 'status', 'note'];
+const LOST_PET_SIGHTING_STATUSES: LostPetSightingStatus[] = ['new', 'helpful', 'false_lead', 'resolved'];
+
+function mapLostPetSightings(value: unknown): LostPetSighting[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((entry) => {
+      if (!entry || typeof entry !== 'object') return null;
+      const row = entry as Record<string, unknown>;
+      const date = typeof row.date === 'string' && row.date ? row.date : null;
+      const location = typeof row.location === 'string' ? row.location.trim() : '';
+      const description = typeof row.description === 'string' ? row.description.trim() : '';
+      if (!date || !location || !description) return null;
+
+      const status = typeof row.status === 'string' && LOST_PET_SIGHTING_STATUSES.includes(row.status as LostPetSightingStatus)
+        ? row.status as LostPetSightingStatus
+        : 'new';
+      const reviewed_at = typeof row.reviewed_at === 'string' && row.reviewed_at ? row.reviewed_at : undefined;
+      const photo_url = typeof row.photo_url === 'string' && row.photo_url ? row.photo_url : undefined;
+
+      return {
+        id: typeof row.id === 'string' && row.id ? row.id : crypto.randomUUID(),
+        date,
+        location,
+        description,
+        status,
+        ...(reviewed_at ? { reviewed_at } : {}),
+        ...(photo_url ? { photo_url } : {}),
+      } satisfies LostPetSighting;
+    })
+    .filter((entry): entry is LostPetSighting => Boolean(entry))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+function mapLostPetUpdates(value: unknown): LostPetUpdate[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((entry) => {
+      if (!entry || typeof entry !== 'object') return null;
+      const row = entry as Record<string, unknown>;
+      const date = typeof row.date === 'string' && row.date ? row.date : null;
+      const text = typeof row.text === 'string' ? row.text.trim() : '';
+      if (!date || !text) return null;
+      const category = typeof row.category === 'string' && LOST_PET_UPDATE_CATEGORIES.includes(row.category as LostPetUpdateCategory)
+        ? row.category as LostPetUpdateCategory
+        : undefined;
+
+      return {
+        id: typeof row.id === 'string' && row.id ? row.id : crypto.randomUUID(),
+        date,
+        text,
+        ...(category ? { category } : {}),
+      } satisfies LostPetUpdate;
+    })
+    .filter((entry): entry is LostPetUpdate => Boolean(entry))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 function mapDbToLostPet(row: Record<string, unknown>): LostPet {
@@ -37,11 +109,30 @@ function mapDbToLostPet(row: Record<string, unknown>): LostPet {
     contact_phone: (row.contact_phone as string) || '',
     contact_email: (row.contact_email as string) || '',
     share_count: (row.share_count as number) || 0,
-    updates: (row.updates as LostPet['updates']) || [],
-    sightings: (row.sightings as LostPet['sightings']) || [],
+    found_at: (row.found_at as string) || null,
+    found_method: (row.found_method as LostPetFoundMethod) || null,
+    reunion_message: (row.reunion_message as string) || null,
+    expires_at: (row.expires_at as string) || null,
+    reminder_sent_at: (row.reminder_sent_at as string) || null,
+    alerts_dispatched_at: (row.alerts_dispatched_at as string) || null,
+    updates: mapLostPetUpdates(row.updates),
+    sightings: mapLostPetSightings(row.sightings),
     created_at: row.created_at as string,
   };
 }
+
+/** Helper to get the last sighting date from a lost pet */
+function getLastSightingDate(pet: LostPet): string | null {
+  if (!pet.sightings || pet.sightings.length === 0) return null;
+  return pet.sightings[0].date; // Already sorted by date desc
+}
+
+/** Helper to count unreviewed sightings (status === 'new') */
+function getUnreviewedSightingCount(pet: LostPet): number {
+  if (!pet.sightings) return 0;
+  return pet.sightings.filter(s => s.status === 'new').length;
+}
+
 
 export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> {
   if (!isSupabaseConfigured()) return [];
@@ -50,18 +141,68 @@ export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> 
     const supabase = await createClient();
     let query = supabase
       .from('lost_pets')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('*');
 
     if (!filters?.includeHidden) query = query.eq('hidden', false);
     if (filters?.city) query = query.eq('city', filters.city);
     if (filters?.species) query = query.eq('species', filters.species);
     if (filters?.status) query = query.eq('status', filters.status);
-    if (filters?.limit) query = query.limit(filters.limit);
+    if (filters?.excludeExpired) query = query.neq('status', 'expired');
 
     const { data, error } = await query;
     if (error || !data) return [];
-    return data.map((row) => mapDbToLostPet(row as unknown as Record<string, unknown>));
+    
+    let pets = data.map((row) => mapDbToLostPet(row as unknown as Record<string, unknown>));
+
+    // Apply lead/sighting filters (post-query filtering since sightings are JSONB)
+    if (filters?.hasUnreviewedSightings !== undefined) {
+      pets = pets.filter(pet => {
+        const hasUnreviewed = getUnreviewedSightingCount(pet) > 0;
+        return filters.hasUnreviewedSightings ? hasUnreviewed : !hasUnreviewed;
+      });
+    }
+
+    if (filters?.minSightingCount !== undefined) {
+      pets = pets.filter(pet => (pet.sightings?.length || 0) >= filters.minSightingCount!);
+    }
+
+    if (filters?.maxSightingCount !== undefined) {
+      pets = pets.filter(pet => (pet.sightings?.length || 0) <= filters.maxSightingCount!);
+    }
+
+    // Apply sorting
+    const sortBy = filters?.sortBy || 'created_at';
+    const sortOrder = filters?.sortOrder || 'desc';
+    const sortMultiplier = sortOrder === 'asc' ? 1 : -1;
+
+    pets.sort((a, b) => {
+      switch (sortBy) {
+        case 'sighting_count': {
+          const countA = a.sightings?.length || 0;
+          const countB = b.sightings?.length || 0;
+          return (countA - countB) * sortMultiplier;
+        }
+        case 'last_sighting_date': {
+          const dateA = getLastSightingDate(a);
+          const dateB = getLastSightingDate(b);
+          if (!dateA && !dateB) return 0;
+          if (!dateA) return 1 * sortMultiplier;
+          if (!dateB) return -1 * sortMultiplier;
+          return (new Date(dateA).getTime() - new Date(dateB).getTime()) * sortMultiplier;
+        }
+        case 'created_at':
+        default: {
+          return (new Date(a.created_at).getTime() - new Date(b.created_at).getTime()) * sortMultiplier;
+        }
+      }
+    });
+
+    // Apply limit after sorting
+    if (filters?.limit) {
+      pets = pets.slice(0, filters.limit);
+    }
+
+    return pets;
   } catch {
     return [];
   }
@@ -104,6 +245,36 @@ export async function updateLostPetStatus(id: string, status: LostPetStatus): Pr
   }
 }
 
+
+
+export async function markLostPetFound(
+  id: string,
+  details: { found_method: LostPetFoundMethod; reunion_message?: string },
+): Promise<LostPet | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .update({
+        status: 'found' as LostPetStatus,
+        found_at: new Date().toISOString(),
+        found_method: details.found_method,
+        reunion_message: details.reunion_message || null,
+      })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error || !data) return null;
+    return mapDbToLostPet(data as unknown as Record<string, unknown>);
+  } catch {
+    return null;
+  }
+}
+
 export async function updateLostPetHidden(id: string, hidden: boolean): Promise<LostPet | null> {
   if (!isSupabaseConfigured()) return null;
 
@@ -112,6 +283,108 @@ export async function updateLostPetHidden(id: string, hidden: boolean): Promise<
     const { data, error } = await supabase
       .from('lost_pets')
       .update({ hidden })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error || !data) return null;
+    return mapDbToLostPet(data as unknown as Record<string, unknown>);
+  } catch {
+    return null;
+  }
+}
+
+export async function renewLostPet(id: string): Promise<LostPet | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+    const newExpiry = new Date(Date.now() + LOST_PET_LISTING_DURATION_DAYS * 86_400_000).toISOString();
+
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .update({ expires_at: newExpiry, status: 'lost' as LostPetStatus })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error || !data) return null;
+    return mapDbToLostPet(data as unknown as Record<string, unknown>);
+  } catch {
+    return null;
+  }
+}
+
+export async function addLostPetOwnerUpdate(
+  id: string,
+  input: { text: string; category?: LostPetUpdateCategory },
+): Promise<LostPet | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+    const { data: pet, error: fetchError } = await supabase
+      .from('lost_pets')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchError || !pet) return null;
+
+    const currentUpdates = mapLostPetUpdates(pet.updates);
+    const nextUpdate: LostPetUpdate = {
+      id: crypto.randomUUID(),
+      date: new Date().toISOString(),
+      text: input.text.trim(),
+      ...(input.category ? { category: input.category } : {}),
+    };
+
+    const nextUpdates = [nextUpdate, ...currentUpdates].slice(0, LOST_PET_UPDATE_LIMIT);
+
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .update({ updates: nextUpdates })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error || !data) return null;
+    return mapDbToLostPet(data as unknown as Record<string, unknown>);
+  } catch {
+    return null;
+  }
+}
+
+
+export async function updateLostPetSightingStatus(
+  id: string,
+  sightingId: string,
+  status: LostPetSightingStatus,
+): Promise<LostPet | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+    const { data: pet, error: fetchError } = await supabase
+      .from('lost_pets')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchError || !pet) return null;
+
+    const currentSightings = mapLostPetSightings(pet.sightings);
+    const sightingExists = currentSightings.some((sighting) => sighting.id === sightingId);
+    if (!sightingExists) return null;
+
+    const reviewedAt = new Date().toISOString();
+    const nextSightings = currentSightings
+      .map((sighting) => sighting.id === sightingId ? { ...sighting, status, reviewed_at: reviewedAt } : sighting)
+      .slice(0, LOST_PET_SIGHTING_LIMIT);
+
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .update({ sightings: nextSightings })
       .eq('id', id)
       .select('*')
       .single();
@@ -136,5 +409,194 @@ export async function deleteLostPet(id: string): Promise<boolean> {
     return !error;
   } catch {
     return false;
+  }
+}
+
+// ── Expiry lifecycle helpers (cron-friendly) ──
+
+export interface ExpiryProcessResult {
+  expired: number;
+  reminded: number;
+  errors: string[];
+}
+
+/**
+ * Process listing expiry in a single pass:
+ * 1. Expire listings past their expires_at date.
+ * 2. Send reminder marker for listings expiring within LOST_PET_EXPIRY_WARN_DAYS
+ *    that haven't been reminded yet.
+ *
+ * Returns counts for observability / logging.
+ */
+export async function processLostPetExpiry(): Promise<ExpiryProcessResult> {
+  const result: ExpiryProcessResult = { expired: 0, reminded: 0, errors: [] };
+  if (!isSupabaseConfigured()) return result;
+
+  try {
+    const supabase = createAdminClient();
+    const now = new Date().toISOString();
+
+    // 1. Expire overdue listings
+    const { data: expiredRows, error: expireErr } = await supabase
+      .from('lost_pets')
+      .update({ status: 'expired' as LostPetStatus })
+      .eq('status', 'lost')
+      .not('expires_at', 'is', null)
+      .lte('expires_at', now)
+      .select('id');
+
+    if (expireErr) {
+      result.errors.push(`expire: ${expireErr.message}`);
+    } else {
+      result.expired = expiredRows?.length ?? 0;
+    }
+
+    // 2. Mark reminder_sent_at for listings expiring within warn window
+    const warnCutoff = new Date(Date.now() + LOST_PET_EXPIRY_WARN_DAYS * 86_400_000).toISOString();
+
+    const { data: remindedRows, error: remindErr } = await supabase
+      .from('lost_pets')
+      .update({ reminder_sent_at: now })
+      .eq('status', 'lost')
+      .is('reminder_sent_at', null)
+      .not('expires_at', 'is', null)
+      .lte('expires_at', warnCutoff)
+      .gt('expires_at', now)
+      .select('id');
+
+    if (remindErr) {
+      result.errors.push(`remind: ${remindErr.message}`);
+    } else {
+      result.reminded = remindedRows?.length ?? 0;
+    }
+
+    return result;
+  } catch (err) {
+    result.errors.push(`unexpected: ${err instanceof Error ? err.message : String(err)}`);
+    return result;
+  }
+}
+
+/** Get listings whose reminder was just set (for notification dispatch). */
+export async function getNewlyRemindedListings(): Promise<LostPet[]> {
+  if (!isSupabaseConfigured()) return [];
+
+  try {
+    const supabase = createAdminClient();
+    const fiveMinAgo = new Date(Date.now() - 5 * 60_000).toISOString();
+
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .select('*')
+      .eq('status', 'lost')
+      .gte('reminder_sent_at', fiveMinAgo)
+      .order('expires_at', { ascending: true });
+
+    if (error || !data) return [];
+    return data.map((row) => mapDbToLostPet(row as unknown as Record<string, unknown>));
+  } catch {
+    return [];
+  }
+}
+
+
+/** Get lost pets for a specific user (owner-facing list) */
+export async function getLostPetsByUser(
+  userId: string,
+  filters?: Omit<LostPetFilters, 'city' | 'species'>
+): Promise<LostPet[]> {
+  if (!isSupabaseConfigured() || !userId) return [];
+
+  try {
+    const supabase = await createClient();
+    let query = supabase
+      .from('lost_pets')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (filters?.status) query = query.eq('status', filters.status);
+    if (filters?.excludeExpired) query = query.neq('status', 'expired');
+
+    const { data, error } = await query;
+    if (error || !data) return [];
+    
+    let pets = data.map((row) => mapDbToLostPet(row as unknown as Record<string, unknown>));
+
+    // Apply lead/sighting filters (post-query filtering since sightings are JSONB)
+    if (filters?.hasUnreviewedSightings !== undefined) {
+      pets = pets.filter(pet => {
+        const hasUnreviewed = getUnreviewedSightingCount(pet) > 0;
+        return filters.hasUnreviewedSightings ? hasUnreviewed : !hasUnreviewed;
+      });
+    }
+
+    if (filters?.minSightingCount !== undefined) {
+      pets = pets.filter(pet => (pet.sightings?.length || 0) >= filters.minSightingCount!);
+    }
+
+    if (filters?.maxSightingCount !== undefined) {
+      pets = pets.filter(pet => (pet.sightings?.length || 0) <= filters.maxSightingCount!);
+    }
+
+    // Apply sorting
+    const sortBy = filters?.sortBy || 'created_at';
+    const sortOrder = filters?.sortOrder || 'desc';
+    const sortMultiplier = sortOrder === 'asc' ? 1 : -1;
+
+    pets.sort((a, b) => {
+      switch (sortBy) {
+        case 'sighting_count': {
+          const countA = a.sightings?.length || 0;
+          const countB = b.sightings?.length || 0;
+          return (countA - countB) * sortMultiplier;
+        }
+        case 'last_sighting_date': {
+          const dateA = getLastSightingDate(a);
+          const dateB = getLastSightingDate(b);
+          if (!dateA && !dateB) return 0;
+          if (!dateA) return 1 * sortMultiplier;
+          if (!dateB) return -1 * sortMultiplier;
+          return (new Date(dateA).getTime() - new Date(dateB).getTime()) * sortMultiplier;
+        }
+        case 'created_at':
+        default: {
+          return (new Date(a.created_at).getTime() - new Date(b.created_at).getTime()) * sortMultiplier;
+        }
+      }
+    });
+
+    // Apply limit after sorting
+    if (filters?.limit) {
+      pets = pets.slice(0, filters.limit);
+    }
+
+    return pets;
+  } catch {
+    return [];
+  }
+}
+/** Extend a listing's expiry by the given number of days (admin use). */
+export async function extendLostPetExpiry(id: string, days: number): Promise<LostPet | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+    const pet = await getLostPet(id);
+    if (!pet) return null;
+
+    const baseDate = pet.expires_at ? new Date(pet.expires_at) : new Date();
+    const newExpiry = new Date(baseDate.getTime() + days * 86_400_000).toISOString();
+
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .update({ expires_at: newExpiry, reminder_sent_at: null })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error || !data) return null;
+    return mapDbToLostPet(data as unknown as Record<string, unknown>);
+  } catch {
+    return null;
   }
 }

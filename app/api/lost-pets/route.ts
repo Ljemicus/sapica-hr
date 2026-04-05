@@ -3,6 +3,7 @@ import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
 import { lostPetReportSchema } from '@/lib/validations';
+import { LOST_PET_LISTING_DURATION_DAYS } from '@/lib/types';
 
 export async function POST(request: Request) {
   const user = await getAuthUser();
@@ -31,6 +32,7 @@ export async function POST(request: Request) {
       contact_email: parsed.data.contact_email || null,
       gallery: parsed.data.gallery || [],
       status: 'lost' as const,
+      expires_at: new Date(Date.now() + LOST_PET_LISTING_DURATION_DAYS * 86_400_000).toISOString(),
     };
 
     const { data, error } = await supabase

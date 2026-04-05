@@ -10,6 +10,9 @@ import {
   Tag,
   AlertTriangle,
   Save,
+  MapPin,
+  Trash2,
+  Loader2,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
@@ -17,6 +20,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import type { LostPetAlertSubscription, LostPetAlertSpecies } from '@/lib/types';
+import { LOST_PET_ALERT_SPECIES_LABELS } from '@/lib/types';
+import { AlertSubscribeDialog } from '@/app/izgubljeni/alert-subscribe-dialog';
 
 export default function PostavkePage() {
   const [emailEnabled, setEmailEnabled] = useState(true);
@@ -29,6 +35,8 @@ export default function PostavkePage() {
   const [izgubljeni, setIzgubljeni] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [alertSubs, setAlertSubs] = useState<LostPetAlertSubscription[]>([]);
+  const [alertsLoading, setAlertsLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
@@ -50,6 +58,21 @@ export default function PostavkePage() {
       }
     };
     load();
+
+    const loadAlerts = async () => {
+      try {
+        const res = await fetch('/api/lost-pets/alerts', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          setAlertSubs(Array.isArray(data.alerts) ? data.alerts : []);
+        }
+      } catch {
+        // silently fail
+      } finally {
+        setAlertsLoading(false);
+      }
+    };
+    loadAlerts();
   }, []);
 
   async function handleSave() {
@@ -90,6 +113,12 @@ export default function PostavkePage() {
 
         {/* Header */}
         <div className="space-y-2">
+          {loading && (
+            <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs text-gray-500 shadow-sm border">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              Učitavanje postavki...
+            </div>
+          )}
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
               <Bell className="h-5 w-5" />
@@ -258,14 +287,80 @@ export default function PostavkePage() {
           </CardContent>
         </Card>
 
+        {/* Lost pet alert subscriptions */}
+        <Card className="border-0 shadow-sm rounded-2xl animate-fade-in-up">
+          <CardContent className="p-6 space-y-0">
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div>
+                <h2 className="text-lg font-semibold">Obavijesti o izgubljenim ljubimcima</h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Gradovi i vrste za koje primajte obavijesti o novim prijavama izgubljenih ljubimaca.
+                </p>
+              </div>
+              <AlertSubscribeDialog />
+            </div>
+            {alertsLoading ? (
+              <div className="flex justify-center py-6">
+                <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+              </div>
+            ) : alertSubs.length === 0 ? (
+              <div className="text-center py-6 text-sm text-gray-400">
+                Nemate aktivnih obavijesti.{' '}
+                <Link href="/izgubljeni" className="text-orange-500 hover:underline">
+                  Postavite prvu
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {alertSubs.map(sub => (
+                  <div
+                    key={sub.id}
+                    className="flex items-center justify-between rounded-lg border p-3 bg-gray-50"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <MapPin className="h-4 w-4 text-red-400 shrink-0" />
+                      <span className="text-sm font-medium truncate">{sub.city}</span>
+                      <Badge variant="secondary" className="text-xs shrink-0">
+                        {LOST_PET_ALERT_SPECIES_LABELS[sub.species as LostPetAlertSpecies] ?? sub.species}
+                      </Badge>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 text-gray-400 hover:text-red-500"
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(`/api/lost-pets/alerts?id=${sub.id}`, { method: 'DELETE' });
+                          if (!res.ok) throw new Error();
+                          setAlertSubs(prev => prev.filter(s => s.id !== sub.id));
+                          toast.success('Obavijest uklonjena.');
+                        } catch {
+                          toast.error('Brisanje nije uspjelo.');
+                        }
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Save button */}
         <div className="flex justify-end">
           <Button
             onClick={handleSave}
+            disabled={loading || saving}
             className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl px-6"
           >
-            <Save className="mr-2 h-4 w-4" />
-            Spremi promjene
+            {saving ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="mr-2 h-4 w-4" />
+            )}
+            {saving ? 'Spremanje...' : 'Spremi promjene'}
           </Button>
         </div>
       </div>

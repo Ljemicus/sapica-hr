@@ -8,9 +8,10 @@ interface SendEmailOptions {
   to: string;
   subject: string;
   html: string;
+  replyTo?: string;
 }
 
-export async function sendEmail({ to, subject, html }: SendEmailOptions) {
+export async function sendEmail({ to, subject, html, replyTo }: SendEmailOptions) {
   if (!RESEND_API_KEY) {
     const message = 'RESEND_API_KEY is not configured';
 
@@ -30,7 +31,7 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions) {
         'Authorization': `Bearer ${RESEND_API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ from: FROM_EMAIL, to, subject, html }),
+      body: JSON.stringify({ from: FROM_EMAIL, to, subject, html, ...(replyTo ? { reply_to: replyTo } : {}) }),
     });
 
     if (!res.ok) {

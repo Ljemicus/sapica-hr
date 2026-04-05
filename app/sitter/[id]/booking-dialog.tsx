@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ChevronRight, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -45,29 +45,29 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
     submitError: isEn ? 'We could not send your request. Please try again.' : 'Nismo uspjeli poslati upit. Pokušajte ponovno.',
     submitSuccess: isEn ? 'Your request has been sent. The sitter now needs to confirm it.' : 'Upit je poslan. Sitter ga sada treba potvrditi.',
     networkError: isEn ? 'Network error. Check your internet connection.' : 'Mrežna greška. Provjerite internetsku vezu.',
-    steps: isEn ? ['Selection', 'Details', 'Send'] : ['Odabir', 'Detalji', 'Slanje'],
-    title: isEn ? 'Send booking request' : 'Pošalji upit za rezervaciju',
+    steps: isEn ? ['Select', 'Details', 'Confirm'] : ['Odabir', 'Detalji', 'Potvrda'],
+    title: isEn ? 'Book this sitter' : 'Rezerviraj sittera',
     description: isEn
-      ? `You are sending a request to sitter ${profile.user?.name}. The booking is confirmed only after approval, and you can also finalize details in messages.`
-      : `Šaljete upit sitteru ${profile.user?.name}. Termin vrijedi tek nakon potvrde, a detalje možete dogovoriti i kroz poruke.`,
+      ? `Send a booking request to ${profile.user?.name}. The booking is confirmed only after approval.`
+      : `Pošaljite upit sitteru ${profile.user?.name}. Termin vrijedi tek nakon potvrde.`,
     pet: isEn ? 'Pet' : 'Ljubimac',
     choosePet: isEn ? 'Choose a pet' : 'Odaberi ljubimca',
     noPets: isEn ? 'You do not have any pets added yet. Add a pet in your profile first, then come back here.' : 'Nemate dodanih ljubimaca. Prvo dodajte ljubimca u svom profilu pa se vratite ovdje.',
     service: isEn ? 'Service' : 'Usluga',
     chooseService: isEn ? 'Choose a service' : 'Odaberi uslugu',
-    next: isEn ? 'Next' : 'Dalje',
+    next: isEn ? 'Continue' : 'Nastavi',
     startDate: isEn ? 'Start date' : 'Datum početka',
     endDate: isEn ? 'End date' : 'Datum završetka',
     note: isEn ? 'Note for the sitter (optional)' : 'Napomena za sittera (opcionalno)',
     notePlaceholder: isEn ? 'E.g. routine, medication, habits, special instructions...' : 'Npr. rutina, lijekovi, navike, posebne upute...',
     back: isEn ? 'Back' : 'Natrag',
-    estimatedTotal: isEn ? 'Estimated total price' : 'Procjena ukupne cijene',
-    finalConfirmation: isEn ? 'The sitter gives the final confirmation for the booking' : 'Konačnu potvrdu termina daje sitter',
-    whatNext: isEn ? 'What happens after you send it?' : 'Što slijedi nakon slanja?',
-    next1: isEn ? '1. The sitter receives your request.' : '1. Sitter prima vaš upit.',
-    next2: isEn ? '2. You confirm the details and timing together.' : '2. Potvrđujete detalje i termin.',
-    next3: isEn ? '3. The booking appears on your dashboard.' : '3. Rezervacija postaje vidljiva na vašem dashboardu.',
-    sending: isEn ? 'Sending request...' : 'Šaljem upit...',
+    estimatedTotal: isEn ? 'Estimated total' : 'Procjena ukupne cijene',
+    finalConfirmation: isEn ? 'The sitter gives the final confirmation' : 'Konačnu potvrdu daje sitter',
+    whatNext: isEn ? 'What happens next?' : 'Što slijedi?',
+    next1: isEn ? 'The sitter receives your request.' : 'Sitter prima vaš upit.',
+    next2: isEn ? 'You confirm the details together.' : 'Potvrđujete detalje zajedno.',
+    next3: isEn ? 'The booking appears on your dashboard.' : 'Rezervacija se pojavljuje na dashboardu.',
+    sending: isEn ? 'Sending...' : 'Šaljem...',
     submit: isEn ? 'Send request' : 'Pošalji upit',
   };
 
@@ -131,39 +131,47 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{copy.title}</DialogTitle>
-          <DialogDescription>{copy.description}</DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-md rounded-2xl p-0 overflow-hidden">
+        {/* Header with warm gradient */}
+        <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-white dark:from-orange-950/30 dark:via-amber-950/20 dark:to-card px-6 pt-6 pb-4">
+          <DialogHeader className="text-left">
+            <DialogTitle className="text-xl font-extrabold font-[var(--font-heading)]">{copy.title}</DialogTitle>
+            <DialogDescription className="text-sm mt-1">{copy.description}</DialogDescription>
+          </DialogHeader>
 
-        <div className="flex items-center justify-center gap-1 mb-2">
-          {steps.map((s, i) => (
-            <div key={s.num} className="flex items-center">
-              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                step >= s.num ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-400'
-              }`}>
-                {step > s.num ? (
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                ) : (
-                  <span className="w-4 h-4 rounded-full bg-current/10 flex items-center justify-center text-[10px]">{s.num}</span>
-                )}
-                {s.label}
+          {/* Step indicator */}
+          <div className="flex items-center justify-center gap-1 mt-4">
+            {steps.map((s, i) => (
+              <div key={s.num} className="flex items-center">
+                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 ${
+                  step >= s.num
+                    ? 'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500'
+                }`}>
+                  {step > s.num ? (
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                  ) : (
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                      step >= s.num ? 'bg-orange-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+                    }`}>{s.num}</span>
+                  )}
+                  {s.label}
+                </div>
+                {i < steps.length - 1 && <ChevronRight className="h-3 w-3 text-gray-300 dark:text-gray-600 mx-1" />}
               </div>
-              {i < steps.length - 1 && <ChevronRight className="h-3 w-3 text-gray-300 mx-1" />}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="px-6 pb-6 pt-4 space-y-4">
           <input type="hidden" {...register('sitter_id')} />
 
           {step === 1 && (
             <div className="space-y-4 animate-fade-in">
               <div className="space-y-2">
-                <Label>{copy.pet}</Label>
+                <Label className="text-sm font-semibold">{copy.pet}</Label>
                 <select
-                  className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-orange-300"
+                  className="premium-select"
                   {...register('pet_id')}
                 >
                   <option value="">{copy.choosePet}</option>
@@ -175,16 +183,16 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
                 </select>
                 {errors.pet_id && <p className="text-sm text-red-500">{translateFormError(errors.pet_id.message, language)}</p>}
                 {pets.length === 0 && (
-                  <p className="text-xs text-muted-foreground bg-amber-50 rounded-lg p-2">
+                  <p className="text-xs text-muted-foreground bg-amber-50 dark:bg-amber-950/20 rounded-xl p-3">
                     {copy.noPets}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label>{copy.service}</Label>
+                <Label className="text-sm font-semibold">{copy.service}</Label>
                 <select
-                  className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-orange-300"
+                  className="premium-select"
                   {...register('service_type')}
                 >
                   <option value="">{copy.chooseService}</option>
@@ -197,11 +205,15 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
                 {errors.service_type && <p className="text-sm text-red-500">{translateFormError(errors.service_type.message, language)}</p>}
               </div>
 
-              <Button type="button" className="w-full bg-orange-500 hover:bg-orange-600" onClick={async () => {
-                const valid = await trigger(['pet_id', 'service_type']);
-                if (valid) setStep(2);
-              }}>
-                {copy.next} <ChevronRight className="h-4 w-4 ml-1" />
+              <Button
+                type="button"
+                className="w-full bg-orange-500 hover:bg-orange-600 btn-hover rounded-full h-12 font-bold"
+                onClick={async () => {
+                  const valid = await trigger(['pet_id', 'service_type']);
+                  if (valid) setStep(2);
+                }}
+              >
+                {copy.next} <ArrowRight className="h-4 w-4 ml-1.5" />
               </Button>
             </div>
           )}
@@ -210,31 +222,35 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
             <div className="space-y-4 animate-fade-in">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label>{copy.startDate}</Label>
-                  <Input type="date" {...register('start_date')} min={new Date().toISOString().split('T')[0]} className="focus:border-orange-300" />
+                  <Label className="text-sm font-semibold">{copy.startDate}</Label>
+                  <Input type="date" {...register('start_date')} min={new Date().toISOString().split('T')[0]} className="rounded-xl h-11 focus:border-orange-300" />
                   {errors.start_date && <p className="text-sm text-red-500">{translateFormError(errors.start_date.message, language)}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label>{copy.endDate}</Label>
-                  <Input type="date" {...register('end_date')} min={startDate || new Date().toISOString().split('T')[0]} className="focus:border-orange-300" />
+                  <Label className="text-sm font-semibold">{copy.endDate}</Label>
+                  <Input type="date" {...register('end_date')} min={startDate || new Date().toISOString().split('T')[0]} className="rounded-xl h-11 focus:border-orange-300" />
                   {errors.end_date && <p className="text-sm text-red-500">{translateFormError(errors.end_date.message, language)}</p>}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>{copy.note}</Label>
-                <Textarea placeholder={copy.notePlaceholder} {...register('note')} className="focus:border-orange-300" />
+                <Label className="text-sm font-semibold">{copy.note}</Label>
+                <Textarea placeholder={copy.notePlaceholder} {...register('note')} className="rounded-xl focus:border-orange-300 min-h-[80px]" />
               </div>
 
-              <div className="flex gap-2">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(1)}>
+              <div className="flex gap-3">
+                <Button type="button" variant="outline" className="flex-1 rounded-full h-12 font-semibold" onClick={() => setStep(1)}>
                   {copy.back}
                 </Button>
-                <Button type="button" className="flex-1 bg-orange-500 hover:bg-orange-600" onClick={async () => {
-                  const valid = await trigger(['start_date', 'end_date']);
-                  if (valid) setStep(3);
-                }}>
-                  {copy.next} <ChevronRight className="h-4 w-4 ml-1" />
+                <Button
+                  type="button"
+                  className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover rounded-full h-12 font-bold"
+                  onClick={async () => {
+                    const valid = await trigger(['start_date', 'end_date']);
+                    if (valid) setStep(3);
+                  }}
+                >
+                  {copy.next} <ArrowRight className="h-4 w-4 ml-1.5" />
                 </Button>
               </div>
             </div>
@@ -243,29 +259,31 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
           {step === 3 && (
             <div className="space-y-4 animate-fade-in">
               {selectedService && startDate && endDate && (
-                <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-6 text-center border border-orange-100">
-                  <p className="text-sm text-muted-foreground mb-1">{copy.estimatedTotal}</p>
-                  <p className="text-4xl font-extrabold text-gradient">{calculatePrice()}&euro;</p>
-                  <div className="mt-3 text-xs text-muted-foreground space-y-1">
-                    <p>{serviceLabel(selectedService as ServiceType)}</p>
+                <div className="rounded-2xl border border-orange-100 dark:border-orange-900/30 bg-gradient-to-br from-orange-50 via-amber-50 to-white dark:from-orange-950/20 dark:via-amber-950/10 dark:to-card p-6 text-center">
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium mb-2">{copy.estimatedTotal}</p>
+                  <p className="text-5xl font-extrabold text-gradient font-[var(--font-heading)]">{calculatePrice()}&euro;</p>
+                  <div className="mt-4 space-y-1 text-xs text-muted-foreground">
+                    <p className="font-medium text-foreground">{serviceLabel(selectedService as ServiceType)}</p>
                     <p>{startDate} — {endDate}</p>
-                    <p>{copy.finalConfirmation}</p>
+                    <p className="opacity-70">{copy.finalConfirmation}</p>
                   </div>
                 </div>
               )}
 
-              <div className="rounded-xl border bg-muted/30 p-4 text-sm text-muted-foreground space-y-1">
-                <p className="font-medium text-foreground">{copy.whatNext}</p>
-                <p>{copy.next1}</p>
-                <p>{copy.next2}</p>
-                <p>{copy.next3}</p>
+              <div className="rounded-2xl bg-muted/40 dark:bg-muted/20 p-4 text-sm space-y-2">
+                <p className="font-bold text-foreground text-xs uppercase tracking-wider">{copy.whatNext}</p>
+                <div className="space-y-1.5 text-muted-foreground text-[13px]">
+                  <p className="flex items-start gap-2"><span className="inline-flex h-5 w-5 rounded-full bg-orange-100 dark:bg-orange-900/30 items-center justify-center text-orange-600 text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>{copy.next1}</p>
+                  <p className="flex items-start gap-2"><span className="inline-flex h-5 w-5 rounded-full bg-orange-100 dark:bg-orange-900/30 items-center justify-center text-orange-600 text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>{copy.next2}</p>
+                  <p className="flex items-start gap-2"><span className="inline-flex h-5 w-5 rounded-full bg-orange-100 dark:bg-orange-900/30 items-center justify-center text-orange-600 text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>{copy.next3}</p>
+                </div>
               </div>
 
-              <div className="flex gap-2">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(2)}>
+              <div className="flex gap-3">
+                <Button type="button" variant="outline" className="flex-1 rounded-full h-12 font-semibold" onClick={() => setStep(2)}>
                   {copy.back}
                 </Button>
-                <Button type="submit" className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover" disabled={loading}>
+                <Button type="submit" className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover rounded-full h-12 font-bold" disabled={loading}>
                   {loading ? copy.sending : copy.submit}
                 </Button>
               </div>
