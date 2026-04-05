@@ -1412,6 +1412,7 @@ export const mockLostPets: LostPet[] = [
     ],
     expires_at: null,
     reminder_sent_at: null,
+    alerts_dispatched_at: null,
     created_at: '2026-03-22T19:00:00Z',
   },
   {
@@ -1448,6 +1449,7 @@ export const mockLostPets: LostPet[] = [
     sightings: [],
     expires_at: null,
     reminder_sent_at: null,
+    alerts_dispatched_at: null,
     created_at: '2026-03-20T10:30:00Z',
   },
   {
@@ -1486,6 +1488,7 @@ export const mockLostPets: LostPet[] = [
     ],
     expires_at: null,
     reminder_sent_at: null,
+    alerts_dispatched_at: null,
     created_at: '2026-03-21T16:30:00Z',
   },
   {
@@ -1522,6 +1525,7 @@ export const mockLostPets: LostPet[] = [
     sightings: [],
     expires_at: null,
     reminder_sent_at: null,
+    alerts_dispatched_at: null,
     created_at: '2026-03-19T20:30:00Z',
   },
   {
@@ -1561,6 +1565,7 @@ export const mockLostPets: LostPet[] = [
     ],
     expires_at: null,
     reminder_sent_at: null,
+    alerts_dispatched_at: null,
     created_at: '2026-03-23T09:30:00Z',
   },
   {
@@ -1598,6 +1603,7 @@ export const mockLostPets: LostPet[] = [
     sightings: [],
     expires_at: null,
     reminder_sent_at: null,
+    alerts_dispatched_at: null,
     created_at: '2026-03-18T14:30:00Z',
   },
   {
@@ -1637,6 +1643,7 @@ export const mockLostPets: LostPet[] = [
     ],
     expires_at: null,
     reminder_sent_at: null,
+    alerts_dispatched_at: null,
     created_at: '2026-03-17T07:30:00Z',
   },
   {
@@ -1672,6 +1679,7 @@ export const mockLostPets: LostPet[] = [
     sightings: [],
     expires_at: null,
     reminder_sent_at: null,
+    alerts_dispatched_at: null,
     created_at: '2026-03-23T18:00:00Z',
   },
   {
@@ -1710,6 +1718,7 @@ export const mockLostPets: LostPet[] = [
     ],
     expires_at: null,
     reminder_sent_at: null,
+    alerts_dispatched_at: null,
     created_at: '2026-03-22T12:30:00Z',
   },
   {
@@ -1748,6 +1757,7 @@ export const mockLostPets: LostPet[] = [
     ],
     expires_at: null,
     reminder_sent_at: null,
+    alerts_dispatched_at: null,
     created_at: '2026-03-16T09:30:00Z',
   },
 ];

@@ -13,6 +13,7 @@ import type { LostPet } from '@/lib/types';
 import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS, CITIES, isLostPetExpired, isLostPetExpiringSoon, lostPetDaysUntilExpiry } from '@/lib/types';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ShareButtons } from './share-buttons';
+import { AlertSubscribeDialog } from './alert-subscribe-dialog';
 import { useLanguage } from '@/lib/i18n/context';
 
 const LostPetsMap = dynamic(() => import('@/components/shared/lost-pets-map'), { ssr: false });
@@ -157,6 +158,9 @@ export function LostPetsContent() {
           <span className="text-sm text-muted-foreground ml-2">
             {loading ? '...' : `${pets.length} ${isEn ? 'results' : 'rezultata'}`}
           </span>
+          <div className="ml-auto">
+            <AlertSubscribeDialog />
+          </div>
         </div>
       </section>
 

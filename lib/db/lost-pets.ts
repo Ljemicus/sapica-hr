@@ -44,6 +44,7 @@ function mapDbToLostPet(row: Record<string, unknown>): LostPet {
     reunion_message: (row.reunion_message as string) || null,
     expires_at: (row.expires_at as string) || null,
     reminder_sent_at: (row.reminder_sent_at as string) || null,
+    alerts_dispatched_at: (row.alerts_dispatched_at as string) || null,
     updates: (row.updates as LostPet['updates']) || [],
     sightings: (row.sightings as LostPet['sightings']) || [],
     created_at: row.created_at as string,
