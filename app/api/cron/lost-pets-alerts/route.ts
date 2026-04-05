@@ -4,9 +4,10 @@ import type { AlertDispatchResult } from '@/lib/db/lost-pet-alerts';
 import { sendEmail } from '@/lib/email';
 import { lostPetAlertEmail } from '@/lib/email-templates';
 import { appLogger } from '@/lib/logger';
+import { requireAdminOrCron } from '@/lib/admin-guard';
 
 /**
- * POST /api/cron/lost-pets-alerts
+ * GET /api/cron/lost-pets-alerts
  *
  * Cron-friendly endpoint that dispatches community alert emails
  * for new lost-pet listings to matching subscribers.
@@ -15,13 +16,15 @@ import { appLogger } from '@/lib/logger';
  * 2. For each listing, finds matching subscribers (city + species).
  * 3. Sends one email per subscriber per listing.
  *
- * Protected by x-cron-secret header.
+ * Secured by CRON_SECRET bearer token (for Vercel Cron) or admin session.
  */
-export async function POST(request: Request) {
-  const secret = request.headers.get('x-cron-secret');
-  if (!secret || secret !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+export async function GET(request: Request) {
+  const guard = await requireAdminOrCron(request);
+  if (!guard.ok) return guard.response;
 
   const result: AlertDispatchResult = {
     listingsProcessed: 0,

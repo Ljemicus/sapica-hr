@@ -1,22 +1,23 @@
 import { NextResponse } from 'next/server';
 import { processLostPetExpiry } from '@/lib/db/lost-pets';
+import { requireAdminOrCron } from '@/lib/admin-guard';
 
 /**
- * POST /api/cron/lost-pets-expiry
+ * GET /api/cron/lost-pets-expiry
  *
  * Cron-friendly endpoint that:
  *  1. Transitions overdue "lost" listings → "expired".
  *  2. Marks reminder_sent_at on listings expiring within the warn window.
  *
- * Protected by a shared secret so only authorised schedulers can call it.
- * A downstream notification service can read newly-reminded listings
- * to dispatch emails/push notifications.
+ * Secured by CRON_SECRET bearer token (for Vercel Cron) or admin session.
  */
-export async function POST(request: Request) {
-  const secret = request.headers.get('x-cron-secret');
-  if (!secret || secret !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+export async function GET(request: Request) {
+  const guard = await requireAdminOrCron(request);
+  if (!guard.ok) return guard.response;
 
   const result = await processLostPetExpiry();
 
