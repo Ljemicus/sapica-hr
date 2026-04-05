@@ -602,6 +602,130 @@ textarea:focus {
   background: linear-gradient(180deg, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.5) 100%);
 }
 
+/* ── Provider Detail — Premium Redesign ── */
+
+/* Detail page hero — warm editorial gradient */
+.detail-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.96 0.02 65) 0%, oklch(0.94 0.03 60) 50%, oklch(0.97 0.015 85) 100%);
+}
+
+.dark .detail-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.17 0.02 55) 0%, oklch(0.15 0.025 50) 50%, oklch(0.14 0.01 50) 100%);
+}
+
+/* Detail sidebar — elevated glass panel */
+.detail-sidebar-panel {
+  @apply rounded-2xl border border-border/30;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.dark .detail-sidebar-panel {
+  background: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Detail section card — refined surface */
+.detail-section-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.3s ease;
+}
+
+.detail-section-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* ── Forum Community — Premium Redesign ── */
+
+/* Forum hero gradient — warm editorial */
+.forum-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.97 0.02 65) 0%, oklch(0.95 0.03 55) 50%, oklch(0.98 0.01 85) 100%);
+}
+
+.dark .forum-hero-gradient {
+  background: linear-gradient(180deg, oklch(0.16 0.02 55) 0%, oklch(0.14 0.025 50) 50%, oklch(0.13 0.01 50) 100%);
+}
+
+/* Forum topic card — editorial hover */
+.forum-topic-card {
+  @apply rounded-2xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.forum-topic-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.07), 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Forum sidebar — glass panel */
+.forum-sidebar-panel {
+  @apply rounded-2xl border border-border/30;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.dark .forum-sidebar-panel {
+  background: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Forum comment card — refined surface */
+.forum-comment-card {
+  @apply rounded-2xl border border-border/20 bg-white dark:bg-card;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.3s ease;
+}
+.forum-comment-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* Forum category pill — premium toggle */
+.forum-category-pill {
+  @apply px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.forum-category-pill:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+.forum-category-pill[data-active="true"] {
+  box-shadow: 0 4px 16px oklch(0.7 0.17 55 / 0.25);
+}
+
+/* Forum trending rank number */
+.forum-trending-rank {
+  @apply flex items-center justify-center h-8 w-8 rounded-full text-sm font-bold;
+  background: linear-gradient(135deg, oklch(0.96 0.02 55) 0%, oklch(0.94 0.04 65) 100%);
+  color: oklch(0.5 0.15 55);
+}
+
+.dark .forum-trending-rank {
+  background: linear-gradient(135deg, oklch(0.22 0.03 55) 0%, oklch(0.20 0.04 65) 100%);
+  color: oklch(0.75 0.15 55);
+}
+
+/* Forum detail — original post card */
+.forum-original-post {
+  @apply rounded-3xl border border-border/30 bg-white dark:bg-card;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+/* Forum search — premium input */
+.forum-search-input {
+  @apply h-12 w-full rounded-xl border border-border/60 bg-white dark:bg-card px-4 pl-11 text-sm transition-all;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.forum-search-input:focus {
+  border-color: oklch(0.7 0.17 55 / 0.5);
+  box-shadow: 0 0 0 3px oklch(0.7 0.17 55 / 0.1), 0 1px 2px rgba(0, 0, 0, 0.04);
+  outline: none;
+}
+
 /* ── Mobile touch-target enforcement ── */
 /* Ensure interactive elements meet 44×44px minimum on touch devices */
 @media (pointer: coarse) {

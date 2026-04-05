@@ -50,15 +50,18 @@ export function CommentForm({ topicId, onSuccess }: CommentFormProps) {
 
   return (
     <>
-      <h3 className="font-semibold text-sm mb-3">Dodaj komentar</h3>
+      <p className="text-xs font-semibold uppercase tracking-[0.15em] text-warm-orange mb-3 flex items-center gap-1.5">
+        <Send className="h-3 w-3" />
+        Dodaj komentar
+      </p>
       <Textarea
         placeholder="Napišite svoj komentar..."
-        className="min-h-[80px] mb-3 rounded-xl"
+        className="min-h-[100px] mb-4 rounded-xl border-border/40 focus-visible:ring-orange-500"
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
       <div className="flex justify-end">
-        <Button className="bg-orange-500 hover:bg-orange-600 rounded-xl" onClick={handleSubmit} disabled={submitting}>
+        <Button className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 rounded-xl h-11 px-6 font-semibold btn-hover" onClick={handleSubmit} disabled={submitting}>
           <Send className="h-4 w-4 mr-2" />
           {submitting ? 'Objavljujem...' : 'Objavi'}
         </Button>
