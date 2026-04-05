@@ -515,7 +515,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
       )}
 
       <div className="container mx-auto px-6 md:px-10 lg:px-16 py-8 md:py-12">
-        <Link href="/izgubljeni" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-warm-coral transition-colors mb-8">
+        <Link href="/izgubljeni" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-warm-orange transition-colors mb-8">
           <ArrowLeft className="h-4 w-4" />
           {isEn ? 'Back to list' : 'Natrag na listu'}
         </Link>
