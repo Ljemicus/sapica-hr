@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
-import { getLostPet, updateLostPetStatus } from '@/lib/db';
+import { getLostPet, markLostPetFound } from '@/lib/db';
+import { markLostPetFoundSchema } from '@/lib/validations';
 
 /**
  * PATCH /api/lost-pets/[id]/status
- * Owner marks their listing as found.
+ * Owner marks their listing as found, with method and optional reunion message.
  */
 export async function PATCH(
   request: Request,
@@ -23,9 +24,9 @@ export async function PATCH(
     return apiError({ status: 400, code: 'INVALID_JSON', message: 'Invalid JSON body' });
   }
 
-  const { status } = (body || {}) as { status?: string };
-  if (status !== 'found') {
-    return apiError({ status: 400, code: 'INVALID_STATUS', message: 'Only "found" status is allowed' });
+  const parsed = markLostPetFoundSchema.safeParse(body);
+  if (!parsed.success) {
+    return apiError({ status: 400, code: 'VALIDATION_ERROR', message: parsed.error.issues[0]?.message || 'Invalid input' });
   }
 
   const pet = await getLostPet(id);
@@ -41,7 +42,10 @@ export async function PATCH(
     return apiError({ status: 400, code: 'ALREADY_FOUND', message: 'This listing is already marked as found' });
   }
 
-  const updated = await updateLostPetStatus(id, 'found');
+  const updated = await markLostPetFound(id, {
+    found_method: parsed.data.found_method,
+    reunion_message: parsed.data.reunion_message || undefined,
+  });
   if (!updated) {
     return apiError({ status: 500, code: 'UPDATE_FAILED', message: 'Failed to update status' });
   }

@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
-import type { LostPet, LostPetSpecies, LostPetStatus } from '@/lib/types';
+import type { LostPet, LostPetFoundMethod, LostPetSpecies, LostPetStatus } from '@/lib/types';
 
 interface LostPetFilters {
   city?: string;
@@ -37,6 +37,9 @@ function mapDbToLostPet(row: Record<string, unknown>): LostPet {
     contact_phone: (row.contact_phone as string) || '',
     contact_email: (row.contact_email as string) || '',
     share_count: (row.share_count as number) || 0,
+    found_at: (row.found_at as string) || null,
+    found_method: (row.found_method as LostPetFoundMethod) || null,
+    reunion_message: (row.reunion_message as string) || null,
     updates: (row.updates as LostPet['updates']) || [],
     sightings: (row.sightings as LostPet['sightings']) || [],
     created_at: row.created_at as string,
@@ -93,6 +96,34 @@ export async function updateLostPetStatus(id: string, status: LostPetStatus): Pr
     const { data, error } = await supabase
       .from('lost_pets')
       .update({ status })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error || !data) return null;
+    return mapDbToLostPet(data as unknown as Record<string, unknown>);
+  } catch {
+    return null;
+  }
+}
+
+export async function markLostPetFound(
+  id: string,
+  details: { found_method: LostPetFoundMethod; reunion_message?: string },
+): Promise<LostPet | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .update({
+        status: 'found' as LostPetStatus,
+        found_at: new Date().toISOString(),
+        found_method: details.found_method,
+        reunion_message: details.reunion_message || null,
+      })
       .eq('id', id)
       .select('*')
       .single();

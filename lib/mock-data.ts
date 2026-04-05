@@ -1399,6 +1399,9 @@ export const mockLostPets: LostPet[] = [
     contact_phone: '+385 91 234 5678',
     contact_email: 'marko.p@email.hr',
     share_count: 234,
+    found_at: null,
+    found_method: null,
+    reunion_message: null,
     updates: [
       { id: 'u1', date: '2026-03-22T19:00:00Z', text: 'Prijavljeno nestanak — zadnji put viđen kod jezera u Maksimiru' },
       { id: 'u2', date: '2026-03-23T08:15:00Z', text: 'Susjed javio da je čuo lajanje u smjeru Bukovačke ulice' },
@@ -1433,6 +1436,9 @@ export const mockLostPets: LostPet[] = [
     contact_phone: '+385 92 345 6789',
     contact_email: 'ana.klaric@email.hr',
     share_count: 187,
+    found_at: null,
+    found_method: null,
+    reunion_message: null,
     updates: [
       { id: 'u1', date: '2026-03-20T10:30:00Z', text: 'Mila pobjegla kroz prozor — tražimo u okolici Bačvica' },
       { id: 'u2', date: '2026-03-21T09:00:00Z', text: 'Postavljene zamke s hranom u dvorištu i oko zgrade' },
@@ -1464,6 +1470,9 @@ export const mockLostPets: LostPet[] = [
     contact_phone: '+385 95 567 8901',
     contact_email: 'ivan.b@email.hr',
     share_count: 156,
+    found_at: null,
+    found_method: null,
+    reunion_message: null,
     updates: [
       { id: 'u1', date: '2026-03-21T16:30:00Z', text: 'Buddy pobjegao na Trsatu — trčao prema Kozali' },
       { id: 'u2', date: '2026-03-22T11:00:00Z', text: 'Viđen u blizini tržnice na Brajdi' },
@@ -1497,6 +1506,9 @@ export const mockLostPets: LostPet[] = [
     contact_phone: '+385 99 678 9012',
     contact_email: 'martina.s@email.hr',
     share_count: 98,
+    found_at: null,
+    found_method: null,
+    reunion_message: null,
     updates: [
       { id: 'u1', date: '2026-03-19T20:30:00Z', text: 'Luna nestala iz dvorišta u Gornjem gradu' },
       { id: 'u2', date: '2026-03-20T18:00:00Z', text: 'Susjedi obavješteni, postavljeni letci u kvartu' },
@@ -1528,6 +1540,9 @@ export const mockLostPets: LostPet[] = [
     contact_phone: '+385 91 789 0123',
     contact_email: 'luka.v@email.hr',
     share_count: 312,
+    found_at: null,
+    found_method: null,
+    reunion_message: null,
     updates: [
       { id: 'u1', date: '2026-03-23T09:30:00Z', text: 'Čarli nestao s Jaruna — hitno ga tražimo!' },
       { id: 'u2', date: '2026-03-23T12:00:00Z', text: 'Viđen u blizini studentskog doma na Savi' },
@@ -1562,6 +1577,9 @@ export const mockLostPets: LostPet[] = [
     contact_phone: '+385 98 890 1234',
     contact_email: 'petra.m@email.hr',
     share_count: 445,
+    found_at: '2026-03-19T11:00:00Z',
+    found_method: 'other',
+    reunion_message: 'Kiki je bila zaključana u podrumu susjedne zgrade! Hvala svima koji su podijelili i pomogli u potrazi!',
     updates: [
       { id: 'u1', date: '2026-03-18T14:30:00Z', text: 'Kiki nestala iz stana na Verudi' },
       { id: 'u2', date: '2026-03-19T10:00:00Z', text: 'Čuli mijaukanje u podrumu' },
@@ -1594,6 +1612,9 @@ export const mockLostPets: LostPet[] = [
     contact_phone: '+385 91 901 2345',
     contact_email: 'dario.k@email.hr',
     share_count: 567,
+    found_at: '2026-03-18T18:00:00Z',
+    found_method: 'sighting',
+    reunion_message: 'Thor je pronađen na plaži u Ninu zahvaljujući susjedima koji su ga prepoznali! Sada je sigurno kod kuće.',
     updates: [
       { id: 'u1', date: '2026-03-17T07:30:00Z', text: 'Thor pobjegao nakon vatrometa u Boriku' },
       { id: 'u2', date: '2026-03-18T16:00:00Z', text: 'Viđen na plaži u Ninu' },
@@ -1628,6 +1649,9 @@ export const mockLostPets: LostPet[] = [
     contact_phone: '+385 92 012 3456',
     contact_email: 'maja.p@email.hr',
     share_count: 89,
+    found_at: null,
+    found_method: null,
+    reunion_message: null,
     updates: [
       { id: 'u1', date: '2026-03-23T18:00:00Z', text: 'Bella nestala iz dvorišta na Spinutu — vrata bila otvorena' },
     ],
@@ -1658,6 +1682,9 @@ export const mockLostPets: LostPet[] = [
     contact_phone: '+385 95 123 4567',
     contact_email: 'tomo.g@email.hr',
     share_count: 143,
+    found_at: null,
+    found_method: null,
+    reunion_message: null,
     updates: [
       { id: 'u1', date: '2026-03-22T12:30:00Z', text: 'Medo nestao s Krnjeva — tražimo ga!' },
       { id: 'u2', date: '2026-03-22T18:00:00Z', text: 'Viđen u Krnjevo 14:30 — trčao prema Vežici' },
@@ -1691,6 +1718,9 @@ export const mockLostPets: LostPet[] = [
     contact_phone: '+385 98 234 5678',
     contact_email: 'sara.d@email.hr',
     share_count: 289,
+    found_at: null,
+    found_method: null,
+    reunion_message: null,
     updates: [
       { id: 'u1', date: '2026-03-16T09:30:00Z', text: 'Nala nestala s Trešnjevke — velika Maine Coon mačka' },
       { id: 'u2', date: '2026-03-17T14:00:00Z', text: 'Čuli mijaukanje noćas ali nismo je pronašli' },

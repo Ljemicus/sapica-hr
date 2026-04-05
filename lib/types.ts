@@ -590,6 +590,7 @@ export const FORUM_CATEGORY_LABELS: Record<ForumCategorySlug, string> = {
 
 export type LostPetStatus = 'lost' | 'found';
 export type LostPetSpecies = 'pas' | 'macka' | 'ostalo';
+export type LostPetFoundMethod = 'sighting' | 'returned_home' | 'shelter' | 'other';
 
 export const LOST_PET_STATUS_LABELS: Record<LostPetStatus, string> = {
   'lost': 'Još se traži',
@@ -600,6 +601,13 @@ export const LOST_PET_SPECIES_LABELS: Record<LostPetSpecies, string> = {
   'pas': 'Pas',
   'macka': 'Mačka',
   'ostalo': 'Ostalo',
+};
+
+export const LOST_PET_FOUND_METHOD_LABELS: Record<LostPetFoundMethod, string> = {
+  sighting: 'Viđenje iz zajednice',
+  returned_home: 'Vratio se kući sam',
+  shelter: 'Pronađen u skloništu',
+  other: 'Drugo',
 };
 
 export interface LostPetSighting {
@@ -641,6 +649,9 @@ export interface LostPet {
   contact_phone: string;
   contact_email: string;
   share_count: number;
+  found_at: string | null;
+  found_method: LostPetFoundMethod | null;
+  reunion_message: string | null;
   updates: LostPetUpdate[];
   sightings: LostPetSighting[];
   created_at: string;
