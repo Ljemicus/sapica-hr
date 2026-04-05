@@ -1,23 +1,6 @@
 -- Radius-based geo-fencing alerts for lost pets
 -- Extends city/species matching with radius-based matching using haversine distance
-
--- ── Add geolocation columns to alert subscriptions ──
-
-ALTER TABLE public.lost_pet_alerts
-  ADD COLUMN IF NOT EXISTS location_lat DECIMAL,
-  ADD COLUMN IF NOT EXISTS location_lng DECIMAL,
-  ADD COLUMN IF NOT EXISTS radius_km INTEGER CHECK (radius_km > 0 AND radius_km <= 500),
-  ADD COLUMN IF NOT EXISTS use_radius BOOLEAN NOT NULL DEFAULT FALSE;
-
--- ── Index for efficient geo queries ──
-
-CREATE INDEX IF NOT EXISTS idx_lost_pet_alerts_geo 
-  ON public.lost_pet_alerts (location_lat, location_lng) 
-  WHERE use_radius = TRUE AND active = TRUE;
-
-CREATE INDEX IF NOT EXISTS idx_lost_pet_alerts_radius_active 
-  ON public.lost_pet_alerts (use_radius, active) 
-  WHERE use_radius = TRUE AND active = TRUE;
+-- Note: radius_km, location_lat, location_lng columns added in 20260406000000_lost_pet_alerts_geo_fencing.sql
 
 -- ── Haversine distance function for PostgreSQL ──
 -- Returns distance in kilometers between two lat/lng points
@@ -84,7 +67,6 @@ BEGIN
   FROM public.lost_pet_alerts a
   JOIN public.users u ON u.id = a.user_id
   WHERE a.active = TRUE
-    AND a.use_radius = TRUE
     AND a.location_lat IS NOT NULL
     AND a.location_lng IS NOT NULL
     AND a.radius_km IS NOT NULL

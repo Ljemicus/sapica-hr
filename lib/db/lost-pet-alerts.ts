@@ -11,7 +11,6 @@ function mapDbToAlert(row: Record<string, unknown>): LostPetAlert {
     species: row.species as LostPetAlertSpecies,
     active: (row.active as boolean) ?? true,
     created_at: row.created_at as string,
-    use_radius: (row.use_radius as boolean) ?? false,
     radius_km: (row.radius_km as number | null) ?? null,
     location_lat: (row.location_lat as number | null) ?? null,
     location_lng: (row.location_lng as number | null) ?? null,
@@ -42,7 +41,6 @@ export async function getUserAlerts(userId: string): Promise<LostPetAlert[]> {
 export interface UpsertAlertInput {
   city: string;
   species: LostPetAlertSpecies;
-  use_radius?: boolean;
   radius_km?: number | null;
   location_lat?: number | null;
   location_lng?: number | null;
@@ -65,7 +63,6 @@ export async function upsertAlert(
           city: input.city,
           species: input.species,
           active: true,
-          use_radius: input.use_radius ?? false,
           radius_km: input.radius_km ?? null,
           location_lat: input.location_lat ?? null,
           location_lng: input.location_lng ?? null,
@@ -106,71 +103,137 @@ interface AlertSubscriber {
   email: string;
   name: string;
   user_id: string;
+  distance_km?: number;
 }
 
 /**
  * Find all active subscribers whose alert preferences match a given listing.
- * Matches on city (exact) and species ('sve' matches any).
+ * Matches on:
+ * - City (exact) + species for non-radius alerts (radius_km IS NULL)
+ * - Haversine distance within subscriber's radius + species for geo alerts
  * Excludes the listing owner so they don't alert themselves.
  */
 export async function getSubscribersForListing(
   city: string,
   species: LostPetSpecies,
   ownerUserId: string | null,
+  listingLat?: number | null,
+  listingLng?: number | null,
 ): Promise<AlertSubscriber[]> {
   if (!isSupabaseConfigured()) return [];
 
   try {
     const supabase = createAdminClient();
+    const subscribers: AlertSubscriber[] = [];
+    const seenUserIds = new Set<string>();
 
-    // Find alert rows matching city + (species or 'sve'), active only
-    let query = supabase
+    // ── 1. Get city-based subscribers (non-radius alerts: radius_km IS NULL) ──
+    let cityQuery = supabase
       .from('lost_pet_alerts')
       .select('user_id')
       .eq('city', city)
       .eq('active', true)
+      .is('radius_km', null)
       .in('species', [species, 'sve']);
 
     if (ownerUserId) {
-      query = query.neq('user_id', ownerUserId);
+      cityQuery = cityQuery.neq('user_id', ownerUserId);
     }
 
-    const { data: alertRows, error: alertErr } = await query;
-    if (alertErr || !alertRows || alertRows.length === 0) return [];
+    const { data: cityAlertRows, error: cityAlertErr } = await cityQuery;
+    if (!cityAlertErr && cityAlertRows && cityAlertRows.length > 0) {
+      const cityUserIds: string[] = [];
+      for (const row of cityAlertRows) {
+        const uid = row.user_id as string;
+        if (!seenUserIds.has(uid)) {
+          seenUserIds.add(uid);
+          cityUserIds.push(uid);
+        }
+      }
 
-    // Deduplicate user IDs (user might have both specific + 'sve' for same city)
-    const userIds = [...new Set(alertRows.map((r) => r.user_id as string))];
+      if (cityUserIds.length > 0) {
+        const { data: users } = await supabase
+          .from('users')
+          .select('id, email, name')
+          .in('id', cityUserIds);
 
-    // Fetch user email + name, respecting notification preferences
-    const { data: users, error: userErr } = await supabase
-      .from('users')
-      .select('id, email, name')
-      .in('id', userIds);
+        if (users && users.length > 0) {
+          const { data: prefs } = await supabase
+            .from('notification_preferences')
+            .select('user_id, email_enabled, lost_pets_enabled')
+            .in('user_id', cityUserIds);
 
-    if (userErr || !users) return [];
+          const prefMap = new Map<string, { email_enabled?: boolean; lost_pets_enabled?: boolean }>();
+          for (const p of (prefs || [])) {
+            prefMap.set(p.user_id as string, p as { email_enabled?: boolean; lost_pets_enabled?: boolean });
+          }
 
-    // Check notification preferences (email_enabled + lost_pets_enabled)
-    const { data: prefs } = await supabase
-      .from('notification_preferences')
-      .select('user_id, email_enabled, lost_pets_enabled')
-      .in('user_id', userIds);
+          for (const u of users) {
+            const pref = prefMap.get(u.id as string);
+            if (!pref || (pref.email_enabled !== false && pref.lost_pets_enabled !== false)) {
+              subscribers.push({
+                email: u.email as string,
+                name: u.name as string,
+                user_id: u.id as string,
+              });
+            }
+          }
+        }
+      }
+    }
 
-    const prefMap = new Map(
-      (prefs || []).map((p) => [p.user_id as string, p]),
-    );
+    // ── 2. Get radius-based subscribers (if listing has coordinates) ──
+    if (listingLat != null && listingLng != null) {
+      const { data: radiusSubscribers, error: radiusErr } = await supabase.rpc(
+        'get_subscribers_within_radius',
+        {
+          p_lat: listingLat,
+          p_lng: listingLng,
+          p_species: species,
+          p_exclude_user_id: ownerUserId,
+        }
+      );
 
-    return users
-      .filter((u) => {
-        const pref = prefMap.get(u.id as string);
-        // Default to enabled if no preference row exists
-        if (!pref) return true;
-        return pref.email_enabled !== false && pref.lost_pets_enabled !== false;
-      })
-      .map((u) => ({
-        email: u.email as string,
-        name: u.name as string,
-        user_id: u.id as string,
-      }));
+      if (!radiusErr && radiusSubscribers && radiusSubscribers.length > 0) {
+        const radiusUserIds: string[] = [];
+        for (const r of radiusSubscribers) {
+          const uid = r.user_id as string;
+          if (!seenUserIds.has(uid)) {
+            seenUserIds.add(uid);
+            radiusUserIds.push(uid);
+          }
+        }
+
+        if (radiusUserIds.length > 0) {
+          const { data: prefs } = await supabase
+            .from('notification_preferences')
+            .select('user_id, email_enabled, lost_pets_enabled')
+            .in('user_id', radiusUserIds);
+
+          const prefMap = new Map<string, { email_enabled?: boolean; lost_pets_enabled?: boolean }>();
+          for (const p of (prefs || [])) {
+            prefMap.set(p.user_id as string, p as { email_enabled?: boolean; lost_pets_enabled?: boolean });
+          }
+
+          for (const r of radiusSubscribers) {
+            const uid = r.user_id as string;
+            if (!seenUserIds.has(uid)) continue; // Skip if already processed
+            
+            const pref = prefMap.get(uid);
+            if (!pref || (pref.email_enabled !== false && pref.lost_pets_enabled !== false)) {
+              subscribers.push({
+                email: r.email as string,
+                name: r.name as string,
+                user_id: uid,
+                distance_km: Math.round((r.distance_km as number) * 10) / 10,
+              });
+            }
+          }
+        }
+      }
+    }
+
+    return subscribers;
   } catch {
     return [];
   }
@@ -182,13 +245,23 @@ export interface AlertDispatchResult {
   errors: string[];
 }
 
+interface UndispatchedListing {
+  id: string;
+  name: string;
+  species: LostPetSpecies;
+  city: string;
+  neighborhood: string;
+  image_url: string;
+  user_id: string | null;
+  location_lat: number | null;
+  location_lng: number | null;
+}
+
 /**
  * Get listings that need alert dispatch (not yet dispatched).
  * Does NOT mark them — call {@link markListingDispatched} only after delivery succeeds.
  */
-export async function getUndispatchedListings(): Promise<
-  Array<{ id: string; name: string; species: LostPetSpecies; city: string; neighborhood: string; image_url: string; user_id: string | null }>
-> {
+export async function getUndispatchedListings(): Promise<UndispatchedListing[]> {
   if (!isSupabaseConfigured()) return [];
 
   try {
@@ -196,7 +269,7 @@ export async function getUndispatchedListings(): Promise<
 
     const { data, error } = await supabase
       .from('lost_pets')
-      .select('id, name, species, city, neighborhood, image_url, user_id')
+      .select('id, name, species, city, neighborhood, image_url, user_id, location_lat, location_lng')
       .eq('status', 'lost')
       .eq('hidden', false)
       .is('alerts_dispatched_at', null);
@@ -211,6 +284,8 @@ export async function getUndispatchedListings(): Promise<
       neighborhood: (row.neighborhood as string) || '',
       image_url: (row.image_url as string) || '',
       user_id: (row.user_id as string) || null,
+      location_lat: (row.location_lat as number) ?? null,
+      location_lng: (row.location_lng as number) ?? null,
     }));
   } catch {
     return [];
