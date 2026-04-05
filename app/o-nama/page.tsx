@@ -16,42 +16,39 @@ const VALUES = [
     icon: Shield,
     title: 'Povjerenje',
     description: 'Verificirani sitteri, recenzije, transparentnost. Znate s kim ostavljate ljubimca.',
-    color: 'text-blue-500',
-    bg: 'bg-blue-50 dark:bg-blue-950/20',
+    color: 'text-warm-orange',
+    bg: 'bg-warm-orange/5',
   },
   {
     icon: Users,
     title: 'Zajednica',
     description: 'Forum, blog, izgubljeni ljubimci, udomljavanje. Više od platforme — zajednica.',
-    color: 'text-teal-500',
-    bg: 'bg-teal-50 dark:bg-teal-950/20',
+    color: 'text-warm-teal',
+    bg: 'bg-warm-teal/5',
   },
   {
     icon: Heart,
     title: 'Jednostavnost',
     description: 'Nađi, rezerviraj, gotovo. Sve na jednom mjestu, bez komplikacija.',
-    color: 'text-rose-500',
-    bg: 'bg-rose-50 dark:bg-rose-950/20',
+    color: 'text-warm-coral',
+    bg: 'bg-warm-coral/5',
   },
 ];
 
 export default function AboutPage() {
   return (
     <div>
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-teal-50 dark:from-orange-950/20 dark:via-background dark:to-teal-950/20">
+      {/* Editorial Hero */}
+      <section className="relative organizations-hero-gradient overflow-hidden">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
-        <div className="container mx-auto px-4 py-16 md:py-24 relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <Badge className="mb-6 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 hover:bg-orange-100 border-0 text-sm px-5 py-2 rounded-full font-semibold animate-fade-in-up">
-              <PawPrint className="h-3.5 w-3.5 mr-1.5" />
-              O nama
-            </Badge>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-heading)]">
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-20 md:py-28 relative">
+          <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
+            <p className="section-kicker">O nama</p>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 font-[var(--font-heading)] leading-[1.05]">
               Nastali smo iz ljubavi.{' '}
               <span className="text-gradient">Doslovno.</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-4 animate-fade-in-up delay-200 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
               PetPark je nastao iz jednostavnog problema — kad trebaš nekome ostaviti
               ljubimca, a nemaš kome.
             </p>
@@ -75,16 +72,16 @@ export default function AboutPage() {
                 <strong className="text-foreground">ekosustav za ljude koji vole životinje</strong>.
               </p>
 
-              <Card className="border-0 shadow-md rounded-2xl bg-gradient-to-r from-orange-50 to-teal-50 dark:from-orange-950/20 dark:to-teal-950/20 my-10 animate-fade-in-up delay-200">
-                <CardContent className="p-8 text-center">
-                  <PawPrint className="h-10 w-10 text-orange-500 mx-auto mb-4" />
-                  <p className="text-xl md:text-2xl font-bold text-foreground leading-snug">
+              <div className="appeal-card my-10 animate-fade-in-up delay-200 overflow-hidden">
+                <div className="p-8 md:p-10 text-center bg-gradient-to-r from-warm-orange/5 to-warm-teal/5">
+                  <PawPrint className="h-10 w-10 text-warm-orange mx-auto mb-4" />
+                  <p className="text-xl md:text-2xl font-bold text-foreground leading-snug font-[var(--font-heading)]">
                     Svaki ljubimac zaslužuje brigu kad vlasnik ne može biti tu.
                     <br />
                     Svaki vlasnik zaslužuje mir da zna da je njegov ljubimac u dobrim rukama.
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               <p className="text-lg animate-fade-in-up delay-300">
                 U Hrvatskoj živi preko <strong className="text-foreground">800.000 pasa</strong> —
@@ -102,10 +99,10 @@ export default function AboutPage() {
       </section>
 
       {/* Origin */}
-      <section className="container mx-auto px-4 py-16 md:py-20">
+      <section className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-20">
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 text-sm text-muted-foreground mb-6 animate-fade-in-up">
-            <MapPin className="h-4 w-4 text-orange-500" />
+            <MapPin className="h-4 w-4 text-warm-orange" />
             Rijeka, Hrvatska
           </div>
           <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-6 font-[var(--font-heading)] animate-fade-in-up delay-100">
@@ -121,28 +118,30 @@ export default function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="container mx-auto px-4 py-16 md:py-20">
+      <section className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {VALUES.map((v, i) => (
-            <Card key={i} className={`border-0 shadow-sm rounded-2xl card-hover animate-fade-in-up delay-${(i + 1) * 100}`}>
-              <CardContent className="p-6 text-center">
-                <div className={`inline-flex p-3 rounded-xl ${v.bg} mb-4`}>
-                  <v.icon className={`h-6 w-6 ${v.color}`} />
-                </div>
-                <h3 className="text-lg font-bold mb-2">{v.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{v.description}</p>
-              </CardContent>
-            </Card>
+            <div 
+              key={i} 
+              className="community-section-card p-6 text-center animate-fade-in-up"
+              style={{ animationDelay: `${(i + 1) * 100}ms` }}
+            >
+              <div className={`inline-flex p-3 rounded-xl ${v.bg} mb-4`}>
+                <v.icon className={`h-6 w-6 ${v.color}`} />
+              </div>
+              <h3 className="text-lg font-bold mb-2 font-[var(--font-heading)]">{v.title}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">{v.description}</p>
+            </div>
           ))}
         </div>
       </section>
 
       {/* Final CTA */}
-      <section className="container mx-auto px-4 pb-20">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-orange-500 to-teal-500 p-10 md:p-16 text-center text-white shadow-xl">
+      <section className="container mx-auto px-6 md:px-10 lg:px-16 pb-20">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-warm-orange to-warm-teal p-10 md:p-16 text-center text-white shadow-xl">
           <div className="absolute inset-0 paw-pattern opacity-[0.06]" />
           <div className="relative">
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4 font-[var(--font-heading)]">
               PetPark nije samo app. 🐾
             </h2>
             <p className="text-white/85 text-lg mb-8 max-w-xl mx-auto">
@@ -150,7 +149,7 @@ export default function AboutPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/pretraga">
-                <Button size="lg" className="bg-white text-orange-600 hover:bg-white/90 shadow-xl shadow-black/10 rounded-xl font-bold text-lg px-8 h-14">
+                <Button size="lg" className="bg-white text-warm-orange hover:bg-white/90 shadow-xl shadow-black/10 rounded-xl font-bold text-lg px-8 h-14">
                   <Search className="mr-2 h-5 w-5" />
                   Pronađi sittera
                 </Button>
