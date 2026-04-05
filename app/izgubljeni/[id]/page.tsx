@@ -62,5 +62,10 @@ export default async function LostPetDetailPage({ params }: LostPetPageProps) {
     notFound();
   }
 
-  return <LostPetDetailContent pet={pet} />;
+  // Strip contact fields and legacy JSONB sightings from the client payload.
+  // Contact info is fetched on-demand via /api/lost-pets/[id]/contact.
+  // Sightings are fetched client-side from /api/lost-pets/[id]/sightings (normalized table).
+  const { contact_name: _cn, contact_phone: _cp, contact_email: _ce, sightings: _legacy, ...safePet } = pet;
+
+  return <LostPetDetailContent pet={safePet as typeof pet} />;
 }

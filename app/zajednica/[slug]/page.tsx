@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: article.title,
       description: article.excerpt,
       type: 'article',
-      url: `${BASE_URL}/zajednica/${slug}`,
+      url: `${BASE_URL}/blog/${slug}`,
       siteName: 'PetPark',
       locale: 'hr_HR',
       publishedTime: article.date,
@@ -62,7 +62,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: article.excerpt,
     },
     alternates: {
-      canonical: `${BASE_URL}/zajednica/${slug}`,
+      canonical: `${BASE_URL}/blog/${slug}`,
     },
   };
 }

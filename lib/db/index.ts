@@ -28,6 +28,7 @@ export {
 } from './blog-comments';
 export { getCategories, getTopics, getTopic, getPosts, getTrendingTopics } from './forum';
 export { getLostPets, getLostPet, updateLostPetStatus, updateLostPetHidden, deleteLostPet } from './lost-pets';
+export { getSightingsByPetId, insertSighting, type InsertSightingInput } from './lost-pet-sightings';
 export { getProducts, getProductBySlug, getProductReviews, getRelatedProducts } from './products';
 export {
   getPublisherProfile,

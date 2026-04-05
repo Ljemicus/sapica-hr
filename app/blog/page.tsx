@@ -17,12 +17,13 @@ export const metadata: Metadata = {
 };
 
 interface BlogPageProps {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; kategorija?: string }>;
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const params = await searchParams;
-  const articles = await getArticles(params.category as BlogCategory | undefined);
+  const activeCategory = (params.category ?? params.kategorija) as BlogCategory | undefined;
+  const articles = await getArticles(activeCategory);
 
-  return <BlogContent articles={articles} initialCategory={params.category} />;
+  return <BlogContent articles={articles} initialCategory={activeCategory} />;
 }

@@ -45,7 +45,7 @@ const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitema
   { route: '/kontakt', changeFrequency: 'monthly', priority: 0.6 },
   { route: '/njega', changeFrequency: 'weekly', priority: 0.8 },
   { route: '/dresura', changeFrequency: 'weekly', priority: 0.8 },
-  { route: '/zajednica', changeFrequency: 'weekly', priority: 0.7 },
+  { route: '/blog', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/forum', changeFrequency: 'daily', priority: 0.7 },
   { route: '/izgubljeni', changeFrequency: 'daily', priority: 0.8 },
   { route: '/privatnost', changeFrequency: 'yearly', priority: 0.2 },
@@ -59,7 +59,7 @@ const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitema
   { route: '/udomljavanje', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/dog-friendly', changeFrequency: 'weekly', priority: 0.6 },
   { route: '/uzgajivacnice', changeFrequency: 'monthly', priority: 0.4 },
-  // /blog and /grooming are 301-redirected to /zajednica and /njega — excluded from sitemap
+  // /zajednica and /grooming are legacy 301 aliases to /blog and /njega — excluded from sitemap
   { route: '/cuvanje-pasa-zagreb', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/cuvanje-pasa-split', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/cuvanje-pasa-rijeka', changeFrequency: 'weekly', priority: 0.7 },
@@ -122,7 +122,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
   const blogEntries: MetadataRoute.Sitemap = articles.map((a) => ({
-    url: `${BASE_URL}/zajednica/${a.slug}`,
+    url: `${BASE_URL}/blog/${a.slug}`,
     lastModified: toLastModified((a as { updated_at?: string; date?: string; created_at?: string }).updated_at ?? (a as { date?: string }).date ?? (a as { created_at?: string }).created_at),
     changeFrequency: 'monthly' as const,
     priority: 0.5,

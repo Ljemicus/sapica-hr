@@ -422,17 +422,39 @@
   opacity: 0;
 }
 
-/* Hero gradient animation — warm cream/peach */
+/* Hero gradient — premium, calm, expansive */
 .hero-gradient {
-  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 20%, #fff7ed 40%, #ffffff 60%, #f0fdfa 80%, #fffbeb 100%);
-  background-size: 400% 400%;
-  animation: gradient-shift 10s ease infinite;
+  background: linear-gradient(170deg, #fffdf8 0%, #fef9ef 25%, #ffffff 50%, #f8fffe 75%, #fffdf8 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 16s ease infinite;
 }
 
 .dark .hero-gradient {
-  background: linear-gradient(135deg, oklch(0.18 0.02 50) 0%, oklch(0.2 0.03 55) 30%, oklch(0.16 0.02 185) 70%, oklch(0.18 0.02 50) 100%);
-  background-size: 400% 400%;
-  animation: gradient-shift 10s ease infinite;
+  background: linear-gradient(170deg, oklch(0.16 0.015 50) 0%, oklch(0.18 0.02 55) 30%, oklch(0.15 0.015 185) 70%, oklch(0.16 0.015 50) 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 16s ease infinite;
+}
+
+/* Film grain texture — subtle photographic noise for premium feel */
+.film-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Luxury editorial separator — thin warm gradient line */
+.luxury-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, oklch(0.7 0.17 55 / 0.3) 20%, oklch(0.7 0.12 185 / 0.2) 80%, transparent 100%);
+}
+
+.dark .luxury-separator {
+  background: linear-gradient(90deg, transparent 0%, oklch(0.75 0.15 55 / 0.25) 20%, oklch(0.72 0.12 185 / 0.15) 80%, transparent 100%);
 }
 
 /* Focus states for inputs */

@@ -1,11 +1,26 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import { createClient } from '@/lib/supabase/server';
+import { rateLimit } from '@/lib/rate-limit';
+import { logAdminAction } from '@/lib/db/audit-logs';
 
-export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
+  // Rate limit contact reveals: 20 per IP per minute to curb scraping
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  if (!rateLimit(`contact-reveal:${ip}`, 20, 60_000)) {
+    return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše zahtjeva. Pokušajte ponovno za minutu.' });
+  }
+
   try {
     const { id } = await context.params;
     const supabase = await createClient();
+
+    // Require authentication — contact info is not anonymous-accessible
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return apiError({ status: 401, code: 'AUTH_REQUIRED', message: 'Morate biti prijavljeni za prikaz kontakt podataka.' });
+    }
+
     const { data, error } = await supabase
       .from('lost_pets')
       .select('contact_name, contact_phone, contact_email')
@@ -15,6 +30,15 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
     if (error || !data) {
       return apiError({ status: 404, code: 'LOST_PET_NOT_FOUND', message: 'Oglas nije pronađen.' });
     }
+
+    // Fire-and-forget: log the contact reveal for telemetry
+    logAdminAction({
+      actorUserId: user.id,
+      targetType: 'lost_pet',
+      targetId: id,
+      action: 'lost_pet_contact_revealed',
+      metadata: { ip },
+    }).catch(() => {});
 
     return NextResponse.json({
       contact_name: data.contact_name || '',

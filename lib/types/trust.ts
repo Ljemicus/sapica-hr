@@ -38,12 +38,48 @@ export type AuditAction =
   | 'lost_pet_unhidden'
   | 'lost_pet_deleted'
   | 'lost_pet_marked_found'
+  | 'lost_pet_contact_revealed'
+  | 'lost_pet_reported'
+  | 'lost_pet_report_resolved'
   | 'forum_topic_hidden'
   | 'forum_topic_unhidden'
   | 'forum_topic_deleted'
   | 'forum_comment_hidden'
   | 'forum_comment_unhidden'
   | 'forum_comment_deleted';
+
+// ── Lost Pet Report Types ──
+
+export type LostPetReportReason =
+  | 'spam'
+  | 'fake_listing'
+  | 'inappropriate_content'
+  | 'wrong_contact_info'
+  | 'duplicate'
+  | 'other';
+
+export type LostPetReportStatus = 'open' | 'reviewed' | 'dismissed';
+
+export interface LostPetReport {
+  id: string;
+  lost_pet_id: string;
+  reporter_user_id: string;
+  reason: LostPetReportReason;
+  details: string | null;
+  status: LostPetReportStatus;
+  resolved_by: string | null;
+  resolved_at: string | null;
+  created_at: string;
+}
+
+export const LOST_PET_REPORT_REASON_LABELS: Record<LostPetReportReason, string> = {
+  spam: 'Spam',
+  fake_listing: 'Lažni oglas',
+  inappropriate_content: 'Neprimjeren sadržaj',
+  wrong_contact_info: 'Pogrešni kontakt podaci',
+  duplicate: 'Duplikat',
+  other: 'Ostalo',
+};
 
 export interface ProviderVerification {
   id: string;
