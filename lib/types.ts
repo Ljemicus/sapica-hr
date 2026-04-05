@@ -593,6 +593,8 @@ export type LostPetSpecies = 'pas' | 'macka' | 'ostalo';
 export type LostPetAlertSpecies = LostPetSpecies | 'sve';
 export type LostPetFoundMethod = 'sighting' | 'returned_home' | 'shelter' | 'other';
 export type LostPetUpdateCategory = 'search' | 'sighting' | 'status' | 'note';
+export type LostPetLeadStatus = 'new' | 'helpful' | 'false_lead' | 'resolved';
+export type LostPetSightingStatus = 'new' | 'helpful' | 'false_lead' | 'resolved';
 
 export const LOST_PET_STATUS_LABELS: Record<LostPetStatus, string> = {
   'lost': 'Još se traži',
@@ -632,6 +634,8 @@ export interface LostPetSighting {
   date: string;
   location: string;
   description: string;
+  status: LostPetSightingStatus;
+  reviewed_at?: string;
   photo_url?: string;
 }
 

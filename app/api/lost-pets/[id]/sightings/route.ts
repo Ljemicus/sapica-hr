@@ -73,6 +73,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       date: new Date().toISOString(),
       location: parsed.data.location,
       description: parsed.data.description,
+      status: 'new' as const,
       ...(parsed.data.photo_url && { photo_url: parsed.data.photo_url }),
     };
 
@@ -145,3 +146,4 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     return apiError({ status: 500, code: 'SIGHTING_CREATE_FAILED', message: 'Prijava viđenja nije spremljena.' });
   }
 }
+

@@ -1408,7 +1408,7 @@ export const mockLostPets: LostPet[] = [
       { id: 'u3', date: '2026-03-23T14:30:00Z', text: 'Još se traži — proširena potraga na Šalatu' },
     ],
     sightings: [
-      { id: 's1', date: '2026-03-23T07:45:00Z', location: 'Bukovačka ulica, Zagreb', description: 'Viđen pas sličnog opisa kako trči prema Šalati.' },
+      { id: 's1', date: '2026-03-23T07:45:00Z', location: 'Bukovačka ulica, Zagreb', description: 'Viđen pas sličnog opisa kako trči prema Šalati.', status: 'new' },
     ],
     expires_at: null,
     reminder_sent_at: null,
@@ -1484,7 +1484,7 @@ export const mockLostPets: LostPet[] = [
       { id: 'u2', date: '2026-03-22T11:00:00Z', text: 'Viđen u blizini tržnice na Brajdi' },
     ],
     sightings: [
-      { id: 's1', date: '2026-03-22T10:30:00Z', location: 'Tržnica Brajda, Rijeka', description: 'Zlatni labrador viđen kako njuška oko štandova.' },
+      { id: 's1', date: '2026-03-22T10:30:00Z', location: 'Tržnica Brajda, Rijeka', description: 'Zlatni labrador viđen kako njuška oko štandova.', status: 'new' },
     ],
     expires_at: null,
     reminder_sent_at: null,
@@ -1561,7 +1561,7 @@ export const mockLostPets: LostPet[] = [
       { id: 'u3', date: '2026-03-24T08:00:00Z', text: 'Potraga se nastavlja — molimo sve u okolici Jaruna da provjere dvorišta' },
     ],
     sightings: [
-      { id: 's1', date: '2026-03-23T11:45:00Z', location: 'Savska cesta kod studentskog doma', description: 'Mali sivo-bijeli buldog viđen kako sjedi ispred ulaza.' },
+      { id: 's1', date: '2026-03-23T11:45:00Z', location: 'Savska cesta kod studentskog doma', description: 'Mali sivo-bijeli buldog viđen kako sjedi ispred ulaza.', status: 'new' },
     ],
     expires_at: null,
     reminder_sent_at: null,
@@ -1639,7 +1639,7 @@ export const mockLostPets: LostPet[] = [
       { id: 'u3', date: '2026-03-18T18:00:00Z', text: '🟢 PRONAĐEN! Thor pronađen na plaži u Ninu, sada je sigurno kod kuće!' },
     ],
     sightings: [
-      { id: 's1', date: '2026-03-18T15:30:00Z', location: 'Plaža Nin, Zadar', description: 'Haski viđen kako trči po plaži.' },
+      { id: 's1', date: '2026-03-18T15:30:00Z', location: 'Plaža Nin, Zadar', description: 'Haski viđen kako trči po plaži.', status: 'new' },
     ],
     expires_at: null,
     reminder_sent_at: null,
@@ -1714,7 +1714,7 @@ export const mockLostPets: LostPet[] = [
       { id: 'u2', date: '2026-03-22T18:00:00Z', text: 'Viđen u Krnjevo 14:30 — trčao prema Vežici' },
     ],
     sightings: [
-      { id: 's1', date: '2026-03-22T14:30:00Z', location: 'Krnjevo, Rijeka', description: 'Smeđi mješanac viđen kako trči prema Vežici.' },
+      { id: 's1', date: '2026-03-22T14:30:00Z', location: 'Krnjevo, Rijeka', description: 'Smeđi mješanac viđen kako trči prema Vežici.', status: 'new' },
     ],
     expires_at: null,
     reminder_sent_at: null,
@@ -1753,7 +1753,7 @@ export const mockLostPets: LostPet[] = [
       { id: 'u2', date: '2026-03-17T14:00:00Z', text: 'Čuli mijaukanje noćas ali nismo je pronašli' },
     ],
     sightings: [
-      { id: 's1', date: '2026-03-17T13:45:00Z', location: 'Trešnjevka, kod parka', description: 'Velika prugasta mačka viđena kako se skriva ispod automobila.' },
+      { id: 's1', date: '2026-03-17T13:45:00Z', location: 'Trešnjevka, kod parka', description: 'Velika prugasta mačka viđena kako se skriva ispod automobila.', status: 'new' },
     ],
     expires_at: null,
     reminder_sent_at: null,

@@ -27,7 +27,7 @@ export {
   deleteArticleComment,
 } from './blog-comments';
 export { getCategories, getTopics, getTopic, getPosts, getTrendingTopics } from './forum';
-export { getLostPets, getLostPet, updateLostPetStatus, markLostPetFound, addLostPetOwnerUpdate, updateLostPetHidden, renewLostPet, deleteLostPet, extendLostPetExpiry, processLostPetExpiry, getNewlyRemindedListings } from './lost-pets';
+export { getLostPets, getLostPet, updateLostPetStatus, markLostPetFound, addLostPetOwnerUpdate, updateLostPetSightingStatus, updateLostPetHidden, renewLostPet, deleteLostPet, extendLostPetExpiry, processLostPetExpiry, getNewlyRemindedListings } from './lost-pets';
 export { getProducts, getProductBySlug, getProductReviews, getRelatedProducts } from './products';
 export {
   getPublisherProfile,
@@ -118,6 +118,7 @@ export {
 } from './rescue-appeal-donations';
 export {
   createRescueVerificationDocument,
+  getRescueVerificationDocument,
   getRescueVerificationDocuments,
   reviewRescueVerificationDocument,
 } from './rescue-verification-documents';

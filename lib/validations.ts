@@ -282,6 +282,14 @@ export const lostPetSightingSchema = z.object({
   photo_url: z.string().url('Neispravan URL slike').optional(),
 });
 
+export const lostPetSightingStatusSchema = z.enum(['new', 'helpful', 'false_lead', 'resolved'], {
+  message: 'Odaberite ispravan status dojave',
+});
+
+export const lostPetSightingStatusUpdateSchema = z.object({
+  status: lostPetSightingStatusSchema,
+});
+
 export const lostPetOwnerUpdateSchema = z.object({
   text: z.string().trim().min(2, 'Ažuriranje mora imati barem 2 znaka').max(280, 'Ažuriranje može imati najviše 280 znakova'),
   category: z.enum(['search', 'sighting', 'status', 'note']).optional().default('note'),
@@ -311,6 +319,8 @@ export type MessageInput = z.infer<typeof messageSchema>;
 export type BlogCommentInput = z.infer<typeof blogCommentSchema>;
 export type LostPetReportInput = z.infer<typeof lostPetReportSchema>;
 export type LostPetSightingInput = z.infer<typeof lostPetSightingSchema>;
+export type LostPetSightingStatusInput = z.infer<typeof lostPetSightingStatusSchema>;
+export type LostPetSightingStatusUpdateInput = z.infer<typeof lostPetSightingStatusUpdateSchema>;
 export type LostPetOwnerUpdateInput = z.infer<typeof lostPetOwnerUpdateSchema>;
 export type MarkLostPetFoundInput = z.infer<typeof markLostPetFoundSchema>;
 export type LostPetAlertInput = z.infer<typeof lostPetAlertSchema>;
