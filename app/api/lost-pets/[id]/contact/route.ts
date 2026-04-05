@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import { createClient } from '@/lib/supabase/server';
 import { rateLimit } from '@/lib/rate-limit';
+import { logAdminAction } from '@/lib/db/audit-logs';
 
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   // Rate limit contact reveals: 20 per IP per minute to curb scraping
@@ -29,6 +30,15 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     if (error || !data) {
       return apiError({ status: 404, code: 'LOST_PET_NOT_FOUND', message: 'Oglas nije pronađen.' });
     }
+
+    // Fire-and-forget: log the contact reveal for telemetry
+    logAdminAction({
+      actorUserId: user.id,
+      targetType: 'lost_pet',
+      targetId: id,
+      action: 'lost_pet_contact_revealed',
+      metadata: { ip },
+    }).catch(() => {});
 
     return NextResponse.json({
       contact_name: data.contact_name || '',
