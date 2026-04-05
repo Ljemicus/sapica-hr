@@ -199,7 +199,7 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
 
   return (
     <div 
-      className="min-h-screen bg-gradient-to-b from-emerald-50/60 via-white to-cyan-50/40"
+      className="min-h-screen bg-background"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -210,39 +210,49 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
         style={{ transform: `translateY(${Math.min(pullDistance - 60, 0)}px)` }}
       >
         <div className="bg-white rounded-full shadow-lg p-3 flex items-center gap-2">
-          <RefreshCw className={`h-5 w-5 text-emerald-600 ${pullDistance > 80 ? 'animate-spin' : ''}`} />
-          <span className="text-sm font-medium text-emerald-700">
+          <RefreshCw className={`h-5 w-5 text-warm-orange ${pullDistance > 80 ? 'animate-spin' : ''}`} />
+          <span className="text-sm font-medium text-foreground">
             {pullDistance > 80 ? 'Otpusti za osvježavanje...' : 'Povuci za osvježavanje...'}
           </span>
         </div>
       </div>
 
-      <div className="container mx-auto max-w-6xl px-4 py-10">
-        {/* Header */}
-        <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl space-y-3">
-            <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 border-0">Rescue directory</Badge>
-            <h1 className="text-3xl font-bold tracking-tight font-[var(--font-heading)] md:text-4xl">
-              Aktivne organizacije koje su prošle onboarding i mogu objavljivati apelacije
+      {/* Editorial Hero */}
+      <section className="relative organizations-hero-gradient overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
+        <div className="container mx-auto max-w-6xl px-6 md:px-10 lg:px-16 py-16 md:py-24 relative">
+          <div className="max-w-3xl animate-fade-in-up">
+            <p className="section-kicker">Rescue Directory</p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-[var(--font-heading)] leading-[1.05] tracking-tight mb-6">
+              Rescue organizacije
             </h1>
-            <p className="text-muted-foreground md:text-lg">
-              Directory više nije mock vitrina — prikazuje samo rescue organizacije koje su aktivne u sustavu. Donacije još nisu dio javnog flowa, ali identitet, opis i live apelacije jesu.
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">
+              Pregledaj verificirane rescue organizacije koje brinu o spašenim životinjama. Upoznaj njihov rad i pomozi direktno.
             </p>
           </div>
 
-          <div className="rounded-2xl border bg-white/90 p-4 shadow-sm lg:max-w-sm">
-            <p className="text-sm font-semibold">Što je javno već sad</p>
-            <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
-              <li>• listing aktivnih organizacija</li>
-              <li>• profil pojedine organizacije</li>
-              <li>• live apelacije vezane uz tu organizaciju</li>
-            </ul>
+          <div className="info-panel p-5 lg:max-w-sm">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-warm-orange/10 flex items-center justify-center shrink-0">
+                <HeartHandshake className="h-5 w-5 text-warm-orange" />
+              </div>
+              <div>
+                <p className="font-semibold">Što je javno već sad</p>
+                <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                  <li>• listing aktivnih organizacija</li>
+                  <li>• profil pojedine organizacije</li>
+                  <li>• live apelacije vezane uz tu organizaciju</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
+      </section>
 
+      <div className="container mx-auto max-w-6xl px-6 md:px-10 lg:px-16 -mt-8 relative z-10">
         {/* Search and Filter Section */}
         <Card className="mb-8 border-0 shadow-sm">
-          <CardContent className="p-4 md:p-5 space-y-4">
+          <CardContent className="p-5 md:p-6 space-y-4">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -337,7 +347,10 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
           </CardContent>
         </Card>
 
-        {/* Results Grid */}
+      </div>
+
+      {/* Results Grid */}
+      <div className="container mx-auto max-w-6xl px-6 md:px-10 lg:px-16 py-12 md:py-16">
         {filteredOrganizations.length === 0 ? (
           <EmptyState
             icon={hasActiveFilters ? Search : HeartHandshake}
@@ -459,11 +472,11 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
         )}
 
         {/* Bottom Info Card */}
-        <Card className="mt-8 border-0 shadow-sm">
-          <CardContent className="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
+        <Card className="mt-12 border-0 shadow-sm">
+          <CardContent className="flex flex-col gap-4 p-6 md:p-8 md:flex-row md:items-center md:justify-between">
             <div className="space-y-1">
               <p className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
-                <HeartHandshake className="h-4 w-4 text-emerald-600" />
+                <HeartHandshake className="h-4 w-4 text-warm-orange" />
                 Rescue dashboard i javni directory sada dijele isti data model
               </p>
               <p className="text-sm text-muted-foreground">
@@ -471,7 +484,7 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
               </p>
             </div>
             <Link href="/dashboard/rescue">
-              <Button variant="outline" className="gap-2 h-11">
+              <Button variant="outline" className="gap-2 h-11 border-warm-orange/30 text-warm-orange hover:bg-warm-orange/5 hover:text-warm-orange">
                 Otvori dashboard <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
