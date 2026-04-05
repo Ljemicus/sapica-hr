@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from './helpers';
 import type { LostPet, LostPetFoundMethod, LostPetSpecies, LostPetStatus } from '@/lib/types';
+import { LOST_PET_LISTING_DURATION_DAYS, LOST_PET_EXPIRY_WARN_DAYS } from '@/lib/types';
 
 interface LostPetFilters {
   city?: string;
@@ -9,6 +10,7 @@ interface LostPetFilters {
   limit?: number;
   fields?: 'full' | 'homepage-card';
   includeHidden?: boolean;
+  excludeExpired?: boolean;
 }
 
 function mapDbToLostPet(row: Record<string, unknown>): LostPet {
@@ -40,6 +42,8 @@ function mapDbToLostPet(row: Record<string, unknown>): LostPet {
     found_at: (row.found_at as string) || null,
     found_method: (row.found_method as LostPetFoundMethod) || null,
     reunion_message: (row.reunion_message as string) || null,
+    expires_at: (row.expires_at as string) || null,
+    reminder_sent_at: (row.reminder_sent_at as string) || null,
     updates: (row.updates as LostPet['updates']) || [],
     sightings: (row.sightings as LostPet['sightings']) || [],
     created_at: row.created_at as string,
@@ -60,6 +64,7 @@ export async function getLostPets(filters?: LostPetFilters): Promise<LostPet[]> 
     if (filters?.city) query = query.eq('city', filters.city);
     if (filters?.species) query = query.eq('species', filters.species);
     if (filters?.status) query = query.eq('status', filters.status);
+    if (filters?.excludeExpired) query = query.neq('status', 'expired');
     if (filters?.limit) query = query.limit(filters.limit);
 
     const { data, error } = await query;
@@ -154,6 +159,27 @@ export async function updateLostPetHidden(id: string, hidden: boolean): Promise<
   }
 }
 
+export async function renewLostPet(id: string): Promise<LostPet | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+    const newExpiry = new Date(Date.now() + LOST_PET_LISTING_DURATION_DAYS * 86_400_000).toISOString();
+
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .update({ expires_at: newExpiry, status: 'lost' as LostPetStatus })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error || !data) return null;
+    return mapDbToLostPet(data as unknown as Record<string, unknown>);
+  } catch {
+    return null;
+  }
+}
+
 export async function deleteLostPet(id: string): Promise<boolean> {
   if (!isSupabaseConfigured()) return false;
 
@@ -167,5 +193,118 @@ export async function deleteLostPet(id: string): Promise<boolean> {
     return !error;
   } catch {
     return false;
+  }
+}
+
+// ── Expiry lifecycle helpers (cron-friendly) ──
+
+export interface ExpiryProcessResult {
+  expired: number;
+  reminded: number;
+  errors: string[];
+}
+
+/**
+ * Process listing expiry in a single pass:
+ * 1. Expire listings past their expires_at date.
+ * 2. Send reminder marker for listings expiring within LOST_PET_EXPIRY_WARN_DAYS
+ *    that haven't been reminded yet.
+ *
+ * Returns counts for observability / logging.
+ */
+export async function processLostPetExpiry(): Promise<ExpiryProcessResult> {
+  const result: ExpiryProcessResult = { expired: 0, reminded: 0, errors: [] };
+  if (!isSupabaseConfigured()) return result;
+
+  try {
+    const supabase = await createClient();
+    const now = new Date().toISOString();
+
+    // 1. Expire overdue listings
+    const { data: expiredRows, error: expireErr } = await supabase
+      .from('lost_pets')
+      .update({ status: 'expired' as LostPetStatus })
+      .eq('status', 'lost')
+      .not('expires_at', 'is', null)
+      .lte('expires_at', now)
+      .select('id');
+
+    if (expireErr) {
+      result.errors.push(`expire: ${expireErr.message}`);
+    } else {
+      result.expired = expiredRows?.length ?? 0;
+    }
+
+    // 2. Mark reminder_sent_at for listings expiring within warn window
+    const warnCutoff = new Date(Date.now() + LOST_PET_EXPIRY_WARN_DAYS * 86_400_000).toISOString();
+
+    const { data: remindedRows, error: remindErr } = await supabase
+      .from('lost_pets')
+      .update({ reminder_sent_at: now })
+      .eq('status', 'lost')
+      .is('reminder_sent_at', null)
+      .not('expires_at', 'is', null)
+      .lte('expires_at', warnCutoff)
+      .gt('expires_at', now)
+      .select('id');
+
+    if (remindErr) {
+      result.errors.push(`remind: ${remindErr.message}`);
+    } else {
+      result.reminded = remindedRows?.length ?? 0;
+    }
+
+    return result;
+  } catch (err) {
+    result.errors.push(`unexpected: ${err instanceof Error ? err.message : String(err)}`);
+    return result;
+  }
+}
+
+/** Get listings whose reminder was just set (for notification dispatch). */
+export async function getNewlyRemindedListings(): Promise<LostPet[]> {
+  if (!isSupabaseConfigured()) return [];
+
+  try {
+    const supabase = await createClient();
+    const fiveMinAgo = new Date(Date.now() - 5 * 60_000).toISOString();
+
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .select('*')
+      .eq('status', 'lost')
+      .gte('reminder_sent_at', fiveMinAgo)
+      .order('expires_at', { ascending: true });
+
+    if (error || !data) return [];
+    return data.map((row) => mapDbToLostPet(row as unknown as Record<string, unknown>));
+  } catch {
+    return [];
+  }
+}
+
+/** Extend a listing's expiry by the given number of days (admin use). */
+export async function extendLostPetExpiry(id: string, days: number): Promise<LostPet | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  try {
+    const supabase = await createClient();
+    const pet = await getLostPet(id);
+    if (!pet) return null;
+
+    const baseDate = pet.expires_at ? new Date(pet.expires_at) : new Date();
+    const newExpiry = new Date(baseDate.getTime() + days * 86_400_000).toISOString();
+
+    const { data, error } = await supabase
+      .from('lost_pets')
+      .update({ expires_at: newExpiry, reminder_sent_at: null })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error || !data) return null;
+    return mapDbToLostPet(data as unknown as Record<string, unknown>);
+  } catch {
+    return null;
   }
 }

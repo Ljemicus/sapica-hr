@@ -41,7 +41,7 @@ export default function LostPetsMap({ pets }: LostPetsMapProps) {
   const { language } = useLanguage();
   const isEn = language === 'en';
   const locale = isEn ? 'en-GB' : 'hr-HR';
-  const statusLabels = isEn ? { lost: 'Still missing', found: 'Found!' } : LOST_PET_STATUS_LABELS;
+  const statusLabels = isEn ? { lost: 'Still missing', found: 'Found!', expired: 'Listing expired' } : LOST_PET_STATUS_LABELS;
   const petsWithCoords = pets.filter(p => p.location_lat && p.location_lng);
 
   // Calculate bounds to fit all markers

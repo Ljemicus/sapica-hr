@@ -588,13 +588,14 @@ export const FORUM_CATEGORY_LABELS: Record<ForumCategorySlug, string> = {
 
 // ── Lost Pets ──
 
-export type LostPetStatus = 'lost' | 'found';
+export type LostPetStatus = 'lost' | 'found' | 'expired';
 export type LostPetSpecies = 'pas' | 'macka' | 'ostalo';
 export type LostPetFoundMethod = 'sighting' | 'returned_home' | 'shelter' | 'other';
 
 export const LOST_PET_STATUS_LABELS: Record<LostPetStatus, string> = {
   'lost': 'Još se traži',
   'found': 'Pronađen!',
+  'expired': 'Oglas istekao',
 };
 
 export const LOST_PET_SPECIES_LABELS: Record<LostPetSpecies, string> = {
@@ -652,9 +653,35 @@ export interface LostPet {
   found_at: string | null;
   found_method: LostPetFoundMethod | null;
   reunion_message: string | null;
+  expires_at: string | null;
+  reminder_sent_at: string | null;
   updates: LostPetUpdate[];
   sightings: LostPetSighting[];
   created_at: string;
+}
+
+/** How many days before expiry a listing is considered "expiring soon". */
+export const LOST_PET_EXPIRY_WARN_DAYS = 3;
+/** Default listing duration in days. */
+export const LOST_PET_LISTING_DURATION_DAYS = 30;
+
+export function isLostPetExpired(pet: LostPet): boolean {
+  if (pet.status === 'found') return false;
+  if (!pet.expires_at) return false;
+  return new Date(pet.expires_at).getTime() < Date.now();
+}
+
+export function isLostPetExpiringSoon(pet: LostPet): boolean {
+  if (pet.status === 'found') return false;
+  if (!pet.expires_at) return false;
+  const msLeft = new Date(pet.expires_at).getTime() - Date.now();
+  return msLeft > 0 && msLeft < LOST_PET_EXPIRY_WARN_DAYS * 86_400_000;
+}
+
+export function lostPetDaysUntilExpiry(pet: LostPet): number | null {
+  if (!pet.expires_at) return null;
+  const days = Math.ceil((new Date(pet.expires_at).getTime() - Date.now()) / 86_400_000);
+  return days;
 }
 
 // ── Shop / Webshop ──

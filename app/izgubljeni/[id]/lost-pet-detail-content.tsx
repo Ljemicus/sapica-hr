@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert, Camera, X, Heart, PartyPopper } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert, Camera, X, Heart, PartyPopper, Clock, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +15,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { ShareButtons } from '../share-buttons';
 import type { LostPet, LostPetFoundMethod } from '@/lib/types';
-import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS, LOST_PET_FOUND_METHOD_LABELS } from '@/lib/types';
+import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS, LOST_PET_FOUND_METHOD_LABELS, isLostPetExpired, isLostPetExpiringSoon, lostPetDaysUntilExpiry, LOST_PET_LISTING_DURATION_DAYS } from '@/lib/types';
 import { toast } from 'sonner';
 import { useLanguage } from '@/lib/i18n/context';
 import { useAuth } from '@/contexts/auth-context';
@@ -52,7 +52,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const { user } = useAuth();
   const isEn = language === 'en';
   const locale = isEn ? 'en-GB' : 'hr-HR';
-  const statusLabels = isEn ? { lost: 'Still missing', found: 'Found!' } : LOST_PET_STATUS_LABELS;
+  const statusLabels = isEn ? { lost: 'Still missing', found: 'Found!', expired: 'Listing expired' } : LOST_PET_STATUS_LABELS;
   const speciesLabels = isEn ? { pas: 'Dog', macka: 'Cat', ostalo: 'Other' } : LOST_PET_SPECIES_LABELS;
   const sexLabels = isEn ? { 'muško': 'Male', 'žensko': 'Female' } : { 'muško': 'Muško', 'žensko': 'Žensko' };
   const foundMethodLabels: Record<LostPetFoundMethod, string> = isEn
@@ -76,7 +76,9 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const [localFoundMethod, setLocalFoundMethod] = useState(pet.found_method);
   const [localReunionMessage, setLocalReunionMessage] = useState(pet.reunion_message);
   const [localHidden, setLocalHidden] = useState(pet.hidden);
+  const [localExpiresAt, setLocalExpiresAt] = useState(pet.expires_at);
   const [actionLoading, setActionLoading] = useState(false);
+  const [renewLoading, setRenewLoading] = useState(false);
 
   // Mark-as-found dialog state
   const [markFoundOpen, setMarkFoundOpen] = useState(false);
@@ -85,6 +87,11 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
 
   const isOwner = user?.id === pet.user_id;
   const isAdmin = user?.role === 'admin';
+
+  const petWithLocalExpiry = { ...pet, expires_at: localExpiresAt, status: localStatus };
+  const expired = isLostPetExpired(petWithLocalExpiry);
+  const expiringSoon = isLostPetExpiringSoon(petWithLocalExpiry);
+  const daysLeft = lostPetDaysUntilExpiry(petWithLocalExpiry);
 
   const daysMissing = localFoundAt
     ? daysBetween(pet.date_lost, localFoundAt)
@@ -154,6 +161,27 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
       toast.error(isEn ? 'Action failed' : 'Akcija nije uspjela');
     }
     setActionLoading(false);
+  };
+
+  const handleRenew = async () => {
+    setRenewLoading(true);
+    try {
+      const res = await fetch(`/api/lost-pets/${pet.id}/renew`, { method: 'POST' });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.message || (isEn ? 'Failed to renew listing' : 'Greška pri obnavljanju oglasa'));
+      } else {
+        const { pet: updated } = await res.json();
+        setLocalExpiresAt(updated.expires_at);
+        setLocalStatus(updated.status);
+        toast.success(isEn
+          ? `Listing renewed for ${LOST_PET_LISTING_DURATION_DAYS} more days`
+          : `Oglas je obnovljen za još ${LOST_PET_LISTING_DURATION_DAYS} dana`);
+      }
+    } catch {
+      toast.error(isEn ? 'Failed to renew listing' : 'Greška pri obnavljanju oglasa');
+    }
+    setRenewLoading(false);
   };
 
   const handleSightingPhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -250,8 +278,56 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
         </div>
       )}
 
+      {/* Expired banner */}
+      {expired && !localHidden && (
+        <div className="bg-gray-600 text-white py-3 px-4 text-center">
+          <div className="container mx-auto flex flex-col md:flex-row items-center justify-center gap-3 text-sm md:text-base font-bold">
+            <div className="flex items-center justify-center gap-2">
+              <Clock className="h-5 w-5" />
+              <span>{isEn ? 'This listing has expired' : 'Ovaj oglas je istekao'}</span>
+            </div>
+            {isOwner && (
+              <Button
+                onClick={handleRenew}
+                disabled={renewLoading}
+                variant="secondary"
+                className="h-9 bg-white text-gray-700 hover:bg-gray-50"
+              >
+                {renewLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+                {isEn ? `Renew for ${LOST_PET_LISTING_DURATION_DAYS} days` : `Obnovi za ${LOST_PET_LISTING_DURATION_DAYS} dana`}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Expiring soon banner */}
+      {expiringSoon && !localHidden && daysLeft !== null && (
+        <div className="bg-amber-500 text-white py-3 px-4 text-center">
+          <div className="container mx-auto flex flex-col md:flex-row items-center justify-center gap-3 text-sm md:text-base font-bold">
+            <div className="flex items-center justify-center gap-2">
+              <Clock className="h-5 w-5" />
+              <span>{isEn
+                ? `This listing expires in ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'}`
+                : `Ovaj oglas ističe za ${daysLeft} ${daysLeft === 1 ? 'dan' : 'dana'}`}</span>
+            </div>
+            {isOwner && (
+              <Button
+                onClick={handleRenew}
+                disabled={renewLoading}
+                variant="secondary"
+                className="h-9 bg-white text-amber-700 hover:bg-amber-50"
+              >
+                {renewLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+                {isEn ? `Renew for ${LOST_PET_LISTING_DURATION_DAYS} days` : `Obnovi za ${LOST_PET_LISTING_DURATION_DAYS} dana`}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Urgent banner for lost pets */}
-      {localStatus === 'lost' && !localHidden && (
+      {localStatus === 'lost' && !localHidden && !expired && (
         <div className="bg-red-600 text-white py-3 px-4 text-center animate-pulse">
           <div className="container mx-auto flex items-center justify-center gap-2 text-sm md:text-base font-bold">
             <AlertTriangle className="h-5 w-5" />
@@ -304,11 +380,19 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
               <Badge className={`absolute top-4 left-4 text-base font-bold px-4 py-2 ${
                 localHidden
                   ? 'bg-yellow-500 text-white'
-                  : localStatus === 'lost'
-                    ? 'bg-red-500 text-white'
-                    : 'bg-green-500 text-white'
+                  : expired
+                    ? 'bg-gray-500 text-white'
+                    : localStatus === 'lost'
+                      ? 'bg-red-500 text-white'
+                      : 'bg-green-500 text-white'
               }`}>
-                {localHidden ? <><EyeOff className="h-4 w-4 inline mr-1" />{isEn ? 'Hidden' : 'Skriveno'}</> : localStatus === 'lost' ? <>{'🔴'} {statusLabels[localStatus]}</> : <>{'🟢'} {statusLabels[localStatus]}</>}
+                {localHidden
+                  ? <><EyeOff className="h-4 w-4 inline mr-1" />{isEn ? 'Hidden' : 'Skriveno'}</>
+                  : expired
+                    ? <><Clock className="h-4 w-4 inline mr-1" />{isEn ? 'Expired' : 'Istekao'}</>
+                    : localStatus === 'lost'
+                      ? <>{'🔴'} {statusLabels[localStatus]}</>
+                      : <>{'🟢'} {statusLabels[localStatus]}</>}
               </Badge>
               <div className="absolute bottom-4 left-4 right-4">
                 <h1 className="text-3xl md:text-4xl font-extrabold text-white drop-shadow-lg mb-1">{pet.name}</h1>
@@ -442,7 +526,7 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
             )}
 
             {/* Sighting Report Form */}
-            {localStatus === 'lost' && !localHidden && (
+            {localStatus === 'lost' && !localHidden && !expired && (
               <Card className="border-2 border-amber-300 bg-amber-50/50">
                 <CardContent className="p-4 md:p-6">
                   {!showSightingForm ? (
@@ -607,6 +691,54 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                   <h3 className="font-semibold mb-3">{isEn ? 'Share' : 'Podijeli'}</h3>
                   <ShareButtons petName={pet.name} city={pet.city} petId={pet.id} size="sm" />
                 </div>
+
+                {/* Owner expiry info */}
+                {isOwner && localStatus === 'lost' && localExpiresAt && (
+                  <div className="pt-4 border-t">
+                    <h3 className="font-semibold mb-3 flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-gray-500" />
+                      {isEn ? 'Listing expiry' : 'Istek oglasa'}
+                    </h3>
+                    {expired ? (
+                      <div className="bg-gray-100 border border-gray-300 rounded-lg p-3 text-center space-y-2">
+                        <p className="text-sm text-gray-600">
+                          {isEn ? 'This listing has expired and is no longer prominently shown.' : 'Ovaj oglas je istekao i više se ne prikazuje istaknuto.'}
+                        </p>
+                        <Button
+                          onClick={handleRenew}
+                          disabled={renewLoading}
+                          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium"
+                        >
+                          {renewLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+                          {isEn ? `Renew for ${LOST_PET_LISTING_DURATION_DAYS} days` : `Obnovi za ${LOST_PET_LISTING_DURATION_DAYS} dana`}
+                        </Button>
+                      </div>
+                    ) : expiringSoon && daysLeft !== null ? (
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-center space-y-2">
+                        <p className="text-sm text-amber-700">
+                          {isEn
+                            ? `Expires in ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'}`
+                            : `Ističe za ${daysLeft} ${daysLeft === 1 ? 'dan' : 'dana'}`}
+                        </p>
+                        <Button
+                          onClick={handleRenew}
+                          disabled={renewLoading}
+                          variant="outline"
+                          className="w-full border-amber-300 text-amber-700 hover:bg-amber-50"
+                        >
+                          {renewLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+                          {isEn ? `Renew for ${LOST_PET_LISTING_DURATION_DAYS} days` : `Obnovi za ${LOST_PET_LISTING_DURATION_DAYS} dana`}
+                        </Button>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        {isEn
+                          ? `Active until ${new Date(localExpiresAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`
+                          : `Aktivan do ${new Date(localExpiresAt).toLocaleDateString('hr-HR', { day: 'numeric', month: 'long', year: 'numeric' })}`}
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* Owner actions — Mark as Found dialog */}
                 {isOwner && localStatus === 'lost' && (

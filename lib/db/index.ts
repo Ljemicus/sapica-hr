@@ -27,7 +27,7 @@ export {
   deleteArticleComment,
 } from './blog-comments';
 export { getCategories, getTopics, getTopic, getPosts, getTrendingTopics } from './forum';
-export { getLostPets, getLostPet, updateLostPetStatus, markLostPetFound, updateLostPetHidden, deleteLostPet } from './lost-pets';
+export { getLostPets, getLostPet, updateLostPetStatus, markLostPetFound, updateLostPetHidden, renewLostPet, deleteLostPet, extendLostPetExpiry, processLostPetExpiry, getNewlyRemindedListings } from './lost-pets';
 export { getProducts, getProductBySlug, getProductReviews, getRelatedProducts } from './products';
 export {
   getPublisherProfile,

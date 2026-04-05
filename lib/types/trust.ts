@@ -43,7 +43,9 @@ export type AuditAction =
   | 'forum_topic_deleted'
   | 'forum_comment_hidden'
   | 'forum_comment_unhidden'
-  | 'forum_comment_deleted';
+  | 'forum_comment_deleted'
+  | 'lost_pet_expired'
+  | 'lost_pet_extended';
 
 export interface ProviderVerification {
   id: string;

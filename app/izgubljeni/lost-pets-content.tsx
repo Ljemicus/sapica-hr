@@ -4,13 +4,13 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { Search, MapPin, Calendar, Plus, Filter, AlertTriangle, Map, List, Loader2, CheckCircle2, Heart } from 'lucide-react';
+import { Search, MapPin, Calendar, Plus, Filter, AlertTriangle, Map, List, Loader2, CheckCircle2, Heart, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import type { LostPet } from '@/lib/types';
-import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS, CITIES } from '@/lib/types';
+import { LOST_PET_SPECIES_LABELS, LOST_PET_STATUS_LABELS, CITIES, isLostPetExpired, isLostPetExpiringSoon, lostPetDaysUntilExpiry } from '@/lib/types';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ShareButtons } from './share-buttons';
 import { useLanguage } from '@/lib/i18n/context';
@@ -32,7 +32,7 @@ export function LostPetsContent() {
   const { language } = useLanguage();
   const isEn = language === 'en';
   const locale = isEn ? 'en-GB' : 'hr-HR';
-  const statusLabels = isEn ? { lost: 'Still missing', found: 'Found!' } : LOST_PET_STATUS_LABELS;
+  const statusLabels = isEn ? { lost: 'Still missing', found: 'Found!', expired: 'Listing expired' } : LOST_PET_STATUS_LABELS;
   const speciesLabels = isEn ? { pas: 'Dog', macka: 'Cat', ostalo: 'Other' } : LOST_PET_SPECIES_LABELS;
   const [pets, setPets] = useState<LostPet[]>([]);
   const [loading, setLoading] = useState(true);
@@ -192,8 +192,13 @@ export function LostPetsContent() {
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {pets.map((pet) => (
+            {pets.map((pet) => {
+              const expired = isLostPetExpired(pet);
+              const expiringSoon = isLostPetExpiringSoon(pet);
+              const daysLeft = lostPetDaysUntilExpiry(pet);
+              return (
               <Card key={pet.id} className={`overflow-hidden hover:shadow-xl transition-all duration-300 border-2 ${
+                expired ? 'border-gray-300 hover:border-gray-400 opacity-70' :
                 pet.status === 'lost' ? 'border-red-200 hover:border-red-300' : 'border-green-200 hover:border-green-300'
               }`}>
                 <div className="relative">
@@ -203,18 +208,30 @@ export function LostPetsContent() {
                         src={pet.image_url}
                         alt={pet.name}
                         fill
-                        className="object-cover"
+                        className={`object-cover${expired ? ' grayscale' : ''}`}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     </div>
                   </Link>
-                  <Badge className={`absolute top-3 left-3 text-sm font-bold px-3 py-1 ${
-                    pet.status === 'lost'
-                      ? 'bg-red-500 text-white hover:bg-red-600'
-                      : 'bg-green-500 text-white hover:bg-green-600'
-                  }`}>
-                    {pet.status === 'lost' ? '🔴' : '🟢'} {statusLabels[pet.status]}
-                  </Badge>
+                  {expired ? (
+                    <Badge className="absolute top-3 left-3 text-sm font-bold px-3 py-1 bg-gray-500 text-white hover:bg-gray-600">
+                      <Clock className="h-3.5 w-3.5 mr-1 inline" /> {isEn ? 'Listing expired' : 'Oglas istekao'}
+                    </Badge>
+                  ) : (
+                    <Badge className={`absolute top-3 left-3 text-sm font-bold px-3 py-1 ${
+                      pet.status === 'lost'
+                        ? 'bg-red-500 text-white hover:bg-red-600'
+                        : 'bg-green-500 text-white hover:bg-green-600'
+                    }`}>
+                      {pet.status === 'lost' ? '🔴' : '🟢'} {statusLabels[pet.status]}
+                    </Badge>
+                  )}
+                  {expiringSoon && daysLeft !== null && (
+                    <Badge className="absolute top-3 right-3 text-xs font-medium px-2 py-1 bg-amber-500 text-white">
+                      <Clock className="h-3 w-3 mr-1 inline" />
+                      {isEn ? `Expires in ${daysLeft}d` : `Ističe za ${daysLeft}d`}
+                    </Badge>
+                  )}
                   <div className="absolute bottom-3 left-3 right-3">
                     <h3 className="text-xl font-bold text-white drop-shadow-lg">{pet.name}</h3>
                     <p className="text-sm text-white/90 drop-shadow">
@@ -272,7 +289,8 @@ export function LostPetsContent() {
                   </Link>
                 </CardContent>
               </Card>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>
