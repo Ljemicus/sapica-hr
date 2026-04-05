@@ -6,7 +6,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import {
   Filter, MapIcon, Grid, LayoutList, SlidersHorizontal, X, MapPin, Star,
-  Clock, Shield, Award, ArrowRight, PawPrint,
+  Clock, Shield, Award, ArrowRight, PawPrint, Search, ChevronRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,7 +26,7 @@ import { CATEGORY_LABELS, CATEGORY_EMOJI, CATEGORY_BADGE_STYLES } from './types'
 const MapView = dynamic(() => import('./map-view'), {
   ssr: false,
   loading: () => (
-    <div className="h-[600px] rounded-xl bg-gray-100 animate-pulse flex items-center justify-center">
+    <div className="h-[600px] rounded-2xl bg-accent animate-pulse flex items-center justify-center">
       <div className="text-center text-muted-foreground">
         <MapIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
         <p className="text-sm">Loading map...</p>
@@ -54,13 +54,6 @@ const CATEGORY_TABS: { key: ProviderCategory | 'all'; emoji: string }[] = [
   { key: 'grooming', emoji: '✂️' },
   { key: 'dresura', emoji: '🎓' },
 ];
-
-const TITLE_MAP: Record<string, string> = {
-  all: 'Pronađi uslugu za svog ljubimca',
-  sitter: 'Pronađi sittera',
-  grooming: 'Pronađi groomera',
-  dresura: 'Pronađi trenera za pse',
-};
 
 function getServiceLabel(service: string, category?: ProviderCategory): string {
   if (category === 'grooming') return GROOMING_SERVICE_LABELS[service as keyof typeof GROOMING_SERVICE_LABELS] || service;
@@ -126,26 +119,26 @@ function SearchFilterPanel({
   const copy = language === 'en'
     ? {
         city: 'City',
-        chooseCity: 'Choose a city',
+        chooseCity: 'All cities',
         serviceType: 'Service type',
         clearSelection: 'Clear selection',
         priceRange: 'Price range (€)',
         minPlaceholder: 'Min',
         maxPlaceholder: 'Max',
         minRating: 'Minimum rating',
-        noMinRating: 'No minimum rating',
+        noMinRating: 'Any rating',
         showResults: 'Show results',
       }
     : {
         city: 'Grad',
-        chooseCity: 'Odaberi grad',
+        chooseCity: 'Svi gradovi',
         serviceType: 'Vrsta usluge',
         clearSelection: 'Poništi odabir',
         priceRange: 'Raspon cijena (€)',
         minPlaceholder: 'Min',
         maxPlaceholder: 'Max',
         minRating: 'Minimalna ocjena',
-        noMinRating: 'Bez minimalne ocjene',
+        noMinRating: 'Bilo koja',
         showResults: 'Prikaži rezultate',
       };
 
@@ -158,13 +151,13 @@ function SearchFilterPanel({
     : null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       <div>
-        <Label className="text-sm font-medium mb-2 block">{copy.city}</Label>
+        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{copy.city}</Label>
         <select
           value={city}
           onChange={(e) => onCityChange(e.target.value)}
-          className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
+          className="premium-select"
         >
           <option value="">{copy.chooseCity}</option>
           {CITIES.map((c) => (
@@ -175,10 +168,10 @@ function SearchFilterPanel({
 
       {serviceOptions && (
         <div>
-          <Label className="text-sm font-medium mb-2 block">{copy.serviceType}</Label>
-          <div className="space-y-2">
+          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{copy.serviceType}</Label>
+          <div className="space-y-1">
             {serviceOptions.map(([key]) => (
-              <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
+              <label key={key} className="premium-radio-option group">
                 <input
                   type="radio"
                   name="service"
@@ -187,13 +180,13 @@ function SearchFilterPanel({
                   onChange={(e) => onServiceChange(e.target.value)}
                   className="accent-orange-500 w-4 h-4"
                 />
-                <span className="text-sm group-hover:text-orange-600 transition-colors">
+                <span className="text-sm group-hover:text-foreground transition-colors">
                   {getTranslatedServiceLabel(key, category === 'all' ? undefined : category, language)}
                 </span>
               </label>
             ))}
             {service && (
-              <button onClick={() => onServiceChange('')} className="text-xs text-orange-500 hover:underline mt-1">
+              <button onClick={() => onServiceChange('')} className="text-xs text-warm-orange hover:underline mt-2 pl-3">
                 {copy.clearSelection}
               </button>
             )}
@@ -203,8 +196,8 @@ function SearchFilterPanel({
 
       {(category === 'all' || category === 'sitter') && (
         <div>
-          <Label className="text-sm font-medium mb-2 block">{copy.priceRange}</Label>
-          <div className="flex gap-2">
+          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{copy.priceRange}</Label>
+          <div className="flex gap-3 items-center">
             <Input
               type="text"
               inputMode="numeric"
@@ -212,9 +205,9 @@ function SearchFilterPanel({
               placeholder={copy.minPlaceholder}
               value={minPrice}
               onChange={(e) => onMinPriceChange(e.target.value.replace(/[^0-9]/g, ''))}
-              className="w-full focus:border-orange-300"
+              className="w-full rounded-xl border-border/60 focus:border-orange-300"
             />
-            <span className="self-center text-muted-foreground">—</span>
+            <span className="text-muted-foreground text-sm">—</span>
             <Input
               type="text"
               inputMode="numeric"
@@ -222,18 +215,18 @@ function SearchFilterPanel({
               placeholder={copy.maxPlaceholder}
               value={maxPrice}
               onChange={(e) => onMaxPriceChange(e.target.value.replace(/[^0-9]/g, ''))}
-              className="w-full focus:border-orange-300"
+              className="w-full rounded-xl border-border/60 focus:border-orange-300"
             />
           </div>
         </div>
       )}
 
       <div>
-        <Label className="text-sm font-medium mb-2 block">{copy.minRating}</Label>
+        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{copy.minRating}</Label>
         <select
           value={minRating}
           onChange={(e) => onMinRatingChange(e.target.value)}
-          className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
+          className="premium-select"
         >
           <option value="">{copy.noMinRating}</option>
           <option value="4.5">4.5+</option>
@@ -243,16 +236,14 @@ function SearchFilterPanel({
         </select>
       </div>
 
-      <Separator />
-
-      <div className="flex gap-2">
-        <Button onClick={onApply} className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover">
+      <div className="pt-2">
+        <Button onClick={onApply} className="w-full bg-orange-500 hover:bg-orange-600 btn-hover rounded-xl h-11 font-semibold">
           {copy.showResults}
         </Button>
         {activeFilterCount > 0 && (
-          <Button variant="outline" onClick={onClear} className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
-            <X className="h-4 w-4" />
-          </Button>
+          <button onClick={onClear} className="w-full text-center text-xs text-muted-foreground hover:text-warm-orange mt-3 transition-colors">
+            {language === 'en' ? 'Clear all filters' : 'Očisti sve filtere'}
+          </button>
         )}
       </div>
     </div>
@@ -274,11 +265,10 @@ function ProviderCard({ provider }: { provider: UnifiedProvider }) {
   const copy = language === 'en'
     ? {
         from: 'from',
-        verified: 'Verified profile',
+        verified: 'Verified',
         topPick: 'Top pick',
-        certified: 'Certified profile',
+        certified: 'Certified',
         trusted: 'Trusted contact',
-        viewDetails: 'View details',
         viewProfile: 'View profile',
         categoryLabels: {
           sitter: 'Sitters',
@@ -288,119 +278,129 @@ function ProviderCard({ provider }: { provider: UnifiedProvider }) {
       }
     : {
         from: 'već od',
-        verified: 'Verificiran profil',
+        verified: 'Verificiran',
         topPick: 'Top izbor',
-        certified: 'Certificiran profil',
+        certified: 'Certificiran',
         trusted: 'Provjeren kontakt',
-        viewDetails: 'Pogledaj detalje',
         viewProfile: 'Pogledaj profil',
         categoryLabels: CATEGORY_LABELS,
       };
 
   return (
     <Link href={provider.profileUrl}>
-      <Card className="group card-hover overflow-hidden cursor-pointer border-0 shadow-sm rounded-2xl">
-        <CardContent className="p-0">
-          <div className={`relative h-44 bg-gradient-to-br ${gradients[gradientIndex]} flex items-center justify-center overflow-hidden`}>
-            <div className="absolute inset-0 paw-pattern opacity-10" />
-            <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors" />
-            <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between pointer-events-none">
-              <div className="text-white/90 text-xs font-medium drop-shadow-sm">
-                {provider.city}
-              </div>
-              {provider.lowestPrice != null && (
-                <div className="rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-orange-600 shadow-sm">
-                  {copy.from} {provider.lowestPrice}&euro;
-                </div>
-              )}
-            </div>
-            <Avatar className="h-22 w-22 border-4 border-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-              <AvatarImage src={provider.avatarUrl || ''} alt={provider.name} />
-              <AvatarFallback className="bg-white/95 text-gray-700 text-2xl font-bold">
-                {provider.name.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="absolute top-3 left-3">
-              <Badge className={`text-xs shadow-sm rounded-full px-2.5 border ${CATEGORY_BADGE_STYLES[provider.category]}`}>
-                {CATEGORY_EMOJI[provider.category]} {copy.categoryLabels[provider.category]}
-              </Badge>
-            </div>
-            <div className="absolute top-3 right-3 flex gap-1.5">
-              {provider.verified && (
-                <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5">
-                  <Shield className="h-3 w-3 mr-1" />
-                  {copy.verified}
-                </Badge>
-              )}
-              {provider.superhost && (
-                <Badge className="bg-white/90 text-amber-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5 font-semibold">
-                  <Award className="h-3 w-3 mr-1" />
-                  {copy.topPick}
-                </Badge>
-              )}
-              {provider.certified && !provider.superhost && (
-                <Badge className="bg-white/90 text-amber-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5 font-semibold">
-                  <Award className="h-3 w-3 mr-1" />
-                  {copy.certified}
-                </Badge>
-              )}
-            </div>
+      <article className="group provider-card overflow-hidden cursor-pointer rounded-2xl bg-white dark:bg-card border border-border/30">
+        {/* Card header — gradient with avatar */}
+        <div className={`relative h-48 bg-gradient-to-br ${gradients[gradientIndex]} flex items-center justify-center overflow-hidden`}>
+          <div className="absolute inset-0 paw-pattern opacity-[0.07]" />
+          <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-500" />
+
+          {/* Avatar */}
+          <Avatar className="h-24 w-24 border-4 border-white shadow-xl group-hover:scale-105 transition-transform duration-500">
+            <AvatarImage src={provider.avatarUrl || ''} alt={provider.name} />
+            <AvatarFallback className="bg-white text-gray-700 text-2xl font-bold">
+              {provider.name.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+
+          {/* Category badge — top left */}
+          <div className="absolute top-4 left-4">
+            <span className={`inline-flex items-center gap-1 text-xs font-semibold rounded-full px-3 py-1.5 shadow-sm border ${CATEGORY_BADGE_STYLES[provider.category]}`}>
+              {CATEGORY_EMOJI[provider.category]} {copy.categoryLabels[provider.category]}
+            </span>
           </div>
-          <div className="p-5 space-y-3">
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <h3 className="font-semibold text-lg group-hover:text-orange-500 transition-colors">
-                  {provider.name}
-                </h3>
-                <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-full">
-                  <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                  <span className="text-sm font-semibold text-amber-700">{provider.rating.toFixed(1)}</span>
-                  <span className="text-xs text-amber-600/70">({provider.reviews})</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                <MapPin className="h-3.5 w-3.5" />
-                {provider.city}
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {provider.bio}
-            </p>
-            <div className="flex flex-wrap gap-1">
-              {provider.services.slice(0, 3).map((s) => (
-                <Badge key={s} variant="secondary" className="text-xs font-normal bg-gray-50">
-                  {getTranslatedServiceLabel(s, provider.category, language)}
-                </Badge>
-              ))}
-              {provider.services.length > 3 && (
-                <Badge variant="secondary" className="text-xs font-normal bg-gray-50">
-                  +{provider.services.length - 3}
-                </Badge>
-              )}
-            </div>
-            <div className="flex items-center justify-between pt-3 border-t">
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                {provider.responseTime ? (
-                  <>
-                    <Clock className="h-3 w-3" />
-                    {provider.responseTime}
-                  </>
-                ) : provider.certificates && provider.certificates.length > 0 ? (
-                  <span className="text-xs text-indigo-600 font-medium">{provider.certificates[0]}</span>
-                ) : provider.verified ? (
-                  <span className="text-xs text-emerald-600 font-medium">{copy.trusted}</span>
-                ) : (
-                  <span className="text-xs text-muted-foreground">{copy.viewDetails}</span>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-orange-500">{copy.viewProfile}</span>
-                <ArrowRight className="h-4 w-4 text-gray-300 group-hover:text-orange-400 group-hover:translate-x-1 transition-all" />
+
+          {/* Trust badges — top right */}
+          <div className="absolute top-4 right-4 flex gap-1.5">
+            {provider.verified && (
+              <span className="inline-flex items-center bg-white/90 text-blue-600 text-xs font-medium shadow-sm rounded-full px-2.5 py-1">
+                <Shield className="h-3 w-3 mr-1" />
+                {copy.verified}
+              </span>
+            )}
+            {provider.superhost && (
+              <span className="inline-flex items-center bg-white/90 text-amber-600 text-xs font-semibold shadow-sm rounded-full px-2.5 py-1">
+                <Award className="h-3 w-3 mr-1" />
+                {copy.topPick}
+              </span>
+            )}
+            {provider.certified && !provider.superhost && (
+              <span className="inline-flex items-center bg-white/90 text-amber-600 text-xs font-semibold shadow-sm rounded-full px-2.5 py-1">
+                <Award className="h-3 w-3 mr-1" />
+                {copy.certified}
+              </span>
+            )}
+          </div>
+
+          {/* Bottom info — city + price */}
+          <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between pointer-events-none">
+            <span className="text-white/90 text-xs font-medium drop-shadow-sm flex items-center gap-1">
+              <MapPin className="h-3 w-3" />
+              {provider.city}
+            </span>
+            {provider.lowestPrice != null && (
+              <span className="rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-orange-600 shadow-sm">
+                {copy.from} {provider.lowestPrice}&euro;
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Card body */}
+        <div className="p-6 space-y-4">
+          {/* Name + Rating */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-bold text-lg font-[var(--font-heading)] group-hover:text-warm-orange transition-colors">
+                {provider.name}
+              </h3>
+              <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/30 px-2.5 py-1 rounded-full">
+                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                <span className="text-sm font-bold text-amber-700 dark:text-amber-400">{provider.rating.toFixed(1)}</span>
+                <span className="text-xs text-amber-600/60 dark:text-amber-500/60">({provider.reviews})</span>
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+
+          {/* Bio */}
+          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            {provider.bio}
+          </p>
+
+          {/* Service tags */}
+          <div className="flex flex-wrap gap-1.5">
+            {provider.services.slice(0, 3).map((s) => (
+              <span key={s} className="inline-flex items-center text-xs font-medium bg-accent dark:bg-accent/50 text-accent-foreground px-2.5 py-1 rounded-lg">
+                {getTranslatedServiceLabel(s, provider.category, language)}
+              </span>
+            ))}
+            {provider.services.length > 3 && (
+              <span className="inline-flex items-center text-xs font-medium bg-accent dark:bg-accent/50 text-muted-foreground px-2.5 py-1 rounded-lg">
+                +{provider.services.length - 3}
+              </span>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="flex items-center justify-between pt-4 border-t border-border/40">
+            <div className="text-xs text-muted-foreground">
+              {provider.responseTime ? (
+                <span className="flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  {provider.responseTime}
+                </span>
+              ) : provider.certificates && provider.certificates.length > 0 ? (
+                <span className="text-indigo-600 dark:text-indigo-400 font-medium">{provider.certificates[0]}</span>
+              ) : provider.verified ? (
+                <span className="text-emerald-600 dark:text-emerald-400 font-medium">{copy.trusted}</span>
+              ) : null}
+            </div>
+            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-warm-orange group-hover:gap-2.5 transition-all">
+              {copy.viewProfile}
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </div>
+        </div>
+      </article>
     </Link>
   );
 }
@@ -489,13 +489,20 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
   const copy = language === 'en'
     ? {
         tabs: { all: 'All', sitter: 'Sitters', grooming: 'Grooming', dresura: 'Dog training' },
-        titles: {
-          all: 'Find the right service for your pet',
-          sitter: 'Find a sitter',
-          grooming: 'Find a groomer',
-          dresura: 'Find a dog trainer',
+        heroKicker: 'Discover',
+        heroTitle: {
+          all: 'Find the right care\nfor your pet.',
+          sitter: 'Find a trusted\npet sitter.',
+          grooming: 'Find a professional\ngroomer.',
+          dresura: 'Find a certified\ndog trainer.',
         },
-        profilesMatch: filtered.length === 1 ? 'profile matches your search' : 'profiles match your search',
+        heroSub: {
+          all: 'Browse verified sitters, groomers, and trainers across Croatia. Every profile is reviewed for quality.',
+          sitter: 'Trusted sitters who treat your pet like family — at their home or yours.',
+          grooming: 'Professional coat care, bathing, and styling for your beloved companion.',
+          dresura: 'Certified trainers for obedience, socialisation, and agility.',
+        },
+        profilesMatch: filtered.length === 1 ? 'profile matches' : 'profiles match',
         filters: 'Filters',
         narrowSearch: 'Refine search',
         sortBest: 'Top rated',
@@ -508,11 +515,24 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
         emptyTitle: 'No great matches yet',
         emptyDescription: 'Try another city or remove a few filters — there are probably more results just around the corner.',
         exploreCities: 'Explore by city',
+        exploreCitiesSub: 'Dedicated city guides with local context and neighbourhood recommendations.',
       }
     : {
         tabs: { all: 'Sve', sitter: 'Sitteri', grooming: 'Grooming', dresura: 'Školovanje pasa' },
-        titles: TITLE_MAP,
-        profilesMatch: filtered.length === 1 ? 'profil odgovara pretrazi' : 'profila odgovara pretrazi',
+        heroKicker: 'Otkrijte',
+        heroTitle: {
+          all: 'Pronađite pravu brigu\nza svog ljubimca.',
+          sitter: 'Pronađite pouzdanog\nčuvara ljubimaca.',
+          grooming: 'Pronađite profesionalnog\ngroomera.',
+          dresura: 'Pronađite certificiranog\ntrenera za pse.',
+        },
+        heroSub: {
+          all: 'Pretražite verificirane sittere, groomere i trenere diljem Hrvatske. Svaki profil je provjeren.',
+          sitter: 'Pouzdani sitteri koji se brinu za vašeg ljubimca kao za svog — u svom domu ili vašem.',
+          grooming: 'Profesionalna njega dlake, kupanje i styling za vašeg voljenog ljubimca.',
+          dresura: 'Certificirani treneri za poslušnost, socijalizaciju i agility.',
+        },
+        profilesMatch: filtered.length === 1 ? 'profil odgovara' : 'profila odgovara',
         filters: 'Filteri',
         narrowSearch: 'Suzi pretragu',
         sortBest: 'Najbolje ocijenjeni',
@@ -525,11 +545,35 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
         emptyTitle: 'Nismo našli dobar match',
         emptyDescription: 'Promijenite grad ili maknite neke filtere — vjerojatno ima više rezultata odmah iza ugla.',
         exploreCities: 'Istražite po gradovima',
+        exploreCitiesSub: 'Posvećeni gradski vodiči s lokalnim kontekstom i preporukama za kvartove.',
       };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-6 -mt-2">
+    <div>
+      {/* ══════════════════════════════════════════
+          EDITORIAL HERO
+          ══════════════════════════════════════════ */}
+      <section className="relative browse-hero-gradient overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24 relative">
+          <div className="max-w-2xl">
+            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-5 font-semibold animate-fade-in-up">
+              {copy.heroKicker}
+            </p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-6 font-[var(--font-heading)] whitespace-pre-line animate-fade-in-up delay-100">
+              {copy.heroTitle[activeCategory]}
+            </h1>
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg animate-fade-in-up delay-200">
+              {copy.heroSub[activeCategory]}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          CATEGORY TABS
+          ══════════════════════════════════════════ */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-16 -mt-5 relative z-10">
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {CATEGORY_TABS.map((tab) => {
             const isActive = activeCategory === tab.key;
@@ -537,16 +581,16 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
               <button
                 key={tab.key}
                 onClick={() => setCategory(tab.key)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 ${
                   isActive
-                    ? 'bg-orange-500 text-white shadow-md shadow-orange-200'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-foreground text-background shadow-lg'
+                    : 'bg-white dark:bg-card text-muted-foreground hover:text-foreground border border-border/50 hover:border-border shadow-sm'
                 }`}
               >
                 <span>{tab.emoji}</span>
                 <span>{copy.tabs[tab.key]}</span>
                 {isActive && (
-                  <span className="bg-white/25 text-white text-xs px-1.5 py-0.5 rounded-full ml-1">
+                  <span className="bg-white/20 text-xs px-2 py-0.5 rounded-full ml-0.5">
                     {filtered.length}
                   </span>
                 )}
@@ -556,181 +600,221 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
         </div>
       </div>
 
-      <div className="sticky top-14 z-30 -mx-4 px-4 py-4 bg-white/95 backdrop-blur-sm border-b border-gray-100 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">{copy.titles[activeCategory]}</h1>
-            <p className="text-muted-foreground text-sm">
-              {filtered.length} {copy.profilesMatch}
-              {city && ` · ${city}`}
+      {/* ══════════════════════════════════════════
+          TOOLBAR
+          ══════════════════════════════════════════ */}
+      <div className="sticky top-14 z-30 glass-strong border-b border-border/50">
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">{filtered.length}</span> {copy.profilesMatch}
+              {city && <span className="text-warm-orange"> · {city}</span>}
             </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Sheet>
-              <SheetTrigger render={<Button variant="outline" size="sm" />} className="md:hidden relative">
-                <SlidersHorizontal className="h-4 w-4 mr-1" />
-                {copy.filters}
-                {activeFilterCount > 0 && (
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center bg-orange-500 text-xs">
-                    {activeFilterCount}
-                  </Badge>
-                )}
-              </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] overflow-y-auto">
-                <SheetTitle className="mb-4">{copy.narrowSearch}</SheetTitle>
-                <SearchFilterPanel
-                  city={city} service={service} minPrice={minPrice} maxPrice={maxPrice} minRating={minRating}
-                  activeFilterCount={activeFilterCount} category={activeCategory}
-                  onCityChange={setCity} onServiceChange={setService} onMinPriceChange={setMinPrice}
-                  onMaxPriceChange={setMaxPrice} onMinRatingChange={setMinRating}
-                  onApply={applyFilters} onClear={clearFilters}
-                />
-              </SheetContent>
-            </Sheet>
+            <div className="flex items-center gap-3">
+              {/* Mobile filter trigger */}
+              <Sheet>
+                <SheetTrigger render={<Button variant="outline" size="sm" />} className="md:hidden relative rounded-xl">
+                  <SlidersHorizontal className="h-4 w-4 mr-1.5" />
+                  {copy.filters}
+                  {activeFilterCount > 0 && (
+                    <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center bg-orange-500 text-xs">
+                      {activeFilterCount}
+                    </Badge>
+                  )}
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[300px] overflow-y-auto">
+                  <SheetTitle className="mb-6 font-[var(--font-heading)]">{copy.narrowSearch}</SheetTitle>
+                  <SearchFilterPanel
+                    city={city} service={service} minPrice={minPrice} maxPrice={maxPrice} minRating={minRating}
+                    activeFilterCount={activeFilterCount} category={activeCategory}
+                    onCityChange={setCity} onServiceChange={setService} onMinPriceChange={setMinPrice}
+                    onMaxPriceChange={setMaxPrice} onMinRatingChange={setMinRating}
+                    onApply={applyFilters} onClear={clearFilters}
+                  />
+                </SheetContent>
+              </Sheet>
 
-            <select
-              value={sort}
-              onChange={(e) => { setSort(e.target.value); setTimeout(applyFilters, 0); }}
-              className="h-9 rounded-lg border border-input bg-background px-3 text-sm focus:border-orange-300"
-            >
-              <option value="rating">{copy.sortBest}</option>
-              <option value="reviews">{copy.sortMostReviews}</option>
-              <option value="price">{copy.sortLowestPrice}</option>
-            </select>
+              {/* Sort */}
+              <select
+                value={sort}
+                onChange={(e) => { setSort(e.target.value); setTimeout(applyFilters, 0); }}
+                className="h-9 rounded-xl border border-border/60 bg-white dark:bg-card px-3 text-sm focus:border-orange-300 shadow-sm"
+              >
+                <option value="rating">{copy.sortBest}</option>
+                <option value="reviews">{copy.sortMostReviews}</option>
+                <option value="price">{copy.sortLowestPrice}</option>
+              </select>
 
-            <div className="hidden sm:flex items-center border rounded-lg overflow-hidden">
-              <button
-                onClick={() => { setShowMap(false); setViewMode('grid'); }}
-                className={`p-2 transition-colors ${!showMap && viewMode === 'grid' ? 'bg-orange-50 text-orange-600' : 'hover:bg-gray-50'}`}
+              {/* View toggles */}
+              <div className="hidden sm:flex items-center border border-border/60 rounded-xl overflow-hidden shadow-sm">
+                <button
+                  onClick={() => { setShowMap(false); setViewMode('grid'); }}
+                  className={`p-2.5 transition-colors ${!showMap && viewMode === 'grid' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
+                >
+                  <Grid className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => { setShowMap(false); setViewMode('list'); }}
+                  className={`p-2.5 transition-colors ${!showMap && viewMode === 'list' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
+                >
+                  <LayoutList className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => setShowMap(true)}
+                  className={`p-2.5 transition-colors ${showMap ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
+                >
+                  <MapIcon className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Mobile map toggle */}
+              <Button
+                variant={showMap ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setShowMap(!showMap)}
+                className={`sm:hidden rounded-xl ${showMap ? 'bg-orange-500 hover:bg-orange-600' : ''}`}
               >
-                <Grid className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => { setShowMap(false); setViewMode('list'); }}
-                className={`p-2 transition-colors ${!showMap && viewMode === 'list' ? 'bg-orange-50 text-orange-600' : 'hover:bg-gray-50'}`}
-              >
-                <LayoutList className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setShowMap(true)}
-                className={`p-2 transition-colors ${showMap ? 'bg-orange-50 text-orange-600' : 'hover:bg-gray-50'}`}
-              >
-                <MapIcon className="h-4 w-4" />
-              </button>
+                {showMap ? <Grid className="h-4 w-4" /> : <MapIcon className="h-4 w-4" />}
+              </Button>
             </div>
-
-            <Button
-              variant={showMap ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setShowMap(!showMap)}
-              className={`sm:hidden ${showMap ? 'bg-orange-500 hover:bg-orange-600' : ''}`}
-            >
-              {showMap ? <Grid className="h-4 w-4" /> : <MapIcon className="h-4 w-4" />}
-            </Button>
           </div>
         </div>
       </div>
 
+      {/* ══════════════════════════════════════════
+          ACTIVE FILTERS
+          ══════════════════════════════════════════ */}
       {activeFilterCount > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6 animate-fade-in">
-          {city && (
-            <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
-              <MapPin className="h-3 w-3" />
-              {city}
-              <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setCity(''); applyFilters(); }} />
-            </Badge>
-          )}
-          {service && (
-            <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
-              {getTranslatedServiceLabel(service, activeCategory === 'all' ? undefined : activeCategory, language)}
-              <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setService(''); applyFilters(); }} />
-            </Badge>
-          )}
-          {minRating && (
-            <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
-              {minRating}+ {copy.rating}
-              <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMinRating(''); applyFilters(); }} />
-            </Badge>
-          )}
-          {minPrice && (
-            <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
-              {copy.from} {minPrice}&euro;
-              <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMinPrice(''); applyFilters(); }} />
-            </Badge>
-          )}
-          {maxPrice && (
-            <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
-              {copy.upTo} {maxPrice}&euro;
-              <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMaxPrice(''); applyFilters(); }} />
-            </Badge>
-          )}
-          <button onClick={clearFilters} className="text-xs text-orange-500 hover:underline self-center ml-1">
-            {copy.clearFilters}
-          </button>
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 pt-6">
+          <div className="flex flex-wrap gap-2 animate-fade-in">
+            {city && (
+              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
+                <MapPin className="h-3 w-3" />
+                {city}
+                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setCity(''); applyFilters(); }} />
+              </Badge>
+            )}
+            {service && (
+              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
+                {getTranslatedServiceLabel(service, activeCategory === 'all' ? undefined : activeCategory, language)}
+                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setService(''); applyFilters(); }} />
+              </Badge>
+            )}
+            {minRating && (
+              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
+                {minRating}+ {copy.rating}
+                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMinRating(''); applyFilters(); }} />
+              </Badge>
+            )}
+            {minPrice && (
+              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
+                {copy.from} {minPrice}&euro;
+                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMinPrice(''); applyFilters(); }} />
+              </Badge>
+            )}
+            {maxPrice && (
+              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
+                {copy.upTo} {maxPrice}&euro;
+                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMaxPrice(''); applyFilters(); }} />
+              </Badge>
+            )}
+            <button onClick={clearFilters} className="text-xs text-warm-orange hover:underline self-center ml-1">
+              {copy.clearFilters}
+            </button>
+          </div>
         </div>
       )}
 
-      <div className="flex gap-8">
-        <aside className="hidden md:block w-64 flex-shrink-0">
-          <Card className="p-5 sticky top-32 border-0 shadow-sm rounded-2xl">
-            <h2 className="font-semibold mb-4 flex items-center gap-2 text-sm uppercase tracking-wider text-muted-foreground">
-              <Filter className="h-4 w-4" />
-              {copy.narrowSearch}
-            </h2>
-            <SearchFilterPanel
-              city={city} service={service} minPrice={minPrice} maxPrice={maxPrice} minRating={minRating}
-              activeFilterCount={activeFilterCount} category={activeCategory}
-              onCityChange={setCity} onServiceChange={setService} onMinPriceChange={setMinPrice}
-              onMaxPriceChange={setMaxPrice} onMinRatingChange={setMinRating}
-              onApply={applyFilters} onClear={clearFilters}
-            />
-          </Card>
-        </aside>
+      {/* ══════════════════════════════════════════
+          MAIN CONTENT
+          ══════════════════════════════════════════ */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-16 py-10">
+        <div className="flex gap-10">
+          {/* Desktop filter sidebar */}
+          <aside className="hidden md:block w-64 flex-shrink-0">
+            <div className="sticky top-32 filter-panel rounded-2xl p-6 border border-border/30 shadow-sm">
+              <h2 className="font-bold mb-6 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                <Filter className="h-3.5 w-3.5" />
+                {copy.narrowSearch}
+              </h2>
+              <SearchFilterPanel
+                city={city} service={service} minPrice={minPrice} maxPrice={maxPrice} minRating={minRating}
+                activeFilterCount={activeFilterCount} category={activeCategory}
+                onCityChange={setCity} onServiceChange={setService} onMinPriceChange={setMinPrice}
+                onMaxPriceChange={setMaxPrice} onMinRatingChange={setMinRating}
+                onApply={applyFilters} onClear={clearFilters}
+              />
+            </div>
+          </aside>
 
-        <div className="flex-1 min-w-0">
-          {showMap ? (
-            <div className="h-[600px] rounded-xl overflow-hidden border shadow-sm animate-fade-in">
-              <MapView providers={filtered} />
-            </div>
-          ) : filtered.length === 0 ? (
-            <EmptyState
-              icon={PawPrint}
-              title={copy.emptyTitle}
-              description={copy.emptyDescription}
-              action={
-                <Button variant="outline" onClick={clearFilters} className="hover:bg-orange-50 hover:text-orange-600">
-                  {copy.clearFilters}
-                </Button>
-              }
-            />
-          ) : (
-            <div className={`animate-fade-in ${
-              viewMode === 'list'
-                ? 'space-y-4'
-                : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
-            }`}>
-              {filtered.map((provider) => (
-                <ProviderCard key={`${provider.category}-${provider.id}`} provider={provider} />
-              ))}
-            </div>
-          )}
+          {/* Results */}
+          <div className="flex-1 min-w-0">
+            {showMap ? (
+              <div className="h-[600px] rounded-2xl overflow-hidden border border-border/30 shadow-sm animate-fade-in">
+                <MapView providers={filtered} />
+              </div>
+            ) : filtered.length === 0 ? (
+              <EmptyState
+                icon={PawPrint}
+                title={copy.emptyTitle}
+                description={copy.emptyDescription}
+                action={
+                  <Button variant="outline" onClick={clearFilters} className="hover:bg-orange-50 hover:text-orange-600 rounded-xl">
+                    {copy.clearFilters}
+                  </Button>
+                }
+              />
+            ) : (
+              <div className={`animate-fade-in ${
+                viewMode === 'list'
+                  ? 'space-y-5'
+                  : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7'
+              }`}>
+                {filtered.map((provider) => (
+                  <ProviderCard key={`${provider.category}-${provider.id}`} provider={provider} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="mt-12 pt-8 border-t">
-        <h2 className="text-lg font-bold mb-4 font-[var(--font-heading)]">{copy.exploreCities}</h2>
-        <div className="flex flex-wrap gap-3">
-          <Link href={localeCityLinks.zagreb} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-medium hover:border-orange-300 hover:text-orange-600 transition-colors">
-            <MapPin className="h-3.5 w-3.5" /> Zagreb
-          </Link>
-          <Link href={localeCityLinks.rijeka} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-medium hover:border-teal-300 hover:text-teal-600 transition-colors">
-            <MapPin className="h-3.5 w-3.5" /> Rijeka
-          </Link>
-          <Link href={localeCityLinks.split} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-medium hover:border-blue-300 hover:text-blue-600 transition-colors">
-            <MapPin className="h-3.5 w-3.5" /> Split
-          </Link>
+      {/* ══════════════════════════════════════════
+          EXPLORE BY CITY — EDITORIAL
+          ══════════════════════════════════════════ */}
+      <section className="py-16 md:py-24 bg-warm-section">
+        <div className="container mx-auto px-6 md:px-10 lg:px-16">
+          <div className="mb-10">
+            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-4 font-semibold">
+              {copy.exploreCities}
+            </p>
+            <p className="text-base text-muted-foreground max-w-lg">
+              {copy.exploreCitiesSub}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { name: 'Zagreb', href: localeCityLinks.zagreb, color: 'hover:border-orange-300 hover:text-orange-600' },
+              { name: 'Rijeka', href: localeCityLinks.rijeka, color: 'hover:border-teal-300 hover:text-teal-600' },
+              { name: 'Split', href: localeCityLinks.split, color: 'hover:border-blue-300 hover:text-blue-600' },
+            ].map((c) => (
+              <Link
+                key={c.name}
+                href={c.href}
+                className={`group flex items-center gap-4 p-5 rounded-2xl border border-border/50 bg-white dark:bg-card transition-all duration-300 hover:shadow-md ${c.color}`}
+              >
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-accent">
+                  <MapPin className="h-5 w-5 text-muted-foreground group-hover:text-current transition-colors" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold font-[var(--font-heading)]">{c.name}</h3>
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-current group-hover:translate-x-0.5 transition-all" />
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

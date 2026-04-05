@@ -4,14 +4,13 @@ import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  Star, MapPin, Award, Shield, X, Filter, SlidersHorizontal, GraduationCap, Clock, Users, ChevronDown, ChevronUp,
+  Star, MapPin, Award, Shield, X, Filter, SlidersHorizontal, GraduationCap, Clock, Users, ChevronDown, ChevronUp, ArrowRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { EmptyState } from '@/components/shared/empty-state';
 import { useLanguage } from '@/lib/i18n/context';
@@ -50,13 +49,13 @@ function FilterPanel({ city, type, activeFilterCount, onCityChange, onTypeChange
   const trainingLabel = (value: TrainingType) => isEn ? TRAINING_TYPE_LABELS_EN[value] : TRAINING_TYPE_LABELS[value];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       <div>
-        <Label className="text-sm font-medium mb-2 block">{isEn ? 'City' : 'Grad'}</Label>
+        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{isEn ? 'City' : 'Grad'}</Label>
         <select
           value={city}
           onChange={(e) => onCityChange(e.target.value)}
-          className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors focus:border-orange-300 focus:ring-1 focus:ring-orange-200"
+          className="premium-select"
         >
           <option value="">{isEn ? 'All cities' : 'Svi gradovi'}</option>
           {CITIES.map((c) => (
@@ -65,10 +64,10 @@ function FilterPanel({ city, type, activeFilterCount, onCityChange, onTypeChange
         </select>
       </div>
       <div>
-        <Label className="text-sm font-medium mb-2 block">{isEn ? 'Training type' : 'Vrsta treninga'}</Label>
-        <div className="space-y-2">
+        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{isEn ? 'Training type' : 'Vrsta treninga'}</Label>
+        <div className="space-y-1">
           {(Object.entries(TRAINING_TYPE_LABELS) as [TrainingType, string][]).map(([key]) => (
-            <label key={key} className="flex items-center gap-2.5 cursor-pointer group">
+            <label key={key} className="premium-radio-option group">
               <input
                 type="radio"
                 name="training-type"
@@ -77,25 +76,24 @@ function FilterPanel({ city, type, activeFilterCount, onCityChange, onTypeChange
                 onChange={(e) => onTypeChange(e.target.value)}
                 className="accent-orange-500 w-4 h-4"
               />
-              <span className="text-sm group-hover:text-orange-600 transition-colors">{trainingLabel(key)}</span>
+              <span className="text-sm group-hover:text-foreground transition-colors">{trainingLabel(key)}</span>
             </label>
           ))}
           {type && (
-            <button onClick={() => onTypeChange('')} className="text-xs text-orange-500 hover:underline mt-1">
+            <button onClick={() => onTypeChange('')} className="text-xs text-warm-orange hover:underline mt-2 pl-3">
               {isEn ? 'Clear selection' : 'Poništi odabir'}
             </button>
           )}
         </div>
       </div>
-      <Separator />
-      <div className="flex gap-2">
-        <Button onClick={onApply} className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover">
+      <div className="pt-2">
+        <Button onClick={onApply} className="w-full bg-orange-500 hover:bg-orange-600 btn-hover rounded-xl h-11 font-semibold">
           {isEn ? 'Apply filters' : 'Primijeni filtere'}
         </Button>
         {activeFilterCount > 0 && (
-          <Button variant="outline" onClick={onClear} className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
-            <X className="h-4 w-4" />
-          </Button>
+          <button onClick={onClear} className="w-full text-center text-xs text-muted-foreground hover:text-warm-orange mt-3 transition-colors">
+            {isEn ? 'Clear all filters' : 'Očisti sve filtere'}
+          </button>
         )}
       </div>
     </div>
@@ -134,90 +132,126 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
   const activeFilterCount = [city, type].filter(Boolean).length;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="sticky top-14 z-30 -mx-4 px-4 py-4 glass-strong border-b border-border/50 mb-6 -mt-2">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <GraduationCap className="h-6 w-6 text-orange-500" />
+    <div>
+      {/* ══════════════════════════════════════════
+          EDITORIAL HERO
+          ══════════════════════════════════════════ */}
+      <section className="relative browse-hero-gradient overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24 relative">
+          <div className="max-w-2xl">
+            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-5 font-semibold animate-fade-in-up">
               {isEn ? 'Dog training' : 'Školovanje pasa'}
+            </p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-6 font-[var(--font-heading)] animate-fade-in-up delay-100">
+              {isEn
+                ? 'Professional training\nfor every dog.'
+                : 'Profesionalna školovanje\nza svakog psa.'}
             </h1>
-            <p className="text-muted-foreground text-sm">
-              {trainers.length} {isEn ? (trainers.length === 1 ? 'trainer found' : 'trainers found') : (trainers.length === 1 ? 'trener pronađen' : 'trenera pronađeno')}
-              {city && (isEn ? ` in ${city}` : ` u gradu ${city}`)}
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg animate-fade-in-up delay-200">
+              {isEn
+                ? 'From basic obedience to agility — certified trainers who use positive reinforcement methods.'
+                : 'Od osnove poslušnosti do agility-ja — certificirani treneri koji koriste pozitivan pristup školovanju pasa.'}
             </p>
           </div>
-          <Sheet>
-            <SheetTrigger render={<Button variant="outline" size="sm" />} className="md:hidden relative">
-              <SlidersHorizontal className="h-4 w-4 mr-1" />
-              {isEn ? 'Filters' : 'Filteri'}
-              {activeFilterCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center bg-orange-500 text-xs">
-                  {activeFilterCount}
-                </Badge>
-              )}
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] overflow-y-auto">
-              <SheetTitle className="mb-4">{isEn ? 'Filters' : 'Filteri'}</SheetTitle>
-              <FilterPanel city={city} type={type} activeFilterCount={activeFilterCount} onCityChange={setCity} onTypeChange={setType} onApply={applyFilters} onClear={clearFilters} />
-            </SheetContent>
-          </Sheet>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          TOOLBAR
+          ══════════════════════════════════════════ */}
+      <div className="sticky top-14 z-30 glass-strong border-b border-border/50">
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">{trainers.length}</span>{' '}
+              {isEn ? (trainers.length === 1 ? 'trainer found' : 'trainers found') : (trainers.length === 1 ? 'trener pronađen' : 'trenera pronađeno')}
+              {city && <span className="text-warm-orange"> · {city}</span>}
+            </p>
+            <Sheet>
+              <SheetTrigger render={<Button variant="outline" size="sm" />} className="md:hidden relative rounded-xl">
+                <SlidersHorizontal className="h-4 w-4 mr-1.5" />
+                {isEn ? 'Filters' : 'Filteri'}
+                {activeFilterCount > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center bg-orange-500 text-xs">
+                    {activeFilterCount}
+                  </Badge>
+                )}
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] overflow-y-auto">
+                <SheetTitle className="mb-6 font-[var(--font-heading)]">{isEn ? 'Filters' : 'Filteri'}</SheetTitle>
+                <FilterPanel city={city} type={type} activeFilterCount={activeFilterCount} onCityChange={setCity} onTypeChange={setType} onApply={applyFilters} onClear={clearFilters} />
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
 
+      {/* ══════════════════════════════════════════
+          ACTIVE FILTERS
+          ══════════════════════════════════════════ */}
       {activeFilterCount > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6 animate-fade-in">
-          {city && (
-            <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
-              <MapPin className="h-3 w-3" />{city}
-              <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setCity(''); applyFilters(); }} />
-            </Badge>
-          )}
-          {type && (
-            <Badge variant="secondary" className="gap-1 bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100">
-              {trainingLabel(type as TrainingType)}
-              <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setType(''); applyFilters(); }} />
-            </Badge>
-          )}
-          <button onClick={clearFilters} className="text-xs text-orange-500 hover:underline self-center ml-1">
-            {isEn ? 'Clear all' : 'Ukloni sve'}
-          </button>
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 pt-6">
+          <div className="flex flex-wrap gap-2 animate-fade-in">
+            {city && (
+              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
+                <MapPin className="h-3 w-3" />{city}
+                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setCity(''); applyFilters(); }} />
+              </Badge>
+            )}
+            {type && (
+              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
+                {trainingLabel(type as TrainingType)}
+                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setType(''); applyFilters(); }} />
+              </Badge>
+            )}
+            <button onClick={clearFilters} className="text-xs text-warm-orange hover:underline self-center ml-1">
+              {isEn ? 'Clear all' : 'Ukloni sve'}
+            </button>
+          </div>
         </div>
       )}
 
-      <div className="flex gap-8">
-        <aside className="hidden md:block w-64 flex-shrink-0">
-          <Card className="p-5 sticky top-32 border-0 shadow-sm rounded-2xl">
-            <h2 className="font-semibold mb-4 flex items-center gap-2 text-sm uppercase tracking-wider text-muted-foreground">
-              <Filter className="h-4 w-4" />
-              {isEn ? 'Filters' : 'Filteri'}
-            </h2>
-            <FilterPanel city={city} type={type} activeFilterCount={activeFilterCount} onCityChange={setCity} onTypeChange={setType} onApply={applyFilters} onClear={clearFilters} />
-          </Card>
-        </aside>
-
-        <div className="flex-1 min-w-0">
-          {trainers.length === 0 ? (
-            <EmptyState
-              icon={GraduationCap}
-              title={isEn ? 'No matching trainers' : 'Nema odgovarajućih trenera'}
-              description={isEn ? 'Change the filters or try searching without a city to see more profiles.' : 'Promijenite filtere ili pokušajte pretragu bez grada kako biste vidjeli više profila.'}
-              action={
-                <Button variant="outline" onClick={clearFilters} className="hover:bg-orange-50 hover:text-orange-600">
-                  {isEn ? 'Reset filters' : 'Poništi filtere'}
-                </Button>
-              }
-            />
-          ) : (
-            <div className="space-y-6 animate-fade-in">
-              {trainers.map((trainer, i) => (
-                <TrainerCard key={trainer.id} trainer={trainer} index={i} />
-              ))}
+      {/* ══════════════════════════════════════════
+          MAIN CONTENT
+          ══════════════════════════════════════════ */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-16 py-10">
+        <div className="flex gap-10">
+          {/* Desktop filter sidebar */}
+          <aside className="hidden md:block w-64 flex-shrink-0">
+            <div className="sticky top-32 filter-panel rounded-2xl p-6 border border-border/30 shadow-sm">
+              <h2 className="font-bold mb-6 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                <Filter className="h-3.5 w-3.5" />
+                {isEn ? 'Filters' : 'Filteri'}
+              </h2>
+              <FilterPanel city={city} type={type} activeFilterCount={activeFilterCount} onCityChange={setCity} onTypeChange={setType} onApply={applyFilters} onClear={clearFilters} />
             </div>
-          )}
-          <p className="text-center text-sm text-muted-foreground italic py-4">
-            {isEn ? 'Pricing is set by each provider on their profile.' : 'Cijene određuju pružatelji usluga na svojim profilima'}
-          </p>
+          </aside>
+
+          {/* Results */}
+          <div className="flex-1 min-w-0">
+            {trainers.length === 0 ? (
+              <EmptyState
+                icon={GraduationCap}
+                title={isEn ? 'No matching trainers' : 'Nema odgovarajućih trenera'}
+                description={isEn ? 'Change the filters or try searching without a city to see more profiles.' : 'Promijenite filtere ili pokušajte pretragu bez grada kako biste vidjeli više profila.'}
+                action={
+                  <Button variant="outline" onClick={clearFilters} className="hover:bg-orange-50 hover:text-orange-600 rounded-xl">
+                    {isEn ? 'Reset filters' : 'Poništi filtere'}
+                  </Button>
+                }
+              />
+            ) : (
+              <div className="space-y-6 animate-fade-in">
+                {trainers.map((trainer, i) => (
+                  <TrainerCard key={trainer.id} trainer={trainer} index={i} />
+                ))}
+              </div>
+            )}
+            <p className="text-center text-sm text-muted-foreground italic py-6 mt-4">
+              {isEn ? 'Pricing is set by each provider on their profile.' : 'Cijene određuju pružatelji usluga na svojim profilima'}
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -243,101 +277,110 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
   }, [expanded, trainer.id, programs.length]);
 
   return (
-    <Card className={`group overflow-hidden border-0 shadow-sm rounded-2xl animate-fade-in-up delay-${((index % 3) + 1) * 100}`}>
-      <CardContent className="p-0">
-        <div className="flex flex-col md:flex-row">
-          <div className={`relative w-full md:w-64 min-h-[200px] bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 overflow-hidden`}>
-            <div className="absolute inset-0 paw-pattern opacity-10" />
-            <div className="absolute inset-0 bg-black/10" />
-            <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white/90 text-xs font-medium">
-              <span>{trainer.city}</span>
-              <span className="rounded-full bg-white/90 px-2.5 py-1 text-indigo-600 shadow-sm">{isEn ? 'Training' : 'Školovanje'}</span>
-            </div>
-            <div className="text-center relative p-6">
-              <Avatar className="h-24 w-24 border-4 border-white shadow-lg mx-auto mb-3">
-                <AvatarFallback className="bg-white/90 text-gray-700 text-2xl font-bold">
-                  {trainer.name.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex gap-1.5 justify-center flex-wrap">
-                {trainer.certified && (
-                  <Badge className="bg-white/90 text-blue-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5">
-                    <Shield className="h-3 w-3 mr-1" />{isEn ? 'Certified' : 'Certificiran'}
-                  </Badge>
-                )}
-                {isPremium && (
-                  <Badge className="bg-white/90 text-amber-600 text-xs shadow-sm hover:bg-white/90 rounded-full px-2.5 font-semibold">
-                    <Award className="h-3 w-3 mr-1" />Premium
-                  </Badge>
-                )}
-              </div>
-            </div>
+    <article className="group overflow-hidden rounded-2xl bg-white dark:bg-card border border-border/30 provider-card">
+      <div className="flex flex-col md:flex-row">
+        {/* Left: gradient avatar panel */}
+        <div className={`relative w-full md:w-72 min-h-[220px] bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 overflow-hidden`}>
+          <div className="absolute inset-0 paw-pattern opacity-[0.07]" />
+          <div className="absolute inset-0 bg-black/5" />
+
+          <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between text-white/90 text-xs font-medium">
+            <span className="flex items-center gap-1 drop-shadow-sm">
+              <MapPin className="h-3 w-3" />
+              {trainer.city}
+            </span>
+            <span className="rounded-full bg-white/95 px-3 py-1.5 text-indigo-600 font-bold shadow-sm">
+              <GraduationCap className="h-3 w-3 inline mr-1" />
+              {isEn ? 'Training' : 'Školovanje'}
+            </span>
           </div>
 
-          <div className="flex-1 p-6">
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <h3 className="font-semibold text-xl">{trainer.name}</h3>
-                <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                  <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{trainer.city}</span>
-                  <span className="flex items-center gap-1">
-                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                    {trainer.rating.toFixed(1)} ({trainer.review_count})
-                  </span>
-                </div>
-              </div>
-              <span className="text-sm text-muted-foreground">{isEn ? 'Pricing by arrangement' : 'Cijene prema dogovoru'}</span>
-            </div>
-
-            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{trainer.bio}</p>
-
-            <div className="flex flex-wrap gap-1.5 mb-3">
-              {trainer.specializations.map((s) => (
-                <Badge key={s} variant="secondary" className="text-xs font-normal bg-indigo-50 text-indigo-700">
-                  {trainingLabel(s)}
-                </Badge>
-              ))}
-            </div>
-
-            {trainer.certificates.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mb-4">
-                {trainer.certificates.map((c) => (
-                  <Badge key={c} variant="outline" className="text-xs font-normal">
-                    <GraduationCap className="h-3 w-3 mr-1" />{c}
-                  </Badge>
-                ))}
-              </div>
-            )}
-
-            {programs.length > 0 && (
-              <div>
-                <button
-                  onClick={() => setExpanded(!expanded)}
-                  className="flex items-center gap-1 text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors"
-                >
-                  {expanded ? (isEn ? 'Hide' : 'Sakrij') : (isEn ? 'Show' : 'Prikaži')} {isEn ? 'programs' : 'programe'} ({programs.length})
-                  {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                </button>
-
-                {expanded && (
-                  <div className="mt-4 space-y-3 animate-fade-in">
-                    {programs.map((program) => (
-                      <ProgramCard key={program.id} program={program} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div className="pt-3 mt-3 border-t border-border/50">
-              <Link href={`/trener/${trainer.id}`} className="text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors flex items-center gap-1">
-                {isEn ? 'View profile' : 'Pogledaj profil'} <ChevronDown className="h-3 w-3 rotate-[-90deg]" />
-              </Link>
+          <div className="text-center relative p-8">
+            <Avatar className="h-24 w-24 border-4 border-white shadow-xl mx-auto mb-4">
+              <AvatarFallback className="bg-white text-gray-700 text-2xl font-bold">
+                {trainer.name.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex gap-1.5 justify-center flex-wrap">
+              {trainer.certified && (
+                <span className="inline-flex items-center bg-white/90 text-blue-600 text-xs font-medium shadow-sm rounded-full px-2.5 py-1">
+                  <Shield className="h-3 w-3 mr-1" />{isEn ? 'Certified' : 'Certificiran'}
+                </span>
+              )}
+              {isPremium && (
+                <span className="inline-flex items-center bg-white/90 text-amber-600 text-xs font-semibold shadow-sm rounded-full px-2.5 py-1">
+                  <Award className="h-3 w-3 mr-1" />Premium
+                </span>
+              )}
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+
+        {/* Right: content */}
+        <div className="flex-1 p-7">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <h3 className="font-bold text-xl font-[var(--font-heading)]">{trainer.name}</h3>
+              <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1.5">
+                <span className="flex items-center gap-1">
+                  <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                  <span className="font-semibold text-amber-700 dark:text-amber-400">{trainer.rating.toFixed(1)}</span>
+                  <span className="text-amber-600/60 dark:text-amber-500/60">({trainer.review_count})</span>
+                </span>
+              </div>
+            </div>
+            <span className="text-xs text-muted-foreground">{isEn ? 'Pricing by arrangement' : 'Cijene prema dogovoru'}</span>
+          </div>
+
+          <p className="text-sm text-muted-foreground mb-5 leading-relaxed">{trainer.bio}</p>
+
+          <div className="flex flex-wrap gap-1.5 mb-4">
+            {trainer.specializations.map((s) => (
+              <span key={s} className="inline-flex items-center text-xs font-medium bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 px-2.5 py-1 rounded-lg">
+                {trainingLabel(s)}
+              </span>
+            ))}
+          </div>
+
+          {trainer.certificates.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-5">
+              {trainer.certificates.map((c) => (
+                <span key={c} className="inline-flex items-center text-xs font-medium bg-accent dark:bg-accent/50 text-accent-foreground border border-border/40 px-2.5 py-1 rounded-lg">
+                  <GraduationCap className="h-3 w-3 mr-1.5" />{c}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {programs.length > 0 && (
+            <div>
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className="flex items-center gap-1.5 text-sm font-semibold text-warm-orange hover:text-orange-600 transition-colors"
+              >
+                {expanded ? (isEn ? 'Hide' : 'Sakrij') : (isEn ? 'Show' : 'Prikaži')} {isEn ? 'programs' : 'programe'} ({programs.length})
+                {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </button>
+
+              {expanded && (
+                <div className="mt-4 space-y-3 animate-fade-in">
+                  {programs.map((program) => (
+                    <ProgramCard key={program.id} program={program} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="pt-4 mt-4 border-t border-border/40">
+            <Link href={`/trener/${trainer.id}`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-warm-orange hover:gap-2.5 transition-all">
+              {isEn ? 'View profile' : 'Pogledaj profil'}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </article>
   );
 }
 
@@ -347,20 +390,20 @@ function ProgramCard({ program }: { program: TrainingProgram }) {
   const trainingLabel = (value: TrainingType) => isEn ? TRAINING_TYPE_LABELS_EN[value] : TRAINING_TYPE_LABELS[value];
 
   return (
-    <div className="p-4 bg-accent rounded-xl border border-border/50">
+    <div className="p-5 bg-accent/50 dark:bg-accent/30 rounded-xl border border-border/40">
       <div className="flex items-start justify-between mb-2">
         <div>
-          <h4 className="font-semibold text-sm">{program.name}</h4>
-          <Badge variant="secondary" className="text-xs mt-1 bg-indigo-50 text-indigo-600">
+          <h4 className="font-bold text-sm font-[var(--font-heading)]">{program.name}</h4>
+          <span className="inline-flex items-center text-xs font-medium mt-1.5 bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-md">
             {trainingLabel(program.type)}
-          </Badge>
+          </span>
         </div>
-        <span className="text-sm text-muted-foreground">{isEn ? 'Pricing by arrangement' : 'Cijena prema dogovoru'}</span>
+        <span className="text-xs text-muted-foreground">{isEn ? 'Pricing by arrangement' : 'Cijena prema dogovoru'}</span>
       </div>
       <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{program.description}</p>
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{program.duration_weeks} {isEn ? 'weeks' : 'tjedana'}</span>
-        <span className="flex items-center gap-1"><Users className="h-3 w-3" />{program.sessions} {isEn ? 'sessions' : 'sesija'}</span>
+        <span className="flex items-center gap-1.5"><Clock className="h-3 w-3" />{program.duration_weeks} {isEn ? 'weeks' : 'tjedana'}</span>
+        <span className="flex items-center gap-1.5"><Users className="h-3 w-3" />{program.sessions} {isEn ? 'sessions' : 'sesija'}</span>
       </div>
     </div>
   );

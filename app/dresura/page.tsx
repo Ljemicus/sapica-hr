@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { GraduationCap, Scissors, Search, ArrowRight } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Scissors, Search, ArrowRight } from 'lucide-react';
 import { getTrainers } from '@/lib/db';
 import { TrainingContent } from './training-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
@@ -42,24 +41,6 @@ export default async function DresuraPage({ searchParams }: DresuraPageProps) {
         areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
       />
       <Breadcrumbs items={[{ label: 'Školovanje pasa', href: '/dresura' }]} />
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-teal-50 dark:from-indigo-950/20 dark:via-background dark:to-teal-950/20">
-        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
-        <div className="container mx-auto px-4 py-14 md:py-20 relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <Badge className="mb-5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 border-0 text-sm px-5 py-2 animate-fade-in-up rounded-full font-semibold">
-              <GraduationCap className="h-3.5 w-3.5 mr-1.5" />
-              Školovanje pasa i trening
-            </Badge>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-5 animate-fade-in-up delay-100 font-[var(--font-heading)]">
-              Profesionalna <span className="text-gradient">školovanje pasa</span>
-            </h1>
-            <p className="text-base md:text-lg text-muted-foreground mb-6 animate-fade-in-up delay-200 leading-relaxed max-w-xl mx-auto">
-              Od osnove poslušnosti do agility-ja — pronađite certificirane trenere
-              koji koriste pozitivan pristup školovanju pasa.
-            </p>
-          </div>
-        </div>
-      </section>
 
       <TrainingContent trainers={trainers} initialParams={params} />
 
@@ -73,32 +54,37 @@ export default async function DresuraPage({ searchParams }: DresuraPageProps) {
         ]}
       />
 
-      <section className="py-10 md:py-14 bg-warm-section">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-center mb-8 font-[var(--font-heading)]">Istražite druge usluge</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+      <section className="py-14 md:py-20 bg-warm-section">
+        <div className="container mx-auto px-6 md:px-10 lg:px-16">
+          <div className="mb-10">
+            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-4 font-semibold">
+              Druge usluge
+            </p>
+            <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)]">Istražite druge usluge</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
             <Link href="/pretraga" className="group">
-              <div className="flex items-center gap-4 p-5 rounded-2xl border border-border/50 bg-background hover:border-orange-300 hover:shadow-md transition-all">
-                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 text-orange-500">
-                  <Search className="h-6 w-6" />
+              <div className="flex items-center gap-4 p-5 rounded-2xl border border-border/50 bg-white dark:bg-card hover:border-orange-300 hover:shadow-md transition-all duration-300">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-900/30 text-orange-500">
+                  <Search className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-sm group-hover:text-orange-500 transition-colors">Čuvanje ljubimaca</h3>
+                  <h3 className="font-bold text-sm font-[var(--font-heading)] group-hover:text-orange-500 transition-colors">Čuvanje ljubimaca</h3>
                   <p className="text-xs text-muted-foreground">Pouzdani sitteri u vašem gradu</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-orange-500 transition-colors" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-orange-500 group-hover:translate-x-0.5 transition-all" />
               </div>
             </Link>
             <Link href="/njega" className="group">
-              <div className="flex items-center gap-4 p-5 rounded-2xl border border-border/50 bg-background hover:border-pink-300 hover:shadow-md transition-all">
-                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-pink-100 dark:bg-pink-900/30 text-pink-500">
-                  <Scissors className="h-6 w-6" />
+              <div className="flex items-center gap-4 p-5 rounded-2xl border border-border/50 bg-white dark:bg-card hover:border-pink-300 hover:shadow-md transition-all duration-300">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-pink-50 dark:bg-pink-900/30 text-pink-500">
+                  <Scissors className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-sm group-hover:text-pink-500 transition-colors">Grooming saloni</h3>
+                  <h3 className="font-bold text-sm font-[var(--font-heading)] group-hover:text-pink-500 transition-colors">Grooming saloni</h3>
                   <p className="text-xs text-muted-foreground">Šišanje, kupanje i njega</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-pink-500 transition-colors" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-pink-500 group-hover:translate-x-0.5 transition-all" />
               </div>
             </Link>
           </div>
