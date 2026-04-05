@@ -507,6 +507,45 @@ textarea:focus {
   }
 }
 
+/* ── Concept Zero — Premium Homepage ── */
+
+.concept-zero {
+  /* Slightly tighter letter-spacing for editorial feel */
+  letter-spacing: -0.01em;
+}
+
+/* CTA gradient — warm orange to deep coral to teal */
+.cz-cta-gradient {
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 30%, #0d9488 100%);
+}
+
+.dark .cz-cta-gradient {
+  background: linear-gradient(135deg, oklch(0.35 0.12 35) 0%, oklch(0.30 0.10 55) 30%, oklch(0.25 0.08 185) 100%);
+}
+
+/* Service cards — subtle reveal on hover */
+.cz-service-card {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.5s ease, transform 0.5s ease;
+}
+.cz-service-card:hover {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Sitter cards — refined hover state */
+.cz-sitter-card {
+  transition: all 0.3s ease;
+}
+
+/* Bounce subtle for scroll indicator */
+@keyframes bounce-subtle-cz {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(6px); opacity: 0.4; }
+}
+.animate-bounce-subtle {
+  animation: bounce-subtle-cz 2s ease-in-out infinite;
+}
+
 /* ── Mobile touch-target enforcement ── */
 /* Ensure interactive elements meet 44×44px minimum on touch devices */
 @media (pointer: coarse) {
