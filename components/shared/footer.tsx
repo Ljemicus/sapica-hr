@@ -74,20 +74,20 @@ export function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             <div>
               <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl text-white mb-4 group">
-                <PawLogo className="h-7 w-7 text-orange-400 group-hover:scale-110 transition-transform" />
+                <PawLogo className="h-7 w-7 text-warm-orange group-hover:scale-110 transition-transform" />
                 <span>
-                  <span className="text-orange-400">Pet</span><span className="text-teal-400">Park</span>
+                  <span className="text-warm-orange">Pet</span><span className="text-teal-400">Park</span>
                 </span>
               </Link>
               <p className="text-sm text-gray-400 leading-relaxed mb-6">{t('footer.tagline')}</p>
               <div className="flex items-center gap-3">
-                <a href="https://facebook.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Facebook">
+                <a href="https://facebook.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-warm-orange flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Facebook">
                   <FacebookIcon className="h-4 w-4" />
                 </a>
-                <a href="https://instagram.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Instagram">
+                <a href="https://instagram.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-warm-orange flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Instagram">
                   <InstagramIcon className="h-4 w-4" />
                 </a>
-                <a href="https://x.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-orange-500 flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Twitter">
+                <a href="https://x.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-warm-orange flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Twitter">
                   <TwitterIcon className="h-4 w-4" />
                 </a>
               </div>
@@ -97,56 +97,56 @@ export function Footer() {
               <ul className="space-y-3 text-sm">
                 <li><Link href={language === 'en' ? '/pretraga/en' : '/pretraga'} className="hover:text-orange-400 transition-colors">{t('footer.find_sitter')}</Link></li>
                 <li><Link href={localizedHref('/njega')} className="hover:text-orange-400 transition-colors">{t('footer.grooming')}</Link></li>
-                <li><Link href={localizedHref('/dresura')} className="hover:text-orange-400 transition-colors">{t('footer.training')}</Link></li>
-                <li><Link href={localizedHref('/veterinari')} className="hover:text-orange-400 transition-colors">{t('footer.veterinarians')}</Link></li>
+                <li><Link href={localizedHref('/dresura')} className="hover:text-warm-orange transition-colors">{t('footer.training')}</Link></li>
+                <li><Link href={localizedHref('/veterinari')} className="hover:text-warm-orange transition-colors">{t('footer.veterinarians')}</Link></li>
                 <li><Link href="/postani-sitter" className="hover:text-teal-400 transition-colors">{t('footer.become_sitter')}</Link></li>
                 <li><Link href="/hitno" className="hover:text-red-400 transition-colors font-medium">{t('footer.emergency')}</Link></li>
               </ul>
 
               <h4 className="font-semibold text-white mt-6 mb-3 text-xs uppercase tracking-wider">{t('footer.popular_cities')}</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href={language === 'en' ? '/cuvanje-pasa-zagreb/en' : '/cuvanje-pasa-zagreb'} className="hover:text-orange-400 transition-colors">{language === 'en' ? 'Dog sitting Zagreb' : 'Čuvanje pasa Zagreb'}</Link></li>
-                <li><Link href={language === 'en' ? '/cuvanje-pasa-split/en' : '/cuvanje-pasa-split'} className="hover:text-orange-400 transition-colors">{language === 'en' ? 'Dog sitting Split' : 'Čuvanje pasa Split'}</Link></li>
-                <li><Link href={language === 'en' ? '/cuvanje-pasa-rijeka/en' : '/cuvanje-pasa-rijeka'} className="hover:text-orange-400 transition-colors">{language === 'en' ? 'Dog sitting Rijeka' : 'Čuvanje pasa Rijeka'}</Link></li>
+                <li><Link href={language === 'en' ? '/cuvanje-pasa-zagreb/en' : '/cuvanje-pasa-zagreb'} className="hover:text-warm-orange transition-colors">{language === 'en' ? 'Dog sitting Zagreb' : 'Čuvanje pasa Zagreb'}</Link></li>
+                <li><Link href={language === 'en' ? '/cuvanje-pasa-split/en' : '/cuvanje-pasa-split'} className="hover:text-warm-orange transition-colors">{language === 'en' ? 'Dog sitting Split' : 'Čuvanje pasa Split'}</Link></li>
+                <li><Link href={language === 'en' ? '/cuvanje-pasa-rijeka/en' : '/cuvanje-pasa-rijeka'} className="hover:text-warm-orange transition-colors">{language === 'en' ? 'Dog sitting Rijeka' : 'Čuvanje pasa Rijeka'}</Link></li>
                 <li><Link href={language === 'en' ? '/grooming-zagreb/en' : '/grooming-zagreb'} className="hover:text-pink-400 transition-colors">{language === 'en' ? 'Grooming Zagreb' : 'Grooming Zagreb'}</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.explore')}</h3>
               <ul className="space-y-3 text-sm">
-                <li><Link href="/blog" className="hover:text-orange-400 transition-colors">{t('nav.blog')}</Link></li>
-                <li><Link href={localizedHref('/forum')} className="hover:text-orange-400 transition-colors">{t('nav.forum')}</Link></li>
+                <li><Link href="/blog" className="hover:text-warm-orange transition-colors">{t('nav.blog')}</Link></li>
+                <li><Link href={localizedHref('/forum')} className="hover:text-warm-orange transition-colors">{t('nav.forum')}</Link></li>
                 <li><Link href="/udruge" className="hover:text-teal-400 transition-colors">{t('footer.rescue_orgs') || 'Udruge'}</Link></li>
                 <li><Link href="/apelacije" className="hover:text-teal-400 transition-colors">{t('footer.appeals') || 'Apelacije'}</Link></li>
                 <li><Link href={localizedHref('/dog-friendly')} className="hover:text-green-400 transition-colors">{t('footer.dog_friendly')}</Link></li>
                 <li><Link href={localizedHref('/udomljavanje')} className="hover:text-pink-400 transition-colors">{t('footer.adoption')}</Link></li>
                 <li><Link href={localizedHref('/izgubljeni')} className="hover:text-red-400 transition-colors">{t('footer.lost_pets')}</Link></li>
-                <li><Link href={localizedHref('/uzgajivacnice')} className="hover:text-orange-400 transition-colors">{t('footer.breeders')}</Link></li>
+                <li><Link href={localizedHref('/uzgajivacnice')} className="hover:text-warm-orange transition-colors">{t('footer.breeders')}</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.contact')}</h3>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-orange-400 flex-shrink-0" />
+                  <Mail className="h-4 w-4 text-warm-orange flex-shrink-0" />
                   <span>info@petpark.hr</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-orange-400 flex-shrink-0 mt-0.5" />
+                  <MapPin className="h-4 w-4 text-warm-orange flex-shrink-0 mt-0.5" />
                   <span>{language === 'en' ? 'Rijeka, Croatia' : 'Rijeka, Hrvatska'}</span>
                 </li>
               </ul>
               <div className="mt-6 space-y-2 text-sm">
-                <Link href="/o-nama" className="block hover:text-orange-400 transition-colors">{t('footer.about')}</Link>
+                <Link href="/o-nama" className="block hover:text-warm-orange transition-colors">{t('footer.about')}</Link>
               </div>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
             <p>{t('footer.rights')}</p>
             <div className="flex items-center gap-4 text-xs">
-              <Link href="/privatnost" className="hover:text-orange-400 transition-colors">{t('footer.privacy')}</Link>
-              <Link href="/uvjeti" className="hover:text-orange-400 transition-colors">{t('footer.terms')}</Link>
-              <Link href="/kontakt" className="hover:text-orange-400 transition-colors">{t('footer.contact')}</Link>
+              <Link href="/privatnost" className="hover:text-warm-orange transition-colors">{t('footer.privacy')}</Link>
+              <Link href="/uvjeti" className="hover:text-warm-orange transition-colors">{t('footer.terms')}</Link>
+              <Link href="/kontakt" className="hover:text-warm-orange transition-colors">{t('footer.contact')}</Link>
             </div>
           </div>
         </div>
