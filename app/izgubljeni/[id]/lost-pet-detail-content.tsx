@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, MapPin, Calendar, Clock, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Clock, Phone, Mail, Eye, EyeOff, AlertTriangle, User, MessageCircle, Tag, Shield, Loader2, CheckCircle2, Trash2, ShieldAlert, Flag, UserCheck, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -60,6 +60,9 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
   const [localStatus, setLocalStatus] = useState(pet.status);
   const [localHidden, setLocalHidden] = useState(pet.hidden);
   const [actionLoading, setActionLoading] = useState(false);
+  const [reportState, setReportState] = useState<'idle' | 'open' | 'submitting' | 'done' | 'error' | 'duplicate'>('idle');
+  const [reportReasonCode, setReportReasonCode] = useState('');
+  const [reportDetails, setReportDetails] = useState('');
 
   useEffect(() => {
     fetch(`/api/lost-pets/${pet.id}/sightings`)
@@ -187,6 +190,39 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
     setShowSightingForm(false);
     setSubmittingSighting(false);
   };
+
+  const handleReport = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reportReasonCode) {
+      toast.error(isEn ? 'Please select a reason.' : 'Odaberite razlog.');
+      return;
+    }
+    setReportState('submitting');
+    try {
+      const res = await fetch(`/api/lost-pets/${pet.id}/report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason_code: reportReasonCode, details: reportDetails || undefined }),
+      });
+      if (res.status === 409) {
+        setReportState('duplicate');
+        toast.info(isEn ? 'You have already reported this listing.' : 'Već ste prijavili ovaj oglas.');
+        return;
+      }
+      if (!res.ok) {
+        setReportState('error');
+        toast.error(isEn ? 'Could not submit report. Try again.' : 'Greška pri slanju prijave. Pokušajte ponovo.');
+        return;
+      }
+      setReportState('done');
+      toast.success(isEn ? 'Report submitted. Our team will review it.' : 'Prijava poslana. Naš tim će je pregledati.');
+    } catch {
+      setReportState('error');
+      toast.error(isEn ? 'Could not submit report. Try again.' : 'Greška pri slanju prijave. Pokušajte ponovo.');
+    }
+  };
+
+  const listingAgeDays = Math.floor((Date.now() - new Date(pet.created_at).getTime()) / (1000 * 60 * 60 * 24));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -466,6 +502,38 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                   </div>
                 </div>
 
+                {/* Trust signals */}
+                <div className="pt-4 border-t">
+                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-blue-500" />
+                    {isEn ? 'Trust & safety' : 'Povjerenje i sigurnost'}
+                  </h3>
+                  <div className="space-y-2">
+                    {pet.user_id && (
+                      <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 rounded-md px-2.5 py-1.5">
+                        <UserCheck className="h-3.5 w-3.5 shrink-0" />
+                        <span>{isEn ? 'Registered user' : 'Registrirani korisnik'}</span>
+                      </div>
+                    )}
+                    {pet.has_microchip && (
+                      <div className="flex items-center gap-2 text-sm text-blue-700 bg-blue-50 rounded-md px-2.5 py-1.5">
+                        <Shield className="h-3.5 w-3.5 shrink-0" />
+                        <span>{isEn ? 'Microchipped' : 'Ima mikročip'}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 rounded-md px-2.5 py-1.5">
+                      <Calendar className="h-3.5 w-3.5 shrink-0" />
+                      <span>{isEn ? `Listed ${listingAgeDays === 0 ? 'today' : listingAgeDays === 1 ? '1 day ago' : `${listingAgeDays} days ago`}` : `Objavljeno ${listingAgeDays === 0 ? 'danas' : listingAgeDays === 1 ? 'jučer' : `prije ${listingAgeDays} dana`}`}</span>
+                    </div>
+                    {!sightingsLoading && localSightings.length > 0 && (
+                      <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 rounded-md px-2.5 py-1.5">
+                        <Eye className="h-3.5 w-3.5 shrink-0" />
+                        <span>{localSightings.length} {isEn ? (localSightings.length === 1 ? 'sighting reported' : 'sightings reported') : (localSightings.length === 1 ? 'viđenje prijavljeno' : 'viđenja prijavljena')}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 {/* Contact */}
                 <div className="pt-4 border-t">
                   <h3 className="font-semibold mb-3 flex items-center gap-2">
@@ -487,18 +555,24 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                       )}
                     </div>
                   ) : (
-                    <Button
-                      onClick={handleContactReveal}
-                      className="w-full"
-                      variant="outline"
-                      disabled={contactState.status === 'loading'}
-                    >
-                      {contactState.status === 'loading' ? (
-                        <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> {isEn ? 'Loading...' : 'Učitavanje...'}</>
-                      ) : (
-                        <><Eye className="h-4 w-4 mr-2" /> {contactState.status === 'error' ? (isEn ? 'Retry' : 'Pokušaj ponovo') : (isEn ? 'Show contact' : 'Pokaži kontakt')}</>
-                      )}
-                    </Button>
+                    <div className="space-y-2">
+                      <Button
+                        onClick={handleContactReveal}
+                        className="w-full"
+                        variant="outline"
+                        disabled={contactState.status === 'loading'}
+                      >
+                        {contactState.status === 'loading' ? (
+                          <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> {isEn ? 'Loading...' : 'Učitavanje...'}</>
+                        ) : (
+                          <><Eye className="h-4 w-4 mr-2" /> {contactState.status === 'error' ? (isEn ? 'Retry' : 'Pokušaj ponovo') : (isEn ? 'Show contact' : 'Pokaži kontakt')}</>
+                        )}
+                      </Button>
+                      <p className="text-xs text-muted-foreground flex items-start gap-1.5">
+                        <Info className="h-3 w-3 mt-0.5 shrink-0" />
+                        {isEn ? 'Login required to view contact info — this protects pet owners from spam.' : 'Prijava je obavezna za prikaz kontakta — ovo štiti vlasnike od neželjenih poruka.'}
+                      </p>
+                    </div>
                   )}
                 </div>
 
@@ -523,6 +597,62 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                       {actionLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
                       {isEn ? 'Mark as found' : 'Označi kao pronađeno'}
                     </Button>
+                  </div>
+                )}
+
+                {/* Report listing */}
+                {!isOwner && !isAdmin && (
+                  <div className="pt-4 border-t">
+                    {reportState === 'done' || reportState === 'duplicate' ? (
+                      <p className="text-xs text-muted-foreground text-center">
+                        {isEn ? 'Report received — thank you.' : 'Prijava zaprimljena — hvala.'}
+                      </p>
+                    ) : reportState === 'open' || reportState === 'submitting' || reportState === 'error' ? (
+                      <form onSubmit={handleReport} className="space-y-2">
+                        <Label className="text-sm font-medium">{isEn ? 'Why are you reporting this listing?' : 'Zašto prijavljujete ovaj oglas?'}</Label>
+                        <select
+                          required
+                          value={reportReasonCode}
+                          onChange={(e) => setReportReasonCode(e.target.value)}
+                          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
+                          <option value="">{isEn ? 'Select a reason...' : 'Odaberite razlog...'}</option>
+                          <option value="spam">{isEn ? 'Spam' : 'Spam'}</option>
+                          <option value="fake_listing">{isEn ? 'Fake listing' : 'Lažni oglas'}</option>
+                          <option value="inappropriate_content">{isEn ? 'Inappropriate content' : 'Neprimjeren sadržaj'}</option>
+                          <option value="wrong_contact_info">{isEn ? 'Wrong contact info' : 'Netočni kontakt podaci'}</option>
+                          <option value="duplicate">{isEn ? 'Duplicate listing' : 'Duplikat oglasa'}</option>
+                          <option value="other">{isEn ? 'Other' : 'Ostalo'}</option>
+                        </select>
+                        <Textarea
+                          maxLength={500}
+                          placeholder={isEn ? 'Additional details (optional)' : 'Dodatni detalji (opcionalno)'}
+                          value={reportDetails}
+                          onChange={(e) => setReportDetails(e.target.value)}
+                          className="text-sm"
+                          rows={2}
+                        />
+                        <div className="flex gap-2">
+                          <Button type="submit" size="sm" variant="outline" className="border-red-200 text-red-600 hover:bg-red-50" disabled={reportState === 'submitting'}>
+                            {reportState === 'submitting' ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Flag className="h-3 w-3 mr-1" />}
+                            {isEn ? 'Submit' : 'Pošalji'}
+                          </Button>
+                          <Button type="button" size="sm" variant="ghost" onClick={() => setReportState('idle')}>
+                            {isEn ? 'Cancel' : 'Odustani'}
+                          </Button>
+                        </div>
+                      </form>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-muted-foreground hover:text-red-500"
+                        onClick={() => setReportState('open')}
+                      >
+                        <Flag className="h-3.5 w-3.5 mr-1.5" />
+                        {isEn ? 'Report this listing' : 'Prijavi ovaj oglas'}
+                      </Button>
+                    )}
                   </div>
                 )}
 

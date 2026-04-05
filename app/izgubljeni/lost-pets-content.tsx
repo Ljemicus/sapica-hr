@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { Search, MapPin, Calendar, Plus, Filter, AlertTriangle, Map, List, Loader2 } from 'lucide-react';
+import { Search, MapPin, Calendar, Plus, Filter, AlertTriangle, Map, List, Loader2, Shield, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -230,6 +230,22 @@ export function LostPetsContent() {
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Calendar className="h-4 w-4 text-gray-400 shrink-0" />
                     <span>{formatDate(pet.date_lost, locale)} ({daysAgo(pet.date_lost, isEn)})</span>
+                  </div>
+
+                  {/* Trust badges */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {pet.user_id && (
+                      <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 rounded px-1.5 py-0.5">
+                        <UserCheck className="h-3 w-3" />
+                        {isEn ? 'Registered' : 'Registriran'}
+                      </span>
+                    )}
+                    {pet.has_microchip && (
+                      <span className="inline-flex items-center gap-1 text-xs text-blue-700 bg-blue-50 rounded px-1.5 py-0.5">
+                        <Shield className="h-3 w-3" />
+                        {isEn ? 'Microchip' : 'Mikročip'}
+                      </span>
+                    )}
                   </div>
 
                   {/* Share buttons */}
