@@ -76,7 +76,7 @@ export async function uploadMessageAttachment(userId: string, file: File): Promi
 }
 
 /**
- * Upload fotografije viđenja izgubljenog ljubimca u 'sighting-photos' bucket.
+ * Upload fotografije viđenja izgubljenog ljubimca u 'lost-pet-images/sightings' bucket.
  */
 export async function uploadSightingPhoto(file: File): Promise<UploadResult> {
   return uploadViaAPI(file, 'lost-pet-images', 'sightings');
