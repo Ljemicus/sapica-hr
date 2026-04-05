@@ -136,19 +136,19 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
       {/* ══════════════════════════════════════════
           EDITORIAL HERO
           ══════════════════════════════════════════ */}
-      <section className="relative browse-hero-gradient overflow-hidden">
-        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+      <section className="relative organizations-hero-gradient overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
         <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24 relative">
-          <div className="max-w-2xl">
-            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-5 font-semibold animate-fade-in-up">
+          <div className="max-w-2xl animate-fade-in-up">
+            <p className="section-kicker">
               {isEn ? 'Dog training' : 'Školovanje pasa'}
             </p>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-6 font-[var(--font-heading)] animate-fade-in-up delay-100">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-6 font-[var(--font-heading)]">
               {isEn
                 ? 'Professional training\nfor every dog.'
-                : 'Profesionalna školovanje\nza svakog psa.'}
+                : 'Profesionalno školovanje\nza svakog psa.'}
             </h1>
-            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg animate-fade-in-up delay-200">
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg">
               {isEn
                 ? 'From basic obedience to agility — certified trainers who use positive reinforcement methods.'
                 : 'Od osnove poslušnosti do agility-ja — certificirani treneri koji koriste pozitivan pristup školovanju pasa.'}
@@ -277,7 +277,7 @@ function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
   }, [expanded, trainer.id, programs.length]);
 
   return (
-    <article className="group overflow-hidden rounded-2xl bg-white dark:bg-card border border-border/30 provider-card">
+    <article className="group community-section-card provider-card overflow-hidden">
       <div className="flex flex-col md:flex-row">
         {/* Left: gradient avatar panel */}
         <div className={`relative w-full md:w-72 min-h-[220px] bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 overflow-hidden`}>
