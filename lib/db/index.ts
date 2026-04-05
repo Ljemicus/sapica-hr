@@ -27,7 +27,7 @@ export {
   deleteArticleComment,
 } from './blog-comments';
 export { getCategories, getTopics, getTopic, getPosts, getTrendingTopics } from './forum';
-export { getLostPets, getLostPet, updateLostPetStatus, markLostPetFound, appendLostPetOwnerUpdate, updateLostPetHidden, renewLostPet, deleteLostPet, extendLostPetExpiry, processLostPetExpiry, getNewlyRemindedListings } from './lost-pets';
+export { getLostPets, getLostPet, updateLostPetStatus, markLostPetFound, addLostPetOwnerUpdate, updateLostPetHidden, renewLostPet, deleteLostPet, extendLostPetExpiry, processLostPetExpiry, getNewlyRemindedListings } from './lost-pets';
 export { getProducts, getProductBySlug, getProductReviews, getRelatedProducts } from './products';
 export {
   getPublisherProfile,
@@ -87,3 +87,37 @@ export {
   logAdminAction,
   getAuditLogs,
 } from './audit-logs';
+
+export {
+  getRescueOrganization,
+  getRescueOrganizationByOwner,
+  getRescueOrganizationBySlug,
+  getRescueOrganizations,
+  createRescueOrganization,
+  updateRescueOrganization,
+  reviewRescueOrganization,
+} from './rescue-organizations';
+export {
+  getRescueAppeal,
+  getRescueAppealBySlug,
+  getRescueAppealsByOrganization,
+  getActiveRescueAppeals,
+  createRescueAppeal,
+  updateRescueAppeal,
+  updateRescueAppealStatus,
+} from './rescue-appeals';
+export {
+  getAppealUpdates,
+  createAppealUpdate,
+  updateAppealUpdate,
+} from './rescue-appeal-updates';
+export {
+  createAppealDonationRecord,
+  getAppealDonationRecords,
+  updateAppealDonationStatus,
+} from './rescue-appeal-donations';
+export {
+  createRescueVerificationDocument,
+  getRescueVerificationDocuments,
+  reviewRescueVerificationDocument,
+} from './rescue-verification-documents';
