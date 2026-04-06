@@ -191,9 +191,14 @@ export default function UvjetiPage() {
                 Provizija se automatski odbija od ukupnog iznosa prije isplate sitteru/pružatelju usluge.
               </p>
               <p>
-                <strong>Otkazivanje i povrat:</strong> Vlasnik može otkazati rezervaciju do 24 sata prije
-                početka usluge uz potpuni povrat novca. Otkazivanja unutar 24 sata podliježu nakandi od 50%.
+                <strong>Otkazivanje i povrat:</strong> Vlasnik može otkazati rezervaciju do 12 sati prije
+                početka usluge uz potpuni povrat novca. Otkazivanja unutar 12 sati podliježu nakandi od 50%.
                 Ako sitter otkaže, vlasnik uvijek dobiva potpuni povrat.
+              </p>
+              <p>
+                <strong>Naknada nakon obavljene usluge:</strong> Nakon što je usluga uspješno obavljena,
+                <strong>ne postoji mogućnost povrata novca</strong>. U slučaju nesuglasica ili pritužbi,
+                molimo vas da kontaktirate korisničku podršku na info@petpark.hr.
               </p>
             </div>
           </section>

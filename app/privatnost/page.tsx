@@ -12,16 +12,16 @@ export default function PrivatnostPage() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="bg-gradient-to-b from-orange-50/50 to-white py-16">
+      <section className="organizations-hero-gradient py-16">
         <div className="container mx-auto px-4 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-100 mb-6">
-            <Shield className="h-8 w-8 text-orange-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 mb-6">
+            <Shield className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Politika privatnosti</h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 font-[var(--font-heading)]">Politika privatnosti</h1>
+          <p className="text-white/80 max-w-2xl mx-auto">
             Vaša privatnost nam je iznimno važna. Ovdje možete saznati kako prikupljamo, koristimo i štitimo vaše osobne podatke.
           </p>
-          <p className="text-sm text-gray-400 mt-4">Posljednje ažuriranje: 24. ožujka 2026.</p>
+          <p className="text-sm text-white/60 mt-4">Posljednje ažuriranje: 24. ožujka 2026.</p>
         </div>
       </section>
 
@@ -34,11 +34,11 @@ export default function PrivatnostPage() {
             <p className="text-gray-600 leading-relaxed mb-3">
               Voditelj obrade vaših osobnih podataka je PetPark (petpark.hr), platforma sa sjedištem u Rijeci, Hrvatska,
               dostupna na adresi{' '}
-              <a href="https://petpark.hr" className="text-orange-600 hover:underline">petpark.hr</a>.
+              <a href="https://petpark.hr" className="text-warm-orange hover:underline">petpark.hr</a>.
             </p>
-            <div className="bg-orange-50 rounded-xl p-4 text-sm text-gray-600">
+            <div className="bg-warm-orange/5 rounded-xl p-4 text-sm text-muted-foreground border border-warm-orange/10">
               <p className="font-semibold text-gray-900 mb-1">Službenik za zaštitu podataka (DPO)</p>
-              <p>Email: <a href="mailto:dpo@petpark.hr" className="text-orange-600 hover:underline">dpo@petpark.hr</a></p>
+              <p>Email: <a href="mailto:dpo@petpark.hr" className="text-warm-orange hover:underline">dpo@petpark.hr</a></p>
               <p>Adresa: PetPark, Rijeka, Hrvatska</p>
             </div>
           </section>
@@ -97,10 +97,10 @@ export default function PrivatnostPage() {
               Vaše podatke ne prodajemo niti dijelimo s trećim stranama u marketinške svrhe. Podatke dijelimo isključivo s:
             </p>
             <ul className="mt-3 space-y-2 text-gray-600">
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span><strong>Supabase</strong> — za autentikaciju, bazu podataka i pohranu datoteka (serveri u EU)</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span><strong>Google</strong> — samo ako koristite Google OAuth prijavu, u skladu s Googleovom politikom privatnosti</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span><strong>Vercel</strong> — za hosting platforme</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span><strong>Plausible Analytics</strong> — anonimna analitika bez osobnih podataka</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span><strong>Supabase</strong> — za autentikaciju, bazu podataka i pohranu datoteka (serveri u EU)</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span><strong>Google</strong> — samo ako koristite Google OAuth prijavu, u skladu s Googleovom politikom privatnosti</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span><strong>Vercel</strong> — za hosting platforme</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span><strong>Plausible Analytics</strong> — anonimna analitika bez osobnih podataka</li>
             </ul>
           </section>
 
@@ -119,20 +119,18 @@ export default function PrivatnostPage() {
                 { icon: Lock, title: 'Pravo na ograničenje', desc: 'Možete zatražiti ograničenje obrade vaših podataka.' },
                 { icon: Shield, title: 'Pravo na prigovor', desc: 'Imate pravo uložiti prigovor nadležnom tijelu za zaštitu podataka (AZOP).' },
               ].map((item) => (
-                <Card key={item.title} className="border-0 shadow-sm">
-                  <CardContent className="pt-5">
-                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mb-3">
-                      <item.icon className="h-5 w-5 text-orange-600" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
-                    <p className="text-sm text-gray-600">{item.desc}</p>
-                  </CardContent>
-                </Card>
+                <div key={item.title} className="community-section-card p-5">
+                  <div className="w-10 h-10 rounded-xl bg-warm-orange/10 flex items-center justify-center mb-3">
+                    <item.icon className="h-5 w-5 text-warm-orange" />
+                  </div>
+                    <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground">{item.desc}</p>
+                </div>
               ))}
             </div>
             <p className="text-gray-600 mt-4">
               Za ostvarivanje bilo kojeg od navedenih prava, kontaktirajte nas na{' '}
-              <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline">info@petpark.hr</a>.
+              <a href="mailto:info@petpark.hr" className="text-warm-orange hover:underline">info@petpark.hr</a>.
               Na vaš zahtjev odgovorit ćemo u roku od 30 dana.
             </p>
           </section>
@@ -156,11 +154,11 @@ export default function PrivatnostPage() {
               zahtijevaju dulje čuvanje određenih podataka.
             </p>
             <ul className="space-y-2 text-gray-600 text-sm">
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Korisnički profil: dok je račun aktivan + 30 dana</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Poruke: 1 godina nakon slanja</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Financijski podaci: 5 godina (zakonska obveza)</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Fotografije: brišu se zajedno s profilom ili na zahtjev</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Analitički podaci: anonimizirani, bez vremenskog ograničenja</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Korisnički profil: dok je račun aktivan + 30 dana</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Poruke: 1 godina nakon slanja</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Financijski podaci: 5 godina (zakonska obveza)</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Fotografije: brišu se zajedno s profilom ili na zahtjev</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Analitički podaci: anonimizirani, bez vremenskog ograničenja</li>
             </ul>
           </section>
 
@@ -185,16 +183,16 @@ export default function PrivatnostPage() {
           </section>
 
           {/* Kontakt */}
-          <section className="bg-orange-50 rounded-2xl p-6 md:p-8">
+          <section className="bg-warm-orange/5 rounded-2xl p-6 md:p-8 border border-warm-orange/10">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                <Mail className="h-6 w-6 text-orange-600" />
+              <div className="w-12 h-12 rounded-xl bg-warm-orange/10 flex items-center justify-center flex-shrink-0">
+                <Mail className="h-6 w-6 text-warm-orange" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Imate pitanja?</h2>
-                <p className="text-gray-600">
+                <h2 className="text-xl font-bold text-foreground mb-2">Imate pitanja?</h2>
+                <p className="text-muted-foreground">
                   Za sva pitanja vezana uz zaštitu vaših osobnih podataka, obratite nam se na{' '}
-                  <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline font-medium">info@petpark.hr</a>.
+                  <a href="mailto:info@petpark.hr" className="text-warm-orange hover:underline font-medium">info@petpark.hr</a>.
                 </p>
               </div>
             </div>
