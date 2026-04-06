@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
+import { setSentryUser } from '@/lib/error-tracking';
 import type { User } from '@/lib/types';
 
 function isSupabaseConfiguredClient(): boolean {
@@ -41,19 +42,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .eq('id', authUser.id)
       .single();
 
-    if (data) return data as User;
-
-    const meta = authUser.user_metadata;
-    return {
-      id: authUser.id,
-      email: authUser.email || '',
-      name: meta?.name || meta?.full_name || authUser.email?.split('@')[0] || '',
-      role: meta?.role || 'owner',
-      avatar_url: meta?.avatar_url || null,
-      phone: null,
-      city: meta?.city || null,
-      created_at: authUser.created_at,
-    };
+    let profile: User;
+    
+    if (data) {
+      profile = data as User;
+    } else {
+      const meta = authUser.user_metadata;
+      profile = {
+        id: authUser.id,
+        email: authUser.email || '',
+        name: meta?.name || meta?.full_name || authUser.email?.split('@')[0] || '',
+        role: meta?.role || 'owner',
+        avatar_url: meta?.avatar_url || null,
+        phone: null,
+        city: meta?.city || null,
+        created_at: authUser.created_at,
+      };
+    }
+    
+    // Set Sentry user context for error tracking
+    setSentryUser({
+      id: profile.id,
+      email: profile.email,
+      name: profile.name,
+    });
+    
+    return profile;
   }, [supabase]);
 
   useEffect(() => {
@@ -99,6 +113,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
       await supabase.auth.signOut();
     }
+    // Clear Sentry user context
+    setSentryUser(null);
     setUser(null);
     setSupabaseUser(null);
     setSession(null);

@@ -88,6 +88,24 @@ export {
   getAuditLogs,
 } from './audit-logs';
 
+// Notifications
+export {
+  canSendNotification,
+  getNotificationPreferences,
+  getUserPushSubscriptions,
+  removeExpiredSubscriptions,
+  type NotificationPreferences,
+  type NotificationType,
+} from './notifications';
+
+// Push Subscriptions
+export {
+  savePushSubscription,
+  getUserPushSubscriptions as getPushSubscriptionsForUser,
+  removePushSubscription,
+  sendPushToUser,
+} from './push-subscriptions';
+
 export {
   getRescueOrganization,
   getRescueOrganizationByOwner,

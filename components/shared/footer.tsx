@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { MapPin, Mail } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n';
+import { CookieSettingsButton } from '@/components/shared/cookie-consent-banner';
 
 const NewsletterSignup = dynamic(() => import('@/components/shared/newsletter-signup').then((mod) => mod.NewsletterSignup));
 
@@ -147,6 +148,7 @@ export function Footer() {
               <Link href="/privatnost" className="hover:text-warm-orange transition-colors">{t('footer.privacy')}</Link>
               <Link href="/uvjeti" className="hover:text-warm-orange transition-colors">{t('footer.terms')}</Link>
               <Link href="/kontakt" className="hover:text-warm-orange transition-colors">{t('footer.contact')}</Link>
+              <CookieSettingsButton />
             </div>
           </div>
         </div>

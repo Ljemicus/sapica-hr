@@ -83,11 +83,56 @@ export default function PrivatnostPage() {
           {/* 4. Kolačići */}
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">4. Kolačići</h2>
-            <p className="text-gray-600 leading-relaxed">
-              Koristimo samo tehničke kolačiće neophodne za funkcioniranje autentikacije (Supabase sesija).
-              Naš analitički alat Plausible Analytics ne koristi kolačiće i u potpunosti poštuje vašu privatnost.
-              Ne koristimo kolačiće za praćenje ili oglašavanje.
+            <p className="text-gray-600 leading-relaxed mb-4">
+              Koristimo kolačiće za poboljšanje funkcionalnosti i korisničkog iskustva. 
+              Kolačiće možete kontrolirati putem postavki u vašem pregledniku ili našeg bannera za privolu.
             </p>
+            
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Kategorije kolačića</h3>
+            <div className="space-y-4">
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                  <h4 className="font-semibold text-gray-900">Neophodni kolačići</h4>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Ovi kolačići su obavezni za rad stranice i ne mogu se isključiti. Uključuju kolačiće 
+                  za autentikaciju (Supabase sesija), sigurnost i osnovnu funkcionalnost. 
+                  Traju tijekom sesije ili do 30 dana za "zapamti me" funkciju.
+                </p>
+              </div>
+              
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                  <h4 className="font-semibold text-gray-900">Analitički kolačići</h4>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Pomažu nam razumjeti kako posjetitelji koriste stranicu. Koristimo Plausible Analytics 
+                  koji poštuje privatnost i ne koristi kolačiće za praćenje pojedinačnih korisnika. 
+                  Uvjetno učitavamo ove skripte samo uz vašu privolu.
+                </p>
+              </div>
+              
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                  <h4 className="font-semibold text-gray-900">Marketinški kolačići</h4>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Koriste se za prikaz relevantnih oglasa, remarketing i praćenje učinkovitosti 
+                  marketinških kampanja. Učitavamo ove skripte (npr. Meta Pixel) samo uz vašu 
+                  izričitu privolu.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 p-4 bg-warm-orange/5 rounded-xl border border-warm-orange/10">
+              <p className="text-sm text-gray-700">
+                <strong>Upravljanje kolačićima:</strong> Možete promijeniti svoje preference u bilo kojem 
+                trenutku klikom na gumb "Postavke kolačića" u podnožju stranice ili na link ispod.
+              </p>
+            </div>
           </section>
 
           {/* 5. Dijeljenje podataka */}

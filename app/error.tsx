@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import * as Sentry from '@sentry/nextjs';
 import { appLogger } from '@/lib/logger';
 import { trackEvent } from '@/lib/analytics';
 
@@ -13,10 +14,22 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
+    // Capture error in Sentry
+    const eventId = Sentry.captureException(error, {
+      contexts: {
+        error_boundary: {
+          digest: error.digest,
+          path: typeof window !== 'undefined' ? window.location.pathname : undefined,
+        },
+      },
+    });
+
     appLogger.error('app.error', 'Unhandled app error boundary triggered', {
       message: error.message,
       digest: error.digest,
+      sentryEventId: eventId,
     });
+    
     trackEvent('Error Boundary', {
       message: error.message?.slice(0, 150) ?? 'unknown',
       digest: error.digest ?? null,

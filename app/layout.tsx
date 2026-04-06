@@ -8,6 +8,8 @@ import { Footer } from '@/components/shared/footer';
 import { BottomNav } from '@/components/shared/bottom-nav';
 import { AuthProvider } from '@/contexts/auth-context';
 import { CartProvider } from '@/lib/cart-context';
+import { CookieConsentProvider } from '@/contexts/cookie-consent-context';
+import { CookieConsentBanner } from '@/components/shared/cookie-consent-banner';
 import { LanguageProvider, DEFAULT_LOCALE, LOCALE_HEADER } from '@/lib/i18n';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { DeferredUI } from '@/components/shared/deferred-ui';
@@ -124,18 +126,21 @@ export default async function RootLayout({
         <SiteNavigationJsonLd />
       </head>
       <body className="min-h-full flex flex-col font-sans">
-        <AuthProvider>
-          <CartProvider>
-            <LanguageProvider>
-              <SkipToContentLink />
-              <Navbar />
-              <main id="main-content" className="flex-1 pb-16 md:pb-0">{children}</main>
-              <Footer />
-              <BottomNav />
-              <DeferredUI />
-            </LanguageProvider>
-          </CartProvider>
-        </AuthProvider>
+        <CookieConsentProvider>
+          <AuthProvider>
+            <CartProvider>
+              <LanguageProvider>
+                <SkipToContentLink />
+                <Navbar />
+                <main id="main-content" className="flex-1 pb-16 md:pb-0">{children}</main>
+                <Footer />
+                <BottomNav />
+                <DeferredUI />
+                <CookieConsentBanner />
+              </LanguageProvider>
+            </CartProvider>
+          </AuthProvider>
+        </CookieConsentProvider>
       </body>
     </html>
   );
