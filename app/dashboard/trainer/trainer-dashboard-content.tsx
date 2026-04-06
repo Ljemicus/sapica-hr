@@ -25,6 +25,7 @@ import {
   type TrainerBooking,
   type TrainerBookingStatus,
 } from '@/lib/types';
+import { TrainerOnboardingWizard } from './components/trainer-onboarding-wizard';
 
 interface TrainerDashboardContentProps {
   trainer: Trainer;
@@ -1209,6 +1210,9 @@ export function TrainerDashboardContent({ trainer, initialPrograms, initialAvail
           </CardContent>
         </Card>
       </div>
+
+      {/* Onboarding Wizard for new trainers */}
+      {(!trainer.bio || trainer.bio.length < 50 || programs.length === 0) && <TrainerOnboardingWizard />}
     </div>
   );
 }

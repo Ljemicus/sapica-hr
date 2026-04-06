@@ -185,16 +185,16 @@ export function OwnerOnboardingWizard() {
           <div
             className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
               index < currentStep
-                ? 'bg-orange-500 w-6'
+                ? 'bg-warm-orange w-6'
                 : index === currentStep
-                ? 'bg-orange-500 h-3 w-3'
-                : 'bg-gray-200'
+                ? 'bg-warm-orange h-3 w-3'
+                : 'bg-muted'
             }`}
           />
           {index < TOTAL_STEPS - 1 && (
             <div
               className={`w-8 h-0.5 mx-1 ${
-                index < currentStep ? 'bg-orange-500' : 'bg-gray-200'
+                index < currentStep ? 'bg-warm-orange' : 'bg-muted'
               }`}
             />
           )}
@@ -206,11 +206,11 @@ export function OwnerOnboardingWizard() {
   // Step content components
   const WelcomeStep = () => (
     <div className="text-center space-y-6">
-      <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-orange-400 to-amber-300 shadow-lg shadow-orange-200">
+      <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-warm-orange to-warm-peach shadow-lg shadow-warm-orange/20">
         <PawPrint className="h-10 w-10 text-white" />
       </div>
       <div className="space-y-3">
-        <h2 className="text-2xl font-bold tracking-tight">
+        <h2 className="text-2xl font-bold tracking-tight font-[var(--font-heading)]">
           Dobrodošli u PetPark! 🎉
         </h2>
         <p className="text-muted-foreground max-w-md mx-auto">
@@ -219,21 +219,21 @@ export function OwnerOnboardingWizard() {
         </p>
       </div>
       <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
-        <div className="p-3 rounded-xl bg-orange-50 border border-orange-100 text-center">
-          <UserCheck className="h-5 w-5 mx-auto mb-1 text-orange-500" />
-          <p className="text-xs font-medium text-orange-700">Provjereni sitteri</p>
+        <div className="p-3 rounded-xl bg-warm-orange/5 border border-warm-orange/10 text-center">
+          <UserCheck className="h-5 w-5 mx-auto mb-1 text-warm-orange" />
+          <p className="text-xs font-medium text-warm-orange/80">Provjereni sitteri</p>
         </div>
-        <div className="p-3 rounded-xl bg-orange-50 border border-orange-100 text-center">
-          <ShieldCheck className="h-5 w-5 mx-auto mb-1 text-orange-500" />
-          <p className="text-xs font-medium text-orange-700">Sigurna plaćanja</p>
+        <div className="p-3 rounded-xl bg-warm-teal/5 border border-warm-teal/10 text-center">
+          <ShieldCheck className="h-5 w-5 mx-auto mb-1 text-warm-teal" />
+          <p className="text-xs font-medium text-warm-teal/80">Sigurna plaćanja</p>
         </div>
-        <div className="p-3 rounded-xl bg-orange-50 border border-orange-100 text-center">
-          <Star className="h-5 w-5 mx-auto mb-1 text-orange-500" />
-          <p className="text-xs font-medium text-orange-700">Recenzije</p>
+        <div className="p-3 rounded-xl bg-warm-coral/5 border border-warm-coral/10 text-center">
+          <Star className="h-5 w-5 mx-auto mb-1 text-warm-coral" />
+          <p className="text-xs font-medium text-warm-coral/80">Recenzije</p>
         </div>
-        <div className="p-3 rounded-xl bg-orange-50 border border-orange-100 text-center">
-          <MapPin className="h-5 w-5 mx-auto mb-1 text-orange-500" />
-          <p className="text-xs font-medium text-orange-700">U vašem gradu</p>
+        <div className="p-3 rounded-xl bg-warm-sage/5 border border-warm-sage/10 text-center">
+          <MapPin className="h-5 w-5 mx-auto mb-1 text-warm-sage" />
+          <p className="text-xs font-medium text-warm-sage/80">U vašem gradu</p>
         </div>
       </div>
     </div>
@@ -242,54 +242,52 @@ export function OwnerOnboardingWizard() {
   const AddPetStep = () => (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-amber-300 shadow-md">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-warm-orange to-warm-peach shadow-md">
           <Heart className="h-8 w-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold tracking-tight">Dodajte svog prvog ljubimca</h2>
+        <h2 className="text-2xl font-bold tracking-tight font-[var(--font-heading)]">Dodajte svog prvog ljubimca</h2>
         <p className="text-muted-foreground">
           Recite nam nešto o svom ljubimcu. Možete dodati više ljubimaca kasnije.
         </p>
       </div>
 
-      <Card className="border-0 shadow-sm">
-        <CardContent className="p-6 space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="pet-name">
-              Ime ljubimca <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="pet-name"
-              value={petData.name}
-              onChange={(e) => setPetData({ ...petData, name: e.target.value })}
-              placeholder="npr. Rex"
-              className="focus:border-orange-300 focus:ring-orange-200"
-            />
-          </div>
+      <div className="community-section-card p-6 space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="pet-name">
+            Ime ljubimca <span className="text-warm-coral">*</span>
+          </Label>
+          <Input
+            id="pet-name"
+            value={petData.name}
+            onChange={(e) => setPetData({ ...petData, name: e.target.value })}
+            placeholder="npr. Rex"
+          />
+        </div>
 
-          <div className="space-y-2">
-            <Label>Vrsta</Label>
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                ['dog', 'Pas', Dog] as const,
-                ['cat', 'Mačka', Cat] as const,
-                ['other', 'Ostalo', HelpCircle] as const,
-              ].map(([value, label, Icon], index) => (
-                <button
-                  key={`species-${value}-${index}`}
-                  type="button"
-                  onClick={() => setPetData({ ...petData, species: value as Species })}
-                  className={`p-4 rounded-xl border-2 text-center transition-all ${
-                    petData.species === value
-                      ? 'border-orange-500 bg-orange-50 shadow-sm'
-                      : 'border-gray-200 hover:border-orange-200 hover:bg-gray-50'
-                  }`}
-                >
-                  <Icon className="h-6 w-6 mx-auto mb-2 text-orange-500" />
-                  <p className="text-sm font-medium">{label}</p>
-                </button>
-              ))}
-            </div>
+        <div className="space-y-2">
+          <Label>Vrsta</Label>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              ['dog', 'Pas', Dog] as const,
+              ['cat', 'Mačka', Cat] as const,
+              ['other', 'Ostalo', HelpCircle] as const,
+            ].map(([value, label, Icon], index) => (
+              <button
+                key={`species-${value}-${index}`}
+                type="button"
+                onClick={() => setPetData({ ...petData, species: value as Species })}
+                className={`p-4 rounded-xl border-2 text-center transition-all ${
+                  petData.species === value
+                    ? 'border-warm-orange bg-warm-orange/5 shadow-sm'
+                    : 'border-border hover:border-warm-orange/30 hover:bg-muted/30'
+                }`}
+              >
+                <Icon className="h-6 w-6 mx-auto mb-2 text-warm-orange" />
+                <p className="text-sm font-medium">{label}</p>
+              </button>
+            ))}
           </div>
+        </div>
 
           <div className="space-y-2">
             <Label htmlFor="pet-breed">Pasmina</Label>
@@ -328,9 +326,8 @@ export function OwnerOnboardingWizard() {
               }}
             />
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </div>
   );
 
   const HowToBookStep = () => (

@@ -23,8 +23,15 @@ export default async function GroomerDashboardPage() {
     .eq('user_id', user.id)
     .single();
 
+  // Check if groomer profile exists
   if (!groomer) {
-    redirect('/onboarding/publisher-type');
+    redirect('/dashboard/groomer/onboarding');
+  }
+
+  // Check if groomer profile is incomplete (missing key fields)
+  const isIncomplete = !groomer.bio || !groomer.address || !groomer.services || groomer.services.length === 0;
+  if (isIncomplete) {
+    redirect('/dashboard/groomer/onboarding');
   }
 
   // Fetch bookings
