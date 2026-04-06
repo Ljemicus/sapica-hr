@@ -334,3 +334,77 @@ export function lostPetSightingEmail(
   `;
   return baseLayout(content, `Novo viđenje ljubimca "${petName}"`);
 }
+
+interface AppealDonationClickEmailData {
+  organizationName: string;
+  appealTitle: string;
+  appealUrl: string;
+  donorName: string | null;
+  donorEmail: string | null;
+  donorPhone: string | null;
+  isAnonymous: boolean;
+  clickedAt: string;
+}
+
+export function appealDonationClickEmail({
+  organizationName,
+  appealTitle,
+  appealUrl,
+  donorName,
+  donorEmail,
+  donorPhone,
+  isAnonymous,
+  clickedAt,
+}: AppealDonationClickEmailData): string {
+  const clickTime = new Date(clickedAt).toLocaleString('hr-HR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  let donorInfoHtml = '';
+  if (isAnonymous) {
+    donorInfoHtml = infoBox('&#128100; Netko je kliknuo gumb "Doniraj" na vašoj apelaciji. Korisnik nije prijavljen na PetPark, pa nemamo dodatnih kontaktnih informacija.');
+  } else {
+    const contactDetails = [
+      donorName ? `<strong>Ime:</strong> ${donorName}` : '',
+      donorEmail ? `<strong>Email:</strong> ${donorEmail}` : '',
+      donorPhone ? `<strong>Telefon:</strong> ${donorPhone}` : '',
+    ].filter(Boolean).join('<br>');
+    
+    donorInfoHtml = `
+      ${infoBox('&#127881; Korisnik je prijavljen na PetPark i kliknuo je gumb "Doniraj" na vašoj apelaciji!')}
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 16px 0; background-color: #f0fdf4; border-radius: 8px; padding: 16px;">
+        <tr>
+          <td>
+            <p style="margin: 0 0 8px; color: #166534; font-size: 14px; font-weight: 600;">Kontakt podaci donatora:</p>
+            <p style="margin: 0; color: #15803d; font-size: 15px; line-height: 1.6;">${contactDetails}</p>
+          </td>
+        </tr>
+      </table>
+    `;
+  }
+
+  const content = `
+    ${heading('Novi interes za donaciju! &#128157;')}
+    ${paragraph(`Pozdrav ${organizationName},`)}
+    ${paragraph(`Netko je iskazao interes za donaciju na vašoj apelaciji <strong>"${appealTitle}"</strong>.`)}
+    ${donorInfoHtml}
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 16px 0;">
+      <tr>
+        <td style="border-top: 1px solid #e5e7eb; padding-top: 16px;">
+          <p style="margin: 0; color: #6b7280; font-size: 13px;">
+            <strong>Vrijeme klika:</strong> ${clickTime}<br>
+            <strong>Apelacija:</strong> <a href="${appealUrl}" style="color: #f97316;">${appealTitle}</a>
+          </p>
+        </td>
+      </tr>
+    </table>
+    ${paragraph('Preporučujemo da kontaktirate potencijalnog donatora u najkraćem mogućem roku.')}
+    ${ctaButton('Pogledaj apelaciju', appealUrl)}
+  `;
+
+  return baseLayout(content, `Novi interes za donaciju na apelaciji "${appealTitle}"`);
+}

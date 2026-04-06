@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, BellRing, CircleDashed, ExternalLink, HeartHandshake, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, BellRing, CircleDashed, HeartHandshake, ShieldCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { getAppealUpdates, getRescueAppealBySlug } from '@/lib/db';
 import { APPEAL_STATUS_LABELS, RESCUE_DONATION_LINK_STATUS_LABELS, RESCUE_VERIFICATION_STATUS_LABELS } from '@/lib/types';
 import { hasApprovedExternalDonationLink } from '@/lib/rescue-utils';
 import { ShareButtons } from './share-buttons';
+import { DonationButton } from './donation-button';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -150,11 +151,11 @@ export default async function RescueAppealDetailPage({ params }: Props) {
                       PetPark ne obrađuje uplatu niti drži sredstva. Klik te vodi na verificirani vanjski donation link organizacije.
                     </p>
                     <div className="mt-4 flex flex-wrap gap-3">
-                      <Link href={organization.external_donation_url} target="_blank" rel="noreferrer">
-                        <Button className="gap-2">
-                          Doniraj izravno organizaciji <ExternalLink className="h-4 w-4" />
-                        </Button>
-                      </Link>
+                      <DonationButton 
+                        appealId={appeal.id}
+                        appealSlug={appeal.slug}
+                        donationUrl={organization.external_donation_url}
+                      />
                       <Badge variant="outline">{RESCUE_DONATION_LINK_STATUS_LABELS[organization.external_donation_url_status]}</Badge>
                     </div>
                   </>

@@ -59,62 +59,66 @@ export default function KontaktPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50/50 to-white dark:from-orange-950/10 dark:to-background">
-      <div className="container mx-auto px-4 py-12 max-w-5xl">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
-            <MessageSquare className="h-4 w-4" />
-            Kontakt
+    <div className="min-h-screen bg-background">
+      {/* Editorial Hero */}
+      <section className="relative organizations-hero-gradient overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24 relative">
+          <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
+            <p className="section-kicker">Kontakt</p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 font-[var(--font-heading)] leading-[1.05]">
+              Kako vam možemo pomoći?
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+              Imate pitanje, prijedlog ili ste primijetili grešku? Javite nam se i odgovorit ćemo u najkraćem roku.
+            </p>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Kako vam možemo pomoći?
-          </h1>
-          <p className="text-muted-foreground max-w-lg mx-auto">
-            Imate pitanje, prijedlog ili ste primijetili grešku? Javite nam se i odgovorit ćemo u najkraćem roku.
-          </p>
         </div>
+      </section>
+
+      <div className="container mx-auto px-6 md:px-10 lg:px-16 py-12 max-w-5xl">
 
         <div className="grid md:grid-cols-3 gap-8">
           {/* Contact Info Cards */}
           <div className="space-y-4">
-            <Card className="border-0 shadow-sm">
-              <CardContent className="flex items-start gap-3 p-5">
-                <div className="h-10 w-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center flex-shrink-0">
-                  <Mail className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+            <div className="community-section-card p-5">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-xl bg-warm-orange/10 flex items-center justify-center flex-shrink-0">
+                  <Mail className="h-5 w-5 text-warm-orange" />
                 </div>
                 <div>
                   <p className="font-medium text-sm text-foreground">Email</p>
                   <p className="text-sm text-muted-foreground">info@petpark.hr</p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card className="border-0 shadow-sm">
-              <CardContent className="flex items-start gap-3 p-5">
-                <div className="h-10 w-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+            <div className="community-section-card p-5">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-xl bg-warm-teal/10 flex items-center justify-center flex-shrink-0">
+                  <MapPin className="h-5 w-5 text-warm-teal" />
                 </div>
                 <div>
                   <p className="font-medium text-sm text-foreground">Adresa</p>
                   <p className="text-sm text-muted-foreground">Rijeka, Hrvatska</p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <div className="p-5 bg-orange-50 dark:bg-orange-950/20 rounded-xl text-sm text-muted-foreground">
-              <p className="font-medium text-foreground mb-1">Radno vrijeme podrške</p>
-              <p>Pon — Sub: 08:00 — 20:00</p>
-              <p>Ned: Zatvoreno</p>
+            <div className="appeal-card p-5 bg-gradient-to-br from-warm-orange/5 to-warm-teal/5">
+              <p className="font-medium text-foreground mb-2">Radno vrijeme podrške</p>
+              <p className="text-sm text-muted-foreground">Pon — Sub: 08:00 — 20:00</p>
+              <p className="text-sm text-muted-foreground">Ned: Zatvoreno</p>
             </div>
           </div>
 
           {/* Contact Form */}
           <div className="md:col-span-2">
-            <Card className="border-0 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg">Pošaljite nam poruku</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <div className="community-section-card">
+              <div className="p-6 border-b border-border/30">
+                <h2 className="text-lg font-semibold font-[var(--font-heading)]">Pošaljite nam poruku</h2>
+              </div>
+              <div className="p-6">
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -176,7 +180,7 @@ export default function KontaktPage() {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white btn-hover"
+                    className="w-full bg-warm-orange hover:bg-warm-orange/90 text-white h-12"
                   >
                     {loading ? (
                       <span className="flex items-center gap-2">
@@ -191,8 +195,8 @@ export default function KontaktPage() {
                     )}
                   </Button>
                 </form>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
         {/* FAQ sekcija */}

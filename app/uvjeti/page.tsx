@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { FileText, Mail, AlertTriangle, Users, ShieldCheck, BookOpen, Ban, CreditCard, Camera, Scale } from 'lucide-react';
+import { FileText, Mail, AlertTriangle, Users, ShieldCheck, BookOpen, Ban, CreditCard, Camera, Scale, HeartHandshake } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 export const metadata: Metadata = {
@@ -198,13 +198,45 @@ export default function UvjetiPage() {
             </div>
           </section>
 
-          {/* 8a. Zabranjena ponašanja */}
+          {/* 8a. Udruge i donacije */}
+          <section>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
+                <HeartHandshake className="h-5 w-5 text-teal-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">8a. Udruge i donacije</h2>
+            </div>
+            <div className="space-y-3 text-gray-600 leading-relaxed">
+              <p>
+                PetPark omogućuje udruge za zaštitu životinja da objavljuju apelacije za pomoć i prikupljanje donacija.
+                Platforma služi isključivo kao poveznica između udruge i potencijalnih donatora.
+              </p>
+              <p>
+                <strong>Važno:</strong> PetPark <strong>ne obrađuje donacije</strong>. Sve donacije idu izravno na račun udruge
+                putem njihovog vanjskog linka za plaćanje. Mi nismo strana u financijskoj transakciji niti imamo uvid u točan iznos
+                prikupljenih sredstava.
+              </p>
+              <p>
+                Ne odgovaramo za način na koji udruge koriste prikupljena sredstva, ispunjavaju li objavljene ciljeve,
+                niti za bilo kakvu štetu koja proizlazi iz donacije ili suradnje s udrugom.
+              </p>
+              <p>
+                Verifikacija udruge na PetParku (plavi checkmark) potvrđuje isključivo da smo provjerili postojanje udruge
+                i njezinu registraciju. To <strong>ne predstavlja pravnu garanciju</strong> niti jamstvo za rad udruge.
+              </p>
+              <p>
+                Preporučujemo donatorima da prije donacije sami provjere rad udruge, njihovu reputaciju i transparentnost.
+              </p>
+            </div>
+          </section>
+
+          {/* 8b. Zabranjena ponašanja */}
           <section>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
                 <Ban className="h-5 w-5 text-red-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">8a. Zabranjena ponašanja</h2>
+              <h2 className="text-2xl font-bold text-gray-900">8b. Zabranjena ponašanja</h2>
             </div>
             <p className="text-gray-600 leading-relaxed mb-3">
               Sljedeća ponašanja su strogo zabranjena i mogu rezultirati trajnom suspenzijom računa:
