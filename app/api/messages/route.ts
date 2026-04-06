@@ -4,7 +4,7 @@ import { getAuthUser } from '@/lib/auth';
 import { getConversation, getMessages, sendMessage } from '@/lib/db';
 import { createClient } from '@/lib/supabase/server';
 import { appLogger } from '@/lib/logger';
-import { messageSchema } from '@/lib/validations';
+import { messageSchema, type MessageInput } from '@/lib/validations';
 import { sendPushToMultiple, NotificationTemplates } from '@/lib/push-notifications';
 import { getUserPushSubscriptions, canSendNotification } from '@/lib/db/notifications';
 
@@ -62,12 +62,13 @@ export async function POST(request: Request) {
     return apiError({ status: 404, code: 'MESSAGE_RECEIVER_NOT_FOUND', message: 'Primatelj nije pronađen.' });
   }
 
+  const messageData = parsed.data as MessageInput;
   const message = await sendMessage({
     sender_id: user.id,
-    receiver_id: parsed.data.receiver_id,
-    booking_id: parsed.data.booking_id || null,
-    content: parsed.data.content,
-    image_url: parsed.data.image_url || null,
+    receiver_id: messageData.receiver_id,
+    booking_id: messageData.booking_id || null,
+    content: messageData.content,
+    image_url: messageData.image_url || null,
     read: false,
   });
 
