@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { TiltCard } from '@/components/animations/tilt-card';
 
 interface AnimatedServiceCardProps {
   href: string;
@@ -24,18 +25,18 @@ export function AnimatedServiceCard({
 }: AnimatedServiceCardProps) {
   return (
     <Link href={href} className="group block">
-      <motion.article
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-50px' }}
-        transition={{
-          duration: 0.5,
-          delay: index * 0.1,
-          ease: [0.25, 0.1, 0.25, 1],
-        }}
-        whileHover={{ y: -8 }}
-        className="relative rounded-3xl overflow-hidden bg-card shadow-lg hover:shadow-2xl transition-shadow duration-500"
-      >
+      <TiltCard tiltAmount={8} scale={1.02}>
+        <motion.article
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{
+            duration: 0.5,
+            delay: index * 0.1,
+            ease: [0.25, 0.1, 0.25, 1],
+          }}
+          className="relative rounded-3xl overflow-hidden bg-card shadow-lg hover:shadow-2xl transition-shadow duration-500"
+        >
         {/* Gradient border on hover */}
         <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-[2px]">
@@ -92,7 +93,8 @@ export function AnimatedServiceCard({
         >
           <ArrowRight className="h-5 w-5 text-white" />
         </motion.div>
-      </motion.article>
+        </motion.article>
+      </TiltCard>
     </Link>
   );
 }

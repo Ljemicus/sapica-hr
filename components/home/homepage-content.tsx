@@ -2,7 +2,10 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Star, MapPin, ChevronRight, Shield, Heart } from 'lucide-react';
+import { ArrowRight, Star, MapPin, ChevronRight, Shield, Heart, Search, Scissors, GraduationCap, Stethoscope, Sparkles, Siren } from 'lucide-react';
+import { ScrollReveal, TextReveal } from '@/components/animations/scroll-reveal';
+import { BentoGrid, FeatureCard, StatCard } from '@/components/animations/bento-grid';
+import { TiltCard, MagneticButton } from '@/components/animations/tilt-card';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/lib/i18n';
 import { HeroSection } from './hero-section';
@@ -249,6 +252,74 @@ export function HomePageContent({
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════
+          2.5 BENTO GRID FEATURES (NEW)
+          ════════════════════════════════════════════ */}
+      <section className="py-24 md:py-36 bg-muted/30" aria-label="Features">
+        <div className="container mx-auto px-6 md:px-10 lg:px-16">
+          <ScrollReveal className="text-center mb-16">
+            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-5 font-semibold">
+              {locale === 'hr' ? 'Zašto PetPark' : 'Why PetPark'}
+            </p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold font-[var(--font-heading)] max-w-2xl mx-auto">
+              <TextReveal 
+                text={locale === 'hr' 
+                  ? 'Sve što vaš ljubimac treba, na jednom mjestu.' 
+                  : 'Everything your pet needs, in one place.'} 
+              />
+            </h2>
+          </ScrollReveal>
+
+          <BentoGrid>
+            <FeatureCard
+              size="large"
+              gradient="orange"
+              icon={<Search className="h-6 w-6" />}
+              title={locale === 'hr' ? 'Pronađite sittera' : 'Find a sitter'}
+              description={locale === 'hr' 
+                ? 'Pretražujte verificirane sittere po lokaciji, dostupnosti i ocjenama. Pronađite savršenog matcha za vašeg ljubimca.' 
+                : 'Browse verified sitters by location, availability, and ratings. Find the perfect match for your pet.'}
+            />
+            <StatCard
+              value="4.9"
+              label={locale === 'hr' ? 'Prosječna ocjena' : 'Average rating'}
+              trend={locale === 'hr' ? 'Bazirano na 1000+ recenzija' : 'Based on 1000+ reviews'}
+              gradient="teal"
+            />
+            <FeatureCard
+              gradient="purple"
+              icon={<Sparkles className="h-6 w-6" />}
+              title={locale === 'hr' ? 'AI Matching' : 'AI Matching'}
+              description={locale === 'hr' 
+                ? 'Naša AI analizira osobnost vašeg ljubimca i pronalazi najboljeg sittera za vas.' 
+                : 'Our AI analyzes your pet\'s personality and finds the best sitter for you.'}
+            />
+            <FeatureCard
+              gradient="teal"
+              icon={<Scissors className="h-6 w-6" />}
+              title={locale === 'hr' ? 'Grooming' : 'Grooming'}
+              description={locale === 'hr' 
+                ? 'Profesionalna njega i uređivanje ljubimaca u vašem gradu.' 
+                : 'Professional pet grooming and styling in your city.'}
+            />
+            <FeatureCard
+              gradient="blue"
+              icon={<GraduationCap className="h-6 w-6" />}
+              title={locale === 'hr' ? 'Dresura' : 'Training'}
+              description={locale === 'hr' 
+                ? 'Certificirani treneri za osnovnu i naprednu dresuru pasa.' 
+                : 'Certified trainers for basic and advanced dog training.'}
+            />
+            <StatCard
+              value="500+"
+              label={locale === 'hr' ? 'Verificiranih partnera' : 'Verified partners'}
+              trend={locale === 'hr' ? 'U 6 hrvatskih gradova' : 'In 6 Croatian cities'}
+              gradient="orange"
+            />
+          </BentoGrid>
         </div>
       </section>
 
