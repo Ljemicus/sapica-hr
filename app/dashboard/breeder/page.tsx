@@ -62,14 +62,14 @@ export default async function BreederDashboardPage() {
   if (!user) redirect('/prijava?returnTo=/dashboard/breeder');
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b">
+      <div className="border-b bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Uzgajivačnica</h1>
-              <p className="text-sm text-gray-500 mt-1">
+              <h1 className="text-2xl font-bold font-[var(--font-heading)]">Uzgajivačnica</h1>
+              <p className="text-sm text-muted-foreground mt-1">
                 Upravljajte svojim profilom, leglima i upitima
               </p>
             </div>

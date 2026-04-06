@@ -191,7 +191,7 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
         <p className="text-muted-foreground mt-1">Upravljajte rezervacijama, dostupnošću i profilom bez lutanja po sekcijama.</p>
       </div>
 
-      <div className="rounded-2xl border bg-gradient-to-r from-orange-50 to-amber-50 p-4 mb-6 animate-fade-in-up delay-300">
+      <div className="community-section-card p-4 mb-6 animate-fade-in-up delay-300 bg-gradient-to-r from-warm-orange/5 to-warm-peach/5">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
             <p className="text-sm font-medium text-foreground">Što traži pažnju?</p>
