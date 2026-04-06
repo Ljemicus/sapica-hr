@@ -93,9 +93,10 @@ export function PetPassportView({ pet, passport, isDemo = false }: Props) {
   const removeMedication = (index: number) => setDraft({ ...draft, medications: draft.medications.filter((_, i) => i !== index) });
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl print:max-w-none print:p-0">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50/20 via-white to-teal-50/20">
+      <div className="container mx-auto px-4 py-8 max-w-3xl print:max-w-none print:p-0">
       <div className="print:hidden">
-        <Link href="/dashboard/vlasnik" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-orange-500 transition-colors mb-6">
+        <Link href="/dashboard/vlasnik" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-warm-orange transition-colors mb-6">
           <ArrowLeft className="h-4 w-4" /> Natrag na nadzornu ploču
         </Link>
       </div>
@@ -340,6 +341,7 @@ export function PetPassportView({ pet, passport, isDemo = false }: Props) {
           </CardContent>
         </Card>
       </div>
+    </div>
 
       <style jsx global>{`
         @media print {
