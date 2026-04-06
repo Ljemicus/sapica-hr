@@ -215,7 +215,7 @@ export function RescueOnboardingWizard({
         {/* Header */}
         <div className="flex items-center justify-between border-b px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-teal-500">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-warm-orange to-warm-teal">
               <StepIcon className="h-5 w-5 text-white" />
             </div>
             <div>
@@ -262,10 +262,10 @@ export function RescueOnboardingWizard({
                 >
                   <div className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors ${
                     isCompleted 
-                      ? 'border-green-500 bg-green-500 text-white' 
+                      ? 'border-warm-teal bg-warm-teal text-white' 
                       : isCurrent 
-                        ? 'border-orange-500 bg-orange-50 text-orange-600'
-                        : 'border-gray-300 bg-white text-gray-400'
+                        ? 'border-warm-orange bg-warm-orange/10 text-warm-orange'
+                        : 'border-border bg-card text-muted-foreground'
                   }`}>
                     {isCompleted ? (
                       <CheckCircle2 className="h-5 w-5" />
@@ -274,7 +274,7 @@ export function RescueOnboardingWizard({
                     )}
                   </div>
                   <span className={`text-xs font-medium ${
-                    isCurrent ? 'text-orange-600' : 'text-muted-foreground'
+                    isCurrent ? 'text-warm-orange' : 'text-muted-foreground'
                   }`}>
                     {step.label}
                   </span>
@@ -283,9 +283,9 @@ export function RescueOnboardingWizard({
             })}
           </div>
           {/* Progress line */}
-          <div className="relative mt-2 h-1 w-full rounded-full bg-gray-200">
+          <div className="relative mt-2 h-1 w-full rounded-full bg-muted">
             <div 
-              className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-orange-500 to-teal-500 transition-all"
+              className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-warm-orange to-warm-teal transition-all"
               style={{ 
                 width: `${((steps.findIndex(s => s.id === currentStep) + (completedSteps.includes(currentStep) ? 1 : 0)) / (steps.length - 1)) * 100}%` 
               }}

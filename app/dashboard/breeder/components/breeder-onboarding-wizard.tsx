@@ -881,7 +881,7 @@ function FacilityStep({
     }
   };
 
-  const canContinue = facility.city && facility.address.length >= 5;
+  const canContinue = Boolean(facility.city && facility.address.length >= 5);
 
   return (
     <Card className="border-0 shadow-lg">
