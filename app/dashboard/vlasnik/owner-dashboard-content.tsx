@@ -172,7 +172,7 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
         totalSpent={totalSpent}
       />
 
-      <div className="rounded-2xl border bg-gradient-to-r from-orange-50 to-amber-50 p-4 mb-6 animate-fade-in-up delay-300">
+      <div className="community-section-card p-4 mb-6 animate-fade-in-up delay-300 bg-gradient-to-r from-warm-orange/5 to-warm-peach/5">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
             <p className="text-sm font-medium text-foreground">Brzi pregled</p>
@@ -189,11 +189,11 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
       </div>
 
       <div className="flex gap-3 mb-8 animate-fade-in-up delay-500 flex-wrap">
-        <Button onClick={openAddPet} className="bg-orange-500 hover:bg-orange-600 btn-hover shadow-sm">
+        <Button onClick={openAddPet} className="bg-warm-orange hover:bg-warm-orange/90">
           <Plus className="h-4 w-4 mr-1" /> Dodaj ljubimca
         </Button>
         <a href="/pretraga">
-          <Button variant="outline" className="hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200">
+          <Button variant="outline" className="hover:bg-warm-orange/5 hover:text-warm-orange hover:border-warm-orange/30">
             Pretraži sittere <ArrowRight className="h-4 w-4 ml-1" />
           </Button>
         </a>

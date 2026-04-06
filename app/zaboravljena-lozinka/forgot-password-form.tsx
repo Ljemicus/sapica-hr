@@ -49,7 +49,9 @@ export function ForgotPasswordForm() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md text-center animate-fade-in-up">
-          <CheckCircle className="h-16 w-16 text-teal-500 mx-auto mb-6" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-warm-teal/10 mb-6">
+            <CheckCircle className="h-10 w-10 text-warm-teal" />
+          </div>
           <h1 className="text-2xl font-bold mb-3">{language === 'en' ? 'Check your email' : 'Provjerite email'}</h1>
           <p className="text-muted-foreground mb-8">
             {language === 'en'
@@ -58,7 +60,7 @@ export function ForgotPasswordForm() {
           </p>
           <Link
             href="/prijava"
-            className="inline-flex items-center gap-2 text-orange-500 hover:underline font-semibold"
+            className="inline-flex items-center gap-2 text-warm-orange hover:underline font-semibold"
           >
             <ArrowLeft className="h-4 w-4" />
             {language === 'en' ? 'Back to login' : 'Natrag na prijavu'}
@@ -72,7 +74,7 @@ export function ForgotPasswordForm() {
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8 animate-fade-in-up">
-          <h1 className="text-3xl font-bold">{language === 'en' ? 'Forgot password' : 'Zaboravljena lozinka'}</h1>
+          <h1 className="text-3xl font-bold font-[var(--font-heading)]">{language === 'en' ? 'Forgot password' : 'Zaboravljena lozinka'}</h1>
           <p className="text-muted-foreground mt-2">
             {language === 'en' ? 'Enter your email address and we’ll send you a password reset link.' : 'Unesite email adresu i poslat ćemo vam poveznicu za resetiranje lozinke.'}
           </p>
@@ -87,7 +89,7 @@ export function ForgotPasswordForm() {
                 id="email"
                 type="email"
                 placeholder={language === 'en' ? 'you@email.com' : 'vas@email.com'}
-                className="pl-10 focus:border-orange-300"
+                className="pl-10"
                 {...register('email')}
               />
             </div>
@@ -96,7 +98,7 @@ export function ForgotPasswordForm() {
 
           <Button
             type="submit"
-            className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50 h-11"
+            className="w-full bg-warm-orange hover:bg-warm-orange/90 h-11"
             disabled={loading}
           >
             {loading ? (language === 'en' ? 'Sending...' : 'Slanje...') : (language === 'en' ? 'Send reset link' : 'Pošalji poveznicu')}
@@ -106,7 +108,7 @@ export function ForgotPasswordForm() {
         <div className="mt-8 text-center">
           <Link
             href="/prijava"
-            className="inline-flex items-center gap-2 text-sm text-orange-500 hover:underline font-semibold"
+            className="inline-flex items-center gap-2 text-sm text-warm-orange hover:underline font-semibold"
           >
             <ArrowLeft className="h-4 w-4" />
             {language === 'en' ? 'Back to login' : 'Natrag na prijavu'}
