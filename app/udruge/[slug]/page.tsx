@@ -150,7 +150,7 @@ export default async function RescueOrganizationDetailPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50/50 via-white to-white">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50/30 via-white to-orange-50/20">
         <div className="container mx-auto max-w-5xl px-4 py-8">
           <Link href="/udruge" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="h-4 w-4" />
@@ -188,7 +188,7 @@ export default async function RescueOrganizationDetailPage({ params }: Props) {
                 </div>
 
                 {/* Stats Card */}
-                <div className="rounded-2xl border bg-muted/40 p-5 lg:min-w-72">
+                <div className="rounded-2xl border bg-gradient-to-br from-white to-gray-50/50 p-5 lg:min-w-72 shadow-sm">
                   <p className="text-sm font-semibold">Statistika organizacije</p>
                   <div className="mt-3 space-y-3 text-sm text-muted-foreground">
                     <div className="flex items-center justify-between">
@@ -253,7 +253,7 @@ export default async function RescueOrganizationDetailPage({ params }: Props) {
                     </div>
                   </div>
 
-                  <div className="mt-6 rounded-2xl bg-muted/40 p-5">
+                  <div className="mt-6 rounded-2xl bg-gradient-to-br from-emerald-50/50 to-teal-50/30 p-5 border border-emerald-100">
                     <p className="inline-flex items-center gap-2 text-sm font-semibold">
                       <ShieldCheck className="h-4 w-4 text-emerald-600" />
                       Transparentnost donacija
@@ -432,15 +432,15 @@ export default async function RescueOrganizationDetailPage({ params }: Props) {
 
               {/* Trust Badge Card */}
               {isVerified && (
-                <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-emerald-50">
+                <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-500 to-emerald-500 text-white">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-3">
-                      <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                        <CheckCircle2 className="h-5 w-5 text-blue-600" />
+                      <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-blue-900">Verificirana organizacija</h3>
-                        <p className="mt-1 text-sm text-blue-800/80">
+                        <h3 className="font-semibold text-white">Verificirana organizacija</h3>
+                        <p className="mt-1 text-sm text-white/90">
                           Ova organizacija je prošla PetPark verifikacijski proces. Dokumentacija je pregledana i odobrena.
                         </p>
                       </div>
