@@ -41,12 +41,20 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
   const [sentUpdates, setSentUpdates] = useState<PetUpdate[]>(recentUpdates);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [loading, setLoading] = useState(false);
-  const [profileForm, setProfileForm] = useState({
+  const [profileForm, setProfileForm] = useState<{
+    bio: string;
+    experience_years: string;
+    services: ServiceType[];
+    prices: Record<string, number>;
+    city: string;
+    instant_booking: boolean;
+  }>({
     bio: profile?.bio || '',
     experience_years: profile?.experience_years?.toString() || '0',
     services: profile?.services || [],
     prices: (profile?.prices || {}) as Record<string, number>,
     city: profile?.city || user.city || '',
+    instant_booking: profile?.instant_booking ?? false,
   });
   const router = useRouter();
 
@@ -77,6 +85,7 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
         services: profileForm.services,
         prices: profileForm.prices,
         city: profileForm.city,
+        instant_booking: profileForm.instant_booking,
       }),
     });
 

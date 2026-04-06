@@ -1,4 +1,4 @@
-import { Edit, User } from 'lucide-react';
+import { Edit, User, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -53,6 +53,7 @@ export function SitterProfileTab({ profile, onEdit }: Props) {
             <div className="flex gap-2">
               {profile.verified && <Badge className="bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-50">✓ Verificiran profil</Badge>}
               {profile.superhost && <Badge className="bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-50">★ Top izbor</Badge>}
+              {profile.instant_booking && <Badge className="bg-purple-50 text-purple-600 border border-purple-200 hover:bg-purple-50"><Zap className="h-3 w-3 mr-1" /> Instant booking</Badge>}
             </div>
           </>
         ) : (

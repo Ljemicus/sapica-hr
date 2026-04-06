@@ -20,6 +20,48 @@ export function getStripe(): Stripe {
   return _stripe;
 }
 
+// ── Payment Intent Creation ──
+
+interface CreatePaymentIntentOptions {
+  amount: number; // in cents
+  currency: string;
+  metadata?: Record<string, string>;
+}
+
+interface CreatePaymentIntentResult {
+  success: boolean;
+  paymentIntentId?: string;
+  clientSecret?: string;
+  error?: string;
+}
+
+export async function createPaymentIntent(
+  options: CreatePaymentIntentOptions
+): Promise<CreatePaymentIntentResult> {
+  try {
+    const stripe = getStripe();
+    
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: options.amount,
+      currency: options.currency,
+      metadata: options.metadata,
+      automatic_payment_methods: { enabled: true },
+    });
+
+    return {
+      success: true,
+      paymentIntentId: paymentIntent.id,
+      clientSecret: paymentIntent.client_secret || undefined,
+    };
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    return {
+      success: false,
+      error: errorMsg,
+    };
+  }
+}
+
 // ── Client-side Stripe loader ──
 
 import { loadStripe, type Stripe as StripeClient } from '@stripe/stripe-js';

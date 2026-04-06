@@ -73,6 +73,7 @@ export const sitterProfileSchema = z.object({
   services: z.array(z.enum(['boarding', 'walking', 'house-sitting', 'drop-in', 'daycare'])).min(1, 'Odaberite barem jednu uslugu'),
   prices: z.record(z.string(), z.coerce.number().min(0)),
   city: z.string().min(1, 'Odaberite grad'),
+  instant_booking: z.boolean().optional(),
 });
 
 export const bookingSchema = z.object({

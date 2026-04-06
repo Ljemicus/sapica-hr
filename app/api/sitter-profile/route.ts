@@ -20,6 +20,7 @@ export async function POST(request: Request) {
     prices: parsed.data.prices,
     city: parsed.data.city,
     user_id: user.id,
+    instant_booking: parsed.data.instant_booking ?? false,
   };
 
   const { data: existing } = await supabase.from('sitter_profiles').select('user_id').eq('user_id', user.id).maybeSingle();

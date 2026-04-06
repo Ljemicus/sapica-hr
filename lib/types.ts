@@ -67,6 +67,7 @@ export interface SitterProfile {
   photos: string[];
   created_at: string;
   verified_level?: VerificationLevel;
+  instant_booking?: boolean;
   user?: User;
 }
 

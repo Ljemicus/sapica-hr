@@ -14,6 +14,7 @@ interface ProfileForm {
   services: ServiceType[];
   prices: Record<string, number>;
   city: string;
+  instant_booking: boolean;
 }
 
 interface Props {
@@ -235,6 +236,22 @@ export function SitterDashboardDialogs({
                 ))}
               </div>
             </div>
+            
+            <div className="p-4 rounded-xl border border-purple-200 bg-purple-50/50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-purple-900">⚡ Instant Booking</Label>
+                  <p className="text-xs text-purple-700 mt-1">
+                    Omogućite vlasnicima da odmah rezerviraju i plate bez čekanja na vaš odgovor.
+                  </p>
+                </div>
+                <Switch 
+                  checked={profileForm.instant_booking || false} 
+                  onCheckedChange={(checked) => onProfileFormChange({ ...profileForm, instant_booking: checked })}
+                />
+              </div>
+            </div>
+            
             <Button onClick={onSaveProfile} className="w-full bg-orange-500 hover:bg-orange-600 btn-hover" disabled={loading}>
               {loading ? 'Spremanje...' : 'Spremi profil'}
             </Button>

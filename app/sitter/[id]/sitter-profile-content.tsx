@@ -8,7 +8,7 @@ import { enUS, hr } from 'date-fns/locale';
 import {
   Star, MapPin, Clock, Shield, Award, Calendar, MessageCircle,
   Heart, ChevronLeft, CheckCircle2, Home, Dog, House, Eye, Sun,
-  Share2, Check, ArrowRight, Camera,
+  Share2, Check, ArrowRight, Camera, Zap,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -194,6 +194,12 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                 <span className={`inline-flex items-center gap-1.5 text-xs font-semibold rounded-full px-3.5 py-1.5 shadow-sm ${heroPhoto ? 'bg-white/95 text-amber-600' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'}`}>
                   <Award className="h-3 w-3" />
                   {copy.topPick}
+                </span>
+              )}
+              {profile.instant_booking && (
+                <span className={`inline-flex items-center gap-1.5 text-xs font-semibold rounded-full px-3.5 py-1.5 shadow-sm ${heroPhoto ? 'bg-white/95 text-purple-600' : 'bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'}`}>
+                  <Zap className="h-3 w-3" />
+                  {isEn ? 'Instant Book' : 'Trenutna Rezervacija'}
                 </span>
               )}
             </div>
