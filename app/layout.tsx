@@ -13,6 +13,7 @@ import { CookieConsentBanner } from '@/components/shared/cookie-consent-banner';
 import { LanguageProvider, DEFAULT_LOCALE, LOCALE_HEADER } from '@/lib/i18n';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { DeferredUI } from '@/components/shared/deferred-ui';
+import { ChatWidget } from '@/components/chat/chat-widget';
 import { WebVitals } from '@/components/monitoring/web-vitals';
 import { SkipToContentLink } from '@/components/shared/skip-to-content-link';
 import { buildLocaleAlternates } from '@/lib/seo/locale-metadata';
@@ -137,6 +138,7 @@ export default async function RootLayout({
                 <BottomNav />
                 <DeferredUI />
                 <CookieConsentBanner />
+                <ChatWidget />
               </LanguageProvider>
             </CartProvider>
           </AuthProvider>

@@ -55,7 +55,7 @@ export async function getConversations(userId: string): Promise<Message[]> {
   }
 }
 
-export async function getMessages(userId: string): Promise<Message[]> {
+export async function getMessages(userId: string): Promise<(Message & { sender?: { id: string; name: string; avatar_url: string | null; role: string }; receiver?: { id: string; name: string; avatar_url: string | null; role: string } })[]> {
   if (!isSupabaseConfigured()) {
     return [];
   }
@@ -63,11 +63,11 @@ export async function getMessages(userId: string): Promise<Message[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('messages')
-      .select('*, sender:users!sender_id(*)')
+      .select('*, sender:users!sender_id(id, name, avatar_url, role), receiver:users!receiver_id(id, name, avatar_url, role)')
       .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
       .order('created_at', { ascending: false });
     if (error || !data) return [];
-    return data as Message[];
+    return data as (Message & { sender?: { id: string; name: string; avatar_url: string | null; role: string }; receiver?: { id: string; name: string; avatar_url: string | null; role: string } })[];
   } catch {
     return [];
   }
@@ -76,7 +76,7 @@ export async function getMessages(userId: string): Promise<Message[]> {
 export async function getConversation(
   userId1: string,
   userId2: string
-): Promise<Message[]> {
+): Promise<(Message & { sender?: { id: string; name: string; avatar_url: string | null; role: string }; receiver?: { id: string; name: string; avatar_url: string | null; role: string } })[]> {
   if (!isSupabaseConfigured()) {
     return [];
   }
@@ -84,7 +84,7 @@ export async function getConversation(
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('messages')
-      .select('*, sender:users!sender_id(*)')
+      .select('*, sender:users!sender_id(id, name, avatar_url, role), receiver:users!receiver_id(id, name, avatar_url, role)')
       .or(
         `and(sender_id.eq.${userId1},receiver_id.eq.${userId2}),and(sender_id.eq.${userId2},receiver_id.eq.${userId1})`
       )
@@ -92,7 +92,7 @@ export async function getConversation(
     if (error || !data) {
       return [];
     }
-    return data as Message[];
+    return data as (Message & { sender?: { id: string; name: string; avatar_url: string | null; role: string }; receiver?: { id: string; name: string; avatar_url: string | null; role: string } })[];
   } catch {
     return [];
   }
