@@ -1,325 +1,327 @@
-import type { SitterProfile, Pet, ServiceType } from '@/lib/types';
-import { appLogger } from '@/lib/logger';
+// AI Matching Algorithm for PetPark
+// Matches pets with optimal sitters based on multiple weighted factors
+
+import type { Pet, SitterProfile, User, ServiceType } from '@/lib/types';
 
 export interface MatchingCriteria {
-  pet: Pet;
+  petId: string;
   serviceType: ServiceType;
-  city: string;
   startDate: string;
   endDate: string;
-  specialRequirements?: string[];
+  ownerCity?: string;
+  maxDistance?: number; // km
+  budgetMax?: number;
+  preferredLanguages?: string[];
 }
 
-export interface SitterMatch {
-  sitter: SitterProfile;
-  score: number;
-  reasons: string[];
-  matchFactors: {
-    location: number;
-    service: number;
-    experience: number;
-    rating: number;
-    responseTime: number;
-    specialNeeds: number;
+export interface MatchScore {
+  sitterId: string;
+  sitter: SitterProfile & { user: User };
+  totalScore: number;
+  breakdown: {
+    locationScore: number;      // 25% - distance from owner/pet
+    availabilityScore: number;  // 20% - calendar availability
+    experienceScore: number;    // 20% - species/size experience
+    ratingScore: number;        // 15% - reviews and rating
+    priceScore: number;         // 10% - budget fit
+    specialNeedsScore: number;  // 10% - special needs compatibility
   };
+  reasons: string[]; // Human-readable reasons for match
 }
 
-interface MatchWeights {
+interface MatchingWeights {
   location: number;
-  service: number;
+  availability: number;
   experience: number;
   rating: number;
-  responseTime: number;
+  price: number;
   specialNeeds: number;
 }
 
-const DEFAULT_WEIGHTS: MatchWeights = {
-  location: 25,      // Same city is crucial
-  service: 20,       // Offers requested service
-  experience: 15,    // Years of experience
-  rating: 20,        // Average rating + review count
-  responseTime: 10,  // Quick response preferred
-  specialNeeds: 10,  // Experience with special needs pets
+const DEFAULT_WEIGHTS: MatchingWeights = {
+  location: 0.25,
+  availability: 0.20,
+  experience: 0.20,
+  rating: 0.15,
+  price: 0.10,
+  specialNeeds: 0.10,
 };
 
-/**
- * Calculate distance score (0-1) based on location
- * 1.0 = same city, 0.5 = nearby (would need geocoding), 0.0 = far
- */
-function calculateLocationScore(sitter: SitterProfile, criteria: MatchingCriteria): number {
-  if (!sitter.city) return 0.3; // Unknown location = lower score
+// Calculate distance between two coordinates using Haversine formula
+export function calculateDistance(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number {
+  const R = 6371; // Earth's radius in km
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLng = (lng2 - lng1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+// Score location proximity (0-100)
+function scoreLocation(
+  sitter: SitterProfile,
+  ownerCity?: string,
+  ownerLat?: number,
+  ownerLng?: number,
+  maxDistance: number = 50
+): number {
+  // If we have coordinates, use distance calculation
+  if (ownerLat && ownerLng && sitter.location_lat && sitter.location_lng) {
+    const distance = calculateDistance(
+      ownerLat,
+      ownerLng,
+      sitter.location_lat,
+      sitter.location_lng
+    );
+    
+    if (distance > maxDistance) return 0;
+    
+    // Exponential decay: closer is much better
+    return Math.round(100 * Math.exp(-distance / 10));
+  }
   
-  const sitterCity = sitter.city.toLowerCase().trim();
-  const criteriaCity = criteria.city.toLowerCase().trim();
+  // Fallback to city matching
+  if (ownerCity && sitter.city) {
+    const sameCity = sitter.city.toLowerCase() === ownerCity.toLowerCase();
+    return sameCity ? 80 : 40;
+  }
   
-  if (sitterCity === criteriaCity) return 1.0;
+  return 50; // Neutral if no location data
+}
+
+// Score availability (0-100) - placeholder, actual check in DB
+function scoreAvailability(
+  sitter: SitterProfile,
+  startDate: string,
+  endDate: string
+): number {
+  // This is a placeholder - actual availability should be checked against bookings table
+  // For now, assume available and let the DB query filter unavailable sitters
+  return 80;
+}
+
+// Score experience with pet type and size (0-100)
+function scoreExperience(
+  sitter: SitterProfile,
+  pet: Pet
+): number {
+  let score = 50; // Base score
+  const reasons: string[] = [];
   
-  // Common city aliases/regions in Croatia
-  const regionMap: Record<string, string[]> = {
-    'zagreb': ['zagreb', 'novi zagreb', 'samobor', 'velika gorica', 'zaprešić'],
-    'split': ['split', 'kaštela', 'trogir', 'solin'],
-    'rijeka': ['rijeka', 'kastav', 'čavle', 'viškovo'],
-    'osijek': ['osijek', 'višnjevac'],
-    'zadar': ['zadar', 'bibinje', 'nin'],
-    'dubrovnik': ['dubrovnik', 'župa dubrovačka'],
+  // More years of experience = higher score
+  if (sitter.experience_years >= 5) {
+    score += 20;
+  } else if (sitter.experience_years >= 2) {
+    score += 10;
+  }
+  
+  // Check if sitter mentions pet species in bio (simple keyword check)
+  const bio = sitter.bio?.toLowerCase() || '';
+  const speciesKeywords: Record<string, string[]> = {
+    dog: ['pas', 'psi', 'pasa', 'dog', 'dogs', 'puppy', 'štene'],
+    cat: ['mačka', 'mačke', 'cat', 'cats', 'kitten', 'mače'],
+    other: ['ptica', 'riba', 'glodavac', 'bird', 'fish', 'rodent'],
   };
   
-  for (const [region, cities] of Object.entries(regionMap)) {
-    if (cities.includes(sitterCity) && cities.includes(criteriaCity)) {
-      return 0.7; // Same region
+  const keywords = speciesKeywords[pet.species] || [];
+  const mentionsSpecies = keywords.some(kw => bio.includes(kw));
+  
+  if (mentionsSpecies) {
+    score += 15;
+    reasons.push(`Ima iskustva s ${pet.species === 'dog' ? 'psima' : pet.species === 'cat' ? 'mačkama' : 'egzotičnim ljubimcima'}`);
+  }
+  
+  // Size experience (if weight info available)
+  if (pet.weight) {
+    const sizeCategory = pet.weight < 10 ? 'small' : pet.weight < 25 ? 'medium' : 'large';
+    const sizeKeywords: Record<string, string[]> = {
+      small: ['mali', 'maleni', 'small', 'tiny', 'štene'],
+      medium: ['srednji', 'medium', 'prosječan'],
+      large: ['veliki', 'large', 'big', 'ogroman', 'giant'],
+    };
+    
+    const sizeMentioned = sizeKeywords[sizeCategory].some(kw => bio.includes(kw));
+    if (sizeMentioned) {
+      score += 10;
+      reasons.push(`Navikao/la na ${sizeCategory === 'small' ? 'male' : sizeCategory === 'medium' ? 'srednje' : 'velike'} ljubimce`);
     }
   }
   
-  return 0.2; // Different cities
+  return Math.min(100, score);
 }
 
-/**
- * Calculate service match score
- */
-function calculateServiceScore(sitter: SitterProfile, criteria: MatchingCriteria): number {
-  if (!sitter.services?.length) return 0;
+// Score rating and reviews (0-100)
+function scoreRating(sitter: SitterProfile): number {
+  // Base score from rating (0-5 scale -> 0-60 points)
+  const ratingScore = (sitter.rating_avg / 5) * 60;
   
-  // Exact service match
-  if (sitter.services.includes(criteria.serviceType)) {
-    // Bonus if they offer multiple services (more flexible)
-    return sitter.services.length >= 3 ? 1.0 : 0.9;
-  }
+  // Bonus for number of reviews (max 40 points at 50+ reviews)
+  const reviewBonus = Math.min(40, sitter.review_count * 0.8);
   
-  // Partial match for related services
-  const relatedServices: Record<ServiceType, ServiceType[]> = {
-    'boarding': ['house-sitting', 'daycare'],
-    'walking': ['drop-in', 'daycare'],
-    'house-sitting': ['boarding', 'drop-in'],
-    'drop-in': ['walking', 'house-sitting'],
-    'daycare': ['boarding', 'walking'],
-  };
+  // Superhost bonus
+  const superhostBonus = sitter.superhost ? 10 : 0;
   
-  const alternatives = relatedServices[criteria.serviceType] || [];
-  if (alternatives.some(s => sitter.services.includes(s))) {
-    return 0.5; // Offers alternative service
-  }
-  
-  return 0;
+  return Math.min(100, ratingScore + reviewBonus + superhostBonus);
 }
 
-/**
- * Calculate experience score based on years
- */
-function calculateExperienceScore(sitter: SitterProfile): number {
-  const years = sitter.experience_years || 0;
+// Score price fit (0-100)
+function scorePrice(
+  sitter: SitterProfile,
+  serviceType: ServiceType,
+  budgetMax?: number
+): number {
+  const price = sitter.prices[serviceType];
   
-  if (years >= 5) return 1.0;
-  if (years >= 3) return 0.85;
-  if (years >= 1) return 0.7;
-  if (years > 0) return 0.5;
-  return 0.3; // New sitter
+  if (!price || price <= 0) return 0; // Doesn't offer this service
+  
+  if (!budgetMax) return 80; // No budget constraint
+  
+  if (price > budgetMax) return Math.max(0, 100 - ((price - budgetMax) / budgetMax) * 100);
+  
+  // Within budget - higher score for better value
+  const valueRatio = price / budgetMax;
+  return Math.round(70 + (1 - valueRatio) * 30);
 }
 
-/**
- * Calculate rating score combining avg rating and review count
- */
-function calculateRatingScore(sitter: SitterProfile): number {
-  const rating = sitter.rating_avg || 0;
-  const reviews = sitter.review_count || 0;
+// Score special needs compatibility (0-100)
+function scoreSpecialNeeds(
+  sitter: SitterProfile,
+  pet: Pet
+): number {
+  if (!pet.special_needs) return 100; // No special needs = full score
   
-  // Rating component (0-5 stars mapped to 0-0.7)
-  const ratingComponent = (rating / 5) * 0.7;
+  let score = 50;
+  const bio = sitter.bio?.toLowerCase() || '';
+  const specialNeeds = pet.special_needs.toLowerCase();
   
-  // Review count component (more reviews = more reliable)
-  let reviewComponent = 0;
-  if (reviews >= 20) reviewComponent = 0.3;
-  else if (reviews >= 10) reviewComponent = 0.25;
-  else if (reviews >= 5) reviewComponent = 0.2;
-  else if (reviews > 0) reviewComponent = 0.1;
-  
-  return Math.min(1, ratingComponent + reviewComponent);
-}
-
-/**
- * Calculate response time score
- */
-function calculateResponseTimeScore(sitter: SitterProfile): number {
-  if (!sitter.response_time) return 0.5; // Unknown = average
-  
-  const responseHours = parseInt(sitter.response_time);
-  if (isNaN(responseHours)) return 0.5;
-  
-  if (responseHours <= 1) return 1.0;
-  if (responseHours <= 3) return 0.85;
-  if (responseHours <= 6) return 0.7;
-  if (responseHours <= 12) return 0.55;
-  if (responseHours <= 24) return 0.4;
-  return 0.25;
-}
-
-/**
- * Calculate special needs match score
- */
-function calculateSpecialNeedsScore(sitter: SitterProfile, criteria: MatchingCriteria): number {
-  if (!criteria.specialRequirements?.length) return 0.5; // No special needs = neutral
-  
-  // Check sitter bio for special needs keywords
-  const bio = (sitter.bio || '').toLowerCase();
+  // Keywords that indicate experience with special needs
   const specialNeedsKeywords = [
-    'specijalne potrebe', 'special needs', 'lijekovi', 'medicine',
-    'stariji', 'senior', 'štenci', 'puppy', 'mačići', 'kitten',
-    'injekcije', 'injektiranje', 'dijabetes', 'epilepsija',
-    'nježan', 'gentle', 'strpljiv', 'patient', 'iskusan', 'experienced'
+    'medicina', 'lijek', 'injekcija', 'dijabetes', 'epilepsija',
+    'medicine', 'medication', 'injection', 'diabetes', 'epilepsy',
+    'special', 'specijalne', 'potrebe', 'needs', 'skrb', 'care'
   ];
   
-  const matches = specialNeedsKeywords.filter(kw => bio.includes(kw));
-  const matchRatio = matches.length / specialNeedsKeywords.length;
+  const hasExperience = specialNeedsKeywords.some(kw => 
+    bio.includes(kw) || specialNeeds.includes(kw)
+  );
   
-  // Superhost bonus for special needs
-  const superhostBonus = sitter.superhost ? 0.2 : 0;
+  if (hasExperience) {
+    score += 30;
+  }
   
-  return Math.min(1, 0.3 + matchRatio * 0.7 + superhostBonus);
+  // Verified sitters get bonus for special needs
+  if (sitter.verified) {
+    score += 10;
+  }
+  
+  // Superhost bonus
+  if (sitter.superhost) {
+    score += 10;
+  }
+  
+  return Math.min(100, score);
 }
 
-/**
- * Generate human-readable reasons for the match
- */
-function generateMatchReasons(sitter: SitterProfile, factors: SitterMatch['matchFactors']): string[] {
+// Main matching function
+export function calculateMatchScore(
+  sitter: SitterProfile & { user: User },
+  pet: Pet,
+  criteria: MatchingCriteria,
+  ownerLat?: number,
+  ownerLng?: number,
+  weights: MatchingWeights = DEFAULT_WEIGHTS
+): MatchScore {
+  const breakdown = {
+    locationScore: scoreLocation(sitter, criteria.ownerCity, ownerLat, ownerLng, criteria.maxDistance),
+    availabilityScore: scoreAvailability(sitter, criteria.startDate, criteria.endDate),
+    experienceScore: scoreExperience(sitter, pet),
+    ratingScore: scoreRating(sitter),
+    priceScore: scorePrice(sitter, criteria.serviceType, criteria.budgetMax),
+    specialNeedsScore: scoreSpecialNeeds(sitter, pet),
+  };
+  
+  // Calculate weighted total
+  const totalScore = Math.round(
+    breakdown.locationScore * weights.location +
+    breakdown.availabilityScore * weights.availability +
+    breakdown.experienceScore * weights.experience +
+    breakdown.ratingScore * weights.rating +
+    breakdown.priceScore * weights.price +
+    breakdown.specialNeedsScore * weights.specialNeeds
+  );
+  
+  // Generate human-readable reasons
   const reasons: string[] = [];
   
-  if (factors.location >= 0.9) {
-    reasons.push('📍 U vašem gradu');
-  } else if (factors.location >= 0.6) {
-    reasons.push('📍 U blizini');
+  if (breakdown.locationScore >= 80) {
+    reasons.push('U vašoj blizini');
   }
-  
-  if (factors.service >= 0.9) {
-    reasons.push('✅ Nudi traženu uslugu');
-  } else if (factors.service >= 0.4) {
-    reasons.push('✅ Nudi sličnu uslugu');
+  if (breakdown.ratingScore >= 80) {
+    reasons.push(sitter.superhost ? '⭐ Superhost' : '⭐ Visoko ocjenjen');
   }
-  
-  if (factors.experience >= 0.85) {
-    reasons.push(`⭐ ${sitter.experience_years}+ godina iskustva`);
-  } else if (factors.experience >= 0.6) {
-    reasons.push(`⭐ ${sitter.experience_years} godina iskustva`);
+  if (breakdown.experienceScore >= 70) {
+    reasons.push(`${sitter.experience_years}+ godina iskustva`);
   }
-  
-  if (factors.rating >= 0.8 && sitter.review_count >= 5) {
-    reasons.push(`❤️ ${sitter.rating_avg.toFixed(1)}/5 (${sitter.review_count} recenzija)`);
-  } else if (sitter.superhost) {
-    reasons.push('🏆 Superhost');
+  if (breakdown.priceScore >= 80 && criteria.budgetMax) {
+    reasons.push('Odličan omjer cijene i kvalitete');
   }
-  
-  if (factors.responseTime >= 0.85) {
-    reasons.push('⚡ Brzo odgovara');
+  if (breakdown.specialNeedsScore >= 70 && pet.special_needs) {
+    reasons.push('Iskustvo sa specijalnim potrebama');
   }
-  
-  if (factors.specialNeeds >= 0.7) {
-    reasons.push('🩺 Iskustvo sa specijalnim potrebama');
+  if (sitter.verified) {
+    reasons.push('✓ Verificiran profil');
   }
-  
-  return reasons.slice(0, 4); // Max 4 reasons
-}
-
-/**
- * Calculate overall match score for a sitter
- */
-function calculateSitterMatch(
-  sitter: SitterProfile,
-  criteria: MatchingCriteria,
-  weights: MatchWeights = DEFAULT_WEIGHTS
-): SitterMatch | null {
-  try {
-    // Must offer the service or alternative
-    const serviceScore = calculateServiceScore(sitter, criteria);
-    if (serviceScore === 0) return null;
-    
-    const factors = {
-      location: calculateLocationScore(sitter, criteria),
-      service: serviceScore,
-      experience: calculateExperienceScore(sitter),
-      rating: calculateRatingScore(sitter),
-      responseTime: calculateResponseTimeScore(sitter),
-      specialNeeds: calculateSpecialNeedsScore(sitter, criteria),
-    };
-    
-    // Calculate weighted score
-    const score = (
-      factors.location * weights.location +
-      factors.service * weights.service +
-      factors.experience * weights.experience +
-      factors.rating * weights.rating +
-      factors.responseTime * weights.responseTime +
-      factors.specialNeeds * weights.specialNeeds
-    ) / 100;
-    
-    return {
-      sitter,
-      score: Math.round(score * 100) / 100,
-      reasons: generateMatchReasons(sitter, factors),
-      matchFactors: factors,
-    };
-  } catch (error) {
-    appLogger.error('ai-matching', 'Error calculating match', { error: String(error) });
-    return null;
-  }
-}
-
-/**
- * Find best matching sitters for given criteria
- */
-export async function findBestMatches(
-  sitters: SitterProfile[],
-  criteria: MatchingCriteria,
-  options: {
-    limit?: number;
-    minScore?: number;
-    weights?: Partial<MatchWeights>;
-  } = {}
-): Promise<SitterMatch[]> {
-  const { limit = 5, minScore = 0.4, weights = {} } = options;
-  
-  const mergedWeights = { ...DEFAULT_WEIGHTS, ...weights };
-  
-  const matches = sitters
-    .map(sitter => calculateSitterMatch(sitter, criteria, mergedWeights))
-    .filter((match): match is SitterMatch => 
-      match !== null && match.score >= minScore
-    )
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit);
-  
-  appLogger.info('ai-matching', 'Found matches', { 
-    criteria: criteria.city,
-    service: criteria.serviceType,
-    candidates: sitters.length,
-    matches: matches.length,
-    topScore: matches[0]?.score
-  });
-  
-  return matches;
-}
-
-/**
- * Get match explanation for a specific sitter
- */
-export function getMatchExplanation(
-  sitter: SitterProfile,
-  criteria: MatchingCriteria
-): { score: number; reasons: string[]; isGoodMatch: boolean } {
-  const match = calculateSitterMatch(sitter, criteria);
-  
-  if (!match) {
-    return { score: 0, reasons: ['Ne nudi traženu uslugu'], isGoodMatch: false };
+  if (sitter.instant_booking) {
+    reasons.push('⚡ Instant booking');
   }
   
   return {
-    score: match.score,
-    reasons: match.reasons,
-    isGoodMatch: match.score >= 0.6,
+    sitterId: sitter.user_id,
+    sitter,
+    totalScore,
+    breakdown,
+    reasons: reasons.slice(0, 4), // Top 4 reasons
   };
 }
 
-/**
- * Quick match check — useful for badges/highlights
- */
-export function isTopMatch(sitter: SitterProfile, criteria: MatchingCriteria): boolean {
-  const match = calculateSitterMatch(sitter, criteria);
-  return match ? match.score >= 0.75 : false;
+// Rank and filter sitters
+export function rankSitters(
+  sitters: (SitterProfile & { user: User })[],
+  pet: Pet,
+  criteria: MatchingCriteria,
+  ownerLat?: number,
+  ownerLng?: number,
+  limit: number = 10
+): MatchScore[] {
+  const scored = sitters
+    .map(sitter => calculateMatchScore(sitter, pet, criteria, ownerLat, ownerLng))
+    .filter(match => match.totalScore > 30) // Filter out poor matches
+    .sort((a, b) => b.totalScore - a.totalScore);
+  
+  return scored.slice(0, limit);
+}
+
+// Get personalized recommendation text
+export function getRecommendationText(match: MatchScore, isTopMatch: boolean = false): string {
+  if (isTopMatch) {
+    return `Najbolji izbor za vašeg ljubimca — ${match.reasons.join(', ')}`;
+  }
+  
+  if (match.totalScore >= 85) {
+    return `Odličan izbor — ${match.reasons.join(', ')}`;
+  } else if (match.totalScore >= 70) {
+    return `Dobar izbor — ${match.reasons.join(', ')}`;
+  } else {
+    return `Alternativa — ${match.reasons.join(', ')}`;
+  }
 }
