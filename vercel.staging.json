@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "@staging-supabase-url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@staging-supabase-anon-key",
+    "NEXT_PUBLIC_APP_ENV": "staging"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_APP_ENV": "staging"
+    }
+  }
+}
