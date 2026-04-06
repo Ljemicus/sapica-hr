@@ -194,24 +194,17 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
       />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-600 via-teal-500 to-cyan-500 py-20 md:py-28">
+      <section className="relative organizations-hero-gradient py-20 md:py-28">
         {/* Paw pattern overlay */}
         <div className="paw-pattern absolute inset-0 opacity-[0.05]" />
 
-        {/* Floating blobs */}
-        <div className="absolute top-10 left-10 h-64 w-64 rounded-full bg-teal-400/30 mix-blend-multiply blur-3xl animate-float" />
-        <div className="absolute bottom-10 right-10 h-72 w-72 rounded-full bg-emerald-400/30 mix-blend-multiply blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-80 w-80 rounded-full bg-cyan-400/20 mix-blend-multiply blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-
         <div className="container mx-auto px-4 text-center relative z-10">
-          <Badge className="mb-6 bg-white/20 text-white border-white/30 backdrop-blur-sm px-4 py-2 text-sm">
-            <PawPrint className="h-4 w-4 mr-2" />
+          <p className="section-kicker mb-6">
             {isEn ? '35+ locations in 7 cities' : '35+ lokacija u 7 gradova'}
-          </Badge>
+          </p>
 
-          <h1 className="text-4xl md:text-6xl font-bold font-[var(--font-heading)] tracking-tight text-white mb-4">
-            Dog-Friendly{' '}
-            <span className="text-gradient">{isEn ? 'Places' : 'Lokacije'}</span>
+          <h1 className="text-4xl md:text-6xl font-extrabold font-[var(--font-heading)] tracking-tight text-white mb-4">
+            Dog-Friendly {isEn ? 'Places' : 'Lokacije'}
           </h1>
 
           <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-10">
@@ -242,10 +235,10 @@ export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocati
               <button
                 key={city}
                 onClick={() => setSelectedCity(city)}
-                className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                className={`filter-pill ${
                   selectedCity === city
-                    ? 'bg-orange-500 text-white shadow-md shadow-orange-200'
-                    : 'bg-white hover:bg-gray-50 text-gray-600 border border-gray-200'
+                    ? 'bg-warm-orange text-white'
+                    : 'bg-white hover:bg-warm-orange/5 text-foreground border border-border'
                 }`}
               >
                 {city}
