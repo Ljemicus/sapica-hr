@@ -62,6 +62,7 @@ export function getDesktopLinks(t: TranslationFn, user?: NavbarUser | null, lang
 export function getServicesMenu(t: TranslationFn, language: Language = 'hr'): NavbarMenuItem[] {
   return [
     { href: '/pretraga', label: t('nav.sitters'), icon: Search },
+    { href: '/ai-matching', label: 'AI Matching', icon: Sparkles, className: 'text-purple-600 dark:text-purple-400 font-medium' },
     { href: localizeHref('/njega', language), label: t('nav.grooming'), icon: Scissors },
     { href: localizeHref('/dresura', language), label: t('nav.training'), icon: GraduationCap },
     { href: localizeHref('/veterinari', language), label: t('nav.veterinarians'), icon: Stethoscope },
