@@ -60,10 +60,15 @@ export function OwnerPetsTab({ pets, onAddPet, onEditPet, onDeletePet }: Props) 
                     {pet.special_needs && (
                       <p className="text-xs text-amber-600 mt-2 bg-amber-50 rounded-lg p-2">⚠️ {pet.special_needs}</p>
                     )}
-                    <div className="mt-2">
+                    <div className="mt-2 flex gap-2 flex-wrap">
                       <Link href={`/ljubimac/${pet.id}/karton`}>
                         <Button variant="outline" size="sm" className="text-xs hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200">
-                          <FileHeart className="h-3 w-3 mr-1" /> Zdravstveni karton
+                          <FileHeart className="h-3 w-3 mr-1" /> Karton
+                        </Button>
+                      </Link>
+                      <Link href={`/ljubimac/${pet.id}/passport`}>
+                        <Button variant="outline" size="sm" className="text-xs hover:bg-teal-50 hover:text-teal-600 hover:border-teal-200">
+                          <span className="mr-1">🐾</span> Passport
                         </Button>
                       </Link>
                     </div>
