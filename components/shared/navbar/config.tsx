@@ -54,9 +54,18 @@ export function getDesktopLinks(t: TranslationFn, user?: NavbarUser | null, lang
     { href: '/o-nama', label: t('nav.about') },
     { href: '/blog', label: t('nav.blog'), icon: BookOpen },
     { href: localizeHref('/forum', language), label: t('nav.forum'), icon: MessageSquare },
-    { href: localizeHref('/izgubljeni', language), label: t('nav.lost'), icon: AlertTriangle, className: 'text-red-500 hover:text-red-600 transition-colors' },
+    // Izgubljeni je ručno renderiran u desktop-nav.tsx (ranije u navigaciji)
     ...(!user ? [{ href: '/postani-sitter', label: t('nav.become_sitter'), className: 'text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 transition-colors px-3 py-2 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-950/20' }] : []),
   ];
+}
+
+// Zasebna funkcija za Izgubljeni link (za ručni render)
+export function getLostPetsLink(t: TranslationFn, language: Language = 'hr'): NavbarLinkItem {
+  return { 
+    href: localizeHref('/izgubljeni', language), 
+    label: t('nav.lost'), 
+    icon: AlertTriangle 
+  };
 }
 
 export function getServicesMenu(t: TranslationFn, language: Language = 'hr'): NavbarMenuItem[] {

@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { getDesktopLinks, getHksMenu, getServicesMenu } from './config';
+import { getDesktopLinks, getHksMenu, getServicesMenu, getLostPetsLink } from './config';
 import type { NavbarUser, TranslationFn } from './types';
 import type { Language } from '@/lib/i18n';
 
@@ -47,7 +47,7 @@ export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; use
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {desktopLinks.slice(1, 5).map((item) => {
+      {desktopLinks.slice(1).map((item) => {
         const Icon = item.icon;
         return (
           <Link key={item.href} href={item.href} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent">
@@ -57,24 +57,21 @@ export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; use
         );
       })}
 
-      {desktopLinks.slice(5, 7).map((item) => {
-        const Icon = item.icon;
-        const isLostPets = item.href.includes('/izgubljeni');
+      {/* Izgubljeni ljubimci - crveni link (dignut ranije u navigaciji) */}
+      {(() => {
+        const lostItem = getLostPetsLink(t, language);
+        const Icon = lostItem.icon;
         return (
           <Link 
-            key={item.href} 
-            href={item.href} 
-            className={cn(
-              "text-sm font-medium transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent",
-              item.className || 'text-muted-foreground hover:text-foreground'
-            )}
+            href={lostItem.href} 
+            className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-red-50"
           >
             {Icon ? <Icon className="h-4 w-4" /> : null}
-            {item.label}
-            {isLostPets ? <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" /> : null}
+            {lostItem.label}
+            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
           </Link>
         );
-      })}
+      })()}
 
       <DropdownMenu>
         <DropdownMenuTrigger render={<button />} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-accent">

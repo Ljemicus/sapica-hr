@@ -92,7 +92,7 @@ export function GalleryUpload({
         </div>
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
+          <DialogTrigger>
             <Button size="sm" disabled={remainingSlots <= 0}>
               <Plus className="h-4 w-4 mr-2" />
               Add Photos
@@ -217,7 +217,7 @@ export function GalleryUpload({
           {/* Add more button */}
           {remainingSlots > 0 && (
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
+              <DialogTrigger>
                 <button className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors flex flex-col items-center justify-center bg-gray-50">
                   <Plus className="h-8 w-8 text-gray-400 mb-2" />
                   <span className="text-sm text-gray-600">Add more</span>
@@ -233,7 +233,7 @@ export function GalleryUpload({
           <h4 className="text-lg font-medium text-gray-700 mb-2">No photos yet</h4>
           <p className="text-gray-500 mb-4">Add photos to show pet owners your space and services</p>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
+            <DialogTrigger>
               <Button>
                 <Upload className="h-4 w-4 mr-2" />
                 Upload First Photos
