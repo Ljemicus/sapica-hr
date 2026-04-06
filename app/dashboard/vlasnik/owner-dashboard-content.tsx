@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Calendar, CalendarCheck, HeartHandshake, PawPrint, Plus, Star } from 'lucide-react';
+import { ArrowRight, Calendar, CalendarCheck, HeartHandshake, PawPrint, Plus, Star, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,6 +14,7 @@ import { OwnerPetsTab } from './components/owner-pets-tab';
 import { OwnerBookingsTab } from './components/owner-bookings-tab';
 import { OwnerReviewsTab } from './components/owner-reviews-tab';
 import { OwnerDashboardDialogs } from './components/owner-dashboard-dialogs';
+import { PhotoNotificationBell } from '@/components/shared/photo-notification-bell';
 import type { OwnerDashboardBooking, OwnerDashboardProps } from './components/owner-dashboard-types';
 
 export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds, activeWalks }: OwnerDashboardProps) {
@@ -160,9 +161,12 @@ export function OwnerDashboardContent({ user, pets, bookings, reviewedBookingIds
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-8 animate-fade-in-up">
-        <h1 className="text-3xl font-bold tracking-tight">Bok, {user.name.split(' ')[0]}!</h1>
-        <p className="text-muted-foreground mt-1">Upravljajte svojim ljubimcima, rezervacijama i recenzijama na jednom mjestu.</p>
+      <div className="mb-8 animate-fade-in-up flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Bok, {user.name.split(' ')[0]}!</h1>
+          <p className="text-muted-foreground mt-1">Upravljajte svojim ljubimcima, rezervacijama i recenzijama na jednom mjestu.</p>
+        </div>
+        <PhotoNotificationBell userId={user.id} />
       </div>
 
       <OwnerDashboardStats

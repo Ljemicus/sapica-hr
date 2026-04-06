@@ -1,8 +1,9 @@
+'use client';
+
 import Image from 'next/image';
-import Link from 'next/link';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Camera, CheckCircle, ClipboardList, Navigation, XCircle } from 'lucide-react';
+import { Camera, CheckCircle, ClipboardList, MessageCircle, Navigation, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,6 +11,8 @@ import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/shared/empty-state';
 import { SERVICE_LABELS, STATUS_LABELS, type PetUpdate, type ServiceType } from '@/lib/types';
 import { statusColors, type DashboardBooking } from './sitter-dashboard-types';
+import { LiveChat } from '@/components/chat/live-chat';
+import { useState } from 'react';
 
 interface Props {
   bookings: DashboardBooking[];
@@ -20,7 +23,16 @@ interface Props {
   onOpenUpdateDialog: (bookingId: string) => void;
 }
 
+interface ChatPartner {
+  id: string;
+  name: string;
+  avatar_url: string | null;
+  role: 'owner' | 'sitter' | 'admin';
+}
+
 export function SitterBookingsTab({ bookings, pendingBookings, upcomingBookings, sentUpdates, onUpdateStatus, onOpenUpdateDialog }: Props) {
+  const [activeChat, setActiveChat] = useState<{ partner: ChatPartner; bookingId: string } | null>(null);
+  
   const historicalBookings = bookings.filter(
     (b) => b.status !== 'pending' && !(b.status === 'accepted' && new Date(b.start_date) >= new Date())
   );
@@ -112,9 +124,23 @@ export function SitterBookingsTab({ bookings, pendingBookings, upcomingBookings,
                         <Button size="sm" variant="outline" onClick={() => onOpenUpdateDialog(booking.id)} className="hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 btn-hover">
                           <Camera className="h-4 w-4 mr-1" /> Pošalji ažuriranje
                         </Button>
-                        <Link href={`/poruke?to=${booking.owner?.id}`} className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-xs transition-[color,box-shadow] hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200">
-                          Poruke
-                        </Link>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-1 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200"
+                          onClick={() => setActiveChat({
+                            partner: {
+                              id: booking.owner?.id || '',
+                              name: booking.owner?.name || 'Vlasnik',
+                              avatar_url: booking.owner?.avatar_url || null,
+                              role: 'owner',
+                            },
+                            bookingId: booking.id,
+                          })}
+                        >
+                          <MessageCircle className="h-4 w-4" />
+                          Poruka
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -153,6 +179,14 @@ export function SitterBookingsTab({ bookings, pendingBookings, upcomingBookings,
 
       {bookings.length === 0 && (
         <EmptyState icon={ClipboardList} title="Nema rezervacija" description="Kada vlasnici rezerviraju vaše usluge, vidjet ćete ih ovdje." />
+      )}
+      
+      {activeChat && (
+        <LiveChat
+          partner={activeChat.partner}
+          bookingId={activeChat.bookingId}
+          onClose={() => setActiveChat(null)}
+        />
       )}
 
       {sentUpdates.length > 0 && (

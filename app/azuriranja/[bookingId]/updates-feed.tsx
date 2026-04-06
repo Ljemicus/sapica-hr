@@ -4,13 +4,16 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Heart, Filter, ArrowLeft, Camera, Send, Image, Video, FileText, Calendar, Eye } from 'lucide-react';
+import { Heart, Filter, ArrowLeft, Camera, Send, Image, Video, FileText, Calendar, Eye, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { ImageUpload } from '@/components/shared/image-upload';
+import { PhotoGallery } from '@/components/shared/photo-gallery';
+import { PhotoStories } from '@/components/shared/photo-stories';
 import type { PetUpdate } from '@/lib/types';
 
 interface Props {
@@ -42,7 +45,8 @@ export function UpdatesFeed({ updates, bookingId, sitterName, petName, currentDa
   const [showSitterForm, setShowSitterForm] = useState(false);
   const [newCaption, setNewCaption] = useState('');
   const [newEmoji, setNewEmoji] = useState('🐕');
-  const [, setUploadedImages] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [sending, setSending] = useState(false);
 
   const toggleLike = (id: string) => {
     setLikedIds(prev => {
@@ -61,6 +65,39 @@ export function UpdatesFeed({ updates, bookingId, sitterName, petName, currentDa
     : updates.filter(u => format(new Date(u.created_at), 'yyyy-MM-dd') === filterDay);
 
   const emojiOptions = ['🐕', '🌳', '🏖️', '😴', '🦴', '🐾', '🎾', '💤', '🍽️', '💊'];
+
+  const handleSendUpdate = async () => {
+    if (!newCaption.trim()) return;
+    
+    setSending(true);
+    try {
+      const response = await fetch('/api/pet-updates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          booking_id: bookingId,
+          type: uploadedImages.length > 0 ? 'photo' : 'text',
+          emoji: newEmoji,
+          caption: newCaption,
+          photo_url: uploadedImages[0] || null,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to send');
+      
+      // Reset form
+      setNewCaption('');
+      setUploadedImages([]);
+      setShowSitterForm(false);
+      
+      // Refresh page to show new update
+      window.location.reload();
+    } catch {
+      alert('Greška pri slanju ažuriranja');
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
@@ -109,29 +146,8 @@ export function UpdatesFeed({ updates, bookingId, sitterName, petName, currentDa
         </Card>
       )}
 
-      {/* Day Filter */}
-      <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2 animate-fade-in-up delay-100">
-        <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-        <button
-          onClick={() => setFilterDay('all')}
-          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0 ${
-            filterDay === 'all' ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
-        >
-          Sve
-        </button>
-        {days.map(day => (
-          <button
-            key={day}
-            onClick={() => setFilterDay(day)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0 ${
-              filterDay === day ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            {format(new Date(day), 'd. MMM', { locale: hr })}
-          </button>
-        ))}
-      </div>
+      {/* Stories - Ephemeral photos from last 24h */}
+      <PhotoStories updates={updates} sitterName={sitterName} petName={petName} />
 
       {/* Sitter Form Toggle */}
       <div className="mb-6 animate-fade-in-up delay-100">
@@ -164,14 +180,21 @@ export function UpdatesFeed({ updates, bookingId, sitterName, petName, currentDa
                 rows={3}
                 className="focus:border-orange-300"
               />
-              <ImageUpload variant="dropzone" maxFiles={3} bucket="pet-photos" entityId={`updates/${bookingId}`} onUploadComplete={(urls) => setUploadedImages(urls)} />
+              <ImageUpload 
+                variant="dropzone" 
+                maxFiles={3} 
+                bucket="pet-photos" 
+                entityId={`updates/${bookingId}`} 
+                onUploadComplete={(urls) => setUploadedImages(urls)} 
+              />
               <div className="flex gap-2">
                 <Button
                   className="flex-1 bg-orange-500 hover:bg-orange-600 btn-hover"
-                  onClick={() => { setNewCaption(''); setShowSitterForm(false); }}
-                  disabled={!newCaption.trim()}
+                  onClick={handleSendUpdate}
+                  disabled={!newCaption.trim() || sending}
                 >
-                  <Send className="h-4 w-4 mr-1" /> Pošalji
+                  <Send className="h-4 w-4 mr-1" />
+                  {sending ? 'Šaljem...' : 'Pošalji'}
                 </Button>
               </div>
             </CardContent>
@@ -179,65 +202,127 @@ export function UpdatesFeed({ updates, bookingId, sitterName, petName, currentDa
         )}
       </div>
 
-      {/* Timeline Feed */}
-      <div className="relative animate-fade-in-up delay-200">
-        {/* Timeline line */}
-        <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-orange-200" />
+      {/* Tabs for Feed and Gallery */}
+      <Tabs defaultValue="feed" className="space-y-6 animate-fade-in-up delay-200">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="feed" className="gap-2">
+            <FileText className="h-4 w-4" /> Feed
+          </TabsTrigger>
+          <TabsTrigger value="gallery" className="gap-2">
+            <Grid3X3 className="h-4 w-4" /> Galerija
+          </TabsTrigger>
+        </TabsList>
 
-        <div className="space-y-4">
-          {filtered.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              Nema ažuriranja za odabrani dan.
-            </div>
-          ) : (
-            filtered.map((update) => {
-              const Icon = typeIcons[update.type];
-              return (
-                <div key={update.id} className="relative flex gap-4 pl-2">
-                  {/* Timeline dot */}
-                  <div className="relative z-10 flex items-center justify-center w-7 h-7 rounded-full bg-orange-100 border-2 border-orange-300 mt-3 flex-shrink-0">
-                    <span className="text-sm">{update.emoji}</span>
-                  </div>
-                  {/* Card */}
-                  <Card className="flex-1 border-0 shadow-sm hover:shadow-md transition-shadow">
-                    <CardContent className="p-4">
-                      {/* Emoji visual placeholder */}
-                      <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-6 mb-3 text-center border border-orange-100/50">
-                        <span className="text-5xl">{update.emoji}</span>
-                        <div className="flex items-center justify-center gap-1 mt-2">
-                          <Badge variant="secondary" className="text-xs bg-white/80">
-                            <Icon className="h-3 w-3 mr-1" />
-                            {typeLabels[update.type]}
-                          </Badge>
-                        </div>
-                      </div>
-                      {/* Caption */}
-                      <p className="text-sm leading-relaxed mb-3">{update.caption}</p>
-                      {/* Footer */}
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>
-                          {format(new Date(update.created_at), 'd. MMM, HH:mm', { locale: hr })}
-                        </span>
-                        <button
-                          onClick={() => toggleLike(update.id)}
-                          className={`flex items-center gap-1 px-2 py-1 rounded-full transition-colors ${
-                            likedIds.has(update.id)
-                              ? 'text-red-500 bg-red-50'
-                              : 'text-gray-400 hover:text-red-400 hover:bg-red-50'
-                          }`}
-                        >
-                          <Heart className={`h-4 w-4 ${likedIds.has(update.id) ? 'fill-red-500' : ''}`} />
-                          {likedIds.has(update.id) ? '1' : ''}
-                        </button>
-                      </div>
-                    </CardContent>
-                  </Card>
+        <TabsContent value="feed" className="space-y-6">
+          {/* Day Filter */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <button
+              onClick={() => setFilterDay('all')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0 ${
+                filterDay === 'all' ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Sve
+            </button>
+            {days.map(day => (
+              <button
+                key={day}
+                onClick={() => setFilterDay(day)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex-shrink-0 ${
+                  filterDay === day ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {format(new Date(day), 'd. MMM', { locale: hr })}
+              </button>
+            ))}
+          </div>
+
+          {/* Timeline Feed */}
+          <div className="relative">
+            {/* Timeline line */}
+            <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-orange-200" />
+
+            <div className="space-y-4">
+              {filtered.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  Nema ažuriranja za odabrani dan.
                 </div>
-              );
-            })
-          )}
-        </div>
-      </div>
+              ) : (
+                filtered.map((update) => {
+                  const Icon = typeIcons[update.type];
+                  const hasPhoto = update.photo_url && (update.type === 'photo' || update.type === 'video');
+                  
+                  return (
+                    <div key={update.id} className="relative flex gap-4 pl-2">
+                      {/* Timeline dot */}
+                      <div className="relative z-10 flex items-center justify-center w-7 h-7 rounded-full bg-orange-100 border-2 border-orange-300 mt-3 flex-shrink-0">
+                        <span className="text-sm">{update.emoji}</span>
+                      </div>
+                      {/* Card */}
+                      <Card className="flex-1 border-0 shadow-sm hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          {/* Photo display */}
+                          {hasPhoto ? (
+                            <div className="relative aspect-video rounded-xl overflow-hidden mb-3 bg-gray-100">
+                              <img
+                                src={update.photo_url!}
+                                alt={update.caption}
+                                className="w-full h-full object-cover"
+                              />
+                              {update.type === 'video' && (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center">
+                                    <div className="w-0 h-0 border-l-[18px] border-l-white border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent ml-1" />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            /* Emoji visual placeholder for text updates */
+                            <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-6 mb-3 text-center border border-orange-100/50">
+                              <span className="text-5xl">{update.emoji}</span>
+                              <div className="flex items-center justify-center gap-1 mt-2">
+                                <Badge variant="secondary" className="text-xs bg-white/80">
+                                  <Icon className="h-3 w-3 mr-1" />
+                                  {typeLabels[update.type]}
+                                </Badge>
+                              </div>
+                            </div>
+                          )}
+                          {/* Caption */}
+                          <p className="text-sm leading-relaxed mb-3">{update.caption}</p>
+                          {/* Footer */}
+                          <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>
+                              {format(new Date(update.created_at), 'd. MMM, HH:mm', { locale: hr })}
+                            </span>
+                            <button
+                              onClick={() => toggleLike(update.id)}
+                              className={`flex items-center gap-1 px-2 py-1 rounded-full transition-colors ${
+                                likedIds.has(update.id)
+                                  ? 'text-red-500 bg-red-50'
+                                  : 'text-gray-400 hover:text-red-400 hover:bg-red-50'
+                              }`}
+                            >
+                              <Heart className={`h-4 w-4 ${likedIds.has(update.id) ? 'fill-red-500' : ''}`} />
+                              {likedIds.has(update.id) ? '1' : ''}
+                            </button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="gallery">
+          <PhotoGallery updates={updates} sitterName={sitterName} petName={petName} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

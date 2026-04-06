@@ -92,9 +92,13 @@ export const reviewSchema = z.object({
 });
 
 export const messageSchema = z.object({
-  content: z.string().min(1, 'Poruka ne može biti prazna').max(2000, 'Poruka može imati najviše 2000 znakova'),
+  content: z.string().max(2000, 'Poruka može imati najviše 2000 znakova'),
   receiver_id: z.string().uuid(),
   booking_id: z.string().uuid().optional(),
+  image_url: z.string().url().optional().nullable(),
+}).refine((data) => data.content?.trim() || data.image_url, {
+  message: 'Poruka mora sadržavati tekst ili sliku',
+  path: ['content'],
 });
 
 export const blogCommentSchema = z.object({

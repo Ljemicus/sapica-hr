@@ -1,6 +1,8 @@
+'use client';
+
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Calendar } from 'lucide-react';
+import { Calendar, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,13 +11,24 @@ import { EmptyState } from '@/components/shared/empty-state';
 import { PaymentButton } from '@/components/shared/payment-button';
 import { STATUS_LABELS, SERVICE_LABELS, type ServiceType } from '@/lib/types';
 import { statusColors, statusDotColors, type OwnerDashboardBooking } from './owner-dashboard-types';
+import { LiveChat } from '@/components/chat/live-chat';
+import { useState } from 'react';
 
 interface Props {
   bookings: OwnerDashboardBooking[];
   onCancelBooking: (bookingId: string) => void;
 }
 
+interface ChatPartner {
+  id: string;
+  name: string;
+  avatar_url: string | null;
+  role: 'owner' | 'sitter' | 'admin';
+}
+
 export function OwnerBookingsTab({ bookings, onCancelBooking }: Props) {
+  const [activeChat, setActiveChat] = useState<{ partner: ChatPartner; bookingId: string } | null>(null);
+
   if (bookings.length === 0) {
     return (
       <EmptyState
@@ -71,6 +84,23 @@ export function OwnerBookingsTab({ bookings, onCancelBooking }: Props) {
                         Otkaži
                       </Button>
                     )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1"
+                      onClick={() => setActiveChat({
+                        partner: {
+                          id: booking.sitter?.id || '',
+                          name: booking.sitter?.name || 'Sitter',
+                          avatar_url: booking.sitter?.avatar_url || null,
+                          role: 'sitter',
+                        },
+                        bookingId: booking.id,
+                      })}
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      Poruka
+                    </Button>
                   </div>
                 </div>
               </CardContent>
@@ -78,6 +108,14 @@ export function OwnerBookingsTab({ bookings, onCancelBooking }: Props) {
           </div>
         ))}
       </div>
+      
+      {activeChat && (
+        <LiveChat
+          partner={activeChat.partner}
+          bookingId={activeChat.bookingId}
+          onClose={() => setActiveChat(null)}
+        />
+      )}
     </div>
   );
 }

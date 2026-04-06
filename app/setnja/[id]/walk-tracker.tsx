@@ -5,10 +5,11 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Clock, MapPin, Gauge, MessageCircle, CheckCircle2, ArrowLeft, Eye } from 'lucide-react';
+import { Clock, MapPin, Gauge, MessageCircle, CheckCircle2, ArrowLeft, Eye, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { createClient } from '@/lib/supabase/client';
 import type { Walk, Species } from '@/lib/types';
 
 const MapContainer = dynamic(
@@ -40,44 +41,79 @@ interface Props {
   isDemo?: boolean;
 }
 
-export function WalkTracker({ walk, sitterName, petName, petSpecies, isDemo = false }: Props) {
-  const [currentPointIndex, setCurrentPointIndex] = useState(
-    walk.status === 'zavrsena' ? walk.route.length - 1 : 0
-  );
+export function WalkTracker({ walk: initialWalk, sitterName, petName, petSpecies, isDemo = false }: Props) {
+  const [walk, setWalk] = useState(initialWalk);
   const [mounted, setMounted] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const supabase = createClient();
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
-  const animate = useCallback(() => {
-    if (walk.status !== 'u_tijeku') return;
-    setCurrentPointIndex(prev => {
-      if (prev >= walk.route.length - 1) return 0;
-      return prev + 1;
-    });
-  }, [walk.status, walk.route.length]);
-
+  // Subscribe to real-time walk updates
   useEffect(() => {
     if (walk.status !== 'u_tijeku') return;
-    const interval = setInterval(animate, 1500);
+
+    const channel = supabase
+      .channel(`walk-${walk.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'walks',
+          filter: `id=eq.${walk.id}`,
+        },
+        (payload) => {
+          const updated = payload.new as Walk;
+          setWalk((prev) => ({ ...prev, ...updated }));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [walk.id, walk.status, supabase]);
+
+  // Calculate elapsed time for active walks
+  useEffect(() => {
+    if (walk.status !== 'u_tijeku') {
+      if (walk.end_time) {
+        setElapsed(Math.round((new Date(walk.end_time).getTime() - new Date(walk.start_time).getTime()) / 1000));
+      }
+      return;
+    }
+
+    const startTime = new Date(walk.start_time).getTime();
+    const interval = setInterval(() => {
+      setElapsed(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
+
     return () => clearInterval(interval);
-  }, [walk.status, animate]);
+  }, [walk.status, walk.start_time, walk.end_time]);
 
   const petEmoji = petSpecies === 'dog' ? '🐕' : petSpecies === 'cat' ? '🐈' : '🐾';
-  const visibleRoute = walk.status === 'u_tijeku'
-    ? walk.route.slice(0, currentPointIndex + 1)
-    : walk.route;
-  const currentPos = walk.route[currentPointIndex];
-  const center = walk.route[Math.floor(walk.route.length / 2)];
+  
+  // Use actual route from walk data
+  const route = walk.route || [];
+  const currentPos = route.length > 0 ? route[route.length - 1] : { lat: 45.815, lng: 15.982 };
+  const center = route.length > 0 
+    ? route[Math.floor(route.length / 2)] 
+    : { lat: 45.815, lng: 15.982 };
 
-  const [nowMs] = useState<number>(() => Date.now());
-  const durationMinutes = walk.end_time
-    ? Math.round((new Date(walk.end_time).getTime() - new Date(walk.start_time).getTime()) / 60000)
-    : Math.round((nowMs - new Date(walk.start_time).getTime()) / 60000);
-  const avgSpeed = walk.distance_km > 0 && durationMinutes > 0
-    ? ((walk.distance_km / durationMinutes) * 60).toFixed(1)
+  const formatElapsed = (seconds: number) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const durationMinutes = Math.round(elapsed / 60);
+  const avgSpeed = walk.distance_km > 0 && elapsed > 0
+    ? ((walk.distance_km / elapsed) * 3600).toFixed(1)
     : '0.0';
 
   return (
@@ -107,7 +143,7 @@ export function WalkTracker({ walk, sitterName, petName, petSpecies, isDemo = fa
             : 'bg-gray-100 text-gray-700 border-gray-200'
         } border`}>
           <div className={`w-2 h-2 rounded-full mr-2 ${walk.status === 'u_tijeku' ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
-          {walk.status === 'u_tijeku' ? 'U tijeku' : 'Završena'}
+          {walk.status === 'u_tijeku' ? 'Uživo' : 'Završena'}
         </Badge>
       </div>
 
@@ -132,8 +168,8 @@ export function WalkTracker({ walk, sitterName, petName, petSpecies, isDemo = fa
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6 animate-fade-in-up delay-100">
         {[
-          { label: 'Trajanje', value: `${durationMinutes} min`, icon: Clock, color: 'from-blue-500 to-cyan-500' },
-          { label: 'Udaljenost', value: `${walk.distance_km} km`, icon: MapPin, color: 'from-orange-500 to-amber-500' },
+          { label: 'Trajanje', value: formatElapsed(elapsed), icon: Clock, color: 'from-blue-500 to-cyan-500' },
+          { label: 'Udaljenost', value: `${walk.distance_km.toFixed(2)} km`, icon: MapPin, color: 'from-orange-500 to-amber-500' },
           { label: 'Prosj. brzina', value: `${avgSpeed} km/h`, icon: Gauge, color: 'from-green-500 to-emerald-500' },
         ].map((stat) => (
           <Card key={stat.label} className="border-0 shadow-sm">
@@ -167,42 +203,49 @@ export function WalkTracker({ walk, sitterName, petName, petSpecies, isDemo = fa
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 {/* Route polyline */}
-                <Polyline
-                  positions={visibleRoute.map(p => [p.lat, p.lng])}
-                  pathOptions={{ color: '#f97316', weight: 4, opacity: 0.8 }}
-                />
-                {/* Faded remaining route */}
-                {walk.status === 'u_tijeku' && currentPointIndex < walk.route.length - 1 && (
+                {route.length >= 2 && (
                   <Polyline
-                    positions={walk.route.slice(currentPointIndex).map(p => [p.lat, p.lng])}
-                    pathOptions={{ color: '#f97316', weight: 3, opacity: 0.2, dashArray: '8 8' }}
+                    positions={route.map(p => [p.lat, p.lng])}
+                    pathOptions={{ color: '#f97316', weight: 4, opacity: 0.8 }}
                   />
                 )}
                 {/* Current position marker */}
-                <CircleMarker
-                  center={[currentPos.lat, currentPos.lng]}
-                  radius={10}
-                  pathOptions={{ color: '#f97316', fillColor: '#f97316', fillOpacity: 1, weight: 3 }}
-                >
-                  <Popup>{walk.status === 'u_tijeku' ? `${petName} je ovdje!` : 'Završna pozicija'}</Popup>
-                </CircleMarker>
+                {route.length > 0 && (
+                  <CircleMarker
+                    center={[currentPos.lat, currentPos.lng]}
+                    radius={10}
+                    pathOptions={{ color: '#f97316', fillColor: '#f97316', fillOpacity: 1, weight: 3 }}
+                  >
+                    <Popup>{walk.status === 'u_tijeku' ? `${petName} je ovdje!` : 'Završna pozicija'}</Popup>
+                  </CircleMarker>
+                )}
                 {/* Start marker */}
-                <CircleMarker
-                  center={[walk.route[0].lat, walk.route[0].lng]}
-                  radius={7}
-                  pathOptions={{ color: '#22c55e', fillColor: '#22c55e', fillOpacity: 1, weight: 2 }}
-                >
-                  <Popup>Početak šetnje</Popup>
-                </CircleMarker>
+                {route.length > 0 && (
+                  <CircleMarker
+                    center={[route[0].lat, route[0].lng]}
+                    radius={7}
+                    pathOptions={{ color: '#22c55e', fillColor: '#22c55e', fillOpacity: 1, weight: 2 }}
+                  >
+                    <Popup>Početak šetnje</Popup>
+                  </CircleMarker>
+                )}
                 {/* Checkpoint markers */}
-                {walk.checkpoints.map((cp, i) => (
+                {walk.checkpoints?.map((cp, i) => (
                   <CircleMarker
                     key={i}
                     center={[cp.lat, cp.lng]}
-                    radius={6}
-                    pathOptions={{ color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.8, weight: 2 }}
+                    radius={8}
+                    pathOptions={{ color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.9, weight: 2 }}
                   >
-                    <Popup>{cp.emoji} {cp.label}</Popup>
+                    <Popup>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">{cp.emoji}</span>
+                        <span>{cp.label}</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {format(new Date(cp.time), 'HH:mm', { locale: hr })}
+                      </p>
+                    </Popup>
                   </CircleMarker>
                 ))}
               </MapContainer>
@@ -216,38 +259,32 @@ export function WalkTracker({ walk, sitterName, petName, petSpecies, isDemo = fa
         </div>
       </Card>
 
-      {/* Timeline */}
-      <Card className="border-0 shadow-sm mb-6 animate-fade-in-up delay-300">
-        <CardHeader>
-          <CardTitle className="text-lg">Checkpointi šetnje</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="relative">
-            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-orange-200" />
-            <div className="space-y-6">
+      {/* Checkpoints */}
+      {walk.checkpoints && walk.checkpoints.length > 0 && (
+        <Card className="border-0 shadow-sm mb-6 animate-fade-in-up delay-300">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Navigation className="h-5 w-5" /> Checkpointi
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
               {walk.checkpoints.map((cp, i) => (
-                <div key={i} className="relative flex items-start gap-4 pl-2">
-                  <div className="relative z-10 flex items-center justify-center w-5 h-5 rounded-full bg-white border-2 border-orange-400 mt-0.5">
-                    <div className={`w-2 h-2 rounded-full ${i <= Math.floor(currentPointIndex / (walk.route.length / walk.checkpoints.length)) || walk.status === 'zavrsena' ? 'bg-orange-500' : 'bg-gray-300'}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{cp.emoji}</span>
-                      <span className="font-medium text-sm">{cp.label}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {format(new Date(cp.time), 'HH:mm', { locale: hr })}
-                    </p>
-                  </div>
-                  {(i <= Math.floor(currentPointIndex / (walk.route.length / walk.checkpoints.length)) || walk.status === 'zavrsena') && (
-                    <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0 mt-1" />
-                  )}
+                <div
+                  key={i}
+                  className="flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-full text-sm"
+                >
+                  <span>{cp.emoji}</span>
+                  <span className="font-medium">{cp.label}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {format(new Date(cp.time), 'HH:mm', { locale: hr })}
+                  </span>
                 </div>
               ))}
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Actions */}
       <div className="flex gap-3 animate-fade-in-up delay-400">
@@ -257,6 +294,14 @@ export function WalkTracker({ walk, sitterName, petName, petSpecies, isDemo = fa
             Pošalji poruku sitteru
           </Button>
         </Link>
+        {walk.booking_id && (
+          <Link href={`/azuriranja/${walk.booking_id}`} className="flex-1">
+            <Button variant="outline" className="w-full hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200">
+              <CheckCircle2 className="h-4 w-4 mr-2" />
+              Pogledaj ažuriranja
+            </Button>
+          </Link>
+        )}
       </div>
     </div>
   );

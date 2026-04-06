@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     receiver_id: parsed.data.receiver_id,
     booking_id: parsed.data.booking_id || null,
     content: parsed.data.content,
-    image_url: null,
+    image_url: parsed.data.image_url || null,
     read: false,
   });
 

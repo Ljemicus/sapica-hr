@@ -7,7 +7,8 @@ import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import {
   ArrowLeft, Play, Pause, Square, Clock, MapPin, Gauge,
-  AlertTriangle, Navigation, MessageSquare,
+  AlertTriangle, Navigation, MessageSquare, Camera, Flag,
+  CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
-import type { WalkSelectorBooking } from '@/lib/types';
+import type { WalkSelectorBooking, WalkCheckpoint } from '@/lib/types';
 
 const MapContainer = dynamic(
   () => import('react-leaflet').then(mod => mod.MapContainer),
@@ -57,6 +58,19 @@ const INITIAL_GEOLOCATION_OPTIONS: PositionOptions = {
   timeout: 10000,
 };
 
+const CHECKPOINT_OPTIONS = [
+  { emoji: '🌳', label: 'Park' },
+  { emoji: '💧', label: 'Voda' },
+  { emoji: '🏠', label: 'Kuća' },
+  { emoji: '🏪', label: 'Dućan' },
+  { emoji: '🎾', label: 'Igralište' },
+  { emoji: '🚽', label: 'Toalet' },
+  { emoji: '🦴', label: 'Poslastica' },
+  { emoji: '🏥', label: 'Veterinar' },
+  { emoji: '📸', label: 'Foto' },
+  { emoji: '✅', label: 'Cilj' },
+];
+
 interface Props {
   userId: string;
   bookings: WalkSelectorBooking[];
@@ -80,11 +94,13 @@ export function WalkSession({ userId, bookings }: Props) {
   const [walkState, setWalkState] = useState<WalkState>('idle');
   const [selectedBookingId, setSelectedBookingId] = useState<string>(bookings[0]?.id || '');
   const [routePoints, setRoutePoints] = useState<RoutePoint[]>([]);
+  const [checkpoints, setCheckpoints] = useState<WalkCheckpoint[]>([]);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [distance, setDistance] = useState(0);
   const [endNote, setEndNote] = useState('');
   const [showEndDialog, setShowEndDialog] = useState(false);
+  const [showCheckpointDialog, setShowCheckpointDialog] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [walkId, setWalkId] = useState<string | null>(null);
@@ -160,6 +176,19 @@ export function WalkSession({ userId, bookings }: Props) {
     );
   }, [addRoutePoint, handleGeoError]);
 
+  const persistWalkUpdate = useCallback(async () => {
+    if (!walkId) return;
+
+    await supabaseRef.current
+      .from('walks')
+      .update({
+        distance_km: Number(distance.toFixed(2)),
+        route: routePoints.map((point) => ({ lat: point.lat, lng: point.lng })),
+        checkpoints: checkpoints,
+      })
+      .eq('id', walkId);
+  }, [distance, routePoints, checkpoints, walkId]);
+
   const persistWalkEnd = useCallback(async () => {
     if (!walkId) return;
 
@@ -170,10 +199,10 @@ export function WalkSession({ userId, bookings }: Props) {
         status: 'zavrsena',
         distance_km: Number(distance.toFixed(2)),
         route: routePoints.map((point) => ({ lat: point.lat, lng: point.lng })),
-        checkpoints: [],
+        checkpoints: checkpoints,
       })
       .eq('id', walkId);
-  }, [distance, routePoints, walkId]);
+  }, [distance, routePoints, checkpoints, walkId]);
 
   const startWalk = async () => {
     if (!navigator.geolocation) {
@@ -202,6 +231,7 @@ export function WalkSession({ userId, bookings }: Props) {
         setWalkState('active');
         setDistance(0);
         setElapsed(0);
+        setCheckpoints([]);
 
         // Create walk in DB
         const petId = selectedBooking?.pet_id || '';
@@ -257,6 +287,38 @@ export function WalkSession({ userId, bookings }: Props) {
     toast('Šetnja nastavljena');
   };
 
+  const addCheckpoint = async (emoji: string, label: string) => {
+    if (!navigator.geolocation || !walkId) return;
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const checkpoint: WalkCheckpoint = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          time: new Date().toISOString(),
+          emoji,
+          label,
+        };
+
+        const newCheckpoints = [...checkpoints, checkpoint];
+        setCheckpoints(newCheckpoints);
+
+        // Persist to DB
+        await supabaseRef.current
+          .from('walks')
+          .update({ checkpoints: newCheckpoints })
+          .eq('id', walkId);
+
+        toast.success(`Checkpoint: ${label} ${emoji}`);
+        setShowCheckpointDialog(false);
+      },
+      () => {
+        toast.error('Nije moguće dohvatiti lokaciju za checkpoint');
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+
   const endWalk = async () => {
     stopWatchingPosition();
     setWalkState('finished');
@@ -269,6 +331,17 @@ export function WalkSession({ userId, bookings }: Props) {
     setShowEndDialog(false);
     toast.success(`Šetnja završena! Trajanje: ${durationMin}min, ${distKm}km`);
   };
+
+  // Periodic sync of walk data every 30 seconds
+  useEffect(() => {
+    if (walkState !== 'active' || !walkId) return;
+
+    const syncInterval = setInterval(() => {
+      persistWalkUpdate();
+    }, 30000);
+
+    return () => clearInterval(syncInterval);
+  }, [walkState, walkId, persistWalkUpdate]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -445,6 +518,25 @@ export function WalkSession({ userId, bookings }: Props) {
                         <Popup>Početak šetnje</Popup>
                       </CircleMarker>
                     )}
+                    {/* Checkpoint markers */}
+                    {checkpoints.map((cp, i) => (
+                      <CircleMarker
+                        key={i}
+                        center={[cp.lat, cp.lng]}
+                        radius={8}
+                        pathOptions={{ color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.9, weight: 2 }}
+                      >
+                        <Popup>
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{cp.emoji}</span>
+                            <span>{cp.label}</span>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {format(new Date(cp.time), 'HH:mm', { locale: hr })}
+                          </p>
+                        </Popup>
+                      </CircleMarker>
+                    ))}
                     {/* Current position */}
                     {currentPos && (
                       <CircleMarker
@@ -466,32 +558,104 @@ export function WalkSession({ userId, bookings }: Props) {
             </div>
           </Card>
 
+          {/* Checkpoint Timeline */}
+          {checkpoints.length > 0 && (
+            <Card className="border-0 shadow-sm mb-6 animate-fade-in-up">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                  <Flag className="h-4 w-4" /> Checkpointi ({checkpoints.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {checkpoints.map((cp, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-full text-sm"
+                    >
+                      <span>{cp.emoji}</span>
+                      <span className="font-medium">{cp.label}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {format(new Date(cp.time), 'HH:mm', { locale: hr })}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Controls */}
           {walkState !== 'finished' && (
-            <div className="flex gap-3 mb-6 animate-fade-in-up delay-200">
-              {walkState === 'active' ? (
+            <div className="space-y-3 mb-6 animate-fade-in-up delay-200">
+              <div className="flex gap-3">
+                {walkState === 'active' ? (
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-12 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-200"
+                    onClick={pauseWalk}
+                  >
+                    <Pause className="h-5 w-5 mr-2" /> Pauziraj
+                  </Button>
+                ) : (
+                  <Button
+                    className="flex-1 h-12 bg-green-600 hover:bg-green-700 btn-hover"
+                    onClick={resumeWalk}
+                  >
+                    <Play className="h-5 w-5 mr-2" /> Nastavi
+                  </Button>
+                )}
                 <Button
                   variant="outline"
-                  className="flex-1 h-12 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-200"
-                  onClick={pauseWalk}
+                  className="flex-1 h-12 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200"
+                  onClick={() => setShowCheckpointDialog(true)}
                 >
-                  <Pause className="h-5 w-5 mr-2" /> Pauziraj
+                  <Flag className="h-5 w-5 mr-2" /> Checkpoint
                 </Button>
-              ) : (
                 <Button
-                  className="flex-1 h-12 bg-green-600 hover:bg-green-700 btn-hover"
-                  onClick={resumeWalk}
+                  className="flex-1 h-12 bg-red-500 hover:bg-red-600"
+                  onClick={() => setShowEndDialog(true)}
                 >
-                  <Play className="h-5 w-5 mr-2" /> Nastavi
+                  <Square className="h-5 w-5 mr-2" /> Završi
                 </Button>
-              )}
-              <Button
-                className="flex-1 h-12 bg-red-500 hover:bg-red-600"
-                onClick={() => setShowEndDialog(true)}
-              >
-                <Square className="h-5 w-5 mr-2" /> Završi šetnju
-              </Button>
+              </div>
             </div>
+          )}
+
+          {/* Checkpoint Dialog */}
+          {showCheckpointDialog && (
+            <Card className="border-0 shadow-sm mb-6 border-l-4 border-l-blue-400 animate-fade-in-up">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Flag className="h-5 w-5 text-blue-500" /> Dodaj checkpoint
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Označite važnu točku na šetnji (park, voda, odmor...)
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+                  {CHECKPOINT_OPTIONS.map((option) => (
+                    <Button
+                      key={option.label}
+                      variant="outline"
+                      onClick={() => addCheckpoint(option.emoji, option.label)}
+                      className="h-auto py-3 flex flex-col items-center gap-1 hover:bg-blue-50 hover:border-blue-300"
+                    >
+                      <span className="text-2xl">{option.emoji}</span>
+                      <span className="text-xs">{option.label}</span>
+                    </Button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setShowCheckpointDialog(false)}
+                >
+                  Odustani
+                </Button>
+              </CardContent>
+            </Card>
           )}
 
           {/* End Walk Dialog */}
@@ -536,11 +700,20 @@ export function WalkSession({ userId, bookings }: Props) {
               <CardContent className="p-6 text-center">
                 <div className="text-4xl mb-3">🎉</div>
                 <h3 className="text-xl font-bold text-green-700 mb-2">Šetnja završena!</h3>
-                <div className="flex justify-center gap-6 text-sm text-green-600">
+                <div className="flex justify-center gap-6 text-sm text-green-600 mb-4">
                   <span>{formatTime(elapsed)}</span>
                   <span>{distance.toFixed(2)} km</span>
                   <span>{avgSpeed} km/h</span>
                 </div>
+                {checkpoints.length > 0 && (
+                  <div className="flex flex-wrap justify-center gap-2 mb-4">
+                    {checkpoints.map((cp, i) => (
+                      <span key={i} className="px-2 py-1 bg-white/60 rounded-full text-sm">
+                        {cp.emoji} {cp.label}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 {endNote && (
                   <div className="mt-4 p-3 bg-white/60 rounded-xl text-sm text-left flex items-start gap-2">
                     <MessageSquare className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
