@@ -408,7 +408,7 @@ function ServicesStep({
         <div className="grid gap-4">
           {SERVICES.map((service) => {
             const isSelected = profile.services.includes(service.type);
-            const Icon = service.icon;
+            const Icon = service.icon as React.ElementType;
             
             return (
               <div

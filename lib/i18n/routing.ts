@@ -31,6 +31,10 @@ const KNOWN_LOCALE_ROUTE_PAIRS = {
     hr: '/njega',
     en: '/njega/en',
   },
+  '/grooming': {
+    hr: '/njega',
+    en: '/njega/en',
+  },
   '/dresura': {
     hr: '/dresura',
     en: '/dresura/en',

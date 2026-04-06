@@ -7,36 +7,36 @@ import { ServiceJsonLd } from '@/components/seo/json-ld';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
-  title: 'Pet grooming — salons and services',
-  description: 'Find professional pet groomers in Croatia for haircuts, baths, hand stripping, and nail care.',
-  keywords: ['pet grooming croatia', 'dog grooming croatia', 'pet salon croatia', 'dog haircut croatia', 'pet bath croatia'],
+  title: 'Pet Grooming — Professional Grooming Salons in Croatia',
+  description: 'Find professional pet groomers for haircuts, bathing, trimming and nail care for your pet in Croatia.',
+  keywords: ['pet grooming croatia', 'dog grooming', 'cat grooming', 'pet salon', 'dog haircut', 'pet bathing'],
   openGraph: {
-    title: 'Pet grooming — salons and services | PetPark',
-    description: 'Find professional pet groomers in Croatia for haircuts, baths, hand stripping, and nail care.',
+    title: 'Pet Grooming — Professional Grooming Salons | PetPark',
+    description: 'Find professional groomers for haircuts, bathing, trimming and nail care for your pet in Croatia.',
     type: 'website',
     ...buildLocaleOpenGraph('/njega/en'),
   },
   alternates: buildLocaleAlternates('/njega/en'),
 };
 
-interface NjegaEnPageProps {
+interface GroomingEnPageProps {
   searchParams: Promise<{ city?: string; service?: string }>;
 }
 
-export default async function NjegaEnPage({ searchParams }: NjegaEnPageProps) {
+export default async function GroomingEnPage({ searchParams }: GroomingEnPageProps) {
   const params = await searchParams;
   const groomers = await getGroomers({ city: params.city, service: params.service as GroomingServiceType | undefined });
 
   return (
     <>
       <ServiceJsonLd
-        name="Pet grooming"
-        description="Find professional pet groomers in Croatia for haircuts, baths, hand stripping, and nail care."
+        name="Pet Grooming"
+        description="Find professional groomers for haircuts, bathing, trimming and nail care for your pet in Croatia."
         url="https://petpark.hr/njega/en"
         serviceType="Pet Grooming"
         areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
       />
-      <Breadcrumbs items={[{ label: 'Pet grooming', href: '/njega/en' }]} />
+      <Breadcrumbs items={[{ label: 'Pet Grooming', href: '/njega/en' }]} />
       <GroomingContent groomers={groomers} initialParams={params} />
     </>
   );
