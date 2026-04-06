@@ -12,16 +12,16 @@ export default function UvjetiPage() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="bg-gradient-to-b from-orange-50/50 to-white py-16">
+      <section className="organizations-hero-gradient py-16">
         <div className="container mx-auto px-4 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-100 mb-6">
-            <FileText className="h-8 w-8 text-orange-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 mb-6">
+            <FileText className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Uvjeti korištenja</h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 font-[var(--font-heading)]">Uvjeti korištenja</h1>
+          <p className="text-white/80 max-w-2xl mx-auto">
             Korištenjem platforme PetPark prihvaćate ove uvjete. Molimo vas da ih pažljivo pročitate.
           </p>
-          <p className="text-sm text-gray-400 mt-4">Posljednje ažuriranje: 24. ožujka 2026.</p>
+          <p className="text-sm text-white/60 mt-4">Posljednje ažuriranje: 24. ožujka 2026.</p>
         </div>
       </section>
 
@@ -46,37 +46,37 @@ export default function UvjetiPage() {
               Za korištenje većine funkcionalnosti platforme potreban je korisnički račun. Prilikom registracije obvezujete se:
             </p>
             <ul className="space-y-2 text-gray-600">
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Navesti točne i potpune podatke</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Redovito ažurirati svoje podatke</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Čuvati sigurnost svojih pristupnih podataka</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Biti stariji od 16 godina</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Imati samo jedan korisnički račun</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Navesti točne i potpune podatke</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Redovito ažurirati svoje podatke</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Čuvati sigurnost svojih pristupnih podataka</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Biti stariji od 16 godina</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Imati samo jedan korisnički račun</li>
             </ul>
           </section>
 
           {/* 3. Odgovornosti korisnika (vlasnika) */}
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                <Users className="h-5 w-5 text-orange-600" />
+              <div className="w-10 h-10 rounded-xl bg-warm-orange/10 flex items-center justify-center">
+                <Users className="h-5 w-5 text-warm-orange" />
               </div>
               <h2 className="text-2xl font-bold text-gray-900">3. Odgovornosti vlasnika ljubimaca</h2>
             </div>
             <p className="text-gray-600 leading-relaxed mb-3">Kao vlasnik ljubimaca koji koristi platformu, odgovorni ste za:</p>
             <ul className="space-y-2 text-gray-600">
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Pružanje točnih informacija o svom ljubimcu (zdravstveno stanje, ponašanje, posebne potrebe)</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Osiguravanje da je ljubimac cijepljen i zdrav za boravak kod sittera</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Pravovremenu komunikaciju sa sitterom</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Poštivanje dogovorenih uvjeta i rokova</li>
-              <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Plaćanje usluga prema dogovorenim cijenama</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Pružanje točnih informacija o svom ljubimcu (zdravstveno stanje, ponašanje, posebne potrebe)</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Osiguravanje da je ljubimac cijepljen i zdrav za boravak kod sittera</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Pravovremenu komunikaciju sa sitterom</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Poštivanje dogovorenih uvjeta i rokova</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Plaćanje usluga prema dogovorenim cijenama</li>
             </ul>
           </section>
 
           {/* 4. Odgovornosti sittera */}
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                <ShieldCheck className="h-5 w-5 text-orange-600" />
+              <div className="w-10 h-10 rounded-xl bg-warm-teal/10 flex items-center justify-center">
+                <ShieldCheck className="h-5 w-5 text-warm-teal" />
               </div>
               <h2 className="text-2xl font-bold text-gray-900">4. Odgovornosti čuvara (sittera)</h2>
             </div>
