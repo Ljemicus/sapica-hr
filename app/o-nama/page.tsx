@@ -48,8 +48,7 @@ export default function AboutPage() {
               <span className="text-gradient">Doslovno.</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              PetPark je nastao iz jednostavnog problema — kad trebaš nekome ostaviti
-              ljubimca, a nemaš kome.
+              PetPark je nastao iz želje da svaka šapa nađe svog čovjeka.
             </p>
           </div>
         </div>
@@ -61,11 +60,7 @@ export default function AboutPage() {
           <div className="prose prose-lg dark:prose-invert mx-auto">
             <div className="space-y-6 text-muted-foreground leading-relaxed">
               <p className="text-lg animate-fade-in-up">
-                Prijatelji su zauzeti, obitelj daleko, a profesionalne opcije? U Hrvatskoj
-                praktički ne postoje. Ili ne znaš za njih.
-              </p>
-              <p className="text-lg animate-fade-in-up delay-100">
-                Osnovali smo PetPark jer smo to sami trebali. Platforma gdje vlasnici ljubimaca mogu naći
+                Mi smo platforma gdje vlasnici ljubimaca mogu naći
                 sve na jednom mjestu — čuvanje, grooming, školovanje, veterinare, udomljavanje,
                 dog-friendly lokacije i zajednicu koja razumije. Ne agencija, ne posrednik —{' '}
                 <strong className="text-foreground">ekosustav za ljude koji vole životinje</strong>.
