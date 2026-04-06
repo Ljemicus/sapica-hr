@@ -32,6 +32,24 @@ export async function getAllVeterinarians() {
   return getVeterinarianRows();
 }
 
+export async function getVeterinarianBySlug(slug: string): Promise<Veterinarian | null> {
+  if (!slug) return null;
+  
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('veterinarians')
+    .select('*')
+    .eq('slug', slug)
+    .eq('status', 'active')
+    .maybeSingle();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return data as Veterinarian;
+}
+
 export async function getEmergencyVeterinarians() {
   const veterinarians = await getVeterinarianRows();
 

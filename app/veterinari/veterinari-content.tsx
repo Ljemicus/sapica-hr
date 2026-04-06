@@ -1,11 +1,13 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { MapPin, Phone, Search, PawPrint, Siren, Mail, Globe, ShieldCheck, Building2, Stethoscope, Clock3, ShieldAlert } from 'lucide-react';
+import Link from 'next/link';
+import { MapPin, Phone, Search, PawPrint, Siren, Mail, Globe, ShieldCheck, Building2, Stethoscope, Clock3, ShieldAlert, Star, MessageSquare, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getVeterinarianEmergencyLabel, getVeterinarianPrimaryPhone, type Veterinarian } from '@/lib/db/veterinarian-helpers';
+import { StarRating } from '@/components/shared/star-rating';
 import { useLanguage } from '@/lib/i18n/context';
 
 interface VeterinariContentProps {
@@ -136,27 +138,46 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
 
               return (
                 <Card key={clinic.id} className="border-0 shadow-sm rounded-2xl card-hover">
+                <Link href={`/veterinari/${clinic.slug}`} className="block">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between gap-2 mb-4">
-                      <div>
-                        <h3 className="font-bold text-lg leading-tight">{clinic.name}</h3>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">{clinic.name}</h3>
                         {clinic.organization_name && clinic.organization_name !== clinic.name && (
                           <p className="text-sm text-muted-foreground mt-1">{clinic.organization_name}</p>
                         )}
-                      </div>
-                      <Badge variant="secondary" className="shrink-0 flex items-center gap-1">
-                        {clinic.type === 'veterinarska_stanica' ? (
-                          <>
-                            <Building2 className="h-3 w-3" />
-                            {isEn ? 'Station' : 'Stanica'}
-                          </>
+                        {/* Rating */}
+                        {(clinic.rating_avg && clinic.rating_avg > 0) ? (
+                          <div className="flex items-center gap-2 mt-2">
+                            <StarRating rating={clinic.rating_avg} size="sm" />
+                            <span className="text-sm font-medium">{clinic.rating_avg.toFixed(1)}</span>
+                            <span className="text-sm text-muted-foreground">
+                              ({clinic.review_count || 0})
+                            </span>
+                          </div>
                         ) : (
-                          <>
-                            <Siren className="h-3 w-3" />
-                            {isEn ? 'Clinic' : 'Ambulanta'}
-                          </>
+                          <div className="flex items-center gap-2 mt-2 text-muted-foreground">
+                            <MessageSquare className="h-3.5 w-3.5" />
+                            <span className="text-sm">{isEn ? 'No reviews yet' : 'Još nema recenzija'}</span>
+                          </div>
                         )}
-                      </Badge>
+                      </div>
+                      <div className="flex flex-col items-end gap-2">
+                        <Badge variant="secondary" className="shrink-0 flex items-center gap-1">
+                          {clinic.type === 'veterinarska_stanica' ? (
+                            <>
+                              <Building2 className="h-3 w-3" />
+                              {isEn ? 'Station' : 'Stanica'}
+                            </>
+                          ) : (
+                            <>
+                              <Siren className="h-3 w-3" />
+                              {isEn ? 'Clinic' : 'Ambulanta'}
+                            </>
+                          )}
+                        </Badge>
+                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                      </div>
                     </div>
 
                     {clinic.address && (
@@ -217,7 +238,8 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
                       )}
                     </div>
                   </CardContent>
-                </Card>
+                </Link>
+              </Card>
               );
             })}
           </div>

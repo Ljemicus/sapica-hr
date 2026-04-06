@@ -24,6 +24,8 @@ export interface Veterinarian {
   emergency_phone: string;
   emergency_verified: boolean;
   emergency_source_note: string;
+  rating_avg?: number;
+  review_count?: number;
 }
 
 export function getVeterinarianEmergencyLabel(mode: EmergencyMode | null | undefined) {

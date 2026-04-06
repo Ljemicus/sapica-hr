@@ -335,3 +335,16 @@ export type LostPetSightingStatusUpdateInput = z.infer<typeof lostPetSightingSta
 export type LostPetOwnerUpdateInput = z.infer<typeof lostPetOwnerUpdateSchema>;
 export type MarkLostPetFoundInput = z.infer<typeof markLostPetFoundSchema>;
 export type LostPetAlertInput = z.infer<typeof lostPetAlertSchema>;
+
+// ── Vet Reviews ──
+
+export const vetReviewSchema = z.object({
+  vet_id: z.string().uuid(),
+  rating: z.number().min(1).max(5, 'Ocjena mora biti između 1 i 5'),
+  comment: z.string().max(1000, 'Komentar može imati najviše 1000 znakova').optional().nullable(),
+  service_type: z.enum(['hitna_pomoc', 'cijepljenje', 'operacija', 'pregled', 'ponasanje', 'ostalo']),
+  price_paid: z.coerce.number().min(0).optional().nullable(),
+  visit_date: z.string().optional().nullable(),
+});
+
+export type VetReviewInput = z.infer<typeof vetReviewSchema>;

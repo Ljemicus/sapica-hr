@@ -1,111 +1,195 @@
-import { appLogger } from '@/lib/logger';
-import { dispatchAlert } from '@/lib/alerting';
+// SMS Provider configuration and helpers
+// Supports Twilio (global) and Infobip (Croatia/EU)
 
-const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
-const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
-const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
-
-interface SendSMSOptions {
-  to: string;
-  message: string;
+export interface SMSConfig {
+  provider: 'twilio' | 'infobip';
+  accountSid?: string; // Twilio
+  authToken?: string; // Twilio
+  fromNumber?: string; // Twilio
+  apiKey?: string; // Infobip
+  baseUrl?: string; // Infobip
+  sender?: string; // Infobip
 }
 
-/**
- * Send SMS via Twilio
- * Returns success even in dev mode without credentials
- */
-export async function sendSMS({ to, message }: SendSMSOptions) {
-  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
-    const missing = [];
-    if (!TWILIO_ACCOUNT_SID) missing.push('TWILIO_ACCOUNT_SID');
-    if (!TWILIO_AUTH_TOKEN) missing.push('TWILIO_AUTH_TOKEN');
-    if (!TWILIO_PHONE_NUMBER) missing.push('TWILIO_PHONE_NUMBER');
-    
-    const errorMsg = `Twilio not configured: ${missing.join(', ')}`;
+export interface SMSMessage {
+  to: string;
+  body: string;
+  from?: string;
+}
 
-    if (process.env.NODE_ENV === 'production') {
-      appLogger.error('sms', errorMsg, { to });
-      return { success: false, error: errorMsg };
-    }
+export interface SMSResult {
+  success: boolean;
+  messageId?: string;
+  error?: string;
+}
 
-    appLogger.info('sms', 'Dev mode — SMS not sent', { to, message: message.slice(0, 50) });
-    return { success: true, dev: true, warning: errorMsg };
+function getConfig(): SMSConfig {
+  return {
+    provider: (process.env.SMS_PROVIDER as 'twilio' | 'infobip') || 'twilio',
+    // Twilio
+    accountSid: process.env.TWILIO_ACCOUNT_SID,
+    authToken: process.env.TWILIO_AUTH_TOKEN,
+    fromNumber: process.env.TWILIO_PHONE_NUMBER,
+    // Infobip
+    apiKey: process.env.INFOBIP_API_KEY,
+    baseUrl: process.env.INFOBIP_BASE_URL,
+    sender: process.env.INFOBIP_SENDER || 'PetPark',
+  };
+}
+
+export async function sendSMS(message: SMSMessage): Promise<SMSResult> {
+  const config = getConfig();
+  
+  if (config.provider === 'twilio') {
+    return sendTwilioSMS(message, config);
+  } else {
+    return sendInfobipSMS(message, config);
   }
+}
 
-  // Format phone number (ensure + prefix)
-  const formattedTo = to.startsWith('+') ? to : `+385${to.replace(/^0/, '')}`;
-
+async function sendTwilioSMS(
+  message: SMSMessage,
+  config: SMSConfig
+): Promise<SMSResult> {
   try {
-    const response = await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString('base64')}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          To: formattedTo,
-          From: TWILIO_PHONE_NUMBER,
-          Body: message,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.text();
-      appLogger.error('sms', 'Twilio API error', { error, to: formattedTo });
-      dispatchAlert({
-        severity: 'P2',
-        service: 'sms',
-        description: `Twilio API returned ${response.status}`,
-        value: `to=${formattedTo}, status=${response.status}`,
-        owner: 'platform',
-      });
-      return { success: false, error };
+    if (!config.accountSid || !config.authToken || !config.fromNumber) {
+      return {
+        success: false,
+        error: 'Twilio configuration missing',
+      };
     }
+
+    const url = `https://api.twilio.com/2010-04-01/Accounts/${config.accountSid}/Messages.json`;
+    const auth = Buffer.from(`${config.accountSid}:${config.authToken}`).toString('base64');
+
+    const body = new URLSearchParams({
+      To: message.to,
+      From: message.from || config.fromNumber,
+      Body: message.body,
+    });
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: body.toString(),
+    });
 
     const data = await response.json();
-    appLogger.info('sms', 'SMS sent successfully', { to: formattedTo, sid: data.sid });
-    return { success: true, data };
-  } catch (err) {
-    const errorMsg = err instanceof Error ? err.message : String(err);
-    appLogger.error('sms', 'Failed to send SMS', { error: errorMsg, to: formattedTo });
-    dispatchAlert({
-      severity: 'P2',
-      service: 'sms',
-      description: 'SMS send threw exception',
-      value: `to=${formattedTo}`,
-      owner: 'platform',
-    });
-    return { success: false, error: errorMsg };
+
+    if (response.ok) {
+      return {
+        success: true,
+        messageId: data.sid,
+      };
+    } else {
+      return {
+        success: false,
+        error: data.message || 'Twilio API error',
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
   }
 }
 
-/**
- * Send emergency vet alert SMS
- */
-export async function sendEmergencyVetSMS(to: string, petName: string, location: string) {
-  const message = `🚨 HITNO - PetPark\n\n"${petName}" treba hitnu veterinarsku pomoć!\n\nNajbliža dostupna stanica:\n${location}\n\nPozovite odmah ili provjerite app za više info.`;
-  
-  return sendSMS({ to, message });
+async function sendInfobipSMS(
+  message: SMSMessage,
+  config: SMSConfig
+): Promise<SMSResult> {
+  try {
+    if (!config.apiKey || !config.baseUrl) {
+      return {
+        success: false,
+        error: 'Infobip configuration missing',
+      };
+    }
+
+    const url = `${config.baseUrl}/sms/2/text/advanced`;
+
+    const payload = {
+      messages: [
+        {
+          from: message.from || config.sender || 'PetPark',
+          destinations: [{ to: formatPhoneNumber(message.to) }],
+          text: message.body,
+        },
+      ],
+    };
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `App ${config.apiKey}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.messages?.[0]?.status?.groupId === 1) {
+      return {
+        success: true,
+        messageId: data.messages[0].messageId,
+      };
+    } else {
+      return {
+        success: false,
+        error: data.messages?.[0]?.status?.description || 'Infobip API error',
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
 }
 
-/**
- * Send booking reminder SMS
- */
-export async function sendBookingReminderSMS(to: string, sitterName: string, date: string, time?: string) {
-  const timeStr = time ? ` u ${time}` : '';
-  const message = `📅 Podsjetnik - PetPark\n\nRezervacija kod ${sitterName}\n${date}${timeStr}\n\nPogledajte detalje u appu.`;
+// Format phone number for Croatia/EU
+function formatPhoneNumber(phone: string): string {
+  // Remove all non-digit characters
+  let cleaned = phone.replace(/\D/g, '');
   
-  return sendSMS({ to, message });
+  // If starts with 0, replace with Croatian country code
+  if (cleaned.startsWith('0')) {
+    cleaned = '385' + cleaned.substring(1);
+  }
+  
+  // If doesn't have country code, assume Croatia
+  if (!cleaned.startsWith('385') && cleaned.length === 9) {
+    cleaned = '385' + cleaned;
+  }
+  
+  return cleaned;
 }
 
-/**
- * Send verification code SMS
- */
-export async function sendVerificationSMS(to: string, code: string) {
-  const message = `PetPark kod za verifikaciju: ${code}\n\nKod vrijedi 10 minuta.`;
+// SMS Templates
+export const smsTemplates = {
+  bookingConfirmed: (data: { sitterName: string; petName: string; date: string; time: string }) =>
+    `PetPark: ${data.sitterName} je potvrdio/la čuvanje za ${data.petName}. Datum: ${data.date} u ${data.time}. Detalji u appu.`,
   
-  return sendSMS({ to, message });
-}
+  bookingRequest: (data: { ownerName: string; petName: string; date: string; time: string }) =>
+    `PetPark: Nova rezervacija od ${data.ownerName} za ${data.petName}. Datum: ${data.date} u ${data.time}. Odgovorite u appu.`,
+  
+  bookingReminder: (data: { type: 'owner' | 'sitter'; name: string; petName: string; date: string; time: string }) =>
+    data.type === 'owner'
+      ? `PetPark: Podsjetnik - sutra čuvanje ${data.petName} kod ${data.name}. ${data.date} u ${data.time}.`
+      : `PetPark: Podsjetnik - sutra čuvanje ${data.petName} za ${data.name}. ${data.date} u ${data.time}.`,
+  
+  bookingCancelled: (data: { name: string; petName: string; date: string }) =>
+    `PetPark: Rezervacija za ${data.petName} (${data.date}) je otkazana od ${data.name}.`,
+  
+  messageReceived: (data: { fromName: string; preview: string }) =>
+    `PetPark: Nova poruka od ${data.fromName}: "${data.preview.substring(0, 50)}${data.preview.length > 50 ? '...' : ''}"`,
+  
+  emergencyVet: (data: { clinicName: string; phone: string; address: string }) =>
+    `PetPark Hitna Pomoć: ${data.clinicName}. Tel: ${data.phone}. Adresa: ${data.address}`,
+};

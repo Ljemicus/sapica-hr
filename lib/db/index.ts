@@ -145,3 +145,25 @@ export {
   getRescueVerificationDocuments,
   reviewRescueVerificationDocument,
 } from './rescue-verification-documents';
+
+// Vet Reviews
+export {
+  getVetReviews,
+  getVetReviewStats,
+  createVetReview,
+  updateVetReview,
+  deleteVetReview,
+  markReviewHelpful,
+  flagReview,
+  getUserVetReview,
+} from './vet-reviews';
+
+// Vet Review Types (client-safe)
+export {
+  VET_SERVICE_LABELS,
+  type VetReview,
+  type VetReviewStats,
+  type VetServiceType,
+  type VetReviewStatus,
+  type VetWithReviews,
+} from '@/lib/types/vet-reviews';
