@@ -7,6 +7,8 @@ import { sendEmail } from '@/lib/email';
 import { lostPetSightingEmail } from '@/lib/email-templates';
 import { appLogger } from '@/lib/logger';
 import { rateLimit } from '@/lib/rate-limit';
+import { sendPushToMultiple, NotificationTemplates } from '@/lib/push-notifications';
+import { getUserPushSubscriptions, canSendNotification } from '@/lib/db/notifications';
 
 function normalizeSightingText(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, ' ');
@@ -131,6 +133,38 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
             listingId: id,
             ownerEmail,
             error: emailResult.error || 'Unknown email failure',
+          });
+        }
+      }
+
+      // Push notification to owner
+      if (pet.user_id) {
+        try {
+          const canSendPush = await canSendNotification(pet.user_id, 'push', 'lost_pets');
+          if (canSendPush) {
+            const subscriptions = await getUserPushSubscriptions(pet.user_id);
+            if (subscriptions.length > 0) {
+              const pushPayload = {
+                title: `Novo viđenje: ${pet.name as string}`,
+                body: `Netko je vidio ${pet.name as string} u ${parsed.data.location}`,
+                tag: 'lost_pet_sighting',
+                requireInteraction: true,
+                data: { url: `/izgubljeni/${id}` },
+              };
+              sendPushToMultiple(
+                subscriptions.map(sub => ({
+                  endpoint: sub.endpoint,
+                  keys: { p256dh: sub.p256dh, auth: sub.auth },
+                })),
+                pushPayload
+              ).catch(err => {
+                appLogger.error('sighting-notify', 'Failed to send push notification', { error: String(err) });
+              });
+            }
+          }
+        } catch (pushErr) {
+          appLogger.error('sighting-notify', 'Push notification error', {
+            error: pushErr instanceof Error ? pushErr.message : String(pushErr),
           });
         }
       }

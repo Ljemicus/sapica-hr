@@ -6,6 +6,8 @@ import { dispatchAlert } from '@/lib/alerting';
 import { appLogger } from '@/lib/logger';
 import { sendEmail } from '@/lib/email';
 import { bookingAcceptedEmail, bookingRejectedEmail, bookingCancelledEmail } from '@/lib/email-templates';
+import { sendPushToMultiple, NotificationTemplates } from '@/lib/push-notifications';
+import { getUserPushSubscriptions, canSendNotification } from '@/lib/db/notifications';
 
 interface BookingRouteError {
   error: string;
@@ -87,7 +89,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json<BookingRouteError>({ error: 'Booking update failed' }, { status: 500 });
   }
 
-  // Best-effort: send status notification emails
+  // Best-effort: send status notification emails + push
   try {
     const dates = `${new Date(booking.start_date).toLocaleDateString('hr-HR')} – ${new Date(booking.end_date).toLocaleDateString('hr-HR')}`;
     const petName = booking.pet?.name || 'Ljubimac';
@@ -103,6 +105,27 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
           dates,
         ),
       }).catch((err) => appLogger.error('bookings.update', 'Failed to send accepted email', { error: String(err) }));
+
+      // Push notification to owner
+      const canSendPush = await canSendNotification(booking.owner_id, 'push', 'bookings');
+      if (canSendPush) {
+        const subscriptions = await getUserPushSubscriptions(booking.owner_id);
+        if (subscriptions.length > 0) {
+          const pushPayload = NotificationTemplates.bookingAccepted(
+            booking.sitter?.name || 'Čuvar',
+            petName
+          );
+          sendPushToMultiple(
+            subscriptions.map(sub => ({
+              endpoint: sub.endpoint,
+              keys: { p256dh: sub.p256dh, auth: sub.auth },
+            })),
+            pushPayload
+          ).catch(err => {
+            appLogger.error('bookings.update', 'Failed to send push notification', { error: String(err) });
+          });
+        }
+      }
     }
 
     if (status === 'rejected' && booking.owner?.email) {
@@ -122,6 +145,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       // Notify the other party
       const recipientEmail = isOwner ? booking.sitter?.email : booking.owner?.email;
       const recipientName = isOwner ? booking.sitter?.name : booking.owner?.name;
+      const recipientId = isOwner ? booking.sitter_id : booking.owner_id;
       if (recipientEmail) {
         sendEmail({
           to: recipientEmail,
@@ -129,9 +153,30 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
           html: bookingCancelledEmail(recipientName || 'Korisnik', petName, dates),
         }).catch((err) => appLogger.error('bookings.update', 'Failed to send cancelled email', { error: String(err) }));
       }
+
+      // Push notification
+      const canSendPush = await canSendNotification(recipientId, 'push', 'bookings');
+      if (canSendPush) {
+        const subscriptions = await getUserPushSubscriptions(recipientId);
+        if (subscriptions.length > 0) {
+          const pushPayload = NotificationTemplates.bookingUpdated(
+            petName,
+            'Otkazano'
+          );
+          sendPushToMultiple(
+            subscriptions.map(sub => ({
+              endpoint: sub.endpoint,
+              keys: { p256dh: sub.p256dh, auth: sub.auth },
+            })),
+            pushPayload
+          ).catch(err => {
+            appLogger.error('bookings.update', 'Failed to send push notification', { error: String(err) });
+          });
+        }
+      }
     }
-  } catch (emailErr) {
-    appLogger.error('bookings.update', 'Email notification error', { error: String(emailErr) });
+  } catch (notifyErr) {
+    appLogger.error('bookings.update', 'Notification error', { error: String(notifyErr) });
   }
 
   return NextResponse.json<Booking>(updated);

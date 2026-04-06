@@ -9,6 +9,8 @@ import { SERVICE_LABELS, type ServiceType } from '@/lib/types';
 import { sendEmail } from '@/lib/email';
 import { newBookingRequestEmail } from '@/lib/email-templates';
 import { calculatePlatformFee } from '@/lib/payment';
+import { sendPushToMultiple, NotificationTemplates } from '@/lib/push-notifications';
+import { getUserPushSubscriptions, canSendNotification } from '@/lib/db/notifications';
 
 export async function GET(request: Request) {
   const user = await getAuthUser();
@@ -116,7 +118,7 @@ export async function POST(request: Request) {
     return apiError({ status: 500, code: 'BOOKING_CREATE_FAILED', message: 'Failed to create booking' });
   }
 
-  // Best-effort: notify sitter via email
+  // Best-effort: notify sitter via email + push
   try {
     const pet = await getPet(pet_id);
     const sitterEmail = sitterProfile.user?.email;
@@ -135,8 +137,33 @@ export async function POST(request: Request) {
         ),
       }).catch((err) => log.error( 'Failed to send booking request email', { error: String(err) }));
     }
-  } catch (emailErr) {
-    log.error( 'Email notification error', { error: String(emailErr) });
+
+    // Send push notification to sitter
+    const canSendPush = await canSendNotification(sitter_id, 'push', 'bookings');
+    if (canSendPush) {
+      const subscriptions = await getUserPushSubscriptions(sitter_id);
+      if (subscriptions.length > 0) {
+        const pushPayload = NotificationTemplates.bookingRequest(
+          user.name || 'Korisnik',
+          pet?.name || 'ljubimca'
+        );
+        sendPushToMultiple(
+          subscriptions.map(sub => ({
+            endpoint: sub.endpoint,
+            keys: { p256dh: sub.p256dh, auth: sub.auth },
+          })),
+          pushPayload
+        ).then(results => {
+          if (results.expired.length > 0) {
+            log.info('Cleaned up expired push subscriptions', { count: results.expired.length });
+          }
+        }).catch(err => {
+          log.error('Failed to send push notification', { error: String(err) });
+        });
+      }
+    }
+  } catch (notifyErr) {
+    log.error( 'Notification error', { error: String(notifyErr) });
   }
 
   return NextResponse.json(booking, { status: 201 });

@@ -9,6 +9,7 @@ import {
   FileCheck, 
   HeartHandshake,
   HeartPulse, 
+  Mail,
   ShieldAlert, 
   ShieldCheck,
   Target,
@@ -378,6 +379,10 @@ export default async function FounderDashboardPage() {
               </Button>
               <Button variant="outline" render={<Link href="/admin#identity" />}>
                 Verifications
+              </Button>
+              <Button variant="outline" render={<Link href="/admin/marketing" />}>
+                <Mail className="h-4 w-4 mr-2" />
+                Email marketing
               </Button>
             </div>
           </CardContent>

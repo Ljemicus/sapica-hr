@@ -5,6 +5,8 @@ import { getConversation, getMessages, sendMessage } from '@/lib/db';
 import { createClient } from '@/lib/supabase/server';
 import { appLogger } from '@/lib/logger';
 import { messageSchema } from '@/lib/validations';
+import { sendPushToMultiple, NotificationTemplates } from '@/lib/push-notifications';
+import { getUserPushSubscriptions, canSendNotification } from '@/lib/db/notifications';
 
 export async function GET(request: Request) {
   const user = await getAuthUser();
@@ -76,5 +78,28 @@ export async function POST(request: Request) {
     });
     return apiError({ status: 500, code: 'MESSAGE_SEND_FAILED', message: 'Failed to send message' });
   }
+
+  // Best-effort: send push notification to receiver
+  try {
+    const canSendPush = await canSendNotification(parsed.data.receiver_id, 'push', 'messages');
+    if (canSendPush) {
+      const subscriptions = await getUserPushSubscriptions(parsed.data.receiver_id);
+      if (subscriptions.length > 0) {
+        const pushPayload = NotificationTemplates.newMessage(user.name || 'Korisnik');
+        sendPushToMultiple(
+          subscriptions.map(sub => ({
+            endpoint: sub.endpoint,
+            keys: { p256dh: sub.p256dh, auth: sub.auth },
+          })),
+          pushPayload
+        ).catch(err => {
+          appLogger.error('messages.send', 'Failed to send push notification', { error: String(err) });
+        });
+      }
+    }
+  } catch (notifyErr) {
+    appLogger.error('messages.send', 'Push notification error', { error: String(notifyErr) });
+  }
+
   return NextResponse.json(message, { status: 201 });
 }
