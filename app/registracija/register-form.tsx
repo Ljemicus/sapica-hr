@@ -101,13 +101,13 @@ export function RegisterForm() {
 
   return (
     <div className="min-h-[80vh] flex">
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-orange-500 to-amber-400 items-center justify-center relative overflow-hidden">
+      <div className="hidden lg:flex flex-1 organizations-hero-gradient items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 paw-pattern opacity-[0.08]" />
         <div className="absolute bottom-20 -left-20 w-60 h-60 bg-white rounded-full opacity-10" />
         <div className="absolute top-10 -right-10 w-40 h-40 bg-white rounded-full opacity-10" />
         <div className="relative text-center text-white p-12 max-w-md">
           <PawLogo className="h-64 w-64 mx-auto mb-10 opacity-90" />
-          <h2 className="text-3xl font-bold mb-4">{language === 'en' ? <>Join <span className="text-orange-500">Pet</span><span className="text-teal-600">Park</span>!</> : <>Pridružite se <span className="text-orange-500">Pet</span><span className="text-teal-600">Parku</span>!</>}</h2>
+          <h2 className="text-3xl font-bold mb-4 font-[var(--font-heading)]">{language === 'en' ? <>Join <span className="text-white/90">Pet</span><span className="text-white/70">Park</span>!</> : <>Pridružite se <span className="text-white/90">Pet</span><span className="text-white/70">Parku</span>!</>}</h2>
           <p className="text-white/80 text-lg leading-relaxed">
             {selectedRole === 'sitter'
               ? (language === 'en' ? 'Earn by doing what you love — offer services in your city and become part of our community.' : 'Zarađujte radeći ono što volite — pružajte usluge u svom gradu i postanite dio naše zajednice.')
@@ -129,9 +129,11 @@ export function RegisterForm() {
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="text-center mb-8 animate-fade-in-up">
-            <PawLogo className="h-12 w-12 text-orange-500 mx-auto mb-4 lg:hidden" />
-            <h1 className="text-3xl font-bold">{language === 'en' ? 'Register' : 'Registracija'}</h1>
-            <p className="text-muted-foreground mt-2">{language === 'en' ? 'Create your ' : 'Kreirajte svoj '}<span className="text-orange-500">Pet</span><span className="text-teal-600">Park</span>{language === 'en' ? ' account' : ' račun'}</p>
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-warm-orange to-warm-peach shadow-lg shadow-warm-orange/20 mb-4 lg:hidden">
+              <PawLogo className="h-10 w-10 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold font-[var(--font-heading)]">{language === 'en' ? 'Register' : 'Registracija'}</h1>
+            <p className="text-muted-foreground mt-2">{language === 'en' ? 'Create your ' : 'Kreirajte svoj '}<span className="text-warm-orange">Pet</span><span className="text-warm-teal">Park</span>{language === 'en' ? ' account' : ' račun'}</p>
           </div>
 
           <div className="space-y-2 mb-6 animate-fade-in-up delay-100">
@@ -142,11 +144,11 @@ export function RegisterForm() {
                 onClick={() => setValue('role', 'owner')}
                 className={`p-5 rounded-xl border-2 text-center transition-all ${
                   selectedRole === 'owner'
-                    ? 'border-orange-500 bg-orange-50 shadow-sm'
-                    : 'border-gray-200 hover:border-orange-200'
+                    ? 'border-warm-orange bg-warm-orange/5 shadow-sm'
+                    : 'border-border hover:border-warm-orange/30'
                 }`}
               >
-                <Dog className={`h-8 w-8 mx-auto mb-2 ${selectedRole === 'owner' ? 'text-orange-500' : 'text-gray-400'}`} />
+                <Dog className={`h-8 w-8 mx-auto mb-2 ${selectedRole === 'owner' ? 'text-warm-orange' : 'text-muted-foreground'}`} />
                 <p className="font-semibold text-sm">{language === 'en' ? 'Pet owner' : 'Vlasnik ljubimca'}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{language === 'en' ? 'Care, grooming, training, adoption and more' : 'Čuvanje, njega, školovanje, udomljavanje i više'}</p>
               </button>
@@ -155,11 +157,11 @@ export function RegisterForm() {
                 onClick={() => setValue('role', 'sitter')}
                 className={`p-5 rounded-xl border-2 text-center transition-all ${
                   selectedRole === 'sitter'
-                    ? 'border-orange-500 bg-orange-50 shadow-sm'
-                    : 'border-gray-200 hover:border-orange-200'
+                    ? 'border-warm-teal bg-warm-teal/5 shadow-sm'
+                    : 'border-border hover:border-warm-teal/30'
                 }`}
               >
-                <Heart className={`h-8 w-8 mx-auto mb-2 ${selectedRole === 'sitter' ? 'text-orange-500' : 'text-gray-400'}`} />
+                <Heart className={`h-8 w-8 mx-auto mb-2 ${selectedRole === 'sitter' ? 'text-warm-teal' : 'text-muted-foreground'}`} />
                 <p className="font-semibold text-sm">{language === 'en' ? 'Service provider' : 'Pružatelj usluga'}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{language === 'en' ? 'Sitting first, with more provider tools after onboarding' : 'Sitter odmah, a ostale vrste profila kroz onboarding nakon prijave'}</p>
               </button>

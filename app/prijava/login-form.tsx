@@ -117,9 +117,11 @@ export function LoginForm() {
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="text-center mb-8 animate-fade-in-up">
-            <PawLogo className="h-12 w-12 text-orange-500 mx-auto mb-4" />
-            <h1 className="text-3xl font-bold">{copy.title}</h1>
-            <p className="text-muted-foreground mt-2">{copy.subtitle}<span className="text-orange-500">Pet</span><span className="text-teal-600">Park</span>{copy.subtitleEnd}</p>
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-warm-orange to-warm-peach shadow-lg shadow-warm-orange/20 mb-4">
+              <PawLogo className="h-10 w-10 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold font-[var(--font-heading)]">{copy.title}</h1>
+            <p className="text-muted-foreground mt-2">{copy.subtitle}<span className="text-warm-orange">Pet</span><span className="text-warm-teal">Park</span>{copy.subtitleEnd}</p>
           </div>
 
           <div className="space-y-3 animate-fade-in-up delay-100">
@@ -171,7 +173,7 @@ export function LoginForm() {
               <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input id="email" type="email" placeholder={language === 'en' ? 'you@email.com' : 'vas@email.com'} className="pl-10 focus:border-orange-300" {...register('email')} />
+                <Input id="email" type="email" placeholder={language === 'en' ? 'you@email.com' : 'vas@email.com'} className="pl-10" {...register('email')} />
               </div>
               {errors.email && <p className="text-sm text-red-500">{translateFormError(errors.email.message, language)}</p>}
             </div>
@@ -183,7 +185,7 @@ export function LoginForm() {
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder={copy.passwordPlaceholder}
-                  className="focus:border-orange-300"
+                  className=""
                   {...register('password')}
                 />
                 <button
@@ -199,12 +201,12 @@ export function LoginForm() {
             </div>
 
             <div className="flex justify-end">
-              <Link href="/zaboravljena-lozinka" className="text-sm text-orange-500 hover:underline">
+              <Link href="/zaboravljena-lozinka" className="text-sm text-warm-orange hover:underline">
                 {copy.forgot}
               </Link>
             </div>
 
-            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-md shadow-orange-200/50 h-11" disabled={loading}>
+            <Button type="submit" className="w-full bg-warm-orange hover:bg-warm-orange/90 h-11" disabled={loading}>
               {loading ? copy.submitLoading : copy.submitIdle}
             </Button>
           </form>
@@ -212,7 +214,7 @@ export function LoginForm() {
           <div className="mt-8 text-center space-y-2">
             <p className="text-sm text-muted-foreground">
               {copy.registerLead}{' '}
-              <Link href={`/registracija${redirect && redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className="text-orange-500 hover:underline font-semibold">
+              <Link href={`/registracija${redirect && redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className="text-warm-orange hover:underline font-semibold">
                 {copy.registerCta}
               </Link>
             </p>
@@ -223,7 +225,7 @@ export function LoginForm() {
         </div>
       </div>
 
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-orange-500 to-amber-400 items-center justify-center relative overflow-hidden">
+      <div className="hidden lg:flex flex-1 organizations-hero-gradient items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 paw-pattern opacity-[0.08]" />
         <div className="absolute top-20 -left-20 w-60 h-60 bg-white rounded-full opacity-10" />
         <div className="absolute bottom-10 -right-10 w-40 h-40 bg-white rounded-full opacity-10" />
