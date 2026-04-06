@@ -77,21 +77,20 @@ const FAQ = [
 export default function SitterAdsLandingPage() {
   return (
     <div className="bg-background">
-      <section className="relative overflow-hidden border-b bg-gradient-to-br from-orange-50 via-white to-teal-50 dark:from-orange-950/10 dark:via-background dark:to-teal-950/10">
+      <section className="relative organizations-hero-gradient overflow-hidden">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
         <div className="container mx-auto px-4 py-14 md:py-20 relative">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-5 bg-orange-100 text-orange-700 hover:bg-orange-100 border-0 rounded-full px-4 py-2 font-semibold">
-              <PawPrint className="h-3.5 w-3.5 mr-1.5" />
+            <p className="section-kicker mb-5">
               Prijave za nove sittere su otvorene
-            </Badge>
+            </p>
 
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight font-[var(--font-heading)] mb-5">
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight font-[var(--font-heading)] mb-5 text-white">
               Zarađuj čuvajući pse i mačke
-              <span className="block text-gradient">u svom gradu</span>
+              <span className="block text-white/80">u svom gradu</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8">
+            <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed mb-8">
               Ako voliš životinje i želiš fleksibilnu dodatnu zaradu, prijavi se za PetPark sittera.
               Ti biraš kad radiš, koje usluge nudiš i koliko rezervacija prihvaćaš.
             </p>
@@ -102,17 +101,17 @@ export default function SitterAdsLandingPage() {
             </div>
 
             <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-              <div className="rounded-2xl bg-background/80 backdrop-blur border p-4">
-                <div className="text-2xl font-extrabold text-orange-500">0€</div>
-                <div className="text-sm text-muted-foreground">prijava</div>
+              <div className="community-section-card p-4 bg-white/10 border-white/20">
+                <div className="text-2xl font-extrabold text-white">0€</div>
+                <div className="text-sm text-white/70">prijava</div>
               </div>
-              <div className="rounded-2xl bg-background/80 backdrop-blur border p-4">
-                <div className="text-2xl font-extrabold text-teal-500">par min</div>
-                <div className="text-sm text-muted-foreground">do prijave</div>
+              <div className="community-section-card p-4 bg-white/10 border-white/20">
+                <div className="text-2xl font-extrabold text-white">par min</div>
+                <div className="text-sm text-white/70">do prijave</div>
               </div>
-              <div className="rounded-2xl bg-background/80 backdrop-blur border p-4">
-                <div className="text-2xl font-extrabold text-purple-500">ti biraš</div>
-                <div className="text-sm text-muted-foreground">raspored</div>
+              <div className="community-section-card p-4 bg-white/10 border-white/20">
+                <div className="text-2xl font-extrabold text-white">ti biraš</div>
+                <div className="text-sm text-white/70">raspored</div>
               </div>
             </div>
           </div>
@@ -122,15 +121,13 @@ export default function SitterAdsLandingPage() {
       <section className="container mx-auto px-4 py-14 md:py-18">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {BENEFITS.map((item) => (
-            <Card key={item.title} className="border-0 shadow-sm rounded-2xl">
-              <CardContent className="p-6">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-50 text-orange-600 dark:bg-orange-950/20 dark:text-orange-400 mb-4">
-                  <item.icon className="h-6 w-6" />
-                </div>
-                <h2 className="font-bold text-lg mb-2">{item.title}</h2>
-                <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
-              </CardContent>
-            </Card>
+            <div key={item.title} className="community-section-card p-6">
+              <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-warm-orange/10 text-warm-orange mb-4">
+                <item.icon className="h-6 w-6" />
+              </div>
+              <h2 className="font-bold text-lg mb-2 font-[var(--font-heading)]">{item.title}</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+            </div>
           ))}
         </div>
       </section>
@@ -147,8 +144,8 @@ export default function SitterAdsLandingPage() {
               </p>
               <div className="grid sm:grid-cols-2 gap-3">
                 {SERVICES.map((service) => (
-                  <div key={service} className="rounded-2xl border bg-background px-4 py-3 font-medium flex items-center gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-teal-500 flex-shrink-0" />
+                  <div key={service} className="community-section-card px-4 py-3 font-medium flex items-center gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-warm-teal flex-shrink-0" />
                     {service}
                   </div>
                 ))}

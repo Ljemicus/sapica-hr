@@ -58,19 +58,15 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <section className="bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-emerald-950/30 dark:via-background dark:to-teal-950/30 py-16 md:py-24">
+      <section className="organizations-hero-gradient py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 dark:bg-emerald-900/40 px-4 py-2 mb-6">
-            <Stethoscope className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-            <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">{isEn ? 'Official veterinary directory' : 'Službeni veterinarski imenik'}</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-            {isEn ? 'Veterinary ' : 'Veterinarske '}
-            <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
-              {isEn ? 'stations and clinics' : 'stanice i ambulante'}
-            </span>
+          <p className="section-kicker mb-6">
+            {isEn ? 'Official veterinary directory' : 'Službeni veterinarski imenik'}
+          </p>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 font-[var(--font-heading)] text-white">
+            {isEn ? 'Veterinary stations and clinics' : 'Veterinarske stanice i ambulante'}
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
             {isEn
               ? 'Official registry of veterinary stations and clinics in Croatia, with clearly marked verified emergency contacts where confirmed.'
               : 'Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj, uz posebno označene verificirane hitne kontakte gdje su potvrđeni.'}
