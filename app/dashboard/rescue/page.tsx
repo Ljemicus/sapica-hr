@@ -2,7 +2,7 @@ import { unstable_noStore as noStore, revalidatePath } from 'next/cache';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { AlertCircle, ArrowRight, BadgeCheck, ClipboardCheck, ClipboardList, HeartHandshake, LayoutDashboard, Link2, Plus, ShieldCheck } from 'lucide-react';
+import { AlertCircle, ArrowRight, BadgeCheck, ClipboardCheck, ClipboardList, HeartHandshake, LayoutDashboard, Link2, Plus, ShieldCheck, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RescueVerificationDocumentsCard } from '@/components/rescue/rescue-verification-documents-card';
+import { RescueOnboardingWizard } from '@/components/rescue/rescue-onboarding-wizard';
 import { createClient } from '@/lib/supabase/server';
 import {
   createRescueOrganization,
@@ -61,6 +62,12 @@ export default async function RescueDashboardPage() {
   const approvedDocs = verificationDocuments.filter((doc) => doc.review_status === 'approved').length;
   const pendingDocs = verificationDocuments.filter((doc) => doc.review_status === 'pending').length;
   const donationLinkReady = hasApprovedExternalDonationLink(organization);
+  
+  // Determine if onboarding wizard should show
+  const hasOrg = !!organization;
+  const hasDocs = verificationDocuments.length > 0;
+  const hasCreatedAppeals = appeals.length > 0;
+  const isNewRescueUser = !hasOrg || !hasDocs || !hasCreatedAppeals;
 
   async function saveOrganizationAction(formData: FormData) {
     'use server';
@@ -162,6 +169,14 @@ export default async function RescueDashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50/60 px-4 py-10">
+      {/* Onboarding Wizard for new rescue users */}
+      {isNewRescueUser && (
+        <RescueOnboardingWizard
+          organizationId={organization?.id}
+          hasDocuments={hasDocs}
+          hasAppeals={hasCreatedAppeals}
+        />
+      )}
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-3">
@@ -206,7 +221,7 @@ export default async function RescueDashboardPage() {
                 )}
               </div>
 
-              <form action={saveOrganizationAction} className="mt-6 space-y-5">
+              <form id="organization-form" action={saveOrganizationAction} className="mt-6 space-y-5">
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="display_name">Javno ime organizacije</Label>
@@ -306,7 +321,9 @@ export default async function RescueDashboardPage() {
           </Card>
 
           <div className="space-y-6">
-            <RescueVerificationDocumentsCard organizationId={organization?.id} documents={verificationDocuments} />
+            <div id="verification-documents">
+              <RescueVerificationDocumentsCard organizationId={organization?.id} documents={verificationDocuments} />
+            </div>
 
             <Card className="border-0 shadow-sm">
               <CardContent className="p-6">
@@ -408,6 +425,33 @@ export default async function RescueDashboardPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Reset onboarding wizard */}
+        {!isNewRescueUser && (
+          <Card className="border-0 shadow-sm bg-gradient-to-r from-orange-50/50 to-teal-50/50">
+            <CardContent className="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
+              <div className="space-y-1">
+                <p className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <Sparkles className="h-4 w-4 text-orange-500" /> Ponovno pokreni uvodni vodič
+                </p>
+                <p className="text-sm text-muted-foreground">Ako želite ponovno proći kroz uvodni vodič, kliknite gumb desno.</p>
+              </div>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    localStorage.removeItem('rescue-onboarding-completed');
+                    localStorage.removeItem('rescue-onboarding-skipped');
+                    localStorage.removeItem('rescue-onboarding-progress');
+                    window.location.reload();
+                  }
+                }}
+              >
+                Pokreni vodič
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

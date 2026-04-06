@@ -16,6 +16,7 @@ import { SitterProfileTab } from './components/sitter-profile-tab';
 import { SitterReviewsTab } from './components/sitter-reviews-tab';
 import { SitterEarningsTab } from './components/sitter-earnings-tab';
 import { SitterDashboardDialogs } from './components/sitter-dashboard-dialogs';
+import { SitterOnboardingWizard } from './components/sitter-onboarding-wizard';
 
 interface Props {
   user: UserType;
@@ -48,6 +49,9 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
     city: profile?.city || user.city || '',
   });
   const router = useRouter();
+
+  // Check if profile is incomplete (new sitter)
+  const isNewSitter = !profile || !profile.bio || profile.bio.length < 50 || profile.services.length === 0;
 
   const availableDates = new Set(availability.filter((a) => a.available).map((a) => a.date));
 
@@ -179,7 +183,9 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
   const maxEarning = Math.max(...monthlyEarnings.map((e) => e.amount), 1);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
+    <>
+      {isNewSitter && <SitterOnboardingWizard />}
+      <div className="container mx-auto px-4 py-8 max-w-5xl">
       <div className="mb-8 animate-fade-in-up">
         <h1 className="text-3xl font-bold tracking-tight">Bok, {user.name.split(' ')[0]}!</h1>
         <p className="text-muted-foreground mt-1">Upravljajte rezervacijama, dostupnošću i profilom bez lutanja po sekcijama.</p>
@@ -288,5 +294,6 @@ export function SitterDashboardContent({ user, profile, bookings, reviews, avail
         onAvatarUploaded={() => router.refresh()}
       />
     </div>
+    </>
   );
 }

@@ -200,38 +200,47 @@ export function ProviderOnboardingForm({ user, initialApplication, stripeReturn 
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-teal-50/40 to-white dark:from-teal-950/10 dark:to-background">
-      <div className="max-w-5xl mx-auto px-4 py-10 md:py-14 space-y-8">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-sm font-medium text-teal-600 mb-2">PetPark provider onboarding</p>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-[var(--font-heading)]">
-              Postani provider na PetParku
-            </h1>
-            <p className="text-muted-foreground mt-3 max-w-2xl">
-              Ispuni osnovne podatke, odaberi usluge i pošalji prijavu. Stripe i detalji za isplatu mogu i kasnije — prvo riješimo profil.
-            </p>
+    <div className="min-h-screen bg-background">
+      {/* Editorial Hero */}
+      <section className="relative organizations-hero-gradient overflow-hidden">
+        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16 relative">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div className="animate-fade-in-up">
+                <p className="section-kicker">PetPark provider onboarding</p>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight font-[var(--font-heading)] leading-[1.05]">
+                  Postani provider na PetParku
+                </h1>
+                <p className="text-muted-foreground mt-4 max-w-2xl text-lg">
+                  Ispuni osnovne podatke, odaberi usluge i pošalji prijavu. Stripe i detalji za isplatu mogu i kasnije — prvo riješimo profil.
+                </p>
+              </div>
+              <Badge className={`border ${PROVIDER_APPLICATION_STATUS_COLORS[status]} px-4 py-1.5 text-sm`}>
+                {PROVIDER_APPLICATION_STATUS_LABELS[status]}
+              </Badge>
+            </div>
           </div>
-          <Badge className={`border ${PROVIDER_APPLICATION_STATUS_COLORS[status]}`}>
-            {PROVIDER_APPLICATION_STATUS_LABELS[status]}
-          </Badge>
         </div>
+      </section>
 
-        <div className="grid gap-3 md:grid-cols-3">
-          <div className="rounded-2xl border bg-background/80 p-4">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Korak 1</p>
-            <p className="font-semibold">Osnovni profil</p>
-            <p className="text-sm text-muted-foreground mt-1">Ime, grad, telefon i kratki opis.</p>
+      <div className="max-w-5xl mx-auto px-6 md:px-10 lg:px-16 py-10 md:py-14 space-y-8">
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="community-section-card p-5">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Korak 1</p>
+            <p className="font-semibold text-lg font-[var(--font-heading)]">Osnovni profil</p>
+            <p className="text-sm text-muted-foreground mt-2">Ime, grad, telefon i kratki opis.</p>
           </div>
-          <div className="rounded-2xl border bg-background/80 p-4">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Korak 2</p>
-            <p className="font-semibold">Usluge i cijene</p>
-            <p className="text-sm text-muted-foreground mt-1">Odaberi što nudiš i stavi početnu cijenu.</p>
+          <div className="community-section-card p-5">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Korak 2</p>
+            <p className="font-semibold text-lg font-[var(--font-heading)]">Usluge i cijene</p>
+            <p className="text-sm text-muted-foreground mt-2">Odaberi što nudiš i stavi početnu cijenu.</p>
           </div>
-          <div className="rounded-2xl border bg-background/80 p-4">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Korak 3</p>
-            <p className="font-semibold">Pošalji prijavu</p>
-            <p className="text-sm text-muted-foreground mt-1">Pregledamo profil pa tek onda ide live.</p>
+          <div className="community-section-card p-5">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Korak 3</p>
+            <p className="font-semibold text-lg font-[var(--font-heading)]">Pošalji prijavu</p>
+            <p className="text-sm text-muted-foreground mt-2">Pregledamo profil pa tek onda ide live.</p>
           </div>
         </div>
 
