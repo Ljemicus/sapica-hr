@@ -11,6 +11,10 @@ const eslintConfig = defineConfig([
         "warn",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
+      // Critical rules - must be error level
+      "react/no-unescaped-entities": "error",
+      "@typescript-eslint/no-explicit-any": "error",
+      "react-hooks/set-state-in-effect": "warn",
     },
   },
   // Override default ignores of eslint-config-next.

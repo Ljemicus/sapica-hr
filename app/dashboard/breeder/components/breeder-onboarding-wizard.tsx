@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Heart,
-  MapPin,
   Calendar,
   Shield,
   CreditCard,
@@ -14,18 +13,15 @@ import {
   Check,
   Sparkles,
   Dog,
-  Cat,
   Home,
   Award,
   Stethoscope,
   FileCheck,
   BadgeCheck,
-  Camera,
   X,
   SkipForward,
   Plus,
   Trash2,
-  Euro,
   Info,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -109,7 +105,7 @@ const CAT_BREEDS = [
   'Sphynx', 'Munchkin', 'Scottish fold', 'Abesinka',
 ];
 
-const ALL_BREEDS = [...DOG_BREEDS, ...CAT_BREEDS].sort();
+const _ALL_BREEDS = [...DOG_BREEDS, ...CAT_BREEDS].sort();
 
 const CITIES = ['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula', 'Dubrovnik', 'Varaždin', 'Karlovac', 'Šibenik'];
 

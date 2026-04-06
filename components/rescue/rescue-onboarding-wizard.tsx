@@ -11,8 +11,7 @@ import {
   Building2, 
   FileText, 
   Megaphone,
-  Sparkles,
-  Loader2
+  Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -54,7 +53,7 @@ export function RescueOnboardingWizard({
   const [isVisible, setIsVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState<WizardStep>('welcome');
   const [completedSteps, setCompletedSteps] = useState<WizardStep[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [_isLoading, _setIsLoading] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
 
   // Load progress from localStorage on mount
@@ -84,23 +83,27 @@ export function RescueOnboardingWizard({
     if (saved) {
       try {
         const progress: WizardProgress = JSON.parse(saved);
-        setCurrentStep(progress.currentStep);
-        setCompletedSteps(progress.completedSteps);
+        // Use timeout to avoid synchronous setState during render
+        setTimeout(() => {
+          setCurrentStep(progress.currentStep);
+          setCompletedSteps(progress.completedSteps);
+        }, 0);
       } catch {
         // Invalid saved data, start fresh
       }
     }
 
     // Determine starting step based on current state
-    if (organizationId && hasDocuments && !hasAppeals) {
-      setCurrentStep('appeal');
-    } else if (organizationId && !hasDocuments) {
-      setCurrentStep('documents');
-    } else if (organizationId) {
-      setCurrentStep('organization');
-    }
-
-    setIsVisible(true);
+    setTimeout(() => {
+      if (organizationId && hasDocuments && !hasAppeals) {
+        setCurrentStep('appeal');
+      } else if (organizationId && !hasDocuments) {
+        setCurrentStep('documents');
+      } else if (organizationId) {
+        setCurrentStep('organization');
+      }
+      setIsVisible(true);
+    }, 0);
   }, [organizationId, hasDocuments, hasAppeals]);
 
   // Save progress to localStorage
@@ -246,7 +249,7 @@ export function RescueOnboardingWizard({
         {/* Progress bar */}
         <div className="border-b bg-muted/30 px-6 py-4">
           <div className="flex items-center justify-between">
-            {steps.map((step, index) => {
+            {steps.map((step, _index) => {
               const isCompleted = completedSteps.includes(step.id);
               const isCurrent = step.id === currentStep;
               const StepIconInner = step.icon;
@@ -359,7 +362,7 @@ export function RescueOnboardingWizard({
 
 // Step Components
 
-function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
+function WelcomeStep({ onNext: _onNext, onSkip: _onSkip }: { onNext: () => void; onSkip: () => void }) {
   return (
     <div className="space-y-4 text-center">
       <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-teal-500">
@@ -395,8 +398,8 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 }
 
 function OrganizationStep({ 
-  onNext, 
-  onPrevious, 
+  onNext: _onNext, 
+  onPrevious: _onPrevious, 
   organizationId 
 }: { 
   onNext: () => void; 
@@ -424,7 +427,7 @@ function OrganizationStep({
       ) : (
         <div className="rounded-lg bg-amber-50 p-4 text-amber-800">
           <p className="text-sm">
-            <strong>Napomena:</strong> Nakon što kliknete "Nastavi", odvest ćemo vas do forme 
+            <strong>Napomena:</strong> Nakon što kliknete &quot;Nastavi&quot;, odvest ćemo vas do forme 
             gdje možete ispuniti podatke o organizaciji.
           </p>
         </div>
@@ -434,8 +437,8 @@ function OrganizationStep({
 }
 
 function DocumentsStep({ 
-  onNext, 
-  onPrevious, 
+  onNext: _onNext, 
+  onPrevious: _onPrevious, 
   hasDocuments 
 }: { 
   onNext: () => void; 
@@ -491,8 +494,8 @@ function DocumentsStep({
 }
 
 function AppealStep({ 
-  onComplete, 
-  onPrevious, 
+  onComplete: _onComplete, 
+  onPrevious: _onPrevious, 
   hasAppeals 
 }: { 
   onComplete: () => void; 
@@ -538,8 +541,11 @@ export function useRescueOnboarding() {
   const [isSkipped, setIsSkipped] = useState<boolean | null>(null);
 
   useEffect(() => {
-    setIsCompleted(!!localStorage.getItem(WIZARD_COMPLETED_KEY));
-    setIsSkipped(!!localStorage.getItem(WIZARD_SKIPPED_KEY));
+    // Use timeout to avoid synchronous setState during render
+    setTimeout(() => {
+      setIsCompleted(!!localStorage.getItem(WIZARD_COMPLETED_KEY));
+      setIsSkipped(!!localStorage.getItem(WIZARD_SKIPPED_KEY));
+    }, 0);
   }, []);
 
   const resetWizard = useCallback(() => {

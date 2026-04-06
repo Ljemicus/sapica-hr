@@ -69,7 +69,7 @@ export function Footer() {
       <div className="hidden md:block">
         <NewsletterSignup />
       </div>
-      <footer className="bg-gray-900 dark:bg-gray-950 text-gray-300 mt-auto relative overflow-hidden">
+      <footer className="bg-gray-900 dark:bg-gray-950 text-gray-300 mt-auto relative overflow-hidden pb-safe">
         <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
         <div className="container mx-auto px-4 py-14 relative">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">

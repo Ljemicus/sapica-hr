@@ -133,8 +133,10 @@ export default async function RootLayout({
               <LanguageProvider>
                 <SkipToContentLink />
                 <Navbar />
-                <main id="main-content" className="flex-1 pb-16 md:pb-0">{children}</main>
-                <Footer />
+                <main id="main-content" className="flex-1">{children}</main>
+                <div className="pb-20 md:pb-0">
+                  <Footer />
+                </div>
                 <BottomNav />
                 <DeferredUI />
                 <CookieConsentBanner />

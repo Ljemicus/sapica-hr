@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BookHeart, Calendar, Image, Plus, Stethoscope, Award, MoreHorizontal } from 'lucide-react';
+import Image from 'next/image';
+import { BookHeart, Calendar, Image as ImageIcon, Plus, Stethoscope, Award, MoreHorizontal } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +20,14 @@ interface JournalEntry {
   created_at: string;
 }
 
+interface Milestone {
+  id: string;
+  title: string;
+  description: string | null;
+  achieved_at: string | null;
+  icon: string | null;
+}
+
 interface PetDiaryProps {
   pet: Pet;
 }
@@ -27,13 +36,14 @@ export function PetDiary({ pet }: PetDiaryProps) {
   const { language } = useLanguage();
   const isEn = language === 'en';
   const [entries, setEntries] = useState<JournalEntry[]>([]);
-  const [milestones, setMilestones] = useState<any[]>([]);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
     fetchEntries();
     fetchMilestones();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pet.id]);
 
   const fetchEntries = async () => {
@@ -62,7 +72,7 @@ export function PetDiary({ pet }: PetDiaryProps) {
     switch (type) {
       case 'milestone': return <Award className="h-4 w-4 text-yellow-500" />;
       case 'health': return <Stethoscope className="h-4 w-4 text-red-500" />;
-      case 'photo': return <Image className="h-4 w-4 text-blue-500" />;
+      case 'photo': return <ImageIcon className="h-4 w-4 text-blue-500" />;
       default: return <BookHeart className="h-4 w-4 text-slate-400" />;
     }
   };
@@ -114,7 +124,7 @@ export function PetDiary({ pet }: PetDiaryProps) {
               {milestones.slice(0, 3).map((m) => (
                 <div key={m.id} className="flex items-center gap-2 text-sm">
                   <span className="text-yellow-600 font-medium">
-                    {new Date(m.milestone_date).toLocaleDateString(isEn ? 'en-US' : 'hr-HR', { month: 'short', day: 'numeric' })}
+                    {m.achieved_at ? new Date(m.achieved_at).toLocaleDateString(isEn ? 'en-US' : 'hr-HR', { month: 'short', day: 'numeric' }) : ''}
                   </span>
                   <span className="text-slate-700">{m.title}</span>
                 </div>
@@ -170,9 +180,11 @@ export function PetDiary({ pet }: PetDiaryProps) {
                         <p className="text-sm text-slate-600 mt-1">{entry.content}</p>
                       )}
                       {entry.image_url && (
-                        <img 
+                        <Image 
                           src={entry.image_url} 
                           alt="" 
+                          width={300}
+                          height={160}
                           className="mt-2 rounded-lg max-h-40 object-cover"
                         />
                       )}

@@ -7,6 +7,24 @@ import { LiveChat } from './live-chat';
 import { useUser } from '@/hooks/use-user';
 import { createClient } from '@/lib/supabase/client';
 
+interface Message {
+  sender_id: string;
+  receiver_id: string;
+  sender: {
+    name: string;
+    avatar_url?: string | null;
+    role?: 'owner' | 'sitter' | 'admin';
+  };
+  receiver: {
+    name: string;
+    avatar_url?: string | null;
+    role?: 'owner' | 'sitter' | 'admin';
+  };
+  content: string;
+  created_at: string;
+  read: boolean;
+}
+
 interface Conversation {
   partner: {
     id: string;
@@ -41,7 +59,7 @@ export function ChatWidget() {
         // Group by partner
         const grouped = new Map<string, Conversation>();
         
-        messages.forEach((msg: any) => {
+        messages.forEach((msg: Message) => {
           const partnerId = msg.sender_id === user.id ? msg.receiver_id : msg.sender_id;
           const partner = msg.sender_id === user.id ? msg.receiver : msg.sender;
           
@@ -50,7 +68,7 @@ export function ChatWidget() {
               partner: {
                 id: partnerId,
                 name: partner?.name || 'Korisnik',
-                avatar_url: partner?.avatar_url,
+                avatar_url: partner?.avatar_url ?? null,
                 role: partner?.role || 'owner',
               },
               lastMessage: {

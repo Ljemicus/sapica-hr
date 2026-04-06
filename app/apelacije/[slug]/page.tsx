@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, BellRing, CircleDashed, HeartHandshake, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, CircleDashed, HeartHandshake, ShieldCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -162,7 +162,7 @@ export default async function RescueAppealDetailPage({ params }: Props) {
                 ) : (
                   <>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      Javni donation CTA se prikazuje tek nakon što admin odobri vanjski link organizacije. Bez fake gumba, bez checkout teatra, bez „oops ništa ne radi" momenta.
+                      Javni donation CTA se prikazuje tek nakon što admin odobri vanjski link organizacije. Bez fake gumba, bez checkout teatra, bez &quot;oops ništa ne radi&quot; momenta.
                     </p>
                     <Button variant="outline" className="mt-4" disabled>
                       Donation link čeka provjeru

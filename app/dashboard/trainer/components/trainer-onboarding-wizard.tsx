@@ -909,7 +909,7 @@ function ServiceAreasStep({
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">
-              Za ovaj grad unesi kvartove ručno (npr. "Centar", "Stari grad"):
+              Za ovaj grad unesi kvartove ručno (npr. &quot;Centar&quot;, &quot;Stari grad&quot;):
             </p>
           )}
           {serviceAreas.neighborhoods.length === 0 && (
@@ -1075,7 +1075,7 @@ function VerificationStep({ onNext, onBack }: { onNext: () => void; onBack: () =
               <ul className="mt-2 space-y-1 text-sm text-blue-800">
                 <li>• Verificirani treneri dobivaju <strong>do 3x više rezervacija</strong></li>
                 <li>• Vlasnici se osjećaju sigurnije</li>
-                <li>• Tvoj profil dobiva "Certificirani trener" značku</li>
+                <li>• Tvoj profil dobiva &quot;Certificirani trener&quot; značku</li>
               </ul>
             </div>
           </div>

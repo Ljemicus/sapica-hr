@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { MapPin, Phone, Search, PawPrint, Siren, Mail, Globe, ShieldCheck, Building2, Stethoscope, Clock3, ShieldAlert, Star, MessageSquare, ChevronRight } from 'lucide-react';
+import { MapPin, Phone, Search, PawPrint, Siren, Mail, Globe, ShieldCheck, Building2, Clock3, ShieldAlert, MessageSquare, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';

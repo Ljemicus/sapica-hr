@@ -14,7 +14,6 @@ import {
   Check,
   Sparkles,
   Home,
-  Clock,
   Star,
   BadgeCheck,
   Camera,
@@ -189,7 +188,12 @@ export function GroomerOnboardingWizard() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        setData({ ...defaultData, ...parsed });
+        // Use requestAnimationFrame to avoid setState during render
+        requestAnimationFrame(() => {
+          setData({ ...defaultData, ...parsed });
+          setIsHydrated(true);
+        });
+        return;
       } catch {
         // Invalid JSON, use defaults
       }

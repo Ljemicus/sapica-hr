@@ -6,7 +6,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import { X, ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+
 import type { PetUpdate } from '@/lib/types';
 
 interface Story {
@@ -83,7 +83,8 @@ export function PhotoStories({ updates, sitterName, petName }: PhotoStoriesProps
 
   // Reset progress when story changes
   useEffect(() => {
-    setProgress(0);
+    // Use timeout to avoid synchronous setState during render
+    setTimeout(() => setProgress(0), 0);
   }, [currentIndex]);
 
   const handlePrevious = () => {

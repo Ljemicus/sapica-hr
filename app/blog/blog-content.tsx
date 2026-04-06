@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useMemo, useCallback } from 'react';
 import { Calendar, User, ArrowRight, BookOpen } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { BLOG_CATEGORY_LABELS, BLOG_CATEGORY_EMOJI, type Article, type BlogCategory } from '@/lib/types';
@@ -15,7 +16,18 @@ interface BlogContentProps {
 
 export function BlogContent({ articles, initialCategory }: BlogContentProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // Use URL param as source of truth, fallback to prop
+  const currentCategory = searchParams.get('category') || initialCategory || '';
+  
   const categories = Object.entries(BLOG_CATEGORY_LABELS) as [BlogCategory, string][];
+  
+  // Filter articles client-side based on URL category
+  const filteredArticles = useMemo(() => {
+    if (!currentCategory) return articles;
+    return articles.filter((a) => a.category === currentCategory);
+  }, [articles, currentCategory]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -41,7 +53,7 @@ export function BlogContent({ articles, initialCategory }: BlogContentProps) {
       <div className="flex flex-wrap justify-center gap-2 mb-10">
         <button
           onClick={() => router.push('/blog')}
-          className={`filter-pill ${!initialCategory ? 'bg-warm-orange text-white' : 'bg-white dark:bg-card border border-border/40 text-foreground hover:border-warm-orange/30'}`}
+          className={`filter-pill ${!currentCategory ? 'bg-warm-orange text-white' : 'bg-white dark:bg-card border border-border/40 text-foreground hover:border-warm-orange/30'}`}
         >
           Sve
         </button>
@@ -49,7 +61,7 @@ export function BlogContent({ articles, initialCategory }: BlogContentProps) {
           <button
             key={key}
             onClick={() => router.push(`/blog?category=${key}`)}
-            className={`filter-pill ${initialCategory === key ? 'bg-warm-orange text-white' : 'bg-white dark:bg-card border border-border/40 text-foreground hover:border-warm-orange/30'}`}
+            className={`filter-pill ${currentCategory === key ? 'bg-warm-orange text-white' : 'bg-white dark:bg-card border border-border/40 text-foreground hover:border-warm-orange/30'}`}
           >
             {BLOG_CATEGORY_EMOJI[key]} {label}
           </button>
@@ -58,7 +70,7 @@ export function BlogContent({ articles, initialCategory }: BlogContentProps) {
 
       {/* Articles grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
-        {articles.map((article, i) => (
+        {filteredArticles.map((article, i) => (
           <Link key={article.slug} href={`/blog/${article.slug}`}>
             <div 
               className="community-section-card group cursor-pointer overflow-hidden h-full animate-fade-in-up"
@@ -94,7 +106,7 @@ export function BlogContent({ articles, initialCategory }: BlogContentProps) {
         ))}
       </div>
 
-      {articles.length === 0 && (
+      {filteredArticles.length === 0 && (
         <div className="text-center py-16">
           <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-muted-foreground">Nema članaka u ovoj kategoriji</h3>

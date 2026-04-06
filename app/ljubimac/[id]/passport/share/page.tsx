@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Syringe, AlertTriangle, Pill, Stethoscope, FileText, QrCode, PawPrint } from 'lucide-react';
 import { format, parseISO, isPast } from 'date-fns';
-import { hr } from 'date-fns/locale';
 import type { PetPassport, Pet } from '@/lib/types';
 
 interface SharePageProps {

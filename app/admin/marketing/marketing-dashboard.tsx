@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
@@ -12,15 +12,12 @@ import {
   BarChart3, 
   Plus, 
   Eye, 
-  EyeOff, 
   Trash2, 
-  Edit3, 
   Clock,
   CheckCircle2,
   XCircle,
   Loader2,
   ChevronRight,
-  Filter,
   Search,
   Megaphone,
   Target,
@@ -35,8 +32,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 interface EmailCampaign {
@@ -132,14 +129,14 @@ const MOCK_TEMPLATES: EmailTemplate[] = [
 ];
 
 export function MarketingDashboard() {
-  const router = useRouter();
+  const _router = useRouter();
   const [activeTab, setActiveTab] = useState('campaigns');
   const [campaigns, setCampaigns] = useState<EmailCampaign[]>(MOCK_CAMPAIGNS);
-  const [templates, setTemplates] = useState<EmailTemplate[]>(MOCK_TEMPLATES);
+  const [templates, _setTemplates] = useState<EmailTemplate[]>(MOCK_TEMPLATES);
   const [isCreating, setIsCreating] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCampaign, setSelectedCampaign] = useState<EmailCampaign | null>(null);
+  const [_selectedCampaign, _setSelectedCampaign] = useState<EmailCampaign | null>(null);
   
   // New campaign form state
   const [newCampaign, setNewCampaign] = useState({
@@ -454,7 +451,7 @@ export function MarketingDashboard() {
                           </Button>
                         )}
                         <Dialog>
-                          <DialogTrigger onClick={() => setSelectedCampaign(campaign)}>
+                          <DialogTrigger onClick={() => _setSelectedCampaign(campaign)}>
                             <Button variant="ghost" size="sm">
                               <Eye className="h-4 w-4" />
                             </Button>

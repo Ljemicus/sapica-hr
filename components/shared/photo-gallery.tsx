@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { X, ChevronLeft, ChevronRight, Heart, Download, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart, Download, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';

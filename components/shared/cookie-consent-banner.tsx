@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cookie, X, ChevronDown, ChevronUp, Shield, BarChart3, Megaphone } from "lucide-react";
+import { Cookie, ChevronDown, ChevronUp, Shield, BarChart3, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useCookieConsent } from "@/contexts/cookie-consent-context";

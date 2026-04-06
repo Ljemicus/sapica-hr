@@ -4,7 +4,7 @@ import { dispatchAlert } from '@/lib/alerting';
 import { apiError } from '@/lib/api-errors';
 import { requireAdmin } from '@/lib/admin-guard';
 import { getVerificationById, updateVerificationReview, getAllVerifications } from '@/lib/db/provider-verifications';
-import { getDocumentsByVerification } from '@/lib/db/provider-documents';
+
 import { getProviderApplicationById, updateProviderApplicationStatus } from '@/lib/db/provider-applications';
 import { grantBadge, revokeBadge } from '@/lib/db/provider-badges';
 import { logAdminAction } from '@/lib/db/audit-logs';
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   try {
     const guard = await requireAdmin();
     if (!guard.ok) return guard.response;
-    const { user } = guard;
+    const { user: _user } = guard;
 
     const statusFilter = request.nextUrl.searchParams.get('status') as VerificationStatus | null;
     const verifications = await getAllVerifications(statusFilter || undefined);

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Plus, Search, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/shared/empty-state';
 import type { LostPet } from '@/lib/types';
 import { CITIES } from '@/lib/types';
@@ -19,7 +18,7 @@ export function LostPetsContent({ initialPets = [] }: LostPetsContentProps) {
   const isEn = language === 'en';
   const [search, setSearch] = useState('');
   const [cityFilter, setCityFilter] = useState('all');
-  const [view, setView] = useState<'grid' | 'map'>('grid');
+  const [_view, _setView] = useState<'grid' | 'map'>('grid');
 
   const filteredPets = initialPets.filter((pet) => {
     if (cityFilter !== 'all' && pet.city !== cityFilter) return false;

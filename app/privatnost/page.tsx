@@ -98,7 +98,7 @@ export default function PrivatnostPage() {
                 <p className="text-sm text-gray-600">
                   Ovi kolačići su obavezni za rad stranice i ne mogu se isključiti. Uključuju kolačiće 
                   za autentikaciju (Supabase sesija), sigurnost i osnovnu funkcionalnost. 
-                  Traju tijekom sesije ili do 30 dana za "zapamti me" funkciju.
+                  Traju tijekom sesije ili do 30 dana za &quot;zapamti me&quot; funkciju.
                 </p>
               </div>
               
@@ -130,7 +130,7 @@ export default function PrivatnostPage() {
             <div className="mt-6 p-4 bg-warm-orange/5 rounded-xl border border-warm-orange/10">
               <p className="text-sm text-gray-700">
                 <strong>Upravljanje kolačićima:</strong> Možete promijeniti svoje preference u bilo kojem 
-                trenutku klikom na gumb "Postavke kolačića" u podnožju stranice ili na link ispod.
+                trenutku klikom na gumb &quot;Postavke kolačića&quot; u podnožju stranice ili na link ispod.
               </p>
             </div>
           </section>

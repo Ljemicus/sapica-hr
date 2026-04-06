@@ -226,8 +226,8 @@ export function HomePageContent({
               <Link href="/registracija?role=sitter">
                 <Button
                   size="lg"
-                  variant="outline"
-                  className="border-2 border-white/30 text-white hover:bg-white/10 h-14 px-10 rounded-full text-base font-semibold backdrop-blur-sm"
+                  variant="ghost"
+                  className="border-2 border-white/30 text-white hover:bg-white/10 hover:text-white h-14 px-10 rounded-full text-base font-semibold backdrop-blur-sm"
                 >
                   {t.heroSecondaryCta}
                 </Button>
@@ -548,8 +548,8 @@ export function HomePageContent({
             <Link href="/registracija?role=sitter">
               <Button
                 size="lg"
-                variant="outline"
-                className="border-2 border-white/30 text-white hover:bg-white/10 h-14 px-10 rounded-full text-base font-semibold"
+                variant="ghost"
+                className="border-2 border-white/30 text-white hover:bg-white/10 hover:text-white h-14 px-10 rounded-full text-base font-semibold"
               >
                 {t.ctaSecondary}
               </Button>

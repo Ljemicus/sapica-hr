@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Calendar, CalendarCheck, HeartHandshake, PawPrint, Plus, Star, Bell } from 'lucide-react';
+import { ArrowRight, Calendar, CalendarCheck, HeartHandshake, PawPrint, Plus, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

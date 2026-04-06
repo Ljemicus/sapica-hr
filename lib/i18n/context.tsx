@@ -29,10 +29,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- explicit locale route should win over saved UI preference
       setLanguageState('en');
     } else if (stored && translations[stored]) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrating from localStorage on mount
+       
       setLanguageState(stored);
     } else if (routeLanguage && translations[routeLanguage]) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync initial UI language with server-rendered route locale
+       
       setLanguageState(routeLanguage);
     }
 

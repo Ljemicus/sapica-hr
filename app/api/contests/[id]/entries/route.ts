@@ -27,14 +27,14 @@ export async function GET(
       query = query.order('submitted_at', { ascending: false });
     }
 
-    const { data: entries, error } = await query;
+    const { data: entries, error: _error } = await query;
 
-    if (error) {
+    if (_error) {
       return NextResponse.json({ error: 'Failed to fetch entries' }, { status: 500 });
     }
 
     return NextResponse.json({ entries });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }
@@ -91,7 +91,7 @@ export async function POST(
     }
 
     return NextResponse.json({ entry }, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }

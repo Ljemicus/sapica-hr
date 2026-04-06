@@ -25,12 +25,7 @@ interface CookieConsentContextType {
 
 const CONSENT_KEY = "petpark-cookie-consent";
 
-const defaultConsent: CookieConsent = {
-  necessary: true,
-  analytics: false,
-  marketing: false,
-  timestamp: new Date().toISOString(),
-};
+
 
 const CookieConsentContext = createContext<CookieConsentContextType | undefined>(undefined);
 
@@ -47,14 +42,19 @@ export function CookieConsentProvider({ children }: { children: React.ReactNode 
       const stored = localStorage.getItem(CONSENT_KEY);
       if (stored) {
         const parsed = JSON.parse(stored) as CookieConsent;
-        setConsent(parsed);
+        // Use requestAnimationFrame to avoid setState during render
+        requestAnimationFrame(() => {
+          setConsent(parsed);
+          setIsLoaded(true);
+        });
+        return;
       } else {
-        setShowBanner(true);
+        requestAnimationFrame(() => setShowBanner(true));
       }
     } catch {
-      setShowBanner(true);
+      requestAnimationFrame(() => setShowBanner(true));
     }
-    setIsLoaded(true);
+    requestAnimationFrame(() => setIsLoaded(true));
   }, []);
 
   // Save consent to localStorage

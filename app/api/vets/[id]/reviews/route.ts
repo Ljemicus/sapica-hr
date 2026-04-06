@@ -4,6 +4,7 @@ import { getAuthUser } from '@/lib/auth';
 import { getVetReviews, createVetReview, getUserVetReview } from '@/lib/db/vet-reviews';
 import { vetReviewSchema } from '@/lib/validations';
 import { appLogger } from '@/lib/logger';
+import { VetServiceType } from '@/lib/types/vet-reviews';
 
 export async function GET(
   request: Request,
@@ -14,7 +15,7 @@ export async function GET(
   
   const limit = parseInt(searchParams.get('limit') || '10');
   const offset = parseInt(searchParams.get('offset') || '0');
-  const serviceType = searchParams.get('service_type') as any;
+  const serviceType = searchParams.get('service_type') as VetServiceType | undefined;
   const verifiedOnly = searchParams.get('verified_only') === 'true';
 
   const reviews = await getVetReviews(vetId, {

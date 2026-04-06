@@ -32,7 +32,7 @@ export function EmergencyVetContent({ userCity }: EmergencyVetContentProps) {
   const [clinics, setClinics] = useState<EmergencyVetClinic[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchCity, setSearchCity] = useState(userCity || '');
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [_userLocation, _setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
 
   // Fetch clinics
@@ -83,7 +83,7 @@ export function EmergencyVetContent({ userCity }: EmergencyVetContentProps) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        setUserLocation({ lat: latitude, lng: longitude });
+        _setUserLocation({ lat: latitude, lng: longitude });
         fetchNearbyClinics(latitude, longitude);
         setLocationLoading(false);
       },

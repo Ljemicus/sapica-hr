@@ -7,7 +7,7 @@ import { sendEmail } from '@/lib/email';
 import { lostPetSightingEmail } from '@/lib/email-templates';
 import { appLogger } from '@/lib/logger';
 import { rateLimit } from '@/lib/rate-limit';
-import { sendPushToMultiple, NotificationTemplates } from '@/lib/push-notifications';
+import { sendPushToMultiple } from '@/lib/push-notifications';
 import { getUserPushSubscriptions, canSendNotification } from '@/lib/db/notifications';
 
 function normalizeSightingText(value: string) {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { apiError } from '@/lib/api-errors';
-import { sendPushToMultiple, NotificationTemplates, type NotificationPayload } from '@/lib/push-notifications';
+import { sendPushToMultiple, type NotificationPayload } from '@/lib/push-notifications';
 import { appLogger } from '@/lib/logger';
 import { canSendNotification } from '@/lib/db/notifications';
 

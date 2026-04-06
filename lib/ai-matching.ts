@@ -101,9 +101,9 @@ function scoreLocation(
 
 // Score availability (0-100) - placeholder, actual check in DB
 function scoreAvailability(
-  sitter: SitterProfile,
-  startDate: string,
-  endDate: string
+  _sitter: SitterProfile,
+  _startDate: string,
+  _endDate: string
 ): number {
   // This is a placeholder - actual availability should be checked against bookings table
   // For now, assume available and let the DB query filter unavailable sitters

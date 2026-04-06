@@ -19,11 +19,22 @@ export async function POST(
     // Check if contest is in voting phase
     const { data: entry } = await supabase
       .from('contest_entries')
-      .select('contest_id, contests(status)')
+      .select('contest_id')
       .eq('id', id)
       .single();
 
-    if (!entry || !['active', 'voting'].includes(entry.contests?.status)) {
+    if (!entry) {
+      return NextResponse.json({ error: 'Entry not found' }, { status: 404 });
+    }
+
+    // Get contest status separately
+    const { data: contest } = await supabase
+      .from('photo_contests')
+      .select('status')
+      .eq('id', entry.contest_id)
+      .single();
+
+    if (!contest || !['active', 'voting'].includes(contest.status)) {
       return NextResponse.json({ error: 'Voting not allowed' }, { status: 400 });
     }
 
@@ -62,7 +73,7 @@ export async function POST(
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }

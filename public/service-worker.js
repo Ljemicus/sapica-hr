@@ -63,7 +63,7 @@ self.addEventListener('push', (event) => {
     event.waitUntil(
       self.registration.showNotification(notification.title, options)
     );
-  } catch (error) {
+  } catch {
     // Fallback for plain text notifications
     event.waitUntil(
       self.registration.showNotification('PetPark', {

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { BadgeCheck, CalendarDays, CheckCircle2, Heart, MapPin, PawPrint, ShieldCheck, Wallet } from 'lucide-react';
+import { BadgeCheck, CalendarDays, CheckCircle2, Heart, MapPin, ShieldCheck, Wallet } from 'lucide-react';
 import { LandingPrimaryCTA, LandingSecondaryCTA } from './cta-buttons';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

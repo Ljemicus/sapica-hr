@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import Image from 'next/image';
 import { Send, Image as ImageIcon, Smile, X, Check, CheckCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -104,6 +105,7 @@ export function LiveChat({ partner, bookingId, onClose, minimized = false, onMin
     return () => {
       channel.unsubscribe();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, partner.id, supabase]);
 
   // Scroll to bottom on new messages
@@ -355,9 +357,11 @@ export function LiveChat({ partner, bookingId, onClose, minimized = false, onMin
                       }`}
                     >
                       {message.image_url && (
-                        <img
+                        <Image
                           src={message.image_url}
                           alt="Slika"
+                          width={300}
+                          height={200}
                           className="rounded-lg mb-2 max-w-full cursor-pointer hover:opacity-90"
                           onClick={() => window.open(message.image_url!, '_blank')}
                         />

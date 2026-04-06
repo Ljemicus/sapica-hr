@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { Search, MessageCircle, Heart, Pin, Flame, Plus, TrendingUp, Clock, AlertTriangle, ArrowRight, Eye } from 'lucide-react';
+import { Search, MessageCircle, Heart, Pin, Flame, Plus, TrendingUp, Clock, AlertTriangle, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -269,7 +270,7 @@ export function ForumContent({ initialTopics, initialTrending }: ForumContentPro
                   {/* Cover image or category accent strip */}
                   {topic.cover_image_url ? (
                     <div className="relative h-36 md:h-40 overflow-hidden">
-                      <img src={topic.cover_image_url} alt="" className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+                      <Image src={topic.cover_image_url} alt="" fill className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                       <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${cover.gradient}`} />
                     </div>

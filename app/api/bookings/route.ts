@@ -168,7 +168,7 @@ export async function POST(request: Request) {
     const canSendSMS = await canSendNotification(sitter_id, 'sms', 'bookings');
     if (canSendSMS && sitterProfile.user?.phone) {
       const smsMessage = `PetPark: Novi upit za cuvanje od ${user.name || 'Korisnik'} za ${pet?.name || 'ljubimca'}. Provjerite u aplikaciji.`;
-      sendSMS({ to: sitterProfile.user.phone, message: smsMessage }).catch(err => {
+      sendSMS({ to: sitterProfile.user.phone, body: smsMessage }).catch(err => {
         log.error('Failed to send SMS', { error: String(err) });
       });
     }

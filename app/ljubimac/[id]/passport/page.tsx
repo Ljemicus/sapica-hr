@@ -14,9 +14,7 @@ import {
   Plus,
   Trash2,
   Calendar,
-  Clock,
-  CheckCircle2,
-  AlertCircle
+  Clock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,7 +27,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { useUser } from '@/hooks/use-user';
 import { toast } from 'sonner';
-import { format, parseISO, isPast, isFuture, addYears } from 'date-fns';
+import { format, parseISO, isPast, isFuture } from 'date-fns';
 import { hr } from 'date-fns/locale';
 import type { PetPassport, Pet, Vaccination, Allergy, Medication, VetInfo } from '@/lib/types';
 
@@ -65,6 +63,7 @@ export default function PetPassportPage() {
   useEffect(() => {
     if (!user || !petId) return;
     loadData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, petId]);
 
   const loadData = async () => {

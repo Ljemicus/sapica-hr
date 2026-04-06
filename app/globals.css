@@ -1008,3 +1008,8 @@ textarea:focus {
     margin: 10mm;
   }
 }
+
+/* Safe area padding for mobile footer */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}

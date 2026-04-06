@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { rankSitters, calculateMatchScore, getRecommendationText, type MatchingCriteria } from '@/lib/ai-matching';
+import { rankSitters, getRecommendationText, type MatchingCriteria } from '@/lib/ai-matching';
 import { getAuthUser } from '@/lib/auth';
-import { ServiceType } from '@/lib/types';
+import { ServiceType, SitterProfile, User } from '@/lib/types';
 
 export async function POST(request: NextRequest) {
   try {
@@ -121,9 +121,15 @@ export async function POST(request: NextRequest) {
       budgetMax,
     };
 
+    // Map sitters to flatten user array from Supabase relation
+    const mappedSitters = sitters.map(s => ({
+      ...s,
+      user: Array.isArray(s.user) ? s.user[0] : s.user,
+    })) as (SitterProfile & { user: User })[];
+
     // Calculate match scores
     const matches = rankSitters(
-      sitters as any,
+      mappedSitters,
       pet,
       criteria,
       ownerLat,
@@ -145,7 +151,7 @@ export async function POST(request: NextRequest) {
         superhost: match.sitter.superhost,
         instantBooking: match.sitter.instant_booking,
         city: match.sitter.city,
-        price: match.sitter.prices[serviceType],
+        price: match.sitter.prices[serviceType as ServiceType],
         services: match.sitter.services,
       },
       matchScore: match.totalScore,
@@ -210,18 +216,21 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      sitters: sitters?.map(s => ({
-        id: s.user_id,
-        name: s.user?.name,
-        avatar: s.user?.avatar_url,
-        rating: s.rating_avg,
-        reviewCount: s.review_count,
-        verified: s.verified,
-        superhost: s.superhost,
-        instantBooking: s.instant_booking,
-        price: s.prices[service],
-        city: s.city,
-      })) || [],
+      sitters: sitters?.map((s) => {
+        const user = Array.isArray(s.user) ? s.user[0] : s.user;
+        return {
+          id: s.user_id,
+          name: user?.name,
+          avatar: user?.avatar_url,
+          rating: s.rating_avg,
+          reviewCount: s.review_count,
+          verified: s.verified,
+          superhost: s.superhost,
+          instantBooking: s.instant_booking,
+          price: s.prices?.[service],
+          city: s.city,
+        };
+      }) || [],
     });
 
   } catch (error) {

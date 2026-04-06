@@ -2,13 +2,13 @@
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, BadgeCheck, HeartHandshake, MapPin, RefreshCw, Search, Shield, X, Dog, Cat, Filter } from 'lucide-react';
+import { ArrowRight, BadgeCheck, HeartHandshake, MapPin, RefreshCw, Search, Shield, X, Filter } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { EmptyState } from '@/components/shared/empty-state';
-import { CITIES, getAppealProgressPct } from '@/lib/types';
+
 import type { RescueOrganization, RescueAppeal } from '@/lib/types';
 
 interface RescueOrganizationsContentProps {
@@ -19,7 +19,7 @@ interface RescueOrganizationsContentProps {
 type SortOption = 'newest' | 'alphabetical' | 'alphabetical-desc';
 type SpeciesFilter = 'all' | 'dog' | 'cat' | 'other';
 
-const SPECIES_LABELS: Record<SpeciesFilter, string> = {
+const _SPECIES_LABELS: Record<SpeciesFilter, string> = {
   all: 'Sve vrste',
   dog: 'Psi',
   cat: 'Mačke',
@@ -37,7 +37,7 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
   const [cityFilter, setCityFilter] = useState<string>('all');
   const [speciesFilter, setSpeciesFilter] = useState<SpeciesFilter>('all');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [_isRefreshing, _setIsRefreshing] = useState(false);
   const [pullStartY, setPullStartY] = useState<number | null>(null);
   const [pullDistance, setPullDistance] = useState(0);
 
@@ -157,7 +157,7 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
 
   const handleTouchEnd = useCallback(() => {
     if (pullDistance > 80) {
-      setIsRefreshing(true);
+      _setIsRefreshing(true);
       window.location.reload();
     }
     setPullStartY(null);
@@ -169,7 +169,7 @@ export function RescueOrganizationsContent({ organizations, activeAppeals }: Res
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'r') {
         e.preventDefault();
-        setIsRefreshing(true);
+        _setIsRefreshing(true);
         window.location.reload();
       }
     };

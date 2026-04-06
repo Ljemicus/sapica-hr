@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Trophy, Camera, Calendar, Users, Heart, Loader2 } from 'lucide-react';
+import Image from 'next/image';
+import { Trophy, Camera, Calendar, Users, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/lib/i18n/context';
 import Link from 'next/link';
@@ -84,10 +84,11 @@ export function PhotoContestsList() {
           <Card className="community-section-card overflow-hidden hover:shadow-eve transition-all cursor-pointer h-full">
             <div className="aspect-video bg-gradient-to-br from-orange-100 to-coral-100 relative">
               {contest.cover_image_url ? (
-                <img 
+                <Image 
                   src={contest.cover_image_url} 
                   alt={contest.title}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               ) : (
                 <div className="flex items-center justify-center h-full">

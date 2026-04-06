@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { MapPin, Phone, Mail, Globe, Building2, Clock, Star, MessageSquare, ThumbsUp, Flag } from 'lucide-react';
+import Image from 'next/image';
+import { MapPin, Phone, Mail, Globe, Building2, Clock, MessageSquare, ThumbsUp, Flag } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { StarRating, StarRatingDisplay } from '@/components/shared/star-rating';
+import { StarRating } from '@/components/shared/star-rating';
 import { useLanguage } from '@/lib/i18n/context';
 import type { Veterinarian } from '@/lib/db/veterinarian-helpers';
 import type { VetReview, VetReviewStats, VetServiceType } from '@/lib/types/vet-reviews';
@@ -265,10 +266,12 @@ export function VetProfileContent({ vet, initialReviews, initialStats }: VetProf
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                               {review.user?.avatar_url ? (
-                                <img 
+                                <Image 
                                   src={review.user.avatar_url} 
                                   alt={review.user.name}
-                                  className="w-10 h-10 rounded-full object-cover"
+                                  width={40}
+                                  height={40}
+                                  className="rounded-full object-cover"
                                 />
                               ) : (
                                 <span className="text-sm font-medium">

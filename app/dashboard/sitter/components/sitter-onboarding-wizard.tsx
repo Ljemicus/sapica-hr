@@ -18,11 +18,9 @@ import {
   Clock,
   Star,
   BadgeCheck,
-  Camera,
   FileCheck,
-  X,
-  Save,
   SkipForward,
+  Camera,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -107,7 +105,12 @@ export function SitterOnboardingWizard() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        setData({ ...defaultData, ...parsed });
+        // Use requestAnimationFrame to avoid setState during render
+        requestAnimationFrame(() => {
+          setData({ ...defaultData, ...parsed });
+          setIsHydrated(true);
+        });
+        return;
       } catch {
         // Invalid JSON, use defaults
       }
@@ -607,7 +610,7 @@ function VerificationStep({ onNext, onBack }: { onNext: () => void; onBack: () =
               <ul className="mt-2 space-y-1 text-sm text-amber-800">
                 <li>• Verificirani sitteri dobivaju <strong>do 3x više rezervacija</strong></li>
                 <li>• Vlasnici se osjećaju sigurnije</li>
-                <li>• Tvoj profil dobiva "Verificirani" značku</li>
+                <li>• Tvoj profil dobiva &quot;Verificirani&quot; značku</li>
               </ul>
             </div>
           </div>

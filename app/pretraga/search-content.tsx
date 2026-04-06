@@ -6,15 +6,14 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import {
   Filter, MapIcon, Grid, LayoutList, SlidersHorizontal, X, MapPin, Star,
-  Clock, Shield, Award, ArrowRight, PawPrint, Search, ChevronRight,
+  Clock, Shield, Award, ArrowRight, PawPrint, ChevronRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/shared/empty-state';

@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
     // Email notification
     if (sitterUser?.email) {
       const dates = `${start.toLocaleDateString('hr-HR')} – ${end.toLocaleDateString('hr-HR')}`;
-      const serviceName = SERVICE_LABELS[service_type as ServiceType] || service_type;
+      const _serviceName = SERVICE_LABELS[service_type as ServiceType] || service_type;
       
       sendEmail({
         to: sitterUser.email,
@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
     const canSendSMS = await canSendNotification(sitter_id, 'sms', 'bookings');
     if (canSendSMS && sitterUser?.phone) {
       const smsMessage = `PetPark: Nova potvrdena rezervacija od ${user.name || 'Korisnik'} za ${pet.name || 'ljubimca'}. Provjerite u aplikaciji.`;
-      sendSMS({ to: sitterUser.phone, message: smsMessage }).catch(err => {
+      sendSMS({ to: sitterUser.phone, body: smsMessage }).catch(err => {
         appLogger.error('instant-booking', 'SMS failed', { error: String(err) });
       });
     }

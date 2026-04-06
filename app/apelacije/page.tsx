@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, BadgeCheck, CalendarDays, HeartHandshake, MapPin, Shield, Target } from 'lucide-react';
+import { ArrowRight, BadgeCheck, HeartHandshake, MapPin, Shield, Target } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+
 import { Button } from '@/components/ui/button';
 import { getActiveRescueAppeals } from '@/lib/db';
 import { APPEAL_STATUS_LABELS, getAppealProgressPct } from '@/lib/types';

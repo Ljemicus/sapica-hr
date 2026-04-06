@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
@@ -136,10 +137,11 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
         {/* Background — photo or warm editorial gradient */}
         {heroPhoto ? (
           <>
-            <img
+            <Image
               src={heroPhoto}
-              alt={profile.user?.name}
-              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
+              alt={profile.user?.name || 'Sitter profile'}
+              fill
+              className="object-cover transition-opacity duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
@@ -256,7 +258,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                       : 'border-white/30 opacity-70 hover:opacity-100 hover:border-white/60'
                   }`}
                 >
-                  <img src={photo} alt="" className="h-full w-full object-cover" />
+                  <Image src={photo} alt="" fill className="object-cover" />
                 </button>
               ))}
               {galleryPhotos.length > 5 && (
@@ -357,10 +359,11 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                       }`}
                       onClick={() => setActivePhoto(i)}
                     >
-                      <img
+                      <Image
                         src={photo}
                         alt=""
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                     </div>

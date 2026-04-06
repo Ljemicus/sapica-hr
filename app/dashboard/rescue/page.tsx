@@ -2,7 +2,7 @@ import { unstable_noStore as noStore, revalidatePath } from 'next/cache';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { AlertCircle, ArrowRight, BadgeCheck, ClipboardCheck, ClipboardList, HeartHandshake, LayoutDashboard, Link2, Plus, ShieldCheck, Sparkles } from 'lucide-react';
+import { AlertCircle, ArrowRight, BadgeCheck, ClipboardList, HeartHandshake, LayoutDashboard, Link2, Plus, ShieldCheck, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

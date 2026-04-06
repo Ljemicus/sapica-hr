@@ -81,12 +81,15 @@ export async function POST(request: Request) {
   }
 
   try {
-    const amountInCents = Math.round(booking.total_price * 100);
+    // Sellerova cijena (ono što ide selleru)
+    const sellerPriceInCents = Math.round(booking.total_price * 100);
+    // Customer cijena = seller cijena + 10%
+    const customerPriceInCents = Math.round(sellerPriceInCents * 1.10);
     const serviceName = SERVICE_LABELS[booking.service_type as ServiceType] || 'Usluga';
 
     const { url, sessionId } = await createCheckoutSession(
       bookingId,
-      amountInCents,
+      sellerPriceInCents, // šaljemo seller cijenu, funkcija računa customer cijenu
       booking.currency || 'EUR',
       sitterProfile.stripe_account_id,
       `PetPark — ${serviceName}`,
@@ -99,7 +102,8 @@ export async function POST(request: Request) {
       .update({
         stripe_session_id: sessionId,
         payment_status: 'pending',
-        platform_fee: calculatePlatformFee(amountInCents) / 100,
+        platform_fee: (customerPriceInCents - sellerPriceInCents) / 100, // 10% razlika
+        customer_total: customerPriceInCents / 100, // koliko je korisnik zapravo platio
       })
       .eq('id', bookingId);
 

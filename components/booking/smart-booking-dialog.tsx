@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sparkles, ChevronRight, MapPin, Calendar, Dog } from 'lucide-react';
+import { Sparkles, ChevronRight, Calendar, Dog } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -124,7 +124,7 @@ export function SmartBookingDialog({ open, onOpenChange, pets }: SmartBookingDia
                 <Dog className="h-4 w-4 text-slate-400" />
                 {copy.petLabel}
               </Label>
-              <Select value={selectedPet} onValueChange={setSelectedPet}>
+              <Select value={selectedPet} onValueChange={(v) => setSelectedPet(v || '')}>
                 <SelectTrigger>
                   <SelectValue placeholder={isEn ? 'Select pet' : 'Odaberi ljubimca'} />
                 </SelectTrigger>

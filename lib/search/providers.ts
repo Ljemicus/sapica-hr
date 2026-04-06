@@ -1,7 +1,7 @@
 import { getGroomers, getSitters, getTrainers } from '@/lib/db';
 import type { ServiceType } from '@/lib/types';
 import type { UnifiedProvider, ProviderCategory } from '@/app/pretraga/types';
-import { getTrustEligibilityByUserId, getTrustEligibilityForGroomer, getTrustEligibilityForTrainer } from '@/lib/trust/bridge';
+import { getTrustEligibilityForGroomer, getTrustEligibilityForTrainer } from '@/lib/trust/bridge';
 
 export type ProviderSort = 'rating' | 'reviews' | 'price';
 

@@ -1,16 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { Bell, X, Image as ImageIcon, MessageSquare } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Bell, Image as ImageIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
 import { usePhotoNotifications } from '@/hooks/use-photo-notifications';
 
 interface PhotoNotificationBellProps {
@@ -66,10 +65,12 @@ export function PhotoNotificationBell({ userId }: PhotoNotificationBellProps) {
                   href={`/azuriranja/${notification.bookingId}`}
                   className="flex items-start gap-3 px-3 py-3 cursor-pointer w-full"
                 >
-                  <img
+                  <Image
                     src={notification.photoUrl}
                     alt="Photo"
-                    className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                    width={48}
+                    height={48}
+                    className="rounded-lg object-cover flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">

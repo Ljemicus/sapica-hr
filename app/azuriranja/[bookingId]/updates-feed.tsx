@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Heart, Filter, ArrowLeft, Camera, Send, Image, Video, FileText, Calendar, Eye, Grid3X3 } from 'lucide-react';
+import { Heart, Filter, ArrowLeft, Camera, Send, Video, FileText, Calendar, Eye, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -265,10 +266,11 @@ export function UpdatesFeed({ updates, bookingId, sitterName, petName, currentDa
                           {/* Photo display */}
                           {hasPhoto ? (
                             <div className="relative aspect-video rounded-xl overflow-hidden mb-3 bg-gray-100">
-                              <img
+                              <Image
                                 src={update.photo_url!}
                                 alt={update.caption}
-                                className="w-full h-full object-cover"
+                                fill
+                                className="object-cover"
                               />
                               {update.type === 'video' && (
                                 <div className="absolute inset-0 flex items-center justify-center">

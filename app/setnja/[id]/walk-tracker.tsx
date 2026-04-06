@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
-import { Clock, MapPin, Gauge, MessageCircle, CheckCircle2, ArrowLeft, Eye, Navigation } from 'lucide-react';
+import { Clock, MapPin, Gauge, MessageCircle, CheckCircle2, ArrowLeft, Navigation, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -48,6 +48,8 @@ export function WalkTracker({ walk: initialWalk, sitterName, petName, petSpecies
   const supabase = createClient();
 
   useEffect(() => {
+    // Intentional hydration pattern - suppressing warning
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -81,7 +83,10 @@ export function WalkTracker({ walk: initialWalk, sitterName, petName, petSpecies
   useEffect(() => {
     if (walk.status !== 'u_tijeku') {
       if (walk.end_time) {
-        setElapsed(Math.round((new Date(walk.end_time).getTime() - new Date(walk.start_time).getTime()) / 1000));
+        // Calculate final elapsed time for completed walks
+        const finalElapsed = Math.round((new Date(walk.end_time).getTime() - new Date(walk.start_time).getTime()) / 1000);
+        // Use timeout to avoid synchronous setState during render
+        setTimeout(() => setElapsed(finalElapsed), 0);
       }
       return;
     }
@@ -111,7 +116,7 @@ export function WalkTracker({ walk: initialWalk, sitterName, petName, petSpecies
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  const durationMinutes = Math.round(elapsed / 60);
+  const _durationMinutes = Math.round(elapsed / 60);
   const avgSpeed = walk.distance_km > 0 && elapsed > 0
     ? ((walk.distance_km / elapsed) * 3600).toFixed(1)
     : '0.0';

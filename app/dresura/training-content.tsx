@@ -254,7 +254,7 @@ export function TrainingContent({ trainers, initialParams }: TrainingContentProp
   );
 }
 
-function TrainerCard({ trainer, index }: { trainer: Trainer; index: number }) {
+function TrainerCard({ trainer, index: _index }: { trainer: Trainer; index: number }) {
   const [expanded, setExpanded] = useState(false);
   const [programs, setPrograms] = useState<TrainingProgram[]>([]);
   const gradient = gradients[trainer.name.charCodeAt(0) % gradients.length];

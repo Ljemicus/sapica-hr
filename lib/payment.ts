@@ -47,14 +47,17 @@ export interface SitterData {
 
 export async function createCheckoutSession(
   bookingId: string,
-  amount: number, // in cents
+  sellerPrice: number, // in cents — sellerova cijena (npr. 100 EUR = 10000)
   currency: string,
   sitterStripeAccountId: string,
   serviceName?: string,
   origin?: string
 ): Promise<CheckoutSessionResult> {
   const stripe = getStripe();
-  const platformFee = Math.round(amount * PLATFORMA_FEE);
+  
+  // Surcharge model: korisnik plaća 110%, seller dobije 100%
+  const customerPrice = Math.round(sellerPrice * (1 + PLATFORMA_FEE)); // 110% od seller cijene
+  const sellerAmount = sellerPrice; // 100% ide selleru
 
   const baseUrl = origin || process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -68,19 +71,23 @@ export async function createCheckoutSession(
             name: serviceName || 'PetPark — Usluga za ljubimce',
             description: `Rezervacija #${bookingId.slice(0, 8)}`,
           },
-          unit_amount: amount,
+          unit_amount: customerPrice, // korisnik plaća 110%
         },
         quantity: 1,
       },
     ],
     payment_intent_data: {
-      application_fee_amount: platformFee,
+      // BEZ application_fee — cijela razlika ostaje na platform accountu
       transfer_data: {
         destination: sitterStripeAccountId,
+        amount: sellerAmount, // seller dobije 100%
       },
       metadata: {
         bookingId,
         sitterStripeAccountId,
+        sellerPrice: sellerPrice.toString(),
+        customerPrice: customerPrice.toString(),
+        platformFee: (customerPrice - sellerAmount).toString(),
       },
     },
     metadata: {

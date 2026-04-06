@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { apiError } from '@/lib/api-errors';
-import { scheduleWelcomeSequence, sendBookingConfirmationEmail, sendReviewRequestEmail } from '@/lib/email-sequences';
+import { scheduleWelcomeSequence } from '@/lib/email-sequences';
 import type { User } from '@/lib/types';
 
 type EmailRole = 'owner' | 'sitter' | 'groomer' | 'trainer' | 'breeder' | 'rescue';

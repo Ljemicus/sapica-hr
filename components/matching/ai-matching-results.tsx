@@ -58,6 +58,7 @@ export function AIMatchingResults({
 
   useEffect(() => {
     fetchMatches();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [petId, serviceType, startDate, endDate]);
 
   const fetchMatches = async () => {
@@ -82,7 +83,7 @@ export function AIMatchingResults({
 
       const data = await res.json();
       setMatches(data.matches || []);
-    } catch (err) {
+    } catch {
       setError(isEn ? 'Could not find matches' : 'Nije moguće pronaći podudaranja');
     } finally {
       setLoading(false);

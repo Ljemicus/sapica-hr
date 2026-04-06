@@ -1,18 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Shield, CheckCircle, XCircle, RotateCcw, Eye, Clock, FileText, User, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import {
   VERIFICATION_STATUS_LABELS,
   VERIFICATION_STATUS_COLORS,
-  type VerificationStatus,
   type ProviderVerification,
 } from '@/lib/types/trust';
 
@@ -59,6 +59,7 @@ export function AdminVerificationQueue() {
 
   useEffect(() => {
     fetchVerifications();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
 
   const fetchDocuments = async (verificationId: string) => {
@@ -231,10 +232,12 @@ export function AdminVerificationQueue() {
                                     <FileText className="h-3 w-3" /> Otvori PDF
                                   </a>
                                 ) : (
-                                  <img
+                                  <Image
                                     src={doc.signed_url}
                                     alt={DOCUMENT_TYPE_LABELS[doc.document_type]}
-                                    className="w-full h-40 object-cover rounded border"
+                                    width={200}
+                                    height={160}
+                                    className="object-cover rounded border"
                                   />
                                 )
                               ) : (
