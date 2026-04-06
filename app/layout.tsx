@@ -5,6 +5,9 @@ import { Inter, Nunito } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/shared/navbar';
 import { Footer } from '@/components/shared/footer';
+import { PageTransition } from '@/components/providers/page-transition';
+import { PerformanceMonitor } from '@/components/providers/performance-monitor';
+import { ErrorBoundary } from '@/components/providers/error-boundary';
 import { BottomNav } from '@/components/shared/bottom-nav';
 import { AuthProvider } from '@/contexts/auth-context';
 import { CartProvider } from '@/lib/cart-context';
@@ -133,7 +136,12 @@ export default async function RootLayout({
               <LanguageProvider>
                 <SkipToContentLink />
                 <Navbar />
-                <main id="main-content" className="flex-1">{children}</main>
+                <main id="main-content" className="flex-1">
+                  <ErrorBoundary>
+                    <PageTransition>{children}</PageTransition>
+                  </ErrorBoundary>
+                </main>
+                <PerformanceMonitor />
                 <div className="pb-20 md:pb-0">
                   <Footer />
                 </div>

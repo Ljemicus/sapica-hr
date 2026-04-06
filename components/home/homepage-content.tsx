@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { ArrowRight, Star, MapPin, ChevronRight, Shield, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/lib/i18n';
+import { HeroSection } from './hero-section';
+import { AnimatedServiceCard } from './animated-service-card';
 
 /* ─────────────────────────────────────────────
    Types
@@ -182,67 +184,10 @@ export function HomePageContent({
 
   return (
     <div className="concept-zero">
-
       {/* ════════════════════════════════════════════
-          1. CINEMATIC HERO
+          1. NEW ANIMATED HERO SECTION
           ════════════════════════════════════════════ */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden" aria-label="Hero">
-        {/* Full-bleed background image */}
-        <div className="absolute inset-0">
-          <Image
-            src="/images/services/07-hero-puppy.jpg"
-            alt=""
-            fill
-            priority
-            fetchPriority="high"
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
-        </div>
-
-        <div className="container mx-auto px-6 md:px-10 lg:px-16 relative z-10 py-32 md:py-40">
-          <div className="max-w-2xl">
-            <p className="text-sm uppercase tracking-[0.25em] text-white/60 mb-6 font-semibold">
-              {t.heroKicker}
-            </p>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.05] mb-8 font-[var(--font-heading)] whitespace-pre-line">
-              {t.heroHeadline}
-            </h1>
-            <p className="text-lg md:text-xl text-white/75 leading-relaxed max-w-lg mb-10">
-              {t.heroSub}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/pretraga">
-                <Button
-                  size="lg"
-                  className="cz-btn-primary bg-white text-foreground hover:bg-white/90 h-14 px-10 rounded-full text-base font-bold shadow-2xl shadow-black/20"
-                >
-                  {t.heroCta}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="/registracija?role=sitter">
-                <Button
-                  size="lg"
-                  variant="ghost"
-                  className="border-2 border-white/30 text-white hover:bg-white/10 hover:text-white h-14 px-10 rounded-full text-base font-semibold backdrop-blur-sm"
-                >
-                  {t.heroSecondaryCta}
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Scroll hint */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-          <div className="w-6 h-10 rounded-full border-2 border-white/30 flex items-start justify-center p-1.5">
-            <div className="w-1.5 h-3 bg-white/60 rounded-full animate-bounce-subtle" />
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* ════════════════════════════════════════════
           2. BRAND PHILOSOPHY
@@ -318,34 +263,15 @@ export function HomePageContent({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {services.map((svc, i) => (
-              <Link key={svc.href} href={svc.href} className="group">
-                <article className="relative rounded-3xl overflow-hidden cz-service-card">
-                  {/* Image */}
-                  <div className={`relative ${i === 0 ? 'aspect-[3/4]' : 'aspect-[3/4]'} overflow-hidden`}>
-                    <Image
-                      src={svc.image}
-                      alt={svc.title}
-                      fill
-                      sizes="(min-width: 768px) 33vw, 100vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  </div>
-                  {/* Content overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                    <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-3 font-[var(--font-heading)]">
-                      {svc.title}
-                    </h3>
-                    <p className="text-white/75 text-sm md:text-base leading-relaxed mb-4 max-w-xs">
-                      {svc.body}
-                    </p>
-                    <span className="inline-flex items-center text-sm font-semibold text-white/90 group-hover:text-white transition-colors">
-                      {t.svcCta}
-                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                  </div>
-                </article>
-              </Link>
+              <AnimatedServiceCard
+                key={svc.href}
+                href={svc.href}
+                image={svc.image}
+                title={svc.title}
+                body={svc.body}
+                cta={t.svcCta}
+                index={i}
+              />
             ))}
           </div>
         </div>

@@ -18,11 +18,17 @@ export type TranslationKey =
   | 'nav.grooming'
   | 'nav.training'
   | 'nav.veterinarians'
+  | 'nav.vets'
+  | 'nav.find_sitter'
+  | 'nav.rescue'
+  | 'nav.search'
+  | 'nav.notifications'
   | 'nav.gps_tracking'
   | 'nav.photo_updates'
   | 'nav.health_card'
   // Navbar user menu
   | 'nav.dashboard'
+  | 'nav.profile'
   | 'nav.messages'
   | 'nav.favorites'
   | 'nav.my_pets'
@@ -65,7 +71,20 @@ export type TranslationKey =
   | 'footer.about'
   | 'footer.rights'
   | 'footer.privacy'
-  | 'footer.terms';
+  | 'footer.terms'
+  // Footer newsletter
+  | 'footer.newsletter'
+  | 'footer.newsletter_desc'
+  | 'footer.email_placeholder'
+  | 'footer.newsletter_submit'
+  | 'footer.newsletter_loading'
+  | 'footer.newsletter_sent'
+  | 'footer.newsletter_success'
+  | 'footer.newsletter_privacy'
+  // Auth
+  | 'auth.sign_in'
+  | 'auth.sign_up'
+  | 'auth.sign_out';
 
 export type Language = 'hr' | 'en';
 

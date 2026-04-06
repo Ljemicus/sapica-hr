@@ -1013,3 +1013,17 @@ textarea:focus {
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 20px);
 }
+
+/* Shimmer animation for loading states */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
+}

@@ -161,7 +161,7 @@ export default function PostaniSitterPage() {
                 <div className="space-y-4 text-sm md:text-base">
                   <p>✅ Za ljude koji vole životinje i žele dodatnu zaradu</p>
                   <p>✅ Za studente, freelancere i zaposlene koji žele fleksibilnost</p>
-                  <p>✅ Za one koji već čuvaju ljubimce "usput", ali to žele raditi ozbiljnije</p>
+                  <p>✅ Za one koji već čuvaju ljubimce &quot;usput&quot;, ali to žele raditi ozbiljnije</p>
                   <p>❌ Nije za ekipu koja želi brzu lovu bez odgovornosti</p>
                 </div>
               </CardContent>

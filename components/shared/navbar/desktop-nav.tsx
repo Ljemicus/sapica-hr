@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ChevronDown, Shield } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,11 +59,19 @@ export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; use
 
       {desktopLinks.slice(5, 7).map((item) => {
         const Icon = item.icon;
+        const isLostPets = item.href.includes('/izgubljeni');
         return (
-          <Link key={item.href} href={item.href} className={item.className || ''}>
+          <Link 
+            key={item.href} 
+            href={item.href} 
+            className={cn(
+              "text-sm font-medium transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent",
+              item.className || 'text-muted-foreground hover:text-foreground'
+            )}
+          >
             {Icon ? <Icon className="h-4 w-4" /> : null}
             {item.label}
-            {item.href === '/izgubljeni' ? <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" /> : null}
+            {isLostPets ? <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" /> : null}
           </Link>
         );
       })}

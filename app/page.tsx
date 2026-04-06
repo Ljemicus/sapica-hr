@@ -20,7 +20,9 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://petpark.hr' },
 };
 
-const NewsletterSignup = dynamic(() => import('@/components/shared/newsletter-signup').then((mod) => mod.NewsletterSignup));
+const AnimatedFooter = dynamic(() => import('@/components/home/animated-footer').then((mod) => mod.AnimatedFooter), {
+  loading: () => <div className="h-64 bg-muted animate-pulse" />,
+});
 
 const homepageServices = [
   { name: 'Čuvanje ljubimaca', url: 'https://petpark.hr/pretraga', description: 'Pronađite pouzdane sittere u vašem gradu' },
@@ -66,7 +68,7 @@ export default async function HomePage() {
   return (
     <>
       <ItemListJsonLd items={homepageServices} />
-      <HomePageContent featuredSitters={featuredSitters} cities={cities} newsletterSlot={<NewsletterSignup />} />
+      <HomePageContent featuredSitters={featuredSitters} cities={cities} newsletterSlot={<AnimatedFooter />} />
     </>
   );
 }

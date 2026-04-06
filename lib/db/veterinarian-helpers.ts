@@ -26,6 +26,8 @@ export interface Veterinarian {
   emergency_source_note: string;
   rating_avg?: number;
   review_count?: number;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export function getVeterinarianEmergencyLabel(mode: EmergencyMode | null | undefined) {

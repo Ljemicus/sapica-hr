@@ -1,10 +1,15 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { MapPin, Mail } from 'lucide-react';
+import { MapPin, Mail, ChevronUp, Check, Loader2, Send } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/lib/i18n';
 import { CookieSettingsButton } from '@/components/shared/cookie-consent-banner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
 const NewsletterSignup = dynamic(() => import('@/components/shared/newsletter-signup').then((mod) => mod.NewsletterSignup));
 
@@ -45,8 +50,114 @@ function TwitterIcon({ className }: { className?: string }) {
   );
 }
 
+function FooterNewsletter() {
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const { t } = useLanguage();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !email.includes('@')) return;
+
+    setIsLoading(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    setIsLoading(false);
+    setIsSuccess(true);
+    toast.success(t('footer.newsletter_success') || 'Uspješno ste prijavljeni na newsletter!');
+    setEmail('');
+    
+    // Reset success state after 3 seconds
+    setTimeout(() => setIsSuccess(false), 3000);
+  };
+
+  return (
+    <div className="mb-10">
+      <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+        {t('footer.newsletter') || 'Newsletter'}
+      </h3>
+      <p className="text-sm text-gray-400 mb-4">
+        {t('footer.newsletter_desc') || 'Primajte savjete za brigu o ljubimcima i posebne ponude.'}
+      </p>
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+        <Input
+          type="email"
+          placeholder={t('footer.email_placeholder') || "Vaša email adresa"}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          disabled={isLoading || isSuccess}
+          className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 h-11 rounded-xl flex-1 focus:ring-2 focus:ring-warm-orange focus:border-transparent"
+        />
+        <Button
+          type="submit"
+          disabled={isLoading || isSuccess || !email}
+          className="relative h-11 px-6 rounded-xl bg-gradient-to-r from-warm-orange to-amber-500 hover:from-warm-orange/90 hover:to-amber-500/90 text-white font-semibold shadow-lg shadow-orange-500/20 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/30"
+        >
+          <AnimatePresence mode="wait">
+            {isLoading ? (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="flex items-center gap-2"
+              >
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>{t('footer.newsletter_loading') || 'Slanje...'}</span>
+              </motion.div>
+            ) : isSuccess ? (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="flex items-center gap-2"
+              >
+                <Check className="h-4 w-4" />
+                <span>{t('footer.newsletter_sent') || 'Poslano!'}</span>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="default"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="flex items-center gap-2"
+              >
+                <Send className="h-4 w-4" />
+                <span>{t('footer.newsletter_submit') || 'Pretplati se'}</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </Button>
+      </form>
+      <p className="text-xs text-gray-500 mt-3">
+        {t('footer.newsletter_privacy') || 'Nema spama. Odjava u bilo kojem trenutku.'}
+      </p>
+    </div>
+  );
+}
+
 export function Footer() {
   const { t, language } = useLanguage();
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 400);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   const localizedHref = (href: string) => {
     if (language !== 'en') return href;
 
@@ -69,28 +180,80 @@ export function Footer() {
       <div className="hidden md:block">
         <NewsletterSignup />
       </div>
-      <footer className="bg-gray-900 dark:bg-gray-950 text-gray-300 mt-auto relative overflow-hidden pb-safe">
+      <footer className="bg-gradient-to-b from-gray-900 to-gray-950 dark:from-gray-950 dark:to-black text-gray-300 mt-auto relative overflow-hidden pb-safe">
+        {/* Wave SVG at top */}
+        <div className="absolute top-0 left-0 right-0 h-2 overflow-hidden">
+          <svg 
+            className="w-full h-12" 
+            viewBox="0 0 1200 120" 
+            preserveAspectRatio="none" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path 
+              d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" 
+              opacity=".25" 
+              className="fill-current text-warm-orange/20"
+            />
+            <path 
+              d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" 
+              opacity=".5" 
+              className="fill-current text-warm-orange/10"
+            />
+            <path 
+              d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" 
+              className="fill-current text-warm-orange/5"
+            />
+          </svg>
+        </div>
+        
         <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
         <div className="container mx-auto px-4 py-14 relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+            <div className="lg:col-span-2">
               <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl text-white mb-4 group">
-                <PawLogo className="h-7 w-7 text-warm-orange group-hover:scale-110 transition-transform" />
+                <PawLogo className="h-7 w-7 text-warm-orange group-hover:scale-110 transition-transform duration-300" />
                 <span>
                   <span className="text-warm-orange">Pet</span><span className="text-teal-400">Park</span>
                 </span>
               </Link>
-              <p className="text-sm text-gray-400 leading-relaxed mb-6">{t('footer.tagline')}</p>
-              <div className="flex items-center gap-3">
-                <a href="https://facebook.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-warm-orange flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Facebook">
-                  <FacebookIcon className="h-4 w-4" />
-                </a>
-                <a href="https://instagram.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-warm-orange flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Instagram">
-                  <InstagramIcon className="h-4 w-4" />
-                </a>
-                <a href="https://x.com/petparkhr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-gray-800 hover:bg-warm-orange flex items-center justify-center transition-all duration-200 hover:scale-105" aria-label="Twitter">
-                  <TwitterIcon className="h-4 w-4" />
-                </a>
+              <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-md">{t('footer.tagline')}</p>
+              
+              <FooterNewsletter />
+              
+              <div className="flex items-center gap-3 mt-6">
+                <motion.a 
+                  href="https://facebook.com/petparkhr" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-10 h-10 rounded-xl bg-gray-800 hover:bg-blue-600 flex items-center justify-center transition-all duration-300 group/social"
+                  aria-label="Facebook"
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <FacebookIcon className="h-5 w-5 text-gray-300 group-hover/social:text-white transition-colors duration-300" />
+                </motion.a>
+                <motion.a 
+                  href="https://instagram.com/petparkhr" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-10 h-10 rounded-xl bg-gray-800 hover:bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center transition-all duration-300 group/social"
+                  aria-label="Instagram"
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <InstagramIcon className="h-5 w-5 text-gray-300 group-hover/social:text-white transition-colors duration-300" />
+                </motion.a>
+                <motion.a 
+                  href="https://x.com/petparkhr" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-10 h-10 rounded-xl bg-gray-800 hover:bg-black flex items-center justify-center transition-all duration-300 group/social"
+                  aria-label="Twitter"
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <TwitterIcon className="h-5 w-5 text-gray-300 group-hover/social:text-white transition-colors duration-300" />
+                </motion.a>
               </div>
             </div>
             <div>
@@ -153,6 +316,24 @@ export function Footer() {
           </div>
         </div>
       </footer>
+      
+      {/* Back to top button */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            onClick={scrollToTop}
+            className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-gradient-to-r from-warm-orange to-amber-500 text-white shadow-xl shadow-orange-500/30 flex items-center justify-center hover:shadow-2xl hover:shadow-orange-500/40 transition-all duration-300"
+            whileHover={{ scale: 1.1, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label="Back to top"
+          >
+            <ChevronUp className="h-5 w-5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </>
   );
 }

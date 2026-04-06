@@ -22,6 +22,7 @@ import { useUser } from '@/hooks/use-user';
 import { AvailabilityCalendar } from '@/components/shared/availability-calendar';
 import { useLanguage } from '@/lib/i18n/context';
 import { BookingDialog } from './booking-dialog';
+import { ImageGallery } from '@/components/sitters/image-gallery';
 
 const serviceIcons: Record<ServiceType, React.ElementType> = {
   boarding: Home,
@@ -246,26 +247,14 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
           </div>
 
           {/* Photo gallery thumbnails — inline in hero */}
-          {galleryPhotos.length > 1 && (
-            <div className="mt-6 flex items-center gap-2 animate-fade-in-up delay-200">
-              {galleryPhotos.slice(0, 5).map((photo, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActivePhoto(i)}
-                  className={`relative h-14 w-14 md:h-16 md:w-16 rounded-xl overflow-hidden border-2 transition-all duration-300 flex-shrink-0 ${
-                    activePhoto === i
-                      ? 'border-white shadow-lg scale-105'
-                      : 'border-white/30 opacity-70 hover:opacity-100 hover:border-white/60'
-                  }`}
-                >
-                  <Image src={photo} alt="" fill className="object-cover" />
-                </button>
-              ))}
-              {galleryPhotos.length > 5 && (
-                <span className={`text-xs font-medium ml-1 ${heroPhoto ? 'text-white/70' : 'text-muted-foreground'}`}>
-                  +{galleryPhotos.length - 5} {copy.photos}
-                </span>
-              )}
+          {galleryPhotos.length > 0 && (
+            <div className="mt-6 animate-fade-in-up delay-200">
+              <ImageGallery 
+                images={galleryPhotos}
+                title=""
+                maxThumbnails={5}
+                className="!space-y-3"
+              />
             </div>
           )}
         </div>
@@ -339,7 +328,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
             </section>
 
             {/* Photo Gallery — full section */}
-            {galleryPhotos.length > 1 && (
+            {galleryPhotos.length > 0 && (
               <section className="animate-fade-in-up delay-200">
                 <div className="flex items-center justify-between mb-6">
                   <div>
@@ -350,25 +339,11 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                     </h2>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                  {galleryPhotos.map((photo, i) => (
-                    <div
-                      key={i}
-                      className={`relative overflow-hidden rounded-2xl group cursor-pointer ${
-                        i === 0 ? 'col-span-2 row-span-2 aspect-[4/3]' : 'aspect-square'
-                      }`}
-                      onClick={() => setActivePhoto(i)}
-                    >
-                      <Image
-                        src={photo}
-                        alt=""
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                    </div>
-                  ))}
-                </div>
+                <ImageGallery 
+                  images={galleryPhotos}
+                  title=""
+                  maxThumbnails={8}
+                />
               </section>
             )}
 

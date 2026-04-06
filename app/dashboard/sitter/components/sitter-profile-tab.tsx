@@ -1,10 +1,11 @@
-import { Edit, User, Zap } from 'lucide-react';
+import { Edit, User, Zap, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { EmptyState } from '@/components/shared/empty-state';
 import { SERVICE_LABELS, type SitterProfile, type ServiceType } from '@/lib/types';
+import { GalleryUpload } from '@/components/sitters/gallery-upload';
 
 interface Props {
   profile: SitterProfile | null;
@@ -50,6 +51,24 @@ export function SitterProfileTab({ profile, onEdit }: Props) {
               <h4 className="text-sm font-medium text-muted-foreground mb-1">Grad</h4>
               <p className="text-sm">{profile.city || 'Nije postavljeno'}</p>
             </div>
+            <Separator />
+            <div>
+              <h4 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                <Image className="h-4 w-4" />
+                Galerija fotografija
+              </h4>
+              <GalleryUpload 
+                sitterId={profile.user_id}
+                currentImages={profile.photos || []}
+                maxImages={20}
+                onImagesUpdated={(newImages) => {
+                  // In a real app, this would update the profile in the database
+                  console.log('Gallery updated:', newImages);
+                  // You would typically call an API here to update the profile
+                }}
+              />
+            </div>
+            <Separator />
             <div className="flex gap-2">
               {profile.verified && <Badge className="bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-50">✓ Verificiran profil</Badge>}
               {profile.superhost && <Badge className="bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-50">★ Top izbor</Badge>}
