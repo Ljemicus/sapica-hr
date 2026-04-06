@@ -28,6 +28,10 @@ export async function getVeterinarians() {
   return getVeterinarianRows();
 }
 
+export async function getAllVeterinarians() {
+  return getVeterinarianRows();
+}
+
 export async function getEmergencyVeterinarians() {
   const veterinarians = await getVeterinarianRows();
 

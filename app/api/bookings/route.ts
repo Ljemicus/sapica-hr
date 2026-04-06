@@ -11,6 +11,7 @@ import { newBookingRequestEmail } from '@/lib/email-templates';
 import { calculatePlatformFee } from '@/lib/payment';
 import { sendPushToMultiple, NotificationTemplates } from '@/lib/push-notifications';
 import { getUserPushSubscriptions, canSendNotification } from '@/lib/db/notifications';
+import { sendSMS } from '@/lib/sms';
 
 export async function GET(request: Request) {
   const user = await getAuthUser();
@@ -161,6 +162,15 @@ export async function POST(request: Request) {
           log.error('Failed to send push notification', { error: String(err) });
         });
       }
+    }
+
+    // Send SMS notification if enabled
+    const canSendSMS = await canSendNotification(sitter_id, 'sms', 'bookings');
+    if (canSendSMS && sitterProfile.user?.phone) {
+      const smsMessage = `PetPark: Novi upit za cuvanje od ${user.name || 'Korisnik'} za ${pet?.name || 'ljubimca'}. Provjerite u aplikaciji.`;
+      sendSMS({ to: sitterProfile.user.phone, message: smsMessage }).catch(err => {
+        log.error('Failed to send SMS', { error: String(err) });
+      });
     }
   } catch (notifyErr) {
     log.error( 'Notification error', { error: String(notifyErr) });
