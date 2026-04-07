@@ -85,17 +85,11 @@ export function HeroSection({ className = '' }: HeroSectionProps) {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url('/images/hero-dog.png')`,
+            backgroundPosition: 'center 30%',
           }}
         />
         {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black/40" />
-        {/* Animated gradient overlay */}
-        <div 
-          className="absolute inset-0 opacity-30 bg-gradient-to-br from-blue-600/50 via-purple-600/50 to-pink-600/50"
-          style={{
-            background: `radial-gradient(circle at ${mousePosition.x * 100}% ${mousePosition.y * 100}%, rgba(255,255,255,0.2) 0%, transparent 50%), linear-gradient(135deg, rgba(59,130,246,0.3) 0%, rgba(147,51,234,0.3) 50%, rgba(236,72,153,0.3) 100%)`,
-          }}
-        />
+        <div className="absolute inset-0 bg-black/50" />
       </div>
 
       {/* Floating paw elements */}
