@@ -242,6 +242,10 @@ describe('🐾 PetPark E2E Test Suite', () => {
       
       expect(contest?.[0]).toHaveProperty('id');
       testContest = contest?.[0];
+      
+      if (!testContest) {
+        throw new Error('Failed to create test contest');
+      }
 
       // Create entry
       const { data: entry } = await supabase

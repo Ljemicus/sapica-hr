@@ -18,10 +18,10 @@ describe('Emergency Vet Clinics', () => {
     
     expect(error).toBeNull();
     expect(data).toBeDefined();
-    expect(data.length).toBeGreaterThan(0);
-    expect(data[0]).toHaveProperty('name');
-    expect(data[0]).toHaveProperty('phone');
-    expect(data[0]).toHaveProperty('is_24h');
+    expect(data?.length).toBeGreaterThan(0);
+    expect(data?.[0]).toHaveProperty('name');
+    expect(data?.[0]).toHaveProperty('phone');
+    expect(data?.[0]).toHaveProperty('is_24h');
   });
 
   it('should have 24h clinics in Zagreb', async () => {
@@ -32,7 +32,7 @@ describe('Emergency Vet Clinics', () => {
       .eq('is_24h', true);
     
     expect(error).toBeNull();
-    expect(data.length).toBeGreaterThan(0);
+    expect(data?.length).toBeGreaterThan(0);
   });
 });
 
@@ -68,7 +68,7 @@ describe('SMS Notifications', () => {
     
     expect(error).toBeNull();
     expect(data).toBeDefined();
-    expect(data[0]).toHaveProperty('id');
+    expect(data?.[0]).toHaveProperty('id');
   });
 });
 
@@ -117,7 +117,7 @@ describe('Photo Contests', () => {
     
     expect(error).toBeNull();
     expect(data).toBeDefined();
-    expect(data[0]).toHaveProperty('id');
+    expect(data?.[0]).toHaveProperty('id');
     
     // Cleanup
     if (data?.[0]?.id) {

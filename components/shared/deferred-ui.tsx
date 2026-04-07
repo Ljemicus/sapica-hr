@@ -14,9 +14,7 @@ const PushNotificationPrompt = dynamic(
   () => import('@/components/shared/push-notification').then((mod) => mod.PushNotificationPrompt)
 );
 
-const CookieConsent = dynamic(
-  () => import('@/components/shared/cookie-consent').then((mod) => mod.CookieConsent)
-);
+
 
 // Lazy-load chat widget — not needed during initial paint
 const ChatWidget = dynamic(
@@ -29,7 +27,7 @@ export function DeferredUI() {
       <ScrollToTop />
       <PushNotificationPrompt />
       <Toaster position="top-right" richColors />
-      <CookieConsent />
+
       <ChatWidget />
     </>
   );
