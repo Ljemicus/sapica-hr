@@ -89,7 +89,7 @@ export function HeroSection({ className = '' }: HeroSectionProps) {
           }}
         />
         {/* Dark gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/30" />
       </div>
 
       {/* Floating paw elements */}
