@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const service = searchParams.get('service');
     
     let query = supabase
-      .from('veterinary_clinics')
+      .from('emergency_vet_clinics')
       .select('*')
       .eq('is_active', true)
       .order('city', { ascending: true })
