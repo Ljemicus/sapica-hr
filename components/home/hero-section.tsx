@@ -84,7 +84,7 @@ export function HeroSection({ className = '' }: HeroSectionProps) {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('/images/hero-dog.png')`,
+            backgroundImage: `url('/images/hero-dog.jpg')`,
             backgroundPosition: 'center 30%',
           }}
         />
