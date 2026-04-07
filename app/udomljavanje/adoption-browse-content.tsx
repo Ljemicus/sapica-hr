@@ -3,10 +3,12 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, HeartHandshake, MapPin, ArrowRight, Search, X } from 'lucide-react';
+import { Heart, HeartHandshake, MapPin, ArrowRight, Search, X, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useAdoptionFavorites } from '@/hooks/use-adoption-favorites';
 import { EmptyState } from '@/components/shared/empty-state';
+import { RescueAlertBanner } from '@/components/adoption/rescue-alert-banner';
+import { BeforeAfterSlider } from '@/components/adoption/before-after-slider';
 import type { AdoptionListingCard } from '@/lib/types';
 import {
   ADOPTION_SPECIES_EMOJI,
@@ -84,8 +86,42 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
     });
   }, [listings, speciesFilter, cityFilter, sizeFilter, genderFilter, search]);
 
+  // Mock urgent pets for "Spasi me" alert (in production, this would come from API)
+  const urgentPets = useMemo(() => {
+    const urgent = listings
+      .filter(l => l.is_urgent || l.name.toLowerCase().includes('hitno'))
+      .slice(0, 3)
+      .map(l => ({
+        id: l.id,
+        name: l.name,
+        species: l.species,
+        reason: 'Traži dom hitno',
+        deadline: 'Ograničeno vrijeme',
+        image_url: l.images?.[0]?.url || '',
+        city: l.city,
+      }));
+    
+    // If no urgent pets, show first 2 as examples
+    if (urgent.length === 0 && listings.length > 0) {
+      return listings.slice(0, 2).map(l => ({
+        id: l.id,
+        name: l.name,
+        species: l.species,
+        reason: 'Čeka na dom',
+        deadline: 'Udomi me',
+        image_url: l.images?.[0]?.url || '',
+        city: l.city,
+      }));
+    }
+    
+    return urgent;
+  }, [listings]);
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Rescue Alert Banner */}
+      <RescueAlertBanner urgentPets={urgentPets} />
+
       {/* Editorial Hero */}
       <section className="relative adoption-hero-gradient overflow-hidden">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
@@ -332,8 +368,59 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
         )}
       </section>
 
-      {/* Bottom CTA */}
+      {/* Success Stories with Before/After */}
       <section className="bg-warm-section">
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24">
+          <div className="text-center mb-12 animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-full px-4 py-2 mb-4">
+              <Sparkles className="h-4 w-4" />
+              <span className="text-sm font-semibold">{isEn ? 'Success Stories' : 'Priče sretnog završetka'}</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] leading-[1.1] mb-4">
+              {isEn ? 'From rescue to beloved family member' : 'Od spasavanja do voljenog člana obitelji'}
+            </h2>
+            <p className="text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+              {isEn
+                ? 'See the incredible transformations of pets who found their forever homes through PetPark.'
+                : 'Pogledajte nevjerojatne transformacije ljubimaca koji su pronašli svoje zauvijek domove putem PetParka.'}
+            </p>
+          </div>
+
+          {/* Before/After Sliders */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+              <BeforeAfterSlider
+                beforeImage="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&h=600&fit=crop"
+                afterImage="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&h=600&fit=crop"
+                beforeLabel={isEn ? 'Before' : 'Prije'}
+                afterLabel={isEn ? 'After' : 'Poslije'}
+                className="shadow-2xl"
+              />
+              <div className="mt-4 text-center">
+                <h3 className="font-bold text-lg">Max</h3>
+                <p className="text-sm text-muted-foreground">{isEn ? 'Found his forever home in Zagreb' : 'Pronašao dom u Zagrebu'}</p>
+              </div>
+            </div>
+
+            <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+              <BeforeAfterSlider
+                beforeImage="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&h=600&fit=crop"
+                afterImage="https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=800&h=600&fit=crop"
+                beforeLabel={isEn ? 'Before' : 'Prije'}
+                afterLabel={isEn ? 'After' : 'Poslije'}
+                className="shadow-2xl"
+              />
+              <div className="mt-4 text-center">
+                <h3 className="font-bold text-lg">Luna</h3>
+                <p className="text-sm text-muted-foreground">{isEn ? 'Rescued and thriving in Split' : 'Spašena i sretna u Splitu'}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="bg-gradient-to-b from-warm-section to-background">
         <div className="container mx-auto px-6 md:px-10 lg:px-16 py-20 md:py-28">
           <div className="max-w-2xl mx-auto text-center animate-fade-in-up">
             <p className="text-sm uppercase tracking-[0.25em] text-warm-orange font-semibold mb-4">
