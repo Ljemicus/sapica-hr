@@ -79,13 +79,21 @@ export function HeroSection({ className = '' }: HeroSectionProps) {
 
   return (
     <section className={`relative min-h-screen flex items-center justify-center overflow-hidden ${className}`}>
-      {/* Animated gradient background */}
+      {/* Background image with overlay */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 animate-gradient-slow" />
         <div 
-          className="absolute inset-0 opacity-30"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            background: `radial-gradient(circle at ${mousePosition.x * 100}% ${mousePosition.y * 100}%, rgba(255,255,255,0.3) 0%, transparent 50%)`,
+            backgroundImage: `url('/images/hero-dog.png')`,
+          }}
+        />
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-black/40" />
+        {/* Animated gradient overlay */}
+        <div 
+          className="absolute inset-0 opacity-30 bg-gradient-to-br from-blue-600/50 via-purple-600/50 to-pink-600/50"
+          style={{
+            background: `radial-gradient(circle at ${mousePosition.x * 100}% ${mousePosition.y * 100}%, rgba(255,255,255,0.2) 0%, transparent 50%), linear-gradient(135deg, rgba(59,130,246,0.3) 0%, rgba(147,51,234,0.3) 50%, rgba(236,72,153,0.3) 100%)`,
           }}
         />
       </div>
