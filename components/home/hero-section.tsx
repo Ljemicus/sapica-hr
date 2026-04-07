@@ -79,7 +79,7 @@ export function HeroSection({ className = '' }: HeroSectionProps) {
 
   return (
     <section className={`relative min-h-screen flex items-center justify-center overflow-hidden ${className}`}>
-      {/* Background image - no overlay */}
+      {/* Background image with dark overlay */}
       <div className="absolute inset-0">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -88,6 +88,8 @@ export function HeroSection({ className = '' }: HeroSectionProps) {
             backgroundPosition: 'center 30%',
           }}
         />
+        {/* Dark gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
       </div>
 
       {/* Floating paw elements */}
@@ -96,17 +98,15 @@ export function HeroSection({ className = '' }: HeroSectionProps) {
       {/* Content */}
       <div className="container mx-auto px-6 md:px-10 lg:px-16 relative z-10 text-center">
         <div className="max-w-4xl mx-auto">
-          <p className="text-sm uppercase tracking-[0.25em] text-white/60 mb-6 font-semibold animate-fade-in">
+          <p className="text-sm uppercase tracking-[0.25em] text-white/80 mb-6 font-semibold animate-fade-in drop-shadow">
             {t.kicker}
           </p>
           
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold mb-8 leading-[1.05] font-[var(--font-heading)] whitespace-pre-line">
-            <span className="bg-gradient-to-r from-white via-blue-100 to-pink-100 bg-clip-text text-transparent animate-text-gradient">
-              {t.headline}
-            </span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold mb-8 leading-[1.05] font-[var(--font-heading)] whitespace-pre-line text-white drop-shadow-lg">
+            {t.headline}
           </h1>
           
-          <p className="text-lg md:text-xl text-white/75 leading-relaxed max-w-2xl mx-auto mb-10 animate-fade-in-delayed">
+          <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto mb-10 animate-fade-in-delayed drop-shadow-md">
             {t.sub}
           </p>
           
