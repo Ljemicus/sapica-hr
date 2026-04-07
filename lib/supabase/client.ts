@@ -7,6 +7,14 @@ export function createClient() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
+    // Allow build/SSG to proceed without env vars
+    if (typeof window === 'undefined') {
+      return createBrowserClient(
+        'https://placeholder.supabase.co',
+        'placeholder-anon-key'
+      );
+    }
+
     if (process.env.NODE_ENV === 'production') {
       throw new Error('Supabase client is not configured in production');
     }
