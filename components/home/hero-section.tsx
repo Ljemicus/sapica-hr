@@ -79,7 +79,7 @@ export function HeroSection({ className = '' }: HeroSectionProps) {
 
   return (
     <section className={`relative min-h-screen flex items-center justify-center overflow-hidden ${className}`}>
-      {/* Background image with overlay */}
+      {/* Background image - no overlay */}
       <div className="absolute inset-0">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -88,8 +88,6 @@ export function HeroSection({ className = '' }: HeroSectionProps) {
             backgroundPosition: 'center 30%',
           }}
         />
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black/50" />
       </div>
 
       {/* Floating paw elements */}
