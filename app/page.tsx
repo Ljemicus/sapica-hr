@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { getSitters } from '@/lib/db';
 import { ItemListJsonLd } from '@/components/seo/json-ld';
-import { PremiumHomepageContent } from '@/components/home/premium-homepage-content';
+import { HomePageContent } from '@/components/home/homepage-content';
 
 // ISR: Revalidate every 1 hour (3600 seconds)
 export const revalidate = 3600;
@@ -68,7 +68,7 @@ export default async function HomePage() {
   return (
     <>
       <ItemListJsonLd items={homepageServices} />
-      <PremiumHomepageContent featuredSitters={featuredSitters} cities={cities} />
+      <HomePageContent featuredSitters={featuredSitters} cities={cities} newsletterSlot={<AnimatedFooter />} />
     </>
   );
 }
