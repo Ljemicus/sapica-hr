@@ -6,15 +6,22 @@ import { getDefaultDashboardForEffectiveKind, getEffectiveUserKind } from '@/lib
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { dispatchAlert } from '@/lib/alerting';
 import { getRequestId, createScopedLogger } from '@/lib/request-context';
-import { rateLimit } from '@/lib/rate-limit';
+import { checkRateLimit, RateLimits, getClientIdentifier } from '@/lib/upstash-rate-limit';
 import { loginSchema } from '@/lib/validations';
 
 export async function POST(request: Request) {
   const reqId = getRequestId(request);
   const log = createScopedLogger('auth.login', reqId);
-  const ip = request.headers.get('x-forwarded-for') || 'unknown';
-  if (!rateLimit(`login:${ip}`, 5, 60000)) {
-    return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše pokušaja.' });
+  
+  // Rate limiting with Redis/Upstash
+  const ip = getClientIdentifier(request);
+  const rateLimitResult = await checkRateLimit(ip, RateLimits.login);
+  if (!rateLimitResult.success) {
+    return apiError({ 
+      status: 429, 
+      code: 'RATE_LIMITED', 
+      message: 'Previše pokušaja. Pokušajte ponovno kasnije.' 
+    });
   }
 
   const body = await request.json().catch(() => null);

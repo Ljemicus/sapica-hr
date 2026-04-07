@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { checkRateLimit, RateLimits, getClientIdentifier } from '@/lib/upstash-rate-limit';
+import { sanitizeRichText } from '@/lib/sanitize';
 import type { SocialPost, SocialPostWithDetails } from '@/lib/types';
 
 // GET /api/social/posts - Get feed posts
@@ -61,8 +63,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Rate limiting
+    const ip = getClientIdentifier(request);
+    const rateLimitResult = await checkRateLimit(`${ip}:${user.id}`, RateLimits.socialPosts);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
-    const { content, mediaUrls, petId, aiTags, aiCaption, challengeId } = body;
+    let { content, mediaUrls, petId, aiTags, aiCaption, challengeId } = body;
+    
+    // Sanitize content
+    content = sanitizeRichText(content);
 
     if (!content || content.trim().length === 0) {
       return NextResponse.json({ error: 'Content is required' }, { status: 400 });

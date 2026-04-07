@@ -7,6 +7,8 @@ import { appLogger } from '@/lib/logger';
 import { messageSchema, type MessageInput } from '@/lib/validations';
 import { sendPushToMultiple, NotificationTemplates } from '@/lib/push-notifications';
 import { getUserPushSubscriptions, canSendNotification } from '@/lib/db/notifications';
+import { checkRateLimit, RateLimits, getClientIdentifier } from '@/lib/upstash-rate-limit';
+import { sanitizeInput } from '@/lib/sanitize';
 
 export async function GET(request: Request) {
   const user = await getAuthUser();
@@ -26,12 +28,29 @@ export async function POST(request: Request) {
   const user = await getAuthUser();
   if (!user) return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
 
+  // Rate limiting
+  const ip = getClientIdentifier(request);
+  const rateLimitResult = await checkRateLimit(`${ip}:${user.id}`, RateLimits.messages);
+  if (!rateLimitResult.success) {
+    return apiError({ 
+      status: 429, 
+      code: 'RATE_LIMITED', 
+      message: 'Previše poruka. Pokušajte ponovno kasnije.' 
+    });
+  }
+
   let body;
   try {
     body = await request.json();
   } catch {
     return apiError({ status: 400, code: 'INVALID_JSON', message: 'Invalid JSON body' });
   }
+  
+  // Sanitize message content
+  if (body.content) {
+    body.content = sanitizeInput(body.content);
+  }
+  
   const parsed = messageSchema.safeParse(body);
   if (!parsed.success) {
     appLogger.warn('messages.send', 'Message validation failed');

@@ -1,3 +1,8 @@
+import { checkRateLimit, RateLimits, type RateLimitConfig } from './upstash-rate-limit';
+
+// Re-export from upstash-rate-limit for backward compatibility
+export { checkRateLimit, RateLimits, type RateLimitConfig } from './upstash-rate-limit';
+
 const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
 const CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 let lastCleanup = Date.now();
@@ -5,18 +10,21 @@ let lastCleanup = Date.now();
 let warnedAboutMemoryLimiter = false;
 
 /**
- * Temporary in-memory limiter.
- *
- * NOTE: This only works reliably on a single long-lived process.
- * On serverless / horizontally scaled deployments (e.g. Vercel), it is best-effort only
- * and MUST be replaced with a shared store (Upstash Redis / Vercel KV / database-backed limiter)
- * for real abuse protection.
+ * Legacy in-memory rate limiter - kept for backward compatibility.
+ * 
+ * NOTE: Prefer using checkRateLimit() from upstash-rate-limit.ts for new code
+ * as it supports Redis-backed rate limiting on production.
+ * 
+ * This function only works reliably on a single long-lived process.
+ * On serverless / horizontally scaled deployments (e.g. Vercel), it is best-effort only.
+ * 
+ * @deprecated Use checkRateLimit() from './upstash-rate-limit' instead
  */
 export function rateLimit(key: string, limit: number = 10, windowMs: number = 60000): boolean {
   if (!warnedAboutMemoryLimiter && process.env.NODE_ENV === 'production') {
     warnedAboutMemoryLimiter = true;
     console.warn(
-      '[rate-limit] Using in-memory rate limiting in production. This is best-effort only on serverless deployments and should be replaced with a shared backend.'
+      '[rate-limit] Using in-memory rate limiting in production. This is best-effort only on serverless deployments. Consider using checkRateLimit() from upstash-rate-limit.ts for Redis-backed rate limiting.'
     );
   }
 

@@ -2,15 +2,21 @@ import { apiError } from '@/lib/api-errors';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { appLogger } from '@/lib/logger';
 import { dispatchAlert } from '@/lib/alerting';
-import { rateLimit } from '@/lib/rate-limit';
+import { checkRateLimit, RateLimits, getClientIdentifier } from '@/lib/upstash-rate-limit';
 import { forgotPasswordSchema } from '@/lib/validations';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
-  const ip = request.headers.get('x-forwarded-for') || 'unknown';
-  if (!rateLimit(`forgot-password:${ip}`, 3, 60000)) {
+  // Rate limiting with Redis/Upstash
+  const ip = getClientIdentifier(request);
+  const rateLimitResult = await checkRateLimit(ip, RateLimits.forgotPassword);
+  if (!rateLimitResult.success) {
     appLogger.warn('auth.forgot-password', 'Rate limit hit', { ip });
-    return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše pokušaja. Pokušajte ponovno za minutu.' });
+    return apiError({ 
+      status: 429, 
+      code: 'RATE_LIMITED', 
+      message: 'Previše pokušaja. Pokušajte ponovno kasnije.' 
+    });
   }
 
   const body = await request.json().catch(() => null);

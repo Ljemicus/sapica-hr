@@ -7,12 +7,18 @@ import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { dispatchAlert } from '@/lib/alerting';
 import { appLogger } from '@/lib/logger';
 import { registerSchema } from '@/lib/validations';
-import { rateLimit } from '@/lib/rate-limit';
+import { checkRateLimit, RateLimits, getClientIdentifier } from '@/lib/upstash-rate-limit';
 
 export async function POST(request: Request) {
-  const ip = request.headers.get('x-forwarded-for') || 'unknown';
-  if (!rateLimit(`register:${ip}`, 5, 60_000)) {
-    return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše pokušaja registracije.' });
+  // Rate limiting with Redis/Upstash
+  const ip = getClientIdentifier(request);
+  const rateLimitResult = await checkRateLimit(ip, RateLimits.register);
+  if (!rateLimitResult.success) {
+    return apiError({ 
+      status: 429, 
+      code: 'RATE_LIMITED', 
+      message: 'Previše pokušaja registracije. Pokušajte ponovno kasnije.' 
+    });
   }
 
   if (!isSupabaseConfigured()) {
