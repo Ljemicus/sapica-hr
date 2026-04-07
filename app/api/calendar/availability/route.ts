@@ -36,6 +36,7 @@ const workingHoursSchema = z.object({
   provider_type: z.enum(['sitter', 'groomer', 'trainer']),
   provider_id: z.string().uuid(),
   working_hours: z.record(
+    z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']),
     z.object({
       start: z.string().regex(/^\d{2}:\d{2}$/),
       end: z.string().regex(/^\d{2}:\d{2}$/),
