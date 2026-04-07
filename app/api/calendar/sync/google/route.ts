@@ -276,7 +276,7 @@ async function ensureValidToken(syncConfig: Record<string, unknown>): Promise<st
 }
 
 async function performBidirectionalSync(
-  supabase: ReturnType<typeof createClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   syncConfig: Record<string, unknown>,
   providerType: string,
   providerId: string
@@ -392,7 +392,7 @@ async function performBidirectionalSync(
 }
 
 async function importFromGoogle(
-  supabase: ReturnType<typeof createClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   syncConfig: Record<string, unknown>,
   providerType: string,
   providerId: string
@@ -442,7 +442,7 @@ async function importFromGoogle(
 }
 
 async function exportToGoogle(
-  supabase: ReturnType<typeof createClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   syncConfig: Record<string, unknown>,
   providerType: string,
   providerId: string
@@ -507,7 +507,7 @@ async function exportToGoogle(
 }
 
 async function disconnectGoogleCalendar(
-  supabase: ReturnType<typeof createClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string,
   providerType?: string,
   providerId?: string

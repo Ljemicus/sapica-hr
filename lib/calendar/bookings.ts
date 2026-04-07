@@ -133,7 +133,7 @@ export async function getBookings(
 
     if (error) throw error;
 
-    return { data: data || [] };
+    return { data: (data || []) as unknown as Booking[] };
   } catch (error) {
     console.error('Error fetching bookings:', error);
     return { error: error instanceof Error ? error.message : 'Failed to fetch bookings' };
@@ -517,7 +517,7 @@ export function subscribeToBookings(
         event: '*',
         schema: 'public',
         table: 'bookings',
-        filter: `provider_type=eq.${provider_type}&provider_id=eq.${providerId}`,
+        filter: `provider_type=eq.${providerType}&provider_id=eq.${providerId}`,
       },
       (payload) => {
         callback({

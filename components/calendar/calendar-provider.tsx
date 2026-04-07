@@ -13,6 +13,8 @@ import type {
   ProviderType,
   AvailabilitySlot,
   BlockedDate,
+  CreateBookingInput,
+  UpdateBookingInput,
 } from '@/types/calendar';
 
 interface CalendarContextType {
@@ -39,8 +41,8 @@ interface CalendarContextType {
   
   // Actions
   refreshData: () => Promise<void>;
-  createBooking: (booking: Partial<Booking>) => Promise<void>;
-  updateBooking: (id: string, booking: Partial<Booking>) => Promise<void>;
+  createBooking: (booking: CreateBookingInput) => Promise<void>;
+  updateBooking: (id: string, booking: UpdateBookingInput) => Promise<void>;
   deleteBooking: (id: string) => Promise<void>;
   confirmBooking: (id: string) => Promise<void>;
   cancelBooking: (id: string, reason?: string) => Promise<void>;
@@ -167,7 +169,7 @@ export function CalendarProvider({
   }, [fetchData]);
 
   // CRUD operations
-  const createBooking = useCallback(async (booking: Partial<Booking>) => {
+  const createBooking = useCallback(async (booking: CreateBookingInput) => {
     try {
       const res = await fetch('/api/calendar/bookings', {
         method: 'POST',
@@ -191,7 +193,7 @@ export function CalendarProvider({
     }
   }, [fetchData, providerType, providerId]);
 
-  const updateBooking = useCallback(async (id: string, booking: Partial<Booking>) => {
+  const updateBooking = useCallback(async (id: string, booking: UpdateBookingInput) => {
     try {
       const res = await fetch('/api/calendar/bookings', {
         method: 'PATCH',

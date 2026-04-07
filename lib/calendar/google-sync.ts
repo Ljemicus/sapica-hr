@@ -462,19 +462,23 @@ export async function importFromGoogleCalendar(
     const bookings: Array<Partial<Booking>> = (data.items || [])
       .filter((event: Record<string, unknown>) => {
         // Skip events created by PetPark to avoid duplicates
-        const extendedProps = event.extendedProperties?.private || {};
-        return !extendedProps.petpark_booking_id;
+        const extendedProps = (event.extendedProperties as Record<string, unknown> | undefined)?.private as Record<string, unknown> | undefined;
+        return !extendedProps?.petpark_booking_id;
       })
-      .map((event: Record<string, unknown>) => ({
-        title: event.summary || 'Google Calendar Event',
-        description: event.description || '',
-        start_time: event.start?.dateTime || event.start?.date,
-        end_time: event.end?.dateTime || event.end?.date,
-        location_address: event.location || null,
-        source: 'google_calendar' as const,
-        external_id: event.id,
-        status: 'confirmed' as const,
-      }));
+      .map((event: Record<string, unknown>) => {
+        const start = event.start as Record<string, string> | undefined;
+        const end = event.end as Record<string, string> | undefined;
+        return {
+          title: (event.summary as string) || 'Google Calendar Event',
+          description: (event.description as string) || '',
+          start_time: start?.dateTime || start?.date || '',
+          end_time: end?.dateTime || end?.date || '',
+          location_address: (event.location as string) || null,
+          source: 'google_calendar' as const,
+          external_id: event.id as string,
+          status: 'confirmed' as const,
+        };
+      });
 
     return { data: bookings };
   } catch (error) {

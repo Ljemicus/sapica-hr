@@ -11,6 +11,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import hrLocale from '@fullcalendar/core/locales/hr';
+
 import { useCalendar } from './calendar-provider';
 import { BookingModal } from './booking-modal';
 import { CalendarFilters } from './calendar-filters';
@@ -74,28 +75,21 @@ export function ProfessionalCalendar() {
   }, [bookings]);
 
   // Handle date click
-  const handleDateClick = useCallback((arg: { date: Date; allDay: boolean }) => {
+  const handleDateClick = useCallback((arg: any) => {
     setSelectedDate(arg.date);
     setSelectedBooking(null);
     setIsBookingModalOpen(true);
   }, [setSelectedDate, setSelectedBooking, setIsBookingModalOpen]);
 
   // Handle event click
-  const handleEventClick = useCallback((arg: { event: { id: string; extendedProps: { booking: Booking } } }) => {
+  const handleEventClick = useCallback((arg: any) => {
     setSelectedBooking(arg.event.extendedProps.booking);
     setSelectedDate(null);
     setIsBookingModalOpen(true);
   }, [setSelectedBooking, setSelectedDate, setIsBookingModalOpen]);
 
   // Handle event drop (drag and drop)
-  const handleEventDrop = useCallback(async (arg: { 
-    event: { 
-      id: string; 
-      start: Date | null; 
-      end: Date | null;
-      extendedProps: { booking: Booking };
-    } 
-  }) => {
+  const handleEventDrop = useCallback(async (arg: any) => {
     const { event } = arg;
     if (!event.start || !event.end) return;
 
@@ -146,13 +140,7 @@ export function ProfessionalCalendar() {
   }, [refreshData]);
 
   // Handle event resize
-  const handleEventResize = useCallback(async (arg: { 
-    event: { 
-      id: string; 
-      start: Date | null; 
-      end: Date | null;
-    } 
-  }) => {
+  const handleEventResize = useCallback(async (arg: any) => {
     const { event } = arg;
     if (!event.start || !event.end) return;
 
@@ -175,17 +163,7 @@ export function ProfessionalCalendar() {
   }, [refreshData]);
 
   // Custom event content
-  const renderEventContent = useCallback((eventInfo: { 
-    event: { 
-      title: string;
-      extendedProps: { 
-        clientName: string;
-        petName: string | null;
-        status: string;
-      };
-    };
-    timeText: string;
-  }) => {
+  const renderEventContent = useCallback((eventInfo: any) => {
     const { event, timeText } = eventInfo;
     const { clientName, petName, status } = event.extendedProps;
 
@@ -362,6 +340,8 @@ export function ProfessionalCalendar() {
         onClose={() => setIsBookingModalOpen(false)}
         booking={selectedBooking}
         selectedDate={selectedDate}
+        providerType="sitter"
+        providerId="temp-provider-id"
       />
     </div>
   );
