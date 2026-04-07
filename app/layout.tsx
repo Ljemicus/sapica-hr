@@ -18,10 +18,7 @@ import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { DeferredUI } from '@/components/shared/deferred-ui';
 import { ChatWidget } from '@/components/chat/chat-widget';
 import { WebVitals } from '@/components/monitoring/web-vitals';
-import { CommandPalette } from '@/components/command-palette';
-import { CustomCursor } from '@/components/animations/custom-cursor';
-import { AnimatedBackground } from '@/components/animations/animated-background';
-import { FloatingParticles } from '@/components/animations/floating-particles';
+// Animation components temporarily removed for build stability
 import { SkipToContentLink } from '@/components/shared/skip-to-content-link';
 import { buildLocaleAlternates } from '@/lib/seo/locale-metadata';
 
@@ -153,10 +150,10 @@ export default async function RootLayout({
                 <DeferredUI />
                 <CookieConsentBanner />
                 <ChatWidget />
-                <CommandPalette locale={routeLocale} />
-                <CustomCursor />
-                <AnimatedBackground />
-                <FloatingParticles />
+                {/* <CommandPalette locale={routeLocale} /> */}
+                {/* <CustomCursor /> */}
+                {/* <AnimatedBackground /> */}
+                {/* <FloatingParticles /> */}
               </LanguageProvider>
             </CartProvider>
           </AuthProvider>

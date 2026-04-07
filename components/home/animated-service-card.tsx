@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { TiltCard } from '@/components/animations/tilt-card';
+// import { TiltCard } from '@/components/animations/tilt-card';
 
 interface AnimatedServiceCardProps {
   href: string;
@@ -25,7 +25,7 @@ export function AnimatedServiceCard({
 }: AnimatedServiceCardProps) {
   return (
     <Link href={href} className="group block">
-      <TiltCard tiltAmount={8} scale={1.02}>
+      {/* <TiltCard tiltAmount={8} scale={1.02}> */}
         <motion.article
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -94,7 +94,7 @@ export function AnimatedServiceCard({
           <ArrowRight className="h-5 w-5 text-white" />
         </motion.div>
         </motion.article>
-      </TiltCard>
+      {/* </TiltCard> */}
     </Link>
   );
 }

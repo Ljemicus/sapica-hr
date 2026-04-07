@@ -50,11 +50,17 @@ export function initializeGA(measurementId: string, consentGranted: boolean = fa
     window.dataLayer.push(arguments);
   };
 
+  // Define gtag function first
+  const gtag: (...args: any[]) => void = function() {
+    window.dataLayer.push(arguments);
+  };
+  window.gtag = gtag;
+
   // Load GA script if consent granted
   if (consentGranted) {
     loadGAScript();
-    gtag('js', new Date());
-    gtag('config', measurementId, {
+    window.gtag('js', new Date());
+    window.gtag('config', measurementId, {
       page_path: window.location.pathname,
       anonymize_ip: true, // GDPR compliance
       allow_google_signals: false, // Disable personalized ads by default
@@ -90,7 +96,7 @@ export function updateConsent(granted: boolean): void {
       initializeGA(MEASUREMENT_ID, true);
     } else {
       // Update consent settings
-      gtag('consent', 'update', {
+      window.gtag('consent', 'update', {
         analytics_storage: 'granted',
         ad_storage: 'denied',
         ad_user_data: 'denied',
@@ -99,7 +105,7 @@ export function updateConsent(granted: boolean): void {
     }
   } else if (!granted && window.gtag) {
     // Revoke consent
-    gtag('consent', 'update', {
+    window.gtag('consent', 'update', {
       analytics_storage: 'denied',
       ad_storage: 'denied',
       ad_user_data: 'denied',
@@ -116,7 +122,7 @@ export function updateConsent(granted: boolean): void {
 export function trackPageView(path: string, title?: string): void {
   if (!analyticsConsentGranted || !window.gtag) return;
 
-  gtag('event', 'page_view', {
+  window.gtag('event', 'page_view', {
     page_path: path,
     page_title: title || document.title,
     page_location: window.location.href,
@@ -131,7 +137,7 @@ export function trackPageView(path: string, title?: string): void {
 export function trackEvent(eventName: string, eventParams?: Record<string, any>): void {
   if (!analyticsConsentGranted || !window.gtag) return;
 
-  gtag('event', eventName, eventParams);
+  window.gtag('event', eventName, eventParams);
 }
 
 // Predefined event tracking functions for common PetPark actions
