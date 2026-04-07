@@ -88,7 +88,8 @@ export function HeroSection({ className = '' }: HeroSectionProps) {
             backgroundPosition: 'center 30%',
           }}
         />
-        {/* No overlay - image shown in full color */}
+        {/* Dark gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />
       </div>
 
       {/* Floating paw elements */}
@@ -97,17 +98,15 @@ export function HeroSection({ className = '' }: HeroSectionProps) {
       {/* Content */}
       <div className="container mx-auto px-6 md:px-10 lg:px-16 relative z-10 text-center">
         <div className="max-w-4xl mx-auto">
-          <p className="text-sm uppercase tracking-[0.25em] text-emerald-600 mb-6 font-semibold animate-fade-in">
+          <p className="text-sm uppercase tracking-[0.25em] text-white/80 mb-6 font-semibold animate-fade-in drop-shadow">
             {t.kicker}
           </p>
           
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold mb-8 leading-[1.05] font-[var(--font-heading)]">
-            <span className="block text-emerald-500 drop-shadow-lg">Gdje ljubav</span>
-            <span className="block text-emerald-500 drop-shadow-lg">prema životinjama</span>
-            <span className="block text-orange-500 drop-shadow-lg">postaje način života.</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold mb-8 leading-[1.05] font-[var(--font-heading)] text-white drop-shadow-lg">
+            {t.headline}
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-800 leading-relaxed max-w-2xl mx-auto mb-10 animate-fade-in-delayed">
+          <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto mb-10 animate-fade-in-delayed drop-shadow-md">
             {t.sub}
           </p>
           
