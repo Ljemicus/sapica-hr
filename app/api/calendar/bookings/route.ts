@@ -33,7 +33,7 @@ const createBookingSchema = z.object({
       service_name: z.string(),
       duration_minutes: z.number().default(60),
       price: z.number().optional(),
-      metadata: z.record(z.unknown()).optional(),
+      metadata: z.record(z.string(), z.unknown()).optional(),
     })
   ).optional(),
 });
