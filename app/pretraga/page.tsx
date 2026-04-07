@@ -124,6 +124,9 @@ function buildSearchMetadata(locale: SearchPageLocale): Metadata {
   };
 }
 
+// ISR: Revalidate every 1 hour (3600 seconds)
+export const revalidate = 3600;
+
 export const metadata: Metadata = buildSearchMetadata('hr');
 
 interface SearchPageProps {

@@ -3,6 +3,9 @@ import { VeterinariContent } from './veterinari-content';
 import { getVeterinarians } from '@/lib/db/veterinarians';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
+// ISR: Revalidate every 1 hour (3600 seconds)
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: 'Veterinarske stanice i ambulante u Hrvatskoj',
   description: 'Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj s adresama i kontakt podacima.',

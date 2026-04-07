@@ -4,8 +4,8 @@ import { getSitters } from '@/lib/db';
 import { ItemListJsonLd } from '@/components/seo/json-ld';
 import { HomePageContent } from '@/components/home/homepage-content';
 
-// Revalidate the homepage at most once per 60 seconds (ISR)
-export const revalidate = 60;
+// ISR: Revalidate every 1 hour (3600 seconds)
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: { absolute: 'PetPark — Pronađite pouzdanog sittera za svog ljubimca' },

@@ -3,6 +3,9 @@ import { getArticles } from '@/lib/db/content';
 import { BlogContent } from './blog-content';
 import type { BlogCategory } from '@/lib/types';
 
+// ISR: Revalidate every 1 hour (3600 seconds)
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: 'Blog — savjeti za vlasnike ljubimaca',
   description: 'Korisni članci i savjeti o zdravlju, prehrani, školovanju pasa i putovanju s ljubimcima. Stručni sadržaj za sve vlasnike.',
