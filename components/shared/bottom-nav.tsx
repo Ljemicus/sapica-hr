@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, BookOpen, MessageSquare, User } from 'lucide-react';
+import { Home, Search, Users, MessageSquare, User } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { useLanguage } from '@/lib/i18n';
 
@@ -16,7 +16,7 @@ export function BottomNav() {
   const navItems = [
     { href: '/', icon: Home, label: t('common.home') },
     { href: '/pretraga', icon: Search, label: t('common.search') },
-    { href: '/zajednica', icon: BookOpen, label: t('nav.blog') },
+    { href: '/zajednica', icon: Users, label: 'Zajednica' },
     { href: forumHref, icon: MessageSquare, label: t('nav.forum') },
   ];
 

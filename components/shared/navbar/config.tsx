@@ -19,6 +19,7 @@ import {
   Star,
   Stethoscope,
   User,
+  Users,
   LogOut,
 } from 'lucide-react';
 import type { NavbarActionItem, NavbarLinkItem, NavbarMenuItem, NavbarUser, TranslationFn } from './types';
@@ -52,6 +53,7 @@ export function getDashboardLink(user?: NavbarUser | null) {
 export function getDesktopLinks(t: TranslationFn, user?: NavbarUser | null, language: Language = 'hr'): NavbarLinkItem[] {
   return [
     { href: '/o-nama', label: t('nav.about') },
+    { href: '/zajednica', label: 'Zajednica', icon: Users },
     { href: '/blog', label: t('nav.blog'), icon: BookOpen },
     { href: localizeHref('/forum', language), label: t('nav.forum'), icon: MessageSquare },
     // Izgubljeni je ručno renderiran u desktop-nav.tsx (ranije u navigaciji)
@@ -138,6 +140,7 @@ export function getMobileUtilityLinks(_t: TranslationFn): NavbarLinkItem[] {
 
 export function getMobileCommunityLinks(t: TranslationFn, language: Language = 'hr'): NavbarLinkItem[] {
   return [
+    { href: '/zajednica', label: 'Zajednica', icon: Users, className: 'text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/20 font-medium' },
     { href: '/blog', label: t('nav.blog'), icon: BookOpen },
     { href: localizeHref('/forum', language), label: t('nav.forum'), icon: MessageSquare },
     { href: '/udruge', label: t('nav.rescue_orgs') || 'Udruge', icon: HeartHandshake, className: 'text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/20 font-medium' },

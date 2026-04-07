@@ -1059,3 +1059,25 @@ export {
   getAppealProgressPct,
   isAppealLive,
 } from '@/lib/types/rescue';
+
+// ── Social Network Types ──
+export type {
+  AITags,
+  AIActivityTag,
+  AILocationTag,
+  AIPetTag,
+  ChallengeEntry,
+  ChallengeEntryWithDetails,
+  ChallengeVote,
+  PetOfTheWeek,
+  PetOfTheWeekWithDetails,
+  PlaydateRequest,
+  PlaydateRequestWithDetails,
+  SocialChallenge,
+  SocialComment,
+  SocialCommentWithUser,
+  SocialReaction,
+  ReactionType,
+  SocialPost,
+  SocialPostWithDetails,
+} from '@/lib/types/social';
