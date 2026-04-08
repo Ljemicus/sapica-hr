@@ -63,23 +63,41 @@ const withSentry = withSentryConfig(nextConfig, {
   // For all available options, see https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
-  
+
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
-  
+
   // Upload a larger set of source maps for prettier stack traces (increases build time)
   widenClientFileUpload: true,
-  
+
   // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers
   tunnelRoute: "/monitoring",
-  
+
   // Source maps configuration
   sourcemaps: {
     disable: false,
   },
-  
+
   // Enables automatic instrumentation of Vercel Cron Monitors
   automaticVercelMonitors: true,
+
+  // Tree-shaking: Only include necessary Sentry features
+  // Disable features we don't use to reduce bundle size
+  bundleSizeOptimizations: {
+    // Disable if not using session replay
+    excludeReplayShadowDom: true,
+    excludeReplayIframe: true,
+    // Disable canvas recording (we don't use it)
+    excludeReplayWorker: true,
+  },
+
+  // Disable Sentry debug logging in production
+  debug: false,
+
+  // Tree-shake Sentry internals
+  // Only enable error monitoring, disable performance monitoring if not needed
+  // If you want performance monitoring, set this to true
+  disableLogger: true,
 });
 
 export default withSentry;
