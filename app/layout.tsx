@@ -143,6 +143,21 @@ export default async function RootLayout({
                   </ErrorBoundary>
                 </main>
                 <PerformanceMonitor />
+                <Script id="register-sw" strategy="afterInteractive">
+                  {`
+                    if ('serviceWorker' in navigator) {
+                      window.addEventListener('load', function() {
+                        navigator.serviceWorker.register('/sw.js')
+                          .then(function(reg) {
+                            console.log('[SW] Registered:', reg.scope);
+                          })
+                          .catch(function(err) {
+                            console.error('[SW] Registration failed:', err);
+                          });
+                      });
+                    }
+                  `}
+                </Script>
                 <div className="pb-20 md:pb-0">
                   <Footer />
                 </div>
