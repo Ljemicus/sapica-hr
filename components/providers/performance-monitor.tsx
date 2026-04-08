@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import * as Sentry from '@sentry/nextjs';
 
 export function PerformanceMonitor() {
   useEffect(() => {
@@ -34,6 +35,7 @@ export function PerformanceMonitor() {
     // Preconnect to critical domains
     const preconnectDomains = [
       'https://hmtlcgjcxhjecsbmmxol.supabase.co',
+      'https://res.cloudinary.com',
     ];
 
     preconnectDomains.forEach((domain) => {
@@ -43,6 +45,61 @@ export function PerformanceMonitor() {
       link.crossOrigin = 'anonymous';
       document.head.appendChild(link);
     });
+
+    // Monitor Long Tasks (tasks > 50ms that block main thread)
+    if ('PerformanceObserver' in window) {
+      try {
+        const observer = new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            // Report long tasks to Sentry
+            if (entry.duration > 100) {
+              Sentry.addBreadcrumb({
+                category: 'performance',
+                message: `Long task detected: ${Math.round(entry.duration)}ms`,
+                level: entry.duration > 200 ? 'warning' : 'info',
+                data: {
+                  duration: entry.duration,
+                  startTime: entry.startTime,
+                },
+              });
+
+              if (process.env.NODE_ENV === 'development') {
+                console.warn(`[Performance] Long task: ${Math.round(entry.duration)}ms`);
+              }
+            }
+          }
+        });
+
+        observer.observe({ entryTypes: ['longtask'] });
+
+        return () => observer.disconnect();
+      } catch (e) {
+        // Long task observer not supported
+      }
+    }
+
+    // Monitor memory usage (if available)
+    if (process.env.NODE_ENV === 'development' && 'memory' in performance) {
+      const logMemory = () => {
+        const memory = (performance as unknown as { memory: {
+          usedJSHeapSize: number;
+          totalJSHeapSize: number;
+          jsHeapSizeLimit: number;
+        }}).memory;
+
+        if (memory) {
+          const usedMB = Math.round(memory.usedJSHeapSize / 1048576);
+          const totalMB = Math.round(memory.totalJSHeapSize / 1048576);
+
+          if (usedMB > 100) {
+            console.warn(`[Memory] High usage: ${usedMB}MB / ${totalMB}MB`);
+          }
+        }
+      };
+
+      const interval = setInterval(logMemory, 30000);
+      return () => clearInterval(interval);
+    }
   }, []);
 
   return null;
