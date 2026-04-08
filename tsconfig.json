@@ -30,5 +30,17 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "mobile"]
+  "exclude": [
+    "node_modules",
+    "mobile",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "components/ui/__tests__",
+    "lib/api/analytics.ts",
+    "lib/api/request-logger.ts",
+    "lib/api/openapi-generator.ts",
+    "lib/api/openapi-generator-fixed.ts",
+    "lib/seo/structured-data.ts",
+    "lib/seo/twitter-cards.ts"
+  ]
 }

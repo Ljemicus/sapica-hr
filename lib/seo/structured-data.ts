@@ -463,7 +463,7 @@ export class StructuredDataGenerator {
    */
   static generateForPage(
     pageType: 'home' | 'sitter' | 'service' | 'product' | 'faq',
-    ...args: any[]
+    ...args: (string | number | undefined)[]
   ): string {
     const data: object[] = [];
     
@@ -478,22 +478,22 @@ export class StructuredDataGenerator {
       case 'sitter':
         const [sitterName, sitterId, image, bio] = args;
         data.push(
-          this.generateBreadcrumb(this.PRESETS.SITTER_BREADCRUMB(sitterName, sitterId)),
-          this.generatePerson(this.PRESETS.SITTER_PERSON(sitterName, image, bio))
+          this.generateBreadcrumb(this.PRESETS.SITTER_BREADCRUMB(String(sitterName ?? ''), String(sitterId ?? ''))),
+          this.generatePerson(this.PRESETS.SITTER_PERSON(String(sitterName ?? ''), String(image ?? ''), String(bio ?? '')))
         );
         break;
         
       case 'service':
         const [providerName, price, area] = args;
         data.push(
-          this.generateService(this.PRESETS.DOG_WALKING_SERVICE(providerName, price, area))
+          this.generateService(this.PRESETS.DOG_WALKING_SERVICE(String(providerName ?? ''), Number(price ?? 0), String(area ?? '')))
         );
         break;
         
       case 'product':
         const [productName, productPrice, productImage] = args;
         data.push(
-          this.generateProduct(this.PRESETS.PET_SUPPLY_PRODUCT(productName, productPrice, productImage))
+          this.generateProduct(this.PRESETS.PET_SUPPLY_PRODUCT(String(productName ?? ''), Number(productPrice ?? 0), String(productImage ?? '')))
         );
         break;
         
@@ -511,7 +511,7 @@ export class StructuredDataGenerator {
  */
 export function generateStructuredData(
   pageType: 'home' | 'sitter' | 'service' | 'product' | 'faq',
-  ...args: any[]
+  ...args: (string | number | undefined)[]
 ): string {
   return StructuredDataGenerator.generateForPage(pageType, ...args);
 }

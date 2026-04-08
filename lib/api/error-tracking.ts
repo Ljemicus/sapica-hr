@@ -3,6 +3,7 @@
  */
 
 import { appLogger } from './logger';
+import type { ErrorContext } from './types';
 
 export interface ErrorTrackingConfig {
   dsn?: string;
@@ -18,7 +19,7 @@ export class ErrorTracker {
     this.config = config;
   }
   
-  captureError(error: Error, context?: Record<string, any>): void {
+  captureError(error: Error, context?: ErrorContext): void {
     if (!this.config.enabled) {
       return;
     }
@@ -72,7 +73,7 @@ export class ErrorTracker {
     }
   }
   
-  private captureClientError(error: Error, context?: Record<string, any>): void {
+  private captureClientError(error: Error, context?: ErrorContext): void {
     // Client-side error tracking implementation
     // This would integrate with Sentry browser SDK
     console.error('Client error:', error, context);
@@ -83,7 +84,7 @@ export class ErrorTracker {
     // }
   }
   
-  private captureServerError(error: Error, context?: Record<string, any>): void {
+  private captureServerError(error: Error, context?: ErrorContext): void {
     // Server-side error tracking implementation
     // This would integrate with Sentry Node SDK
     console.error('Server error:', error, context);
@@ -131,10 +132,10 @@ export class ErrorBoundary extends Error {
 // Utility function to wrap async operations with error tracking
 export function withErrorTracking<T>(
   fn: () => Promise<T>,
-  context?: Record<string, any>
+  context?: ErrorContext
 ): Promise<T> {
   return fn().catch(error => {
-    errorTracker.captureError(error, context);
+    errorTracker.captureError(error instanceof Error ? error : new Error(String(error)), context);
     throw error;
   });
 }
@@ -192,7 +193,7 @@ export const ERRORS = {
   SYSTEM_ERROR: 'Internal system error',
   SYSTEM_MAINTENANCE: 'System under maintenance',
   SYSTEM_OVERLOAD: 'System is overloaded',
-};
+} as const;
 
 // Error severity levels
 export enum ErrorSeverity {

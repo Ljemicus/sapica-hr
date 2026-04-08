@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { generateNonce, buildCSPHeader, CSP_NONCE_HEADER } from '@/lib/security/csp';
 import { createServerClient } from '@supabase/ssr';
 import { updateSession } from '@/lib/supabase/middleware';
 import { generateRequestId, REQUEST_ID_HEADER } from '@/lib/request-context';
@@ -50,6 +51,9 @@ function isCsrfExcludedRoute(pathname: string): boolean {
 }
 
 export async function proxy(request: NextRequest) {
+  // Generate CSP nonce for this request
+  const nonce = generateNonce();
+  
   // Assign a request ID for end-to-end correlation across logs.
   // Honour an existing header (e.g. from an upstream load-balancer).
   const requestId = request.headers.get(REQUEST_ID_HEADER) || generateRequestId();
@@ -63,6 +67,10 @@ export async function proxy(request: NextRequest) {
     if (csrfResponse) {
       csrfResponse.headers.set(REQUEST_ID_HEADER, requestId);
       csrfResponse.headers.set(LOCALE_HEADER, locale);
+      // Add CSP headers
+      const cspValue = buildCSPHeader({ nonce });
+      csrfResponse.headers.set('Content-Security-Policy', cspValue);
+      csrfResponse.headers.set(CSP_NONCE_HEADER, nonce);
       return csrfResponse;
     }
   }
@@ -71,6 +79,10 @@ export async function proxy(request: NextRequest) {
   if (forced404) {
     forced404.headers.set(REQUEST_ID_HEADER, requestId);
     forced404.headers.set(LOCALE_HEADER, locale);
+    // Add CSP headers
+    const cspValue = buildCSPHeader({ nonce });
+    forced404.headers.set('Content-Security-Policy', cspValue);
+    forced404.headers.set(CSP_NONCE_HEADER, nonce);
     return forced404;
   }
 
@@ -165,6 +177,11 @@ export async function proxy(request: NextRequest) {
     'Permissions-Policy',
     'camera=(), microphone=(), geolocation=(self), interest-cohort=()'
   );
+  
+  // Add CSP header with nonce
+  const cspValue = buildCSPHeader({ nonce });
+  response.headers.set('Content-Security-Policy', cspValue);
+  response.headers.set(CSP_NONCE_HEADER, nonce);
   
   return response;
 }

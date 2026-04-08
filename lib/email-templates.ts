@@ -1,3 +1,12 @@
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function baseLayout(content: string, preheader?: string): string {
   return `<!DOCTYPE html>
 <html lang="hr">
@@ -17,7 +26,7 @@ function baseLayout(content: string, preheader?: string): string {
   <![endif]-->
 </head>
 <body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased;">
-  ${preheader ? `<div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">${preheader}</div>` : ''}
+  ${preheader ? `<div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">${escapeHtml(preheader)}</div>` : ''}
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f3f4f6;">
     <tr>
       <td align="center" style="padding: 24px 16px;">
@@ -74,13 +83,13 @@ function ctaButton(text: string, href: string): string {
   <tr>
     <td align="center">
       <!--[if mso]>
-      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="${href}" style="height:48px;v-text-anchor:middle;width:240px;" arcsize="50%" fillcolor="#f97316">
-        <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:bold;">${text}</center>
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="${href.replace(/"/g, '&quot;')}" style="height:48px;v-text-anchor:middle;width:240px;" arcsize="50%" fillcolor="#f97316">
+        <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:bold;">${escapeHtml(text)}</center>
       </v:roundrect>
       <![endif]-->
       <!--[if !mso]><!-->
-      <a href="${href}" target="_blank" style="display: inline-block; background-color: #f97316; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 24px; mso-hide: all;">
-        ${text}
+      <a href="${href.replace(/"/g, '&quot;')}" target="_blank" style="display: inline-block; background-color: #f97316; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 24px; mso-hide: all;">
+        ${escapeHtml(text)}
       </a>
       <!--<![endif]-->
     </td>
@@ -89,18 +98,18 @@ function ctaButton(text: string, href: string): string {
 }
 
 function heading(text: string): string {
-  return `<h2 style="margin: 0 0 20px; color: #1f2937; font-size: 22px; font-weight: 700; line-height: 1.3;">${text}</h2>`;
+  return `<h2 style="margin: 0 0 20px; color: #1f2937; font-size: 22px; font-weight: 700; line-height: 1.3;">${escapeHtml(text)}</h2>`;
 }
 
 function paragraph(text: string): string {
-  return `<p style="margin: 0 0 16px; color: #374151; font-size: 16px; line-height: 1.6;">${text}</p>`;
+  return `<p style="margin: 0 0 16px; color: #374151; font-size: 16px; line-height: 1.6;">${escapeHtml(text)}</p>`;
 }
 
 function infoBox(text: string): string {
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 16px 0;">
   <tr>
     <td style="background-color: #fef3e2; border-left: 4px solid #f97316; border-radius: 0 8px 8px 0; padding: 16px 20px;">
-      <p style="margin: 0; color: #92400e; font-size: 15px; line-height: 1.5; font-weight: 500;">${text}</p>
+      <p style="margin: 0; color: #92400e; font-size: 15px; line-height: 1.5; font-weight: 500;">${escapeHtml(text)}</p>
     </td>
   </tr>
 </table>`;
@@ -117,13 +126,13 @@ export function newBookingRequestEmail(
 ): string {
   const content = `
     ${heading('Novi upit za čuvanje! &#127881;')}
-    ${paragraph(`Pozdrav ${sitterName},`)}
-    ${paragraph(`<strong>${ownerName}</strong> želi rezervirati <strong>${serviceName}</strong> za ljubimca <strong>${petName}</strong>.`)}
-    ${infoBox(`&#128197; Datumi: ${dates}`)}
+    ${paragraph(`Pozdrav ${escapeHtml(sitterName)},`)}
+    ${paragraph(`<strong>${escapeHtml(ownerName)}</strong> želi rezervirati <strong>${escapeHtml(serviceName)}</strong> za ljubimca <strong>${escapeHtml(petName)}</strong>.`)}
+    ${infoBox(`&#128197; Datumi: ${escapeHtml(dates)}`)}
     ${paragraph('Pregledajte upit i odgovorite što prije kako biste osigurali rezervaciju.')}
     ${ctaButton('Pogledaj upit', 'https://petpark.hr/dashboard/sitter')}
   `;
-  return baseLayout(content, `${ownerName} želi rezervirati ${serviceName} za ${petName}`);
+  return baseLayout(content, `${escapeHtml(ownerName)} želi rezervirati ${escapeHtml(serviceName)} za ${escapeHtml(petName)}`);
 }
 
 export function bookingAcceptedEmail(
@@ -134,13 +143,13 @@ export function bookingAcceptedEmail(
 ): string {
   const content = `
     ${heading('Rezervacija potvrđena! &#127881;')}
-    ${paragraph(`Sjajne vijesti, ${ownerName}!`)}
-    ${paragraph(`<strong>${sitterName}</strong> je prihvatio/la rezervaciju za <strong>${petName}</strong>.`)}
-    ${infoBox(`&#128197; Datumi: ${dates}`)}
+    ${paragraph(`Sjajne vijesti, ${escapeHtml(ownerName)}!`)}
+    ${paragraph(`<strong>${escapeHtml(sitterName)}</strong> je prihvatio/la rezervaciju za <strong>${escapeHtml(petName)}</strong>.`)}
+    ${infoBox(`&#128197; Datumi: ${escapeHtml(dates)}`)}
     ${paragraph('Možete kontaktirati sittera putem poruka kako biste dogovorili detalje.')}
     ${ctaButton('Pogledaj rezervaciju', 'https://petpark.hr/dashboard/vlasnik')}
   `;
-  return baseLayout(content, `${sitterName} je prihvatio/la rezervaciju za ${petName}`);
+  return baseLayout(content, `${escapeHtml(sitterName)} je prihvatio/la rezervaciju za ${escapeHtml(petName)}`);
 }
 
 export function bookingRejectedEmail(
@@ -151,12 +160,12 @@ export function bookingRejectedEmail(
 ): string {
   const content = `
     ${heading('Rezervacija odbijena')}
-    ${paragraph(`Pozdrav ${ownerName},`)}
-    ${paragraph(`Nažalost, <strong>${sitterName}</strong> ne može prihvatiti rezervaciju za <strong>${petName}</strong> (<strong>${dates}</strong>).`)}
+    ${paragraph(`Pozdrav ${escapeHtml(ownerName)},`)}
+    ${paragraph(`Nažalost, <strong>${escapeHtml(sitterName)}</strong> ne može prihvatiti rezervaciju za <strong>${escapeHtml(petName)}</strong> (<strong>${escapeHtml(dates)}</strong>).`)}
     ${paragraph('Ne brinite — na PetParku možete lako pronaći drugog pouzdanog sittera za vašeg ljubimca.')}
     ${ctaButton('Pronađi drugog sittera', 'https://petpark.hr/pretraga')}
   `;
-  return baseLayout(content, `${sitterName} ne može prihvatiti rezervaciju za ${petName}`);
+  return baseLayout(content, `${escapeHtml(sitterName)} ne može prihvatiti rezervaciju za ${escapeHtml(petName)}`);
 }
 
 export function bookingCancelledEmail(
@@ -166,12 +175,12 @@ export function bookingCancelledEmail(
 ): string {
   const content = `
     ${heading('Rezervacija otkazana')}
-    ${paragraph(`Pozdrav ${recipientName},`)}
-    ${paragraph(`Nažalost, rezervacija za <strong>${petName}</strong> (<strong>${dates}</strong>) je otkazana.`)}
+    ${paragraph(`Pozdrav ${escapeHtml(recipientName)},`)}
+    ${paragraph(`Nažalost, rezervacija za <strong>${escapeHtml(petName)}</strong> (<strong>${escapeHtml(dates)}</strong>) je otkazana.`)}
     ${paragraph('Ne brinite — na PetParku možete lako pronaći drugog pouzdanog sittera za vašeg ljubimca.')}
     ${ctaButton('Pronađi drugog sittera', 'https://petpark.hr/pretraga')}
   `;
-  return baseLayout(content, `Rezervacija za ${petName} je otkazana`);
+  return baseLayout(content, `Rezervacija za ${escapeHtml(petName)} je otkazana`);
 }
 
 export function newMessageEmail(
@@ -180,12 +189,12 @@ export function newMessageEmail(
 ): string {
   const content = `
     ${heading('Nova poruka &#128172;')}
-    ${paragraph(`Pozdrav ${recipientName},`)}
-    ${paragraph(`<strong>${senderName}</strong> vam je poslao/la poruku na PetParku.`)}
+    ${paragraph(`Pozdrav ${escapeHtml(recipientName)},`)}
+    ${paragraph(`<strong>${escapeHtml(senderName)}</strong> vam je poslao/la poruku na PetParku.`)}
     ${paragraph('Odgovorite što prije kako biste nastavili razgovor.')}
     ${ctaButton('Pogledaj poruku', 'https://petpark.hr/poruke')}
   `;
-  return baseLayout(content, `${senderName} vam je poslao/la poruku`);
+  return baseLayout(content, `${escapeHtml(senderName)} vam je poslao/la poruku`);
 }
 
 export function walkUpdateEmail(
@@ -195,13 +204,13 @@ export function walkUpdateEmail(
 ): string {
   const content = `
     ${heading('Vaš ljubimac je na šetnji! &#128694;')}
-    ${paragraph(`Pozdrav ${ownerName},`)}
-    ${paragraph(`<strong>${sitterName}</strong> je krenuo/la u šetnju s <strong>${petName}</strong>.`)}
+    ${paragraph(`Pozdrav ${escapeHtml(ownerName)},`)}
+    ${paragraph(`<strong>${escapeHtml(sitterName)}</strong> je krenuo/la u šetnju s <strong>${escapeHtml(petName)}</strong>.`)}
     ${infoBox('&#128205; Pratite šetnju uživo na PetParku — GPS lokacija, prijeđena udaljenost i fotografije.')}
     ${paragraph('Otvorite aplikaciju za praćenje u stvarnom vremenu.')}
     ${ctaButton('Prati šetnju', 'https://petpark.hr/dashboard/vlasnik')}
   `;
-  return baseLayout(content, `${sitterName} je krenuo/la u šetnju s ${petName}`);
+  return baseLayout(content, `${escapeHtml(sitterName)} je krenuo/la u šetnju s ${escapeHtml(petName)}`);
 }
 
 export function paymentConfirmationEmail(
@@ -213,13 +222,13 @@ export function paymentConfirmationEmail(
 ): string {
   const content = `
     ${heading('Plaćanje potvrđeno! &#9989;')}
-    ${paragraph(`Pozdrav ${ownerName},`)}
-    ${paragraph(`Vaše plaćanje za <strong>${serviceName}</strong> za ljubimca <strong>${petName}</strong> je uspješno provedeno.`)}
-    ${infoBox(`&#128197; Datumi: ${dates}<br>&#128176; Iznos: ${amountFormatted}`)}
+    ${paragraph(`Pozdrav ${escapeHtml(ownerName)},`)}
+    ${paragraph(`Vaše plaćanje za <strong>${escapeHtml(serviceName)}</strong> za ljubimca <strong>${escapeHtml(petName)}</strong> je uspješno provedeno.`)}
+    ${infoBox(`&#128197; Datumi: ${escapeHtml(dates)}<br>&#128176; Iznos: ${escapeHtml(amountFormatted)}`)}
     ${paragraph('Rezervacija je potvrđena. Čuvar će biti obaviješten.')}
     ${ctaButton('Pogledaj rezervaciju', 'https://petpark.hr/dashboard/vlasnik')}
   `;
-  return baseLayout(content, `Plaćanje za ${serviceName} je potvrđeno`);
+  return baseLayout(content, `Plaćanje za ${escapeHtml(serviceName)} je potvrđeno`);
 }
 
 export function sitterPaymentNotificationEmail(
@@ -232,19 +241,19 @@ export function sitterPaymentNotificationEmail(
 ): string {
   const content = `
     ${heading('Nova uplata primljena! &#128176;')}
-    ${paragraph(`Pozdrav ${sitterName},`)}
-    ${paragraph(`<strong>${ownerName}</strong> je platio/la <strong>${serviceName}</strong> za ljubimca <strong>${petName}</strong>.`)}
-    ${infoBox(`&#128197; Datumi: ${dates}<br>&#128176; Vaša zarada: ${payoutFormatted}`)}
+    ${paragraph(`Pozdrav ${escapeHtml(sitterName)},`)}
+    ${paragraph(`<strong>${escapeHtml(ownerName)}</strong> je platio/la <strong>${escapeHtml(serviceName)}</strong> za ljubimca <strong>${escapeHtml(petName)}</strong>.`)}
+    ${infoBox(`&#128197; Datumi: ${escapeHtml(dates)}<br>&#128176; Vaša zarada: ${escapeHtml(payoutFormatted)}`)}
     ${paragraph('Sredstva će biti dostupna na vašem Stripe računu nakon završetka usluge.')}
     ${ctaButton('Pogledaj dashboard', 'https://petpark.hr/dashboard/sitter')}
   `;
-  return baseLayout(content, `${ownerName} je platio/la za ${serviceName}`);
+  return baseLayout(content, `${escapeHtml(ownerName)} je platio/la za ${escapeHtml(serviceName)}`);
 }
 
 export function welcomeEmail(userName: string): string {
   const content = `
     ${heading('Dobrodošli na PetPark! &#128062;')}
-    ${paragraph(`Dobrodošli na PetPark, ${userName}!`)}
+    ${paragraph(`Dobrodošli na PetPark, ${escapeHtml(userName)}!`)}
     ${paragraph('Drago nam je što ste se pridružili zajednici ljubitelja životinja. PetPark je platforma koja povezuje vlasnike kućnih ljubimaca s pouzdanim čuvarima — jer vaš ljubimac zaslužuje najbolju brigu.')}
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 20px 0;">
       <tr>
@@ -286,7 +295,7 @@ export function welcomeEmail(userName: string): string {
     </table>
     ${ctaButton('Započni pretragu', 'https://petpark.hr/pretraga')}
   `;
-  return baseLayout(content, `Dobrodošli na PetPark, ${userName}!`);
+  return baseLayout(content, `Dobrodošli na PetPark, ${escapeHtml(userName)}!`);
 }
 
 export function lostPetAlertEmail(
@@ -298,21 +307,21 @@ export function lostPetAlertEmail(
   listingId: string,
   distanceKm?: number,
 ): string {
-  const listingUrl = `https://petpark.hr/izgubljeni/${listingId}`;
+  const listingUrl = `https://petpark.hr/izgubljeni/${encodeURIComponent(listingId)}`;
   const speciesLabel = species === 'pas' ? 'pas' : species === 'macka' ? 'mačka' : 'ljubimac';
-  const locationText = neighborhood ? `${neighborhood}, ${city}` : city;
+  const locationText = neighborhood ? `${escapeHtml(neighborhood)}, ${escapeHtml(city)}` : city;
   const distanceText = distanceKm !== undefined ? ` (${distanceKm} km od vaše lokacije)` : '';
 
   const content = `
     ${heading('Novi oglas za nestanak! &#128680;')}
-    ${paragraph(`Pozdrav ${recipientName},`)}
-    ${paragraph(`U vašoj blizini je prijavljen nestanak: <strong>${petName}</strong> (${speciesLabel}).`)}
-    ${infoBox(`&#128205; Lokacija: ${locationText}${distanceText}`)}
+    ${paragraph(`Pozdrav ${escapeHtml(recipientName)},`)}
+    ${paragraph(`U vašoj blizini je prijavljen nestanak: <strong>${escapeHtml(petName)}</strong> (${speciesLabel}).`)}
+    ${infoBox(`&#128205; Lokacija: ${escapeHtml(locationText)}${escapeHtml(distanceText)}`)}
     ${paragraph('Ako ste vidjeli ovog ljubimca, svaka informacija pomaže!')}
     ${ctaButton('Pogledaj oglas', listingUrl)}
     ${paragraph('<small style="color: #9ca3af;">Primili ste ovaj email jer ste pretplaćeni na obavijesti o nestalim ljubimcima. Možete upravljati pretplatama u postavkama.</small>')}
   `;
-  return baseLayout(content, `Nestao ${speciesLabel} "${petName}" u gradu ${city}`);
+  return baseLayout(content, `Nestao ${speciesLabel} "${escapeHtml(petName)}" u gradu ${escapeHtml(city)}`);
 }
 
 export function lostPetSightingEmail(
@@ -322,17 +331,17 @@ export function lostPetSightingEmail(
   sightingDescription: string,
   listingId: string,
 ): string {
-  const listingUrl = `https://petpark.hr/izgubljeni/${listingId}`;
+  const listingUrl = `https://petpark.hr/izgubljeni/${encodeURIComponent(listingId)}`;
 
   const content = `
     ${heading('Novo viđenje vašeg ljubimca! &#128064;')}
-    ${paragraph(`Pozdrav ${ownerName},`)}
-    ${paragraph(`Netko je prijavio viđenje vašeg ljubimca <strong>${petName}</strong>!`)}
-    ${infoBox(`&#128205; Lokacija: ${sightingLocation}<br>&#128221; Opis: ${sightingDescription}`)}
+    ${paragraph(`Pozdrav ${escapeHtml(ownerName)},`)}
+    ${paragraph(`Netko je prijavio viđenje vašeg ljubimca <strong>${escapeHtml(petName)}</strong>!`)}
+    ${infoBox(`&#128205; Lokacija: ${escapeHtml(sightingLocation)}<br>&#128221; Opis: ${escapeHtml(sightingDescription)}`)}
     ${paragraph('Pogledajte prijavu i sve detalje na stranici oglasa.')}
     ${ctaButton('Pogledaj oglas', listingUrl)}
   `;
-  return baseLayout(content, `Novo viđenje ljubimca "${petName}"`);
+  return baseLayout(content, `Novo viđenje ljubimca "${escapeHtml(petName)}"`);
 }
 
 interface AppealDonationClickEmailData {
@@ -369,9 +378,9 @@ export function appealDonationClickEmail({
     donorInfoHtml = infoBox('&#128100; Netko je kliknuo gumb "Doniraj" na vašoj apelaciji. Korisnik nije prijavljen na PetPark, pa nemamo dodatnih kontaktnih informacija.');
   } else {
     const contactDetails = [
-      donorName ? `<strong>Ime:</strong> ${donorName}` : '',
-      donorEmail ? `<strong>Email:</strong> ${donorEmail}` : '',
-      donorPhone ? `<strong>Telefon:</strong> ${donorPhone}` : '',
+      donorName ? `<strong>Ime:</strong> ${escapeHtml(donorName)}` : '',
+      donorEmail ? `<strong>Email:</strong> ${escapeHtml(donorEmail)}` : '',
+      donorPhone ? `<strong>Telefon:</strong> ${escapeHtml(donorPhone)}` : '',
     ].filter(Boolean).join('<br>');
     
     donorInfoHtml = `
@@ -389,15 +398,15 @@ export function appealDonationClickEmail({
 
   const content = `
     ${heading('Novi interes za donaciju! &#128157;')}
-    ${paragraph(`Pozdrav ${organizationName},`)}
-    ${paragraph(`Netko je iskazao interes za donaciju na vašoj apelaciji <strong>"${appealTitle}"</strong>.`)}
+    ${paragraph(`Pozdrav ${escapeHtml(organizationName)},`)}
+    ${paragraph(`Netko je iskazao interes za donaciju na vašoj apelaciji <strong>"${escapeHtml(appealTitle)}"</strong>.`)}
     ${donorInfoHtml}
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 16px 0;">
       <tr>
         <td style="border-top: 1px solid #e5e7eb; padding-top: 16px;">
           <p style="margin: 0; color: #6b7280; font-size: 13px;">
-            <strong>Vrijeme klika:</strong> ${clickTime}<br>
-            <strong>Apelacija:</strong> <a href="${appealUrl}" style="color: #f97316;">${appealTitle}</a>
+            <strong>Vrijeme klika:</strong> ${escapeHtml(clickTime)}<br>
+            <strong>Apelacija:</strong> <a href="${appealUrl.replace(/"/g, '&quot;')}" style="color: #f97316;">${escapeHtml(appealTitle)}</a>
           </p>
         </td>
       </tr>
@@ -406,5 +415,5 @@ export function appealDonationClickEmail({
     ${ctaButton('Pogledaj apelaciju', appealUrl)}
   `;
 
-  return baseLayout(content, `Novi interes za donaciju na apelaciji "${appealTitle}"`);
+  return baseLayout(content, `Novi interes za donaciju na apelaciji "${escapeHtml(appealTitle)}"`);
 }

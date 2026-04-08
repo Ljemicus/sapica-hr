@@ -78,7 +78,7 @@ export function HeroSection({ className = '' }: HeroSectionProps) {
   });
 
   return (
-    <section className={`relative min-h-screen flex items-center justify-center overflow-hidden ${className}`}>
+    <section className={`relative min-h-screen flex items-center justify-center overflow-hidden pb-8 md:pb-12 ${className}`}>
       {/* Background image with dark overlay */}
       <div className="absolute inset-0">
         <div 

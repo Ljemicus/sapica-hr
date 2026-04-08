@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { PetOfTheWeekWithDetails } from '@/lib/types/social';
+import { OptimizedImage } from '@/components/shared/optimized-image';
 
 interface PetOfTheWeekProps {
   showHistory?: boolean;
@@ -119,11 +120,14 @@ export function PetOfTheWeek({ showHistory = false }: PetOfTheWeekProps) {
               {currentPet.post.media_urls && currentPet.post.media_urls.length > 0 && (
                 <div className="flex gap-2 mt-3">
                   {currentPet.post.media_urls.slice(0, 3).map((url, i) => (
-                    <img
+                    <OptimizedImage
                       key={i}
                       src={url}
                       alt={`${currentPet.pet.name} ${i + 1}`}
-                      className="h-16 w-16 object-cover rounded-lg"
+                      width={64}
+                      height={64}
+                      className="rounded-lg"
+                      objectFit="cover"
                     />
                   ))}
                 </div>

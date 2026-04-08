@@ -121,7 +121,7 @@ INSERT INTO public.pets (id, owner_id, name, species, breed, age, weight, specia
 ('00055555-5555-5555-5555-555555555555', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Buddy', 'dog', 'Zlatni retriver', 4, 32.0, NULL, '/images/pets/buddy.jpg');
 
 -- Bookings
-INSERT INTO public.bookings (id, owner_id, sitter_id, pet_id, service_type, start_date, end_date, status, total_price, note, is_demo) VALUES
+INSERT INTO public.sitter_bookings_old (id, owner_id, sitter_id, pet_id, service_type, start_date, end_date, status, total_price, note, is_demo) VALUES
 ('00001111-1111-1111-1111-111111111111', '99999999-9999-9999-9999-999999999999', '11111111-1111-1111-1111-111111111111', '00011111-1111-1111-1111-111111111111', 'boarding', '2026-03-20', '2026-03-25', 'completed', 125.00, 'Rex voli šetnje ujutro', FALSE),
 ('00002222-2222-2222-2222-222222222222', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '22222222-2222-2222-2222-222222222222', '00033333-3333-3333-3333-333333333333', 'boarding', '2026-03-28', '2026-04-02', 'accepted', 150.00, NULL, FALSE),
 ('00003333-3333-3333-3333-333333333333', '99999999-9999-9999-9999-999999999999', '33333333-3333-3333-3333-333333333333', '00011111-1111-1111-1111-111111111111', 'walking', '2026-03-22', '2026-03-22', 'completed', 8.00, NULL, FALSE),
@@ -133,7 +133,7 @@ INSERT INTO public.reviews (booking_id, reviewer_id, reviewee_id, rating, commen
 ('00003333-3333-3333-3333-333333333333', '99999999-9999-9999-9999-999999999999', '33333333-3333-3333-3333-333333333333', 5, 'Ivana je odlična šetačica! Rex je bio umoran i sretan nakon šetnje. Preporučujem svima!');
 
 -- Add more reviews with generated booking IDs for completeness
-INSERT INTO public.bookings (id, owner_id, sitter_id, pet_id, service_type, start_date, end_date, status, total_price) VALUES
+INSERT INTO public.sitter_bookings_old (id, owner_id, sitter_id, pet_id, service_type, start_date, end_date, status, total_price) VALUES
 ('00005555-5555-5555-5555-555555555555', '99999999-9999-9999-9999-999999999999', '44444444-4444-4444-4444-444444444444', '00011111-1111-1111-1111-111111111111', 'boarding', '2026-02-10', '2026-02-15', 'completed', 110.00),
 ('00006666-6666-6666-6666-666666666666', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '44444444-4444-4444-4444-444444444444', '00033333-3333-3333-3333-333333333333', 'walking', '2026-02-20', '2026-02-20', 'completed', 8.00),
 ('00007777-7777-7777-7777-777777777777', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', '00055555-5555-5555-5555-555555555555', 'daycare', '2026-01-15', '2026-01-15', 'completed', 20.00),
@@ -348,7 +348,7 @@ ON CONFLICT (slug) DO NOTHING;
 -- Veterinarians (Official Registry)
 -- ════════════════════════════════════════════════════════
 
-\i ./seed-veterinari.sql
+-- External seed file skipped
 
 -- Re-enable FK checks
 SET session_replication_role = DEFAULT;

@@ -3,10 +3,11 @@
  */
 
 import { appLogger } from './logger';
+import type { AnalyticsProperties, AnalyticsTraits } from './types';
 
 export interface AnalyticsEvent {
   name: string;
-  properties?: Record<string, any>;
+  properties?: AnalyticsProperties;
   userId?: string;
   timestamp?: string;
 }
@@ -20,7 +21,7 @@ export interface AnalyticsConfig {
 export class Analytics {
   public config: AnalyticsConfig;
   private queue: AnalyticsEvent[] = [];
-  private flushInterval: NodeJS.Timeout | null = null;
+  private flushInterval: ReturnType<typeof setInterval> | null = null;
   
   constructor(config: AnalyticsConfig) {
     this.config = config;
@@ -45,7 +46,7 @@ export class Analytics {
     
     // Log for development
     if (process.env.NODE_ENV === 'development') {
-      appLogger.debug('Analytics event tracked', fullEvent);
+      appLogger.debug('Analytics event tracked', fullEvent as unknown);
     }
     
     // Auto-flush if queue gets too large
@@ -54,7 +55,7 @@ export class Analytics {
     }
   }
   
-  identify(userId: string, traits?: Record<string, any>): void {
+  identify(userId: string, traits?: AnalyticsTraits): void {
     if (!this.config.enabled) {
       return;
     }
@@ -66,7 +67,7 @@ export class Analytics {
     });
   }
   
-  page(name: string, properties?: Record<string, any>): void {
+  page(name: string, properties?: AnalyticsProperties): void {
     if (!this.config.enabled) {
       return;
     }
@@ -133,8 +134,8 @@ export const analytics = new Analytics({
 export function useAnalytics() {
   return {
     track: (event: AnalyticsEvent) => analytics.track(event),
-    identify: (userId: string, traits?: Record<string, any>) => analytics.identify(userId, traits),
-    page: (name: string, properties?: Record<string, any>) => analytics.page(name, properties),
+    identify: (userId: string, traits?: AnalyticsTraits) => analytics.identify(userId, traits),
+    page: (name: string, properties?: AnalyticsProperties) => analytics.page(name, properties),
   };
 }
 
@@ -182,7 +183,7 @@ export const EVENTS = {
   // Performance events
   PAGE_LOAD: 'page_load',
   API_CALL: 'api_call',
-};
+} as const;
 
 // Initialize analytics
 export function initAnalytics(config?: Partial<AnalyticsConfig>): void {

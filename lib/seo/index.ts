@@ -3,6 +3,16 @@
  * Barrel export for all SEO modules
  */
 
+import type { 
+  PageType, 
+  PageData, 
+  SitterPageData, 
+  ServicePageData, 
+  ProductPageData, 
+  BlogPageData,
+  SEOMetadata 
+} from './types';
+
 // Re-export existing modules
 export * from './internal-links';
 export * from './locale-metadata';
@@ -13,10 +23,38 @@ export * from './opengraph-generator';
 export * from './twitter-cards';
 export * from './structured-data';
 
+// Export types
+export type {
+  PageType,
+  PageData,
+  SitterPageData,
+  ServicePageData,
+  ProductPageData,
+  BlogPageData,
+  SEOMetadata,
+} from './types';
+
 // Combined utilities
 export { generateOpenGraphImage, generateOpenGraphMetaTags } from './opengraph-generator';
-export { generateTwitterCard, generateSocialMetaTags } from './twitter-cards';
+export { generateTwitterCardTags, generateTwitterCardFromOpenGraph } from './twitter-cards';
 export { generateStructuredData } from './structured-data';
+
+// Type guards
+function isSitterPageData(data: PageData): data is SitterPageData {
+  return typeof data === 'object' && data !== null && 'name' in data && 'rating' in data;
+}
+
+function isServicePageData(data: PageData): data is ServicePageData {
+  return typeof data === 'object' && data !== null && 'service' in data && 'location' in data;
+}
+
+function isProductPageData(data: PageData): data is ProductPageData {
+  return typeof data === 'object' && data !== null && 'name' in data && 'description' in data;
+}
+
+function isBlogPageData(data: PageData): data is BlogPageData {
+  return typeof data === 'object' && data !== null && 'title' in data && 'excerpt' in data && 'author' in data;
+}
 
 // Main SEO generator
 export class SEOGenerator {
@@ -24,15 +62,9 @@ export class SEOGenerator {
    * Generate complete SEO metadata for a page
    */
   static generateForPage(
-    pageType: 'home' | 'sitter' | 'service' | 'product' | 'blog' | 'faq',
-    pageData: any
-  ): {
-    title: string;
-    description: string;
-    openGraph: Array<{ property: string; content: string }>;
-    twitter: Array<{ name: string; content: string }>;
-    structuredData: string;
-  } {
+    pageType: PageType,
+    pageData: PageData
+  ): SEOMetadata {
     // Generate page-specific metadata
     const { title, description } = this.getPageMetadata(pageType, pageData);
     
@@ -54,7 +86,7 @@ export class SEOGenerator {
     };
   }
   
-  private static getPageMetadata(pageType: string, data: any): { title: string; description: string } {
+  private static getPageMetadata(pageType: PageType, data: PageData): { title: string; description: string } {
     switch (pageType) {
       case 'home':
         return {
@@ -63,27 +95,51 @@ export class SEOGenerator {
         };
         
       case 'sitter':
+        if (isSitterPageData(data)) {
+          return {
+            title: `${data.name} - Pet Sitter on PetPark`,
+            description: `⭐ ${data.rating}/5 rating | ${data.bio?.substring(0, 150) || 'Professional pet sitter'}...`,
+          };
+        }
         return {
-          title: `${data.name} - Pet Sitter on PetPark`,
-          description: `⭐ ${data.rating}/5 rating | ${data.bio?.substring(0, 150)}...`,
+          title: 'Pet Sitter on PetPark',
+          description: 'Professional pet sitter available for your pet care needs.',
         };
         
       case 'service':
+        if (isServicePageData(data)) {
+          return {
+            title: `${data.service} Services in ${data.location}`,
+            description: `Find top-rated ${data.service.toLowerCase()} providers in ${data.location}. Read reviews, compare prices, and book instantly.`,
+          };
+        }
         return {
-          title: `${data.service} Services in ${data.location}`,
-          description: `Find top-rated ${data.service.toLowerCase()} providers in ${data.location}. Read reviews, compare prices, and book instantly.`,
+          title: 'Pet Services on PetPark',
+          description: 'Find top-rated pet care providers. Read reviews, compare prices, and book instantly.',
         };
         
       case 'product':
+        if (isProductPageData(data)) {
+          return {
+            title: data.name,
+            description: data.description,
+          };
+        }
         return {
-          title: data.name,
-          description: data.description,
+          title: 'Product on PetPark',
+          description: 'Quality pet products available on PetPark.',
         };
         
       case 'blog':
+        if (isBlogPageData(data)) {
+          return {
+            title: data.title,
+            description: data.excerpt,
+          };
+        }
         return {
-          title: data.title,
-          description: data.excerpt,
+          title: 'PetPark Blog',
+          description: 'Tips, stories, and advice for pet owners.',
         };
         
       case 'faq':
@@ -100,7 +156,7 @@ export class SEOGenerator {
     }
   }
   
-  private static generateOpenGraphTags(pageType: string, data: any): Array<{ property: string; content: string }> {
+  private static generateOpenGraphTags(pageType: PageType, data: PageData): Array<{ property: string; content: string }> {
     // Use OpenGraph generator presets
     const { generateOpenGraphMetaTags } = require('./opengraph-generator');
     
@@ -109,42 +165,75 @@ export class SEOGenerator {
         return generateOpenGraphMetaTags('HOME');
         
       case 'sitter':
-        return generateOpenGraphMetaTags('SITTER_PROFILE', data.name, data.rating);
+        if (isSitterPageData(data)) {
+          return generateOpenGraphMetaTags('SITTER_PROFILE', data.name, data.rating);
+        }
+        return generateOpenGraphMetaTags('HOME');
         
       case 'service':
-        return generateOpenGraphMetaTags('SERVICE', data.service, data.location);
+        if (isServicePageData(data)) {
+          return generateOpenGraphMetaTags('SERVICE', data.service, data.location);
+        }
+        return generateOpenGraphMetaTags('HOME');
         
       case 'blog':
-        return generateOpenGraphMetaTags('BLOG_POST', data.title, data.author);
+        if (isBlogPageData(data)) {
+          return generateOpenGraphMetaTags('BLOG_POST', data.title, data.author);
+        }
+        return generateOpenGraphMetaTags('HOME');
         
       default:
         return generateOpenGraphMetaTags('HOME');
     }
   }
   
-  private static generateTwitterTags(pageType: string, data: any): Array<{ name: string; content: string }> {
+  private static generateTwitterTags(pageType: PageType, data: PageData): Array<{ name: string; content: string }> {
     // Use Twitter Card generator presets
-    const { generateTwitterCard } = require('./twitter-cards');
+    const { generateTwitterCardTags } = require('./twitter-cards');
     
     switch (pageType) {
       case 'home':
-        return generateTwitterCard('HOME');
+        return generateTwitterCardTags({ card: 'summary_large_image', title: 'PetPark', description: 'Trusted Pet Care Platform', image: '/og-home.jpg' });
         
       case 'sitter':
-        return generateTwitterCard('SITTER_PROFILE', data.name, data.rating, data.image);
+        if (isSitterPageData(data)) {
+          return generateTwitterCardTags({ 
+            card: 'summary_large_image', 
+            title: `${data.name} - Pet Sitter`, 
+            description: `⭐ ${data.rating}/5 rating`, 
+            image: data.image || '/og-sitter-default.jpg' 
+          });
+        }
+        return generateTwitterCardTags({ card: 'summary_large_image', title: 'PetPark', description: 'Trusted Pet Care Platform', image: '/og-home.jpg' });
         
       case 'service':
-        return generateTwitterCard('SERVICE_PAGE', data.service, data.location);
+        if (isServicePageData(data)) {
+          return generateTwitterCardTags({ 
+            card: 'summary_large_image', 
+            title: `${data.service} in ${data.location}`, 
+            description: `Find top-rated ${data.service.toLowerCase()} providers`, 
+            image: '/og-service.jpg' 
+          });
+        }
+        return generateTwitterCardTags({ card: 'summary_large_image', title: 'PetPark', description: 'Trusted Pet Care Platform', image: '/og-home.jpg' });
         
       case 'blog':
-        return generateTwitterCard('BLOG_POST', data.title, data.excerpt, data.image, data.author);
+        if (isBlogPageData(data)) {
+          return generateTwitterCardTags({ 
+            card: 'summary_large_image', 
+            title: data.title, 
+            description: data.excerpt, 
+            image: data.image || '/og-blog-default.jpg' 
+          });
+        }
+        return generateTwitterCardTags({ card: 'summary_large_image', title: 'PetPark', description: 'Trusted Pet Care Platform', image: '/og-home.jpg' });
         
       default:
-        return generateTwitterCard('HOME');
+        return generateTwitterCardTags({ card: 'summary_large_image', title: 'PetPark', description: 'Trusted Pet Care Platform', image: '/og-home.jpg' });
     }
   }
   
-  private static generateStructuredData(pageType: string, data: any): string {
+  private static generateStructuredData(pageType: PageType, data: PageData): string {
     // Use Structured Data generator
     const { generateStructuredData } = require('./structured-data');
     
@@ -153,13 +242,22 @@ export class SEOGenerator {
         return generateStructuredData('home');
         
       case 'sitter':
-        return generateStructuredData('sitter', data.name, data.id, data.image, data.bio);
+        if (isSitterPageData(data)) {
+          return generateStructuredData('sitter', data.name, data.id, data.image, data.bio);
+        }
+        return '';
         
       case 'service':
-        return generateStructuredData('service', data.providerName, data.price, data.area);
+        if (isServicePageData(data)) {
+          return generateStructuredData('service', data.providerName, data.price, data.area);
+        }
+        return '';
         
       case 'product':
-        return generateStructuredData('product', data.name, data.price, data.image);
+        if (isProductPageData(data)) {
+          return generateStructuredData('product', data.name, data.price, data.image);
+        }
+        return '';
         
       case 'faq':
         return generateStructuredData('faq');

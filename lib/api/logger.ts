@@ -2,12 +2,14 @@
  * Application logger
  */
 
+import type { LogData } from './types';
+
 export interface LogEntry {
   level: 'debug' | 'info' | 'warn' | 'error';
   message: string;
   timestamp: string;
   context?: string;
-  data?: any;
+  data?: LogData;
 }
 
 export class Logger {
@@ -17,23 +19,23 @@ export class Logger {
     this.context = context;
   }
   
-  debug(message: string, data?: any) {
+  debug(message: string, data?: LogData): void {
     this.log('debug', message, data);
   }
   
-  info(message: string, data?: any) {
+  info(message: string, data?: LogData): void {
     this.log('info', message, data);
   }
   
-  warn(message: string, data?: any) {
+  warn(message: string, data?: LogData): void {
     this.log('warn', message, data);
   }
   
-  error(message: string, data?: any) {
+  error(message: string, data?: LogData): void {
     this.log('error', message, data);
   }
   
-  private log(level: LogEntry['level'], message: string, data?: any) {
+  private log(level: LogEntry['level'], message: string, data?: LogData): void {
     const entry: LogEntry = {
       level,
       message,

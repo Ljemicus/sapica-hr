@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import type { SocialPostWithDetails, SocialCommentWithUser, ReactionType } from '@/lib/types/social';
 import { formatDistanceToNow } from '@/lib/utils';
 import { cn } from '@/lib/utils';
+import { OptimizedImage } from '@/components/shared/optimized-image';
 
 interface PostCardProps {
   post: SocialPostWithDetails;
@@ -228,7 +229,7 @@ export function PostCard({ post, onDelete, userReaction: initialUserReaction = n
                 {url.match(/\.(mp4|webm|mov)$/i) ? (
                   <video src={url} className="w-full h-full object-cover" controls />
                 ) : (
-                  <img src={url} alt="" className="w-full h-full object-cover" />
+                  <OptimizedImage src={url} alt="" width={600} height={338} className="w-full h-full" objectFit="cover" />
                 )}
               </div>
             ))}

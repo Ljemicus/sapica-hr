@@ -21,7 +21,6 @@ import { DeferredUI } from '@/components/shared/deferred-ui';
 import { ChatWidget } from '@/components/chat/chat-widget';
 import { WebVitals } from '@/components/monitoring/web-vitals';
 import { OnlineStatusProvider } from '@/components/providers/online-status-provider';
-// Animation components temporarily removed for build stability
 import { SkipToContentLink } from '@/components/shared/skip-to-content-link';
 import { buildLocaleAlternates } from '@/lib/seo/locale-metadata';
 
@@ -55,6 +54,13 @@ export const metadata: Metadata = {
   creator: 'PetPark',
   publisher: 'PetPark',
   formatDetection: { telephone: true, email: true },
+  alternates: {
+    canonical: 'https://petpark.hr',
+    languages: {
+      'hr-HR': 'https://petpark.hr',
+      'en-US': 'https://petpark.hr/en',
+    },
+  },
   openGraph: {
     title: 'PetPark — Sve za ljubimce na jednom mjestu',
     description: 'Čuvanje, grooming, školovanje, veterinari, udomljavanje i zajednica ljubitelja životinja — sve u jednoj aplikaciji.',
@@ -78,9 +84,17 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
-  alternates: buildLocaleAlternates('/'),
+  verification: {
+    google: 'google-site-verification-code',
+  },
   icons: {
     icon: [
       { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
@@ -92,7 +106,6 @@ export const metadata: Metadata = {
     ],
   },
 };
-
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -108,6 +121,7 @@ export default async function RootLayout({
 }) {
   const headerStore = await headers();
   const routeLocale = headerStore.get(LOCALE_HEADER) ?? DEFAULT_LOCALE;
+  const cspNonce = headerStore.get('X-CSP-Nonce') ?? undefined;
 
   return (
     <html lang={routeLocale} className={`${inter.variable} ${nunito.variable} h-full antialiased`} suppressHydrationWarning>
@@ -119,8 +133,14 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://hmtlcgjcxhjecsbmmxol.supabase.co" />
         <link rel="dns-prefetch" href="https://hmtlcgjcxhjecsbmmxol.supabase.co" />
         <link rel="dns-prefetch" href="https://plausible.io" />
+        
+        {/* Hreflang tags for SEO */}
+        <link rel="alternate" hrefLang="hr" href="https://petpark.hr" />
+        <link rel="alternate" hrefLang="en" href="https://petpark.hr/en" />
+        <link rel="alternate" hrefLang="x-default" href="https://petpark.hr" />
+        
         {/* Inline Critical CSS */}
-        <style dangerouslySetInnerHTML={{ __html: readFileSync(join(process.cwd(), 'public', 'critical.css'), 'utf-8') }} />
+        <style nonce={cspNonce} dangerouslySetInnerHTML={{ __html: readFileSync(join(process.cwd(), 'public', 'critical.css'), 'utf-8') }} />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="PetPark" />
@@ -148,20 +168,8 @@ export default async function RootLayout({
                   </ErrorBoundary>
                 </main>
                 <PerformanceMonitor />
-                <Script id="register-sw" strategy="afterInteractive">
-                  {`
-                    if ('serviceWorker' in navigator) {
-                      window.addEventListener('load', function() {
-                        navigator.serviceWorker.register('/sw.js')
-                          .then(function(reg) {
-                            console.log('[SW] Registered:', reg.scope);
-                          })
-                          .catch(function(err) {
-                            console.error('[SW] Registration failed:', err);
-                          });
-                      });
-                    }
-                  `}
+                <Script id="register-sw" strategy="afterInteractive" nonce={cspNonce}>
+                  {`if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('/sw.js').then(function(reg) { console.log('[SW] Registered:', reg.scope); }).catch(function(err) { console.error('[SW] Registration failed:', err); }); }); }`}
                 </Script>
                 <div className="pb-20 md:pb-0">
                   <Footer />
@@ -170,10 +178,6 @@ export default async function RootLayout({
                 <DeferredUI />
                 <CookieConsentBanner />
                 <ChatWidget />
-                {/* <CommandPalette locale={routeLocale} /> */}
-                {/* <CustomCursor /> */}
-                {/* <AnimatedBackground /> */}
-                {/* <FloatingParticles /> */}
               </LanguageProvider>
             </CartProvider>
           </AuthProvider>

@@ -3,22 +3,23 @@
  */
 
 import { appLogger } from './logger';
+import type { EnvValidationResult, EnvValue } from './types';
 
 export interface EnvValidationRule {
   key: string;
   required?: boolean;
   type?: 'string' | 'number' | 'boolean' | 'array' | 'object';
-  default?: any;
-  validator?: (value: any) => boolean;
+  default?: EnvValue;
+  validator?: (value: EnvValue) => boolean;
   errorMessage?: string;
 }
 
-export interface EnvValidationResult {
+export interface EnvValidationResultFull {
   isValid: boolean;
   errors: string[];
   warnings: string[];
   missing: string[];
-  validated: Record<string, any>;
+  validated: EnvValidationResult;
 }
 
 export class EnvValidator {
@@ -34,8 +35,8 @@ export class EnvValidator {
     return this;
   }
   
-  validate(): EnvValidationResult {
-    const result: EnvValidationResult = {
+  validate(): EnvValidationResultFull {
+    const result: EnvValidationResultFull = {
       isValid: true,
       errors: [],
       warnings: [],
@@ -66,7 +67,7 @@ export class EnvValidator {
       }
       
       // Parse value based on type
-      let parsedValue: any;
+      let parsedValue: EnvValue;
       try {
         parsedValue = this.parseValue(value, rule.type);
       } catch (error) {
@@ -90,7 +91,7 @@ export class EnvValidator {
     return result;
   }
   
-  private parseValue(value: string, type?: string): any {
+  private parseValue(value: string, type?: string): EnvValue {
     if (!type || type === 'string') {
       return value;
     }
@@ -114,7 +115,7 @@ export class EnvValidator {
         
       case 'array':
         try {
-          return JSON.parse(value);
+          return JSON.parse(value) as string[];
         } catch {
           // If not valid JSON, treat as comma-separated
           return value.split(',').map((item: string) => item.trim());
@@ -122,7 +123,7 @@ export class EnvValidator {
         
       case 'object':
         try {
-          return JSON.parse(value);
+          return JSON.parse(value) as Record<string, unknown>;
         } catch {
           throw new Error(`Not a valid JSON object: ${value}`);
         }
@@ -237,7 +238,7 @@ export const PETPARK_ENV_RULES: EnvValidationRule[] = [
     required: true,
     type: 'string',
     default: 'development',
-    validator: (value) => ['development', 'production', 'test'].includes(value),
+    validator: (value) => ['development', 'production', 'test'].includes(String(value)),
     errorMessage: 'NODE_ENV must be development, production, or test',
   },
   {
@@ -255,7 +256,7 @@ export const PETPARK_ENV_RULES: EnvValidationRule[] = [
 ];
 
 // Validate environment on startup
-export function validateEnvironment(): EnvValidationResult {
+export function validateEnvironment(): EnvValidationResultFull {
   const validator = new EnvValidator();
   validator.addRules(PETPARK_ENV_RULES);
   
@@ -283,7 +284,7 @@ export function validateEnvironment(): EnvValidationResult {
 }
 
 // Get validated environment variables
-export function getValidatedEnv(): Record<string, any> {
+export function getValidatedEnv(): EnvValidationResult {
   const validator = new EnvValidator();
   validator.addRules(PETPARK_ENV_RULES);
   const result = validator.validate();

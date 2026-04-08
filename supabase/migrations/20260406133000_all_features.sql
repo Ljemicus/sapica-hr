@@ -543,9 +543,29 @@ CREATE TYPE dispute_status AS ENUM ('open', 'under_review', 'mediation', 'resolv
 CREATE TYPE dispute_reason AS ENUM ('no_show', 'damages', 'pet_injury', 'payment_issue', 'service_not_as_described', 'cancellation_dispute', 'other');
 CREATE TYPE dispute_resolution AS ENUM ('refund_full', 'refund_partial', 'no_refund', 'reschedule', 'other');
 
+-- Ensure sitter_bookings_old exists before creating disputes
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.tables 
+        WHERE table_schema = 'public' AND table_name = 'sitter_bookings_old'
+    ) THEN
+        -- If old bookings doesn't exist, rename current bookings if it has old structure
+        IF EXISTS (
+            SELECT 1 FROM information_schema.tables 
+            WHERE table_schema = 'public' AND table_name = 'bookings'
+        ) AND NOT EXISTS (
+            SELECT 1 FROM information_schema.columns 
+            WHERE table_schema = 'public' AND table_name = 'bookings' AND column_name = 'provider_id'
+        ) THEN
+            ALTER TABLE public.bookings RENAME TO sitter_bookings_old;
+        END IF;
+    END IF;
+END $$;
+
 CREATE TABLE public.disputes (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  booking_id UUID REFERENCES public.bookings(id) ON DELETE CASCADE NOT NULL,
+  booking_id UUID REFERENCES public.sitter_bookings_old(id) ON DELETE CASCADE NOT NULL,
   
   -- Who opened the dispute
   opened_by UUID REFERENCES public.users(id) NOT NULL,
@@ -590,7 +610,7 @@ CREATE TABLE public.dispute_messages (
 -- Insurance claims
 CREATE TABLE public.insurance_claims (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  booking_id UUID REFERENCES public.bookings(id) ON DELETE SET NULL,
+  booking_id UUID REFERENCES public.sitter_bookings_old(id) ON DELETE SET NULL,
   user_id UUID REFERENCES public.users(id) NOT NULL,
   claim_type TEXT NOT NULL CHECK (claim_type IN ('vet_bills', 'property_damage', 'theft', 'liability', 'other')),
   
@@ -649,7 +669,7 @@ CREATE POLICY "Sitters can view own verification" ON public.sitter_verifications
 CREATE POLICY "Admins can manage verifications" ON public.sitter_verifications FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE users.id = auth.uid() AND users.role = 'admin'));
 
 -- Dispute policies
-CREATE POLICY "Parties can view their disputes" ON public.disputes FOR SELECT USING (opened_by = auth.uid() OR EXISTS (SELECT 1 FROM public.bookings WHERE bookings.id = disputes.booking_id AND (bookings.owner_id = auth.uid() OR bookings.sitter_id = auth.uid())));
+CREATE POLICY "Parties can view their disputes" ON public.disputes FOR SELECT USING (opened_by = auth.uid() OR EXISTS (SELECT 1 FROM public.sitter_bookings_old WHERE sitter_bookings_old.id = disputes.booking_id AND (sitter_bookings_old.owner_id = auth.uid() OR sitter_bookings_old.sitter_id = auth.uid())));
 CREATE POLICY "Admins can manage disputes" ON public.disputes FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE users.id = auth.uid() AND users.role = 'admin'));
 
 -- Messages

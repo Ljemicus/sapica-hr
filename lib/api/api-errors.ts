@@ -2,12 +2,14 @@
  * API Error handling utilities
  */
 
+import type { ApiErrorDetails, ZodErrorLike, FormattedZodError } from './types';
+
 export class ApiError extends Error {
   constructor(
     public statusCode: number,
     public message: string,
     public code?: string,
-    public details?: any
+    public details?: ApiErrorDetails | ApiErrorDetails[]
   ) {
     super(message);
     this.name = 'ApiError';
@@ -26,7 +28,7 @@ export class ApiError extends Error {
 // Common API errors
 export const ERRORS = {
   // 400 - Bad Request
-  VALIDATION_ERROR: (details?: any) => 
+  VALIDATION_ERROR: (details?: ApiErrorDetails | ApiErrorDetails[]) => 
     new ApiError(400, 'Validation failed', 'VALIDATION_ERROR', details),
   
   INVALID_INPUT: (message = 'Invalid input provided') =>
@@ -89,7 +91,7 @@ export const ERRORS = {
 };
 
 // Error handler for API routes
-export function handleApiError(error: any): ApiError {
+export function handleApiError(error: unknown): ApiError {
   if (error instanceof ApiError) {
     return error;
   }
@@ -104,17 +106,17 @@ export function handleApiError(error: any): ApiError {
 }
 
 // Zod error formatter
-export function formatZodError(error: any): any {
+export function formatZodError(error: ZodErrorLike): FormattedZodError {
   if (error.errors) {
     return {
-      fieldErrors: error.errors.reduce((acc: any, err: any) => {
+      fieldErrors: error.errors.reduce<Record<string, string>>((acc, err) => {
         const path = err.path.join('.');
         acc[path] = err.message;
         return acc;
       }, {}),
     };
   }
-  return { error: error.message };
+  return { fieldErrors: { general: error.message || 'Validation failed' } };
 }
 
 // Create error response
@@ -131,7 +133,7 @@ export function createErrorResponse(error: ApiError): Response {
 }
 
 // Error boundary for React components
-export function withErrorBoundary<T extends React.ComponentType<any>>(
+export function withErrorBoundary<T extends React.ComponentType<Record<string, unknown>>>(
   Component: T,
   fallback?: React.ReactNode
 ): T {

@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ImageUpload } from '@/components/shared/image-upload';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { OptimizedImage } from '@/components/shared/optimized-image';
 
 interface GalleryUploadProps {
   sitterId: string;
@@ -141,10 +142,13 @@ export function GalleryUpload({
                   <div className="grid grid-cols-3 gap-2">
                     {uploadedUrls.map((url, index) => (
                       <div key={index} className="relative aspect-square rounded-md overflow-hidden border">
-                        <img 
+                        <OptimizedImage 
                           src={url} 
                           alt={`Uploaded ${index + 1}`}
-                          className="w-full h-full object-cover"
+                          width={200}
+                          height={200}
+                          className="w-full h-full"
+                          objectFit="cover"
                         />
                       </div>
                     ))}
@@ -188,10 +192,13 @@ export function GalleryUpload({
           {currentImages.map((imageUrl, index) => (
             <div key={index} className="relative group">
               <div className="aspect-square rounded-lg overflow-hidden border bg-gray-100">
-                <img
+                <OptimizedImage
                   src={imageUrl}
                   alt={`Gallery image ${index + 1}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  width={300}
+                  height={300}
+                  className="group-hover:scale-105 transition-transform duration-300"
+                  objectFit="cover"
                 />
                 
                 {/* Remove button */}

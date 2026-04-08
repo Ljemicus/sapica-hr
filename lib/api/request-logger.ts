@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { appLogger } from './logger';
+import type { RequestHandler } from './types';
 
 export interface RequestLog {
   method: string;
@@ -73,13 +74,13 @@ export class RequestLogger {
     // Log based on level
     switch (logLevel) {
       case 'info':
-        appLogger.info('Request completed', logEntry);
+        appLogger.info('Request completed', logEntry as unknown);
         break;
       case 'warn':
-        appLogger.warn('Request completed with client error', logEntry);
+        appLogger.warn('Request completed with client error', logEntry as unknown);
         break;
       case 'error':
-        appLogger.error('Request completed with server error', logEntry);
+        appLogger.error('Request completed with server error', logEntry as unknown);
         break;
     }
     
@@ -104,7 +105,7 @@ export class RequestLogger {
    * Generate a unique request ID
    */
   private static generateRequestId(): string {
-    return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   }
   
   /**
@@ -163,13 +164,13 @@ export class RequestLogger {
     // Log based on level
     switch (logLevel) {
       case 'info':
-        appLogger.info('API request completed', logEntry);
+        appLogger.info('API request completed', logEntry as unknown);
         break;
       case 'warn':
-        appLogger.warn('API request completed with client error', logEntry);
+        appLogger.warn('API request completed with client error', logEntry as unknown);
         break;
       case 'error':
-        appLogger.error('API request completed with server error', logEntry);
+        appLogger.error('API request completed with server error', logEntry as unknown);
         break;
     }
   }
@@ -249,9 +250,9 @@ export const requestLogger = RequestLogger;
 
 // Helper function for API routes
 export function withRequestLogging<T>(
-  handler: (req: Request, ...args: any[]) => Promise<T>
-): (req: Request, ...args: any[]) => Promise<T> {
-  return async function loggedHandler(req: Request, ...args: any[]) {
+  handler: RequestHandler<T>
+): RequestHandler<T> {
+  return async function loggedHandler(req: Request, ...args: unknown[]) {
     const startTime = Date.now();
     
     try {

@@ -1,6 +1,4 @@
--- ════════════════════════════════════════════════════════
 -- PetPark — Payment infrastructure (Stripe Connect)
--- ════════════════════════════════════════════════════════
 
 -- Add Stripe fields to sitter_profiles
 ALTER TABLE public.sitter_profiles 
@@ -8,7 +6,7 @@ ALTER TABLE public.sitter_profiles
   ADD COLUMN IF NOT EXISTS stripe_onboarding_complete BOOLEAN DEFAULT FALSE,
   ADD COLUMN IF NOT EXISTS payout_enabled BOOLEAN DEFAULT FALSE;
 
--- Add payment fields to bookings
+-- Add payment fields to bookings (old structure at this point)
 ALTER TABLE public.bookings 
   ADD COLUMN IF NOT EXISTS payment_status TEXT DEFAULT 'unpaid' 
     CHECK (payment_status IN ('unpaid', 'pending', 'paid', 'refunded', 'failed')),
@@ -17,7 +15,7 @@ ALTER TABLE public.bookings
   ADD COLUMN IF NOT EXISTS platform_fee DECIMAL DEFAULT 0,
   ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'EUR';
 
--- Payments log table
+-- Payments log table - reference public.bookings (old structure)
 CREATE TABLE IF NOT EXISTS public.payments (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   booking_id UUID REFERENCES public.bookings(id),

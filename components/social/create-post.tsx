@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { OptimizedImage } from '@/components/shared/optimized-image';
 import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'sonner';
 import type { Pet } from '@/lib/types';
@@ -258,7 +259,7 @@ export function CreatePost({ pets, onPostCreated, challengeId }: CreatePostProps
               <div className={`grid gap-2 mt-3 ${images.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
                 {images.map((image, i) => (
                   <div key={i} className="relative aspect-video">
-                    <img src={image} alt={`Upload ${i + 1}`} className="w-full h-full object-cover rounded-lg" />
+                    <OptimizedImage src={image} alt={`Upload ${i + 1}`} width={400} height={225} className="rounded-lg" objectFit="cover" />
                     <button
                       onClick={() => removeImage(i)}
                       className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-black/70"

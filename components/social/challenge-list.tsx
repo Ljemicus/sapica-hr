@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
+import { OptimizedImage } from '@/components/shared/optimized-image';
 import type { SocialChallenge, ChallengeEntryWithDetails } from '@/lib/types/social';
 
 interface ChallengeCardProps {
@@ -80,7 +81,7 @@ function ChallengeCard({ challenge, onVote, userVotes = new Set() }: ChallengeCa
     <Card className="overflow-hidden">
       <div className={`h-32 bg-gradient-to-r from-orange-400 to-pink-500 relative ${challenge.image_url ? '' : 'flex items-center justify-center'}`}>
         {challenge.image_url ? (
-          <img src={challenge.image_url} alt={challenge.title} className="w-full h-full object-cover" />
+          <OptimizedImage src={challenge.image_url} alt={challenge.title} width={400} height={128} className="w-full h-full" objectFit="cover" />
         ) : (
           <Trophy className="h-16 w-16 text-white/50" />
         )}
