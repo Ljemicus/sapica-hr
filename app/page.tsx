@@ -20,10 +20,6 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://petpark.hr' },
 };
 
-const AnimatedFooter = dynamic(() => import('@/components/home/animated-footer').then((mod) => mod.AnimatedFooter), {
-  loading: () => <div className="h-64 bg-muted animate-pulse" />,
-});
-
 const homepageServices = [
   { name: 'Čuvanje ljubimaca', url: 'https://petpark.hr/pretraga', description: 'Pronađite pouzdane sittere u vašem gradu' },
   { name: 'Grooming', url: 'https://petpark.hr/njega', description: 'Profesionalni groomeri i saloni za njegu ljubimaca' },
@@ -68,7 +64,7 @@ export default async function HomePage() {
   return (
     <>
       <ItemListJsonLd items={homepageServices} />
-      <HomePageContent featuredSitters={featuredSitters} cities={cities} newsletterSlot={<AnimatedFooter />} />
+      <HomePageContent featuredSitters={featuredSitters} cities={cities} />
     </>
   );
 }

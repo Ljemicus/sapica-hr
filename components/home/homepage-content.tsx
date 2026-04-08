@@ -167,11 +167,9 @@ const servicesMeta = [
 export function HomePageContent({
   featuredSitters,
   cities,
-  newsletterSlot,
 }: {
   featuredSitters: FeaturedSitter[];
   cities: City[];
-  newsletterSlot?: React.ReactNode;
 }) {
   const { language } = useLanguage();
   const locale = language === 'en' ? 'en' : 'hr';
@@ -445,12 +443,7 @@ export function HomePageContent({
       </section>
 
       {/* ════════════════════════════════════════════
-          7. NEWSLETTER SLOT
-          ════════════════════════════════════════════ */}
-      {newsletterSlot}
-
-      {/* ════════════════════════════════════════════
-          8. BRAND CTA — WARM GRADIENT
+          7. BRAND CTA — WARM GRADIENT
           ════════════════════════════════════════════ */}
       <section className="relative py-20 md:py-32 lg:py-44 overflow-hidden" aria-label="Call to action">
         <div className="absolute inset-0 cz-cta-gradient" />
