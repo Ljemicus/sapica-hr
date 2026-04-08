@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import Script from 'next/script';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { Inter, Nunito } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/shared/navbar';
@@ -116,6 +118,8 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://hmtlcgjcxhjecsbmmxol.supabase.co" />
         <link rel="dns-prefetch" href="https://hmtlcgjcxhjecsbmmxol.supabase.co" />
         <link rel="dns-prefetch" href="https://plausible.io" />
+        {/* Inline Critical CSS */}
+        <style dangerouslySetInnerHTML={{ __html: readFileSync(join(process.cwd(), 'public', 'critical.css'), 'utf-8') }} />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="PetPark" />
