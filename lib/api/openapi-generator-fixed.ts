@@ -148,26 +148,6 @@ export class OpenApiGenerator {
   }
   
   /**
-   * Generate security schemes
-   */
-  private static generateSecuritySchemes(): Record<string, unknown> {
-    return {
-      bearerAuth: {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        description: 'JWT token authentication',
-      },
-      csrfToken: {
-        type: 'apiKey',
-        in: 'header',
-        name: 'x-csrf-token',
-        description: 'CSRF token for state-changing operations',
-      },
-    };
-  }
-
-  /**
    * Generate API paths
    */
   private static generatePaths(): Record<string, OpenApiPath> {
@@ -604,9 +584,31 @@ export class OpenApiGenerator {
           },
         },
       },
+      
+      // Add more paths as needed...
     };
   }
   
+  /**
+   * Generate security schemes
+   */
+  private static generateSecuritySchemes(): Record<string, unknown> {
+    return {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'JWT token authentication',
+      },
+      csrfToken: {
+        type: 'apiKey',
+        in: 'header',
+        name: 'x-csrf-token',
+        description: 'CSRF token for state-changing operations',
+      },
+    };
+  }
+
   /**
    * Generate API schemas
    */
@@ -791,10 +793,6 @@ export class OpenApiGenerator {
           name: {
             type: 'string',
             description: 'Pet name',
-          },
-          type: {
-            type:'string',
-            description: 'Pet type',
           },
         },
       },

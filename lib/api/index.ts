@@ -3,7 +3,16 @@ export * from './api-errors';
 export * from './rate-limit';
 export * from './upstash-rate-limit';
 export * from './logger';
-export * from './error-tracking';
+export { 
+  ErrorTracker, 
+  errorTracker, 
+  initErrorTracking,
+  ErrorBoundary,
+  withErrorTracking,
+  ErrorSeverity,
+  classifyError,
+  formatErrorResponse
+} from './error-tracking';
 export * from './analytics';
 export * from './env-check';
 export * from './env';

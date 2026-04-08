@@ -71,7 +71,7 @@ export class EnvValidator {
         parsedValue = this.parseValue(value, rule.type);
       } catch (error) {
         result.isValid = false;
-        result.errors.push(`Failed to parse ${rule.key}: ${error.message}`);
+        result.errors.push(`Failed to parse ${rule.key}: ${error instanceof Error ? error.message : String(error)}`);
         continue;
       }
       

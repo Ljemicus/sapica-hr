@@ -3,6 +3,7 @@ import { createServerClient } from '@supabase/ssr';
 import { updateSession } from '@/lib/supabase/middleware';
 import { generateRequestId, REQUEST_ID_HEADER } from '@/lib/request-context';
 import { detectLocaleFromPathname, LOCALE_HEADER } from '@/lib/i18n/routing';
+import { csrfMiddleware } from './middleware/csrf';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const TRAINER_DEMO_RE = /^trainer[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$/i;
@@ -38,6 +39,16 @@ function maybeHard404DynamicProfile(request: NextRequest) {
   return null;
 }
 
+// Routes that should be excluded from CSRF protection
+const CSRF_EXCLUDED_ROUTES = [
+  '/api/webhooks/',
+  '/api/auth/callback',
+];
+
+function isCsrfExcludedRoute(pathname: string): boolean {
+  return CSRF_EXCLUDED_ROUTES.some(route => pathname.startsWith(route));
+}
+
 export async function proxy(request: NextRequest) {
   // Assign a request ID for end-to-end correlation across logs.
   // Honour an existing header (e.g. from an upstream load-balancer).
@@ -45,6 +56,16 @@ export async function proxy(request: NextRequest) {
   const locale = detectLocaleFromPathname(request.nextUrl.pathname);
   request.headers.set(REQUEST_ID_HEADER, requestId);
   request.headers.set(LOCALE_HEADER, locale);
+
+  // Apply CSRF protection (skip for excluded routes)
+  if (!isCsrfExcludedRoute(request.nextUrl.pathname)) {
+    const csrfResponse = await csrfMiddleware(request);
+    if (csrfResponse) {
+      csrfResponse.headers.set(REQUEST_ID_HEADER, requestId);
+      csrfResponse.headers.set(LOCALE_HEADER, locale);
+      return csrfResponse;
+    }
+  }
 
   const forced404 = maybeHard404DynamicProfile(request);
   if (forced404) {
@@ -134,6 +155,17 @@ export async function proxy(request: NextRequest) {
 
   response.headers.set(REQUEST_ID_HEADER, requestId);
   response.headers.set(LOCALE_HEADER, locale);
+  
+  // Add security headers
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(self), interest-cohort=()'
+  );
+  
   return response;
 }
 

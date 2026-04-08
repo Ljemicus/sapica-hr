@@ -1,0 +1,46 @@
+# PetPark Security Policy
+# This file follows the security.txt standard (RFC 9116)
+
+Contact: security@petpark.example.com
+Contact: https://petpark.example.com/security
+Contact: mailto:security@petpark.example.com
+
+Encryption: https://petpark.example.com/.well-known/pgp-key.txt
+Acknowledgments: https://petpark.example.com/security/hall-of-fame
+Policy: https://petpark.example.com/security/policy
+Hiring: https://petpark.example.com/careers
+
+Preferred-Languages: en, hr
+Canonical: https://petpark.example.com/.well-known/security.txt
+Expires: 2026-12-31T23:59:59.000Z
+
+# Scope
+# This security policy applies to:
+# - *.petpark.example.com
+# - *.api.petpark.example.com
+# - PetPark mobile applications
+# - PetPark API endpoints
+
+# Bug Bounty Program
+# We operate a private bug bounty program for security researchers.
+# Please contact us for program details and scope.
+
+# Disclosure Policy
+# We follow coordinated disclosure practices.
+# Please allow 90 days for remediation before public disclosure.
+
+# Legal
+# By testing and reporting vulnerabilities, you agree to:
+# 1. Not access or modify user data without explicit permission
+# 2. Not perform denial of service attacks
+# 3. Not use automated scanners that may impact service availability
+# 4. Not disclose vulnerabilities to third parties before we've had time to fix them
+# 5. Comply with all applicable laws and regulations
+
+# Safe Harbor
+# We consider security research conducted in accordance with this policy
+# to be authorized conduct. We will not initiate legal action against
+# researchers who discover, test, and report vulnerabilities in accordance
+# with this policy.
+
+# Thank you for helping keep PetPark and our users safe!
