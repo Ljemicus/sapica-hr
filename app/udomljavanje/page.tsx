@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { getActiveAdoptionListings } from '@/lib/db/adoption-listings';
 import { AdoptionBrowseContent } from './adoption-browse-content';
+
+// ISR: Revalidate every 10 minutes for adoption listings
+export const revalidate = 600;
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {

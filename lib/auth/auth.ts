@@ -1,2 +1,2 @@
 // Re-export from parent directory for backwards compatibility
-export * from '../sanitize';
+export * from '../auth';

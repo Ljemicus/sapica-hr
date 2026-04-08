@@ -26,6 +26,7 @@ import { ImageUpload } from '@/components/shared/image-upload';
 import { Cat, Dog, HelpCircle } from 'lucide-react';
 import type { Species } from '@/lib/types';
 import { toast } from 'sonner';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 
 const ONBOARDING_STORAGE_KEY = 'petpark-owner-onboarding';
 
@@ -492,8 +493,12 @@ export function OwnerOnboardingWizard() {
             <div className="flex items-center gap-4">
               <div className="h-16 w-16 rounded-full bg-gradient-to-br from-orange-400 to-amber-300 flex items-center justify-center overflow-hidden">
                 {petData.photo_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={petData.photo_url} alt={petData.name} className="h-full w-full object-cover" />
+                  <OptimizedImage
+                    src={petData.photo_url}
+                    alt={petData.name}
+                    fill
+                    className="rounded-full"
+                  />
                 ) : (
                   <PawPrint className="h-8 w-8 text-white" />
                 )}

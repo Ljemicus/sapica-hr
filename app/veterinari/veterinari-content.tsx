@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { getVeterinarianEmergencyLabel, getVeterinarianPrimaryPhone, type Veterinarian } from '@/lib/db/veterinarian-helpers';
 import { StarRating } from '@/components/shared/star-rating';
 import { useLanguage } from '@/lib/i18n/context';
-import { VeterinariMap } from './veterinari-map';
+import { LazyVeterinariMap } from './lazy-veterinari-map';
 
 interface VeterinariContentProps {
   veterinarians: Veterinarian[];
@@ -162,7 +162,7 @@ export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
           </div>
         ) : viewMode === 'map' ? (
           <div className="mt-6">
-            <VeterinariMap 
+            <LazyVeterinariMap 
               veterinarians={filteredClinics} 
               selectedCity={selectedCity}
             />

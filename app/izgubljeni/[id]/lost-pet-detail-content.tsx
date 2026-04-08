@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { useLanguage } from '@/lib/i18n/context';
 import { useAuth } from '@/contexts/auth-context';
 import { uploadSightingPhoto, validateFile, createPreviewUrl, UPLOAD_ACCEPTED_TYPES } from '@/lib/upload';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 
 const MapComponent = dynamic(() => import('./map-component'), { ssr: false });
 
@@ -837,8 +838,12 @@ export function LostPetDetailContent({ pet }: { pet: LostPet }) {
                       <Label>{isEn ? 'Photo (optional)' : 'Fotografija (opcionalno)'}</Label>
                       {sightingPhotoPreview ? (
                         <div className="relative w-full max-w-xs h-40 mt-1 rounded-xl overflow-hidden border border-amber-300/50">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={sightingPhotoPreview} alt={isEn ? 'Preview' : 'Pregled'} className="w-full h-full object-cover" />
+                          <OptimizedImage
+                            src={sightingPhotoPreview}
+                            alt={isEn ? 'Preview' : 'Pregled'}
+                            fill
+                            className="rounded-xl"
+                          />
                           <button
                             type="button"
                             onClick={handleSightingPhotoRemove}

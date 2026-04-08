@@ -1,5 +1,5 @@
 export { isSupabaseConfigured } from './helpers';
-export { ensureSitterProfile, syncUserProfile } from '@/lib/auth-profile';
+export { ensureSitterProfile, syncUserProfile } from '@/lib/auth/auth-profile';
 export { getUser, getUsers, getUsersByRole, updateUserProfile } from './users';
 export { getPets, getPetsByOwner, getPet, createPet, getPetCardData, type PetCardData } from './pets';
 export { getSitters, getSitter, getSitterById, getSitterProfileById } from './sitters';

@@ -19,3 +19,4 @@ export * from './env';
 export * from './request-logger';
 export * from './versioning';
 export * from './openapi-generator';
+export * from './cors';

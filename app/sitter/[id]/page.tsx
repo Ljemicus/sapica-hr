@@ -16,6 +16,9 @@ interface SitterPageProps {
   params: Promise<{ id: string }>;
 }
 
+// ISR: Revalidate every 5 minutes for sitter profiles
+export const revalidate = 300;
+
 const getCachedSitter = cache(async (id: string) => (await getSitterPageData(id)).profile);
 
 export async function generateMetadata({ params }: SitterPageProps): Promise<Metadata> {
