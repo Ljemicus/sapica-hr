@@ -9,6 +9,7 @@ import { shouldIndexSitter, robotsMeta } from '@/lib/seo/indexability';
 import { SERVICE_LABELS } from '@/lib/types';
 import { getProviderApplication } from '@/lib/db/provider-applications';
 import { getProviderPublicGate } from '@/lib/trust/gate';
+import { SitterJsonLd } from '@/components/seo/json-ld';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -70,67 +71,19 @@ export default async function SitterPage({ params }: SitterPageProps) {
     if (!gate.allowed) return notFound();
   }
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: `${profile.user.name} — Pet Sitter`,
-    description: profile.bio || `Profesionalni čuvar ljubimaca u ${profile.user.city || 'Hrvatskoj'}`,
-    url: `${BASE_URL}/sitter/${id}`,
-    image: profile.user.avatar_url || undefined,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: profile.user.city || 'Zagreb',
-      addressCountry: 'HR',
-    },
-    ...(profile.location_lat && profile.location_lng ? {
-      geo: {
-        '@type': 'GeoCoordinates',
-        latitude: profile.location_lat,
-        longitude: profile.location_lng,
-      },
-    } : {}),
-    aggregateRating: profile.rating_avg && profile.review_count > 0 ? {
-      '@type': 'AggregateRating',
-      ratingValue: profile.rating_avg,
-      reviewCount: profile.review_count,
-      bestRating: 5,
-      worstRating: 1,
-    } : undefined,
-    hasOfferCatalog: {
-      '@type': 'OfferCatalog',
-      name: 'Usluge čuvanja ljubimaca',
-      itemListElement: profile.services
-        .filter(s => profile.prices[s] > 0)
-        .map(s => ({
-          '@type': 'Offer',
-          itemOffered: {
-            '@type': 'Service',
-            name: SERVICE_LABELS[s],
-          },
-          price: profile.prices[s],
-          priceCurrency: 'EUR',
-        })),
-    },
-    ...(reviews.length > 0 ? {
-      review: reviews.slice(0, 5).map(r => ({
-        '@type': 'Review',
-        author: { '@type': 'Person', name: r.reviewer?.name || 'Korisnik' },
-        datePublished: r.created_at,
-        reviewRating: {
-          '@type': 'Rating',
-          ratingValue: r.rating,
-          bestRating: 5,
-          worstRating: 1,
-        },
-        reviewBody: r.comment,
-      })),
-    } : {}),
-    priceRange: '€€',
-  };
-
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <SitterJsonLd
+        name={profile.user.name}
+        description={profile.bio || `Profesionalni čuvar ljubimaca u ${profile.user.city || 'Hrvatskoj'}`}
+        city={profile.user.city || undefined}
+        services={profile.services.map(s => SERVICE_LABELS[s])}
+        rating={profile.rating_avg || undefined}
+        reviewCount={profile.review_count || undefined}
+        imageUrl={profile.user.avatar_url || undefined}
+        profileUrl={`${BASE_URL}/sitter/${id}`}
+        priceRange="€€"
+      />
       <Breadcrumbs items={[
         { label: 'Pretraga sittera', href: '/pretraga' },
         { label: profile.user.name, href: `/sitter/${id}` },

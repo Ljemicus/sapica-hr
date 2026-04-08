@@ -214,16 +214,18 @@ export function RegisterForm() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 animate-fade-in-up delay-200">
-            <div className="flex justify-center mb-2">
-              <ImageUpload
-                variant="avatar"
-                bucket="avatars"
-                entityId="registration"
-                fallbackText={watch('name')?.charAt(0)?.toUpperCase() || '?'}
-                onUploadComplete={(urls) => setAvatarUrl(urls[0] || null)}
-              />
+            <div className="flex justify-center mb-4">
+              <div className="scale-90 sm:scale-100">
+                <ImageUpload
+                  variant="avatar"
+                  bucket="avatars"
+                  entityId="registration"
+                  fallbackText={watch('name')?.charAt(0)?.toUpperCase() || '?'}
+                  onUploadComplete={(urls) => setAvatarUrl(urls[0] || null)}
+                />
+              </div>
             </div>
-            <p className="text-center text-xs text-muted-foreground -mt-2 mb-2">{language === 'en' ? 'Add a profile photo (optional)' : 'Dodajte profilnu sliku (opcionalno)'}</p>
+            <p className="text-center text-xs text-muted-foreground mb-4">{language === 'en' ? 'Add a profile photo (optional)' : 'Dodajte profilnu sliku (opcionalno)'}</p>
 
             <div className="space-y-2">
               <Label htmlFor="name">{language === 'en' ? 'What is your name?' : 'Kako se zovete?'}</Label>

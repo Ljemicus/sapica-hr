@@ -210,6 +210,90 @@ export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
   );
 }
 
+interface SitterJsonLdProps {
+  name: string;
+  description?: string;
+  city?: string;
+  services?: string[];
+  rating?: number;
+  reviewCount?: number;
+  imageUrl?: string;
+  profileUrl: string;
+  priceRange?: string;
+}
+
+export function SitterJsonLd({
+  name,
+  description,
+  city,
+  services = [],
+  rating,
+  reviewCount,
+  imageUrl,
+  profileUrl,
+  priceRange,
+}: SitterJsonLdProps) {
+  return (
+    <JsonLdScript
+      data={{
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'Person',
+            '@id': `${profileUrl}#person`,
+            name,
+            description,
+            image: imageUrl,
+            address: city
+              ? {
+                  '@type': 'PostalAddress',
+                  addressLocality: city,
+                  addressCountry: 'HR',
+                }
+              : undefined,
+            url: profileUrl,
+            jobTitle: 'Pet Sitter',
+            worksFor: { '@id': 'https://petpark.hr/#organization' },
+          },
+          {
+            '@type': 'LocalBusiness',
+            '@id': `${profileUrl}#business`,
+            name: `${name} - Čuvanje ljubimaca`,
+            description: description || `Profesionalno čuvanje ljubimaca - ${services.join(', ')}`,
+            image: imageUrl,
+            url: profileUrl,
+            address: city
+              ? {
+                  '@type': 'PostalAddress',
+                  addressLocality: city,
+                  addressCountry: 'HR',
+                }
+              : undefined,
+            areaServed: city
+              ? {
+                  '@type': 'City',
+                  name: city,
+                }
+              : undefined,
+            serviceType: services.length > 0 ? services : ['Pet Sitting'],
+            provider: { '@id': `${profileUrl}#person` },
+            ...(rating && {
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: rating,
+                reviewCount: reviewCount || 0,
+                bestRating: 5,
+                worstRating: 1,
+              },
+            }),
+            ...(priceRange && { priceRange }),
+          },
+        ],
+      }}
+    />
+  );
+}
+
 export function SiteNavigationJsonLd() {
   const navItems = [
     { name: 'Čuvanje ljubimaca', url: 'https://petpark.hr/pretraga' },
