@@ -20,6 +20,7 @@ import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { DeferredUI } from '@/components/shared/deferred-ui';
 import { ChatWidget } from '@/components/chat/chat-widget';
 import { WebVitals } from '@/components/monitoring/web-vitals';
+import { OnlineStatusProvider } from '@/components/providers/online-status-provider';
 // Animation components temporarily removed for build stability
 import { SkipToContentLink } from '@/components/shared/skip-to-content-link';
 import { buildLocaleAlternates } from '@/lib/seo/locale-metadata';
