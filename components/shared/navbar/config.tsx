@@ -53,7 +53,7 @@ export function getDashboardLink(user?: NavbarUser | null) {
 export function getDesktopLinks(t: TranslationFn, user?: NavbarUser | null, language: Language = 'hr'): NavbarLinkItem[] {
   return [
     { href: localizeHref('/udomljavanje', language), label: t('footer.adoption') || 'Udomljavanje', icon: HeartHandshake, className: 'text-pink-500 font-semibold' },
-    { href: '/o-nama', label: t('nav.about') },
+    { href: '/o-nama', label: <><span className="text-logo-orange">O</span> <span className="text-logo-teal">nama</span></>, className: 'font-semibold' },
     { href: '/zajednica', label: 'Zajednica', icon: Users },
     { href: '/blog', label: t('nav.blog'), icon: BookOpen },
     { href: localizeHref('/forum', language), label: t('nav.forum'), icon: MessageSquare },

@@ -15,6 +15,11 @@ import type { SocialPostWithDetails } from '@/lib/types/social';
 
 export function SocialFeedContent() {
   const { user } = useAuth();
+  
+  return <SocialFeedInner user={user} />;
+}
+
+function SocialFeedInner({ user }: { user: import('@/lib/types').User | null }) {
   const [posts, setPosts] = useState<SocialPostWithDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);

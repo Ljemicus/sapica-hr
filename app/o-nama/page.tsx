@@ -55,8 +55,8 @@ export default function AboutPage() {
           <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
             <p className="text-sm font-semibold tracking-wider text-white/80 uppercase mb-4">O nama</p>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 font-[var(--font-heading)] leading-[1.05] text-white drop-shadow-lg">
-              Nastali smo iz ljubavi.{' '}
-              <span className="text-warm-orange">Doslovno.</span>
+              <span className="text-logo-orange">Nastali smo iz ljubavi.</span>{' '}
+              <span className="text-logo-teal">Doslovno.</span>
             </h1>
             <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto drop-shadow-md">
               PetPark je nastao iz želje da svaka šapa nađe svog čovjeka.

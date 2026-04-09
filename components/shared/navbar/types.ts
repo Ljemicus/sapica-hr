@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import type { ComponentType } from 'react';
+import type React from 'react';
 import type { TranslationKey } from '@/lib/i18n';
 
 export interface NavbarUser {
@@ -11,7 +12,7 @@ export interface NavbarUser {
 
 export interface NavbarLinkItem {
   href: string;
-  label: string;
+  label: string | React.ReactNode;
   icon?: LucideIcon;
   className?: string;
   external?: boolean;

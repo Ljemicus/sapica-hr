@@ -31,7 +31,7 @@ export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout,
   const communityLinks = getMobileCommunityLinks(t, language);
   const accountLinks = getMobileAccountLinks(t, user);
 
-  const renderLink = (href: string, label: string, Icon?: React.ComponentType<{ className?: string }>, className?: string, badge?: number) => (
+  const renderLink = (href: string, label: string | React.ReactNode, Icon?: React.ComponentType<{ className?: string }>, className?: string, badge?: number) => (
     <Link href={href} onClick={() => setOpen(false)} className={`flex items-center gap-3 px-3 py-3 rounded-xl text-foreground hover:bg-accent transition-colors min-h-[48px] ${className || ''}`}>
       {Icon ? <Icon className="h-5 w-5 shrink-0" /> : null}
       <span className="flex-1">{label}</span>
