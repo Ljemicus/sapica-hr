@@ -82,7 +82,7 @@ export default function PostaniSitterPage() {
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
         <div className="container mx-auto px-4 py-14 md:py-20 relative">
           <div className="max-w-4xl mx-auto text-center">
-            <p className="section-kicker mb-5">
+            <p className="section-kicker text-center mb-5">
               Prijave za nove sittere su otvorene
             </p>
 
