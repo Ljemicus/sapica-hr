@@ -58,7 +58,7 @@ const STEPS = [
 const FAQ = [
   {
     q: 'Moram li imati obrt ili firmu?',
-    a: 'Ne za prijavu. Bitno je da si odgovorna osoba, voliš životinje i možeš kvalitetno odraditi uslugu.',
+    a: 'Da. Za pružanje usluga na PetParku potrebno je imati registriran obrt ili firmu (j.d.o.o., d.o.o.). To osigurava pravnu zaštitu tebi i vlasnicima ljubimaca.',
   },
   {
     q: 'Mogu li nuditi samo šetnje ili samo čuvanje?',

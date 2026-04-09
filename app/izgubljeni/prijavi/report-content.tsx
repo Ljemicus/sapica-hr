@@ -185,7 +185,7 @@ export function ReportLostPetContent() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">
+        <form onSubmit={handleSubmit} className="max-w-2xl mx-auto px-4 space-y-6">
           {/* Photos */}
           <Card>
             <CardHeader>

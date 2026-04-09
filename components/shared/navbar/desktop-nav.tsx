@@ -72,7 +72,7 @@ export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; use
         );
       })()}
 
-      {/* Izgubljeni ljubimci - crveni link (dignut ranije u navigaciji) */}],
+      {/* Izgubljeni ljubimci - crveni link (dignut ranije u navigaciji) */}
       {(() => {
         const lostItem = getLostPetsLink(t, language);
         const Icon = lostItem.icon;

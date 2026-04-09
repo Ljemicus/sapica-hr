@@ -1,1 +1,0 @@
--- Already created in 002_extended_schema.sql

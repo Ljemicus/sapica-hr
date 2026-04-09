@@ -1,11 +1,11 @@
-import { createServerClient } from '@supabase/ssr';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Creates a Supabase client for API routes.
- * Does NOT use cookies() - for public/anonymous queries only.
- * For authenticated requests in API routes, use Authorization header.
+ * Uses standard supabase-js client (not SSR) for API routes.
+ * This avoids the cookies() issue in Next.js API routes.
  */
-export async function createApiClient() {
+export function createApiClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -13,18 +13,5 @@ export async function createApiClient() {
     throw new Error('Supabase environment variables are not configured (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY)');
   }
 
-  return createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
-    {
-      cookies: {
-        getAll() {
-          return [];
-        },
-        setAll() {
-          // No-op in API routes
-        },
-      },
-    }
-  );
+  return createSupabaseClient(supabaseUrl, supabaseAnonKey);
 }
