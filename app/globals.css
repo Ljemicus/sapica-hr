@@ -161,7 +161,7 @@
     @apply w-full;
   }
   /* Center all sections with container */
-  section:has(> .container) {
+  section:has(.container) {
     @apply flex justify-center;
   }
   html {

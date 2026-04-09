@@ -121,13 +121,17 @@ export default function PostaniSitterPage() {
 
       {/* Benefits */}
       <section className="container mx-auto px-4 py-14 md:py-18">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] mb-4">Zašto postati sitter?</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Fleksibilnost, dodatna zarada i posao koji voliš.</p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {BENEFITS.map((item) => (
-            <div key={item.title} className="community-section-card p-6">
+            <div key={item.title} className="community-section-card p-6 text-center">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-warm-orange/10 text-warm-orange mb-4">
                 <item.icon className="h-6 w-6" />
               </div>
-              <h2 className="font-bold text-lg mb-2 font-[var(--font-heading)]">{item.title}</h2>
+              <h3 className="font-bold text-lg mb-2 font-[var(--font-heading)]">{item.title}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
             </div>
           ))}
@@ -137,17 +141,19 @@ export default function PostaniSitterPage() {
       {/* Services */}
       <section className="bg-muted/40 border-y">
         <div className="container mx-auto px-4 py-14 md:py-18">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] mb-4">
+              Što možeš nuditi kao sitter?
+            </h2>
+            <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto">
+              Ne moraš nuditi sve. Kreneš s jednom uslugom, a kasnije proširiš profil kad ti sjedne ritam.
+            </p>
+          </div>
           <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 items-start">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] mb-4">
-                Što možeš nuditi kao sitter?
-              </h2>
-              <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-                Ne moraš nuditi sve. Kreneš s jednom uslugom, a kasnije proširiš profil kad ti sjedne ritam.
-              </p>
+            <div className="text-center md:text-left">
               <div className="grid sm:grid-cols-2 gap-3">
                 {SERVICES.map((service) => (
-                  <div key={service} className="community-section-card px-4 py-3 font-medium flex items-center gap-3">
+                  <div key={service} className="community-section-card px-4 py-3 font-medium flex items-center justify-center md:justify-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-warm-teal flex-shrink-0" />
                     {service}
                   </div>
@@ -193,14 +199,18 @@ export default function PostaniSitterPage() {
 
       {/* Cities */}
       <section className="container mx-auto px-4 py-14 md:py-18">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] mb-4">Gdje tražimo sittere?</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Pridruži se rastućoj mreži u hrvatskim gradovima.</p>
+        </div>
         <div className="max-w-4xl mx-auto rounded-3xl bg-gradient-to-r from-orange-500 to-teal-500 text-white p-8 md:p-12 shadow-xl">
           <div className="grid md:grid-cols-[1.4fr_1fr] gap-8 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Tražimo sittere u većim gradovima</h2>
+            <div className="text-center md:text-left">
+              <h3 className="text-3xl md:text-4xl font-extrabold mb-4">Tražimo sittere u većim gradovima</h3>
               <p className="text-white/90 text-lg leading-relaxed mb-5">
                 Zagreb, Rijeka, Split i ostali gradovi gdje postoji potražnja za čuvanjem i šetnjama pasa.
               </p>
-              <div className="flex flex-wrap gap-2 text-sm">
+              <div className="flex flex-wrap gap-2 text-sm justify-center md:justify-start">
                 {['Zagreb', 'Rijeka', 'Split', 'Osijek', 'Pula'].map((city) => (
                   <span key={city} className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1.5">
                     <MapPin className="h-3.5 w-3.5" /> {city}
