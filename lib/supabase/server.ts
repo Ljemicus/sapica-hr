@@ -2,13 +2,35 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 export async function createClient() {
-  const cookieStore = await cookies();
-
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error('Supabase environment variables are not configured (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY)');
+  }
+
+  // For API routes, we can't use cookies() - return anon client
+  // For Server Components, cookies() works fine
+  let cookieStore;
+  try {
+    cookieStore = await cookies();
+  } catch {
+    // In API routes or where cookies() is not available
+    // Return a client without cookie handling (for public/anonymous queries)
+    return createServerClient(
+      supabaseUrl,
+      supabaseAnonKey,
+      {
+        cookies: {
+          getAll() {
+            return [];
+          },
+          setAll() {
+            // No-op in API routes
+          },
+        },
+      }
+    );
   }
 
   return createServerClient(
