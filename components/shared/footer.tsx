@@ -177,9 +177,6 @@ export function Footer() {
 
   return (
     <>
-      <div className="hidden md:block">
-        <NewsletterSignup />
-      </div>
       <footer className="bg-gradient-to-b from-gray-900 to-gray-950 dark:from-gray-950 dark:to-black text-gray-300 mt-auto relative overflow-hidden pb-safe">
         {/* Wave SVG at top */}
         <div className="absolute top-0 left-0 right-0 h-2 overflow-hidden">
@@ -213,7 +210,7 @@ export function Footer() {
               <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl text-white mb-4 group">
                 <PawLogo className="h-7 w-7 text-warm-orange group-hover:scale-110 transition-transform duration-300" />
                 <span translate="no">
-                  <span style={{ color: '#FFB347' }}>Pet</span><span style={{ color: '#14b8a6' }}>Park</span>
+                  <span className="text-logo-orange">Pet</span><span className="text-logo-teal">Park</span>
                 </span>
               </Link>
               <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-md">{t('footer.tagline')}</p>

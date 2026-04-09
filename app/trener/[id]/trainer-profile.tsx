@@ -180,11 +180,11 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
       </section>
 
       {/* ── Content Grid ── */}
-      <div className="container mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16 lg:py-20">
+      <div className="container mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16 lg:py-20 pb-24 md:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
 
           {/* ── Main Content ── */}
-          <div className="lg:col-span-2 space-y-10 md:space-y-12">
+          <div className="lg:col-span-2 space-y-12 md:space-y-14">
 
             {/* About */}
             <section className="animate-fade-in-up">
@@ -289,9 +289,9 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
             {/* Programs */}
             <section className="animate-fade-in-up delay-300">
               <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-3 font-semibold">{copy.programsKicker}</p>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] leading-tight flex items-center gap-3 mb-6">
+              <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] leading-tight flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-6">
                 {copy.programsTitle}
-                <Badge className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border-0 text-sm px-3 py-0.5">
+                <Badge className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border-0 text-sm px-3 py-0.5 w-fit">
                   {programs.length}
                 </Badge>
               </h2>
@@ -333,9 +333,9 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
             {/* Reviews */}
             <section className="animate-fade-in-up delay-300">
               <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-3 font-semibold">{copy.reviewsKicker}</p>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] leading-tight flex items-center gap-3 mb-6">
+              <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] leading-tight flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-6">
                 {copy.reviewsTitle}
-                <Badge className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border-0 text-sm px-3 py-0.5">
+                <Badge className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border-0 text-sm px-3 py-0.5 w-fit">
                   {reviews.length}
                 </Badge>
               </h2>

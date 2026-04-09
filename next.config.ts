@@ -24,8 +24,8 @@ const nextConfig: NextConfig = {
       { source: '/sitters', destination: '/pretraga', permanent: true },
       { source: '/groomers', destination: '/njega', permanent: true },
       { source: '/trainers', destination: '/dresura', permanent: true },
-      // Duplicate content cleanup — canonical is /blog and /njega
-      { source: '/zajednica/:slug', destination: '/blog/:slug', permanent: true },
+      // NOTE: /zajednica/feed is excluded — it's the social feed page
+      { source: '/zajednica/:slug((?!feed).*)', destination: '/blog/:slug', permanent: true },
       { source: '/grooming', destination: '/njega', permanent: true },
     ];
   },

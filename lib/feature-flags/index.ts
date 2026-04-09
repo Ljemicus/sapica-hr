@@ -39,7 +39,7 @@ const productionFlags: Record<FeatureFlag, FeatureConfig> = {
   adoption: { enabled: false, description: 'Pet adoption listings', showInNav: false },
   lostPets: { enabled: false, description: 'Lost and found pets', showInNav: false },
   petDiary: { enabled: false, description: 'Pet journal and milestones', showInNav: false },
-  socialFeed: { enabled: true, description: 'Social feed and posts', showInNav: true },
+  socialFeed: { enabled: false, description: 'Social feed and posts', showInNav: false },
   gamification: { enabled: false, description: 'Badges and points', showInNav: false },
   breeders: { enabled: false, description: 'Breeder directory', showInNav: false },
   dogFriendly: { enabled: false, description: 'Dog-friendly places', showInNav: false },

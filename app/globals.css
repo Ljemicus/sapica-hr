@@ -96,6 +96,9 @@
   --warm-peach: #E8E6E0;
   --warm-coral: #C45B4A;
   --warm-sage: #5A7D5A;
+  /* Original logo colors - do not change */
+  --logo-orange: #FFB347;
+  --logo-teal: #14b8a6;
   /* Premium tokens */
   --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.06);
@@ -141,6 +144,9 @@
   --warm-peach: oklch(0.35 0.04 55);
   --warm-coral: oklch(0.72 0.15 30);
   --warm-sage: oklch(0.55 0.05 155);
+  /* Original logo colors - do not change */
+  --logo-orange: #FFB347;
+  --logo-teal: #14b8a6;
 }
 
 @layer base {
@@ -150,9 +156,25 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Ensure all main content is centered */
+  main {
+    @apply w-full;
+  }
+  /* Center all sections with container */
+  section:has(> .container) {
+    @apply flex justify-center;
+  }
   html {
     @apply font-sans scroll-smooth;
   }
+}
+
+/* ── Logo Brand Colors ── */
+.text-logo-orange {
+  color: #FFB347;
+}
+.text-logo-teal {
+  color: #14b8a6;
 }
 
 /* ── Custom Animations ── */

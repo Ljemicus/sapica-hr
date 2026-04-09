@@ -37,17 +37,28 @@ const VALUES = [
 export default function AboutPage() {
   return (
     <div>
-      {/* Editorial Hero */}
-      <section className="relative organizations-hero-gradient overflow-hidden">
-        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
-        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-20 md:py-28 relative">
+      {/* Editorial Hero sa slikom u pozadini */}
+      <section className="relative overflow-hidden min-h-[70vh] flex items-center justify-center">
+        {/* Pozadinska slika */}
+        <div className="absolute inset-0">
+          <img 
+            src="/images/o-nama-ljubav.png" 
+            alt="Ljudi i psi u parku" 
+            className="w-full h-full object-cover"
+          />
+          {/* Tamni overlay za bolju čitljivost teksta */}
+          <div className="absolute inset-0 bg-black/40" />
+        </div>
+        
+        {/* Tekst preko slike */}
+        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-20 md:py-28 relative z-10 flex justify-center">
           <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
-            <p className="section-kicker">O nama</p>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 font-[var(--font-heading)] leading-[1.05]">
+            <p className="text-sm font-semibold tracking-wider text-white/80 uppercase mb-4">O nama</p>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 font-[var(--font-heading)] leading-[1.05] text-white drop-shadow-lg">
               Nastali smo iz ljubavi.{' '}
-              <span className="text-gradient">Doslovno.</span>
+              <span className="text-warm-orange">Doslovno.</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto drop-shadow-md">
               PetPark je nastao iz želje da svaka šapa nađe svog čovjeka.
             </p>
           </div>
@@ -55,7 +66,7 @@ export default function AboutPage() {
       </section>
 
       {/* Story */}
-      <section className="container mx-auto px-4 py-16 md:py-20">
+      <section className="container mx-auto px-4 py-16 md:py-20 flex justify-center">
         <div className="max-w-3xl mx-auto">
           <div className="prose prose-lg dark:prose-invert mx-auto">
             <div className="space-y-6 text-muted-foreground leading-relaxed">
@@ -93,7 +104,7 @@ export default function AboutPage() {
       </section>
 
       {/* Origin */}
-      <section className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-20">
+      <section className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-20 flex justify-center">
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 text-sm text-muted-foreground mb-6 animate-fade-in-up">
             <MapPin className="h-4 w-4 text-warm-orange" />
@@ -112,7 +123,7 @@ export default function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-20">
+      <section className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-20 flex justify-center">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {VALUES.map((v, i) => (
             <div 
@@ -131,7 +142,7 @@ export default function AboutPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="container mx-auto px-6 md:px-10 lg:px-16 pb-20">
+      <section className="container mx-auto px-6 md:px-10 lg:px-16 pb-20 flex justify-center">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-warm-orange to-warm-teal p-10 md:p-16 text-center text-white shadow-xl">
           <div className="absolute inset-0 paw-pattern opacity-[0.06]" />
           <div className="relative">

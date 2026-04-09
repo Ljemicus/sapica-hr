@@ -291,11 +291,11 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
       </section>
 
       {/* ── Content Grid ── */}
-      <div className="container mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16 lg:py-20">
+      <div className="container mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16 lg:py-20 pb-24 md:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
 
           {/* ── Main Content ── */}
-          <div className="lg:col-span-2 space-y-10 md:space-y-12">
+          <div className="lg:col-span-2 space-y-12 md:space-y-14">
 
             {/* About */}
             <section className="animate-fade-in-up">

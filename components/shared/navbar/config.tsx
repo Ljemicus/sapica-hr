@@ -52,6 +52,7 @@ export function getDashboardLink(user?: NavbarUser | null) {
 
 export function getDesktopLinks(t: TranslationFn, user?: NavbarUser | null, language: Language = 'hr'): NavbarLinkItem[] {
   return [
+    { href: localizeHref('/udomljavanje', language), label: t('footer.adoption') || 'Udomljavanje', icon: HeartHandshake, className: 'text-pink-500 font-semibold' },
     { href: '/o-nama', label: t('nav.about') },
     { href: '/zajednica', label: 'Zajednica', icon: Users },
     { href: '/blog', label: t('nav.blog'), icon: BookOpen },
@@ -78,8 +79,6 @@ export function getServicesMenu(t: TranslationFn, language: Language = 'hr'): Na
     { href: localizeHref('/dresura', language), label: t('nav.training'), icon: GraduationCap },
     { href: localizeHref('/veterinari', language), label: t('nav.veterinarians'), icon: Stethoscope },
     { href: '/hitno', label: t('nav.emergency'), icon: Siren, className: 'text-red-600 dark:text-red-400 font-medium' },
-    { href: localizeHref('/uzgajivacnice', language), label: t('nav.breeders'), icon: Baby },
-    { href: localizeHref('/dog-friendly', language), label: 'Dog-Friendly', icon: Dog },
   ];
 }
 

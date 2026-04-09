@@ -1,5 +1,5 @@
 import { isFeatureEnabledServer } from '@/lib/feature-flags';
-import { redirect } from 'next/navigation';
+import { SocialFeedContent } from '@/components/social/social-feed-content';
 
 // Community page - simplified for initial launch
 export default function ZajednicaPage() {
@@ -20,6 +20,10 @@ export default function ZajednicaPage() {
     );
   }
 
-  // If enabled, redirect to full social feed
-  redirect('/zajednica/feed');
+  // Render feed directly instead of redirect
+  return (
+    <main className="min-h-screen bg-background">
+      <SocialFeedContent />
+    </main>
+  );
 }

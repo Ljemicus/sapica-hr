@@ -71,7 +71,7 @@ export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout,
                   <div className="flex items-center gap-2.5">
                     <PawLogo className="h-9 w-9 text-orange-500" />
                     <span className="font-extrabold text-lg" translate="no">
-                      <span style={{ color: '#FFB347' }}>Pet</span><span style={{ color: '#14b8a6' }}>Park</span>
+                      <span className="text-logo-orange">Pet</span><span className="text-logo-teal">Park</span>
                     </span>
                   </div>
                   <LanguageSwitcher />
@@ -84,16 +84,6 @@ export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout,
               <div className="border-t border-border/50 my-3" />
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">{t('nav.services')}</p>
               {primaryLinks.slice(1).map((item) => renderLink(item.href, item.label, item.icon, item.className))}
-
-              <div className="border-t border-border/50 my-3" />
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">{t('common.demo')}</p>
-              {utilityLinks.map((item) => (
-                <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className={`flex items-center gap-3 px-3 py-3 rounded-xl text-foreground hover:bg-accent transition-colors min-h-[48px] ${item.className || ''}`}>
-                  {item.icon ? <item.icon className="h-5 w-5 shrink-0" /> : null}
-                  <span className="flex-1">{item.label}</span>
-                  {item.demo ? <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 border border-amber-200 font-medium">Demo</span> : null}
-                </Link>
-              ))}
 
               <div className="border-t border-border/50 my-3" />
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">{t('common.community')}</p>
