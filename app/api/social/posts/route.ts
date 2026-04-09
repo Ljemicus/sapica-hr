@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createApiClient } from '@/lib/supabase/api';
 import { NextResponse } from 'next/server';
 import { checkRateLimit, RateLimits, getClientIdentifier } from '@/lib/upstash-rate-limit';
 import { sanitizeRichText } from '@/lib/sanitize';
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     const userId = searchParams.get('userId');
     const challengeId = searchParams.get('challengeId');
 
-    const supabase = await createClient();
+    const supabase = await createApiClient();
 
     let query = supabase
       .from('social_posts')
@@ -56,7 +56,7 @@ export async function GET(request: Request) {
 // POST /api/social/posts - Create a new post
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
+    const supabase = await createApiClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
