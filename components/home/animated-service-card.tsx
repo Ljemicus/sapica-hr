@@ -35,7 +35,7 @@ export function AnimatedServiceCard({
             delay: index * 0.1,
             ease: [0.25, 0.1, 0.25, 1],
           }}
-          className="relative rounded-3xl overflow-hidden bg-card shadow-lg hover:shadow-2xl transition-shadow duration-500"
+          className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-card shadow-lg hover:shadow-2xl transition-shadow duration-500"
         >
         {/* Gradient border on hover */}
         <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
@@ -45,7 +45,7 @@ export function AnimatedServiceCard({
         </div>
 
         {/* Image container */}
-        <div className="relative aspect-[3/4] overflow-hidden">
+        <div className="relative aspect-[4/3] md:aspect-[3/4] overflow-hidden">
           <Image
             src={image}
             alt={title}
@@ -63,9 +63,9 @@ export function AnimatedServiceCard({
         </div>
 
         {/* Content overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8">
           <motion.h3
-            className="text-2xl md:text-3xl font-extrabold text-white mb-3 font-[var(--font-heading)]"
+            className="text-xl md:text-2xl lg:text-3xl font-extrabold text-white mb-2 md:mb-3 font-[var(--font-heading)]"
             initial={{ y: 0 }}
             whileHover={{ y: -4 }}
             transition={{ duration: 0.3 }}

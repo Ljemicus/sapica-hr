@@ -260,7 +260,7 @@ export function HomePageContent({
             {t.svcKicker}
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             {services.map((svc, i) => (
               <AnimatedServiceCard
                 key={svc.href}
@@ -334,10 +334,10 @@ export function HomePageContent({
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
               {featuredSitters.slice(0, 6).map((sitter) => (
                 <Link key={sitter.id} href={`/sitter/${sitter.id}`} className="group">
-                  <article className="bg-white dark:bg-card rounded-2xl border border-border/40 p-6 md:p-7 cz-sitter-card transition-all duration-300 hover:shadow-xl hover:shadow-orange-100/30 dark:hover:shadow-black/20 hover:-translate-y-1">
+                  <article className="bg-white dark:bg-card rounded-xl md:rounded-2xl border border-border/40 p-4 md:p-6 lg:p-7 cz-sitter-card transition-all duration-300 hover:shadow-xl hover:shadow-orange-100/30 dark:hover:shadow-black/20 hover:-translate-y-1">
                     <div className="flex items-center gap-4 mb-5">
                       <div className={`h-14 w-14 rounded-full bg-gradient-to-br ${sitter.gradient} text-white font-bold flex items-center justify-center text-xl shadow-lg shrink-0`}>
                         {sitter.initial}
