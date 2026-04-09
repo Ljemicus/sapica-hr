@@ -44,6 +44,9 @@ export const metadata: Metadata = {
     template: '%s | PetPark',
   },
   description: 'PetPark je hrvatska super-aplikacija za ljubimce. Čuvanje, grooming, školovanje pasa, veterinari, udomljavanje, dog-friendly lokacije i još više — sve na jednom mjestu.',
+  other: {
+    'google': 'notranslate',
+  },
   keywords: [
     'pet sitting', 'čuvanje ljubimaca', 'šetanje pasa', 'grooming', 'školovanje pasa',
     'čuvar za pse', 'čuvar za mačke', 'pet sitter Hrvatska', 'veterinar',

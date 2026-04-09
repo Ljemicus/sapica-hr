@@ -107,7 +107,7 @@ export function RegisterForm() {
         <div className="absolute top-10 -right-10 w-40 h-40 bg-white rounded-full opacity-10" />
         <div className="relative text-center text-white p-12 max-w-md">
           <PawLogo className="h-64 w-64 mx-auto mb-10 opacity-90" />
-          <h2 className="text-3xl font-bold mb-4 font-[var(--font-heading)]">{language === 'en' ? <>Join <span className="text-white/90">Pet</span><span className="text-white/70">Park</span>!</> : <>Pridružite se <span className="text-white/90">Pet</span><span className="text-white/70">Parku</span>!</>}</h2>
+          <h2 className="text-3xl font-bold mb-4 font-[var(--font-heading)]">{language === 'en' ? <>Join <span className="text-white/90" translate="no">Pet</span><span className="text-white/70" translate="no">Park</span>!</> : <>Pridružite se <span className="text-white/90" translate="no">Pet</span><span className="text-white/70" translate="no">Parku</span>!</>}</h2>
           <p className="text-white/80 text-lg leading-relaxed">
             {selectedRole === 'sitter'
               ? (language === 'en' ? 'Earn by doing what you love — offer services in your city and become part of our community.' : 'Zarađujte radeći ono što volite — pružajte usluge u svom gradu i postanite dio naše zajednice.')
@@ -133,7 +133,7 @@ export function RegisterForm() {
               <PawLogo className="h-10 w-10 text-white" />
             </div>
             <h1 className="text-3xl font-bold font-[var(--font-heading)]">{language === 'en' ? 'Register' : 'Registracija'}</h1>
-            <p className="text-muted-foreground mt-2">{language === 'en' ? 'Create your ' : 'Kreirajte svoj '}<span className="text-warm-orange">Pet</span><span className="text-warm-teal">Park</span>{language === 'en' ? ' account' : ' račun'}</p>
+            <p className="text-muted-foreground mt-2">{language === 'en' ? 'Create your ' : 'Kreirajte svoj '}<span className="text-warm-orange" translate="no">Pet</span><span className="text-warm-teal" translate="no">Park</span>{language === 'en' ? ' account' : ' račun'}</p>
           </div>
 
           <div className="space-y-2 mb-6 animate-fade-in-up delay-100">

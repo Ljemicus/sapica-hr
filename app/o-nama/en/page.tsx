@@ -97,13 +97,13 @@ export default function AboutPageEn() {
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 text-sm text-muted-foreground mb-6 animate-fade-in-up">
             <MapPin className="h-4 w-4 text-warm-orange" />
-            Rijeka, Croatia
+            <span translate="no">Rijeka</span>, Croatia
           </div>
           <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-6 font-[var(--font-heading)] animate-fade-in-up delay-100">
             Small team, big mission
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed mb-8 animate-fade-in-up delay-200">
-            We started from Rijeka, but our goal is all of Croatia.
+            We started from <span translate="no">Rijeka</span>, but our goal is all of Croatia.
             Every city, every neighborhood, every pet. We grow because
             the community grows with us — every new user, every adopted pet,
             every happy paw is proof that this works.

@@ -191,7 +191,7 @@ export function HomePageContent({
       {/* ════════════════════════════════════════════
           2. BRAND PHILOSOPHY
           ════════════════════════════════════════════ */}
-      <section className="mt-8 md:mt-12 py-16 md:py-24 lg:py-36 relative" aria-label={t.philoKicker}>
+      <section className="mt-12 md:mt-16 lg:mt-20 py-16 md:py-24 lg:py-36 relative" aria-label={t.philoKicker}>
         <div className="container mx-auto px-6 md:px-10 lg:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
             {/* Text column */}
@@ -254,7 +254,7 @@ export function HomePageContent({
       {/* ════════════════════════════════════════════
           3. EDITORIAL SERVICE SHOWCASE
           ════════════════════════════════════════════ */}
-      <section className="mt-6 md:mt-8 py-16 md:py-24 lg:py-36 bg-warm-section" aria-label={t.svcKicker}>
+      <section className="mt-12 md:mt-16 lg:mt-20 py-16 md:py-24 lg:py-36 bg-warm-section" aria-label={t.svcKicker}>
         <div className="container mx-auto px-6 md:px-10 lg:px-16">
           <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-5 font-semibold">
             {t.svcKicker}
@@ -279,7 +279,7 @@ export function HomePageContent({
       {/* ════════════════════════════════════════════
           4. TRUST STRIP
           ════════════════════════════════════════════ */}
-      <section className="mt-6 md:mt-8 py-14 md:py-20 lg:py-28" aria-label={t.trustKicker}>
+      <section className="mt-12 md:mt-16 lg:mt-20 py-14 md:py-20 lg:py-28" aria-label={t.trustKicker}>
         <div className="container mx-auto px-6 md:px-10 lg:px-16">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-5 font-semibold">
@@ -314,7 +314,7 @@ export function HomePageContent({
           5. FEATURED SITTERS — EDITORIAL
           ════════════════════════════════════════════ */}
       {featuredSitters.length > 0 && (
-        <section className="mt-6 md:mt-8 py-16 md:py-24 lg:py-36 bg-warm-section" aria-label={t.sittersKicker}>
+        <section className="mt-12 md:mt-16 lg:mt-20 py-16 md:py-24 lg:py-36 bg-warm-section" aria-label={t.sittersKicker}>
           <div className="container mx-auto px-6 md:px-10 lg:px-16">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
               <div>
@@ -396,7 +396,7 @@ export function HomePageContent({
       {/* ════════════════════════════════════════════
           6. CITIES — EDITORIAL GRID
           ════════════════════════════════════════════ */}
-      <section className="mt-6 md:mt-8 py-16 md:py-24 lg:py-36" aria-label={t.citiesKicker}>
+      <section className="mt-12 md:mt-16 lg:mt-20 py-16 md:py-24 lg:py-36" aria-label={t.citiesKicker}>
         <div className="container mx-auto px-6 md:px-10 lg:px-16">
           <div className="mb-14">
             <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-4 font-semibold">
