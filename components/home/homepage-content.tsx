@@ -285,7 +285,7 @@ export function HomePageContent({
             <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-5 font-semibold">
               {t.trustKicker}
             </p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold font-[var(--font-heading)] max-w-xl mx-auto leading-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold font-[var(--font-heading)] max-w-xl mx-auto leading-tight text-foreground">
               {locale === 'hr'
                 ? 'Povjerenje se gradi, ne tvrdi.'
                 : 'Trust is built, not claimed.'}

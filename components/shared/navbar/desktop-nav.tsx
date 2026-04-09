@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { getDesktopLinks, getHksMenu, getServicesMenu, getLostPetsLink } from './config';
+import { getDesktopLinks, getHksMenu, getServicesMenu, getLostPetsLink, getAdoptionLink } from './config';
 import type { NavbarUser, TranslationFn } from './types';
 import type { Language } from '@/lib/i18n';
 
@@ -57,7 +57,22 @@ export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; use
         );
       })}
 
-      {/* Izgubljeni ljubimci - crveni link (dignut ranije u navigaciji) */}
+      {/* Udomljavanje - između Postani sitter i Izgubljeni */}
+      {(() => {
+        const adoptionItem = getAdoptionLink(t, language);
+        const Icon = adoptionItem.icon;
+        return (
+          <Link 
+            href={adoptionItem.href} 
+            className="text-sm font-medium text-pink-500 hover:text-pink-600 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-pink-50 font-semibold"
+          >
+            {Icon ? <Icon className="h-4 w-4" /> : null}
+            {adoptionItem.label}
+          </Link>
+        );
+      })()}
+
+      {/* Izgubljeni ljubimci - crveni link (dignut ranije u navigaciji) */}],
       {(() => {
         const lostItem = getLostPetsLink(t, language);
         const Icon = lostItem.icon;

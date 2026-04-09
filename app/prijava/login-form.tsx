@@ -225,7 +225,7 @@ export function LoginForm() {
         </div>
       </div>
 
-      <div className="hidden lg:flex flex-1 organizations-hero-gradient items-center justify-center relative overflow-hidden">
+      <div className="hidden lg:flex flex-1 auth-hero-gradient items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 paw-pattern opacity-[0.08]" />
         <div className="absolute top-20 -left-20 w-60 h-60 bg-white rounded-full opacity-10" />
         <div className="absolute bottom-10 -right-10 w-40 h-40 bg-white rounded-full opacity-10" />

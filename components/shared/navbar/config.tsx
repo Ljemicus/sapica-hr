@@ -52,14 +52,22 @@ export function getDashboardLink(user?: NavbarUser | null) {
 
 export function getDesktopLinks(t: TranslationFn, user?: NavbarUser | null, language: Language = 'hr'): NavbarLinkItem[] {
   return [
-    { href: localizeHref('/udomljavanje', language), label: t('footer.adoption') || 'Udomljavanje', icon: HeartHandshake, className: 'text-pink-500 font-semibold' },
-    { href: '/o-nama', label: <><span className="text-logo-orange">O</span> <span className="text-logo-teal">nama</span></>, className: 'font-semibold' },
     { href: '/zajednica', label: 'Zajednica', icon: Users },
     { href: '/blog', label: t('nav.blog'), icon: BookOpen },
     { href: localizeHref('/forum', language), label: t('nav.forum'), icon: MessageSquare },
-    // Izgubljeni je ručno renderiran u desktop-nav.tsx (ranije u navigaciji)
+    // Postani sitter je uvjetno renderiran u desktop-nav.tsx
     ...(!user ? [{ href: '/postani-sitter', label: t('nav.become_sitter'), className: 'text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 transition-colors px-3 py-2 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-950/20' }] : []),
   ];
+}
+
+// Udomljavanje link (za ručni render između Postani sitter i Izgubljeni)
+export function getAdoptionLink(t: TranslationFn, language: Language = 'hr'): NavbarLinkItem {
+  return { 
+    href: localizeHref('/udomljavanje', language), 
+    label: t('footer.adoption') || 'Udomljavanje', 
+    icon: HeartHandshake,
+    className: 'text-pink-500 font-semibold'
+  };
 }
 
 // Zasebna funkcija za Izgubljeni link (za ručni render)
@@ -123,7 +131,6 @@ export function getUserMenuItems(t: TranslationFn, user?: NavbarUser | null): Na
 
 export function getMobilePrimaryLinks(t: TranslationFn, language: Language = 'hr'): NavbarLinkItem[] {
   return [
-    { href: '/o-nama', label: t('nav.about'), icon: Heart },
     { href: '/pretraga', label: t('nav.sitters'), icon: Search },
     { href: localizeHref('/njega', language), label: t('nav.grooming'), icon: Scissors },
     { href: localizeHref('/dresura', language), label: t('nav.training'), icon: GraduationCap },
