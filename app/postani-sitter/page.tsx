@@ -78,7 +78,7 @@ export default function PostaniSitterPage() {
   return (
     <div className="bg-background">
       {/* Hero */}
-      <section className="relative organizations-hero-gradient overflow-hidden">
+      <section className="relative auth-hero-gradient overflow-hidden">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
         <div className="container mx-auto px-4 py-14 md:py-20 relative">
           <div className="max-w-4xl mx-auto text-center">
