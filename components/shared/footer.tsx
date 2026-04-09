@@ -213,7 +213,7 @@ export function Footer() {
               <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl text-white mb-4 group">
                 <PawLogo className="h-7 w-7 text-warm-orange group-hover:scale-110 transition-transform duration-300" />
                 <span translate="no">
-                  <span className="text-warm-orange">Pet</span><span className="text-teal-400">Park</span>
+                  <span style={{ color: '#FFB347' }}>Pet</span><span style={{ color: '#14b8a6' }}>Park</span>
                 </span>
               </Link>
               <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-md">{t('footer.tagline')}</p>

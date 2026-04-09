@@ -121,7 +121,7 @@ export function LoginForm() {
               <PawLogo className="h-10 w-10 text-white" />
             </div>
             <h1 className="text-3xl font-bold font-[var(--font-heading)]">{copy.title}</h1>
-            <p className="text-muted-foreground mt-2">{copy.subtitle}<span className="text-warm-orange" translate="no">Pet</span><span className="text-warm-teal" translate="no">Park</span>{copy.subtitleEnd}</p>
+            <p className="text-muted-foreground mt-2">{copy.subtitle}<span style={{ color: '#FFB347' }} translate="no">Pet</span><span style={{ color: '#14b8a6' }} translate="no">Park</span>{copy.subtitleEnd}</p>
           </div>
 
           <div className="space-y-3 animate-fade-in-up delay-100">

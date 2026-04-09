@@ -71,7 +71,7 @@ export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout,
                   <div className="flex items-center gap-2.5">
                     <PawLogo className="h-9 w-9 text-orange-500" />
                     <span className="font-extrabold text-lg" translate="no">
-                      <span className="text-orange-500">Pet</span><span className="text-teal-600 dark:text-teal-400">Park</span>
+                      <span style={{ color: '#FFB347' }}>Pet</span><span style={{ color: '#14b8a6' }}>Park</span>
                     </span>
                   </div>
                   <LanguageSwitcher />

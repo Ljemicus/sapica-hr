@@ -133,7 +133,7 @@ export function RegisterForm() {
               <PawLogo className="h-10 w-10 text-white" />
             </div>
             <h1 className="text-3xl font-bold font-[var(--font-heading)]">{language === 'en' ? 'Register' : 'Registracija'}</h1>
-            <p className="text-muted-foreground mt-2">{language === 'en' ? 'Create your ' : 'Kreirajte svoj '}<span className="text-warm-orange" translate="no">Pet</span><span className="text-warm-teal" translate="no">Park</span>{language === 'en' ? ' account' : ' račun'}</p>
+            <p className="text-muted-foreground mt-2">{language === 'en' ? 'Create your ' : 'Kreirajte svoj '}<span style={{ color: '#FFB347' }} translate="no">Pet</span><span style={{ color: '#14b8a6' }} translate="no">Park</span>{language === 'en' ? ' account' : ' račun'}</p>
           </div>
 
           <div className="space-y-2 mb-6 animate-fade-in-up delay-100">
