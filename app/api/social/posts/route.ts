@@ -1,7 +1,7 @@
 import { createApiClient } from '@/lib/supabase/api';
 import { NextResponse } from 'next/server';
 import { checkRateLimit, RateLimits, getClientIdentifier } from '@/lib/upstash-rate-limit';
-import { sanitizeRichText } from '@/lib/sanitize';
+import { sanitizeRichText } from '@/lib/sanitize-api';
 import type { SocialPost, SocialPostWithDetails } from '@/lib/types';
 
 // GET /api/social/posts - Get feed posts
