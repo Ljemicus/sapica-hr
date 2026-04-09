@@ -297,7 +297,7 @@ export function HomePageContent({
               const icons = [Shield, Star, Heart, Shield];
               const Icon = icons[i % icons.length];
               return (
-                <div key={item.title} className="text-center lg:text-left">
+                <div key={item.title} className="text-center">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-warm-peach dark:bg-warm-orange/15 mb-5">
                     <Icon className="h-5 w-5 text-warm-orange" />
                   </div>
@@ -316,7 +316,7 @@ export function HomePageContent({
       {featuredSitters.length > 0 && (
         <section className="mt-8 md:mt-16 lg:mt-20 py-10 md:py-24 lg:py-36 bg-warm-section" aria-label={t.sittersKicker}>
           <div className="container mx-auto px-6 md:px-10 lg:px-16">
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
+            <div className="text-center mb-14">
               <div>
                 <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-4 font-semibold">
                   {t.sittersKicker}
@@ -324,14 +324,8 @@ export function HomePageContent({
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold font-[var(--font-heading)] mb-3">
                   {t.sittersHeadline}
                 </h2>
-                <p className="text-lg text-muted-foreground max-w-lg">{t.sittersSub}</p>
+                <p className="text-lg text-muted-foreground max-w-lg mx-auto">{t.sittersSub}</p>
               </div>
-              <Link href="/pretraga" className="hidden md:inline-flex shrink-0">
-                <Button variant="outline" className="rounded-full h-12 px-8">
-                  {t.sittersViewAll}
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
@@ -380,10 +374,10 @@ export function HomePageContent({
               ))}
             </div>
 
-            {/* Mobile view-all */}
-            <div className="mt-8 text-center md:hidden">
+            {/* View all button */}
+            <div className="mt-10 text-center">
               <Link href="/pretraga">
-                <Button variant="outline" className="rounded-full">
+                <Button variant="outline" className="rounded-full h-12 px-8">
                   {t.sittersViewAll}
                   <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
