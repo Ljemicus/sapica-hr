@@ -48,7 +48,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ posts: posts as SocialPostWithDetails[] });
   } catch (error) {
     console.error('Error in GET /api/social/posts:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: 'Internal server error', details: errorMessage }, { status: 500 });
   }
 }
 

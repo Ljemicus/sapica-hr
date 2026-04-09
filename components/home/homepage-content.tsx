@@ -155,7 +155,7 @@ const copy = {
 
 /* Service image & link map */
 const servicesMeta = [
-  { image: '/images/services/01-pet-sitting.jpg', href: '/pretraga' },
+  { image: '/images/services/01-pet-sitting.jpg', href: '/pretraga?service=sitting' },
   { image: '/images/services/02-grooming.jpg', href: '/njega' },
   { image: '/images/services/03-dresura-agility.jpg', href: '/dresura' },
 ];

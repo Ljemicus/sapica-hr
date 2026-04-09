@@ -11,13 +11,13 @@ export function BottomNav() {
   const { user } = useAuth();
   const { t, language } = useLanguage();
 
-  const forumHref = language === 'en' ? '/forum/en' : '/forum';
+  const blogHref = language === 'en' ? '/blog/en' : '/blog';
 
   const navItems = [
     { href: '/', icon: Home, label: t('common.home') },
     { href: '/pretraga', icon: Search, label: t('common.search') },
     { href: '/zajednica', icon: Users, label: 'Zajednica' },
-    { href: forumHref, icon: MessageSquare, label: t('nav.forum') },
+    { href: blogHref, icon: MessageSquare, label: 'Blog' },
   ];
 
   const dashboardLink = user?.role === 'sitter'
