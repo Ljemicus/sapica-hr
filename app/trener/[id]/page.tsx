@@ -2,15 +2,17 @@ import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { robotsMeta } from '@/lib/seo/indexability';
 import type { Trainer } from '@/lib/types';
+import { getProviderTrainerById } from '@/lib/db/provider-trainers';
 import { TrainerProfileLoader } from './trainer-profile-loader';
-
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 interface TrainerPageProps {
   params: Promise<{ id: string }>;
 }
 
-function createTrainerShell(id: string): Trainer {
+async function createTrainerShell(id: string): Promise<Trainer> {
+  const trainer = await getProviderTrainerById(id);
+  if (trainer) return trainer;
+
   return {
     id,
     name: 'Profil trenera',
@@ -30,16 +32,17 @@ function createTrainerShell(id: string): Trainer {
 
 export async function generateMetadata({ params }: TrainerPageProps): Promise<Metadata> {
   const { id } = await params;
+  const trainer = await createTrainerShell(id);
   return {
-    title: `Profil trenera ${id}`,
-    description: 'Profil trenera na PetParku.',
+    title: { absolute: `${trainer.name} | PetPark` },
+    description: trainer.bio || 'Profil trenera na PetParku.',
     robots: robotsMeta(false),
   };
 }
 
 export default async function TrainerPage({ params }: TrainerPageProps) {
   const { id } = await params;
-  const trainer = createTrainerShell(id);
+  const trainer = await createTrainerShell(id);
 
   return (
     <>

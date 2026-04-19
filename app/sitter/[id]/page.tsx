@@ -2,13 +2,17 @@ import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { robotsMeta } from '@/lib/seo/indexability';
 import type { SitterProfile } from '@/lib/types';
+import { getProviderSitterById } from '@/lib/db/provider-sitters';
 import { SitterProfileLoader } from './sitter-profile-loader';
 
 interface SitterPageProps {
   params: Promise<{ id: string }>;
 }
 
-function createSitterShell(id: string): SitterProfile & { user: NonNullable<SitterProfile['user']> } {
+async function createSitterShell(id: string): Promise<SitterProfile & { user: NonNullable<SitterProfile['user']> }> {
+  const profile = await getProviderSitterById(id);
+  if (profile) return profile as SitterProfile & { user: NonNullable<SitterProfile['user']> };
+
   return {
     user_id: id,
     bio: 'Podaci o sitteru učitavaju se.',
@@ -40,16 +44,17 @@ function createSitterShell(id: string): SitterProfile & { user: NonNullable<Sitt
 
 export async function generateMetadata({ params }: SitterPageProps): Promise<Metadata> {
   const { id } = await params;
+  const profile = await createSitterShell(id);
   return {
-    title: `Profil sittera ${id}`,
-    description: 'Profil sittera na PetParku.',
+    title: { absolute: `${profile.user.name} | PetPark` },
+    description: profile.bio || 'Profil sittera na PetParku.',
     robots: robotsMeta(false),
   };
 }
 
 export default async function SitterPage({ params }: SitterPageProps) {
   const { id } = await params;
-  const profile = createSitterShell(id);
+  const profile = await createSitterShell(id);
 
   return (
     <>

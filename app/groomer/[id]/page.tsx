@@ -2,13 +2,17 @@ import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { robotsMeta } from '@/lib/seo/indexability';
 import type { Groomer } from '@/lib/types';
+import { getProviderGroomerById } from '@/lib/db/provider-groomers';
 import { GroomerProfileLoader } from './groomer-profile-loader';
 
 interface GroomerPageProps {
   params: Promise<{ id: string }>;
 }
 
-function createGroomerShell(id: string): Groomer {
+async function createGroomerShell(id: string): Promise<Groomer> {
+  const groomer = await getProviderGroomerById(id);
+  if (groomer) return groomer;
+
   return {
     id,
     name: 'Profil groomera',
@@ -28,16 +32,17 @@ function createGroomerShell(id: string): Groomer {
 
 export async function generateMetadata({ params }: GroomerPageProps): Promise<Metadata> {
   const { id } = await params;
+  const groomer = await createGroomerShell(id);
   return {
-    title: `Profil groomera ${id}`,
-    description: 'Profil groomera na PetParku.',
+    title: { absolute: `${groomer.name} | PetPark` },
+    description: groomer.bio || 'Profil groomera na PetParku.',
     robots: robotsMeta(false),
   };
 }
 
 export default async function GroomerPage({ params }: GroomerPageProps) {
   const { id } = await params;
-  const groomer = createGroomerShell(id);
+  const groomer = await createGroomerShell(id);
 
   return (
     <>
