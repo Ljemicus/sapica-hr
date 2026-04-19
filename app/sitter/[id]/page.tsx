@@ -48,6 +48,7 @@ export async function generateMetadata({ params }: SitterPageProps): Promise<Met
   return {
     title: { absolute: `${profile.user.name} | PetPark` },
     description: profile.bio || 'Profil sittera na PetParku.',
+    alternates: { canonical: `/sitter/${id}` },
     robots: robotsMeta(false),
   };
 }

@@ -36,6 +36,7 @@ export async function generateMetadata({ params }: TrainerPageProps): Promise<Me
   return {
     title: { absolute: `${trainer.name} | PetPark` },
     description: trainer.bio || 'Profil trenera na PetParku.',
+    alternates: { canonical: `/trener/${id}` },
     robots: robotsMeta(false),
   };
 }

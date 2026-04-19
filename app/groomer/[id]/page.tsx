@@ -36,6 +36,7 @@ export async function generateMetadata({ params }: GroomerPageProps): Promise<Me
   return {
     title: { absolute: `${groomer.name} | PetPark` },
     description: groomer.bio || 'Profil groomera na PetParku.',
+    alternates: { canonical: `/groomer/${id}` },
     robots: robotsMeta(false),
   };
 }
