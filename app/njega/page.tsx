@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getGroomers } from '@/lib/db/groomers';
+import { getProviderGroomers } from '@/lib/db/provider-groomers';
 import { GroomingContent } from '@/app/grooming/grooming-content';
 import type { GroomingServiceType } from '@/lib/types';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
@@ -25,7 +25,7 @@ interface NjegaPageProps {
 
 export default async function NjegaPage({ searchParams }: NjegaPageProps) {
   const params = await searchParams;
-  const groomers = await getGroomers({ city: params.city, service: params.service as GroomingServiceType | undefined });
+  const groomers = await getProviderGroomers({ city: params.city, service: params.service as GroomingServiceType | undefined });
 
   return (
     <>

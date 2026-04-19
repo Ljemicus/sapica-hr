@@ -1,13 +1,17 @@
-import { getGroomerAvailableDates, getGroomerReviews, getGroomer } from '@/lib/db/extensions';
+import {
+  getProviderGroomerAvailableDates,
+  getProviderGroomerById,
+  getProviderGroomerReviews,
+} from '@/lib/db/provider-groomers';
 
 export async function getGroomerPageData(id: string) {
-  const groomer = await getGroomer(id);
+  const groomer = await getProviderGroomerById(id);
   if (!groomer) {
     return { groomer: null, reviews: [], availableDates: new Set<string>() };
   }
 
-  const reviews = await getGroomerReviews(id);
-  const availableDatesList = await getGroomerAvailableDates(id);
+  const reviews = await getProviderGroomerReviews(id);
+  const availableDatesList = await getProviderGroomerAvailableDates(id);
 
   return {
     groomer,

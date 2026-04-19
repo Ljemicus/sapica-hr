@@ -1,7 +1,6 @@
-import { getGroomers, getSitters, getTrainers } from '@/lib/db';
 import type { ServiceType } from '@/lib/types';
 import type { UnifiedProvider, ProviderCategory } from '@/app/pretraga/types';
-import { getTrustEligibilityForGroomer, getTrustEligibilityForTrainer } from '@/lib/trust/bridge';
+import { getUnifiedProvidersFromProviderModel } from './provider-adapters';
 
 export type ProviderSort = 'rating' | 'reviews' | 'price';
 
@@ -86,103 +85,22 @@ export function normalizeProviderSearchParams(params: {
 }
 
 export async function getUnifiedProviders(params: ProviderSearchParams): Promise<UnifiedProvider[]> {
-  const category = params.category;
-  const shouldFetchSitters = !category || category === 'sitter';
-  const shouldFetchGroomers = !category || category === 'grooming';
-  const shouldFetchTrainers = !category || category === 'dresura';
+  const providers = await getUnifiedProvidersFromProviderModel();
 
-  const [sitters, groomers, trainers] = await Promise.all([
-    shouldFetchSitters
-      ? getSitters({
-          city: params.city,
-          service: params.service as ServiceType | undefined,
-          min_rating: params.minRating,
-          min_price: params.minPrice,
-          max_price: params.maxPrice,
-          sort: params.sort === 'price' ? 'price_asc' : params.sort,
-        })
-      : Promise.resolve([]),
-    shouldFetchGroomers
-      ? getGroomers({ city: params.city, service: category === 'grooming' ? params.service as never : undefined })
-      : Promise.resolve([]),
-    shouldFetchTrainers
-      ? getTrainers({ city: params.city, type: category === 'dresura' ? params.service as never : undefined })
-      : Promise.resolve([]),
-  ]);
+  let next = providers;
 
-  const providers: UnifiedProvider[] = [];
-
-  for (const s of sitters) {
-    if (!s.verified) continue;
-    const prices = Object.values(s.prices).filter((p): p is number => typeof p === 'number');
-    providers.push({
-      id: s.user_id,
-      name: s.user?.name || 'Sitter',
-      avatarUrl: s.user?.avatar_url || null,
-      city: s.city,
-      bio: s.bio,
-      rating: s.rating_avg,
-      reviews: s.review_count,
-      verified: s.verified,
-      superhost: s.superhost,
-      category: 'sitter',
-      services: s.services,
-      lowestPrice: prices.length > 0 ? Math.min(...prices) : undefined,
-      responseTime: s.response_time,
-      profileUrl: `/sitter/${s.user_id}`,
-      locationLat: s.location_lat,
-      locationLng: s.location_lng,
-    });
+  if (params.category) {
+    next = next.filter((provider) => provider.category === params.category);
   }
 
-  for (const g of groomers) {
-    const trust = await getTrustEligibilityForGroomer(g);
-    if (!trust.eligible) continue;
-    const prices = Object.values(g.prices || {}).filter((p): p is number => typeof p === 'number');
-    providers.push({
-      id: g.id,
-      name: g.name,
-      avatarUrl: null,
-      city: g.city,
-      bio: g.bio,
-      rating: g.rating,
-      reviews: g.review_count,
-      verified: g.verified,
-      superhost: false,
-      category: 'grooming',
-      services: g.services,
-      lowestPrice: prices.length > 0 ? Math.min(...prices) : undefined,
-      responseTime: null,
-      profileUrl: `/groomer/${g.id}`,
-      locationLat: null,
-      locationLng: null,
-    });
+  if (params.city) {
+    const city = params.city.toLowerCase();
+    next = next.filter((provider) => (provider.city || '').toLowerCase() === city);
   }
 
-  for (const t of trainers) {
-    const trust = await getTrustEligibilityForTrainer(t);
-    if (!trust.eligible) continue;
-    providers.push({
-      id: t.id,
-      name: t.name,
-      avatarUrl: null,
-      city: t.city,
-      bio: t.bio,
-      rating: t.rating,
-      reviews: t.review_count,
-      verified: t.certified,
-      superhost: false,
-      category: 'dresura',
-      services: t.specializations,
-      lowestPrice: typeof t.price_per_hour === 'number' ? t.price_per_hour : undefined,
-      responseTime: null,
-      profileUrl: `/trener/${t.id}`,
-      locationLat: null,
-      locationLng: null,
-      certified: t.certified,
-      certificates: t.certificates,
-    });
+  if (params.service) {
+    next = next.filter((provider) => provider.services.includes(params.service as ServiceType));
   }
 
-  return applyUnifiedFilters(providers, params);
+  return applyUnifiedFilters(next, params);
 }

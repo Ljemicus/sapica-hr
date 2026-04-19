@@ -1,12 +1,10 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isSupabaseConfigured } from './helpers';
-import type { Trainer, TrainingProgram, TrainingType } from '@/lib/types';
+import type { Groomer, GroomingServiceType, GroomerSpecialization } from '@/lib/types';
 
-interface ProviderTrainerSettingsRow {
-  provider_id: string;
-  specializations: string[] | null;
-  certified: boolean | null;
-  training_location: string | null;
+interface ProviderGroomerFilters {
+  city?: string;
+  service?: GroomingServiceType;
 }
 
 interface ProviderRow {
@@ -17,14 +15,10 @@ interface ProviderRow {
   bio: string | null;
   city: string | null;
   address: string | null;
-  lat: number | null;
-  lng: number | null;
   phone: string | null;
   email: string | null;
-  experience_years: number | null;
   verified_status: string | null;
   public_status: string | null;
-  response_time_label: string | null;
   rating_avg: number | null;
   review_count: number | null;
 }
@@ -33,12 +27,15 @@ interface ProfileRow {
   id: string;
   email: string | null;
   display_name: string | null;
-  avatar_url: string | null;
   phone: string | null;
   city: string | null;
-  locale: string | null;
-  status: string | null;
-  onboarding_state: string | null;
+}
+
+interface ProviderGroomerSettingsRow {
+  provider_id: string;
+  specialization: string | null;
+  mobile_service: boolean | null;
+  working_hours_json: Record<string, { start: string; end: string }> | null;
 }
 
 interface ProviderServiceRow {
@@ -52,12 +49,8 @@ interface ProviderServiceRow {
 }
 
 interface AvailabilitySlotRow {
-  id: string;
   provider_id: string;
-  service_code: string | null;
   starts_at: string;
-  ends_at: string;
-  timezone: string | null;
   status: string | null;
 }
 
@@ -71,9 +64,9 @@ interface ReviewRow {
   created_at: string;
 }
 
-interface ProviderTrainerReview {
+interface ProviderGroomerReview {
   id: string;
-  trainer_id: string;
+  groomer_id: string;
   author_name: string;
   author_initial: string;
   rating: number;
@@ -81,71 +74,83 @@ interface ProviderTrainerReview {
   created_at: string;
 }
 
-const TRAINER_SERVICE_LABELS: Record<string, { name: string; type: TrainingProgram['type'] }> = {
-  training_basic: { name: 'Osnovna poslušnost', type: 'osnovna' },
-  training_advanced: { name: 'Napredni trening', type: 'napredna' },
-  training_agility: { name: 'Agility', type: 'agility' },
-  training_behaviour: { name: 'Korekcija ponašanja', type: 'ponasanje' },
-  training_puppies: { name: 'Škola za štence', type: 'stenci' },
+const GROOMER_SERVICE_CODE_MAP: Record<string, GroomingServiceType> = {
+  grooming_haircut: 'sisanje',
+  grooming_bath: 'kupanje',
+  grooming_trimming: 'trimanje',
+  grooming_nails: 'nokti',
+  grooming_brushing: 'cetkanje',
 };
 
-const TRAINER_SPECIALIZATION_MAP: Record<string, Trainer['specializations'][number]> = {
-  obedience: 'osnovna',
-  basic: 'osnovna',
-  advanced: 'napredna',
-  agility: 'agility',
-  behaviour: 'ponasanje',
-  behavior: 'ponasanje',
-  puppies: 'stenci',
-  puppy: 'stenci',
+const GROOMER_SPECIALIZATION_MAP: Record<string, GroomerSpecialization> = {
+  dogs: 'psi',
+  cats: 'macke',
+  both: 'oba',
+  small_dogs_and_basic_grooming: 'psi',
 };
 
-interface ProviderTrainerFilters {
-  city?: string;
-  type?: TrainingType;
-}
-
-function mapTrainerSpecializations(values: string[] | null | undefined): Trainer['specializations'] {
-  const mapped = (values || [])
-    .map((value) => TRAINER_SPECIALIZATION_MAP[String(value).toLowerCase()])
-    .filter((value): value is Trainer['specializations'][number] => Boolean(value));
+function toServices(services: ProviderServiceRow[]): GroomingServiceType[] {
+  const mapped = services
+    .filter((service) => service.is_active !== false)
+    .map((service) => GROOMER_SERVICE_CODE_MAP[String(service.service_code).toLowerCase()])
+    .filter((value): value is GroomingServiceType => Boolean(value));
 
   return Array.from(new Set(mapped));
 }
 
-function toTrainer(provider: ProviderRow, profile: ProfileRow | null, settings: ProviderTrainerSettingsRow | null, services: ProviderServiceRow[]): Trainer {
-  const activePrices = services
-    .filter((service) => service.is_active !== false && typeof service.base_price === 'number')
-    .map((service) => Number(service.base_price));
+function toPrices(services: ProviderServiceRow[]): Record<GroomingServiceType, number> {
+  const prices: Partial<Record<GroomingServiceType, number>> = {};
 
-  const specializations = mapTrainerSpecializations(settings?.specializations);
+  for (const service of services) {
+    const mapped = GROOMER_SERVICE_CODE_MAP[String(service.service_code).toLowerCase()];
+    if (!mapped) continue;
+    prices[mapped] = Number(service.base_price || 0);
+  }
+
+  return {
+    sisanje: prices.sisanje || 0,
+    kupanje: prices.kupanje || 0,
+    trimanje: prices.trimanje || 0,
+    nokti: prices.nokti || 0,
+    cetkanje: prices.cetkanje || 0,
+  };
+}
+
+function toGroomer(
+  provider: ProviderRow,
+  profile: ProfileRow | null,
+  settings: ProviderGroomerSettingsRow | null,
+  services: ProviderServiceRow[]
+): Groomer {
+  const mappedServices = toServices(services);
 
   return {
     id: provider.id,
-    name: provider.display_name || profile?.display_name || 'Trener',
+    name: provider.display_name || profile?.display_name || 'Groomer',
     city: provider.city || profile?.city || 'Hrvatska',
-    specializations: specializations.length > 0 ? specializations : ['osnovna'],
-    price_per_hour: activePrices.length > 0 ? Math.min(...activePrices) : 0,
-    certificates: settings?.certified ? ['Verified trainer'] : [],
+    services: mappedServices.length > 0 ? mappedServices : ['kupanje'],
+    prices: toPrices(services),
     rating: Number(provider.rating_avg || 0),
     review_count: Number(provider.review_count || 0),
     bio: provider.bio || '',
-    certified: Boolean(settings?.certified),
+    verified: provider.verified_status === 'verified',
+    specialization: GROOMER_SPECIALIZATION_MAP[String(settings?.specialization || '').toLowerCase()] || 'oba',
     user_id: provider.profile_id || undefined,
     phone: provider.phone || profile?.phone || undefined,
     email: provider.email || profile?.email || undefined,
     address: provider.address || undefined,
+    working_hours: settings?.working_hours_json || undefined,
   };
 }
 
-export async function getProviderTrainers(filters?: ProviderTrainerFilters): Promise<Trainer[]> {
+export async function getProviderGroomers(filters?: ProviderGroomerFilters): Promise<Groomer[]> {
   if (!isSupabaseConfigured()) return [];
 
   const supabase = createAdminClient();
   let query = supabase
     .from('providers')
     .select('*')
-    .eq('provider_kind', 'trainer')
+    .eq('provider_kind', 'groomer')
     .eq('public_status', 'listed');
 
   if (filters?.city) {
@@ -161,12 +166,12 @@ export async function getProviderTrainers(filters?: ProviderTrainerFilters): Pro
 
   const [{ data: profiles }, { data: settings }, { data: services }] = await Promise.all([
     profileIds.length > 0 ? supabase.from('profiles').select('*').in('id', profileIds) : Promise.resolve({ data: [] }),
-    providerIds.length > 0 ? supabase.from('provider_trainer_settings').select('*').in('provider_id', providerIds) : Promise.resolve({ data: [] }),
+    providerIds.length > 0 ? supabase.from('provider_groomer_settings').select('*').in('provider_id', providerIds) : Promise.resolve({ data: [] }),
     providerIds.length > 0 ? supabase.from('provider_services').select('*').in('provider_id', providerIds).eq('is_active', true) : Promise.resolve({ data: [] }),
   ]);
 
   const profileMap = new Map(((profiles as ProfileRow[] | null) || []).map((row) => [row.id, row]));
-  const settingsMap = new Map(((settings as ProviderTrainerSettingsRow[] | null) || []).map((row) => [row.provider_id, row]));
+  const settingsMap = new Map(((settings as ProviderGroomerSettingsRow[] | null) || []).map((row) => [row.provider_id, row]));
   const servicesByProvider = new Map<string, ProviderServiceRow[]>();
   for (const service of ((services as ProviderServiceRow[] | null) || [])) {
     const list = servicesByProvider.get(service.provider_id) || [];
@@ -174,8 +179,8 @@ export async function getProviderTrainers(filters?: ProviderTrainerFilters): Pro
     servicesByProvider.set(service.provider_id, list);
   }
 
-  let trainers = providers.map((provider) =>
-    toTrainer(
+  let groomers = providers.map((provider) =>
+    toGroomer(
       provider,
       provider.profile_id ? profileMap.get(provider.profile_id) || null : null,
       settingsMap.get(provider.id) || null,
@@ -183,15 +188,15 @@ export async function getProviderTrainers(filters?: ProviderTrainerFilters): Pro
     )
   );
 
-  if (filters?.type) {
-    trainers = trainers.filter((trainer) => trainer.specializations.includes(filters.type!));
+  if (filters?.service) {
+    groomers = groomers.filter((groomer) => groomer.services.includes(filters.service!));
   }
 
-  trainers.sort((a, b) => b.rating - a.rating || b.review_count - a.review_count);
-  return trainers;
+  groomers.sort((a, b) => b.rating - a.rating || b.review_count - a.review_count);
+  return groomers;
 }
 
-export async function getProviderTrainerById(providerId: string): Promise<Trainer | null> {
+export async function getProviderGroomerById(providerId: string): Promise<Groomer | null> {
   if (!isSupabaseConfigured()) return null;
 
   const supabase = createAdminClient();
@@ -199,7 +204,7 @@ export async function getProviderTrainerById(providerId: string): Promise<Traine
     .from('providers')
     .select('*')
     .eq('id', providerId)
-    .eq('provider_kind', 'trainer')
+    .eq('provider_kind', 'groomer')
     .eq('public_status', 'listed')
     .maybeSingle();
 
@@ -209,47 +214,14 @@ export async function getProviderTrainerById(providerId: string): Promise<Traine
     provider.profile_id
       ? supabase.from('profiles').select('*').eq('id', provider.profile_id).maybeSingle()
       : Promise.resolve({ data: null }),
-    supabase.from('provider_trainer_settings').select('*').eq('provider_id', provider.id).maybeSingle(),
+    supabase.from('provider_groomer_settings').select('*').eq('provider_id', provider.id).maybeSingle(),
     supabase.from('provider_services').select('*').eq('provider_id', provider.id).eq('is_active', true),
   ]);
 
-  return toTrainer(provider as ProviderRow, (profile as ProfileRow | null) ?? null, (settings as ProviderTrainerSettingsRow | null) ?? null, (services as ProviderServiceRow[]) ?? []);
+  return toGroomer(provider as ProviderRow, (profile as ProfileRow | null) ?? null, (settings as ProviderGroomerSettingsRow | null) ?? null, (services as ProviderServiceRow[]) ?? []);
 }
 
-export async function getProviderTrainerPrograms(providerId: string): Promise<TrainingProgram[]> {
-  if (!isSupabaseConfigured()) return [];
-
-  const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from('provider_services')
-    .select('*')
-    .eq('provider_id', providerId)
-    .eq('is_active', true);
-
-  if (error || !data) return [];
-
-  return (data as ProviderServiceRow[]).map((service) => {
-    const mapped = TRAINER_SERVICE_LABELS[service.service_code] || {
-      name: service.service_code,
-      type: 'osnovna' as const,
-    };
-
-    return {
-      id: service.id,
-      trainer_id: providerId,
-      name: mapped.name,
-      type: mapped.type,
-      duration_weeks: 1,
-      sessions: 1,
-      price: Number(service.base_price || 0),
-      description: service.duration_minutes
-        ? `${mapped.name} (${service.duration_minutes} min)`
-        : mapped.name,
-    };
-  });
-}
-
-export async function getProviderTrainerReviews(providerId: string): Promise<ProviderTrainerReview[]> {
+export async function getProviderGroomerReviews(providerId: string): Promise<ProviderGroomerReview[]> {
   if (!isSupabaseConfigured()) return [];
 
   const supabase = createAdminClient();
@@ -278,7 +250,7 @@ export async function getProviderTrainerReviews(providerId: string): Promise<Pro
     const authorName = reviewer?.display_name || 'PetPark korisnik';
     return {
       id: review.id,
-      trainer_id: providerId,
+      groomer_id: providerId,
       author_name: authorName,
       author_initial: authorName.charAt(0).toUpperCase(),
       rating: Number(review.rating || 0),
@@ -288,18 +260,18 @@ export async function getProviderTrainerReviews(providerId: string): Promise<Pro
   });
 }
 
-export async function getProviderTrainerAvailableDates(providerId: string): Promise<string[]> {
-  if (!isSupabaseConfigured()) return [];
+export async function getProviderGroomerAvailableDates(providerId: string): Promise<Set<string>> {
+  if (!isSupabaseConfigured()) return new Set();
 
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from('availability_slots')
-    .select('*')
+    .select('provider_id, starts_at, status')
     .eq('provider_id', providerId)
     .eq('status', 'available')
     .order('starts_at', { ascending: true });
 
-  if (error || !data) return [];
+  if (error || !data) return new Set();
 
-  return Array.from(new Set((data as AvailabilitySlotRow[]).map((slot) => slot.starts_at.slice(0, 10))));
+  return new Set((data as AvailabilitySlotRow[]).map((slot) => slot.starts_at.slice(0, 10)));
 }

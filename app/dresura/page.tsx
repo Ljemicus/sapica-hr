@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Scissors, Search, ArrowRight } from 'lucide-react';
-import { getTrainers } from '@/lib/db';
+import { getProviderTrainers } from '@/lib/db/provider-trainers';
 import { TrainingContent } from './training-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { ServiceJsonLd } from '@/components/seo/json-ld';
@@ -29,7 +29,7 @@ interface DresuraPageProps {
 
 export default async function DresuraPage({ searchParams }: DresuraPageProps) {
   const params = await searchParams;
-  const trainers = await getTrainers({ city: params.city, type: params.type as TrainingType | undefined });
+  const trainers = await getProviderTrainers({ city: params.city, type: params.type as TrainingType | undefined });
 
   return (
     <div>
