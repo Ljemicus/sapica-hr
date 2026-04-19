@@ -31,7 +31,7 @@ export async function GET() {
       });
       
       const dbStart = Date.now();
-      const { error } = await supabase.from('users').select('id').limit(1);
+      const { error } = await supabase.from('profiles').select('id').limit(1);
       checks.database = { 
         status: error ? 'error' : 'ok', 
         responseTime: Date.now() - dbStart,

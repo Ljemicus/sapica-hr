@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
-import { robotsMeta } from '@/lib/seo/indexability';
+import { robotsMeta, shouldIndexGroomer } from '@/lib/seo/indexability';
 import type { Groomer } from '@/lib/types';
 import { getProviderGroomerById } from '@/lib/db/provider-groomers';
 import { GroomerProfileLoader } from './groomer-profile-loader';
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: GroomerPageProps): Promise<Me
     title: { absolute: `${groomer.name} | PetPark` },
     description: groomer.bio || 'Profil groomera na PetParku.',
     alternates: { canonical: `/groomer/${id}` },
-    robots: robotsMeta(false),
+    robots: robotsMeta(shouldIndexGroomer(groomer)),
   };
 }
 

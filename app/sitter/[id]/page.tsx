@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
-import { robotsMeta } from '@/lib/seo/indexability';
+import { robotsMeta, shouldIndexSitter } from '@/lib/seo/indexability';
 import type { SitterProfile } from '@/lib/types';
 import { getProviderSitterById } from '@/lib/db/provider-sitters';
 import { SitterProfileLoader } from './sitter-profile-loader';
@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: SitterPageProps): Promise<Met
     title: { absolute: `${profile.user.name} | PetPark` },
     description: profile.bio || 'Profil sittera na PetParku.',
     alternates: { canonical: `/sitter/${id}` },
-    robots: robotsMeta(false),
+    robots: robotsMeta(shouldIndexSitter(profile)),
   };
 }
 

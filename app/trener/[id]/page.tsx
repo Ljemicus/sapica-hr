@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
-import { robotsMeta } from '@/lib/seo/indexability';
+import { robotsMeta, shouldIndexTrainer } from '@/lib/seo/indexability';
 import type { Trainer } from '@/lib/types';
 import { getProviderTrainerById } from '@/lib/db/provider-trainers';
 import { TrainerProfileLoader } from './trainer-profile-loader';
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: TrainerPageProps): Promise<Me
     title: { absolute: `${trainer.name} | PetPark` },
     description: trainer.bio || 'Profil trenera na PetParku.',
     alternates: { canonical: `/trener/${id}` },
-    robots: robotsMeta(false),
+    robots: robotsMeta(shouldIndexTrainer(trainer)),
   };
 }
 
