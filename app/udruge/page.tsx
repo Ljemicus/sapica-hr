@@ -6,7 +6,7 @@ import { ItemListJsonLd } from '@/components/seo/json-ld';
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 export const metadata: Metadata = {
-  title: 'Rescue udruge i organizacije | PetPark',
+  title: { absolute: 'Rescue udruge i organizacije | PetPark' },
   description: 'Pregled aktivnih rescue organizacija na PetParku spojen na stvarne podatke iz baze. Pretražuj i filtriraj po gradu i pronađi udrugu za donaciju ili udomljavanje.',
   openGraph: {
     title: 'Rescue udruge i organizacije | PetPark',

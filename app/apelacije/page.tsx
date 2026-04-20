@@ -11,7 +11,7 @@ import { ItemListJsonLd } from '@/components/seo/json-ld';
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 export const metadata: Metadata = {
-  title: 'Rescue apelacije | PetPark',
+  title: { absolute: 'Rescue apelacije | PetPark' },
   description: 'Javne rescue apelacije za pomoć životinjama u potrebi. Pregledaj aktivne slučajeve i pomozi direktno organizacijama koje brinu o spašenim životinjama.',
   openGraph: {
     title: 'Rescue apelacije | PetPark',
