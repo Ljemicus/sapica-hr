@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import LostPetsPage from '../page';
+import { LostPetsContent } from '../lost-pets-content';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
@@ -16,4 +16,6 @@ export const metadata: Metadata = {
   alternates: buildLocaleAlternates('/izgubljeni/en'),
 };
 
-export default LostPetsPage;
+export default function LostPetsEnPage() {
+  return <LostPetsContent forcedLanguage="en" />;
+}

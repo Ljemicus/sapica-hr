@@ -28,9 +28,10 @@ function formatAge(months: number | null, isEn: boolean): string {
     : (isEn ? `${years} yr` : `${years} g.`);
 }
 
-export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingCard[] }) {
+export function AdoptionBrowseContent({ listings, forcedLanguage }: { listings: AdoptionListingCard[]; forcedLanguage?: 'hr' | 'en' }) {
   const { language } = useLanguage();
-  const isEn = language === 'en';
+  const activeLanguage = forcedLanguage || language;
+  const isEn = activeLanguage === 'en';
   const speciesFilters = [
     { value: 'all', label: isEn ? 'All' : 'Sve', emoji: '' },
     { value: 'dog', label: isEn ? 'Dogs' : 'Psi', emoji: '🐕' },

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
-import VeterinariPage from '../page';
+import { VeterinariContent } from '../veterinari-content';
+import { getVeterinarians } from '@/lib/db/veterinarians';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
@@ -16,4 +17,7 @@ export const metadata: Metadata = {
   alternates: buildLocaleAlternates('/veterinari/en'),
 };
 
-export default VeterinariPage;
+export default async function VeterinariEnPage() {
+  const veterinarians = await getVeterinarians();
+  return <VeterinariContent veterinarians={veterinarians} forcedLanguage="en" />;
+}

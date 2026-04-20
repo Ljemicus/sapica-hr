@@ -13,9 +13,10 @@ interface LostPetsContentProps {
   initialPets?: LostPet[];
 }
 
-export function LostPetsContent({ initialPets = [] }: LostPetsContentProps) {
+export function LostPetsContent({ initialPets = [], forcedLanguage }: LostPetsContentProps & { forcedLanguage?: 'hr' | 'en' }) {
   const { language } = useLanguage();
-  const isEn = language === 'en';
+  const activeLanguage = forcedLanguage || language;
+  const isEn = activeLanguage === 'en';
   const [search, setSearch] = useState('');
   const [cityFilter, setCityFilter] = useState('all');
   const [_view, _setView] = useState<'grid' | 'map'>('grid');

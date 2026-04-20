@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
-import AdoptionPage from '../page';
+import { getActiveAdoptionListings } from '@/lib/db/adoption-listings';
+import { AdoptionBrowseContent } from '../adoption-browse-content';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
@@ -16,4 +17,7 @@ export const metadata: Metadata = {
   alternates: buildLocaleAlternates('/udomljavanje/en'),
 };
 
-export default AdoptionPage;
+export default async function AdoptionEnPage() {
+  const listings = await getActiveAdoptionListings();
+  return <AdoptionBrowseContent listings={listings} forcedLanguage="en" />;
+}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
-import DogFriendlyPage from '../page';
+import { getDogFriendlyLocations } from '@/lib/db/dog-friendly';
+import { DogFriendlyContent } from '../dog-friendly-content';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
@@ -17,4 +18,7 @@ export const metadata: Metadata = {
   alternates: buildLocaleAlternates('/dog-friendly/en'),
 };
 
-export default DogFriendlyPage;
+export default async function DogFriendlyEnPage() {
+  const locations = await getDogFriendlyLocations();
+  return <DogFriendlyContent locations={locations} forcedLanguage="en" />;
+}

@@ -33,9 +33,10 @@ function getEmergencyBadgeClass(mode: Veterinarian['emergency_mode']) {
 
 type ViewMode = 'list' | 'map';
 
-export function VeterinariContent({ veterinarians }: VeterinariContentProps) {
+export function VeterinariContent({ veterinarians, forcedLanguage }: VeterinariContentProps & { forcedLanguage?: 'hr' | 'en' }) {
   const { language } = useLanguage();
-  const isEn = language === 'en';
+  const activeLanguage = forcedLanguage || language;
+  const isEn = activeLanguage === 'en';
   const [selectedCity, setSelectedCity] = useState<string>('all');
   const [stationOnly, setStationOnly] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('list');

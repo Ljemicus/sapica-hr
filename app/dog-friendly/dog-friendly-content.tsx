@@ -86,9 +86,10 @@ function getCategoryLabel(category: DogFriendlyLocation['category'], isEn: boole
   return labels[category];
 }
 
-export function DogFriendlyContent({ locations }: { locations: DogFriendlyLocation[] }) {
+export function DogFriendlyContent({ locations, forcedLanguage }: { locations: DogFriendlyLocation[]; forcedLanguage?: 'hr' | 'en' }) {
   const { language } = useLanguage();
-  const isEn = language === 'en';
+  const activeLanguage = forcedLanguage || language;
+  const isEn = activeLanguage === 'en';
   const [search, setSearch] = useState('');
   const allLabel = isEn ? 'All' : 'Sve';
   const [selectedCity, setSelectedCity] = useState<string>(allLabel);
