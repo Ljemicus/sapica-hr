@@ -3,6 +3,7 @@ import { Heart, MapPin, Users, PawPrint, Shield, Search } from 'lucide-react';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
 export const metadata: Metadata = {
   title: { absolute: 'O nama — Naša priča | PetPark' },
@@ -37,6 +38,7 @@ const VALUES = [
 export default function AboutPage() {
   return (
     <div>
+      <Breadcrumbs items={[{ label: 'O nama', href: '/o-nama' }]} />
       {/* Editorial Hero sa slikom u pozadini */}
       <section className="relative overflow-hidden min-h-[70vh] flex items-center justify-center">
         {/* Pozadinska slika */}

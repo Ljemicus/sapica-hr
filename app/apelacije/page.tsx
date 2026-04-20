@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { getActiveRescueAppeals } from '@/lib/db';
 import { APPEAL_STATUS_LABELS, getAppealProgressPct } from '@/lib/types';
 import { ItemListJsonLd } from '@/components/seo/json-ld';
+import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -57,6 +58,7 @@ export default async function RescueAppealsPage() {
   return (
     <>
       <ItemListJsonLd items={jsonLdItems} />
+      <Breadcrumbs items={[{ label: 'Apelacije', href: '/apelacije' }]} />
       <div className="min-h-screen bg-background">
         {/* Editorial Hero */}
         <section className="relative appeals-hero-gradient overflow-hidden">

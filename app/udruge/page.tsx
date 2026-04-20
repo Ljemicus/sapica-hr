@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getActiveRescueAppeals, getRescueOrganizations } from '@/lib/db';
 import { RescueOrganizationsContent } from './rescue-organizations-content';
 import { ItemListJsonLd } from '@/components/seo/json-ld';
+import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
@@ -41,6 +42,7 @@ export default async function RescueOrganizationsPage() {
   return (
     <>
       <ItemListJsonLd items={jsonLdItems} />
+      <Breadcrumbs items={[{ label: 'Udruge', href: '/udruge' }]} />
       <RescueOrganizationsContent 
         organizations={organizations} 
         activeAppeals={activeAppeals} 

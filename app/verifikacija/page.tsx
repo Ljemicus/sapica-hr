@@ -4,6 +4,7 @@ import { ShieldCheck, Award, ArrowRight, CheckCircle2, PawPrint, Upload, UserChe
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
@@ -89,6 +90,7 @@ function VerificationBody({ language }: { language: 'hr' | 'en' }) {
 
   return (
     <div>
+      <Breadcrumbs items={[{ label: language === 'en' ? 'Verification' : 'Verifikacija', href: language === 'en' ? '/verifikacija/en' : '/verifikacija' }]} />
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-amber-50 dark:from-blue-950/20 dark:via-background dark:to-amber-950/20">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
         <div className="container mx-auto px-4 py-16 md:py-24 relative">
