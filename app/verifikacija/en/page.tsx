@@ -16,5 +16,5 @@ export const metadata: Metadata = {
 };
 
 export default function VerificationEnPage() {
-  return <VerificationPageShell />;
+  return <VerificationPageShell language="en" />;
 }

@@ -3,7 +3,6 @@ import { PawPrint } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { FAQJsonLd } from '@/components/seo/json-ld';
 import { FaqContent } from './faq-content';
-import { LanguageGate } from '@/components/shared/language-gate';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const FAQ_ITEMS = {
@@ -54,38 +53,22 @@ export const metadata: Metadata = {
   alternates: buildLocaleAlternates('/faq'),
 };
 
-function FaqHero() {
+function FaqHero({ locale }: { locale: 'hr' | 'en' }) {
+  const isEn = locale === 'en';
+
   return (
-    <LanguageGate
-      hr={
-        <>
-          <Badge className="mb-6 bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 hover:bg-teal-100 border-0 text-sm px-5 py-2 rounded-full font-semibold animate-fade-in-up">
-            <PawPrint className="h-3.5 w-3.5 mr-1.5" />
-            Pomoć i podrška
-          </Badge>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-heading)]">
-            Često postavljana <span className="text-gradient">pitanja</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in-up delay-200 leading-relaxed max-w-2xl mx-auto">
-            Sve što trebate znati o PetParku na jednom mjestu. Ako ne nalazite odgovor, javite nam se.
-          </p>
-        </>
-      }
-      en={
-        <>
-          <Badge className="mb-6 bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 hover:bg-teal-100 border-0 text-sm px-5 py-2 rounded-full font-semibold animate-fade-in-up">
-            <PawPrint className="h-3.5 w-3.5 mr-1.5" />
-            Help and support
-          </Badge>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-heading)]">
-            Frequently asked <span className="text-gradient">questions</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in-up delay-200 leading-relaxed max-w-2xl mx-auto">
-            Everything you need to know about PetPark in one place. If you can’t find the answer, just contact us.
-          </p>
-        </>
-      }
-    />
+    <>
+      <Badge className="mb-6 bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 hover:bg-teal-100 border-0 text-sm px-5 py-2 rounded-full font-semibold animate-fade-in-up">
+        <PawPrint className="h-3.5 w-3.5 mr-1.5" />
+        {isEn ? 'Help and support' : 'Pomoć i podrška'}
+      </Badge>
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-heading)]">
+        {isEn ? 'Frequently asked ' : 'Često postavljana '}<span className="text-gradient">{isEn ? 'questions' : 'pitanja'}</span>
+      </h1>
+      <p className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in-up delay-200 leading-relaxed max-w-2xl mx-auto">
+        {isEn ? 'Everything you need to know about PetPark in one place. If you can’t find the answer, just contact us.' : 'Sve što trebate znati o PetParku na jednom mjestu. Ako ne nalazite odgovor, javite nam se.'}
+      </p>
+    </>
   );
 }
 
@@ -97,7 +80,7 @@ export function FaqPageShell({ locale }: { locale: 'hr' | 'en' }) {
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
         <div className="container mx-auto px-4 py-16 md:py-24 relative">
           <div className="max-w-3xl mx-auto text-center">
-            <FaqHero />
+            <FaqHero locale={locale} />
           </div>
         </div>
       </section>

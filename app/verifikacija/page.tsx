@@ -4,7 +4,6 @@ import { ShieldCheck, Award, ArrowRight, CheckCircle2, PawPrint, Upload, UserChe
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LanguageGate } from '@/components/shared/language-gate';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
@@ -176,10 +175,10 @@ function VerificationBody({ language }: { language: 'hr' | 'en' }) {
   );
 }
 
-export function VerificationPageShell() {
-  return <LanguageGate hr={<VerificationBody language="hr" />} en={<VerificationBody language="en" />} />;
+export function VerificationPageShell({ language = 'hr' }: { language?: 'hr' | 'en' }) {
+  return <VerificationBody language={language} />;
 }
 
 export default function VerifikacijaPage() {
-  return <VerificationPageShell />;
+  return <VerificationPageShell language="hr" />;
 }
