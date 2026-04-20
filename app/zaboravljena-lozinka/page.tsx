@@ -5,6 +5,7 @@ import { ForgotPasswordForm } from './forgot-password-form';
 export const metadata: Metadata = {
   title: 'Zaboravljena lozinka',
   description: 'Zatražite poveznicu za resetiranje lozinke',
+  alternates: { canonical: 'https://petpark.hr/zaboravljena-lozinka' },
   robots: { index: false, follow: false },
 };
 

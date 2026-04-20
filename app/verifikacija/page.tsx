@@ -8,7 +8,7 @@ import { LanguageGate } from '@/components/shared/language-gate';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
-  title: 'Verifikacija sittera | PetPark',
+  title: { absolute: 'Verifikacija sittera | PetPark' },
   description: 'Saznajte više o verifikacijskim razinama na PetParku — Basic, Verificiran i Premium sitter. Izgradite povjerenje i privucite više klijenata.',
   openGraph: {
     title: 'Verifikacija sittera | PetPark',

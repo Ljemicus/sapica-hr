@@ -5,6 +5,7 @@ import { LoginForm } from './login-form';
 export const metadata: Metadata = {
   title: 'Prijava',
   description: 'Prijavite se na svoj PetPark račun',
+  alternates: { canonical: 'https://petpark.hr/prijava' },
   robots: { index: false, follow: false },
 };
 

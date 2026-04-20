@@ -5,6 +5,7 @@ import { RegisterForm } from './register-form';
 export const metadata: Metadata = {
   title: 'Registracija',
   description: 'Kreirajte svoj PetPark račun',
+  alternates: { canonical: 'https://petpark.hr/registracija' },
   robots: { index: false, follow: false },
 };
 

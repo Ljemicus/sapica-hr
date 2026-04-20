@@ -5,6 +5,7 @@ import { ResetPasswordForm } from './reset-password-form';
 export const metadata: Metadata = {
   title: 'Nova lozinka',
   description: 'Postavite novu lozinku za svoj PetPark račun',
+  alternates: { canonical: 'https://petpark.hr/nova-lozinka' },
   robots: { index: false, follow: false },
 };
 
