@@ -36,15 +36,16 @@ interface TrainingContentProps {
   initialParams: { city?: string; type?: string };
 }
 
-export function TrainingContent({ trainers, initialParams }: TrainingContentProps) {
+export function TrainingContent({ trainers, initialParams, forcedLanguage }: TrainingContentProps & { forcedLanguage?: 'hr' | 'en' }) {
   const router = useRouter();
   const { language } = useLanguage();
-  const isEn = language === 'en';
+  const activeLanguage = forcedLanguage || language;
+  const isEn = activeLanguage === 'en';
   const [city, setCity] = useState(initialParams.city || '');
   const [type, setType] = useState(initialParams.type || '');
 
   const trainingLabel = (value: TrainingType) => isEn ? TRAINING_TYPE_LABELS_EN[value] : TRAINING_TYPE_LABELS[value];
-  const basePath = isEn ? '/dresura/en' : '/dresura';
+  const basePath = activeLanguage === 'en' ? '/dresura/en' : '/dresura';
 
   const applyFilters = useCallback(() => {
     const params = new URLSearchParams();

@@ -42,16 +42,17 @@ interface GroomingContentProps {
   initialParams: { city?: string; service?: string };
 }
 
-export function GroomingContent({ groomers, initialParams }: GroomingContentProps) {
+export function GroomingContent({ groomers, initialParams, forcedLanguage }: GroomingContentProps & { forcedLanguage?: 'hr' | 'en' }) {
   const router = useRouter();
   const { language } = useLanguage();
-  const isEn = language === 'en';
+  const activeLanguage = forcedLanguage || language;
+  const isEn = activeLanguage === 'en';
   const [city, setCity] = useState(initialParams.city || '');
   const [service, setService] = useState(initialParams.service || '');
 
   const serviceLabel = (value: GroomingServiceType) => isEn ? GROOMING_SERVICE_LABELS_EN[value] : GROOMING_SERVICE_LABELS[value];
   const specializationLabel = (value: GroomerSpecialization) => isEn ? GROOMER_SPECIALIZATION_LABELS_EN[value] : GROOMER_SPECIALIZATION_LABELS[value];
-  const basePath = isEn ? '/njega/en' : '/njega';
+  const basePath = activeLanguage === 'en' ? '/njega/en' : '/njega';
 
   const applyFilters = useCallback(() => {
     const params = new URLSearchParams();

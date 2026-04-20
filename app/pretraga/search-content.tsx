@@ -404,9 +404,10 @@ function ProviderCard({ provider }: { provider: UnifiedProvider }) {
   );
 }
 
-export function SearchContent({ providers, initialParams }: SearchContentProps) {
+export function SearchContent({ providers, initialParams, forcedLanguage }: SearchContentProps & { forcedLanguage?: 'hr' | 'en' }) {
   const router = useRouter();
   const { language } = useLanguage();
+  const activeLanguage = forcedLanguage || language;
   const [showMap, setShowMap] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const activeCategory = (initialParams.category || 'all') as ProviderCategory | 'all';
@@ -416,7 +417,7 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
   const [maxPrice, setMaxPrice] = useState(initialParams.max_price || '');
   const [minRating, setMinRating] = useState(initialParams.min_rating || '');
   const [sort, setSort] = useState(initialParams.sort || 'rating');
-  const basePath = language === 'en' ? '/pretraga/en' : '/pretraga';
+  const basePath = activeLanguage === 'en' ? '/pretraga/en' : '/pretraga';
 
   const buildUrl = useCallback((overrides?: Record<string, string | undefined>) => {
     const current: Record<string, string> = {};
@@ -473,7 +474,7 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
   }
 
   const activeFilterCount = [city, service, minPrice, maxPrice, minRating].filter(Boolean).length;
-  const localeCityLinks = language === 'en'
+  const localeCityLinks = activeLanguage === 'en'
     ? {
         zagreb: '/cuvanje-pasa-zagreb/en',
         rijeka: '/cuvanje-pasa-rijeka/en',
@@ -485,7 +486,7 @@ export function SearchContent({ providers, initialParams }: SearchContentProps) 
         split: '/cuvanje-pasa-split',
       };
 
-  const copy = language === 'en'
+  const copy = activeLanguage === 'en'
     ? {
         tabs: { all: 'All', sitter: 'Sitters', grooming: 'Grooming', dresura: 'Dog training' },
         heroKicker: 'Discover',

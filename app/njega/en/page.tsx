@@ -37,7 +37,7 @@ export default async function GroomingEnPage({ searchParams }: GroomingEnPagePro
         areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
       />
       <Breadcrumbs items={[{ label: 'Pet Grooming', href: '/njega/en' }]} />
-      <GroomingContent groomers={groomers} initialParams={params} />
+      <GroomingContent groomers={groomers} initialParams={params} forcedLanguage="en" />
     </>
   );
 }

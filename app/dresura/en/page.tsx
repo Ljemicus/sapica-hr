@@ -42,7 +42,7 @@ export default async function DresuraEnPage({ searchParams }: DresuraEnPageProps
       />
       <Breadcrumbs items={[{ label: 'Dog training', href: '/dresura/en' }]} />
 
-      <TrainingContent trainers={trainers} initialParams={params} />
+      <TrainingContent trainers={trainers} initialParams={params} forcedLanguage="en" />
 
       <InternalLinkSection
         eyebrow="Cities with supply"
