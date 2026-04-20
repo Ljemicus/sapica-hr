@@ -51,10 +51,11 @@ interface BreedersContentProps {
   initialParams: { species?: string; city?: string; breed?: string; sort?: string };
 }
 
-export function BreedersContent({ breeders, initialParams }: BreedersContentProps) {
+export function BreedersContent({ breeders, initialParams, forcedLanguage }: BreedersContentProps & { forcedLanguage?: 'hr' | 'en' }) {
   const { language } = useLanguage();
-  const isEn = language === 'en';
-  const localeSegment = getLocaleSegment(language);
+  const activeLanguage = forcedLanguage || language;
+  const isEn = activeLanguage === 'en';
+  const localeSegment = getLocaleSegment(activeLanguage);
   const basePath = `/uzgajivacnice${localeSegment}`;
 
   // Breed lists based on language

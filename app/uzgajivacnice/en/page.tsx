@@ -59,7 +59,7 @@ export default async function BreedersEnPage({ searchParams }: BreedersEnPagePro
         </div>
       </section>
 
-      <BreedersContent breeders={breeders} initialParams={params} />
+      <BreedersContent breeders={breeders} initialParams={params} forcedLanguage="en" />
     </div>
   );
 }
