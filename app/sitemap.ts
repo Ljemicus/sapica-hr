@@ -6,6 +6,9 @@ import { shouldIndexSitter, shouldIndexGroomer, shouldIndexTrainer, shouldIndexL
 import { appLogger } from '@/lib/logger';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { buildLanguageAlternates } from '@/lib/i18n/routing';
+import { getProviderTrainers } from '@/lib/db/provider-trainers';
+import { getProviderGroomers } from '@/lib/db/provider-groomers';
+import { getProviderSitterById } from '@/lib/db/provider-sitters';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 const DEFAULT_LAST_MODIFIED = new Date('2026-04-01T00:00:00.000Z');
@@ -80,10 +83,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const admin = createAdminClient();
-  const [sittersResult, groomersResult, trainersResult, adoptionResult, articles, topics, lostPets, rescueOrgsResult, rescueAppealsResult] = await Promise.all([
-    admin.from('sitter_profiles').select('user_id, verified, city, services, prices, rating_avg, review_count, bio, created_at, user:users!user_id(id, email, name, role, avatar_url, phone, city, created_at)').eq('verified', true),
-    admin.from('groomers').select('id, name, city, services, prices, rating, review_count, bio, verified, specialization, user_id, phone, email, address, working_hours'),
-    admin.from('trainers').select('id, name, city, specializations, price_per_hour, certificates, rating, review_count, bio, certified, user_id, phone, email, address'),
+  const [providersResult, trainers, groomers, adoptionResult, articles, topics, lostPets, rescueOrgsResult, rescueAppealsResult] = await Promise.all([
+    admin.from('providers').select('id, provider_kind').eq('public_status', 'listed').in('provider_kind', ['sitter', 'groomer', 'trainer']),
+    getProviderTrainers().catch(() => []),
+    getProviderGroomers().catch(() => []),
     admin.from('adoption_listings').select('id, status, name, species, breed, age_months, gender, size, city, images, is_urgent, published_at').eq('status', 'active').order('published_at', { ascending: false, nullsFirst: false }),
     getArticles().catch(() => []),
     getTopics().catch(() => []),
@@ -92,26 +95,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     admin.from('rescue_appeals').select('id, slug, status, updated_at, created_at').eq('status', 'active'),
   ]);
 
-  const sitters = (sittersResult.data || []) as Array<Record<string, unknown>>;
-  const groomers = (groomersResult.data || []) as Array<Record<string, unknown>>;
-  const trainers = (trainersResult.data || []) as Array<Record<string, unknown>>;
   const adoptionListings = (adoptionResult.data || []) as Array<Record<string, unknown>>;
 
-  const sitterEntries: MetadataRoute.Sitemap = sitters
+  const providerRows = ((providersResult.data || []) as Array<{ id: string; provider_kind: string }>);
+  const sitterProviderIds = providerRows.filter((provider) => provider.provider_kind === 'sitter').map((provider) => provider.id);
+  const sitterProfiles = (await Promise.all(sitterProviderIds.map((id) => getProviderSitterById(id).catch(() => null)))).filter(Boolean);
+
+  const sitterEntries: MetadataRoute.Sitemap = sitterProfiles
     .filter((s) => shouldIndexSitter(s as never))
     .map((s) => ({
-      url: `${BASE_URL}/sitter/${String(s.user_id)}`,
-      lastModified: toLastModified((s as { updated_at?: string; created_at?: string }).updated_at ?? (s as { created_at?: string }).created_at),
+      url: `${BASE_URL}/sitter/${String(s!.user_id)}`,
+      lastModified: toLastModified((s as { created_at?: string }).created_at),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     }));
 
-  // Only include indexable (non-thin) profiles in the sitemap.
   const groomerEntries: MetadataRoute.Sitemap = groomers
     .filter((g) => shouldIndexGroomer(g as never))
     .map((g) => ({
       url: `${BASE_URL}/groomer/${String(g.id)}`,
-      lastModified: toLastModified((g as { updated_at?: string; created_at?: string }).updated_at ?? (g as { created_at?: string }).created_at),
+      lastModified: DEFAULT_LAST_MODIFIED,
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     }));
@@ -120,13 +123,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((t) => shouldIndexTrainer(t as never))
     .map((t) => ({
       url: `${BASE_URL}/trener/${String(t.id)}`,
-      lastModified: toLastModified((t as { updated_at?: string; created_at?: string }).updated_at ?? (t as { created_at?: string }).created_at),
+      lastModified: DEFAULT_LAST_MODIFIED,
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     }));
 
   const blogEntries: MetadataRoute.Sitemap = articles.map((a) => ({
-    url: `${BASE_URL}/zajednica/${a.slug}`,
+    url: `${BASE_URL}/blog/${a.slug}`,
     lastModified: toLastModified((a as { updated_at?: string; date?: string; created_at?: string }).updated_at ?? (a as { date?: string }).date ?? (a as { created_at?: string }).created_at),
     changeFrequency: 'monthly' as const,
     priority: 0.5,
