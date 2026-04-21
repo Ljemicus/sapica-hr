@@ -5,6 +5,7 @@ import { requireAdmin } from '@/lib/admin-guard';
 import { apiError } from '@/lib/api-errors';
 import { getProviderApplicationById, updateProviderApplicationStatus } from '@/lib/db/provider-applications';
 import { logAdminAction } from '@/lib/db/audit-logs';
+import { promoteProviderApplication } from '@/lib/db/provider-promotion';
 import type { ProviderApplicationStatus } from '@/lib/types';
 
 const ALLOWED_STATUSES = new Set<ProviderApplicationStatus>(['active', 'rejected', 'restricted', 'pending_verification']);
@@ -67,11 +68,41 @@ export async function POST(request: Request) {
     return apiError({ status: 500, code: 'UPDATE_FAILED', message: 'Failed to update application' });
   }
 
+  let promotionResult: Awaited<ReturnType<typeof promoteProviderApplication>> | null = null;
+  if (status === 'active') {
+    promotionResult = await promoteProviderApplication(applicationId);
+    if (!promotionResult.ok) {
+      log.error('Provider promotion failed after activation', {
+        applicationId,
+        adminId: user.id,
+        errors: promotionResult.errors,
+        warnings: promotionResult.warnings,
+      });
+      dispatchAlert({
+        severity: 'P2',
+        service: 'admin.provider-applications',
+        description: 'Provider promotion failed after application activation',
+        value: `applicationId=${applicationId}`,
+        owner: 'platform',
+      });
+      return apiError({
+        status: 500,
+        code: 'PROMOTION_FAILED',
+        message: 'Application activated, but provider live-model sync failed',
+        details: {
+          errors: promotionResult.errors,
+          warnings: promotionResult.warnings,
+        },
+      });
+    }
+  }
+
   log.info( 'Application status updated', {
     applicationId,
     previousStatus: existing.status,
     newStatus: status,
     adminId: user.id,
+    providerPromotion: promotionResult ? { ok: promotionResult.ok, providerId: promotionResult.providerId, providerKind: promotionResult.providerKind } : undefined,
   });
 
   await logAdminAction({
@@ -83,8 +114,18 @@ export async function POST(request: Request) {
       previous_status: existing.status,
       new_status: status,
       ...(cleanNotes ? { admin_notes: cleanNotes } : {}),
+      ...(promotionResult
+        ? {
+            provider_promotion: {
+              ok: promotionResult.ok,
+              provider_id: promotionResult.providerId,
+              provider_kind: promotionResult.providerKind,
+              warnings: promotionResult.warnings,
+            },
+          }
+        : {}),
     },
   });
 
-  return NextResponse.json({ application: updated });
+  return NextResponse.json({ application: updated, providerPromotion: promotionResult });
 }
