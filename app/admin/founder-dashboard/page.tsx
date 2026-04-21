@@ -22,6 +22,7 @@ import { getAuthUser } from '@/lib/auth';
 import { getUsers, getAllBookings, getAllProviderApplications, getPendingVerifications, getRescueOrganizations, getRescueVerificationDocuments, getRescueStats } from '@/lib/db';
 import { collectKpis } from '@/lib/kpi-digest';
 import { runOpsAudit } from '@/lib/ops-audit';
+import { getProviderIntegrityIssues } from '@/lib/db/provider-integrity';
 import type { ProviderApplication } from '@/lib/types';
 import { FounderDashboardRefresh } from './founder-dashboard-refresh';
 import { FounderDashboardActions } from './founder-dashboard-actions';
@@ -43,7 +44,7 @@ export default async function FounderDashboardPage() {
   if (!user) redirect('/prijava?redirect=%2Fadmin%2Ffounder-dashboard');
   if (user.role !== 'admin') redirect('/');
 
-  const [users, bookings, providerApplications, pendingVerifications, kpi, ops, rescueOrganizations, rescueStats] = await Promise.all([
+  const [users, bookings, providerApplications, pendingVerifications, kpi, ops, rescueOrganizations, rescueStats, providerIntegrityIssues] = await Promise.all([
     getUsers('admin-list'),
     getAllBookings('admin-list'),
     getAllProviderApplications(),
@@ -52,6 +53,7 @@ export default async function FounderDashboardPage() {
     runOpsAudit(),
     getRescueOrganizations(),
     getRescueStats(),
+    getProviderIntegrityIssues(),
   ]);
 
   const rescueDocsPerOrg = await Promise.all(
@@ -245,6 +247,34 @@ export default async function FounderDashboardPage() {
               </div>
             </div>
             <p className="text-xs text-muted-foreground">Zadnji server-side audit renderan odmah pri otvaranju dashboarda.</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <ShieldAlert className="h-5 w-5 text-amber-600" />
+              Provider integrity
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between rounded-xl bg-muted/40 p-3">
+              <span className="text-sm text-muted-foreground">Integrity issues</span>
+              <Badge className={providerIntegrityIssues.length === 0 ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-yellow-50 text-yellow-700 border border-yellow-200'}>
+                {providerIntegrityIssues.length === 0 ? 'Clean' : `${providerIntegrityIssues.length} issue${providerIntegrityIssues.length === 1 ? '' : 's'}`}
+              </Badge>
+            </div>
+            <div className="space-y-2">
+              {providerIntegrityIssues.slice(0, 5).map((issue) => (
+                <div key={`${issue.providerId}-${issue.issue}-${issue.details || ''}`} className="rounded-xl border p-3 text-sm">
+                  <p className="font-medium">{issue.providerKind} · {issue.issue}</p>
+                  <p className="text-xs text-muted-foreground mt-1 break-all">providerId: {issue.providerId}{issue.details ? ` · ${issue.details}` : ''}</p>
+                </div>
+              ))}
+              {providerIntegrityIssues.length === 0 && (
+                <p className="text-sm text-muted-foreground">Nema detektiranih listed-provider integrity problema.</p>
+              )}
+            </div>
           </CardContent>
         </Card>
 

@@ -6,6 +6,7 @@ import { apiError } from '@/lib/api-errors';
 import { getProviderApplicationById, updateProviderPublicStatus } from '@/lib/db/provider-applications';
 import { getProviderPublicGate } from '@/lib/trust/gate';
 import { logAdminAction } from '@/lib/db/audit-logs';
+import { promoteProviderApplication } from '@/lib/db/provider-promotion';
 import type { PublicStatus } from '@/lib/types/trust';
 
 const ALLOWED_STATUSES = new Set<PublicStatus>(['pending_review', 'public', 'hidden', 'suspended']);
@@ -34,7 +35,34 @@ export async function POST(request: Request) {
       return apiError({ status: 404, code: 'NOT_FOUND', message: 'Provider application not found' });
     }
 
+    let promotionResult: Awaited<ReturnType<typeof promoteProviderApplication>> | null = null;
     if (publicStatus === 'public') {
+      promotionResult = await promoteProviderApplication(applicationId);
+      if (!promotionResult.ok) {
+        log.error('Provider promotion failed before public listing', {
+          applicationId,
+          adminId: user.id,
+          errors: promotionResult.errors,
+          warnings: promotionResult.warnings,
+        });
+        dispatchAlert({
+          severity: 'P2',
+          service: 'admin.provider-public-status',
+          description: 'Provider promotion failed before public listing',
+          value: `applicationId=${applicationId}`,
+          owner: 'platform',
+        });
+        return apiError({
+          status: 500,
+          code: 'PROMOTION_FAILED',
+          message: 'Provider live-model sync failed before public listing',
+          details: {
+            errors: promotionResult.errors,
+            warnings: promotionResult.warnings,
+          },
+        });
+      }
+
       const gate = await getProviderPublicGate(applicationId);
       if (!gate.allowed && gate.reason !== 'not_public_status') {
         return apiError({
@@ -112,9 +140,10 @@ export async function POST(request: Request) {
       previousStatus: application.public_status,
       newStatus: publicStatus,
       adminId: user.id,
+      providerPromotion: promotionResult ? { ok: promotionResult.ok, providerId: promotionResult.providerId, providerKind: promotionResult.providerKind } : undefined,
     });
 
-    return NextResponse.json({ application: updated });
+    return NextResponse.json({ application: updated, providerPromotion: promotionResult });
   } catch (error) {
     log.error( 'Public status update failed unexpectedly', {
       error: error instanceof Error ? error.message : 'unknown',
