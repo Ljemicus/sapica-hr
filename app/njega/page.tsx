@@ -1,10 +1,6 @@
 import type { Metadata } from 'next';
-import { getProviderGroomers } from '@/lib/db/provider-groomers';
-import { GroomingContent } from '@/app/grooming/grooming-content';
-import type { GroomingServiceType } from '@/lib/types';
-import { Breadcrumbs } from '@/components/shared/breadcrumbs';
-import { ServiceJsonLd } from '@/components/seo/json-ld';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
+import { GroomingPageShell } from './grooming-page-shell';
 
 export const metadata: Metadata = {
   title: 'Njega ljubimaca — grooming saloni i usluge',
@@ -23,21 +19,6 @@ interface NjegaPageProps {
   searchParams: Promise<{ city?: string; service?: string }>;
 }
 
-export default async function NjegaPage({ searchParams }: NjegaPageProps) {
-  const params = await searchParams;
-  const groomers = await getProviderGroomers({ city: params.city, service: params.service as GroomingServiceType | undefined });
-
-  return (
-    <>
-      <ServiceJsonLd
-        name="Njega ljubimaca"
-        description="Pronađite profesionalne groomere za šišanje, kupanje, trimanje i njegu noktiju ljubimaca u Hrvatskoj."
-        url="https://petpark.hr/njega"
-        serviceType="Pet Grooming"
-        areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
-      />
-      <Breadcrumbs items={[{ label: 'Njega ljubimaca', href: '/njega' }]} />
-      <GroomingContent groomers={groomers} initialParams={params} />
-    </>
-  );
+export default function NjegaPage({ searchParams }: NjegaPageProps) {
+  return <GroomingPageShell searchParams={searchParams} locale="hr" />;
 }
