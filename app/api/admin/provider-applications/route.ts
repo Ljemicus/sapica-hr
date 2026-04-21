@@ -51,23 +51,6 @@ export async function POST(request: Request) {
     return apiError({ status: 400, code: 'INVALID_TRANSITION', message: `Invalid status transition from ${existing.status} to ${status}` });
   }
 
-  const updated = await updateProviderApplicationStatus(applicationId, status, user.id, cleanNotes);
-  if (!updated) {
-    log.error( 'Application status update failed', {
-      applicationId,
-      targetStatus: status,
-      adminId: user.id,
-    });
-    dispatchAlert({
-      severity: 'P2',
-      service: 'admin.provider-applications',
-      description: 'Provider application status update failed — admin action not persisted',
-      value: `applicationId=${applicationId}, status=${status}`,
-      owner: 'platform',
-    });
-    return apiError({ status: 500, code: 'UPDATE_FAILED', message: 'Failed to update application' });
-  }
-
   let promotionResult: Awaited<ReturnType<typeof promoteProviderApplication>> | null = null;
   if (status === 'active') {
     promotionResult = await promoteProviderApplication(applicationId);
@@ -95,6 +78,23 @@ export async function POST(request: Request) {
         },
       });
     }
+  }
+
+  const updated = await updateProviderApplicationStatus(applicationId, status, user.id, cleanNotes);
+  if (!updated) {
+    log.error( 'Application status update failed', {
+      applicationId,
+      targetStatus: status,
+      adminId: user.id,
+    });
+    dispatchAlert({
+      severity: 'P2',
+      service: 'admin.provider-applications',
+      description: 'Provider application status update failed — admin action not persisted',
+      value: `applicationId=${applicationId}, status=${status}`,
+      owner: 'platform',
+    });
+    return apiError({ status: 500, code: 'UPDATE_FAILED', message: 'Failed to update application' });
   }
 
   log.info( 'Application status updated', {
