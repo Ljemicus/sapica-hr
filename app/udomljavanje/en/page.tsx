@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { getActiveAdoptionListings } from '@/lib/db/adoption-listings';
 import { AdoptionBrowseContent } from '../adoption-browse-content';
+import { PublicPageShell } from '@/components/shared/public-page-shell';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
@@ -19,5 +20,9 @@ export const metadata: Metadata = {
 
 export default async function AdoptionEnPage() {
   const listings = await getActiveAdoptionListings();
-  return <AdoptionBrowseContent listings={listings} forcedLanguage="en" />;
+  return (
+    <PublicPageShell breadcrumbItems={[{ label: 'Adoption', href: '/udomljavanje/en' }]}>
+      <AdoptionBrowseContent listings={listings} forcedLanguage="en" />
+    </PublicPageShell>
+  );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getActiveAdoptionListings } from '@/lib/db/adoption-listings';
 import { AdoptionBrowseContent } from './adoption-browse-content';
+import { PublicPageShell } from '@/components/shared/public-page-shell';
 
 // ISR: Revalidate every 10 minutes for adoption listings
 export const revalidate = 600;
@@ -21,5 +22,9 @@ export const metadata: Metadata = {
 
 export default async function AdoptionPage() {
   const listings = await getActiveAdoptionListings();
-  return <AdoptionBrowseContent listings={listings} />;
+  return (
+    <PublicPageShell breadcrumbItems={[{ label: 'Udomljavanje', href: '/udomljavanje' }]}>
+      <AdoptionBrowseContent listings={listings} />
+    </PublicPageShell>
+  );
 }

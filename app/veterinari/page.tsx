@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { VeterinariContent } from './veterinari-content';
 import { getVeterinarians } from '@/lib/db/veterinarians';
+import { PublicPageShell } from '@/components/shared/public-page-shell';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 // ISR: Revalidate every 1 hour (3600 seconds)
@@ -22,5 +23,9 @@ export const metadata: Metadata = {
 export default async function VeterinariPage() {
   const veterinarians = await getVeterinarians();
 
-  return <VeterinariContent veterinarians={veterinarians} />;
+  return (
+    <PublicPageShell breadcrumbItems={[{ label: 'Veterinari', href: '/veterinari' }]}>
+      <VeterinariContent veterinarians={veterinarians} />
+    </PublicPageShell>
+  );
 }

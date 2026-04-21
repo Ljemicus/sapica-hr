@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { VeterinariContent } from '../veterinari-content';
 import { getVeterinarians } from '@/lib/db/veterinarians';
+import { PublicPageShell } from '@/components/shared/public-page-shell';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
@@ -19,5 +20,9 @@ export const metadata: Metadata = {
 
 export default async function VeterinariEnPage() {
   const veterinarians = await getVeterinarians();
-  return <VeterinariContent veterinarians={veterinarians} forcedLanguage="en" />;
+  return (
+    <PublicPageShell breadcrumbItems={[{ label: 'Veterinarians', href: '/veterinari/en' }]}>
+      <VeterinariContent veterinarians={veterinarians} forcedLanguage="en" />
+    </PublicPageShell>
+  );
 }

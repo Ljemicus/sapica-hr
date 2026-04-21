@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { getDogFriendlyLocations } from '@/lib/db/dog-friendly';
 import { DogFriendlyContent } from '../dog-friendly-content';
+import { PublicPageShell } from '@/components/shared/public-page-shell';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
@@ -20,5 +21,9 @@ export const metadata: Metadata = {
 
 export default async function DogFriendlyEnPage() {
   const locations = await getDogFriendlyLocations();
-  return <DogFriendlyContent locations={locations} forcedLanguage="en" />;
+  return (
+    <PublicPageShell breadcrumbItems={[{ label: 'Dog-friendly', href: '/dog-friendly/en' }]}>
+      <DogFriendlyContent locations={locations} forcedLanguage="en" />
+    </PublicPageShell>
+  );
 }
