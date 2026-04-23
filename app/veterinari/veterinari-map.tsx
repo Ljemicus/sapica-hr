@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Veterinarian } from '@/lib/db/veterinarian-helpers';
-import { MapPin, Phone, Clock3, Building2, Siren, ExternalLink } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/context';
 
 // Fix Leaflet default icons
@@ -26,26 +26,29 @@ export function VeterinariMap({ veterinarians, selectedCity }: VeterinariMapProp
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isMapReady, setIsMapReady] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
 
   // Filter veterinarians with coordinates
-  const veterinariansWithCoords = veterinarians.filter(
-    (vet) => vet.latitude && vet.longitude
+  const veterinariansWithCoords = useMemo(
+    () => veterinarians.filter((vet) => vet.latitude && vet.longitude),
+    [veterinarians]
   );
 
   // Filter by selected city
-  const filteredVeterinarians = selectedCity === 'all' 
-    ? veterinariansWithCoords 
-    : veterinariansWithCoords.filter(vet => vet.city === selectedCity);
+  const filteredVeterinarians = useMemo(
+    () =>
+      selectedCity === 'all'
+        ? veterinariansWithCoords
+        : veterinariansWithCoords.filter((vet) => vet.city === selectedCity),
+    [selectedCity, veterinariansWithCoords]
+  );
 
   // Initialize map
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
     try {
-      setIsLoading(true);
-      
       // Default to Croatia center if no veterinarians with coordinates
       const defaultCenter: L.LatLngExpression = [45.1, 15.2];
       let initialZoom = 7;
@@ -72,11 +75,12 @@ export function VeterinariMap({ veterinarians, selectedCity }: VeterinariMapProp
         maxZoom: 19,
       }).addTo(mapInstanceRef.current);
 
-      setIsLoading(false);
+      setIsMapReady(true);
+
     } catch (error) {
       console.error('Error initializing map:', error);
       setMapError(isEn ? 'Failed to load map. Please try again.' : 'Greška pri učitavanju karte. Pokušajte ponovno.');
-      setIsLoading(false);
+      setIsMapReady(false);
     }
 
     return () => {
@@ -84,12 +88,13 @@ export function VeterinariMap({ veterinarians, selectedCity }: VeterinariMapProp
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
+      setIsMapReady(false);
     };
-  }, []);
+  }, [filteredVeterinarians, isEn]);
 
   // Update markers when filteredVeterinarians changes
   useEffect(() => {
-    if (!mapInstanceRef.current || isLoading) return;
+    if (!mapInstanceRef.current) return;
 
     // Clear existing markers
     markersRef.current.forEach(marker => marker.remove());
@@ -191,7 +196,7 @@ export function VeterinariMap({ veterinarians, selectedCity }: VeterinariMapProp
       mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] });
     }
 
-  }, [filteredVeterinarians, isLoading, isEn]);
+  }, [filteredVeterinarians, isEn]);
 
   if (mapError) {
     return (
@@ -226,7 +231,7 @@ export function VeterinariMap({ veterinarians, selectedCity }: VeterinariMapProp
 
   return (
     <div className="relative">
-      {isLoading && (
+      {!isMapReady && (
         <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10 rounded-lg">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-2"></div>

@@ -1,6 +1,5 @@
 import {
   AlertTriangle,
-  Baby,
   BookOpen,
   Dog,
   FileHeart,

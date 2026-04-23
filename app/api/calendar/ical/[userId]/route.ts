@@ -31,7 +31,7 @@ function generateICalFeed(
   bookings: Array<Record<string, unknown>>,
   includeClientDetails: boolean,
   includeInternalNotes: boolean,
-  feedToken: string
+  _feedToken: string
 ): string {
   const now = formatICalDate(new Date());
   
@@ -128,7 +128,7 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    const { userId } = await params;
+    const { userId: _userId } = await params;
     const supabase = await createClient();
     
     const { searchParams } = new URL(request.url);

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { MapPin, Mail, ChevronUp, Check, Loader2, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

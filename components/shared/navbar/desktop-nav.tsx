@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { ChevronDown, Shield } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,

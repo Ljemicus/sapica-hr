@@ -10,7 +10,6 @@ import {
   getMobileAccountLinks,
   getMobileCommunityLinks,
   getMobilePrimaryLinks,
-  getMobileUtilityLinks,
 } from './config';
 import type { NavbarUser, TranslationFn } from './types';
 import type { Language } from '@/lib/i18n';
@@ -27,7 +26,6 @@ interface MobileSheetProps {
 
 export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout, pendingRescueCount = 0 }: MobileSheetProps) {
   const primaryLinks = getMobilePrimaryLinks(t, language);
-  const utilityLinks = getMobileUtilityLinks(t);
   const communityLinks = getMobileCommunityLinks(t, language);
   const accountLinks = getMobileAccountLinks(t, user);
 
