@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
 
-import { getActiveAdoptionListings } from '@/lib/db/adoption-listings';
-import { AdoptionBrowseContent } from '../adoption-browse-content';
-import { PublicPageShell } from '@/components/shared/public-page-shell';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
+import { AdoptionPageShell } from '../adoption-page-shell';
 
 export const metadata: Metadata = {
   title: 'Adoption — dogs and cats looking for a home',
@@ -18,11 +16,6 @@ export const metadata: Metadata = {
   alternates: buildLocaleAlternates('/udomljavanje/en'),
 };
 
-export default async function AdoptionEnPage() {
-  const listings = await getActiveAdoptionListings();
-  return (
-    <PublicPageShell breadcrumbItems={[{ label: 'Adoption', href: '/udomljavanje/en' }]}>
-      <AdoptionBrowseContent listings={listings} forcedLanguage="en" />
-    </PublicPageShell>
-  );
+export default function AdoptionEnPage() {
+  return <AdoptionPageShell locale="en" />;
 }

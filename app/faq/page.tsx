@@ -3,6 +3,7 @@ import { PawPrint } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { FAQJsonLd } from '@/components/seo/json-ld';
 import { FaqContent } from './faq-content';
+import { PublicPageShell } from '@/components/shared/public-page-shell';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const FAQ_ITEMS = {
@@ -74,7 +75,7 @@ function FaqHero({ locale }: { locale: 'hr' | 'en' }) {
 
 export function FaqPageShell({ locale }: { locale: 'hr' | 'en' }) {
   return (
-    <div>
+    <PublicPageShell breadcrumbItems={[{ label: 'FAQ', href: locale === 'en' ? '/faq/en' : '/faq' }] }>
       <FAQJsonLd faqs={FAQ_ITEMS[locale]} />
       <section className="relative overflow-hidden bg-gradient-to-br from-teal-50 via-white to-orange-50 dark:from-teal-950/20 dark:via-background dark:to-orange-950/20">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
@@ -86,7 +87,7 @@ export function FaqPageShell({ locale }: { locale: 'hr' | 'en' }) {
       </section>
 
       <FaqContent />
-    </div>
+    </PublicPageShell>
   );
 }
 

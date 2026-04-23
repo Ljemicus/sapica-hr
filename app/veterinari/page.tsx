@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
-import { VeterinariContent } from './veterinari-content';
-import { getVeterinarians } from '@/lib/db/veterinarians';
-import { PublicPageShell } from '@/components/shared/public-page-shell';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
+import { VeterinariPageShell } from './veterinari-page-shell';
 
 // ISR: Revalidate every 1 hour (3600 seconds)
 export const revalidate = 3600;
@@ -20,12 +18,6 @@ export const metadata: Metadata = {
   alternates: buildLocaleAlternates('/veterinari'),
 };
 
-export default async function VeterinariPage() {
-  const veterinarians = await getVeterinarians();
-
-  return (
-    <PublicPageShell breadcrumbItems={[{ label: 'Veterinari', href: '/veterinari' }]}>
-      <VeterinariContent veterinarians={veterinarians} />
-    </PublicPageShell>
-  );
+export default function VeterinariPage() {
+  return <VeterinariPageShell locale="hr" />;
 }

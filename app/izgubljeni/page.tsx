@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import { LostPetsContent } from './lost-pets-content';
-import { PublicPageShell } from '@/components/shared/public-page-shell';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
+import { LostPetsPageShell } from './lost-pets-page-shell';
 
 export const metadata: Metadata = {
   title: 'Izgubljeni ljubimci — prijavite ili pronađite',
@@ -17,9 +16,5 @@ export const metadata: Metadata = {
 };
 
 export default function LostPetsPage() {
-  return (
-    <PublicPageShell breadcrumbItems={[{ label: 'Izgubljeni ljubimci', href: '/izgubljeni' }]}>
-      <LostPetsContent />
-    </PublicPageShell>
-  );
+  return <LostPetsPageShell locale="hr" />;
 }

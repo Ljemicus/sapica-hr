@@ -1,8 +1,7 @@
 import { Suspense } from 'react';
 import { SearchContent } from './search-content';
-import { ServiceJsonLd } from '@/components/seo/json-ld';
 import { InternalLinkSection, type InternalLinkItem } from '@/components/shared/internal-link-section';
-import { PublicPageShell } from '@/components/shared/public-page-shell';
+import { DiscoveryPageShell } from '@/components/shared/discovery-page-shell';
 import { getUnifiedProviders, normalizeProviderSearchParams } from '@/lib/search/providers';
 
 export type SearchPageLocale = 'hr' | 'en';
@@ -87,24 +86,24 @@ export async function SearchPageShell({ searchParams, locale }: SearchPageShellP
   const pathname = getSearchPagePath(locale);
 
   return (
-    <PublicPageShell breadcrumbItems={[{ label: copy.breadcrumbLabel, href: pathname }]}>
-      <ServiceJsonLd
-        name={copy.jsonLdName}
-        description={copy.jsonLdDescription}
-        url={`https://petpark.hr${pathname}`}
-        serviceType="Pet Sitting"
-        areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
-      />
+    <DiscoveryPageShell
+      breadcrumbLabel={copy.breadcrumbLabel}
+      breadcrumbHref={pathname}
+      jsonLdName={copy.jsonLdName}
+      jsonLdDescription={copy.jsonLdDescription}
+      serviceType="Pet Sitting"
+      areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
+      internalLinks={{
+        eyebrow: copy.internalLinksEyebrow,
+        title: copy.internalLinksTitle,
+        description: copy.internalLinksDescription,
+        items: getLocalizedDiscoveryLinks(locale),
+        ctaLabel: copy.internalLinksCta,
+      }}
+    >
       <Suspense fallback={<div className="container mx-auto px-6 md:px-10 lg:px-16 py-16">{copy.loadingLabel}</div>}>
         <SearchContent providers={providers} initialParams={params} forcedLanguage={locale} />
       </Suspense>
-      <InternalLinkSection
-        eyebrow={copy.internalLinksEyebrow}
-        title={copy.internalLinksTitle}
-        description={copy.internalLinksDescription}
-        items={getLocalizedDiscoveryLinks(locale)}
-        ctaLabel={copy.internalLinksCta}
-      />
-    </PublicPageShell>
+    </DiscoveryPageShell>
   );
 }

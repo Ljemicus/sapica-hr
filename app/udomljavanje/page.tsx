@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import { getActiveAdoptionListings } from '@/lib/db/adoption-listings';
-import { AdoptionBrowseContent } from './adoption-browse-content';
 import { PublicPageShell } from '@/components/shared/public-page-shell';
+import { AdoptionPageShell } from './adoption-page-shell';
 
 // ISR: Revalidate every 10 minutes for adoption listings
 export const revalidate = 600;
@@ -20,11 +19,6 @@ export const metadata: Metadata = {
   alternates: buildLocaleAlternates('/udomljavanje'),
 };
 
-export default async function AdoptionPage() {
-  const listings = await getActiveAdoptionListings();
-  return (
-    <PublicPageShell breadcrumbItems={[{ label: 'Udomljavanje', href: '/udomljavanje' }]}>
-      <AdoptionBrowseContent listings={listings} />
-    </PublicPageShell>
-  );
+export default function AdoptionPage() {
+  return <AdoptionPageShell locale="hr" />;
 }

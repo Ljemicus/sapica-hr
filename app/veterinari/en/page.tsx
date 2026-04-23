@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
 
-import { VeterinariContent } from '../veterinari-content';
-import { getVeterinarians } from '@/lib/db/veterinarians';
-import { PublicPageShell } from '@/components/shared/public-page-shell';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
+import { VeterinariPageShell } from '../veterinari-page-shell';
 
 export const metadata: Metadata = {
   title: 'Veterinary stations and clinics in Croatia',
@@ -18,11 +16,6 @@ export const metadata: Metadata = {
   alternates: buildLocaleAlternates('/veterinari/en'),
 };
 
-export default async function VeterinariEnPage() {
-  const veterinarians = await getVeterinarians();
-  return (
-    <PublicPageShell breadcrumbItems={[{ label: 'Veterinarians', href: '/veterinari/en' }]}>
-      <VeterinariContent veterinarians={veterinarians} forcedLanguage="en" />
-    </PublicPageShell>
-  );
+export default function VeterinariEnPage() {
+  return <VeterinariPageShell locale="en" />;
 }

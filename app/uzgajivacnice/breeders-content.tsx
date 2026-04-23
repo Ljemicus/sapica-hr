@@ -51,12 +51,30 @@ interface BreedersContentProps {
   initialParams: { species?: string; city?: string; breed?: string; sort?: string };
 }
 
+const HERO_COPY = {
+  hr: {
+    badge: 'Uzgajivači',
+    titlePrefix: 'Pronađite',
+    titleHighlight: 'uzgajivače',
+    description:
+      'Pregledajte uzgajivače pasa i mačaka u Hrvatskoj, usporedite profile i brzo pronađite kontakt koji vam odgovara.',
+  },
+  en: {
+    badge: 'Breeders',
+    titlePrefix: 'Find',
+    titleHighlight: 'breeders',
+    description:
+      'Browse dog and cat breeders in Croatia, compare profiles, and quickly find the right contact for your next companion.',
+  },
+} as const;
+
 export function BreedersContent({ breeders, initialParams, forcedLanguage }: BreedersContentProps & { forcedLanguage?: 'hr' | 'en' }) {
   const { language } = useLanguage();
   const activeLanguage = forcedLanguage || language;
   const isEn = activeLanguage === 'en';
   const localeSegment = getLocaleSegment(activeLanguage);
   const basePath = `/uzgajivacnice${localeSegment}`;
+  const hero = HERO_COPY[activeLanguage];
 
   // Breed lists based on language
   const dogBreeds = isEn ? DOG_BREEDS_EN : DOG_BREEDS_HR;

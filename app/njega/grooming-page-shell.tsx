@@ -1,6 +1,5 @@
 import { GroomingContent } from '@/app/grooming/grooming-content';
-import { ServiceJsonLd } from '@/components/seo/json-ld';
-import { PublicPageShell } from '@/components/shared/public-page-shell';
+import { DiscoveryPageShell } from '@/components/shared/discovery-page-shell';
 import { getProviderGroomers } from '@/lib/db/provider-groomers';
 import type { GroomingServiceType } from '@/lib/types';
 
@@ -32,15 +31,15 @@ export async function GroomingPageShell({ searchParams, locale }: GroomingPageSh
   const copy = GROOMING_PAGE_COPY[locale];
 
   return (
-    <PublicPageShell breadcrumbItems={[{ label: copy.breadcrumbLabel, href: copy.pathname }]}>
-      <ServiceJsonLd
-        name={copy.jsonLdName}
-        description={copy.jsonLdDescription}
-        url={`https://petpark.hr${copy.pathname}`}
-        serviceType="Pet Grooming"
-        areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
-      />
+    <DiscoveryPageShell
+      breadcrumbLabel={copy.breadcrumbLabel}
+      breadcrumbHref={copy.pathname}
+      jsonLdName={copy.jsonLdName}
+      jsonLdDescription={copy.jsonLdDescription}
+      serviceType="Pet Grooming"
+      areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
+    >
       <GroomingContent groomers={groomers} initialParams={params} forcedLanguage={locale} />
-    </PublicPageShell>
+    </DiscoveryPageShell>
   );
 }

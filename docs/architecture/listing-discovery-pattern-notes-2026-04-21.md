@@ -71,11 +71,27 @@ Reason:
 - it is the broadest listing shell
 - if we can make its route wrapper/content contract clean, the same pattern can be reused for training and grooming
 
-## Proposed next implementation step
-1. define a clean route wrapper contract for `SearchContent`
-2. ensure breadcrumb uses shared `PublicPageShell`
-3. make locale/hero shell responsibility explicit at route level
-4. then mirror the same approach to `/dresura` and `/njega`
+## Progress update
+Completed:
+- `/pretraga` route wrapper normalized into `search-page-shell.tsx`
+- `/dresura` route wrapper normalized into `training-page-shell.tsx`
+- `/njega` route wrapper normalized into `grooming-page-shell.tsx`
+- `/dresura/en` moved onto the same canonical provider-model read path as HR
+- `/njega/en` moved onto the same canonical provider-model read path as HR
+- local build and smoke confirmed for:
+  - `/pretraga`
+  - `/pretraga/en`
+  - `/dresura`
+  - `/dresura/en`
+  - `/njega`
+  - `/njega/en`
+
+## What still remains for this family
+1. optionally extract a reusable shared discovery shell component
+   - `components/shared/discovery-page-shell.tsx`
+2. reduce repeated related-links / internal-link block composition across discovery shells
+3. normalize `dog-friendly`, `veterinari`, `izgubljeni`, `udomljavanje`, `uzgajivacnice` toward the same shell family where it makes sense
+4. decide whether this family should share a stronger common hero API or keep per-vertical hero text/layout
 
 ## Desired end state
 For this family, we want:

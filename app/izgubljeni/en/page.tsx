@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 
-import { LostPetsContent } from '../lost-pets-content';
-import { PublicPageShell } from '@/components/shared/public-page-shell';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
+import { LostPetsPageShell } from '../lost-pets-page-shell';
 
 export const metadata: Metadata = {
   title: 'Lost pets — report or find them',
@@ -18,9 +17,5 @@ export const metadata: Metadata = {
 };
 
 export default function LostPetsEnPage() {
-  return (
-    <PublicPageShell breadcrumbItems={[{ label: 'Lost pets', href: '/izgubljeni/en' }]}>
-      <LostPetsContent forcedLanguage="en" />
-    </PublicPageShell>
-  );
+  return <LostPetsPageShell locale="en" />;
 }

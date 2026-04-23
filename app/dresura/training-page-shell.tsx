@@ -1,9 +1,7 @@
 import Link from 'next/link';
 import { Scissors, Search, ArrowRight } from 'lucide-react';
 import { TrainingContent } from './training-content';
-import { ServiceJsonLd } from '@/components/seo/json-ld';
-import { InternalLinkSection } from '@/components/shared/internal-link-section';
-import { PublicPageShell } from '@/components/shared/public-page-shell';
+import { DiscoveryPageShell } from '@/components/shared/discovery-page-shell';
 import { TRAINING_HUB_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
 import { getProviderTrainers } from '@/lib/db/provider-trainers';
 import type { TrainingType } from '@/lib/types';
@@ -56,28 +54,20 @@ export async function TrainingPageShell({ searchParams, locale }: TrainingPageSh
   const copy = TRAINING_PAGE_COPY[locale];
 
   return (
-    <PublicPageShell breadcrumbItems={[{ label: copy.breadcrumbLabel, href: copy.pathname }]}>
-      <ServiceJsonLd
-        name={copy.jsonLdName}
-        description={copy.jsonLdDescription}
-        url={`https://petpark.hr${copy.pathname}`}
-        serviceType="Dog Training"
-        areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
-      />
-
-      <TrainingContent trainers={trainers} initialParams={params} forcedLanguage={locale} />
-
-      <InternalLinkSection
-        eyebrow={copy.eyebrow}
-        title={copy.internalTitle}
-        description={copy.internalDescription}
-        items={[
-          ...TRAINING_HUB_LINKS,
-          ...CONTENT_DISCOVERY_LINKS,
-        ]}
-      />
-
-      <section className="py-14 md:py-20 bg-warm-section">
+    <DiscoveryPageShell
+      breadcrumbLabel={copy.breadcrumbLabel}
+      breadcrumbHref={copy.pathname}
+      jsonLdName={copy.jsonLdName}
+      jsonLdDescription={copy.jsonLdDescription}
+      serviceType="Dog Training"
+      areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
+      internalLinks={{
+        eyebrow: copy.eyebrow,
+        title: copy.internalTitle,
+        description: copy.internalDescription,
+        items: [...TRAINING_HUB_LINKS, ...CONTENT_DISCOVERY_LINKS],
+      }}
+      afterContent={<section className="py-14 md:py-20 bg-warm-section">
         <div className="container mx-auto px-6 md:px-10 lg:px-16">
           <div className="mb-10">
             <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-4 font-semibold">
@@ -112,7 +102,9 @@ export async function TrainingPageShell({ searchParams, locale }: TrainingPageSh
             </Link>
           </div>
         </div>
-      </section>
-    </PublicPageShell>
+      </section>}
+    >
+      <TrainingContent trainers={trainers} initialParams={params} forcedLanguage={locale} />
+    </DiscoveryPageShell>
   );
 }

@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
 
-import { getDogFriendlyLocations } from '@/lib/db/dog-friendly';
-import { DogFriendlyContent } from '../dog-friendly-content';
-import { PublicPageShell } from '@/components/shared/public-page-shell';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
+import { DogFriendlyPageShell } from '../dog-friendly-page-shell';
 
 export const metadata: Metadata = {
   title: 'Dog-friendly places in Croatia',
@@ -19,11 +17,6 @@ export const metadata: Metadata = {
   alternates: buildLocaleAlternates('/dog-friendly/en'),
 };
 
-export default async function DogFriendlyEnPage() {
-  const locations = await getDogFriendlyLocations();
-  return (
-    <PublicPageShell breadcrumbItems={[{ label: 'Dog-friendly', href: '/dog-friendly/en' }]}>
-      <DogFriendlyContent locations={locations} forcedLanguage="en" />
-    </PublicPageShell>
-  );
+export default function DogFriendlyEnPage() {
+  return <DogFriendlyPageShell locale="en" />;
 }
