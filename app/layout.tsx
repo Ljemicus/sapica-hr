@@ -20,9 +20,7 @@ import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { DeferredUI } from '@/components/shared/deferred-ui';
 import { ChatWidget } from '@/components/chat/chat-widget';
 import { WebVitals } from '@/components/monitoring/web-vitals';
-import { OnlineStatusProvider } from '@/components/providers/online-status-provider';
 import { SkipToContentLink } from '@/components/shared/skip-to-content-link';
-import { buildLocaleAlternates } from '@/lib/seo/locale-metadata';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],

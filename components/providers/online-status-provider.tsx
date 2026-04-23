@@ -9,14 +9,14 @@ interface OnlineStatusContextType {
 const OnlineStatusContext = createContext<OnlineStatusContextType | undefined>(undefined);
 
 export function OnlineStatusProvider({ children }: { children: ReactNode }) {
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState(() => {
+    if (typeof navigator === 'undefined') return true;
+    return navigator.onLine;
+  });
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-
-    // Set initial state
-    setIsOnline(navigator.onLine);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);

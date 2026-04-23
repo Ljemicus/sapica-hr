@@ -5,7 +5,7 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js';
  * Uses standard supabase-js client (not SSR) for API routes.
  * This avoids the cookies() issue in Next.js API routes.
  */
-export function createApiClient() {
+export async function createApiClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 

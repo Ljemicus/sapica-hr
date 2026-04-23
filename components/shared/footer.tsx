@@ -11,8 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 
-const NewsletterSignup = dynamic(() => import('@/components/shared/newsletter-signup').then((mod) => mod.NewsletterSignup));
-
 function PawLogo({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 512 512" fill="none">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { updateConsent, getConsentState } from '@/lib/analytics/ga4';
+import { updateConsent } from '@/lib/analytics/ga4';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 
@@ -11,30 +11,28 @@ interface CookieConsentBannerProps {
 
 export default function CookieConsentBanner({ measurementId }: CookieConsentBannerProps) {
   const [showBanner, setShowBanner] = useState(false);
-  const [consentGiven, setConsentGiven] = useState<boolean | null>(null);
 
   useEffect(() => {
     // Check if user has already made a choice
     const savedConsent = localStorage.getItem('petpark_analytics_consent');
-    
+
     if (savedConsent === null) {
       // No choice made yet, show banner
       setShowBanner(true);
-    } else {
-      // User has made a choice
-      const consent = savedConsent === 'true';
-      setConsentGiven(consent);
-      
-      // Update GA consent state
-      if (measurementId) {
-        updateConsent(consent);
-      }
+      return;
+    }
+
+    // User has made a choice
+    const consent = savedConsent === 'true';
+
+    // Update GA consent state
+    if (measurementId) {
+      updateConsent(consent);
     }
   }, [measurementId]);
 
   const handleAccept = () => {
     localStorage.setItem('petpark_analytics_consent', 'true');
-    setConsentGiven(true);
     setShowBanner(false);
     
     if (measurementId) {
@@ -49,7 +47,6 @@ export default function CookieConsentBanner({ measurementId }: CookieConsentBann
 
   const handleReject = () => {
     localStorage.setItem('petpark_analytics_consent', 'false');
-    setConsentGiven(false);
     setShowBanner(false);
     
     if (measurementId) {
