@@ -82,8 +82,15 @@ export async function getUnifiedProvidersFromProviderModel(): Promise<UnifiedPro
   if (!isSupabaseConfigured()) return [];
 
   const supabase = createAdminClient();
+  
+  // Trust gate: only verified, listed, non-demo providers
   const [providersRes, servicesRes, sitterSettingsRes, groomerSettingsRes, trainerSettingsRes] = await Promise.all([
-    supabase.from('providers').select('id, profile_id, provider_kind, display_name, bio, city, lat, lng, verified_status, public_status, response_time_label, rating_avg, review_count').eq('public_status', 'listed'),
+    supabase
+      .from('providers')
+      .select('id, profile_id, provider_kind, display_name, bio, city, lat, lng, verified_status, public_status, response_time_label, rating_avg, review_count, is_demo')
+      .eq('public_status', 'listed')
+      .eq('verified_status', 'verified')
+      .is('is_demo', false),
     supabase.from('provider_services').select('provider_id, service_code, base_price, is_active').eq('is_active', true),
     supabase.from('provider_sitter_settings').select('provider_id, services, superhost'),
     supabase.from('provider_groomer_settings').select('provider_id, specialization'),
