@@ -49,7 +49,9 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Error in GET /api/social/posts:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json({ error: 'Internal server error', details: errorMessage }, { status: 500 });
+    const errorStack = error instanceof Error ? error.stack : '';
+    console.error('Error stack:', errorStack);
+    return NextResponse.json({ error: 'Internal server error', details: errorMessage, stack: errorStack }, { status: 500 });
   }
 }
 
