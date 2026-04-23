@@ -69,7 +69,7 @@ function ChallengeCard({ challenge, onVote, userVotes = new Set() }: ChallengeCa
         
         toast.success(data.voted ? 'Glas dodan!' : 'Glas uklonjen');
       }
-    } catch (error) {
+    } catch {
       toast.error('Greška prilikom glasanja');
     }
   }, [challenge.id, onVote]);
@@ -185,11 +185,7 @@ export function ChallengeList({ limit }: ChallengeListProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [userVotes, setUserVotes] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    loadChallenges();
-  }, []);
-
-  const loadChallenges = async () => {
+  const loadChallenges = useCallback(async () => {
     try {
       const response = await fetch('/api/social/challenges?active=true');
       if (response.ok) {
@@ -201,7 +197,11 @@ export function ChallengeList({ limit }: ChallengeListProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [limit]);
+
+  useEffect(() => {
+    loadChallenges();
+  }, [loadChallenges]);
 
   const handleVote = useCallback((entryId: string, voted: boolean) => {
     setUserVotes(prev => {

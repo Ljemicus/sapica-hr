@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import { ImagePlus, X, Sparkles, Camera } from 'lucide-react';
+import { ImagePlus, X, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -20,7 +20,7 @@ interface CreatePostProps {
 }
 
 // Simulated AI tagging - in production this would call an AI service
-async function generateAITags(content: string, hasImages: boolean): Promise<AITags> {
+async function generateAITags(content: string, _hasImages: boolean): Promise<AITags> {
   const tags: AITags = {
     petTypes: [],
     activities: [],
@@ -147,7 +147,7 @@ export function CreatePost({ pets, onPostCreated, challengeId }: CreatePostProps
       setAiTags(tags);
       setAiCaption(caption);
       toast.success('AI tagovi generirani!');
-    } catch (error) {
+    } catch {
       toast.error('Greška prilikom generiranja AI tagova');
     } finally {
       setIsGeneratingAI(false);
@@ -197,7 +197,7 @@ export function CreatePost({ pets, onPostCreated, challengeId }: CreatePostProps
       } else {
         throw new Error('Failed to create post');
       }
-    } catch (error) {
+    } catch {
       toast.error('Greška prilikom objavljivanja');
     } finally {
       setIsSubmitting(false);

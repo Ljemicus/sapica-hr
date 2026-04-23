@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { MapPin, PawPrint, Heart, MessageCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,14 +29,7 @@ export function PlaydateMatching({ userPets }: PlaydateMatchingProps) {
   const [sentRequests, setSentRequests] = useState<PlaydateRequestWithDetails[]>([]);
   const [receivedRequests, setReceivedRequests] = useState<PlaydateRequestWithDetails[]>([]);
 
-  // Load playdate requests
-  useEffect(() => {
-    if (user) {
-      loadRequests();
-    }
-  }, [user]);
-
-  const loadRequests = async () => {
+  const loadRequests = useCallback(async () => {
     try {
       const [sentRes, receivedRes] = await Promise.all([
         fetch('/api/social/playdates?type=sent'),
@@ -54,7 +47,7 @@ export function PlaydateMatching({ userPets }: PlaydateMatchingProps) {
     } catch (error) {
       console.error('Error loading requests:', error);
     }
-  };
+  }, []);
 
   // Simulate finding nearby pets
   const findMatches = useCallback(async () => {
@@ -122,15 +115,15 @@ export function PlaydateMatching({ userPets }: PlaydateMatchingProps) {
 
       if (response.ok) {
         toast.success('Zahtjev za druženje poslan!');
-        loadRequests();
+        await loadRequests();
       } else {
         const error = await response.json();
         toast.error(error.error || 'Greška prilikom slanja zahtjeva');
       }
-    } catch (error) {
+    } catch {
       toast.error('Greška prilikom slanja zahtjeva');
     }
-  }, [user, selectedPet]);
+  }, [user, selectedPet, loadRequests]);
 
   const handleRespondToRequest = useCallback(async (requestId: string, status: 'accepted' | 'rejected') => {
     try {
@@ -142,12 +135,12 @@ export function PlaydateMatching({ userPets }: PlaydateMatchingProps) {
 
       if (response.ok) {
         toast.success(status === 'accepted' ? 'Zahtjev prihvaćen!' : 'Zahtjev odbijen');
-        loadRequests();
+        await loadRequests();
       }
-    } catch (error) {
+    } catch {
       toast.error('Greška prilikom odgovaranja na zahtjev');
     }
-  }, []);
+  }, [loadRequests]);
 
   if (!user) {
     return (
@@ -261,7 +254,7 @@ export function PlaydateMatching({ userPets }: PlaydateMatchingProps) {
                         želi druženje s {request.target_pet.name}
                       </p>
                       {request.message && (
-                        <p className="text-sm mt-1 italic">"{request.message}"</p>
+                        <p className="text-sm mt-1 italic">&ldquo;{request.message}&rdquo;</p>
                       )}
                     </div>
                     <div className="flex gap-2">

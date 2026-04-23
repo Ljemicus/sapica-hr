@@ -29,14 +29,7 @@ function SocialFeedInner({ user }: { user: import('@/lib/types').User | null }) 
   const [userPets, setUserPets] = useState<Pet[]>([]);
   const LIMIT = 10;
 
-  // Load user's pets
-  useEffect(() => {
-    if (user) {
-      loadUserPets();
-    }
-  }, [user]);
-
-  const loadUserPets = async () => {
+  const loadUserPets = useCallback(async () => {
     try {
       const response = await fetch('/api/pets');
       if (response.ok) {
@@ -46,7 +39,14 @@ function SocialFeedInner({ user }: { user: import('@/lib/types').User | null }) 
     } catch (error) {
       console.error('Error loading pets:', error);
     }
-  };
+  }, []);
+
+  // Load user's pets
+  useEffect(() => {
+    if (user) {
+      void loadUserPets();
+    }
+  }, [user, loadUserPets]);
 
   // Load posts
   const loadPosts = useCallback(async (reset = false) => {
@@ -102,7 +102,7 @@ function SocialFeedInner({ user }: { user: import('@/lib/types').User | null }) 
 
   useEffect(() => {
     loadPosts(true);
-  }, []);
+  }, [loadPosts]);
 
   const handlePostCreated = useCallback(() => {
     loadPosts(true);

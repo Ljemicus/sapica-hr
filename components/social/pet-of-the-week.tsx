@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Crown, Trophy, Star, Calendar } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,11 +17,7 @@ export function PetOfTheWeek({ showHistory = false }: PetOfTheWeekProps) {
   const [pastPets, setPastPets] = useState<PetOfTheWeekWithDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadPetOfTheWeek();
-  }, []);
-
-  const loadPetOfTheWeek = async () => {
+  const loadPetOfTheWeek = useCallback(async () => {
     try {
       const [currentResponse, historyResponse] = await Promise.all([
         fetch('/api/social/pet-of-week?current=true'),
@@ -42,7 +38,11 @@ export function PetOfTheWeek({ showHistory = false }: PetOfTheWeekProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [showHistory]);
+
+  useEffect(() => {
+    loadPetOfTheWeek();
+  }, [loadPetOfTheWeek]);
 
   if (isLoading) {
     return (
@@ -115,7 +115,7 @@ export function PetOfTheWeek({ showHistory = false }: PetOfTheWeekProps) {
           {currentPet.post && (
             <div className="mt-4 pt-4 border-t">
               <p className="text-sm text-muted-foreground italic">
-                "{currentPet.post.content.slice(0, 150)}..."
+                &ldquo;{currentPet.post.content.slice(0, 150)}...&rdquo;
               </p>
               {currentPet.post.media_urls && currentPet.post.media_urls.length > 0 && (
                 <div className="flex gap-2 mt-3">
