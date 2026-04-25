@@ -1,27 +1,29 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { sendSMS, smsTemplates } from '@/lib/sms';
+import { getAuthUser } from '@/lib/auth';
+
+function isAuthorizedSystemCall(request: NextRequest): boolean {
+  const smsInternalKey = process.env.SMS_INTERNAL_KEY;
+  const authHeader = request.headers.get('authorization');
+  return Boolean(smsInternalKey && authHeader === `Bearer ${smsInternalKey}`);
+}
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
+    const authUser = await getAuthUser();
+    const isSystemCall = isAuthorizedSystemCall(request);
     
-    // Verify admin or system role
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    // Allow system/internal calls without auth for cron jobs
-    const body = await request.json();
-    const { to, template, data, body: customBody, internalKey } = body;
-    
-    // Check internal key for system calls
-    const isSystemCall = internalKey === process.env.SMS_INTERNAL_KEY;
-    
-    if (!user && !isSystemCall) {
+    if (!isSystemCall && !authUser?.isAdmin) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
+    
+    const body = await request.json();
+    const { to, template, data, body: customBody } = body;
     
     if (!to) {
       return NextResponse.json(
@@ -68,7 +70,7 @@ export async function POST(request: NextRequest) {
     
     // Log to database
     await supabase.from('sms_logs').insert({
-      user_id: body.userId || user?.id,
+      user_id: body.userId || authUser?.id,
       phone: to,
       body: messageBody,
       template: template || 'custom',
