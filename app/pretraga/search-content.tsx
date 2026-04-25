@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import {
@@ -152,8 +152,10 @@ function SearchFilterPanel({
   return (
     <div className="space-y-7">
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{copy.city}</Label>
+        <Label htmlFor="filter-city" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{copy.city}</Label>
         <select
+          id="filter-city"
+          aria-label={copy.city}
           value={city}
           onChange={(e) => onCityChange(e.target.value)}
           className="premium-select"
@@ -185,7 +187,7 @@ function SearchFilterPanel({
               </label>
             ))}
             {service && (
-              <button onClick={() => onServiceChange('')} className="text-xs text-warm-orange hover:underline mt-2 pl-3">
+              <button type="button" aria-label={copy.clearSelection} onClick={() => onServiceChange('')} className="text-xs text-warm-orange hover:underline mt-2 pl-3">
                 {copy.clearSelection}
               </button>
             )}
@@ -221,8 +223,10 @@ function SearchFilterPanel({
       )}
 
       <div>
-        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{copy.minRating}</Label>
+        <Label htmlFor="filter-min-rating" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{copy.minRating}</Label>
         <select
+          id="filter-min-rating"
+          aria-label={copy.minRating}
           value={minRating}
           onChange={(e) => onMinRatingChange(e.target.value)}
           className="premium-select"
@@ -240,7 +244,7 @@ function SearchFilterPanel({
           {copy.showResults}
         </Button>
         {activeFilterCount > 0 && (
-          <button onClick={onClear} className="w-full text-center text-xs text-muted-foreground hover:text-warm-orange mt-3 transition-colors">
+          <button type="button" aria-label={language === 'en' ? 'Clear all filters' : 'Očisti sve filtere'} onClick={onClear} className="w-full text-center text-xs text-muted-foreground hover:text-warm-orange mt-3 transition-colors">
             {language === 'en' ? 'Clear all filters' : 'Očisti sve filtere'}
           </button>
         )}
@@ -286,7 +290,7 @@ function ProviderCard({ provider }: { provider: UnifiedProvider }) {
       };
 
   return (
-    <Link href={provider.profileUrl}>
+    <Link prefetch={false} href={provider.profileUrl}>
       <article className="community-section-card group overflow-hidden cursor-pointer">
         {/* Card header — gradient with avatar */}
         <div className={`relative h-48 bg-gradient-to-br ${gradients[gradientIndex]} flex items-center justify-center overflow-hidden`}>
@@ -406,17 +410,27 @@ function ProviderCard({ provider }: { provider: UnifiedProvider }) {
 
 export function SearchContent({ providers, initialParams, forcedLanguage }: SearchContentProps & { forcedLanguage?: 'hr' | 'en' }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlParams = {
+    category: searchParams.get('category') || initialParams.category,
+    city: searchParams.get('city') || initialParams.city,
+    service: searchParams.get('service') || initialParams.service,
+    min_price: searchParams.get('min_price') || initialParams.min_price,
+    max_price: searchParams.get('max_price') || initialParams.max_price,
+    min_rating: searchParams.get('min_rating') || initialParams.min_rating,
+    sort: searchParams.get('sort') || initialParams.sort,
+  };
   const { language } = useLanguage();
   const activeLanguage = forcedLanguage || language;
   const [showMap, setShowMap] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const activeCategory = (initialParams.category || 'all') as ProviderCategory | 'all';
-  const [city, setCity] = useState(initialParams.city || '');
-  const [service, setService] = useState(initialParams.service || '');
-  const [minPrice, setMinPrice] = useState(initialParams.min_price || '');
-  const [maxPrice, setMaxPrice] = useState(initialParams.max_price || '');
-  const [minRating, setMinRating] = useState(initialParams.min_rating || '');
-  const [sort, setSort] = useState(initialParams.sort || 'rating');
+  const activeCategory = (urlParams.category || 'all') as ProviderCategory | 'all';
+  const [city, setCity] = useState(urlParams.city || '');
+  const [service, setService] = useState(urlParams.service || '');
+  const [minPrice, setMinPrice] = useState(urlParams.min_price || '');
+  const [maxPrice, setMaxPrice] = useState(urlParams.max_price || '');
+  const [minRating, setMinRating] = useState(urlParams.min_rating || '');
+  const [sort, setSort] = useState(urlParams.sort || 'rating');
   const basePath = activeLanguage === 'en' ? '/pretraga/en' : '/pretraga';
 
   const buildUrl = useCallback((overrides?: Record<string, string | undefined>) => {
@@ -468,10 +482,32 @@ export function SearchContent({ providers, initialParams, forcedLanguage }: Sear
   };
 
   let filtered = providers;
+  if (activeCategory !== 'all') {
+    filtered = filtered.filter((p) => p.category === activeCategory);
+  }
+  if (city) {
+    filtered = filtered.filter((p) => (p.city || '').toLowerCase() === city.toLowerCase());
+  }
+  if (service) {
+    filtered = filtered.filter((p) => p.services.includes(service as ServiceType));
+  }
+  if (minPrice) {
+    const min = Number(minPrice);
+    filtered = filtered.filter((p) => p.lowestPrice == null || p.lowestPrice >= min);
+  }
+  if (maxPrice) {
+    const max = Number(maxPrice);
+    filtered = filtered.filter((p) => p.lowestPrice == null || p.lowestPrice <= max);
+  }
   if (minRating) {
     const minR = Number(minRating);
     filtered = filtered.filter((p) => p.rating >= minR);
   }
+  filtered = [...filtered].sort((a, b) => {
+    if (sort === 'reviews') return b.reviews - a.reviews;
+    if (sort === 'price') return (a.lowestPrice ?? Number.POSITIVE_INFINITY) - (b.lowestPrice ?? Number.POSITIVE_INFINITY);
+    return b.rating - a.rating;
+  });
 
   const activeFilterCount = [city, service, minPrice, maxPrice, minRating].filter(Boolean).length;
   const localeCityLinks = activeLanguage === 'en'
@@ -580,6 +616,8 @@ export function SearchContent({ providers, initialParams, forcedLanguage }: Sear
             return (
               <button
                 key={tab.key}
+                type="button"
+                aria-label={`${copy.tabs[tab.key]} ${isActive ? (language === 'en' ? 'selected' : 'odabrano') : ''}`.trim()}
                 onClick={() => setCategory(tab.key)}
                 data-active={isActive}
                 className={`filter-pill flex items-center gap-2 whitespace-nowrap ${
@@ -637,6 +675,7 @@ export function SearchContent({ providers, initialParams, forcedLanguage }: Sear
 
               {/* Sort */}
               <select
+                aria-label={language === 'en' ? 'Sort results' : 'Sortiraj rezultate'}
                 value={sort}
                 onChange={(e) => { setSort(e.target.value); setTimeout(applyFilters, 0); }}
                 className="h-9 rounded-xl border border-border/60 bg-white dark:bg-card px-3 text-sm focus:border-orange-300 shadow-sm"
@@ -649,18 +688,24 @@ export function SearchContent({ providers, initialParams, forcedLanguage }: Sear
               {/* View toggles */}
               <div className="hidden sm:flex items-center border border-border/60 rounded-xl overflow-hidden shadow-sm">
                 <button
+                  type="button"
+                  aria-label={language === 'en' ? 'Show grid view' : 'Prikaži grid prikaz'}
                   onClick={() => { setShowMap(false); setViewMode('grid'); }}
                   className={`p-2.5 transition-colors ${!showMap && viewMode === 'grid' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
                 >
                   <Grid className="h-4 w-4" />
                 </button>
                 <button
+                  type="button"
+                  aria-label={language === 'en' ? 'Show list view' : 'Prikaži listu'}
                   onClick={() => { setShowMap(false); setViewMode('list'); }}
                   className={`p-2.5 transition-colors ${!showMap && viewMode === 'list' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
                 >
                   <LayoutList className="h-4 w-4" />
                 </button>
                 <button
+                  type="button"
+                  aria-label={language === 'en' ? 'Show map view' : 'Prikaži kartu'}
                   onClick={() => setShowMap(true)}
                   className={`p-2.5 transition-colors ${showMap ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
                 >
@@ -670,6 +715,7 @@ export function SearchContent({ providers, initialParams, forcedLanguage }: Sear
 
               {/* Mobile map toggle */}
               <Button
+                aria-label={showMap ? (language === 'en' ? 'Show grid view' : 'Prikaži grid prikaz') : (language === 'en' ? 'Show map view' : 'Prikaži kartu')}
                 variant={showMap ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setShowMap(!showMap)}
@@ -719,7 +765,7 @@ export function SearchContent({ providers, initialParams, forcedLanguage }: Sear
                 <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMaxPrice(''); applyFilters(); }} />
               </Badge>
             )}
-            <button onClick={clearFilters} className="text-xs text-warm-orange hover:underline self-center ml-1">
+            <button type="button" aria-label={language === 'en' ? 'Clear all filters' : 'Očisti sve filtere'} onClick={clearFilters} className="text-xs text-warm-orange hover:underline self-center ml-1">
               {copy.clearFilters}
             </button>
           </div>

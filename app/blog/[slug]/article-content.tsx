@@ -376,7 +376,7 @@ export function ArticleContent({ article, relatedArticles, comments, currentUser
                   </div>
                   <div className="space-y-3">
                     {internalLinks.map((item) => (
-                      <Link key={item.href} href={item.href} className="block rounded-xl border bg-white p-3 hover:border-orange-200 hover:bg-orange-50/60 transition-colors">
+                      <Link prefetch={false} key={item.href} href={item.href} className="block rounded-xl border bg-white p-3 hover:border-orange-200 hover:bg-orange-50/60 transition-colors">
                         <div className="flex items-start justify-between gap-3">
                           <div>
                             <p className="font-medium text-sm text-foreground">{item.title}</p>
@@ -398,13 +398,13 @@ export function ArticleContent({ article, relatedArticles, comments, currentUser
               <h2 className="text-2xl font-bold mb-2">{categoryCta.title}</h2>
               <p className="text-sm md:text-base text-muted-foreground mb-5 leading-relaxed">{categoryCta.text}</p>
               <div className="flex flex-wrap gap-3">
-                <Link href={categoryCta.primary.href}>
+                <Link prefetch={false} href={categoryCta.primary.href}>
                   <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6">
                     {categoryCta.primary.label}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href={categoryCta.secondary.href}>
+                <Link prefetch={false} href={categoryCta.secondary.href}>
                   <Button variant="outline" className="rounded-full hover:bg-white hover:text-orange-600 hover:border-orange-200">
                     {categoryCta.secondary.label}
                   </Button>
@@ -426,11 +426,11 @@ export function ArticleContent({ article, relatedArticles, comments, currentUser
                   {getAuthorBio(article.author)}
                 </p>
                 <div className="flex flex-wrap items-center gap-3 mt-3 text-sm">
-                  <Link href="/blog" className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 font-medium">
+                  <Link prefetch={false} href="/blog" className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 font-medium">
                     Pogledaj sve članke
                     <ArrowRight className="h-3 w-3" />
                   </Link>
-                  <Link href={`/blog?category=${article.category}`} className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 font-medium">
+                  <Link prefetch={false} href={`/blog?category=${article.category}`} className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 font-medium">
                     Više iz kategorije {BLOG_CATEGORY_LABELS[article.category].toLowerCase()}
                     <ArrowRight className="h-3 w-3" />
                   </Link>
@@ -470,14 +470,14 @@ export function ArticleContent({ article, relatedArticles, comments, currentUser
                   <h2 className="text-xl font-bold">Nastavite čitati</h2>
                   <p className="text-sm text-muted-foreground mt-1">Još korisnog sadržaja iz sličnih ili susjednih tema.</p>
                 </div>
-                <Link href={`/blog?category=${article.category}`} className="text-sm font-medium text-orange-600 hover:text-orange-700 inline-flex items-center gap-1">
+                <Link prefetch={false} href={`/blog?category=${article.category}`} className="text-sm font-medium text-orange-600 hover:text-orange-700 inline-flex items-center gap-1">
                   Više iz kategorije
                   <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {relatedArticles.map((related) => (
-                  <Link key={related.slug} href={`/blog/${related.slug}`}>
+                  <Link prefetch={false} key={related.slug} href={`/blog/${related.slug}`}>
                     <Card className="group card-hover h-full border-0 shadow-sm rounded-2xl overflow-hidden cursor-pointer">
                       <CardContent className="p-0">
                         <div className={`h-28 bg-gradient-to-br ${related.coverGradient ?? 'from-orange-100 to-amber-50'} flex items-center justify-center relative`}>

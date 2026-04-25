@@ -183,7 +183,7 @@ export function ServiceCardsGrid() {
       type: 'veterinar',
       title: 'Veterinarske usluge',
       description: 'Veterinarske ordinacije i hitne službe. Preventivni pregledi, cijepljenja i specijalističke usluge.',
-      href: '/veterinari'
+      href: '/pretraga'
     }
   ];
 

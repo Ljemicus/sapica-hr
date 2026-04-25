@@ -1,7 +1,7 @@
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock analytics functions
-const mockTrackFunnelEvent = jest.fn();
+const mockTrackFunnelEvent = vi.fn();
 const mockFunnel = {
   signupStart: (source: string) => mockTrackFunnelEvent('signup_start', { source }),
   signupComplete: (userId: string, method: string) => mockTrackFunnelEvent('signup_complete', { userId, method }),

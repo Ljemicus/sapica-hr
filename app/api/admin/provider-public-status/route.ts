@@ -1,3 +1,4 @@
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { dispatchAlert } from '@/lib/alerting';
 import { getRequestId, createScopedLogger } from '@/lib/request-context';
@@ -134,6 +135,14 @@ export async function POST(request: Request) {
         },
       });
     }
+
+    if (promotionResult?.providerId) {
+      revalidateTag(`provider-${promotionResult.providerId}`, 'max');
+      revalidatePath(`/sitter/${promotionResult.providerId}`);
+    }
+    revalidateTag('providers-public', 'max');
+    revalidatePath('/');
+    revalidatePath('/pretraga');
 
     log.info( 'Public status updated', {
       applicationId,

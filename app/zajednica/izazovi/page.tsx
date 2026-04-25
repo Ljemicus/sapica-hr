@@ -1,13 +1,12 @@
-import { redirect } from 'next/navigation';
-import { isFeatureEnabledServer } from '@/lib/feature-flags';
+import type { Metadata } from 'next';
+import { UskoroState } from '@/components/shared/uskoro-state';
 
-// Challenges page - disabled for initial launch
-export default function ChallengesPage() {
-  // Check if challenges feature is enabled
-  if (!isFeatureEnabledServer('challenges')) {
-    redirect('/zajednica');
-  }
+export const metadata: Metadata = {
+  title: { absolute: 'Izazovi uskoro | PetPark' },
+  description: 'Izazovi se vraćaju kad community modul bude spreman.',
+  robots: { index: false, follow: false },
+};
 
-  // If enabled, this would render the challenges content
-  redirect('/zajednica');
+export default function Page() {
+  return <UskoroState title="Izazovi uskoro" description="Izazovi se vraćaju kad community modul bude spreman." />;
 }

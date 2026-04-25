@@ -1,39 +1,10 @@
 import type { Metadata, Viewport } from 'next';
-import { headers } from 'next/headers';
-import Script from 'next/script';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { Inter, Nunito } from 'next/font/google';
 import './globals.css';
-import { Navbar } from '@/components/shared/navbar';
-import { Footer } from '@/components/shared/footer';
-import { PageTransition } from '@/components/providers/page-transition';
-import { PerformanceMonitor } from '@/components/providers/performance-monitor';
-import { ErrorBoundary } from '@/components/providers/error-boundary';
-import { BottomNav } from '@/components/shared/bottom-nav';
-import { AuthProvider } from '@/contexts/auth-context';
-import { CartProvider } from '@/lib/cart-context';
-import { CookieConsentProvider } from '@/contexts/cookie-consent-context';
-import { CookieConsentBanner } from '@/components/shared/cookie-consent-banner';
-import { LanguageProvider, DEFAULT_LOCALE, LOCALE_HEADER } from '@/lib/i18n';
+import { StaticNavbar } from '@/components/shared/static-navbar';
+import { StaticFooter } from '@/components/shared/static-footer';
+import { DEFAULT_LOCALE } from '@/lib/i18n';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
-import { DeferredUI } from '@/components/shared/deferred-ui';
-import { ChatWidget } from '@/components/chat/chat-widget';
-import { WebVitals } from '@/components/monitoring/web-vitals';
 import { SkipToContentLink } from '@/components/shared/skip-to-content-link';
-
-const inter = Inter({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-sans',
-  display: 'swap',
-});
-
-const nunito = Nunito({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-heading',
-  weight: ['600', '700', '800'],
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://petpark.hr'),
@@ -41,22 +12,21 @@ export const metadata: Metadata = {
     default: 'PetPark — Sve za ljubimce na jednom mjestu',
     template: '%s | PetPark',
   },
-  description: 'PetPark je hrvatska super-aplikacija za ljubimce. Čuvanje, grooming, školovanje pasa, veterinari, udomljavanje, dog-friendly lokacije i još više — sve na jednom mjestu.',
+  description: 'PetPark je hrvatska platforma za čuvanje ljubimaca. Zagreb, beta — pronađite čuvara, šetača ili boarding bez izmišljenog inventoryja.',
   other: {
     'google': 'notranslate',
   },
   keywords: [
     'pet sitting', 'čuvanje ljubimaca', 'šetanje pasa', 'grooming', 'školovanje pasa',
-    'čuvar za pse', 'čuvar za mačke', 'pet sitter Hrvatska', 'veterinar',
-    'udomljavanje pasa', 'dog-friendly', 'izgubljeni ljubimci',
-    'Zagreb', 'Split', 'Rijeka', 'Osijek', 'Pula', 'Zadar',
+    'čuvar za pse', 'čuvar za mačke', 'pet sitter Hrvatska', 'izgubljeni ljubimci',
+    'Zagreb', 'Split', 'Rijeka',
   ],
   authors: [{ name: 'PetPark' }],
   creator: 'PetPark',
   publisher: 'PetPark',
   formatDetection: { telephone: true, email: true },
   alternates: {
-    canonical: 'https://petpark.hr',
+    canonical: 'https://petpark.hr/',
     languages: {
       'hr-HR': 'https://petpark.hr',
       'en-US': 'https://petpark.hr/en',
@@ -64,7 +34,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'PetPark — Sve za ljubimce na jednom mjestu',
-    description: 'Čuvanje, grooming, školovanje, veterinari, udomljavanje i zajednica ljubitelja životinja — sve u jednoj aplikaciji.',
+    description: 'Zagreb, beta — čuvanje, šetanje i boarding ljubimaca bez izmišljenog inventoryja.',
     type: 'website',
     locale: 'hr_HR',
     url: 'https://petpark.hr',
@@ -79,7 +49,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'PetPark — Sve za ljubimce na jednom mjestu',
-    description: 'Čuvanje, grooming, školovanje, veterinari, udomljavanje i zajednica ljubitelja životinja — sve u jednoj aplikaciji.',
+    description: 'Zagreb, beta — čuvanje, šetanje i boarding ljubimaca bez izmišljenog inventoryja.',
     images: ['/opengraph-image'],
   },
   robots: {
@@ -97,14 +67,7 @@ export const metadata: Metadata = {
     google: 'google-site-verification-code',
   },
   icons: {
-    icon: [
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
+    icon: [{ url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' }],
   },
 };
 
@@ -115,74 +78,38 @@ export const viewport: Viewport = {
   themeColor: '#f97316',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const headerStore = await headers();
-  const routeLocale = headerStore.get(LOCALE_HEADER) ?? DEFAULT_LOCALE;
-  const cspNonce = headerStore.get('X-CSP-Nonce') ?? undefined;
+  const routeLocale = DEFAULT_LOCALE;
 
   return (
-    <html lang={routeLocale} className={`${inter.variable} ${nunito.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang={routeLocale} className="h-full antialiased" suppressHydrationWarning>
       <head>
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta name="theme-color" content="#f97316" />
-        <link rel="preconnect" href="https://hmtlcgjcxhjecsbmmxol.supabase.co" />
-        <link rel="dns-prefetch" href="https://hmtlcgjcxhjecsbmmxol.supabase.co" />
-        <link rel="dns-prefetch" href="https://plausible.io" />
         
         {/* Hreflang tags for SEO */}
         <link rel="alternate" hrefLang="hr" href="https://petpark.hr" />
         <link rel="alternate" hrefLang="en" href="https://petpark.hr/en" />
         <link rel="alternate" hrefLang="x-default" href="https://petpark.hr" />
         
-        {/* Inline Critical CSS */}
-        <style nonce={cspNonce} dangerouslySetInnerHTML={{ __html: readFileSync(join(process.cwd(), 'public', 'critical.css'), 'utf-8') }} />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="PetPark" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <Script
-          defer
-          data-domain="petpark.hr"
-          src="https://plausible.io/js/script.js"
-          strategy="afterInteractive"
-        />
-        <WebVitals />
         <WebsiteJsonLd />
         <SiteNavigationJsonLd />
       </head>
       <body className="min-h-full flex flex-col font-sans">
-        <CookieConsentProvider>
-          <AuthProvider>
-            <CartProvider>
-              <LanguageProvider>
-                <SkipToContentLink />
-                <Navbar />
-                <main id="main-content" className="flex-1">
-                  <ErrorBoundary>
-                    <PageTransition>{children}</PageTransition>
-                  </ErrorBoundary>
-                </main>
-                <PerformanceMonitor />
-                <Script id="register-sw" strategy="afterInteractive" nonce={cspNonce}>
-                  {`if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('/sw.js').then(function(reg) { console.log('[SW] Registered:', reg.scope); }).catch(function(err) { console.error('[SW] Registration failed:', err); }); }); }`}
-                </Script>
-                <div className="pb-20 md:pb-0">
-                  <Footer />
-                </div>
-                <BottomNav />
-                <DeferredUI />
-                <CookieConsentBanner />
-                <ChatWidget />
-              </LanguageProvider>
-            </CartProvider>
-          </AuthProvider>
-        </CookieConsentProvider>
+        <SkipToContentLink />
+        <StaticNavbar />
+        <main id="main" className="flex-1">
+          {children}
+        </main>
+        <div className="hidden md:block">
+          <StaticFooter />
+        </div>
       </body>
     </html>
   );

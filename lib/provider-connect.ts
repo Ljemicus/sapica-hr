@@ -20,6 +20,10 @@ function isStripeConfigured(): boolean {
   return !!(key && key.length > 0 && !key.includes('REPLACE'));
 }
 
+function getDayBucket(): string {
+  return Math.floor(Date.now() / (1000 * 60 * 60 * 24)).toString();
+}
+
 /**
  * Create a Stripe Connect Express account for a provider and return
  * the account ID + hosted onboarding URL.
@@ -37,7 +41,7 @@ export async function createProviderConnectAccount(
   const stripe = getStripe();
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
-  const account = await stripe.accounts.create({
+  const account = await stripe.accounts.create({ // idempotencyKey below
     type: 'express',
     country,
     email,
@@ -53,13 +57,19 @@ export async function createProviderConnectAccount(
       petpark_user_id: userId,
       petpark_flow: 'provider_onboarding',
     },
+  }, {
+    idempotencyKey: `account-${userId}`,
   });
 
-  const accountLink = await stripe.accountLinks.create({
+  const dayBucket = getDayBucket();
+
+  const accountLink = await stripe.accountLinks.create({ // idempotencyKey below
     account: account.id,
     refresh_url: `${baseUrl}/onboarding/provider?stripe_refresh=true`,
     return_url: `${baseUrl}/onboarding/provider?stripe_complete=true`,
     type: 'account_onboarding',
+  }, {
+    idempotencyKey: `acctlink-${account.id}-${dayBucket}`,
   });
 
   return {
@@ -80,12 +90,15 @@ export async function refreshProviderOnboardingLink(
 
   const stripe = getStripe();
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+  const dayBucket = getDayBucket();
 
-  const accountLink = await stripe.accountLinks.create({
+  const accountLink = await stripe.accountLinks.create({ // idempotencyKey below
     account: stripeAccountId,
     refresh_url: `${baseUrl}/onboarding/provider?stripe_refresh=true`,
     return_url: `${baseUrl}/onboarding/provider?stripe_complete=true`,
     type: 'account_onboarding',
+  }, {
+    idempotencyKey: `acctlink-${stripeAccountId}-${dayBucket}`,
   });
 
   return accountLink.url;

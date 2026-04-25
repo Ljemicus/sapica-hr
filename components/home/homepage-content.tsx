@@ -1,11 +1,7 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Star, MapPin, ChevronRight, Shield, Heart, Search, Scissors, GraduationCap, Stethoscope, Sparkles, Siren } from 'lucide-react';
 // Animation components temporarily removed for build stability
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/lib/i18n';
 import { HeroSection } from './hero-section';
 import { AnimatedServiceCard } from './animated-service-card';
 
@@ -49,12 +45,12 @@ const copy = {
     philoKicker: 'Naša filozofija',
     philoHeadline: 'Svaki ljubimac zaslužuje\nizvanrednu brigu.',
     philoBody: 'PetPark nije samo platforma za rezervacije. To je ekosustav izgrađen oko jedne jednostavne ideje: da briga o životinjama treba biti jednako promišljena, pouzdana i lijepa kao i ljubav koju im dajemo.',
-    philoStat1: '4.9',
-    philoStat1Label: 'Prosječna ocjena',
-    philoStat2: '500+',
-    philoStat2Label: 'Verificiranih partnera',
-    philoStat3: '6',
-    philoStat3Label: 'Gradova u Hrvatskoj',
+    philoStat1: 'Zagreb',
+    philoStat1Label: 'Beta tržište',
+    philoStat2: 'Live',
+    philoStat2Label: 'Provjera profila',
+    philoStat3: '0',
+    philoStat3Label: 'Lažnih KPI brojki',
 
     // Services
     svcKicker: 'Usluge',
@@ -78,7 +74,7 @@ const copy = {
     // Sitters
     sittersKicker: 'Istaknuti partneri',
     sittersHeadline: 'Ljudi kojima vlasnici vjeruju.',
-    sittersSub: 'Profili s odličnim recenzijama, jasnim opisima i provjerenim podacima.',
+    sittersSub: 'Profili se prikazuju iz stvarne baze, bez izmišljenih brojki.',
     sittersViewAll: 'Pregledaj sve',
     sittersViewProfile: 'Pogledaj profil',
     sittersFallbackBio: 'Pouzdan sitter za pse i mačke u vašem gradu.',
@@ -91,7 +87,7 @@ const copy = {
 
     // CTA
     ctaHeadline: 'Spremni za\nbolju brigu?',
-    ctaBody: 'Pronađite pouzdanog sittera, groomera ili trenera u svom gradu — ili se pridružite rastućoj mreži partnera.',
+    ctaBody: 'Pronađite pouzdanog sittera u Zagrebu beta — ili se pridružite kao partner dok širimo mrežu.',
     ctaPrimary: 'Pronađi uslugu',
     ctaSecondary: 'Postani partner',
 
@@ -108,12 +104,12 @@ const copy = {
     philoKicker: 'Our philosophy',
     philoHeadline: 'Every pet deserves\nextraordinary care.',
     philoBody: 'PetPark is not just a booking platform. It\'s an ecosystem built around one simple idea: that caring for animals should be as thoughtful, reliable, and beautiful as the love we give them.',
-    philoStat1: '4.9',
-    philoStat1Label: 'Average rating',
-    philoStat2: '500+',
-    philoStat2Label: 'Verified partners',
-    philoStat3: '6',
-    philoStat3Label: 'Cities in Croatia',
+    philoStat1: 'Zagreb',
+    philoStat1Label: 'Beta market',
+    philoStat2: 'Live',
+    philoStat2Label: 'Profile checks',
+    philoStat3: '0',
+    philoStat3Label: 'Fake KPI claims',
 
     svcKicker: 'Services',
     svc1Title: 'Boarding & sitting',
@@ -134,7 +130,7 @@ const copy = {
 
     sittersKicker: 'Featured partners',
     sittersHeadline: 'People owners trust.',
-    sittersSub: 'Profiles with outstanding reviews, clear descriptions, and verified details.',
+    sittersSub: 'Profiles are rendered from the live database, without invented counts.',
     sittersViewAll: 'View all',
     sittersViewProfile: 'View profile',
     sittersFallbackBio: 'A trusted sitter for dogs and cats in your city.',
@@ -145,7 +141,7 @@ const copy = {
     citiesCta: 'Explore',
 
     ctaHeadline: 'Ready for\nbetter care?',
-    ctaBody: 'Find a trusted sitter, groomer, or trainer in your city — or join a growing network of partners.',
+    ctaBody: 'Find a trusted sitter in Zagreb beta — or join as a partner while the network grows.',
     ctaPrimary: 'Find a service',
     ctaSecondary: 'Become a partner',
 
@@ -171,9 +167,8 @@ export function HomePageContent({
   featuredSitters: FeaturedSitter[];
   cities: City[];
 }) {
-  const { language } = useLanguage();
-  const locale = language === 'en' ? 'en' : 'hr';
-  const t = copy[locale];
+  const locale = 'hr';
+  const t = copy.hr;
 
   const services = [
     { title: t.svc1Title, body: t.svc1Body, ...servicesMeta[0] },
@@ -188,6 +183,7 @@ export function HomePageContent({
           ════════════════════════════════════════════ */}
       <HeroSection />
 
+      <div className="hidden md:block">
       {/* ════════════════════════════════════════════
           2. BRAND PHILOSOPHY
           ════════════════════════════════════════════ */}
@@ -237,13 +233,13 @@ export function HomePageContent({
               {/* Floating accent card */}
               <div className="absolute -bottom-6 -left-6 md:-left-10 bg-white dark:bg-card rounded-2xl p-5 shadow-xl border border-border/40 max-w-[220px]">
                 <div className="flex items-center gap-2 mb-2">
-                  <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
-                  <span className="text-2xl font-extrabold font-[var(--font-heading)]">4.9</span>
+                  <span className="text-amber-400">★</span>
+                  <span className="text-2xl font-extrabold font-[var(--font-heading)]">Beta</span>
                 </div>
                 <p className="text-sm text-muted-foreground leading-snug">
                   {locale === 'hr'
-                    ? 'Prosječna ocjena naših partnera'
-                    : 'Average rating of our partners'}
+                    ? 'Zagreb beta, bez izmišljenih KPI-ja'
+                    : 'Zagreb beta, no invented KPIs'}
                 </p>
               </div>
             </div>
@@ -269,7 +265,6 @@ export function HomePageContent({
                 title={svc.title}
                 body={svc.body}
                 cta={t.svcCta}
-                index={i}
               />
             ))}
           </div>
@@ -294,12 +289,12 @@ export function HomePageContent({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
             {t.trustItems.map((item, i) => {
-              const icons = [Shield, Star, Heart, Shield];
-              const Icon = icons[i % icons.length];
+              const icons = ['✓', '★', '♥', '✓'];
+              const icon = icons[i % icons.length];
               return (
                 <div key={item.title} className="text-center">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-warm-peach dark:bg-warm-orange/15 mb-5">
-                    <Icon className="h-5 w-5 text-warm-orange" />
+                    <span className="text-warm-orange">{icon}</span>
                   </div>
                   <h3 className="text-lg font-bold mb-2 font-[var(--font-heading)]">{item.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{item.body}</p>
@@ -330,7 +325,7 @@ export function HomePageContent({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
               {featuredSitters.slice(0, 6).map((sitter) => (
-                <Link key={sitter.id} href={`/sitter/${sitter.id}`} className="group">
+                <Link prefetch={false} key={sitter.id} href={`/sitter/${sitter.id}`} className="group">
                   <article className="bg-white dark:bg-card rounded-xl md:rounded-2xl border border-border/40 p-4 md:p-6 lg:p-7 cz-sitter-card transition-all duration-300 hover:shadow-xl hover:shadow-orange-100/30 dark:hover:shadow-black/20 hover:-translate-y-1">
                     <div className="flex items-center gap-4 mb-5">
                       <div className={`h-14 w-14 rounded-full bg-gradient-to-br ${sitter.gradient} text-white font-bold flex items-center justify-center text-xl shadow-lg shrink-0`}>
@@ -341,7 +336,7 @@ export function HomePageContent({
                           {sitter.name}
                         </h3>
                         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                          <MapPin className="h-3.5 w-3.5 shrink-0" />
+                          <span aria-hidden="true">•</span>
                           <span className="truncate">{sitter.city}</span>
                         </div>
                       </div>
@@ -354,7 +349,7 @@ export function HomePageContent({
                     <div className="flex items-center justify-between pt-5 border-t border-border/40">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                          <span className="text-amber-400">★</span>
                           <span className="font-semibold text-sm">{sitter.rating?.toFixed(1) || '—'}</span>
                           <span className="text-muted-foreground text-xs">({sitter.reviews || 0})</span>
                         </div>
@@ -366,7 +361,7 @@ export function HomePageContent({
                       </div>
                       <span className="text-sm font-semibold text-warm-orange inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         {t.sittersViewProfile}
-                        <ChevronRight className="h-4 w-4" />
+                        <span>→</span>
                       </span>
                     </div>
                   </article>
@@ -376,10 +371,10 @@ export function HomePageContent({
 
             {/* View all button */}
             <div className="mt-10 text-center">
-              <Link href="/pretraga">
+              <Link prefetch={false} href="/pretraga">
                 <Button variant="outline" className="rounded-full h-12 px-8">
                   {t.sittersViewAll}
-                  <ChevronRight className="ml-2 h-4 w-4" />
+                  <span className="ml-2">→</span>
                 </Button>
               </Link>
             </div>
@@ -426,7 +421,7 @@ export function HomePageContent({
                       {city.name}
                     </h3>
                     <span className="text-white/80 text-sm font-medium inline-flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {t.citiesCta} <ArrowRight className="h-3.5 w-3.5" />
+                      {t.citiesCta} <span>→</span>
                     </span>
                   </div>
                 </Link>
@@ -450,16 +445,16 @@ export function HomePageContent({
             {t.ctaBody}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/pretraga">
+            <Link prefetch={false} href="/pretraga">
               <Button
                 size="lg"
                 className="bg-white text-foreground hover:bg-white/90 h-14 px-10 rounded-full text-base font-bold shadow-2xl shadow-black/15"
               >
                 {t.ctaPrimary}
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <span className="ml-2">→</span>
               </Button>
             </Link>
-            <Link href="/registracija?role=sitter">
+            <Link prefetch={false} href="/registracija?role=sitter">
               <Button
                 size="lg"
                 variant="ghost"
@@ -471,6 +466,7 @@ export function HomePageContent({
           </div>
         </div>
       </section>
+      </div>
     </div>
   );
 }

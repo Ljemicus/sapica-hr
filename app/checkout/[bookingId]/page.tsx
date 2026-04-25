@@ -36,10 +36,10 @@ export default function CheckoutPage({
 
         const meRes = await fetch('/api/auth/me');
         const me = meRes.ok ? await meRes.json() : null;
-        if (me?.id && found.sitter_id === me.id) {
+        if (me?.id && found.sitter?.id === me.id) {
           setProviderPaymentReady(true);
-        } else if (found.sitter_id) {
-          const statusRes = await fetch(`/api/sitters/${found.sitter_id}`);
+        } else if (found.sitter?.id) {
+          const statusRes = await fetch(`/api/sitters/${found.sitter.id}`);
           const sitter = statusRes.ok ? await statusRes.json() : null;
           const isReady = Boolean(sitter?.stripe_onboarding_complete || sitter?.stripe_account_id || sitter?.verified_payment_provider);
           setProviderPaymentReady(isReady);

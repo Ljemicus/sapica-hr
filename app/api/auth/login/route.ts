@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import type { LoginSuccessResponse } from '@/lib/auth-responses';
-import { parseAuthRole } from '@/lib/auth';
+import { getPrimaryRole, normalizeRoles } from '@/lib/auth';
 import { getDefaultDashboardForEffectiveKind, getEffectiveUserKind } from '@/lib/effective-user-kind';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { dispatchAlert } from '@/lib/alerting';
@@ -13,7 +13,6 @@ export async function POST(request: Request) {
   const reqId = getRequestId(request);
   const log = createScopedLogger('auth.login', reqId);
   
-  // Rate limiting with Redis/Upstash
   const ip = getClientIdentifier(request);
   const rateLimitResult = await checkRateLimit(ip, RateLimits.login);
   if (!rateLimitResult.success) {
@@ -53,11 +52,13 @@ export async function POST(request: Request) {
     return apiError({ status: 401, code: 'INVALID_CREDENTIALS', message: 'Pogrešan email ili lozinka.' });
   }
 
-  const { data: profile } = await supabase
-    .from('users')
+  const { data: rolesData } = await supabase
+    .from('profile_roles')
     .select('role')
-    .eq('id', data.user.id)
-    .single();
+    .eq('profile_id', data.user.id);
+
+  const roles = normalizeRoles((rolesData ?? []).map((row: { role: string }) => row.role));
+  const role = getPrimaryRole(roles);
 
   const { data: publisherProfile } = await supabase
     .from('publisher_profiles')
@@ -65,9 +66,10 @@ export async function POST(request: Request) {
     .eq('user_id', data.user.id)
     .maybeSingle();
 
-  const role = parseAuthRole(profile?.role || data.user.user_metadata?.role);
   const effectiveKind = getEffectiveUserKind({ authRole: role, publisherType: publisherProfile?.type ?? null });
-  const defaultRedirect = getDefaultDashboardForEffectiveKind(effectiveKind);
+  const defaultRedirect = roles.length === 0
+    ? '/onboarding/profile'
+    : getDefaultDashboardForEffectiveKind(effectiveKind);
 
   const response: LoginSuccessResponse = { user: data.user, role, defaultRedirect };
   return NextResponse.json(response);

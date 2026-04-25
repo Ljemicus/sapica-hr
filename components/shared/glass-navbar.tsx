@@ -62,8 +62,6 @@ export function GlassNavbar({ className = '' }: GlassNavbarProps) {
     { href: '/pretraga', label: t('nav.find_sitter') },
     { href: '/njega', label: t('nav.grooming') },
     { href: '/dresura', label: t('nav.training') },
-    { href: '/veterinari', label: t('nav.vets') },
-    { href: '/udruge', label: t('nav.rescue') },
     { href: '/o-nama', label: t('nav.about') },
   ];
 
@@ -92,7 +90,7 @@ export function GlassNavbar({ className = '' }: GlassNavbarProps) {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link 
+          <Link prefetch={false}
             href="/" 
             className="flex items-center gap-2 font-extrabold text-xl group"
             aria-label={t('common.homepage')}
@@ -176,7 +174,7 @@ export function GlassNavbar({ className = '' }: GlassNavbarProps) {
                       const Icon = item.icon;
                       return (
                         <DropdownMenuItem key={item.href}>
-                          <Link href={item.href} className="cursor-pointer flex items-center">
+                          <Link prefetch={false} href={item.href} className="cursor-pointer flex items-center">
                             <Icon className="mr-2 h-4 w-4" />
                             {item.label}
                           </Link>
@@ -196,7 +194,7 @@ export function GlassNavbar({ className = '' }: GlassNavbarProps) {
               </>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href="/prijava">
+                <Link prefetch={false} href="/prijava">
                   <Button
                     variant="ghost"
                     className="rounded-full hover:bg-white/20 dark:hover:bg-white/10"
@@ -204,7 +202,7 @@ export function GlassNavbar({ className = '' }: GlassNavbarProps) {
                     {t('auth.sign_in')}
                   </Button>
                 </Link>
-                <Link href="/registracija">
+                <Link prefetch={false} href="/registracija">
                   <Button className="rounded-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white">
                     {t('auth.sign_up')}
                   </Button>

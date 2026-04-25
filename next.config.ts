@@ -1,13 +1,21 @@
 import type { NextConfig } from "next";
-import { withSentryConfig } from '@sentry/nextjs';
+
+const allowedStyleHashes = [
+  "'unsafe-hashes'",
+  "'sha256-t6oewASd7J1vBg5mQtX4hl8bg8FeegYFM3scKLIhYUc='",
+  "'sha256-LwoYSIU7H7ALhCK8JF+HKTq2AdcpkrZ9eK1pLP9iv6U='",
+  "'sha256-68ahHyH65aqS202beKyu22MkdAEr0fBCN3eHnbYX+wg='",
+  "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
+  "'sha256-CIxDM5jnsGiKqXs2v7NKCY5MzdR9gu6TtiMJrDw29AY='",
+];
 
 const csp = [
   "default-src 'self'",
   "base-uri 'self'",
   "frame-ancestors 'none'",
   "object-src 'none'",
-  "script-src 'self' 'unsafe-inline' https://plausible.io",
-  "style-src 'self' 'unsafe-inline'",
+  "script-src 'self' https://plausible.io",
+  ["style-src 'self'", ...allowedStyleHashes].join(' '),
   "img-src 'self' data: https: blob:",
   "font-src 'self' data:",
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://plausible.io https://api.resend.com https://api.stripe.com",
@@ -37,8 +45,6 @@ const nextConfig: NextConfig = {
         { key: 'X-Content-Type-Options', value: 'nosniff' },
         { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         { key: 'X-DNS-Prefetch-Control', value: 'on' },
-        { key: 'Link', value: '<https://hmtlcgjcxhjecsbmmxol.supabase.co>; rel=preconnect' },
-        { key: 'Link', value: '<https://res.cloudinary.com>; rel=preconnect' },
         { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
         { key: 'Content-Security-Policy', value: csp },
@@ -56,48 +62,8 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', '@radix-ui/react-icons'],
+    optimizeCss: true,
   },
 };
 
-const withSentry = withSentryConfig(nextConfig, {
-  // For all available options, see https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-
-  // Only print logs for uploading source maps in CI
-  silent: !process.env.CI,
-
-  // Upload a larger set of source maps for prettier stack traces (increases build time)
-  widenClientFileUpload: true,
-
-  // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers
-  tunnelRoute: "/monitoring",
-
-  // Source maps configuration
-  sourcemaps: {
-    disable: false,
-  },
-
-  // Enables automatic instrumentation of Vercel Cron Monitors
-  automaticVercelMonitors: true,
-
-  // Tree-shaking: Only include necessary Sentry features
-  // Disable features we don't use to reduce bundle size
-  bundleSizeOptimizations: {
-    // Disable if not using session replay
-    excludeReplayShadowDom: true,
-    excludeReplayIframe: true,
-    // Disable canvas recording (we don't use it)
-    excludeReplayWorker: true,
-  },
-
-  // Disable Sentry debug logging in production
-  debug: false,
-
-  // Tree-shake Sentry internals
-  // Only enable error monitoring, disable performance monitoring if not needed
-  // If you want performance monitoring, set this to true
-  disableLogger: true,
-});
-
-export default withSentry;
+export default nextConfig;

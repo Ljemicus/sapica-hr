@@ -41,7 +41,7 @@ export async function POST(request: Request) {
   const review = await createReview({
     booking_id: parsed.data.booking_id,
     reviewer_id: user.id,
-    reviewee_id: booking.sitter_id,
+    reviewee_id: booking.sitter?.id || '',
     rating: parsed.data.rating,
     comment: parsed.data.comment,
   });

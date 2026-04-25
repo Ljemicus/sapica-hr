@@ -29,7 +29,7 @@ export async function GET(
       return apiError({ status: 404, code: 'NOT_FOUND', message: 'Organizacija nije pronađena.' });
     }
 
-    const canAccess = user.role === 'admin' || organization.owner_user_id === user.id;
+    const canAccess = user.isAdmin || organization.owner_user_id === user.id;
     if (!canAccess) {
       return apiError({ status: 403, code: 'FORBIDDEN', message: 'Nemaš pristup ovom dokumentu.' });
     }

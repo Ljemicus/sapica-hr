@@ -4,7 +4,8 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { setSentryUser } from '@/lib/error-tracking';
-import type { User } from '@/lib/types';
+import type { UserRole } from '@/lib/types';
+import type { AuthUser } from '@/lib/auth';
 
 function isSupabaseConfiguredClient(): boolean {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -12,8 +13,22 @@ function isSupabaseConfiguredClient(): boolean {
   return !!(url && url.length > 0 && !url.includes('placeholder') && key && key.length > 0 && !key.includes('placeholder'));
 }
 
+interface ProfileRow {
+  id: string;
+  email: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  phone: string | null;
+  city: string | null;
+  created_at: string;
+}
+
+interface ProfileRoleRow {
+  role: string;
+}
+
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
   supabaseUser: SupabaseUser | null;
   session: Session | null;
   loading: boolean;
@@ -28,56 +43,75 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
+function isUserRole(value: unknown): value is UserRole {
+  return value === 'owner' || value === 'sitter' || value === 'admin';
+}
+
+function normalizeRoles(values: unknown[]): UserRole[] {
+  const roles = values.filter(isUserRole);
+  return Array.from(new Set(roles));
+}
+
+function getPrimaryRole(roles: UserRole[]): UserRole {
+  if (roles.includes('admin')) return 'admin';
+  if (roles.includes('sitter')) return 'sitter';
+  return 'owner';
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
-  const fetchUserProfile = useCallback(async (authUser: SupabaseUser): Promise<User | null> => {
-    const { data } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', authUser.id)
-      .single();
+  const fetchUserProfile = useCallback(async (authUser: SupabaseUser): Promise<AuthUser> => {
+    const [{ data: profileData }, { data: rolesData }] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('id, email, display_name, avatar_url, phone, city, created_at')
+        .eq('id', authUser.id)
+        .maybeSingle(),
+      supabase
+        .from('profile_roles')
+        .select('role')
+        .eq('profile_id', authUser.id),
+    ]);
 
-    let profile: User;
-    
-    if (data) {
-      profile = data as User;
-    } else {
-      const meta = authUser.user_metadata;
-      profile = {
-        id: authUser.id,
-        email: authUser.email || '',
-        name: meta?.name || meta?.full_name || authUser.email?.split('@')[0] || '',
-        role: meta?.role || 'owner',
-        avatar_url: meta?.avatar_url || null,
-        phone: null,
-        city: meta?.city || null,
-        created_at: authUser.created_at,
-      };
-    }
-    
-    // Set Sentry user context for error tracking
+    const roles = normalizeRoles(((rolesData ?? []) as ProfileRoleRow[]).map((row) => row.role));
+    const primaryRole = getPrimaryRole(roles);
+    const profile = profileData as ProfileRow | null;
+
+    const resolvedUser: AuthUser = {
+      id: authUser.id,
+      email: profile?.email || authUser.email || '',
+      name: profile?.display_name || authUser.user_metadata?.name || authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || '',
+      role: primaryRole,
+      roles,
+      isAdmin: roles.includes('admin'),
+      avatar_url: profile?.avatar_url || authUser.user_metadata?.avatar_url || null,
+      phone: profile?.phone || null,
+      city: profile?.city || authUser.user_metadata?.city || null,
+      created_at: profile?.created_at || authUser.created_at,
+      profileFound: Boolean(profile),
+      profileMissing: !profile || roles.length === 0,
+    };
+
     setSentryUser({
-      id: profile.id,
-      email: profile.email,
-      name: profile.name,
+      id: resolvedUser.id,
+      email: resolvedUser.email,
+      name: resolvedUser.name,
     });
-    
-    return profile;
+
+    return resolvedUser;
   }, [supabase]);
 
   useEffect(() => {
     if (!isSupabaseConfiguredClient()) {
-      // No Supabase configured — user stays null
       Promise.resolve().then(() => setLoading(false));
       return;
     }
 
-    // Supabase auth mode
     supabase.auth.getSession().then(async ({ data: { session: s } }) => {
       setSession(s);
       setSupabaseUser(s?.user ?? null);
@@ -91,13 +125,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, s) => {
+      async (_event, s) => {
         setSession(s);
         setSupabaseUser(s?.user ?? null);
         if (s?.user) {
           const profile = await fetchUserProfile(s.user);
           setUser(profile);
         } else {
+          setSentryUser(null);
           setUser(null);
         }
         setLoading(false);
@@ -109,11 +144,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = useCallback(async () => {
     if (isSupabaseConfiguredClient()) {
-      // Call server-side logout to clear server session cookies
       await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
       await supabase.auth.signOut();
     }
-    // Clear Sentry user context
     setSentryUser(null);
     setUser(null);
     setSupabaseUser(null);

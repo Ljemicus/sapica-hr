@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/public';
 import { isSupabaseConfigured } from './helpers';
 import type { BlogComment } from '@/lib/types';
 
@@ -44,7 +45,7 @@ export async function getArticleComments(articleSlug: string): Promise<BlogComme
   }
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from('blog_comments')
       .select('id, article_slug, user_id, content, created_at, updated_at, user:users!user_id(id, name, avatar_url)')
@@ -67,7 +68,7 @@ export async function getArticleCommentById(commentId: string): Promise<BlogComm
   }
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from('blog_comments')
       .select('id, article_slug, user_id, content, created_at, updated_at, user:users!user_id(id, name, avatar_url)')

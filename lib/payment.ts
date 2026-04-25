@@ -47,21 +47,21 @@ export interface SitterData {
 
 export async function createCheckoutSession(
   bookingId: string,
-  sellerPrice: number, // in cents — sellerova cijena (npr. 100 EUR = 10000)
+  sellerPriceInCents: number, // seller cijena u centima (npr. 100 EUR = 10000)
   currency: string,
-  sitterStripeAccountId: string,
+  providerStripeAccountId: string,
   serviceName?: string,
   origin?: string
 ): Promise<CheckoutSessionResult> {
   const stripe = getStripe();
   
   // Surcharge model: korisnik plaća 110%, seller dobije 100%
-  const customerPrice = Math.round(sellerPrice * (1 + PLATFORMA_FEE)); // 110% od seller cijene
-  const sellerAmount = sellerPrice; // 100% ide selleru
+  const customerPriceInCents = Math.round(sellerPriceInCents * (1 + PLATFORMA_FEE));
+  const sellerAmountInCents = sellerPriceInCents;
 
   const baseUrl = origin || process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await stripe.checkout.sessions.create({ // idempotencyKey: `checkout-${bookingId}`
     mode: 'payment',
     line_items: [
       {
@@ -71,7 +71,7 @@ export async function createCheckoutSession(
             name: serviceName || 'PetPark — Usluga za ljubimce',
             description: `Rezervacija #${bookingId.slice(0, 8)}`,
           },
-          unit_amount: customerPrice, // korisnik plaća 110%
+          unit_amount: customerPriceInCents,
         },
         quantity: 1,
       },
@@ -79,15 +79,15 @@ export async function createCheckoutSession(
     payment_intent_data: {
       // BEZ application_fee — cijela razlika ostaje na platform accountu
       transfer_data: {
-        destination: sitterStripeAccountId,
-        amount: sellerAmount, // seller dobije 100%
+        destination: providerStripeAccountId,
+        amount: sellerAmountInCents,
       },
       metadata: {
         bookingId,
-        sitterStripeAccountId,
-        sellerPrice: sellerPrice.toString(),
-        customerPrice: customerPrice.toString(),
-        platformFee: (customerPrice - sellerAmount).toString(),
+        providerStripeAccountId,
+        sellerPrice: sellerPriceInCents.toString(),
+        customerPrice: customerPriceInCents.toString(),
+        platformFee: (customerPriceInCents - sellerAmountInCents).toString(),
       },
     },
     metadata: {
@@ -95,6 +95,8 @@ export async function createCheckoutSession(
     },
     success_url: `${baseUrl}/checkout/${bookingId}/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/checkout/${bookingId}/cancel`,
+  }, {
+    idempotencyKey: `checkout-${bookingId}`,
   });
 
   return {
@@ -103,12 +105,16 @@ export async function createCheckoutSession(
   };
 }
 
+function getDayBucket(): string {
+  return Math.floor(Date.now() / (1000 * 60 * 60 * 24)).toString();
+}
+
 export async function createConnectAccount(
   sitterData: SitterData
 ): Promise<ConnectAccountResult> {
   const stripe = getStripe();
 
-  const account = await stripe.accounts.create({
+  const account = await stripe.accounts.create({ // idempotencyKey below
     type: 'express',
     country: sitterData.country || 'HR',
     email: sitterData.email,
@@ -120,15 +126,20 @@ export async function createConnectAccount(
     metadata: {
       petpark_user_id: sitterData.id,
     },
+  }, {
+    idempotencyKey: `account-${sitterData.id}`,
   });
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+  const dayBucket = getDayBucket();
 
-  const accountLink = await stripe.accountLinks.create({
+  const accountLink = await stripe.accountLinks.create({ // idempotencyKey below
     account: account.id,
     refresh_url: `${baseUrl}/dashboard/sitter?stripe_refresh=true`,
     return_url: `${baseUrl}/dashboard/sitter?stripe_onboarding=complete`,
     type: 'account_onboarding',
+  }, {
+    idempotencyKey: `acctlink-${account.id}-${dayBucket}`,
   });
 
   return {
@@ -142,12 +153,15 @@ export async function createAccountLink(
 ): Promise<string> {
   const stripe = getStripe();
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
+  const dayBucket = getDayBucket();
 
-  const accountLink = await stripe.accountLinks.create({
+  const accountLink = await stripe.accountLinks.create({ // idempotencyKey below
     account: stripeAccountId,
     refresh_url: `${baseUrl}/dashboard/sitter?stripe_refresh=true`,
     return_url: `${baseUrl}/dashboard/sitter?stripe_onboarding=complete`,
     type: 'account_onboarding',
+  }, {
+    idempotencyKey: `acctlink-${stripeAccountId}-${dayBucket}`,
   });
 
   return accountLink.url;
@@ -183,7 +197,9 @@ export async function createRefund(
     params.amount = amount;
   }
 
-  const refund = await stripe.refunds.create(params);
+  const refund = await stripe.refunds.create(params, {
+    idempotencyKey: `refund-${paymentIntentId}`,
+  });
   return { refundId: refund.id };
 }
 
@@ -225,7 +241,10 @@ export async function createDashboardLink(
 ): Promise<string> {
   const stripe = getStripe();
 
-  const loginLink = await stripe.accounts.createLoginLink(stripeAccountId);
+  const dayBucket = getDayBucket();
+  const loginLink = await stripe.accounts.createLoginLink(stripeAccountId, {}, {
+    idempotencyKey: `loginlink-${stripeAccountId}-${dayBucket}`,
+  });
   return loginLink.url;
 }
 

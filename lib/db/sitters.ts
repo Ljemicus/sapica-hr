@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/public';
 import { isSupabaseConfigured } from './helpers';
 import type { SitterProfile, User, ServiceType } from '@/lib/types';
 
@@ -52,7 +52,7 @@ export async function getSitters(
   }
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     let query = supabase
       .from('sitter_profiles')
       .select('user_id, bio, experience_years, services, prices, verified, superhost, response_time, rating_avg, review_count, location_lat, location_lng, city, photos, created_at, user:users!user_id(id, email, name, role, avatar_url, phone, city, created_at)')
@@ -119,7 +119,7 @@ export async function getSitter(
   }
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from('sitter_profiles')
       .select('user_id, bio, experience_years, services, prices, verified, superhost, response_time, rating_avg, review_count, location_lat, location_lng, city, photos, created_at, user:users!user_id(id, email, name, role, avatar_url, phone, city, created_at)')

@@ -28,10 +28,8 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  // Refresh the session (important for token refresh)
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Protected routes
   const protectedPaths = ['/dashboard', '/poruke', '/admin', '/omiljeni', '/onboarding'];
   const isProtected = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)
@@ -45,20 +43,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Admin route protection
-  if (request.nextUrl.pathname.startsWith('/admin') && user) {
-    const { data: profile } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    if (profile?.role !== 'admin') {
-      const url = request.nextUrl.clone();
-      url.pathname = '/';
-      return NextResponse.redirect(url);
-    }
-  }
-
+  // Middleware does not decide admin role truth anymore.
+  // `/admin/*` authorization is delegated to server helpers that read `profile_roles` canonically.
   return supabaseResponse;
 }

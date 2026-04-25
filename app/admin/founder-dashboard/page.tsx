@@ -42,7 +42,8 @@ function getPriorityApplications(apps: ProviderApplication[]) {
 export default async function FounderDashboardPage() {
   const user = await getAuthUser();
   if (!user) redirect('/prijava?redirect=%2Fadmin%2Ffounder-dashboard');
-  if (user.role !== 'admin') redirect('/');
+  if (user.profileMissing) redirect('/onboarding/profile');
+  if (!user.isAdmin) redirect('/');
 
   const [users, bookings, providerApplications, pendingVerifications, kpi, ops, rescueOrganizations, rescueStats, providerIntegrityIssues] = await Promise.all([
     getUsers('admin-list'),

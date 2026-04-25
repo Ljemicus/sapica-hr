@@ -1,15 +1,12 @@
-import { SocialFeedContent } from '@/components/social/social-feed-content';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+import { UskoroState } from '@/components/shared/uskoro-state';
 
 export const metadata: Metadata = {
-  title: 'Zajednica | PetPark',
-  description: 'Pridružite se zajednici ljubitelja životinja. Dijelite fotografije, sudjelujte u izazovima i pronađite nove prijatelje za svog ljubimca.',
+  title: { absolute: 'Feed zajednice uskoro | PetPark' },
+  description: 'Feed je privremeno skriven dok social backend nije spreman.',
+  robots: { index: false, follow: false },
 };
 
-export default function FeedPage() {
-  return (
-    <main className="min-h-screen bg-background">
-      <SocialFeedContent />
-    </main>
-  );
+export default function Page() {
+  return <UskoroState title="Feed zajednice uskoro" description="Feed je privremeno skriven dok social backend nije spreman." />;
 }

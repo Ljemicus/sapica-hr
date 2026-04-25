@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
+import { UskoroState } from '@/components/shared/uskoro-state';
 
-import { buildForumMetadata } from '../page';
-import ForumPage from '../page';
+export const metadata: Metadata = {
+  title: { absolute: 'Forum coming soon | PetPark' },
+  description: 'The forum is temporarily hidden until backend and moderation are ready.',
+  robots: { index: false, follow: false },
+};
 
-export const metadata: Metadata = buildForumMetadata('en');
-
-export default ForumPage;
+export default function Page() {
+  return <UskoroState title="Forum coming soon" description="The forum is temporarily hidden until backend and moderation are ready." />;
+}

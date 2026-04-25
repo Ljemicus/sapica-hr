@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -90,15 +89,15 @@
   --sidebar-border: #E5E4DF;
   --sidebar-ring: #5A7D5A;
   /* Warm palette tokens - mapped to sage */
-  --warm-orange: #5A7D5A;
+  --warm-orange: #476947;
   --warm-teal: #6B8E6B;
   --warm-cream: #FAF9F6;
   --warm-peach: #E8E6E0;
   --warm-coral: #C45B4A;
   --warm-sage: #5A7D5A;
-  /* Original logo colors - do not change */
-  --logo-orange: #FFB347;
-  --logo-teal: #14b8a6;
+  /* Accessible logo colors for light backgrounds */
+  --logo-orange: #B45309;
+  --logo-teal: #0F766E;
   /* Premium tokens */
   --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.06);
@@ -144,9 +143,14 @@
   --warm-peach: oklch(0.35 0.04 55);
   --warm-coral: oklch(0.72 0.15 30);
   --warm-sage: oklch(0.55 0.05 155);
-  /* Original logo colors - do not change */
-  --logo-orange: #FFB347;
-  --logo-teal: #14b8a6;
+  /* Accessible logo colors for dark backgrounds */
+  --logo-orange: #FDBA74;
+  --logo-teal: #5EEAD4;
+}
+
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
 }
 
 @layer base {
@@ -171,10 +175,32 @@
 
 /* ── Logo Brand Colors ── */
 .text-logo-orange {
-  color: #FFB347;
+  color: var(--logo-orange);
 }
 .text-logo-teal {
-  color: #14b8a6;
+  color: var(--logo-teal);
+}
+
+/* ── A11y contrast overrides for Tailwind brand utilities on cream backgrounds ── */
+.text-orange-500,
+.text-orange-600,
+.text-orange-700 {
+  color: #7C2D12;
+}
+.text-red-500 {
+  color: #B91C1C;
+}
+.bg-orange-500 {
+  background-color: #C2410C;
+}
+.hover\:bg-orange-600:hover {
+  background-color: #9A3412;
+}
+.hover\:text-orange-500:hover {
+  color: #C2410C;
+}
+.hover\:text-red-500:hover {
+  color: #B91C1C;
 }
 
 /* ── Custom Animations ── */
@@ -503,6 +529,24 @@ textarea:focus {
 @media (min-width: 768px) {
   .has-bottom-nav {
     padding-bottom: 0;
+  }
+}
+
+/* Keep mobile public-route LCP text paint immediate; decorative entrance animations can wait for desktop. */
+@media (max-width: 767px) {
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-float,
+  .animate-slide-in-left,
+  .animate-slide-in-right,
+  .animate-scale-in,
+  .animate-gradient,
+  .animate-count-up,
+  .animate-shimmer,
+  .animate-slide-up {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 

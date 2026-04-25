@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { getArticles } from '@/lib/db/content';
 import { BlogContent } from './blog-content';
-import type { BlogCategory } from '@/lib/types';
 
 // ISR: Revalidate every 1 hour (3600 seconds)
 export const revalidate = 3600;
@@ -19,13 +18,8 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://petpark.hr/blog' },
 };
 
-interface BlogPageProps {
-  searchParams: Promise<{ category?: string }>;
-}
+export default async function BlogPage() {
+  const articles = await getArticles();
 
-export default async function BlogPage({ searchParams }: BlogPageProps) {
-  const params = await searchParams;
-  const articles = await getArticles(params.category as BlogCategory | undefined);
-
-  return <BlogContent articles={articles} initialCategory={params.category} />;
+  return <BlogContent articles={articles} />;
 }

@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { robotsMeta, shouldIndexSitter } from '@/lib/seo/indexability';
 import type { SitterProfile } from '@/lib/types';
-import { getProviderSitterById } from '@/lib/db/provider-sitters';
-import { SitterProfileLoader } from './sitter-profile-loader';
+import { getProviderSitterAvailability, getProviderSitterById, getProviderSitterReviews } from '@/lib/db/provider-sitters';
+import { SitterProfileContent } from './sitter-profile-content';
+
+export const revalidate = 60;
 
 interface SitterPageProps {
   params: Promise<{ id: string }>;
@@ -56,6 +58,10 @@ export async function generateMetadata({ params }: SitterPageProps): Promise<Met
 export default async function SitterPage({ params }: SitterPageProps) {
   const { id } = await params;
   const profile = await createSitterShell(id);
+  const [reviews, availability] = await Promise.all([
+    getProviderSitterReviews(id),
+    getProviderSitterAvailability(id),
+  ]);
 
   return (
     <>
@@ -63,7 +69,13 @@ export default async function SitterPage({ params }: SitterPageProps) {
         { label: 'Pretraga sittera', href: '/pretraga' },
         { label: profile.user.name, href: `/sitter/${id}` },
       ]} />
-      <SitterProfileLoader id={id} initialProfile={profile} />
+      <SitterProfileContent
+        profile={profile}
+        reviews={reviews}
+        availability={availability}
+        bookingPets={[]}
+        bookingUserId={null}
+      />
     </>
   );
 }

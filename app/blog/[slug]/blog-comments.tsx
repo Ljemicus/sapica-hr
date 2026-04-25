@@ -345,7 +345,7 @@ export function BlogComments({ articleSlug, initialComments, currentUser }: Blog
                   Prijavite se i uključite u raspravu ispod članka.
                 </p>
               </div>
-              <Link href={`/prijava?redirect=${encodeURIComponent(`/blog/${articleSlug}`)}`}>
+              <Link prefetch={false} href={`/prijava?redirect=${encodeURIComponent(`/blog/${articleSlug}`)}`}>
                 <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-5">
                   Prijava
                 </Button>

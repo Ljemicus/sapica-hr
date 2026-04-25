@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { Suspense, useCallback } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import type { Language } from '@/lib/i18n';
 
 const languages: Language[] = ['hr', 'en'];
 
-export function LanguageSwitcher() {
+function LanguageSwitcherInner() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -57,5 +57,13 @@ export function LanguageSwitcher() {
         })}
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+export function LanguageSwitcher() {
+  return (
+    <Suspense fallback={null}>
+      <LanguageSwitcherInner />
+    </Suspense>
   );
 }

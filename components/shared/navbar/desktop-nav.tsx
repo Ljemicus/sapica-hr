@@ -20,7 +20,7 @@ export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; use
   return (
     <nav className="hidden md:flex items-center gap-4" aria-label={t('common.main_navigation')}>
       {desktopLinks.slice(0, 1).map((item) => (
-        <Link key={item.href} href={item.href} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-accent">
+        <Link prefetch={false} key={item.href} href={item.href} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-accent">
           {item.label}
         </Link>
       ))}
@@ -35,7 +35,7 @@ export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; use
             return (
               <div key={item.href}>
                 {item.separatorBefore ? <DropdownMenuSeparator /> : null}
-                <DropdownMenuItem render={<Link href={item.href} />} className={`cursor-pointer rounded-lg ${item.className || ''}`}>
+                <DropdownMenuItem render={<Link prefetch={false} href={item.href} />} className={`cursor-pointer rounded-lg ${item.className || ''}`}>
                   {Icon ? <Icon className="mr-2 h-4 w-4" /> : null}
                   {item.label}
                   {item.demo ? <Badge variant="secondary" className="ml-auto text-[10px] px-1.5 py-0 bg-amber-50 text-amber-600 border-amber-200">Demo</Badge> : null}
@@ -49,7 +49,7 @@ export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; use
       {desktopLinks.slice(1).map((item) => {
         const Icon = item.icon;
         return (
-          <Link key={item.href} href={item.href} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent">
+          <Link prefetch={false} key={item.href} href={item.href} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-accent">
             {Icon ? <Icon className="h-4 w-4" /> : null}
             {item.label}
           </Link>
@@ -59,9 +59,10 @@ export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; use
       {/* Udomljavanje - između Postani sitter i Izgubljeni */}
       {(() => {
         const adoptionItem = getAdoptionLink(t, language);
+        if (!adoptionItem) return null;
         const Icon = adoptionItem.icon;
         return (
-          <Link 
+          <Link prefetch={false}
             href={adoptionItem.href} 
             className="text-sm font-medium text-pink-500 hover:text-pink-600 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-pink-50 font-semibold"
           >
@@ -76,7 +77,7 @@ export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; use
         const lostItem = getLostPetsLink(t, language);
         const Icon = lostItem.icon;
         return (
-          <Link 
+          <Link prefetch={false}
             href={lostItem.href} 
             className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-red-50"
           >
@@ -100,7 +101,7 @@ export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; use
             const Icon = item.icon;
             const rendered = item.external
               ? <a href={item.href} target="_blank" rel="noopener noreferrer" />
-              : <Link href={item.href} />;
+              : <Link prefetch={false} href={item.href} />;
 
             return (
               <div key={item.href}>
@@ -116,7 +117,7 @@ export function DesktopNav({ t, user, language = 'hr' }: { t: TranslationFn; use
       </DropdownMenu>
 
       {desktopLinks.slice(7).map((item) => (
-        <Link key={item.href} href={item.href} className={item.className || ''}>
+        <Link prefetch={false} key={item.href} href={item.href} className={item.className || ''}>
           {item.label}
         </Link>
       ))}

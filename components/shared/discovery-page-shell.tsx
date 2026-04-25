@@ -18,6 +18,7 @@ export interface DiscoveryPageShellProps {
     description: string;
     items: InternalLinkItem[];
     ctaLabel?: string;
+    className?: string;
   };
   afterContent?: ReactNode;
 }
@@ -44,6 +45,7 @@ export function DiscoveryPageShell({
       />
       {children}
       {internalLinks ? (
+        <div className={internalLinks.className}>
         <InternalLinkSection
           eyebrow={internalLinks.eyebrow}
           title={internalLinks.title}
@@ -51,6 +53,7 @@ export function DiscoveryPageShell({
           items={internalLinks.items}
           ctaLabel={internalLinks.ctaLabel}
         />
+        </div>
       ) : null}
       {afterContent}
     </PublicPageShell>

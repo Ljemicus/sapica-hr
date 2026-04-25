@@ -14,8 +14,12 @@ export default async function MarketingAdminPage() {
   if (!user) {
     redirect('/prijava?redirect=%2Fadmin%2Fmarketing');
   }
-  
-  if (user.role !== 'admin') {
+
+  if (user.profileMissing) {
+    redirect('/onboarding/profile');
+  }
+
+  if (!user.isAdmin) {
     redirect('/');
   }
 

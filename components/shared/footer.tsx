@@ -161,12 +161,8 @@ export function Footer() {
     const localizedRoutes: Record<string, string> = {
       '/njega': '/njega/en',
       '/dresura': '/dresura/en',
-      '/veterinari': '/veterinari/en',
-      '/dog-friendly': '/dog-friendly/en',
-      '/udomljavanje': '/udomljavanje/en',
       '/izgubljeni': '/izgubljeni/en',
       '/uzgajivacnice': '/uzgajivacnice/en',
-      '/forum': '/forum/en',
     };
 
     return localizedRoutes[href] ?? href;
@@ -204,13 +200,13 @@ export function Footer() {
         <div className="container mx-auto px-4 py-14 relative">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
             <div className="lg:col-span-2">
-              <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl text-white mb-4 group">
+              <Link prefetch={false} href="/" className="flex items-center gap-2.5 font-extrabold text-xl text-white mb-4 group">
                 <PawLogo className="h-7 w-7 text-warm-orange group-hover:scale-110 transition-transform duration-300" />
                 <span translate="no">
                   <span className="text-logo-orange">Pet</span><span className="text-logo-teal">Park</span>
                 </span>
               </Link>
-              <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-md">{t('footer.tagline')}</p>
+              <p className="hidden md:block text-sm text-gray-400 leading-relaxed mb-6 max-w-md">{t('footer.tagline')}</p>
               
               <FooterNewsletter />
               
@@ -253,33 +249,27 @@ export function Footer() {
             <div>
               <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.services')}</h3>
               <ul className="space-y-3 text-sm">
-                <li><Link href={language === 'en' ? '/pretraga/en' : '/pretraga'} className="hover:text-orange-400 transition-colors">{t('footer.find_sitter')}</Link></li>
-                <li><Link href={localizedHref('/njega')} className="hover:text-orange-400 transition-colors">{t('footer.grooming')}</Link></li>
-                <li><Link href={localizedHref('/dresura')} className="hover:text-warm-orange transition-colors">{t('footer.training')}</Link></li>
-                <li><Link href={localizedHref('/veterinari')} className="hover:text-warm-orange transition-colors">{t('footer.veterinarians')}</Link></li>
-                <li><Link href="/postani-sitter" className="hover:text-teal-400 transition-colors">{t('footer.become_sitter')}</Link></li>
-                <li><Link href="/hitno" className="hover:text-red-400 transition-colors font-medium">{t('footer.emergency')}</Link></li>
+                <li><Link prefetch={false} href={language === 'en' ? '/pretraga/en' : '/pretraga'} className="hover:text-orange-400 transition-colors">{t('footer.find_sitter')}</Link></li>
+                <li><Link prefetch={false} href={localizedHref('/njega')} className="hover:text-orange-400 transition-colors">{t('footer.grooming')}</Link></li>
+                <li><Link prefetch={false} href={localizedHref('/dresura')} className="hover:text-warm-orange transition-colors">{t('footer.training')}</Link></li>
+                <li><Link prefetch={false} href="/postani-sitter" className="hover:text-teal-400 transition-colors">{t('footer.become_sitter')}</Link></li>
+                <li><Link prefetch={false} href="/hitno" className="hover:text-red-400 transition-colors font-medium">{t('footer.emergency')}</Link></li>
               </ul>
 
               <h4 className="font-semibold text-white mt-6 mb-3 text-xs uppercase tracking-wider">{t('footer.popular_cities')}</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href={language === 'en' ? '/cuvanje-pasa-zagreb/en' : '/cuvanje-pasa-zagreb'} className="hover:text-warm-orange transition-colors">{language === 'en' ? 'Dog sitting Zagreb' : 'Čuvanje pasa Zagreb'}</Link></li>
-                <li><Link href={language === 'en' ? '/cuvanje-pasa-split/en' : '/cuvanje-pasa-split'} className="hover:text-warm-orange transition-colors">{language === 'en' ? 'Dog sitting Split' : 'Čuvanje pasa Split'}</Link></li>
-                <li><Link href={language === 'en' ? '/cuvanje-pasa-rijeka/en' : '/cuvanje-pasa-rijeka'} className="hover:text-warm-orange transition-colors">{language === 'en' ? 'Dog sitting Rijeka' : 'Čuvanje pasa Rijeka'}</Link></li>
-                <li><Link href={language === 'en' ? '/grooming-zagreb/en' : '/grooming-zagreb'} className="hover:text-pink-400 transition-colors">{language === 'en' ? 'Grooming Zagreb' : 'Grooming Zagreb'}</Link></li>
+                <li><Link prefetch={false} href={language === 'en' ? '/cuvanje-pasa-zagreb/en' : '/cuvanje-pasa-zagreb'} className="hover:text-warm-orange transition-colors">{language === 'en' ? 'Dog sitting Zagreb' : 'Čuvanje pasa Zagreb'}</Link></li>
+                <li><Link prefetch={false} href={language === 'en' ? '/cuvanje-pasa-split/en' : '/cuvanje-pasa-split'} className="hover:text-warm-orange transition-colors">{language === 'en' ? 'Dog sitting Split' : 'Čuvanje pasa Split'}</Link></li>
+                <li><Link prefetch={false} href={language === 'en' ? '/cuvanje-pasa-rijeka/en' : '/cuvanje-pasa-rijeka'} className="hover:text-warm-orange transition-colors">{language === 'en' ? 'Dog sitting Rijeka' : 'Čuvanje pasa Rijeka'}</Link></li>
+                <li><Link prefetch={false} href={language === 'en' ? '/grooming-zagreb/en' : '/grooming-zagreb'} className="hover:text-pink-400 transition-colors">{language === 'en' ? 'Grooming Zagreb' : 'Grooming Zagreb'}</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('footer.explore')}</h3>
               <ul className="space-y-3 text-sm">
-                <li><Link href="/blog" className="hover:text-warm-orange transition-colors">{t('nav.blog')}</Link></li>
-                <li><Link href={localizedHref('/forum')} className="hover:text-warm-orange transition-colors">{t('nav.forum')}</Link></li>
-                <li><Link href="/udruge" className="hover:text-teal-400 transition-colors">{t('footer.rescue_orgs') || 'Udruge'}</Link></li>
-                <li><Link href="/apelacije" className="hover:text-teal-400 transition-colors">{t('footer.appeals') || 'Apelacije'}</Link></li>
-                <li><Link href={localizedHref('/dog-friendly')} className="hover:text-green-400 transition-colors">{t('footer.dog_friendly')}</Link></li>
-                <li><Link href={localizedHref('/udomljavanje')} className="hover:text-pink-400 transition-colors">{t('footer.adoption')}</Link></li>
-                <li><Link href={localizedHref('/izgubljeni')} className="hover:text-red-400 transition-colors">{t('footer.lost_pets')}</Link></li>
-                <li><Link href={localizedHref('/uzgajivacnice')} className="hover:text-warm-orange transition-colors">{t('footer.breeders')}</Link></li>
+                <li><Link prefetch={false} href="/blog" className="hover:text-warm-orange transition-colors">{t('nav.blog')}</Link></li>
+                <li><Link prefetch={false} href={localizedHref('/izgubljeni')} className="hover:text-red-400 transition-colors">{t('footer.lost_pets')}</Link></li>
+                <li><Link prefetch={false} href={localizedHref('/uzgajivacnice')} className="hover:text-warm-orange transition-colors">{t('footer.breeders')}</Link></li>
               </ul>
             </div>
             <div>
@@ -295,16 +285,16 @@ export function Footer() {
                 </li>
               </ul>
               <div className="mt-6 space-y-2 text-sm">
-                <Link href="/o-nama" className="block hover:text-warm-orange transition-colors">{t('footer.about')}</Link>
+                <Link prefetch={false} href="/o-nama" className="block hover:text-warm-orange transition-colors">{t('footer.about')}</Link>
               </div>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
             <p>{t('footer.rights')}</p>
             <div className="flex items-center gap-4 text-xs">
-              <Link href="/privatnost" className="hover:text-warm-orange transition-colors">{t('footer.privacy')}</Link>
-              <Link href="/uvjeti" className="hover:text-warm-orange transition-colors">{t('footer.terms')}</Link>
-              <Link href="/kontakt" className="hover:text-warm-orange transition-colors">{t('footer.contact')}</Link>
+              <Link prefetch={false} href="/privatnost" className="hover:text-warm-orange transition-colors">{t('footer.privacy')}</Link>
+              <Link prefetch={false} href="/uvjeti" className="hover:text-warm-orange transition-colors">{t('footer.terms')}</Link>
+              <Link prefetch={false} href="/kontakt" className="hover:text-warm-orange transition-colors">{t('footer.contact')}</Link>
               <CookieSettingsButton />
             </div>
           </div>

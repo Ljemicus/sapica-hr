@@ -39,7 +39,7 @@ export function DesktopActions({ t, user, loading, signOut, pendingRescueCount =
       
       {/* Admin notification badge */}
       {user?.role === 'admin' && pendingRescueCount > 0 && (
-        <Link href="/admin/founder-dashboard" className="relative">
+        <Link prefetch={false} href="/admin/founder-dashboard" className="relative">
           <Button 
             variant="ghost" 
             size="icon" 
@@ -61,7 +61,7 @@ export function DesktopActions({ t, user, loading, signOut, pendingRescueCount =
       {actions.map((action) => {
         const Icon = action.icon;
         return (
-          <Link key={action.href} href={action.href}>
+          <Link prefetch={false} key={action.href} href={action.href}>
             <Button variant="ghost" size="icon" className="hover:bg-accent rounded-xl" aria-label={action.label}>
               <Icon className="h-5 w-5 text-orange-500" />
             </Button>
@@ -99,7 +99,7 @@ export function DesktopActions({ t, user, loading, signOut, pendingRescueCount =
                 return (
                   <div key={item.href}>
                     {item.separatorBefore ? <DropdownMenuSeparator /> : null}
-                    <DropdownMenuItem render={<Link href={item.href} />} className={`cursor-pointer rounded-lg ${item.className || ''}`}>
+                    <DropdownMenuItem render={<Link prefetch={false} href={item.href} />} className={`cursor-pointer rounded-lg ${item.className || ''}`}>
                       {Icon ? <Icon className="mr-2 h-4 w-4" /> : null}
                       {item.label}
                       {/* Show badge for admin founder dashboard link */}
@@ -122,10 +122,10 @@ export function DesktopActions({ t, user, loading, signOut, pendingRescueCount =
         </div>
       ) : (
         <div className="flex items-center gap-2">
-          <Link href="/prijava">
+          <Link prefetch={false} href="/prijava">
             <Button variant="ghost" size="sm" className="hover:bg-accent rounded-lg">{t('nav.login')}</Button>
           </Link>
-          <Link href="/registracija">
+          <Link prefetch={false} href="/registracija">
             <Button size="sm" className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500 shadow-md shadow-orange-200/50 dark:shadow-orange-900/30 btn-hover rounded-lg font-semibold">{t('nav.register')}</Button>
           </Link>
         </div>

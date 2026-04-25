@@ -24,7 +24,7 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
     }
 
     const isOwner = user.id === data.user_id;
-    const isAdmin = user.role === 'admin';
+    const isAdmin = user.isAdmin;
     if (!isOwner && !isAdmin) {
       return apiError({ status: 403, code: 'FORBIDDEN', message: 'Kontakt nije javno dostupan.' });
     }

@@ -19,29 +19,17 @@ function buildSearchMetadata(locale: SearchPageLocale): Metadata {
   };
 }
 
-// ISR: Revalidate every 1 hour (3600 seconds)
-export const revalidate = 3600;
+// ISR: search inventory changes often, but should still cache between hits.
+export const revalidate = 60;
 
 export const metadata: Metadata = buildSearchMetadata('hr');
 
-interface SearchPageProps {
-  searchParams: Promise<{
-    category?: string;
-    city?: string;
-    service?: string;
-    min_price?: string;
-    max_price?: string;
-    min_rating?: string;
-    sort?: string;
-  }>;
+export async function SearchPageView({ locale }: { locale: SearchPageLocale }) {
+  return <SearchPageShell locale={locale} />;
 }
 
-export async function SearchPageView({ searchParams, locale }: SearchPageProps & { locale: SearchPageLocale }) {
-  return <SearchPageShell searchParams={searchParams} locale={locale} />;
-}
-
-export default function SearchPage(props: SearchPageProps) {
-  return <SearchPageView {...props} locale="hr" />;
+export default function SearchPage() {
+  return <SearchPageView locale="hr" />;
 }
 
 export { buildSearchMetadata };

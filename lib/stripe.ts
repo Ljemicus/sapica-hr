@@ -25,6 +25,7 @@ export function getStripe(): Stripe {
 interface CreatePaymentIntentOptions {
   amount: number; // in cents
   currency: string;
+  bookingId?: string;
   metadata?: Record<string, string>;
 }
 
@@ -41,11 +42,14 @@ export async function createPaymentIntent(
   try {
     const stripe = getStripe();
     
-    const paymentIntent = await stripe.paymentIntents.create({
+    const bookingId = options.bookingId || options.metadata?.bookingId || options.metadata?.booking_id || 'unknown';
+    const paymentIntent = await stripe.paymentIntents.create({ // idempotencyKey below
       amount: options.amount,
       currency: options.currency,
       metadata: options.metadata,
       automatic_payment_methods: { enabled: true },
+    }, {
+      idempotencyKey: `pi-${bookingId}`,
     });
 
     return {

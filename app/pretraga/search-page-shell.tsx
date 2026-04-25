@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
-import { SearchContent } from './search-content';
+import { SearchStaticContent } from './search-static-content';
 import { InternalLinkSection, type InternalLinkItem } from '@/components/shared/internal-link-section';
 import { DiscoveryPageShell } from '@/components/shared/discovery-page-shell';
-import { getUnifiedProviders, normalizeProviderSearchParams } from '@/lib/search/providers';
+import { getUnifiedProviders } from '@/lib/search/providers';
 
 export type SearchPageLocale = 'hr' | 'en';
 
@@ -66,22 +66,12 @@ export function getLocalizedDiscoveryLinks(locale: SearchPageLocale): InternalLi
 }
 
 interface SearchPageShellProps {
-  searchParams: Promise<{
-    category?: string;
-    city?: string;
-    service?: string;
-    min_price?: string;
-    max_price?: string;
-    min_rating?: string;
-    sort?: string;
-  }>;
   locale: SearchPageLocale;
 }
 
-export async function SearchPageShell({ searchParams, locale }: SearchPageShellProps) {
-  const params = await searchParams;
-  const normalizedParams = normalizeProviderSearchParams(params);
-  const providers = await getUnifiedProviders(normalizedParams);
+export async function SearchPageShell({ locale }: SearchPageShellProps) {
+  const params = {};
+  const providers = await getUnifiedProviders({});
   const copy = SEARCH_PAGE_COPY[locale];
   const pathname = getSearchPagePath(locale);
 
@@ -99,10 +89,11 @@ export async function SearchPageShell({ searchParams, locale }: SearchPageShellP
         description: copy.internalLinksDescription,
         items: getLocalizedDiscoveryLinks(locale),
         ctaLabel: copy.internalLinksCta,
+        className: 'hidden md:block',
       }}
     >
       <Suspense fallback={<div className="container mx-auto px-6 md:px-10 lg:px-16 py-16">{copy.loadingLabel}</div>}>
-        <SearchContent providers={providers} initialParams={params} forcedLanguage={locale} />
+        <SearchStaticContent providers={providers} />
       </Suspense>
     </DiscoveryPageShell>
   );

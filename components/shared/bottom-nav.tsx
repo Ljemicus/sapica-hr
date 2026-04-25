@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Users, MessageSquare, User } from 'lucide-react';
+import { Home, Search, MessageSquare, User } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { useLanguage } from '@/lib/i18n';
 
@@ -16,7 +16,6 @@ export function BottomNav() {
   const navItems = [
     { href: '/', icon: Home, label: t('common.home') },
     { href: '/pretraga', icon: Search, label: t('common.search') },
-    { href: '/zajednica', icon: Users, label: 'Zajednica' },
     { href: blogHref, icon: MessageSquare, label: 'Blog' },
   ];
 
@@ -49,6 +48,7 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={false}
               className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-xl transition-all duration-200 min-w-[3.5rem] ${
                 isActive
                   ? 'text-orange-600 dark:text-orange-400'

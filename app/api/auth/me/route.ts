@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import type { User } from '@/lib/types';
+import type { AuthUser } from '@/lib/auth';
 
 interface AuthMeResponse {
-  user: User | null;
+  user: AuthUser | null;
+  needsOnboarding: boolean;
 }
 
 export async function GET() {
   const user = await getAuthUser();
-  const response: AuthMeResponse = { user };
+  const response: AuthMeResponse = { user, needsOnboarding: Boolean(user?.profileMissing) };
   return NextResponse.json(response);
 }

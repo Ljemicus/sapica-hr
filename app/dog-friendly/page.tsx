@@ -1,21 +1,12 @@
 import type { Metadata } from 'next';
-import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
-import { DogFriendlyPageShell } from './dog-friendly-page-shell';
+import { UskoroState } from '@/components/shared/uskoro-state';
 
 export const metadata: Metadata = {
-  title: 'Dog-Friendly lokacije u Hrvatskoj',
-  description: 'Pronađite dog-friendly kafiće, restorane, plaže, parkove i hotele diljem Hrvatske. Kompletni vodič za vlasnike pasa — Zagreb, Split, Rijeka, Dubrovnik i više.',
-  keywords: ['dog friendly lokacije hrvatska', 'kafići koji primaju pse', 'dog friendly plaže', 'dog friendly restorani', 'pas u kafiću hrvatska', 'pet friendly hrvatska'],
-  openGraph: {
-    title: 'Dog-Friendly lokacije u Hrvatskoj | PetPark',
-    description: 'Pronađite dog-friendly kafiće, restorane, plaže, parkove i hotele diljem Hrvatske.',
-    siteName: 'PetPark',
-    type: 'website',
-    ...buildLocaleOpenGraph('/dog-friendly'),
-  },
-  alternates: buildLocaleAlternates('/dog-friendly'),
+  title: { absolute: 'Dog-friendly mjesta uskoro | PetPark' },
+  description: 'Dog-friendly vodič vraćamo kad imamo stvaran inventory, ne prazne landing stranice.',
+  robots: { index: false, follow: false },
 };
 
-export default function DogFriendlyPage() {
-  return <DogFriendlyPageShell locale="hr" />;
+export default function Page() {
+  return <UskoroState title="Dog-friendly mjesta uskoro" description="Dog-friendly vodič vraćamo kad imamo stvaran inventory, ne prazne landing stranice." />;
 }

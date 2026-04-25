@@ -1,21 +1,12 @@
 import type { Metadata } from 'next';
-
-import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
-import { VeterinariPageShell } from '../veterinari-page-shell';
+import { UskoroState } from '@/components/shared/uskoro-state';
 
 export const metadata: Metadata = {
-  title: 'Veterinary stations and clinics in Croatia',
-  description: 'Official directory of veterinary stations and clinics in Croatia with addresses and contact details.',
-  keywords: ['veterinarian croatia', 'veterinary clinic croatia', 'veterinary station croatia', 'petpark veterinarians'],
-  openGraph: {
-    title: 'Veterinary stations and clinics in Croatia | PetPark',
-    description: 'Official directory of veterinary stations and clinics in Croatia with addresses and contact details.',
-    type: 'website',
-    ...buildLocaleOpenGraph('/veterinari/en'),
-  },
-  alternates: buildLocaleAlternates('/veterinari/en'),
+  title: { absolute: 'Veterinarians coming soon | PetPark' },
+  description: 'The veterinary directory will go live when there is a verified content pipeline.',
+  robots: { index: false, follow: false },
 };
 
-export default function VeterinariEnPage() {
-  return <VeterinariPageShell locale="en" />;
+export default function Page() {
+  return <UskoroState title="Veterinarians coming soon" description="The veterinary directory will go live when there is a verified content pipeline." />;
 }

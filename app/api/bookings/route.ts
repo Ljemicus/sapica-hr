@@ -89,17 +89,18 @@ export async function POST(request: Request) {
   const platform_fee = calculatePlatformFee(Math.round(total_price * 100)) / 100;
 
   const booking = await createBooking({
-    owner_id: user.id,
-    sitter_id,
+    owner_profile_id: user.id,
+    provider_id: sitter_id,
     pet_id,
-    service_type,
-    start_date,
-    end_date,
-    total_price,
-    platform_fee,
+    provider_kind: 'sitter',
+    primary_service_code: service_type === 'house-sitting' ? 'house_sitting' : service_type === 'drop-in' ? 'drop_in' : service_type,
+    starts_at: start_date,
+    ends_at: end_date,
+    total_amount: total_price,
+    platform_fee_amount: platform_fee,
     payment_status: 'unpaid',
     currency: 'EUR',
-    note: note || null,
+    owner_note: note || null,
     status: 'pending',
   });
 

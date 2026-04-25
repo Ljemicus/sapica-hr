@@ -1,47 +1,12 @@
-import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getVeterinarianBySlug } from '@/lib/db/veterinarians';
-import { getVetReviews, getVetReviewStats } from '@/lib/db/vet-reviews';
-import { VetProfileContent } from './components/vet-profile-content';
+import { UskoroState } from '@/components/shared/uskoro-state';
 
-interface VetProfilePageProps {
-  params: Promise<{ slug: string }>;
-}
+export const metadata: Metadata = {
+  title: { absolute: 'Profil veterinara uskoro | PetPark' },
+  description: 'Profil veterinara je privremeno skriven dok ne potvrdimo podatke.',
+  robots: { index: false, follow: false },
+};
 
-export async function generateMetadata({ params }: VetProfilePageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const vet = await getVeterinarianBySlug(slug);
-  
-  if (!vet) {
-    return {
-      title: 'Veterinar nije pronađen | PetPark',
-    };
-  }
-
-  return {
-    title: `${vet.name} | Recenzije i kontakt | PetPark`,
-    description: `Pogledajte recenzije za ${vet.name} u ${vet.city}. Adresa: ${vet.address}. Telefon: ${vet.phone || 'nema'}.`,
-  };
-}
-
-export default async function VetProfilePage({ params }: VetProfilePageProps) {
-  const { slug } = await params;
-  const vet = await getVeterinarianBySlug(slug);
-
-  if (!vet) {
-    notFound();
-  }
-
-  const [reviews, stats] = await Promise.all([
-    getVetReviews(vet.id, { limit: 10 }),
-    getVetReviewStats(vet.id),
-  ]);
-
-  return (
-    <VetProfileContent 
-      vet={vet} 
-      initialReviews={reviews} 
-      initialStats={stats}
-    />
-  );
+export default function Page() {
+  return <UskoroState title="Profil veterinara uskoro" description="Profil veterinara je privremeno skriven dok ne potvrdimo podatke." />;
 }

@@ -121,7 +121,7 @@ export function ArticleJsonLd({ article }: ArticleJsonLdProps) {
         dateModified: article.date,
         mainEntityOfPage: {
           '@type': 'WebPage',
-          '@id': `https://petpark.hr/zajednica/${article.slug}`,
+          '@id': `https://petpark.hr/blog/${article.slug}`,
         },
         articleSection: article.category,
       }}
@@ -299,12 +299,7 @@ export function SiteNavigationJsonLd() {
     { name: 'Čuvanje ljubimaca', url: 'https://petpark.hr/pretraga' },
     { name: 'Grooming', url: 'https://petpark.hr/njega' },
     { name: 'Školovanje pasa', url: 'https://petpark.hr/dresura' },
-    { name: 'Veterinari', url: 'https://petpark.hr/veterinari' },
-    { name: 'Blog', url: 'https://petpark.hr/zajednica' },
-    { name: 'Forum', url: 'https://petpark.hr/forum' },
-    { name: 'Udomljavanje', url: 'https://petpark.hr/udomljavanje' },
     { name: 'Izgubljeni ljubimci', url: 'https://petpark.hr/izgubljeni' },
-    { name: 'Dog-Friendly', url: 'https://petpark.hr/dog-friendly' },
   ];
 
   return (

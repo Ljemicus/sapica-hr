@@ -1,10 +1,5 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
-// import { TiltCard } from '@/components/animations/tilt-card';
 
 interface AnimatedServiceCardProps {
   href: string;
@@ -12,7 +7,6 @@ interface AnimatedServiceCardProps {
   title: string;
   body: string;
   cta: string;
-  index: number;
 }
 
 export function AnimatedServiceCard({
@@ -21,22 +15,10 @@ export function AnimatedServiceCard({
   title,
   body,
   cta,
-  index,
 }: AnimatedServiceCardProps) {
   return (
-    <Link href={href} className="group block">
-      {/* <TiltCard tiltAmount={8} scale={1.02}> */}
-        <motion.article
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{
-            duration: 0.5,
-            delay: index * 0.1,
-            ease: [0.25, 0.1, 0.25, 1],
-          }}
-          className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-card shadow-lg hover:shadow-2xl transition-shadow duration-500"
-        >
+    <Link prefetch={false} href={href} className="group block">
+        <article className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-card shadow-lg hover:shadow-2xl transition-shadow duration-500">
         {/* Gradient border on hover */}
         <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-[2px]">
@@ -64,37 +46,23 @@ export function AnimatedServiceCard({
 
         {/* Content overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8">
-          <motion.h3
-            className="text-xl md:text-2xl lg:text-3xl font-extrabold text-white mb-2 md:mb-3 font-[var(--font-heading)]"
-            initial={{ y: 0 }}
-            whileHover={{ y: -4 }}
-            transition={{ duration: 0.3 }}
-          >
+          <h3 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-white mb-2 md:mb-3 font-[var(--font-heading)]">
             {title}
-          </motion.h3>
+          </h3>
           <p className="text-white/75 text-sm md:text-base leading-relaxed mb-4 max-w-xs">
             {body}
           </p>
-          <motion.span
-            className="inline-flex items-center text-sm font-semibold text-white/90 group-hover:text-white"
-            whileHover={{ x: 4 }}
-            transition={{ duration: 0.2 }}
-          >
+          <span className="inline-flex items-center text-sm font-semibold text-white/90 group-hover:text-white">
             {cta}
-            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-          </motion.span>
+            <span className="ml-2">→</span>
+          </span>
         </div>
 
         {/* Floating icon badge */}
-        <motion.div
-          className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          initial={{ scale: 0.8 }}
-          whileHover={{ scale: 1.1 }}
-        >
-          <ArrowRight className="h-5 w-5 text-white" />
-        </motion.div>
-        </motion.article>
-      {/* </TiltCard> */}
+        <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <span className="text-white">→</span>
+        </div>
+        </article>
     </Link>
   );
 }

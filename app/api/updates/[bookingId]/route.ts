@@ -24,7 +24,7 @@ export async function GET(
   }
 
   const canAccess =
-    user.role === 'admin' ||
+    user.isAdmin ||
     booking.owner_id === user.id ||
     booking.sitter_id === user.id;
 

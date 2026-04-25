@@ -1,18 +1,18 @@
 import { getAuthUser } from '@/lib/auth';
 import { apiError } from '@/lib/api-errors';
-import type { User } from '@/lib/types';
+import type { AuthUser } from '@/lib/auth';
 
 type AdminGuardResult =
-  | { ok: true; user: User }
+  | { ok: true; user: AuthUser }
   | { ok: false; response: ReturnType<typeof apiError> };
 
 /**
  * Verify the current session belongs to an admin user.
- * Returns the admin User on success, or a 403 JSON response on failure.
+ * Returns the admin user on success, or a 403 JSON response on failure.
  */
 export async function requireAdmin(): Promise<AdminGuardResult> {
   const user = await getAuthUser();
-  if (!user || user.role !== 'admin') {
+  if (!user?.isAdmin) {
     return {
       ok: false,
       response: apiError({ status: 403, code: 'FORBIDDEN', message: 'Admin access required' }),
@@ -35,7 +35,6 @@ export async function requireAdminOrCron(
   }
   const authHeader = request.headers.get('authorization');
   if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
-    // Cron caller — return a synthetic actor so routes can still log an actor id
     return {
       ok: true,
       user: {
@@ -43,10 +42,14 @@ export async function requireAdminOrCron(
         email: 'cron@petpark.internal',
         name: 'Vercel Cron',
         role: 'admin',
+        roles: ['admin'],
+        isAdmin: true,
         avatar_url: null,
         phone: null,
         city: null,
         created_at: new Date().toISOString(),
+        profileFound: true,
+        profileMissing: false,
       },
     };
   }

@@ -30,7 +30,7 @@ export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout,
   const accountLinks = getMobileAccountLinks(t, user);
 
   const renderLink = (href: string, label: string | React.ReactNode, Icon?: React.ComponentType<{ className?: string }>, className?: string, badge?: number) => (
-    <Link href={href} onClick={() => setOpen(false)} className={`flex items-center gap-3 px-3 py-3 rounded-xl text-foreground hover:bg-accent transition-colors min-h-[48px] ${className || ''}`}>
+    <Link prefetch={false} href={href} onClick={() => setOpen(false)} className={`flex items-center gap-3 px-3 py-3 rounded-xl text-foreground hover:bg-accent transition-colors min-h-[48px] ${className || ''}`}>
       {Icon ? <Icon className="h-5 w-5 shrink-0" /> : null}
       <span className="flex-1">{label}</span>
       {badge && badge > 0 ? (
@@ -114,10 +114,10 @@ export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout,
 
             {!user ? (
               <div className="p-4 border-t border-border/50 space-y-2">
-                <Link href="/prijava" onClick={() => setOpen(false)}>
+                <Link prefetch={false} href="/prijava" onClick={() => setOpen(false)}>
                   <Button variant="outline" className="w-full rounded-xl min-h-[48px]">{t('nav.login')}</Button>
                 </Link>
-                <Link href="/registracija" onClick={() => setOpen(false)}>
+                <Link prefetch={false} href="/registracija" onClick={() => setOpen(false)}>
                   <Button className="w-full bg-orange-500 hover:bg-orange-600 rounded-xl font-semibold min-h-[48px]">{t('nav.register')}</Button>
                 </Link>
               </div>

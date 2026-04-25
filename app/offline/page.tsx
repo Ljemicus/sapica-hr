@@ -33,12 +33,12 @@ export default function OfflinePage() {
           ali za punu funkcionalnost potrebna je internetska veza.
         </p>
         <div className="space-y-3">
-          <button
-            onClick={() => window.location.reload()}
-            className="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+          <a
+            href="/"
+            className="block w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
           >
             Pokušaj ponovno
-          </button>
+          </a>
           <a
             href="/"
             className="block w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"

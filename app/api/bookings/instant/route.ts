@@ -11,6 +11,17 @@ import { sendEmail } from '@/lib/email';
 import { bookingAcceptedEmail } from '@/lib/email-templates';
 import { SERVICE_LABELS, type ServiceType } from '@/lib/types';
 
+function toPrimaryServiceCode(serviceType: ServiceType): string {
+  switch (serviceType) {
+    case 'house-sitting':
+      return 'house_sitting';
+    case 'drop-in':
+      return 'drop_in';
+    default:
+      return serviceType;
+  }
+}
+
 /**
  * POST /api/bookings/instant
  * Create an instant booking — skips pending state, goes directly to accepted + payment
@@ -62,35 +73,42 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient();
 
-    // Check if sitter has instant booking enabled
-    const { data: sitterProfile, error: sitterError } = await supabase
-      .from('sitter_profiles')
-      .select('user_id, prices, instant_booking, verified, user:users!user_id(id, name, email, phone)')
-      .eq('user_id', sitter_id)
+    const { data: provider, error: providerError } = await supabase
+      .from('providers')
+      .select('id, profile_id, display_name, email, phone, verified_status, instant_booking_enabled, stripe_account_id, stripe_onboarding_complete')
+      .eq('id', sitter_id)
+      .eq('provider_kind', 'sitter')
       .maybeSingle();
 
-    if (sitterError || !sitterProfile) {
+    if (providerError || !provider) {
       return NextResponse.json({ error: 'Sitter not found' }, { status: 404 });
     }
 
-    if (!sitterProfile.instant_booking) {
+    if (!provider.instant_booking_enabled) {
       return NextResponse.json(
         { error: 'Sitter does not support instant booking', code: 'INSTANT_BOOKING_NOT_ENABLED' },
         { status: 400 }
       );
     }
 
-    if (!sitterProfile.verified) {
+    if (provider.verified_status !== 'verified') {
       return NextResponse.json(
         { error: 'Sitter must be verified for instant booking', code: 'SITTER_NOT_VERIFIED' },
         { status: 400 }
       );
     }
 
+    const [{ data: providerProfile }, { data: providerServices }] = await Promise.all([
+      provider.profile_id
+        ? supabase.from('profiles').select('id, display_name, email, phone').eq('id', provider.profile_id).maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
+      supabase.from('provider_services').select('service_code, base_price, is_active').eq('provider_id', sitter_id).eq('is_active', true),
+    ]);
+
     // Get pet details
     const { data: pet, error: petError } = await supabase
       .from('pets')
-      .select('name, owner_id')
+      .select('name, owner_profile_id')
       .eq('id', pet_id)
       .maybeSingle();
 
@@ -98,12 +116,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Pet not found' }, { status: 404 });
     }
 
-    if (pet.owner_id !== user.id) {
+    if (pet.owner_profile_id !== user.id) {
       return NextResponse.json({ error: 'Pet does not belong to you' }, { status: 403 });
     }
 
     // Calculate pricing
-    const pricePerDay = sitterProfile.prices?.[service_type as ServiceType] || 0;
+    const serviceCode = toPrimaryServiceCode(service_type as ServiceType);
+    const serviceRow = (providerServices || []).find((service: any) => service.service_code === serviceCode && service.is_active !== false);
+    const pricePerDay = Number(serviceRow?.base_price || 0);
     if (pricePerDay <= 0) {
       return NextResponse.json(
         { error: 'Service not available from this sitter' },
@@ -112,27 +132,31 @@ export async function POST(request: NextRequest) {
     }
 
     const days = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
-    const total_price = pricePerDay * days;
-    const platform_fee = calculatePlatformFee(Math.round(total_price * 100)) / 100;
+    const provider_amount = pricePerDay * days;
+    const platform_fee = calculatePlatformFee(Math.round(provider_amount * 100)) / 100;
+    const total_price = provider_amount + platform_fee;
 
-    // Create booking with status = accepted (skips pending)
     const { data: booking, error: bookingError } = await supabase
       .from('bookings')
       .insert({
-        owner_id: user.id,
-        sitter_id,
+        owner_profile_id: user.id,
+        provider_id: sitter_id,
         pet_id,
-        service_type,
-        start_date,
-        end_date,
-        total_price,
+        provider_kind: 'sitter',
+        primary_service_code: serviceCode,
+        starts_at: start_date,
+        ends_at: end_date,
+        subtotal_amount: provider_amount,
+        provider_amount,
         platform_fee,
-        payment_status: 'pending', // Will be updated after Stripe payment
+        platform_fee_amount: platform_fee,
+        total_amount: total_price,
+        payment_status: 'pending',
         currency: 'EUR',
-        note: note || null,
-        status: 'accepted', // ← INSTANT: skips pending
+        owner_note: note || null,
+        status: 'accepted',
       })
-      .select()
+      .select('id, owner_profile_id, provider_id, pet_id, primary_service_code, starts_at, ends_at, total_amount, platform_fee_amount, payment_status, currency, owner_note, status, created_at')
       .single();
 
     if (bookingError || !booking) {
@@ -140,38 +164,38 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
     }
 
-    // Create Stripe payment intent
-    const { createPaymentIntent } = await import('@/lib/stripe');
-    const paymentResult = await createPaymentIntent({
-      amount: Math.round(total_price * 100),
-      currency: 'eur',
-      metadata: {
-        booking_id: booking.id,
-        sitter_id,
-        owner_id: user.id,
-      },
-    });
+    const { createCheckoutSession } = await import('@/lib/payment');
 
-    if (!paymentResult.success) {
-      // Rollback booking if payment intent fails
+    if (!provider.stripe_account_id || !provider.stripe_onboarding_complete) {
       await supabase.from('bookings').delete().eq('id', booking.id);
-      return NextResponse.json(
-        { error: 'Payment initialization failed', details: paymentResult.error },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Sitter has not connected payments yet' }, { status: 400 });
     }
 
-    // Update booking with payment intent
-    await supabase
-      .from('bookings')
-      .update({ 
-        payment_status: 'pending',
-        stripe_payment_intent_id: paymentResult.paymentIntentId,
-      })
-      .eq('id', booking.id);
+    const { url, sessionId } = await createCheckoutSession(
+      booking.id,
+      Math.round(provider_amount * 100),
+      'EUR',
+      provider.stripe_account_id,
+      `PetPark — ${SERVICE_LABELS[service_type as ServiceType] || service_type}`
+    );
+
+    await supabase.from('payments').upsert({
+      booking_id: booking.id,
+      provider_id: sitter_id,
+      stripe_checkout_session_id: sessionId,
+      amount: total_price,
+      platform_fee_amount: platform_fee,
+      currency: 'EUR',
+      status: 'pending',
+      raw_provider_payload: { instant_booking: true },
+    }, { onConflict: 'booking_id' });
 
     // Notify sitter (async, don't block response)
-    const sitterUser = sitterProfile.user as { name?: string; email?: string; phone?: string } | null;
+    const sitterUser = {
+      name: providerProfile?.display_name || provider.display_name || undefined,
+      email: providerProfile?.email || provider.email || undefined,
+      phone: providerProfile?.phone || provider.phone || undefined,
+    };
     
     // Email notification
     if (sitterUser?.email) {
@@ -216,8 +240,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       booking,
-      paymentIntentId: paymentResult.paymentIntentId,
-      clientSecret: paymentResult.clientSecret,
+      checkoutUrl: url,
+      checkoutSessionId: sessionId,
       message: 'Instant booking created successfully',
     }, { status: 201 });
 

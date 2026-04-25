@@ -12,7 +12,8 @@ export const metadata: Metadata = {
 export default async function AdminPage() {
   const user = await getAuthUser();
   if (!user) redirect('/prijava?redirect=%2Fadmin');
-  if (user.role !== 'admin') redirect('/');
+  if (user.profileMissing) redirect('/onboarding/profile');
+  if (!user.isAdmin) redirect('/');
 
   const users = (await getUsers('admin-list')).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   const sitters = await getSitters({ fields: 'admin-list' });

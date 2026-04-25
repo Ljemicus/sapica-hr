@@ -12,6 +12,17 @@ export interface CSPConfig {
   reportOnly?: boolean;
 }
 
+const allowedStyleHashes = [
+  // Next route announcer and Sonner inject deterministic inline style/style tags.
+  // Keep these narrow hashes instead of restoring `unsafe-inline`.
+  "'unsafe-hashes'",
+  "'sha256-t6oewASd7J1vBg5mQtX4hl8bg8FeegYFM3scKLIhYUc='",
+  "'sha256-LwoYSIU7H7ALhCK8JF+HKTq2AdcpkrZ9eK1pLP9iv6U='",
+  "'sha256-68ahHyH65aqS202beKyu22MkdAEr0fBCN3eHnbYX+wg='",
+  "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
+  "'sha256-CIxDM5jnsGiKqXs2v7NKCY5MzdR9gu6TtiMJrDw29AY='",
+];
+
 /**
  * Generate a cryptographically secure nonce
  */
@@ -25,15 +36,15 @@ export function generateNonce(): string {
 export function buildCSPHeader(config: CSPConfig = {}): string {
   const { nonce, reportUri, reportOnly = false } = config;
   
-  const nonceString = nonce ? `'nonce-${nonce}'` : "'unsafe-inline'";
+  const nonceString = nonce ? `'nonce-${nonce}'` : "";
   
   const directives = [
     "default-src 'self'",
     "base-uri 'self'",
     "frame-ancestors 'none'",
     "object-src 'none'",
-    `script-src 'self' ${nonceString} https://plausible.io`,
-    "style-src 'self' 'unsafe-inline'",
+    ["script-src 'self'", nonceString, "https://plausible.io"].filter(Boolean).join(" "),
+    ["style-src 'self'", nonceString, ...allowedStyleHashes].filter(Boolean).join(" "),
     "img-src 'self' data: https: blob:",
     "font-src 'self' data:",
     "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://plausible.io https://api.resend.com https://api.stripe.com",

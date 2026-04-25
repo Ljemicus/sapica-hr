@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -41,7 +40,7 @@ export function InternalLinkSection({ eyebrow, title, description, items, ctaLab
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {items.map((item) => (
-              <Link key={item.href} href={item.href} className="group block h-full">
+              <Link prefetch={false} key={item.href} href={item.href} className="group block h-full">
                 <Card className="h-full border-0 shadow-sm card-hover rounded-2xl transition-all group-hover:shadow-md">
                   <CardContent className="p-5 h-full flex flex-col">
                     {item.badge && (
@@ -58,7 +57,7 @@ export function InternalLinkSection({ eyebrow, title, description, items, ctaLab
                       {item.description}
                     </p>
                     <div className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-orange-500">
-                      {ctaLabel} <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      {ctaLabel} →
                     </div>
                   </CardContent>
                 </Card>

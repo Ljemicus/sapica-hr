@@ -1,23 +1,12 @@
 import type { Metadata } from 'next';
-import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
-import { VeterinariPageShell } from './veterinari-page-shell';
-
-// ISR: Revalidate every 1 hour (3600 seconds)
-export const revalidate = 3600;
+import { UskoroState } from '@/components/shared/uskoro-state';
 
 export const metadata: Metadata = {
-  title: 'Veterinarske stanice i ambulante u Hrvatskoj',
-  description: 'Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj s adresama i kontakt podacima.',
-  keywords: ['veterinar', 'veterinarska stanica', 'veterinarska ambulanta', 'veterinari hrvatska', 'petpark veterinari'],
-  openGraph: {
-    title: 'Veterinarske stanice i ambulante u Hrvatskoj | PetPark',
-    description: 'Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj s adresama i kontakt podacima.',
-    type: 'website',
-    ...buildLocaleOpenGraph('/veterinari'),
-  },
-  alternates: buildLocaleAlternates('/veterinari'),
+  title: { absolute: 'Veterinari uskoro | PetPark' },
+  description: 'Veterinarski directory ćemo otvoriti kad postoji realan i provjeren content pipeline.',
+  robots: { index: false, follow: false },
 };
 
-export default function VeterinariPage() {
-  return <VeterinariPageShell locale="hr" />;
+export default function Page() {
+  return <UskoroState title="Veterinari uskoro" description="Veterinarski directory ćemo otvoriti kad postoji realan i provjeren content pipeline." />;
 }

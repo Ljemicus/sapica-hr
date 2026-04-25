@@ -24,7 +24,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 
   const booking = await getBooking(id);
   if (!booking) return NextResponse.json<BookingRouteError>({ error: 'Booking not found' }, { status: 404 });
-  if (booking.owner_id !== user.id && booking.sitter_id !== user.id && user.role !== 'admin') {
+  if (booking.owner_id !== user.id && booking.sitter_id !== user.id && !user.isAdmin) {
     return NextResponse.json<BookingRouteError>({ error: 'Forbidden' }, { status: 403 });
   }
 
@@ -52,7 +52,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (!booking) return NextResponse.json<BookingRouteError>({ error: 'Booking not found' }, { status: 404 });
 
   const isOwner = booking.owner_id === user.id;
-  const isSitter = booking.sitter_id === user.id;
+  const isSitter = booking.sitter?.id === user.id;
   if (!isOwner && !isSitter) {
     return NextResponse.json<BookingRouteError>({ error: 'Forbidden' }, { status: 403 });
   }
@@ -145,7 +145,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       // Notify the other party
       const recipientEmail = isOwner ? booking.sitter?.email : booking.owner?.email;
       const recipientName = isOwner ? booking.sitter?.name : booking.owner?.name;
-      const recipientId = isOwner ? booking.sitter_id : booking.owner_id;
+      const recipientId = isOwner ? booking.sitter?.id || '' : booking.owner_id;
       if (recipientEmail) {
         sendEmail({
           to: recipientEmail,

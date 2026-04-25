@@ -1,18 +1,19 @@
+import { vi } from 'vitest';
 import {
   getOptimizedImageUrl,
   getPlaceholderUrl,
 } from './cloudinary';
 
 // Mock cloudinary
-jest.mock('cloudinary', () => ({
+vi.mock('cloudinary', () => ({
   v2: {
-    config: jest.fn(),
+    config: vi.fn(),
     uploader: {
-      upload_stream: jest.fn(),
-      upload: jest.fn(),
-      destroy: jest.fn(),
+      upload_stream: vi.fn(),
+      upload: vi.fn(),
+      destroy: vi.fn(),
     },
-    url: jest.fn((publicId, options) => {
+    url: vi.fn((publicId, options) => {
       const transform = options?.transformation?.[0] || '';
       return `https://res.cloudinary.com/test/image/upload/${transform}/${publicId}`;
     }),

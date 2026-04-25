@@ -5,7 +5,6 @@ import { getArticles, getArticleComments } from '@/lib/db';
 import { getArticlePageData } from './article-page-data';
 import { ArticleContent } from './article-content';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
-import { getAuthUser } from '@/lib/auth';
 import { BLOG_CATEGORY_LABELS } from '@/lib/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
@@ -16,6 +15,7 @@ interface ArticlePageProps {
 
 const getCachedArticle = cache(async (slug: string) => (await getArticlePageData(slug)).article);
 
+export const revalidate = 3600;
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
@@ -54,10 +54,9 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-  const [{ article, related }, comments, user] = await Promise.all([
+  const [{ article, related }, comments] = await Promise.all([
     getArticlePageData(slug),
     getArticleComments(slug),
-    getAuthUser(),
   ]);
   if (!article) {
     notFound();
@@ -100,7 +99,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         article={article}
         relatedArticles={related}
         comments={comments}
-        currentUser={user ? { id: user.id, name: user.name, avatar_url: user.avatar_url, role: user.role } : null}
+        currentUser={null}
       />
     </>
   );

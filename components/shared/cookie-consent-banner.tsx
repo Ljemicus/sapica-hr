@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Cookie, ChevronDown, ChevronUp, Shield, BarChart3, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -22,19 +21,12 @@ export function CookieConsentBanner() {
   };
 
   return (
-    <AnimatePresence>
+    <div className="fixed bottom-0 left-0 right-0 z-50 p-3 md:p-4">
       {showBanner && (
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6"
-        >
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto max-w-3xl">
             <div className="rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden">
               {/* Header */}
-              <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-4 flex items-center justify-between">
+              <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-4 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
                     <Cookie className="h-5 w-5 text-white" />
@@ -54,22 +46,14 @@ export function CookieConsentBanner() {
               </div>
 
               {/* Content */}
-              <div className="p-6">
-                <p className="text-gray-600 mb-4 leading-relaxed">
-                  Koristimo kolačiće za poboljšanje vašeg iskustva. Necessary kolačići su obavezni za rad stranice. 
-                  Analytics kolačići nam pomažu razumjeti kako koristite stranicu. Marketing kolačići koriste se za personalizirane oglase.
+              <div className="p-4">
+                <p className="text-sm text-gray-700 mb-3 leading-relaxed">
+                  Koristimo neophodne kolačiće za rad stranice. Analitiku i marketing uključujemo samo uz vaš pristanak.
                 </p>
 
                 {/* Expandable Preferences */}
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="overflow-hidden"
-                    >
+                {isExpanded && (
+                    <div className="overflow-hidden">
                       <div className="space-y-4 mb-6 pb-6 border-b border-gray-100">
                         {/* Necessary - Always On */}
                         <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50">
@@ -133,9 +117,8 @@ export function CookieConsentBanner() {
                           </div>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   )}
-                </AnimatePresence>
 
                 {/* Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -181,9 +164,8 @@ export function CookieConsentBanner() {
               </div>
             </div>
           </div>
-        </motion.div>
       )}
-    </AnimatePresence>
+    </div>
   );
 }
 

@@ -43,6 +43,7 @@ function maybeHard404DynamicProfile(request: NextRequest) {
 // Routes that should be excluded from CSRF protection
 const CSRF_EXCLUDED_ROUTES = [
   '/api/webhooks/',
+  '/api/payments/webhook',
   '/api/auth/callback',
 ];
 
@@ -50,9 +51,18 @@ function isCsrfExcludedRoute(pathname: string): boolean {
   return CSRF_EXCLUDED_ROUTES.some(route => pathname.startsWith(route));
 }
 
+function isPublicCacheRoute(pathname: string): boolean {
+  return pathname === '/'
+    || pathname === '/pretraga'
+    || pathname === '/pretraga/en'
+    || pathname === '/blog'
+    || pathname.startsWith('/blog/');
+}
+
 export async function proxy(request: NextRequest) {
-  // Generate CSP nonce for this request
-  const nonce = generateNonce();
+  const isCacheablePublic = ['GET', 'HEAD'].includes(request.method) && isPublicCacheRoute(request.nextUrl.pathname);
+  // Generate CSP nonce only for dynamic/non-cacheable responses.
+  const nonce = isCacheablePublic ? undefined : generateNonce();
   
   // Assign a request ID for end-to-end correlation across logs.
   // Honour an existing header (e.g. from an upstream load-balancer).
@@ -61,8 +71,8 @@ export async function proxy(request: NextRequest) {
   request.headers.set(REQUEST_ID_HEADER, requestId);
   request.headers.set(LOCALE_HEADER, locale);
 
-  // Apply CSRF protection (skip for excluded routes)
-  if (!isCsrfExcludedRoute(request.nextUrl.pathname)) {
+  // Apply CSRF protection (skip for excluded routes and cacheable public GET pages).
+  if (!isCacheablePublic && !isCsrfExcludedRoute(request.nextUrl.pathname)) {
     const csrfResponse = await csrfMiddleware(request);
     if (csrfResponse) {
       csrfResponse.headers.set(REQUEST_ID_HEADER, requestId);
@@ -70,7 +80,7 @@ export async function proxy(request: NextRequest) {
       // Add CSP headers
       const cspValue = buildCSPHeader({ nonce });
       csrfResponse.headers.set('Content-Security-Policy', cspValue);
-      csrfResponse.headers.set(CSP_NONCE_HEADER, nonce);
+      if (nonce) csrfResponse.headers.set(CSP_NONCE_HEADER, nonce);
       return csrfResponse;
     }
   }
@@ -82,16 +92,16 @@ export async function proxy(request: NextRequest) {
     // Add CSP headers
     const cspValue = buildCSPHeader({ nonce });
     forced404.headers.set('Content-Security-Policy', cspValue);
-    forced404.headers.set(CSP_NONCE_HEADER, nonce);
+    if (nonce) forced404.headers.set(CSP_NONCE_HEADER, nonce);
     return forced404;
   }
 
-  const response = await updateSession(request);
+  const response = isCacheablePublic ? NextResponse.next({ request }) : await updateSession(request);
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (supabaseUrl && supabaseAnonKey) {
+  if (!isCacheablePublic && supabaseUrl && supabaseAnonKey) {
     const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {
         getAll() {
@@ -181,7 +191,7 @@ export async function proxy(request: NextRequest) {
   // Add CSP header with nonce
   const cspValue = buildCSPHeader({ nonce });
   response.headers.set('Content-Security-Policy', cspValue);
-  response.headers.set(CSP_NONCE_HEADER, nonce);
+  if (nonce) response.headers.set(CSP_NONCE_HEADER, nonce);
   
   return response;
 }

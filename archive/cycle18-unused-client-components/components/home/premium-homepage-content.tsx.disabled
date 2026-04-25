@@ -41,10 +41,10 @@ const copy = {
     heroCta: 'Pronađite sittera',
     heroSecondaryCta: 'Postanite partner',
 
-    stats1: '500+',
-    stats1Label: 'Verificiranih partnera',
-    stats2: '4.9',
-    stats2Label: 'Prosječna ocjena',
+    stats1: 'Zagreb',
+    stats1Label: 'Beta tržište',
+    stats2: 'Live',
+    stats2Label: 'Provjera profila',
     stats3: '10k+',
     stats3Label: 'Sretnih vlasnika',
 
@@ -78,10 +78,10 @@ const copy = {
     heroCta: 'Find a sitter',
     heroSecondaryCta: 'Become a partner',
 
-    stats1: '500+',
-    stats1Label: 'Verified partners',
-    stats2: '4.9',
-    stats2Label: 'Average rating',
+    stats1: 'Zagreb',
+    stats1Label: 'Beta market',
+    stats2: 'Live',
+    stats2Label: 'Profile checks',
     stats3: '10k+',
     stats3Label: 'Happy owners',
 
@@ -129,7 +129,7 @@ const services = [
   {
     title: { hr: 'Veterinari', en: 'Veterinarians' },
     description: { hr: 'Pronađite veterinare u vašem gradu.', en: 'Find veterinarians in your city.' },
-    href: '/veterinari',
+    href: '/pretraga',
   },
 ];
 

@@ -1,30 +1,28 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
-import { getSitters } from '@/lib/db';
+import { getUnifiedProvidersFromProviderModel } from '@/lib/search/provider-adapters';
 import { ItemListJsonLd } from '@/components/seo/json-ld';
 import { HomePageContent } from '@/components/home/homepage-content';
 
-// ISR: Revalidate every 1 hour (3600 seconds)
-export const revalidate = 3600;
+// ISR: keep homepage truth fresh without request-time rendering.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: { absolute: 'PetPark — Pronađite pouzdanog sittera za svog ljubimca' },
-  description: 'Verificirani pet sitteri, groomeri i treneri u vašem gradu. Rezervirajte online brzo, jasno i bez stresa uz PetPark.',
+  description: 'Zagreb, beta. Pronađite čuvara, šetača ili boarding za svog ljubimca — bez izmišljenih brojki i ghost inventoryja.',
   keywords: ['pet sitting hrvatska', 'čuvanje ljubimaca', 'pet sitter', 'grooming', 'školovanje pasa', 'rezervacija sittera'],
   openGraph: {
     title: 'PetPark — Pronađite pouzdanog sittera za svog ljubimca',
-    description: 'Verificirani sitteri, jasne recenzije i brza online rezervacija za ljubimce u Hrvatskoj.',
-    url: 'https://petpark.hr',
+    description: 'Zagreb, beta. Pronađite čuvara, šetača ili boarding za svog ljubimca.',
+    url: 'https://petpark.hr/',
     type: 'website',
   },
-  alternates: { canonical: 'https://petpark.hr' },
+  alternates: { canonical: 'https://petpark.hr/' },
 };
 
 const homepageServices = [
   { name: 'Čuvanje ljubimaca', url: 'https://petpark.hr/pretraga', description: 'Pronađite pouzdane sittere u vašem gradu' },
-  { name: 'Grooming', url: 'https://petpark.hr/njega', description: 'Profesionalni groomeri i saloni za njegu ljubimaca' },
-  { name: 'Školovanje pasa', url: 'https://petpark.hr/dresura', description: 'Certificirani treneri i programi za pse' },
-  { name: 'Veterinari', url: 'https://petpark.hr/veterinari', description: 'Veterinarske ordinacije u vašem gradu' },
+  { name: 'Grooming', url: 'https://petpark.hr/njega', description: 'Njega ljubimaca bez tvrdnji o lažnom inventoryju' },
+  { name: 'Školovanje pasa', url: 'https://petpark.hr/dresura', description: 'Trening i edukacija pasa bez tvrdnji o lažnom inventoryju' },
 ];
 
 const SITTER_GRADIENTS = [
@@ -40,24 +38,24 @@ const cities = [
   { name: 'Zagreb', image: '/images/cities/zagreb.jpg', landing: '/cuvanje-pasa-zagreb' },
   { name: 'Rijeka', image: '/images/cities/rijeka.jpg', landing: '/cuvanje-pasa-rijeka' },
   { name: 'Split', image: '/images/cities/split.jpg', landing: '/cuvanje-pasa-split' },
-  { name: 'Osijek', image: '/images/cities/osijek.jpg', landing: null },
-  { name: 'Pula', image: '/images/cities/pula.jpg', landing: null },
-  { name: 'Zadar', image: '/images/cities/zadar.jpg', landing: null },
 ];
 
 export default async function HomePage() {
-  const topSitters = await getSitters({ sort: 'rating', limit: 6, fields: 'homepage-card' });
+  const topSitters = (await getUnifiedProvidersFromProviderModel())
+    .filter((provider) => provider.category === 'sitter')
+    .sort((a, b) => b.rating - a.rating || b.reviews - a.reviews)
+    .slice(0, 6);
 
   const featuredSitters = topSitters.map((s, i) => ({
-    id: s.user_id,
-    name: s.user?.name || 'Sitter',
+    id: s.id,
+    name: s.name || 'Sitter',
     city: s.city || '',
-    rating: s.rating_avg,
-    reviews: s.review_count,
+    rating: s.rating,
+    reviews: s.reviews,
     bio: s.bio || '',
     verified: s.verified,
     superhost: s.superhost,
-    initial: (s.user?.name || 'S').charAt(0),
+    initial: (s.name || 'S').charAt(0),
     gradient: SITTER_GRADIENTS[i % SITTER_GRADIENTS.length],
   }));
 
