@@ -84,7 +84,18 @@ export function validateCsrfToken(
   config: CsrfConfig = {}
 ): boolean {
   const cfg = { ...defaultConfig, ...config };
-  
+
+  const origin = request.headers.get('origin');
+  if (origin) {
+    try {
+      if (new URL(origin).origin === request.nextUrl.origin) {
+        return true;
+      }
+    } catch {
+      return false;
+    }
+  }
+
   if (!cookieToken) {
     return false;
   }

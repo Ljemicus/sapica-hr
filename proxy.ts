@@ -45,6 +45,10 @@ const CSRF_EXCLUDED_ROUTES = [
   '/api/webhooks/',
   '/api/payments/webhook',
   '/api/auth/callback',
+  '/api/cron/',
+  '/api/email/cron/',
+  '/api/admin/kpi-digest',
+  '/api/admin/ops-audit',
 ];
 
 function isCsrfExcludedRoute(pathname: string): boolean {
