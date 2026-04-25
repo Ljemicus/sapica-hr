@@ -1,91 +1,90 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import * as Sentry from '@sentry/nextjs';
+import { Redis } from '@upstash/redis';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { getStripe } from '@/lib/stripe';
 
-// Health check endpoint for monitoring and load balancers
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+type CheckName = 'db' | 'auth' | 'stripe' | 'redis';
+type CheckResult = {
+  ok: boolean;
+  responseTimeMs: number;
+  message?: string;
+};
+
+type HealthChecks = Record<CheckName, CheckResult>;
+
+function configured(value: string | undefined): value is string {
+  return Boolean(value && !value.includes('placeholder') && !value.includes('your-') && !value.includes('REPLACE'));
+}
+
+async function timedCheck(fn: () => Promise<void>): Promise<CheckResult> {
+  const started = Date.now();
+  try {
+    await fn();
+    return { ok: true, responseTimeMs: Date.now() - started };
+  } catch (error) {
+    return {
+      ok: false,
+      responseTimeMs: Date.now() - started,
+      message: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+async function checkRedis(): Promise<void> {
+  if (!configured(process.env.UPSTASH_REDIS_REST_URL) || !configured(process.env.UPSTASH_REDIS_REST_TOKEN)) {
+    throw new Error('Upstash Redis is not configured');
+  }
+
+  const redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+  });
+  const pong = await redis.ping();
+  if (pong !== 'PONG') {
+    throw new Error(`Unexpected Redis ping response: ${String(pong)}`);
+  }
+}
+
 export async function GET() {
-  const startTime = Date.now();
-  const checks: Record<string, { status: 'ok' | 'error'; responseTime?: number; message?: string }> = {};
-  
-  // Test Sentry error capture
-  try {
-    // Intentionally throw a test error to verify Sentry integration
-    if (process.env.NODE_ENV !== 'production') {
-      Sentry.captureMessage('Health check test message', 'info');
-    }
-    checks.sentry_test = { status: 'ok', message: 'Sentry message captured successfully' };
-  } catch (error) {
-    checks.sentry_test = { status: 'error', message: String(error) };
-  }
-  
-  // Check Supabase connection
-  try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
-    if (!supabaseUrl || !supabaseKey) {
-      checks.database = { status: 'error', message: 'Missing Supabase credentials' };
-    } else {
-      const supabase = createClient(supabaseUrl, supabaseKey, {
-        auth: { autoRefreshToken: false, persistSession: false }
-      });
-      
-      const dbStart = Date.now();
-      const { error } = await supabase.from('profiles').select('id').limit(1);
-      checks.database = { 
-        status: error ? 'error' : 'ok', 
-        responseTime: Date.now() - dbStart,
-        message: error?.message 
-      };
-    }
-  } catch (error) {
-    checks.database = { status: 'error', message: String(error) };
-  }
+  const started = Date.now();
+  const admin = createAdminClient();
 
-  // Check Redis/Upstash if configured
-  if (process.env.UPSTASH_REDIS_REST_URL && !process.env.UPSTASH_REDIS_REST_URL.includes('your-url')) {
-    try {
-      const redisStart = Date.now();
-      const response = await fetch(`${process.env.UPSTASH_REDIS_REST_URL}/ping`, {
-        headers: { Authorization: `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}` },
-      });
-      checks.redis = { 
-        status: response.ok ? 'ok' : 'error', 
-        responseTime: Date.now() - redisStart 
-      };
-    } catch (error) {
-      checks.redis = { status: 'error', message: String(error) };
-    }
-  } else {
-    checks.redis = { status: 'ok', message: 'Redis not configured (using mock)' };
-  }
-
-  // Check Sentry configuration (non-critical)
-  checks.sentry = {
-    status: process.env.SENTRY_DSN && !process.env.SENTRY_DSN.includes('your-dsn') ? 'ok' : 'ok',
-    message: process.env.SENTRY_DSN && !process.env.SENTRY_DSN.includes('your-dsn')
-      ? undefined
-      : 'SENTRY_DSN not configured (non-critical)',
+  const checks: HealthChecks = {
+    db: await timedCheck(async () => {
+      const { error } = await admin.from('profiles').select('id').limit(1);
+      if (error) throw new Error(error.message);
+    }),
+    auth: await timedCheck(async () => {
+      const { error } = await admin.auth.admin.listUsers({ page: 1, perPage: 1 });
+      if (error) throw new Error(error.message);
+    }),
+    stripe: await timedCheck(async () => {
+      await getStripe().balance.retrieve();
+    }),
+    redis: await timedCheck(checkRedis),
   };
 
-  const totalResponseTime = Date.now() - startTime;
-  const allHealthy = Object.values(checks).every(c => c.status === 'ok');
+  const ok = Object.values(checks).every((check) => check.ok);
 
   return NextResponse.json(
     {
-      status: allHealthy ? 'healthy' : 'unhealthy',
+      ok,
+      status: ok ? 'healthy' : 'unhealthy',
       timestamp: new Date().toISOString(),
       version: process.env.NEXT_PUBLIC_APP_VERSION || 'unknown',
       environment: process.env.NODE_ENV,
-      responseTime: totalResponseTime,
+      responseTimeMs: Date.now() - started,
       checks,
     },
-    { 
-      status: allHealthy ? 200 : 503,
+    {
+      status: ok ? 200 : 503,
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate',
         'X-Health-Check': 'true',
-      }
-    }
+      },
+    },
   );
 }
