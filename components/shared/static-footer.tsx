@@ -35,7 +35,7 @@ export function StaticFooter() {
             ))}
           </nav>
         </div>
-        <p className="mt-8 text-xs text-slate-500">© {new Date().getFullYear()} PetPark. Sva prava pridržana.</p>
+        <p className="mt-8 text-xs text-slate-400">© {new Date().getFullYear()} PetPark. Sva prava pridržana.</p>
       </div>
     </footer>
   );

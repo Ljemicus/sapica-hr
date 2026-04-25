@@ -29,7 +29,7 @@ export function StaticNavbar() {
             </Link>
           ))}
         </nav>
-        <Link prefetch={false} href="/pretraga" className="inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700">
+        <Link prefetch={false} href="/pretraga" className="inline-flex items-center gap-2 rounded-full bg-orange-700 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-800">
           Pretraži
         </Link>
       </div>

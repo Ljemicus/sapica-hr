@@ -21,8 +21,8 @@ function safeName(route) {
 
   for (const route of routes) {
     const url = `${baseUrl}${route}`;
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
-    await page.addStyleTag({ content: '*,*::before,*::after{transition:none!important;animation:none!important;caret-color:auto!important}' });
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForTimeout(1500);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .analyze();
