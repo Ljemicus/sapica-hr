@@ -19,11 +19,11 @@ function configured(value: string | undefined): value is string {
   return Boolean(value && !value.includes('placeholder') && !value.includes('your-') && !value.includes('REPLACE'));
 }
 
-async function timedCheck(fn: () => Promise<void>): Promise<CheckResult> {
+async function timedCheck(fn: () => Promise<string | void | undefined>): Promise<CheckResult> {
   const started = Date.now();
   try {
-    await fn();
-    return { ok: true, responseTimeMs: Date.now() - started };
+    const message = await fn();
+    return { ok: true, responseTimeMs: Date.now() - started, ...(message ? { message } : {}) };
   } catch (error) {
     return {
       ok: false,
@@ -33,9 +33,9 @@ async function timedCheck(fn: () => Promise<void>): Promise<CheckResult> {
   }
 }
 
-async function checkRedis(): Promise<void> {
+async function checkRedis(): Promise<string | undefined> {
   if (!configured(process.env.UPSTASH_REDIS_REST_URL) || !configured(process.env.UPSTASH_REDIS_REST_TOKEN)) {
-    throw new Error('Upstash Redis is not configured');
+    return 'Upstash Redis not configured; app is using in-memory fallback rate limiting.';
   }
 
   const redis = new Redis({
@@ -46,6 +46,7 @@ async function checkRedis(): Promise<void> {
   if (pong !== 'PONG') {
     throw new Error(`Unexpected Redis ping response: ${String(pong)}`);
   }
+  return undefined;
 }
 
 export async function GET() {
