@@ -44,8 +44,8 @@ export function buildCSPHeader(config: CSPConfig = {}): string {
     "frame-ancestors 'none'",
     "object-src 'none'",
     // Next App Router still emits framework bootstrap/data inline scripts without our middleware nonce.
-    // Keep this pragmatic allowance until nonce propagation is wired through the full React tree.
-    ["script-src 'self'", "'unsafe-inline'", nonceString, "https://plausible.io"].filter(Boolean).join(" "),
+    // Do not include a script nonce here: browsers ignore 'unsafe-inline' when a nonce/hash is present.
+    ["script-src 'self'", "'unsafe-inline'", "https://plausible.io"].join(" "),
     ["style-src 'self'", nonceString, ...allowedStyleHashes].filter(Boolean).join(" "),
     "img-src 'self' data: https: blob:",
     "font-src 'self' data:",
