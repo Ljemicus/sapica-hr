@@ -33,6 +33,17 @@ export async function GET(request: NextRequest) {
       const { data: clinics, error } = await query;
 
       if (error) {
+        const isMissingTable = error.code === '42P01' || /emergency_vet_clinics/i.test(error.message ?? '');
+
+        if (isMissingTable) {
+          console.warn('Emergency vet clinics table is not provisioned; returning empty vet list.');
+          return {
+            clinics: [],
+            count: 0,
+            unavailable: true,
+          };
+        }
+
         console.error('Error fetching vet clinics:', error);
         throw error;
       }

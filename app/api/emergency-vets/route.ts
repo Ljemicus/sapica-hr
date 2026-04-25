@@ -27,6 +27,13 @@ export async function GET(request: NextRequest) {
     const { data: clinics, error } = await query;
     
     if (error) {
+      const isMissingTable = error.code === '42P01' || /emergency_vet_clinics/i.test(error.message ?? '');
+
+      if (isMissingTable) {
+        console.warn('Emergency vet clinics table is not provisioned; returning empty list.');
+        return NextResponse.json({ clinics: [], count: 0, unavailable: true });
+      }
+
       console.error('Error fetching emergency vet clinics:', error);
       return NextResponse.json(
         { error: 'Failed to fetch emergency vet clinics' },
@@ -34,7 +41,7 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    return NextResponse.json({ clinics });
+    return NextResponse.json({ clinics, count: clinics?.length ?? 0 });
   } catch (error) {
     console.error('Error in emergency-vets API:', error);
     return NextResponse.json(
