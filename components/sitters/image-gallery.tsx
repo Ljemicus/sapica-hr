@@ -115,6 +115,7 @@ export function ImageGallery({
                 className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm"
                 onClick={handlePrevious}
                 disabled={isLoading}
+                aria-label="Previous image"
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
@@ -124,6 +125,7 @@ export function ImageGallery({
                 className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm"
                 onClick={handleNext}
                 disabled={isLoading}
+                aria-label="Next image"
               >
                 <ChevronRight className="h-5 w-5" />
               </Button>
@@ -137,6 +139,7 @@ export function ImageGallery({
             className="absolute top-4 right-4 bg-white/80 hover:bg-white backdrop-blur-sm"
             onClick={() => setIsLightboxOpen(true)}
             disabled={isLoading}
+            aria-label="Open image gallery"
           >
             <Maximize2 className="h-5 w-5" />
           </Button>
@@ -161,6 +164,7 @@ export function ImageGallery({
                 )}
                 onClick={() => setSelectedIndex(index)}
                 disabled={isLoading}
+                aria-label={`Show gallery image ${index + 1}`}
               >
                 <Image
                   src={image}
@@ -181,6 +185,7 @@ export function ImageGallery({
               <button
                 className="relative aspect-square overflow-hidden rounded-md border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors flex items-center justify-center bg-gray-50"
                 onClick={() => setIsLightboxOpen(true)}
+                aria-label="View all gallery images"
               >
                 <div className="text-center">
                   <div className="text-2xl font-bold text-gray-600">+{images.length - maxThumbnails}</div>
@@ -202,6 +207,7 @@ export function ImageGallery({
               size="icon"
               className="absolute top-4 right-4 z-10 bg-white/10 hover:bg-white/20 text-white"
               onClick={() => setIsLightboxOpen(false)}
+              aria-label="Close image gallery"
             >
               <X className="h-6 w-6" />
             </Button>
@@ -214,6 +220,7 @@ export function ImageGallery({
                   size="icon"
                   className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/10 hover:bg-white/20 text-white"
                   onClick={handlePrevious}
+                  aria-label="Previous image"
                 >
                   <ChevronLeft className="h-8 w-8" />
                 </Button>
@@ -222,6 +229,7 @@ export function ImageGallery({
                   size="icon"
                   className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/10 hover:bg-white/20 text-white"
                   onClick={handleNext}
+                  aria-label="Next image"
                 >
                   <ChevronRight className="h-8 w-8" />
                 </Button>
@@ -276,6 +284,7 @@ export function ImageGallery({
                         : 'border-transparent hover:border-white'
                     )}
                     onClick={() => setSelectedIndex(index)}
+                    aria-label={`Show gallery image ${index + 1}`}
                   >
                     <Image
                       src={image}

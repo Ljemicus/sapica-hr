@@ -214,18 +214,6 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
             <div className="flex items-end gap-5 md:gap-6 animate-fade-in-up delay-100">
               <div className="avatar-gradient-border flex-shrink-0 animate-scale-in">
                 <Avatar className="h-24 w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 border-4 border-white shadow-2xl">
-                  {profile.user?.avatar_url ? (
-                    <Image
-                      src={profile.user.avatar_url}
-                      alt={profile.user?.name || 'Sitter'}
-                      width={128}
-                      height={128}
-                      priority
-                      fetchPriority="high"
-                      sizes="(max-width: 768px) 96px, (max-width: 1024px) 112px, 128px"
-                      className="aspect-square size-full rounded-full object-cover"
-                    />
-                  ) : null}
                   <AvatarFallback className="bg-white text-gray-700 text-3xl md:text-4xl font-bold">
                     {profile.user?.name?.charAt(0).toUpperCase()}
                   </AvatarFallback>

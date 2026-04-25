@@ -564,11 +564,11 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-2xl bg-warm-peach dark:bg-warm-orange/15 px-4 py-4 text-center">
                   <div className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 font-[var(--font-heading)]">{groomer.services.length}</div>
-                  <div className="text-[11px] text-muted-foreground font-medium mt-1 uppercase tracking-wider">{copy.services}</div>
+                  <div className="text-[11px] text-slate-700 dark:text-slate-300 font-semibold mt-1 uppercase tracking-wider">{copy.services}</div>
                 </div>
                 <div className="rounded-2xl bg-teal-50 dark:bg-teal-900/20 px-4 py-4 text-center">
                   <div className="text-2xl font-extrabold text-teal-600 dark:text-teal-400 font-[var(--font-heading)]">{groomer.review_count}</div>
-                  <div className="text-[11px] text-muted-foreground font-medium mt-1 uppercase tracking-wider">{copy.reviews}</div>
+                  <div className="text-[11px] text-slate-700 dark:text-slate-300 font-semibold mt-1 uppercase tracking-wider">{copy.reviews}</div>
                 </div>
               </div>
 
@@ -589,7 +589,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                             {hours ? (
                               <span className="font-semibold">{formatWorkingHours(hours)}</span>
                             ) : (
-                              <span className="text-muted-foreground/50">{copy.closed}</span>
+                              <span className="text-slate-600 dark:text-slate-300">{copy.closed}</span>
                             )}
                           </div>
                         );
@@ -619,7 +619,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                         className={`aspect-square rounded-lg flex items-center justify-center text-xs font-semibold transition-all duration-200 ${
                           isAvailable
                             ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-200 dark:ring-emerald-800/50'
-                            : 'bg-gray-50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-600'
+                            : 'bg-gray-100 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300'
                         }`}
                         title={`${format(date, 'd.M.')} — ${isAvailable ? copy.available : copy.unavailable}`}
                       >
