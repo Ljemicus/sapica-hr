@@ -14,7 +14,9 @@ const csp = [
   "base-uri 'self'",
   "frame-ancestors 'none'",
   "object-src 'none'",
-  "script-src 'self' https://plausible.io",
+  // Next App Router requires inline bootstrap/data scripts on dynamic app pages.
+  // TODO: replace unsafe-inline with full nonce propagation once Next script nonces are wired end-to-end.
+  "script-src 'self' 'unsafe-inline' https://plausible.io",
   ["style-src 'self'", ...allowedStyleHashes].join(' '),
   "img-src 'self' data: https: blob:",
   "font-src 'self' data:",
