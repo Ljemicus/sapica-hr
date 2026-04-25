@@ -42,7 +42,7 @@ The endpoint returns `503` if any required dependency fails.
 Added:
 
 - `app/api/cron/webhook-health/route.ts`
-- `vercel.json` cron entry: `/api/cron/webhook-health` every 5 minutes
+- `vercel.json` cron entry: `/api/cron/webhook-health` daily at `0 4 * * *` on Vercel Hobby; the original 5-minute cadence requires Vercel Pro
 
 Behavior:
 
@@ -81,6 +81,8 @@ git diff --cached --check
 ## Known limitations / not yet live-accepted
 
 Full Cycle 23 acceptance still requires staging/live verification:
+
+Operational note: Vercel Hobby blocks `*/5 * * * *` cron schedules, so webhook-health is configured daily for deployability until the project is on a plan that supports sub-daily cron cadence. The route can still be invoked manually or by an external scheduler.
 
 1. Sentry throwaway staging error must show original source in Sentry.
 2. `curl https://petpark.hr/api/health` must return JSON with `db/auth/stripe/redis` all `ok:true` using real production env vars.
