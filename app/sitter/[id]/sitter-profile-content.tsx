@@ -142,6 +142,9 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
               src={heroPhoto}
               alt={profile.user?.name || 'Sitter profile'}
               fill
+              priority
+              fetchPriority="high"
+              sizes="100vw"
               className="object-cover transition-opacity duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
@@ -211,7 +214,18 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
             <div className="flex items-end gap-5 md:gap-6 animate-fade-in-up delay-100">
               <div className="avatar-gradient-border flex-shrink-0 animate-scale-in">
                 <Avatar className="h-24 w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 border-4 border-white shadow-2xl">
-                  <AvatarImage src={profile.user?.avatar_url || ''} alt={profile.user?.name} />
+                  {profile.user?.avatar_url ? (
+                    <Image
+                      src={profile.user.avatar_url}
+                      alt={profile.user?.name || 'Sitter'}
+                      width={128}
+                      height={128}
+                      priority
+                      fetchPriority="high"
+                      sizes="(max-width: 768px) 96px, (max-width: 1024px) 112px, 128px"
+                      className="aspect-square size-full rounded-full object-cover"
+                    />
+                  ) : null}
                   <AvatarFallback className="bg-white text-gray-700 text-3xl md:text-4xl font-bold">
                     {profile.user?.name?.charAt(0).toUpperCase()}
                   </AvatarFallback>
@@ -376,7 +390,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                     <div key={review.id} className={`detail-section-card p-6 md:p-7 ${i > 0 ? 'mt-4' : ''}`}>
                       <div className="flex items-start gap-4">
                         <Avatar className="h-11 w-11 border-2 border-border/20 flex-shrink-0">
-                          <AvatarImage src={review.reviewer?.avatar_url || ''} />
+                          <AvatarImage src={review.reviewer?.avatar_url || ''} alt={review.reviewer?.name || 'Recenzent'} />
                           <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm font-semibold">
                             {review.reviewer?.name?.charAt(0)}
                           </AvatarFallback>
@@ -456,11 +470,11 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-2xl bg-warm-peach dark:bg-warm-orange/15 px-4 py-4 text-center">
                   <div className="text-2xl font-extrabold text-orange-600 dark:text-orange-400 font-[var(--font-heading)]">{profile.review_count}</div>
-                  <div className="text-[11px] text-muted-foreground font-medium mt-1 uppercase tracking-wider">{copy.reviewsLabel}</div>
+                  <div className="text-[11px] text-slate-700 dark:text-slate-300 font-semibold mt-1 uppercase tracking-wider">{copy.reviewsLabel}</div>
                 </div>
                 <div className="rounded-2xl bg-teal-50 dark:bg-teal-900/20 px-4 py-4 text-center">
                   <div className="text-2xl font-extrabold text-teal-600 dark:text-teal-400 font-[var(--font-heading)]">{profile.experience_years}</div>
-                  <div className="text-[11px] text-muted-foreground font-medium mt-1 uppercase tracking-wider">{copy.experienceLabel}</div>
+                  <div className="text-[11px] text-slate-700 dark:text-slate-300 font-semibold mt-1 uppercase tracking-wider">{copy.experienceLabel}</div>
                 </div>
               </div>
 
@@ -482,7 +496,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                         className={`aspect-square rounded-lg flex items-center justify-center text-xs font-semibold transition-all duration-200 ${
                           isAvailable
                             ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-200 dark:ring-emerald-800/50'
-                            : 'bg-gray-50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-600'
+                            : 'bg-gray-100 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300'
                         }`}
                         title={`${format(date, 'd.M.')} — ${isAvailable ? copy.available : copy.unavailable}`}
                       >

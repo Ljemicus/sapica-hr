@@ -41,13 +41,25 @@ export function AvailabilityCalendar({ availableDates, selectedDate, onSelectDat
             {isEn ? '📅 Availability' : '📅 Dostupnost'}
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="hover:bg-orange-50 dark:hover:bg-orange-950/20" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hover:bg-orange-50 dark:hover:bg-orange-950/20"
+              onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+              aria-label={isEn ? 'Previous month' : 'Prethodni mjesec'}
+            >
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <span className="font-medium min-w-[140px] text-center capitalize">
               {format(currentMonth, isEn ? 'LLLL yyyy' : 'LLLL yyyy.', { locale })}
             </span>
-            <Button variant="ghost" size="icon" className="hover:bg-orange-50 dark:hover:bg-orange-950/20" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hover:bg-orange-50 dark:hover:bg-orange-950/20"
+              onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+              aria-label={isEn ? 'Next month' : 'Sljedeći mjesec'}
+            >
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -80,10 +92,11 @@ export function AvailabilityCalendar({ availableDates, selectedDate, onSelectDat
                   isSelected
                     ? 'bg-orange-500 text-white shadow-md'
                     : isAvailable
-                      ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                      : 'bg-red-50 text-red-300 dark:bg-red-950/20 dark:text-red-400/50'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                      : 'bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-300'
                 } ${today ? 'ring-2 ring-orange-500 ring-offset-2' : ''} ${clickable ? 'cursor-pointer hover:scale-[1.03]' : ''}`}
                 title={`${format(day, isEn ? 'MMMM d' : 'd. MMMM', { locale })} — ${isAvailable ? (isEn ? 'Available' : 'Dostupno') : (isEn ? 'Busy' : 'Zauzeto')}`}
+                aria-label={`${format(day, isEn ? 'MMMM d' : 'd. MMMM', { locale })} — ${isAvailable ? (isEn ? 'Available' : 'Dostupno') : (isEn ? 'Busy' : 'Zauzeto')}`}
               >
                 {day.getDate()}
               </button>

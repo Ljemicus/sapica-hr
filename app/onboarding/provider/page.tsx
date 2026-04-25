@@ -9,7 +9,7 @@ import { ProviderOnboardingForm } from './provider-onboarding-form';
 import { ProviderIdentityVerification } from '@/components/provider-identity-verification';
 
 export const metadata: Metadata = {
-  title: 'Onboarding providera | PetPark',
+  title: { absolute: 'Onboarding providera | PetPark' },
   description: 'Postani provider na PetParku i dovrši onboarding za isplate, usluge i profil.',
   robots: { index: false, follow: false },
 };

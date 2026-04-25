@@ -29,7 +29,6 @@ export const metadata: Metadata = {
     canonical: 'https://petpark.hr/',
     languages: {
       'hr-HR': 'https://petpark.hr',
-      'en-US': 'https://petpark.hr/en',
     },
   },
   openGraph: {
@@ -92,7 +91,6 @@ export default function RootLayout({
         
         {/* Hreflang tags for SEO */}
         <link rel="alternate" hrefLang="hr" href="https://petpark.hr" />
-        <link rel="alternate" hrefLang="en" href="https://petpark.hr/en" />
         <link rel="alternate" hrefLang="x-default" href="https://petpark.hr" />
         
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -107,7 +105,7 @@ export default function RootLayout({
         <main id="main" className="flex-1">
           {children}
         </main>
-        <div className="hidden md:block">
+        <div className="hidden min-h-[185px] md:block">
           <StaticFooter />
         </div>
       </body>
