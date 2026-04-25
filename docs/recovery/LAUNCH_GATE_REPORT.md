@@ -1,16 +1,16 @@
 # PetPark Launch Gate Report
 
-Generated: 2026-04-25T07:25:06Z
+Generated: 2026-04-25T11:00:31Z
 Branch: recovery/petpark-worktree-checkpoint-2026-04-25
-Commit: 166e52e1
+Commit: 2de760f2
 Artifact dir: `/tmp/petpark-launch-gate`
 
 ## Summary
 
 | Metric  | Count |
 | ------- | ----: |
-| PASS    |     5 |
-| FAIL    |     5 |
+| PASS    |     6 |
+| FAIL    |     4 |
 | UNKNOWN |     1 |
 
 ## Gate results
@@ -27,9 +27,9 @@ Artifact dir: `/tmp/petpark-launch-gate`
 | Webhook event coverage     | PASS    | 6 target cases                       |                                       |
 | Zagreb Tier A providers    | FAIL    | 1/5 from status doc                  | docs/recovery/ZAGREB_TIER_A_STATUS.md |
 | DMARC monitoring           | FAIL    | missing rua/ruf: "v=DMARC1; p=none;" | dmarc.txt                             |
-| GDPR endpoints reachable   | FAIL    | export=HTTP/2 404                    |
+| GDPR endpoints reachable   | PASS    | export=HTTP/2 405                    |
 
-; delete=HTTP/2 404
+; delete=HTTP/2 405
 | gdpr-\*-head.txt |
 
 ## Decision
