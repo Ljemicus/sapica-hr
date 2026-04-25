@@ -32,20 +32,47 @@ echo "=== Launch Gate Check ==="
 echo "timestamp_utc=$NOW_UTC"
 echo "artifact_dir=$ARTIFACT_DIR"
 
+run_sql_count() {
+  local sql="$1" out="$2" err="$3"
+  if [[ -z "${DB_URL:-}" ]]; then
+    return 2
+  fi
+  if command -v psql >/dev/null 2>&1; then
+    psql "$DB_URL" -tAc "$sql" > "$out" 2> "$err"
+    return $?
+  fi
+  node - "$sql" > "$out" 2> "$err" <<'NODE'
+const { Client } = require('pg');
+const sql = process.argv[2];
+const client = new Client({ connectionString: process.env.DB_URL, ssl: { rejectUnauthorized: false }, connectionTimeoutMillis: 15000 });
+(async () => {
+  await client.connect();
+  const result = await client.query(sql);
+  const value = Object.values(result.rows[0] || {})[0];
+  console.log(value ?? '');
+  await client.end();
+})().catch(async (error) => {
+  console.error(error.message);
+  try { await client.end(); } catch {}
+  process.exit(1);
+});
+NODE
+}
+
 echo "1. RLS-disabled public tables"
-if [[ -n "${DB_URL:-}" ]] && command -v psql >/dev/null 2>&1; then
-  psql "$DB_URL" -tAc "SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='r' AND NOT c.relrowsecurity;" > "$ARTIFACT_DIR/rls_disabled.txt" 2> "$ARTIFACT_DIR/rls_disabled.err"
+if [[ -n "${DB_URL:-}" ]]; then
+  run_sql_count "SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='r' AND NOT c.relrowsecurity;" "$ARTIFACT_DIR/rls_disabled.txt" "$ARTIFACT_DIR/rls_disabled.err"
   code=$?
-  count="$(tr -d '[:space:]' < "$ARTIFACT_DIR/rls_disabled.txt")"
+  count="$(tr -d '[:space:]' < "$ARTIFACT_DIR/rls_disabled.txt" 2>/dev/null)"
   if [[ $code -eq 0 && "$count" == "0" ]]; then
     record "RLS-disabled public tables" "PASS" "0" "rls_disabled.txt"
   elif [[ $code -eq 0 ]]; then
     record "RLS-disabled public tables" "FAIL" "$count tables without RLS" "rls_disabled.txt"
   else
-    record "RLS-disabled public tables" "UNKNOWN" "psql failed" "rls_disabled.err"
+    record "RLS-disabled public tables" "UNKNOWN" "DB query failed" "rls_disabled.err"
   fi
 else
-  record "RLS-disabled public tables" "UNKNOWN" "DB_URL not set or psql unavailable" ""
+  record "RLS-disabled public tables" "UNKNOWN" "DB_URL not set" ""
 fi
 
 echo "2. npm audit high+critical"
@@ -170,16 +197,16 @@ else
 fi
 
 echo "9. Zagreb Tier A providers"
-if [[ -n "${DB_URL:-}" ]] && command -v psql >/dev/null 2>&1; then
-  psql "$DB_URL" -tAc "SELECT count(*) FROM providers p JOIN profiles pr ON pr.id=p.profile_id WHERE p.public_status='listed' AND p.verified_status='verified' AND pr.city ILIKE 'Zagreb';" > "$ARTIFACT_DIR/zagreb-providers.txt" 2> "$ARTIFACT_DIR/zagreb-providers.err"
+if [[ -n "${DB_URL:-}" ]]; then
+  run_sql_count "SELECT count(*) FROM providers p JOIN profiles pr ON pr.id=p.profile_id WHERE p.public_status='listed' AND p.verified_status='verified' AND pr.city ILIKE 'Zagreb';" "$ARTIFACT_DIR/zagreb-providers.txt" "$ARTIFACT_DIR/zagreb-providers.err"
   zg_code=$?
-  zg="$(tr -d '[:space:]' < "$ARTIFACT_DIR/zagreb-providers.txt")"
+  zg="$(tr -d '[:space:]' < "$ARTIFACT_DIR/zagreb-providers.txt" 2>/dev/null)"
   if [[ $zg_code -eq 0 && "$zg" -ge 5 ]]; then
     record "Zagreb Tier A providers" "PASS" "$zg/5" "zagreb-providers.txt"
   elif [[ $zg_code -eq 0 ]]; then
     record "Zagreb Tier A providers" "FAIL" "$zg/5" "zagreb-providers.txt"
   else
-    record "Zagreb Tier A providers" "UNKNOWN" "psql failed" "zagreb-providers.err"
+    record "Zagreb Tier A providers" "UNKNOWN" "DB query failed" "zagreb-providers.err"
   fi
 else
   # Fallback to documented current state if DB_URL is unavailable.

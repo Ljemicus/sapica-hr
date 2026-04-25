@@ -1,33 +1,33 @@
 # PetPark Launch Gate Report
 
-Generated: 2026-04-25T11:00:31Z
+Generated: 2026-04-25T11:17:00Z
 Branch: recovery/petpark-worktree-checkpoint-2026-04-25
-Commit: 2de760f2
+Commit: 778c1cc1
 Artifact dir: `/tmp/petpark-launch-gate`
 
 ## Summary
 
 | Metric  | Count |
 | ------- | ----: |
-| PASS    |     6 |
+| PASS    |     7 |
 | FAIL    |     4 |
-| UNKNOWN |     1 |
+| UNKNOWN |     0 |
 
 ## Gate results
 
-| Gate                       | Status  | Detail                               | Artifact                              |
-| -------------------------- | ------- | ------------------------------------ | ------------------------------------- |
-| RLS-disabled public tables | UNKNOWN | DB_URL not set or psql unavailable   |                                       |
-| npm audit high+critical    | PASS    | 0                                    | npm-audit.json                        |
-| gitleaks tracked source    | PASS    | 0 findings                           | gitleaks-no-git.txt                   |
-| npm test                   | PASS    | exit=0                               | npm-test.log                          |
-| Lighthouse mobile LCP      | FAIL    | home:error pretraga:error blog:error | lighthouse/                           |
-| axe serious/critical       | FAIL    | exit=1                               | axe.log                               |
-| Stripe create idempotency  | PASS    | 0 missing idempotencyKey             | missing-idempotency.txt               |
-| Webhook event coverage     | PASS    | 6 target cases                       |                                       |
-| Zagreb Tier A providers    | FAIL    | 1/5 from status doc                  | docs/recovery/ZAGREB_TIER_A_STATUS.md |
-| DMARC monitoring           | FAIL    | missing rua/ruf: "v=DMARC1; p=none;" | dmarc.txt                             |
-| GDPR endpoints reachable   | PASS    | export=HTTP/2 405                    |
+| Gate                       | Status | Detail                               | Artifact                |
+| -------------------------- | ------ | ------------------------------------ | ----------------------- |
+| RLS-disabled public tables | PASS   | 0                                    | rls_disabled.txt        |
+| npm audit high+critical    | PASS   | 0                                    | npm-audit.json          |
+| gitleaks tracked source    | PASS   | 0 findings                           | gitleaks-no-git.txt     |
+| npm test                   | PASS   | exit=0                               | npm-test.log            |
+| Lighthouse mobile LCP      | FAIL   | home:error pretraga:error blog:error | lighthouse/             |
+| axe serious/critical       | FAIL   | exit=1                               | axe.log                 |
+| Stripe create idempotency  | PASS   | 0 missing idempotencyKey             | missing-idempotency.txt |
+| Webhook event coverage     | PASS   | 6 target cases                       |                         |
+| Zagreb Tier A providers    | FAIL   | 1/5                                  | zagreb-providers.txt    |
+| DMARC monitoring           | FAIL   | missing rua/ruf: "v=DMARC1; p=none;" | dmarc.txt               |
+| GDPR endpoints reachable   | PASS   | export=HTTP/2 405                    |
 
 ; delete=HTTP/2 405
 | gdpr-\*-head.txt |
