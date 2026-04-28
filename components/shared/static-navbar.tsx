@@ -1,36 +1,51 @@
 import Link from 'next/link';
-
-function PawIcon() {
-  return (
-    <svg className="h-7 w-7 text-orange-600" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10Z" />
-    </svg>
-  );
-}
+import { BrandLogo } from '@/components/shared/brand-logo';
 
 const navItems = [
-  { href: '/pretraga', label: 'Pretraga' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/postani-sitter', label: 'Postani sitter' },
+  { href: '/o-nama', label: 'O nama' },
+  { href: '/pretraga', label: 'Usluge' },
+  { href: '/zajednica', label: 'Zajednica' },
+  { href: '/izgubljeni', label: 'Izgubljeni', highlight: true },
+  { href: '/prijava', label: 'Prijava' },
 ];
 
 export function StaticNavbar() {
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link prefetch={false} href="/" className="flex items-center gap-2 font-extrabold text-xl" aria-label="PetPark početna">
-          <PawIcon />
-          <span>PetPark</span>
+    <header className="sticky top-0 z-50 border-b border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)]/92 shadow-[var(--pp-shadow-soft)] backdrop-blur-xl supports-[backdrop-filter]:bg-[color:var(--pp-warm-white)]/86">
+      <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:flex-nowrap lg:px-8">
+        <Link
+          prefetch={false}
+          href="/"
+          className="group inline-flex shrink-0 rounded-[var(--pp-radius-pill)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-logo-teal)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--pp-warm-white)]"
+          aria-label="PetPark početna"
+        >
+          <BrandLogo size="md" className="transition-transform duration-200 group-hover:scale-[1.02]" />
         </Link>
-        <nav className="hidden items-center gap-2 md:flex" aria-label="Glavna navigacija">
+
+        <nav
+          className="order-3 flex w-full flex-wrap items-center gap-2 lg:order-2 lg:w-auto lg:flex-1 lg:justify-end"
+          aria-label="Glavna navigacija"
+        >
           {navItems.map((item) => (
-            <Link key={item.href} prefetch={false} href={item.href} className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+            <Link
+              key={item.href}
+              prefetch={false}
+              href={item.href}
+              className={item.highlight
+                ? 'inline-flex items-center justify-center rounded-[var(--pp-radius-pill)] border border-[color:var(--pp-lost-accent)]/20 bg-[color:var(--pp-lost-bg)] px-3 py-2 text-xs font-extrabold text-[color:var(--pp-lost-accent)] transition hover:-translate-y-0.5 hover:shadow-[var(--pp-shadow-card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-lost-accent)] sm:px-4 sm:text-sm'
+                : 'inline-flex items-center justify-center rounded-[var(--pp-radius-pill)] px-3 py-2 text-xs font-extrabold text-[color:var(--pp-muted)] transition hover:bg-white/70 hover:text-[color:var(--pp-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-logo-teal)] sm:px-4 sm:text-sm'}
+            >
               {item.label}
             </Link>
           ))}
         </nav>
-        <Link prefetch={false} href="/pretraga" className="inline-flex items-center gap-2 rounded-full bg-orange-700 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-800">
-          Pretraži
+
+        <Link
+          prefetch={false}
+          href="/pretraga"
+          className="order-2 inline-flex shrink-0 items-center justify-center rounded-[var(--pp-radius-pill)] bg-[color:var(--pp-forest)] px-4 py-2.5 text-sm font-extrabold text-white shadow-[0_18px_40px_rgba(14,83,56,.22)] transition hover:-translate-y-0.5 hover:bg-[color:var(--pp-forest-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-logo-teal)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--pp-warm-white)] lg:order-3"
+        >
+          Pronađi uslugu
         </Link>
       </div>
     </header>
