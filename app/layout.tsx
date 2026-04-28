@@ -105,9 +105,7 @@ export default function RootLayout({
         <main id="main" className="flex-1">
           {children}
         </main>
-        <div className="hidden min-h-[185px] md:block">
-          <StaticFooter />
-        </div>
+        <StaticFooter />
       </body>
     </html>
   );
