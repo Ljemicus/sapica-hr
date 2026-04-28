@@ -98,6 +98,70 @@
   /* Accessible logo colors for light backgrounds */
   --logo-orange: #B45309;
   --logo-teal: #0F766E;
+  /* PetPark Redesign System v1 tokens — additive foundation */
+  --pp-logo-orange: #de9350;
+  --pp-logo-teal: #55a497;
+  --pp-logo-yellow: #ecb666;
+
+  --pp-forest: #0e5338;
+  --pp-forest-dark: #073d29;
+  --pp-forest-soft: #2f6a54;
+
+  --pp-cream: #f5f1e6;
+  --pp-warm-white: #fffaf3;
+  --pp-surface: #ffffff;
+  --pp-sand: #ded8cb;
+  --pp-line: #ddd6c7;
+
+  --pp-ink: #1e2d26;
+  --pp-muted: #6e7a72;
+  --pp-muted-2: #859087;
+
+  --pp-sitter-bg: #dfead7;
+  --pp-sitter-accent: #6f9a67;
+  --pp-grooming-bg: #fde7d1;
+  --pp-grooming-accent: #de9350;
+  --pp-trainer-bg: #d9f0eb;
+  --pp-trainer-accent: #55a497;
+  --pp-lost-bg: #f8dbd6;
+  --pp-lost-accent: #cc6c5c;
+  --pp-community-bg: #f8efbf;
+  --pp-community-accent: #c69b3d;
+  --pp-vet-bg: #ddeeff;
+  --pp-vet-accent: #5f95c7;
+  --pp-adoption-bg: #f5dde4;
+  --pp-adoption-accent: #c87b92;
+  --pp-breeder-bg: #e8e1f5;
+  --pp-breeder-accent: #8e78b8;
+
+  --pp-font-heading: "Fraunces", Georgia, serif;
+  --pp-font-body: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --pp-space-4: 4px;
+  --pp-space-8: 8px;
+  --pp-space-12: 12px;
+  --pp-space-16: 16px;
+  --pp-space-20: 20px;
+  --pp-space-24: 24px;
+  --pp-space-32: 32px;
+  --pp-space-40: 40px;
+  --pp-space-48: 48px;
+  --pp-space-64: 64px;
+  --pp-space-80: 80px;
+  --pp-space-96: 96px;
+
+  --pp-radius-12: 12px;
+  --pp-radius-16: 16px;
+  --pp-radius-20: 20px;
+  --pp-radius-24: 24px;
+  --pp-radius-32: 32px;
+  --pp-radius-40: 40px;
+  --pp-radius-pill: 999px;
+
+  --pp-shadow-soft: 0 12px 36px rgba(30, 45, 38, 0.08);
+  --pp-shadow-card: 0 10px 28px rgba(30, 45, 38, 0.06);
+  --pp-shadow-strong: 0 24px 64px rgba(30, 45, 38, 0.12);
+
   /* Premium tokens */
   --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.06);
@@ -149,8 +213,8 @@
 }
 
 :root {
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-sans: var(--pp-font-body, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif);
+  --font-heading: var(--pp-font-heading, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif);
 }
 
 @layer base {
