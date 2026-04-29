@@ -138,7 +138,7 @@ export default function RedizajnPreviewPage() {
           visual={<HeroVisual />}
         />
 
-        <section aria-labelledby="preview-search-title" className="space-y-5">
+        <section aria-labelledby="preview-search-title" className="flex flex-col space-y-5">
           <SectionHeader
             kicker="Brzi početak"
             title="Što danas treba tvom ljubimcu?"
@@ -155,7 +155,7 @@ export default function RedizajnPreviewPage() {
           />
         </section>
 
-        <section aria-labelledby="preview-services-title" className="space-y-8">
+        <section aria-labelledby="preview-services-title" className="flex flex-col space-y-8">
           <SectionHeader
             kicker="Usluge"
             title="Sve važno za ljubimce na jednom toplom mjestu."
@@ -170,7 +170,7 @@ export default function RedizajnPreviewPage() {
           </div>
         </section>
 
-        <section aria-labelledby="preview-providers-title" className="space-y-8">
+        <section aria-labelledby="preview-providers-title" className="flex flex-col space-y-8">
           <SectionHeader
             kicker="Partneri"
             title="Primjer kako će izgledati stvarni profili."
@@ -202,7 +202,7 @@ export default function RedizajnPreviewPage() {
           />
         </section>
 
-        <section aria-labelledby="preview-trust-title" className="space-y-8">
+        <section aria-labelledby="preview-trust-title" className="flex flex-col space-y-8">
           <SectionHeader
             kicker="Zašto PetPark"
             title="Toplo, korisno i transparentno."
