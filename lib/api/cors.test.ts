@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+import { appLogger } from '@/lib/logger';
 import {
   getCorsHeaders,
   isOriginAllowed,
@@ -5,11 +7,11 @@ import {
 } from './cors';
 
 // Mock logger
-jest.mock('@/lib/logger', () => ({
+vi.mock('@/lib/logger', () => ({
   appLogger: {
-    warn: jest.fn(),
-    info: jest.fn(),
-    error: jest.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -67,13 +69,12 @@ describe('CORS Utils', () => {
 
   describe('logCorsViolation', () => {
     it('should log warning', () => {
-      const { appLogger } = require('@/lib/logger');
-      const request = new Request('https://evil.com', {
+      const request = Object.assign(new Request('https://evil.com/test-path', {
         headers: {
           origin: 'https://evil.com',
           'user-agent': 'test-agent',
         },
-      }) as unknown as import('next/server').NextRequest;
+      }), { nextUrl: new URL('https://evil.com/test-path') }) as unknown as import('next/server').NextRequest;
       
       logCorsViolation(request);
       

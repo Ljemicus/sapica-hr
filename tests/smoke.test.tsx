@@ -1,14 +1,14 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock next/navigation
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter() {
     return {
-      push: jest.fn(),
-      replace: jest.fn(),
-      prefetch: jest.fn(),
-      back: jest.fn(),
+      push: vi.fn(),
+      replace: vi.fn(),
+      prefetch: vi.fn(),
+      back: vi.fn(),
     };
   },
   usePathname() {
@@ -20,7 +20,7 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock next/image
-jest.mock('next/image', () => ({
+vi.mock('next/image', () => ({
   __esModule: true,
   default: (props: { src: string; alt: string; [key: string]: unknown }) => {
     // eslint-disable-next-line @next/next/no-img-element
@@ -29,20 +29,20 @@ jest.mock('next/image', () => ({
 }));
 
 // Mock Supabase
-jest.mock('@supabase/supabase-js', () => ({
-  createClient: jest.fn(() => ({
+vi.mock('@supabase/supabase-js', () => ({
+  createClient: vi.fn(() => ({
     auth: {
-      getSession: jest.fn(() => Promise.resolve({ data: { session: null }, error: null })),
-      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+      getSession: vi.fn(() => Promise.resolve({ data: { session: null }, error: null })),
+      onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
     },
-    from: jest.fn(() => ({
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          single: jest.fn(() => Promise.resolve({ data: null, error: null })),
-          limit: jest.fn(() => Promise.resolve({ data: [], error: null })),
+    from: vi.fn(() => ({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({ data: null, error: null })),
+          limit: vi.fn(() => Promise.resolve({ data: [], error: null })),
         })),
-        limit: jest.fn(() => Promise.resolve({ data: [], error: null })),
-        order: jest.fn(() => Promise.resolve({ data: [], error: null })),
+        limit: vi.fn(() => Promise.resolve({ data: [], error: null })),
+        order: vi.fn(() => Promise.resolve({ data: [], error: null })),
       })),
     })),
   })),

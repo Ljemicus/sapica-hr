@@ -1,0 +1,35 @@
+{
+  "legacyUserReads": [
+    "app/api/appeals/donation-click/route.ts:74:.from('users')",
+    "app/api/auth/login/route.ts:57:.from('users')",
+    "app/api/email/booking-confirmation/route.ts:47:.from('users')",
+    "app/api/email/review-request/route.ts:45:.from('users')",
+    "app/api/email/sequences/welcome/route.ts:36:.from('users')",
+    "app/api/email/sequences/welcome/route.ts:48:.from('users')",
+    "app/api/lost-pets/[id]/relay/route.ts:61:.from('users')",
+    "app/api/lost-pets/[id]/sightings/route.ts:100:.from('users')",
+    "app/api/matching/find-sitters/route.ts:64:.from('users')",
+    "app/api/messages/route.ts:66:.from('users')",
+    "app/api/push/send/route.ts:28:.from('users')",
+    "app/api/social/challenges/route.ts:54:.from('users')",
+    "app/api/social/pet-of-week/route.ts:56:.from('users')",
+    "app/poruke/messages-content.tsx:94:const { data } = await supabase.from('users').select('id, name, avatar_url').eq('id', toParam).single();",
+    "lib/auth-profile.ts:24:const { error } = await supabase.from('users').upsert(",
+    "lib/auth.ts:96:.from('users')",
+    "lib/db/lost-pet-alerts.ts:157:.from('users')",
+    "lib/db/users.ts:11:const { data, error } = await supabase.from('users').select('id, email, name, role, avatar_url, phone, city, created_at').eq('id', id).single();",
+    "lib/db/users.ts:30:const { data, error } = await supabase.from('users').select(selectClause);",
+    "lib/db/users.ts:48:.from('users')",
+    "lib/db/users.ts:66:const { data, error } = await supabase.from('users').select('id, email, name, role, avatar_url, phone, city, created_at').eq('role', role);",
+    "lib/kpi-digest.ts:68:db.from('users').select('id', { count: 'exact', head: true }).gte('created_at', since),",
+    "lib/kpi-digest.ts:69:db.from('users').select('id', { count: 'exact', head: true }),",
+    "lib/supabase/middleware.ts:51:.from('users')",
+    "tests/e2e/e2e-full.test.ts:22:const { data: users } = await supabase.from('users').select('*').limit(2);",
+    "tests/e2e/e2e-full.test.ts:37:const { data, error } = await supabase.from('users').select('*').limit(5);",
+    "tests/e2e/new-features.test.ts:100:const { data: users } = await supabase.from('users').select('id').limit(1);",
+    "tests/e2e/new-features.test.ts:42:const { data: users } = await supabase.from('users').select('id').limit(1);"
+  ],
+  "checkoutMissingIdempotency": [
+    "lib/payment.ts:64:const session = await stripe.checkout.sessions.create({"
+  ]
+}
