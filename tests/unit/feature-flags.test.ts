@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock the feature flags module
 const mockFlags: Record<string, { enabled: boolean; showInNav: boolean; redirectTo?: string }> = {
