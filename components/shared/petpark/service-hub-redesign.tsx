@@ -237,7 +237,7 @@ export function ServiceHubRedesign() {
           <SectionHeader
             kicker="Transparentnost"
             title="Jasno što postoji, jasno što se tek gradi."
-            description="Service hub mora biti topao i šaren, ali i ozbiljan: bez lažnih ocjena, bez izmišljenih cijena i bez skrivanja statusa kategorija."
+            description="Pregled usluga treba biti topao i jasan: bez lažnih ocjena, bez izmišljenih cijena i bez skrivanja statusa kategorija."
           />
           <TrustPanel
             items={[

@@ -3,7 +3,7 @@ import { ServiceHubRedesign } from '@/components/shared/petpark/service-hub-rede
 
 export const metadata: Metadata = {
   title: { absolute: 'PetPark usluge redizajn preview | PetPark' },
-  description: 'Interni preview redizajna PetPark service hub stranice.',
+  description: 'Interni preview redizajna PetPark pregleda usluga.',
   robots: {
     index: false,
     follow: false,
