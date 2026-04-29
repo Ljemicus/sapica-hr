@@ -21,7 +21,8 @@
     "check:build": "npm run build && echo \"✅ Build successful\"",
     "preflight": "npm run validate:prod && npm run check:build && npm run lint",
     "launch:check": "npm run preflight && echo \"✅ All pre-launch checks passed\"",
-    "prepare": "husky"
+    "prepare": "husky",
+    "ci:regression": "node scripts/check-regressions.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
