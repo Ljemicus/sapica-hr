@@ -10,7 +10,20 @@ import { EmptyStateCard } from '@/components/shared/petpark/empty-state-card';
 import { PetParkBadge } from '@/components/shared/petpark/pp-badge';
 import { ServiceListingCard } from '@/components/shared/petpark/service-listing-card';
 import { useLanguage } from '@/lib/i18n/context';
-import { CITIES, GROOMING_SERVICE_LABELS, GROOMER_SPECIALIZATION_LABELS, type Groomer, type GroomerSpecialization, type GroomingServiceType } from '@/lib/types';
+import { CITIES, GROOMING_SERVICE_LABELS, GROOMER_SPECIALIZATION_LABELS, type GroomerSpecialization, type GroomingServiceType } from '@/lib/types';
+
+export type PublicGroomingListingItem = {
+  id: string;
+  name: string;
+  city: string;
+  services: GroomingServiceType[];
+  prices: Partial<Record<GroomingServiceType, number>>;
+  rating: number | null;
+  review_count: number;
+  bio: string;
+  verified: boolean;
+  specialization: GroomerSpecialization;
+};
 
 const GROOMING_SERVICE_LABELS_EN: Record<GroomingServiceType, string> = {
   sisanje: 'Haircut',
@@ -98,11 +111,11 @@ const LISTING_COPY = {
 } as const;
 
 interface GroomingContentProps {
-  groomers: Groomer[];
+  groomers: PublicGroomingListingItem[];
   initialParams: { city?: string; service?: string };
 }
 
-function minPositivePrice(prices: Groomer['prices']) {
+function minPositivePrice(prices: PublicGroomingListingItem['prices']) {
   const values = Object.values(prices || {})
     .map((value) => Number(value))
     .filter((value) => Number.isFinite(value) && value > 0);
