@@ -1,5 +1,5 @@
-import { Suspense } from 'react';
 import { SearchContent } from './search-content';
+import { ServiceHubOverview } from '@/components/shared/petpark/service-hub-overview';
 import { InternalLinkSection, type InternalLinkItem } from '@/components/shared/internal-link-section';
 import { DiscoveryPageShell } from '@/components/shared/discovery-page-shell';
 import { getUnifiedProviders, normalizeProviderSearchParams } from '@/lib/search/providers';
@@ -101,9 +101,14 @@ export async function SearchPageShell({ searchParams, locale }: SearchPageShellP
         ctaLabel: copy.internalLinksCta,
       }}
     >
-      <Suspense fallback={<div className="container mx-auto px-6 md:px-10 lg:px-16 py-16">{copy.loadingLabel}</div>}>
-        <SearchContent providers={providers} initialParams={params} forcedLanguage={locale} />
-      </Suspense>
+      {locale === 'hr' ? <ServiceHubOverview mode="production" /> : null}
+      <SearchContent
+        providers={providers}
+        initialParams={params}
+        forcedLanguage={locale}
+        showEditorialHero={locale !== 'hr'}
+        resultsAnchorId="rezultati"
+      />
     </DiscoveryPageShell>
   );
 }

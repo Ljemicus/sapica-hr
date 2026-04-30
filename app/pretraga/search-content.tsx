@@ -45,6 +45,8 @@ interface SearchContentProps {
     min_rating?: string;
     sort?: string;
   };
+  showEditorialHero?: boolean;
+  resultsAnchorId?: string;
 }
 
 const CATEGORY_TABS: { key: ProviderCategory | 'all'; emoji: string }[] = [
@@ -404,7 +406,13 @@ function ProviderCard({ provider }: { provider: UnifiedProvider }) {
   );
 }
 
-export function SearchContent({ providers, initialParams, forcedLanguage }: SearchContentProps & { forcedLanguage?: 'hr' | 'en' }) {
+export function SearchContent({
+  providers,
+  initialParams,
+  forcedLanguage,
+  showEditorialHero = true,
+  resultsAnchorId,
+}: SearchContentProps & { forcedLanguage?: 'hr' | 'en' }) {
   const router = useRouter();
   const { language } = useLanguage();
   const activeLanguage = forcedLanguage || language;
@@ -549,31 +557,33 @@ export function SearchContent({ providers, initialParams, forcedLanguage }: Sear
       };
 
   return (
-    <div>
+    <div id={resultsAnchorId}>
       {/* ══════════════════════════════════════════
           EDITORIAL HERO
           ══════════════════════════════════════════ */}
-      <section className="relative browse-hero-gradient overflow-hidden">
-        <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
-        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24 relative">
-          <div className="max-w-2xl">
-            <p className="section-kicker animate-fade-in-up">
-              {copy.heroKicker}
-            </p>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-6 font-[var(--font-heading)] whitespace-pre-line animate-fade-in-up delay-100">
-              {copy.heroTitle[activeCategory]}
-            </h1>
-            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg animate-fade-in-up delay-200">
-              {copy.heroSub[activeCategory]}
-            </p>
+      {showEditorialHero ? (
+        <section className="relative browse-hero-gradient overflow-hidden">
+          <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
+          <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24 relative">
+            <div className="max-w-2xl">
+              <p className="section-kicker animate-fade-in-up">
+                {copy.heroKicker}
+              </p>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-6 font-[var(--font-heading)] whitespace-pre-line animate-fade-in-up delay-100">
+                {copy.heroTitle[activeCategory]}
+              </h1>
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg animate-fade-in-up delay-200">
+                {copy.heroSub[activeCategory]}
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       {/* ══════════════════════════════════════════
           CATEGORY TABS
           ══════════════════════════════════════════ */}
-      <div className="container mx-auto px-6 md:px-10 lg:px-16 -mt-5 relative z-10">
+      <div className={`container mx-auto px-6 md:px-10 lg:px-16 relative z-10 ${showEditorialHero ? '-mt-5' : 'pt-2'}`}>
         <div className="flex flex-wrap justify-center gap-2">
           {CATEGORY_TABS.map((tab) => {
             const isActive = activeCategory === tab.key;
@@ -649,18 +659,24 @@ export function SearchContent({ providers, initialParams, forcedLanguage }: Sear
               {/* View toggles */}
               <div className="hidden sm:flex items-center border border-border/60 rounded-xl overflow-hidden shadow-sm">
                 <button
+                  type="button"
+                  aria-label={activeLanguage === 'en' ? 'Show grid view' : 'Prikaži mrežni prikaz'}
                   onClick={() => { setShowMap(false); setViewMode('grid'); }}
                   className={`p-2.5 transition-colors ${!showMap && viewMode === 'grid' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
                 >
                   <Grid className="h-4 w-4" />
                 </button>
                 <button
+                  type="button"
+                  aria-label={activeLanguage === 'en' ? 'Show list view' : 'Prikaži prikaz liste'}
                   onClick={() => { setShowMap(false); setViewMode('list'); }}
                   className={`p-2.5 transition-colors ${!showMap && viewMode === 'list' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
                 >
                   <LayoutList className="h-4 w-4" />
                 </button>
                 <button
+                  type="button"
+                  aria-label={activeLanguage === 'en' ? 'Show map view' : 'Prikaži kartu'}
                   onClick={() => setShowMap(true)}
                   className={`p-2.5 transition-colors ${showMap ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
                 >
@@ -672,6 +688,9 @@ export function SearchContent({ providers, initialParams, forcedLanguage }: Sear
               <Button
                 variant={showMap ? 'default' : 'outline'}
                 size="sm"
+                aria-label={showMap
+                  ? activeLanguage === 'en' ? 'Show grid view' : 'Prikaži mrežni prikaz'
+                  : activeLanguage === 'en' ? 'Show map view' : 'Prikaži kartu'}
                 onClick={() => setShowMap(!showMap)}
                 className={`sm:hidden rounded-xl ${showMap ? 'bg-orange-500 hover:bg-orange-600' : ''}`}
               >
