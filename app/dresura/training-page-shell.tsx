@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { Scissors, Search, ArrowRight } from 'lucide-react';
-import { TrainingContent } from './training-content';
+import { TrainingContent, type PublicTrainingListingItem } from './training-content';
 import { DiscoveryPageShell } from '@/components/shared/discovery-page-shell';
 import { TRAINING_HUB_LINKS, CONTENT_DISCOVERY_LINKS } from '@/lib/seo/internal-links';
 import { getProviderTrainers } from '@/lib/db/provider-trainers';
-import type { TrainingType } from '@/lib/types';
+import type { Trainer, TrainingType } from '@/lib/types';
 
 export type TrainingPageLocale = 'hr' | 'en';
 
@@ -16,7 +16,7 @@ export const TRAINING_PAGE_COPY = {
     pathname: '/dresura',
     eyebrow: 'Gradovi s ponudom',
     internalTitle: 'Tražite trening u određenom gradu?',
-    internalDescription: 'Umjesto novih thin landingica, ovdje vodimo na filtrirane training rute za gradove gdje već postoji realan supply trenera.',
+    internalDescription: 'Vodimo vas na filtrirane rezultate za gradove gdje su dostupni treneri.',
     relatedEyebrow: 'Druge usluge',
     relatedTitle: 'Istražite druge usluge',
     petSittingTitle: 'Čuvanje ljubimaca',
@@ -32,7 +32,7 @@ export const TRAINING_PAGE_COPY = {
     pathname: '/dresura/en',
     eyebrow: 'Cities with supply',
     internalTitle: 'Looking for a trainer in a specific city?',
-    internalDescription: 'Instead of spinning up thin landing pages, we route people to filtered training results only where there is real trainer supply.',
+    internalDescription: 'We route you to filtered results in cities where trainers are available.',
     relatedEyebrow: 'Related services',
     relatedTitle: 'Explore related services',
     petSittingTitle: 'Pet sitting',
@@ -43,6 +43,24 @@ export const TRAINING_PAGE_COPY = {
   },
 } as const;
 
+
+function toPublicTrainingListingItem(trainer: Trainer): PublicTrainingListingItem {
+  return {
+    id: trainer.id,
+    name: trainer.name,
+    city: trainer.city,
+    profileHref: `/trener/${trainer.id}`,
+    description: trainer.bio,
+    specializations: trainer.specializations,
+    serviceTags: trainer.specializations,
+    certificates: trainer.certificates,
+    certified: trainer.certified,
+    rating: trainer.review_count > 0 ? trainer.rating : null,
+    reviewCount: trainer.review_count ?? 0,
+    priceFrom: trainer.price_per_hour > 0 ? trainer.price_per_hour : null,
+  };
+}
+
 interface TrainingPageShellProps {
   searchParams: Promise<{ city?: string; type?: string }>;
   locale: TrainingPageLocale;
@@ -50,7 +68,7 @@ interface TrainingPageShellProps {
 
 export async function TrainingPageShell({ searchParams, locale }: TrainingPageShellProps) {
   const params = await searchParams;
-  const trainers = await getProviderTrainers({ city: params.city, type: params.type as TrainingType | undefined });
+  const trainers = (await getProviderTrainers({ city: params.city, type: params.type as TrainingType | undefined })).map(toPublicTrainingListingItem);
   const copy = TRAINING_PAGE_COPY[locale];
 
   return (
