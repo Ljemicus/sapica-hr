@@ -1,28 +1,18 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import type { Groomer } from '@/lib/types';
+import type { PublicGroomerProfile, PublicProviderReview } from '@/lib/types/public-provider';
 import { GroomerProfile } from './groomer-profile';
 
-interface GroomerReview {
-  id: string;
-  groomer_id: string;
-  author_name: string;
-  author_initial: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-}
-
 interface GroomerPageData {
-  groomer: Groomer | null;
-  reviews: GroomerReview[];
+  groomer: PublicGroomerProfile | null;
+  reviews: PublicProviderReview[];
   availableDates: string[];
 }
 
 interface GroomerProfileLoaderProps {
   id: string;
-  initialGroomer: Groomer;
+  initialGroomer: PublicGroomerProfile;
 }
 
 export function GroomerProfileLoader({ id, initialGroomer }: GroomerProfileLoaderProps) {

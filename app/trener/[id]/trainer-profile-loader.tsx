@@ -1,35 +1,23 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import type { Trainer, TrainingProgram } from '@/lib/types';
+import type { PublicTrainerProfile, PublicProviderReview } from '@/lib/types/public-provider';
 import { TrainerProfile } from './trainer-profile';
 
-interface TrainerReview {
-  id: string;
-  trainer_id: string;
-  author_name: string;
-  author_initial: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-}
-
 interface TrainerPageData {
-  trainer: Trainer | null;
-  programs: TrainingProgram[];
-  reviews: TrainerReview[];
+  trainer: PublicTrainerProfile | null;
+  reviews: PublicProviderReview[];
   availableDates: string[];
 }
 
 interface TrainerProfileLoaderProps {
   id: string;
-  initialTrainer: Trainer;
+  initialTrainer: PublicTrainerProfile;
 }
 
 export function TrainerProfileLoader({ id, initialTrainer }: TrainerProfileLoaderProps) {
   const [data, setData] = useState<TrainerPageData>({
     trainer: initialTrainer,
-    programs: [],
     reviews: [],
     availableDates: [],
   });
@@ -80,7 +68,6 @@ export function TrainerProfileLoader({ id, initialTrainer }: TrainerProfileLoade
   return (
     <TrainerProfile
       trainer={data.trainer ?? initialTrainer}
-      programs={data.programs}
       reviews={data.reviews}
       availableDates={availableDatesSet}
     />

@@ -1,18 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { Availability, PublicSitterReview, SitterProfile } from '@/lib/types';
+import type { PublicSitterProfile, PublicProviderReview } from '@/lib/types/public-provider';
+import type { Availability } from '@/lib/types';
 import { SitterProfileContent } from './sitter-profile-content';
 
 interface SitterPageData {
-  profile: (SitterProfile & { user: NonNullable<SitterProfile['user']> }) | null;
-  reviews: PublicSitterReview[];
+  profile: PublicSitterProfile | null;
+  reviews: PublicProviderReview[];
   availability: Availability[];
 }
 
 interface SitterProfileLoaderProps {
   id: string;
-  initialProfile: SitterProfile & { user: NonNullable<SitterProfile['user']> };
+  initialProfile: PublicSitterProfile;
 }
 
 export function SitterProfileLoader({ id, initialProfile }: SitterProfileLoaderProps) {
@@ -61,11 +62,9 @@ export function SitterProfileLoader({ id, initialProfile }: SitterProfileLoaderP
 
   return (
     <SitterProfileContent
-      profile={(data.profile ?? initialProfile) as SitterProfile & { user: NonNullable<SitterProfile['user']> }}
+      profile={data.profile ?? initialProfile}
       reviews={data.reviews}
       availability={data.availability}
-      bookingPets={[]}
-      bookingUserId={null}
     />
   );
 }
