@@ -12,14 +12,15 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { GROOMING_SERVICE_LABELS, type Groomer, type GroomingServiceType, type GroomerAvailabilitySlot } from '@/lib/types';
+import { GROOMING_SERVICE_LABELS, type GroomingServiceType, type GroomerAvailabilitySlot } from '@/lib/types';
+import type { PublicGroomerProfile } from '@/lib/public/provider-profile-sanitizers';
 import { useLanguage } from '@/lib/i18n/context';
 import { toast } from 'sonner';
 
 interface GroomerBookingDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  groomer: Groomer;
+  groomer: PublicGroomerProfile;
   initialDate?: string;
   initialSlot?: GroomerAvailabilitySlot | null;
 }

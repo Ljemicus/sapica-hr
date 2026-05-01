@@ -3,6 +3,7 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { robotsMeta, shouldIndexTrainer } from '@/lib/seo/indexability';
 import type { Trainer } from '@/lib/types';
 import { getProviderTrainerById } from '@/lib/db/provider-trainers';
+import { sanitizeTrainerProfile } from '@/lib/public/provider-profile-sanitizers';
 import { TrainerProfileLoader } from './trainer-profile-loader';
 
 interface TrainerPageProps {
@@ -33,9 +34,10 @@ async function createTrainerShell(id: string): Promise<Trainer> {
 export async function generateMetadata({ params }: TrainerPageProps): Promise<Metadata> {
   const { id } = await params;
   const trainer = await createTrainerShell(id);
+  const publicTrainer = sanitizeTrainerProfile(trainer)!;
   return {
-    title: { absolute: `${trainer.name} | PetPark` },
-    description: trainer.bio || 'Profil trenera na PetParku.',
+    title: { absolute: `${publicTrainer.name} | PetPark` },
+    description: publicTrainer.safeBio || 'Profil trenera na PetParku.',
     alternates: { canonical: `/trener/${id}` },
     robots: robotsMeta(shouldIndexTrainer(trainer)),
   };
@@ -44,14 +46,15 @@ export async function generateMetadata({ params }: TrainerPageProps): Promise<Me
 export default async function TrainerPage({ params }: TrainerPageProps) {
   const { id } = await params;
   const trainer = await createTrainerShell(id);
+  const publicTrainer = sanitizeTrainerProfile(trainer)!;
 
   return (
     <>
       <Breadcrumbs items={[
         { label: 'Školovanje pasa', href: '/dresura' },
-        { label: trainer.name, href: `/trener/${id}` },
+        { label: publicTrainer.name, href: `/trener/${id}` },
       ]} />
-      <TrainerProfileLoader id={id} initialTrainer={trainer} />
+      <TrainerProfileLoader id={id} initialTrainer={publicTrainer} />
     </>
   );
 }

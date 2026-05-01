@@ -8,14 +8,15 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { type Trainer, type TrainingProgram, type TrainerAvailabilitySlot, type TrainingType } from '@/lib/types';
+import { type TrainingProgram, type TrainerAvailabilitySlot, type TrainingType } from '@/lib/types';
+import type { PublicTrainerProfile } from '@/lib/public/provider-profile-sanitizers';
 import { useLanguage } from '@/lib/i18n/context';
 import { toast } from 'sonner';
 
 interface TrainerBookingDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  trainer: Trainer;
+  trainer: PublicTrainerProfile;
   programs: TrainingProgram[];
 }
 

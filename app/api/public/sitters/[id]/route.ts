@@ -4,6 +4,7 @@ import {
   getProviderSitterById,
   getProviderSitterReviews,
 } from '@/lib/db/provider-sitters';
+import { sanitizeSitterProfile, sanitizeSitterReviews } from '@/lib/public/provider-profile-sanitizers';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -23,8 +24,8 @@ export async function GET(_request: Request, { params }: RouteContext) {
   ]);
 
   return NextResponse.json({
-    profile,
-    reviews,
+    profile: sanitizeSitterProfile(profile, id),
+    reviews: sanitizeSitterReviews(reviews),
     availability,
   });
 }

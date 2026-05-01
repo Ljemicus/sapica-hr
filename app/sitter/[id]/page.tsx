@@ -3,6 +3,7 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { robotsMeta, shouldIndexSitter } from '@/lib/seo/indexability';
 import type { SitterProfile } from '@/lib/types';
 import { getProviderSitterById } from '@/lib/db/provider-sitters';
+import { sanitizeSitterProfile } from '@/lib/public/provider-profile-sanitizers';
 import { SitterProfileLoader } from './sitter-profile-loader';
 
 interface SitterPageProps {
@@ -45,9 +46,10 @@ async function createSitterShell(id: string): Promise<SitterProfile & { user: No
 export async function generateMetadata({ params }: SitterPageProps): Promise<Metadata> {
   const { id } = await params;
   const profile = await createSitterShell(id);
+  const publicProfile = sanitizeSitterProfile(profile, id)!;
   return {
-    title: { absolute: `${profile.user.name} | PetPark` },
-    description: profile.bio || 'Profil sittera na PetParku.',
+    title: { absolute: `${publicProfile.name} | PetPark` },
+    description: publicProfile.safeBio || 'Profil sittera na PetParku.',
     alternates: { canonical: `/sitter/${id}` },
     robots: robotsMeta(shouldIndexSitter(profile)),
   };
@@ -56,14 +58,15 @@ export async function generateMetadata({ params }: SitterPageProps): Promise<Met
 export default async function SitterPage({ params }: SitterPageProps) {
   const { id } = await params;
   const profile = await createSitterShell(id);
+  const publicProfile = sanitizeSitterProfile(profile, id)!;
 
   return (
     <>
       <Breadcrumbs items={[
         { label: 'Pretraga sittera', href: '/pretraga' },
-        { label: profile.user.name, href: `/sitter/${id}` },
+        { label: publicProfile.name, href: `/sitter/${id}` },
       ]} />
-      <SitterProfileLoader id={id} initialProfile={profile} />
+      <SitterProfileLoader id={id} initialProfile={publicProfile} />
     </>
   );
 }

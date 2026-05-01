@@ -1,33 +1,16 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import type { Trainer, TrainingProgram } from '@/lib/types';
+import type { PublicTrainerPageData, PublicTrainerProfile } from '@/lib/public/provider-profile-sanitizers';
 import { TrainerProfile } from './trainer-profile';
-
-interface TrainerReview {
-  id: string;
-  trainer_id: string;
-  author_name: string;
-  author_initial: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-}
-
-interface TrainerPageData {
-  trainer: Trainer | null;
-  programs: TrainingProgram[];
-  reviews: TrainerReview[];
-  availableDates: string[];
-}
 
 interface TrainerProfileLoaderProps {
   id: string;
-  initialTrainer: Trainer;
+  initialTrainer: PublicTrainerProfile;
 }
 
 export function TrainerProfileLoader({ id, initialTrainer }: TrainerProfileLoaderProps) {
-  const [data, setData] = useState<TrainerPageData>({
+  const [data, setData] = useState<PublicTrainerPageData>({
     trainer: initialTrainer,
     programs: [],
     reviews: [],
@@ -43,7 +26,7 @@ export function TrainerProfileLoader({ id, initialTrainer }: TrainerProfileLoade
         if (!response.ok) {
           throw new Error(`Failed to load trainer profile (${response.status})`);
         }
-        return response.json() as Promise<TrainerPageData>;
+        return response.json() as Promise<PublicTrainerPageData>;
       })
       .then((payload) => {
         if (!cancelled && payload.trainer) {

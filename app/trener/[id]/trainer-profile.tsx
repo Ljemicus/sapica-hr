@@ -17,16 +17,16 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
 import { AvailabilityCalendar } from '@/components/shared/availability-calendar';
-import { TRAINING_TYPE_LABELS, type Trainer, type TrainingProgram, type TrainingType } from '@/lib/types';
-import { formatAddress, hasContactInfo } from '@/lib/profile-helpers';
+import { TRAINING_TYPE_LABELS, type TrainingProgram, type TrainingType } from '@/lib/types';
+import type { PublicProviderReview, PublicTrainerProfile } from '@/lib/public/provider-profile-sanitizers';
+
 import { useUser } from '@/hooks/use-user';
 import { useLanguage } from '@/lib/i18n/context';
 import { TrainerBookingDialog } from './booking-dialog';
 
-interface TrainerReview { id: string; trainer_id: string; author_name: string; author_initial: string; rating: number; comment: string; created_at: string; }
 const TRAINING_TYPE_LABELS_EN: Record<TrainingType, string> = { osnovna: 'Basic obedience', napredna: 'Advanced training', agility: 'Agility', ponasanje: 'Behaviour correction', stenci: 'Puppies' };
 
-interface TrainerProfileProps { trainer: Trainer; programs: TrainingProgram[]; reviews: TrainerReview[]; availableDates: Set<string>; }
+interface TrainerProfileProps { trainer: PublicTrainerProfile; programs: TrainingProgram[]; reviews: PublicProviderReview[]; availableDates: Set<string>; }
 
 export function TrainerProfile({ trainer, programs, reviews, availableDates }: TrainerProfileProps) {
   const { user } = useUser();
@@ -37,6 +37,10 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
   const isEn = language === 'en';
   const locale = isEn ? enUS : hr;
   const trainingLabel = (type: TrainingType) => isEn ? TRAINING_TYPE_LABELS_EN[type] : TRAINING_TYPE_LABELS[type];
+
+  const hasReviews = trainer.review_count > 0;
+  const safeRatingLabel = hasReviews && trainer.rating !== null ? trainer.rating.toFixed(1) : trainer.noReviewsLabel;
+  const safeHourlyPrice = trainer.price_per_hour && trainer.price_per_hour > 0 ? trainer.price_per_hour : null;
 
   const copy = {
     linkCopied: isEn ? 'Link copied!' : 'Link kopiran!',
@@ -163,8 +167,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                    {trainer.rating.toFixed(1)}
-                    <span className="opacity-70">({trainer.review_count})</span>
+                    {safeRatingLabel}
                   </span>
                   {programs.length > 0 && (
                     <span className="flex items-center gap-1.5">
@@ -197,7 +200,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
                 <div className="grid grid-cols-3 gap-4 mt-7 pt-6 border-t border-border/30">
                   <div className="text-center">
                     <div className="text-2xl md:text-3xl font-extrabold text-gradient font-[var(--font-heading)]">
-                      {trainer.rating.toFixed(1)}
+                      {hasReviews && trainer.rating !== null ? trainer.rating.toFixed(1) : '—'}
                     </div>
                     <div className="text-xs text-muted-foreground font-medium mt-1">{copy.ratingLabel}</div>
                   </div>
@@ -221,51 +224,13 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
             <section className="animate-fade-in-up delay-100">
               <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-3 font-semibold">{copy.contactKicker}</p>
               <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] leading-tight mb-6">{copy.contact}</h2>
-              {hasContactInfo(trainer) ? (
-                <div className="space-y-3">
-                  {trainer.phone && (
-                    <a href={`tel:${trainer.phone}`} className="detail-section-card p-5 flex items-center gap-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer">
-                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-500">
-                        <Phone className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground font-medium">{copy.phone}</div>
-                        <span className="font-semibold">{trainer.phone}</span>
-                      </div>
-                    </a>
-                  )}
-                  {trainer.email && (
-                    <a href={`mailto:${trainer.email}`} className="detail-section-card p-5 flex items-center gap-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer">
-                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-500">
-                        <Mail className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground font-medium">{copy.email}</div>
-                        <span className="font-semibold">{trainer.email}</span>
-                      </div>
-                    </a>
-                  )}
-                  {(trainer.address || trainer.city) && (
-                    <div className="detail-section-card p-5 flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-sm">
-                        <MapPinned className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground font-medium">{trainer.address ? copy.address : copy.city}</div>
-                        <span className="font-semibold">{formatAddress(trainer.address, trainer.city)}</span>
-                      </div>
-                    </div>
-                  )}
+              <div className="detail-section-card p-10 md:p-12 text-center">
+                <div className="inline-flex h-16 w-16 rounded-full bg-warm-peach dark:bg-warm-orange/15 items-center justify-center mb-5">
+                  <Mail className="h-7 w-7 text-warm-orange" />
                 </div>
-              ) : (
-                <div className="detail-section-card p-10 md:p-12 text-center">
-                  <div className="inline-flex h-16 w-16 rounded-full bg-warm-peach dark:bg-warm-orange/15 items-center justify-center mb-5">
-                    <Mail className="h-7 w-7 text-warm-orange" />
-                  </div>
-                  <p className="text-foreground font-bold text-lg font-[var(--font-heading)] mb-2">{copy.contact}</p>
-                  <p className="text-sm text-muted-foreground max-w-xs mx-auto">{copy.noContact}</p>
-                </div>
-              )}
+                <p className="text-foreground font-bold text-lg font-[var(--font-heading)] mb-2">{copy.contact}</p>
+                <p className="text-sm text-muted-foreground max-w-xs mx-auto">{copy.noContact}</p>
+              </div>
             </section>
 
             {/* Specializations */}
@@ -350,7 +315,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
               ) : (
                 <div className="space-y-0">
                   {reviews.map((review, i) => (
-                    <div key={review.id} className={`detail-section-card p-6 md:p-7 ${i > 0 ? 'mt-4' : ''}`}>
+                    <div key={`${review.created_at}-${i}`} className={`detail-section-card p-6 md:p-7 ${i > 0 ? 'mt-4' : ''}`}>
                       <div className="flex items-start gap-4">
                         <Avatar className="h-11 w-11 border-2 border-border/20 flex-shrink-0">
                           <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm font-semibold">
@@ -400,7 +365,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
               {/* Price hero */}
               <div className="text-center">
                 <div className="text-5xl md:text-6xl font-extrabold text-gradient font-[var(--font-heading)] leading-none">
-                  {trainer.price_per_hour}&euro;
+                  {safeHourlyPrice ? `${safeHourlyPrice}€` : trainer.priceFallbackLabel}
                 </div>
                 <p className="text-muted-foreground text-xs mt-2.5">{copy.perHour}</p>
               </div>

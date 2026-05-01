@@ -1,22 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { Availability, PublicSitterReview, SitterProfile } from '@/lib/types';
+import type { PublicSitterPageData, PublicSitterProfile } from '@/lib/public/provider-profile-sanitizers';
 import { SitterProfileContent } from './sitter-profile-content';
-
-interface SitterPageData {
-  profile: (SitterProfile & { user: NonNullable<SitterProfile['user']> }) | null;
-  reviews: PublicSitterReview[];
-  availability: Availability[];
-}
 
 interface SitterProfileLoaderProps {
   id: string;
-  initialProfile: SitterProfile & { user: NonNullable<SitterProfile['user']> };
+  initialProfile: PublicSitterProfile;
 }
 
 export function SitterProfileLoader({ id, initialProfile }: SitterProfileLoaderProps) {
-  const [data, setData] = useState<SitterPageData>({
+  const [data, setData] = useState<PublicSitterPageData>({
     profile: initialProfile,
     reviews: [],
     availability: [],
@@ -29,7 +23,7 @@ export function SitterProfileLoader({ id, initialProfile }: SitterProfileLoaderP
     fetch(`/api/public/sitters/${id}`, { cache: 'no-store' })
       .then(async (response) => {
         if (!response.ok) throw new Error(`Failed to load sitter profile (${response.status})`);
-        return response.json() as Promise<SitterPageData>;
+        return response.json() as Promise<PublicSitterPageData>;
       })
       .then((payload) => {
         if (!cancelled && payload.profile) {
@@ -61,7 +55,7 @@ export function SitterProfileLoader({ id, initialProfile }: SitterProfileLoaderP
 
   return (
     <SitterProfileContent
-      profile={(data.profile ?? initialProfile) as SitterProfile & { user: NonNullable<SitterProfile['user']> }}
+      profile={data.profile ?? initialProfile}
       reviews={data.reviews}
       availability={data.availability}
       bookingPets={[]}
