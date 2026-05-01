@@ -3,6 +3,7 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { robotsMeta, shouldIndexGroomer } from '@/lib/seo/indexability';
 import type { Groomer } from '@/lib/types';
 import { getProviderGroomerById } from '@/lib/db/provider-groomers';
+import { sanitizeGroomerProfile } from '@/lib/public/provider-profile-sanitizers';
 import { GroomerProfileLoader } from './groomer-profile-loader';
 
 interface GroomerPageProps {
@@ -51,7 +52,7 @@ export default async function GroomerPage({ params }: GroomerPageProps) {
         { label: 'Grooming', href: '/njega' },
         { label: groomer.name, href: `/groomer/${id}` },
       ]} />
-      <GroomerProfileLoader id={id} initialGroomer={groomer} />
+      <GroomerProfileLoader id={id} initialGroomer={sanitizeGroomerProfile(groomer)!} />
     </>
   );
 }

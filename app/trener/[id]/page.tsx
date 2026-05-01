@@ -3,6 +3,7 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { robotsMeta, shouldIndexTrainer } from '@/lib/seo/indexability';
 import type { Trainer } from '@/lib/types';
 import { getProviderTrainerById } from '@/lib/db/provider-trainers';
+import { sanitizeTrainerProfile } from '@/lib/public/provider-profile-sanitizers';
 import { TrainerProfileLoader } from './trainer-profile-loader';
 
 interface TrainerPageProps {
@@ -51,7 +52,7 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
         { label: 'Školovanje pasa', href: '/dresura' },
         { label: trainer.name, href: `/trener/${id}` },
       ]} />
-      <TrainerProfileLoader id={id} initialTrainer={trainer} />
+      <TrainerProfileLoader id={id} initialTrainer={sanitizeTrainerProfile(trainer)!} />
     </>
   );
 }

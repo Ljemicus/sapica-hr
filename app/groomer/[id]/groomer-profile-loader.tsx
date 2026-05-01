@@ -1,32 +1,16 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import type { Groomer } from '@/lib/types';
+import type { PublicGroomerPageData, PublicGroomerProfile } from '@/lib/public/provider-profile-sanitizers';
 import { GroomerProfile } from './groomer-profile';
-
-interface GroomerReview {
-  id: string;
-  groomer_id: string;
-  author_name: string;
-  author_initial: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-}
-
-interface GroomerPageData {
-  groomer: Groomer | null;
-  reviews: GroomerReview[];
-  availableDates: string[];
-}
 
 interface GroomerProfileLoaderProps {
   id: string;
-  initialGroomer: Groomer;
+  initialGroomer: PublicGroomerProfile;
 }
 
 export function GroomerProfileLoader({ id, initialGroomer }: GroomerProfileLoaderProps) {
-  const [data, setData] = useState<GroomerPageData>({
+  const [data, setData] = useState<PublicGroomerPageData>({
     groomer: initialGroomer,
     reviews: [],
     availableDates: [],
@@ -41,7 +25,7 @@ export function GroomerProfileLoader({ id, initialGroomer }: GroomerProfileLoade
         if (!response.ok) {
           throw new Error(`Failed to load groomer profile (${response.status})`);
         }
-        return response.json() as Promise<GroomerPageData>;
+        return response.json() as Promise<PublicGroomerPageData>;
       })
       .then((payload) => {
         if (!cancelled && payload.groomer) {
@@ -77,8 +61,8 @@ export function GroomerProfileLoader({ id, initialGroomer }: GroomerProfileLoade
 
   return (
     <GroomerProfile
-      groomer={data.groomer ?? initialGroomer}
-      reviews={data.reviews}
+      groomer={(data.groomer ?? initialGroomer) as any}
+      reviews={data.reviews as any}
       availableDates={availableDatesSet}
     />
   );

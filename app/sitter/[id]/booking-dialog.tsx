@@ -48,8 +48,8 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
     steps: isEn ? ['Select', 'Details', 'Confirm'] : ['Odabir', 'Detalji', 'Potvrda'],
     title: isEn ? 'Book this sitter' : 'Rezerviraj sittera',
     description: isEn
-      ? `Send a booking request to ${profile.user?.name}. The booking is confirmed only after approval.`
-      : `Pošaljite upit sitteru ${profile.user?.name}. Termin vrijedi tek nakon potvrde.`,
+      ? `Send a booking request to ${(profile as any).name || profile.user?.name}. The booking is confirmed only after approval.`
+      : `Pošaljite upit sitteru ${(profile as any).name || profile.user?.name}. Termin vrijedi tek nakon potvrde.`,
     pet: isEn ? 'Pet' : 'Ljubimac',
     choosePet: isEn ? 'Choose a pet' : 'Odaberi ljubimca',
     noPets: isEn ? 'You do not have any pets added yet. Add a pet in your profile first, then come back here.' : 'Nemate dodanih ljubimaca. Prvo dodajte ljubimca u svom profilu pa se vratite ovdje.',
@@ -74,7 +74,7 @@ export function BookingDialog({ open, onOpenChange, profile, userId: _userId, pe
   const { register, handleSubmit, formState: { errors }, watch, trigger } = useForm<BookingInput>({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
-      sitter_id: profile.user_id,
+      sitter_id: (profile as any).id,
     },
   });
 

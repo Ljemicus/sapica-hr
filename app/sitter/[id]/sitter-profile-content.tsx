@@ -140,7 +140,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
           <>
             <Image
               src={heroPhoto}
-              alt={profile.user?.name || 'Sitter profile'}
+              alt={(profile as any).name || 'Sitter profile'}
               fill
               className="object-cover transition-opacity duration-700"
             />
@@ -211,15 +211,15 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
             <div className="flex items-end gap-5 md:gap-6 animate-fade-in-up delay-100">
               <div className="avatar-gradient-border flex-shrink-0 animate-scale-in">
                 <Avatar className="h-24 w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 border-4 border-white shadow-2xl">
-                  <AvatarImage src={profile.user?.avatar_url || ''} alt={profile.user?.name} />
+                  <AvatarImage src={(profile as any).avatarUrl || ''} alt={(profile as any).name} />
                   <AvatarFallback className="bg-white text-gray-700 text-3xl md:text-4xl font-bold">
-                    {profile.user?.name?.charAt(0).toUpperCase()}
+                    {(profile as any).avatarInitials || (profile as any).name?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </div>
               <div className="pb-1">
                 <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-[var(--font-heading)] leading-[1.05] mb-3 ${heroPhoto ? 'text-white drop-shadow-md' : ''}`}>
-                  {profile.user?.name}
+                  {(profile as any).name}
                 </h1>
                 <div className={`flex flex-wrap items-center gap-x-5 gap-y-2 text-sm ${heroPhoto ? 'text-white/85' : 'text-muted-foreground'}`}>
                   <span className="flex items-center gap-1.5">
@@ -228,8 +228,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Star className={`h-4 w-4 ${heroPhoto ? 'fill-amber-300 text-amber-300' : 'fill-amber-400 text-amber-400'}`} />
-                    {profile.rating_avg.toFixed(1)}
-                    <span className="opacity-70">({profile.review_count})</span>
+                    {profile.review_count > 0 && profile.rating_avg !== null ? profile.rating_avg.toFixed(1) : ((profile as any).noReviewsLabel || 'Novo na PetParku · još nema recenzija')}
                   </span>
                   {profile.response_time && (
                     <span className="flex items-center gap-1.5">
@@ -278,7 +277,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                 <div className="grid grid-cols-3 gap-4 mt-7 pt-6 border-t border-border/30">
                   <div className="text-center">
                     <div className="text-2xl md:text-3xl font-extrabold text-gradient font-[var(--font-heading)]">
-                      {profile.rating_avg.toFixed(1)}
+                      {profile.review_count > 0 && profile.rating_avg !== null ? profile.rating_avg.toFixed(1) : '—'}
                     </div>
                     <div className="text-xs text-muted-foreground font-medium mt-1">{copy.ratingLabel}</div>
                   </div>
@@ -411,7 +410,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
               <div className="text-center">
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium mb-2">{copy.from}</p>
                 <div className="text-5xl md:text-6xl font-extrabold text-gradient font-[var(--font-heading)] leading-none">
-                  {lowestPrice}&euro;
+                  {Number.isFinite(lowestPrice) ? `${lowestPrice}€` : ((profile as any).priceFallbackLabel || 'Cijena po dogovoru')}
                 </div>
                 <p className="text-muted-foreground text-xs mt-2.5">{copy.depending}</p>
               </div>
@@ -427,7 +426,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                     {copy.sendBooking}
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
-                  <Link href={`/poruke?to=${profile.user_id}`} className="block">
+                  <Link href={`/poruke?provider=${(profile as any).id}`} className="block">
                     <Button
                       variant="outline"
                       className="w-full hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:text-orange-600 hover:border-orange-300 rounded-full h-12 text-[15px] font-semibold"
@@ -439,7 +438,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                   </Link>
                 </div>
               ) : !user ? (
-                <Link href={`/prijava?redirect=/sitter/${profile.user_id}`} className="block">
+                <Link href={`/prijava?redirect=/sitter/${(profile as any).id}`} className="block">
                   <Button
                     className="w-full bg-orange-500 hover:bg-orange-600 btn-hover shadow-lg shadow-orange-200/50 dark:shadow-orange-900/20 rounded-full h-13 text-[15px] font-bold"
                     size="lg"

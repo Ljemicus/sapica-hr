@@ -3,6 +3,7 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { robotsMeta, shouldIndexSitter } from '@/lib/seo/indexability';
 import type { SitterProfile } from '@/lib/types';
 import { getProviderSitterById } from '@/lib/db/provider-sitters';
+import { sanitizeSitterProfile } from '@/lib/public/provider-profile-sanitizers';
 import { SitterProfileLoader } from './sitter-profile-loader';
 
 interface SitterPageProps {
@@ -63,7 +64,7 @@ export default async function SitterPage({ params }: SitterPageProps) {
         { label: 'Pretraga sittera', href: '/pretraga' },
         { label: profile.user.name, href: `/sitter/${id}` },
       ]} />
-      <SitterProfileLoader id={id} initialProfile={profile} />
+      <SitterProfileLoader id={id} initialProfile={sanitizeSitterProfile(profile, id)!} />
     </>
   );
 }

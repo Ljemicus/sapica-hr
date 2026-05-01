@@ -31,7 +31,6 @@ import {
   getOrderedDays,
   formatWorkingHours,
   hasWorkingHours,
-  hasContactInfo,
 } from '@/lib/profile-helpers';
 import { useUser } from '@/hooks/use-user';
 import { useLanguage } from '@/lib/i18n/context';
@@ -109,6 +108,9 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
   const locale = isEn ? enUS : hr;
 
   const lowestPrice = Math.min(...Object.values(groomer.prices).filter((price) => price > 0));
+  const hasReviews = groomer.review_count > 0;
+  const safeRatingLabel = hasReviews ? groomer.rating.toFixed(1) : ((groomer as any).noReviewsLabel || 'Novo na PetParku · još nema recenzija');
+  const safePriceLabel = Number.isFinite(lowestPrice) ? `${lowestPrice}` : ((groomer as any).priceFallbackLabel || 'Cijena po dogovoru');
   const serviceLabel = (value: GroomingServiceType) =>
     isEn ? GROOMING_SERVICE_LABELS_EN[value] : GROOMING_SERVICE_LABELS[value];
   const specializationLabel = isEn
@@ -276,8 +278,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                    {groomer.rating.toFixed(1)}
-                    <span className="opacity-70">({groomer.review_count})</span>
+                    {safeRatingLabel}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <ClipboardList className="h-4 w-4 flex-shrink-0" />
@@ -308,7 +309,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                 <div className="grid grid-cols-3 gap-4 mt-7 pt-6 border-t border-border/30">
                   <div className="text-center">
                     <div className="text-2xl md:text-3xl font-extrabold text-gradient font-[var(--font-heading)]">
-                      {groomer.rating.toFixed(1)}
+                      {hasReviews ? groomer.rating.toFixed(1) : '—'}
                     </div>
                     <div className="text-xs text-muted-foreground font-medium mt-1">{copy.ratingLabel}</div>
                   </div>
@@ -332,51 +333,13 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
             <section className="animate-fade-in-up delay-100">
               <p className="text-sm uppercase tracking-[0.25em] text-warm-orange mb-3 font-semibold">{copy.contactKicker}</p>
               <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] leading-tight mb-6">{copy.contact}</h2>
-              {hasContactInfo(groomer) ? (
-                <div className="space-y-3">
-                  {groomer.phone && (
-                    <a href={`tel:${groomer.phone}`} className="detail-section-card p-5 flex items-center gap-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer">
-                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-500">
-                        <Phone className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground font-medium">{copy.phone}</div>
-                        <span className="font-semibold">{groomer.phone}</span>
-                      </div>
-                    </a>
-                  )}
-                  {groomer.email && (
-                    <a href={`mailto:${groomer.email}`} className="detail-section-card p-5 flex items-center gap-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer">
-                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-500">
-                        <Mail className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground font-medium">{copy.email}</div>
-                        <span className="font-semibold">{groomer.email}</span>
-                      </div>
-                    </a>
-                  )}
-                  {(groomer.address || groomer.city) && (
-                    <div className="detail-section-card p-5 flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-sm">
-                        <MapPinned className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground font-medium">{copy.address}</div>
-                        <span className="font-semibold">{formatAddress(groomer.address, groomer.city)}</span>
-                      </div>
-                    </div>
-                  )}
+              <div className="detail-section-card p-10 md:p-12 text-center">
+                <div className="inline-flex h-16 w-16 rounded-full bg-warm-peach dark:bg-warm-orange/15 items-center justify-center mb-5">
+                  <Mail className="h-7 w-7 text-warm-orange" />
                 </div>
-              ) : (
-                <div className="detail-section-card p-10 md:p-12 text-center">
-                  <div className="inline-flex h-16 w-16 rounded-full bg-warm-peach dark:bg-warm-orange/15 items-center justify-center mb-5">
-                    <Mail className="h-7 w-7 text-warm-orange" />
-                  </div>
-                  <p className="text-foreground font-bold text-lg font-[var(--font-heading)] mb-2">{copy.contact}</p>
-                  <p className="text-sm text-muted-foreground max-w-xs mx-auto">{copy.noContact}</p>
-                </div>
-              )}
+                <p className="text-foreground font-bold text-lg font-[var(--font-heading)] mb-2">{copy.contact}</p>
+                <p className="text-sm text-muted-foreground max-w-xs mx-auto">{copy.noContact}</p>
+              </div>
             </section>
 
             {/* Services & Pricing */}
@@ -518,7 +481,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
               <div className="text-center">
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium mb-2">{copy.from}</p>
                 <div className="text-5xl md:text-6xl font-extrabold text-gradient font-[var(--font-heading)] leading-none">
-                  {lowestPrice}&euro;
+                  {Number.isFinite(lowestPrice) ? `${safePriceLabel}€` : safePriceLabel}
                 </div>
                 <p className="text-muted-foreground text-xs mt-2.5">{copy.depending}</p>
               </div>

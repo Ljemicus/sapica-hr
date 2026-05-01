@@ -5,6 +5,7 @@ import {
   getProviderTrainerReviews,
   getProviderTrainerAvailableDates,
 } from '@/lib/db/provider-trainers';
+import { sanitizeProviderReviews, sanitizeTrainerProfile, sanitizeTrainingPrograms } from '@/lib/public/provider-profile-sanitizers';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -25,9 +26,9 @@ export async function GET(_request: Request, { params }: RouteContext) {
   ]);
 
   return NextResponse.json({
-    trainer,
-    programs,
-    reviews,
+    trainer: sanitizeTrainerProfile(trainer),
+    programs: sanitizeTrainingPrograms(programs),
+    reviews: sanitizeProviderReviews(reviews),
     availableDates,
   });
 }
