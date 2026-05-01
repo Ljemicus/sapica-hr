@@ -55,6 +55,41 @@
   --color-warm-sage: var(--warm-sage);
 }
 
+/* ── PetPark Design Tokens ── */
+:root {
+  /* Backgrounds */
+  --pp-cream: #F5F4F0;
+  --pp-warm-white: #FAF9F6;
+  --pp-grooming-bg: #F0F7F4;
+  --pp-trainer-bg: #F5F0FA;
+  
+  /* Text */
+  --pp-ink: #2D2D2D;
+  --pp-muted: #6B6B6B;
+  
+  /* Brand */
+  --pp-logo-teal: #14b8a6;
+  --pp-logo-orange: #FFB347;
+  --pp-logo-yellow: #F5E6A3;
+  
+  /* Accents */
+  --pp-grooming-accent: #5A7D5A;
+  --pp-trainer-accent: #7D5A7D;
+  --pp-forest: #4A6741;
+  --pp-forest-dark: #3A5232;
+  
+  /* UI */
+  --pp-line: #E8E6E0;
+  --pp-shadow-card: 0 4px 24px rgba(45, 45, 45, 0.08);
+  
+  /* Radius */
+  --pp-radius-16: 16px;
+  --pp-radius-20: 20px;
+  --pp-radius-28: 28px;
+  --pp-radius-32: 32px;
+  --pp-radius-pill: 9999px;
+}
+
 :root {
   /* Premium Palette - Cream White & Charcoal */
   --background: #FAF9F6;
