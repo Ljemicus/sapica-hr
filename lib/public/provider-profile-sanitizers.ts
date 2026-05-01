@@ -36,6 +36,7 @@ export type PublicGroomerProfile = {
   avatarInitials: string;
   availabilitySummary?: string;
   safeLocationDisplay?: string;
+  working_hours?: Groomer['working_hours'];
 };
 
 export type PublicTrainerProfile = {
@@ -87,26 +88,48 @@ export type PublicSitterProfile = {
   avatarUrl: string | null;
   photos: string[];
   instant_booking?: boolean;
+  experience_years: number;
   availabilitySummary?: string;
   safeLocationDisplay?: string;
 };
 
+export type PublicProviderReview = {
+  author_name: string;
+  author_initial: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+};
+
+export type PublicSitterSafeReview = {
+  rating: number;
+  comment: string;
+  created_at: string;
+  reviewer: {
+    name: string;
+    avatar_url: string | null;
+  };
+  booking: {
+    service_type: ServiceType;
+  };
+};
+
 export type PublicGroomerPageData = {
   groomer: PublicGroomerProfile | null;
-  reviews: ReturnType<typeof sanitizeProviderReviews>;
+  reviews: PublicProviderReview[];
   availableDates: string[];
 };
 
 export type PublicTrainerPageData = {
   trainer: PublicTrainerProfile | null;
   programs: PublicTrainingProgram[];
-  reviews: ReturnType<typeof sanitizeProviderReviews>;
+  reviews: PublicProviderReview[];
   availableDates: string[];
 };
 
 export type PublicSitterPageData = {
   profile: PublicSitterProfile | null;
-  reviews: ReturnType<typeof sanitizeSitterReviews>;
+  reviews: PublicSitterSafeReview[];
   availability: Availability[];
 };
 
@@ -148,13 +171,13 @@ function sanitizePrices<T extends string>(prices: Record<T, number>): Record<T, 
   return Object.fromEntries(Object.entries(prices).map(([key, value]) => [key, Number(value || 0) > 0 ? Number(value) : 0])) as Record<T, number>;
 }
 
-export function sanitizeProviderReviews<T extends { id: string; rating: number; comment: string; created_at: string; author_name?: string; author_initial?: string }>(reviews: T[]) {
+export function sanitizeProviderReviews<T extends { rating: number; comment: string; created_at: string; author_name?: string; author_initial?: string }>(reviews: T[]): PublicProviderReview[] {
   return reviews.map((review) => ({
-    ...review,
     author_name: safeText(review.author_name, 'PetPark korisnik'),
     author_initial: safeText(review.author_initial, 'P').slice(0, 2),
     comment: safeText(review.comment),
     rating: Number(review.rating || 0),
+    created_at: review.created_at,
   }));
 }
 
@@ -186,6 +209,7 @@ export function sanitizeGroomerProfile(groomer: Groomer | null): PublicGroomerPr
     priceFallbackLabel: PRICE_FALLBACK_HR,
     avatarInitials: avatarInitials(name),
     safeLocationDisplay: city,
+    working_hours: groomer.working_hours,
   };
 }
 
@@ -228,24 +252,14 @@ export function sanitizeTrainingPrograms(programs: TrainingProgram[]): PublicTra
   }));
 }
 
-export function sanitizeSitterReviews(reviews: PublicSitterReview[]) {
+export function sanitizeSitterReviews(reviews: PublicSitterReview[]): PublicSitterSafeReview[] {
   return reviews.map((review) => ({
-    id: review.id,
-    booking_id: '',
-    reviewer_id: '',
-    reviewee_id: '',
     rating: Number(review.rating || 0),
     comment: safeText(review.comment),
     created_at: review.created_at,
     reviewer: {
-      id: '',
-      email: '',
       name: safeText(review.reviewer?.name, 'PetPark korisnik'),
-      role: 'owner' as const,
       avatar_url: review.reviewer?.avatar_url || null,
-      phone: null,
-      city: null,
-      created_at: review.reviewer?.created_at || review.created_at,
     },
     booking: { service_type: review.booking?.service_type || 'boarding' },
   }));
@@ -282,6 +296,7 @@ export function sanitizeSitterProfile(profile: (SitterProfile & { user?: NonNull
     avatarUrl: profile.user?.avatar_url || null,
     photos: Array.isArray(profile.photos) ? profile.photos : [],
     instant_booking: Boolean(profile.instant_booking),
+    experience_years: Math.max(0, Number(profile.experience_years || 0)),
     safeLocationDisplay: city,
   };
 }

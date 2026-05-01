@@ -17,16 +17,16 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { StarRating } from '@/components/shared/star-rating';
 import { AvailabilityCalendar } from '@/components/shared/availability-calendar';
-import { TRAINING_TYPE_LABELS, type Trainer, type TrainingProgram, type TrainingType } from '@/lib/types';
+import { TRAINING_TYPE_LABELS, type TrainingProgram, type TrainingType } from '@/lib/types';
+import type { PublicProviderReview, PublicTrainerProfile } from '@/lib/public/provider-profile-sanitizers';
 
 import { useUser } from '@/hooks/use-user';
 import { useLanguage } from '@/lib/i18n/context';
 import { TrainerBookingDialog } from './booking-dialog';
 
-interface TrainerReview { id: string; trainer_id: string; author_name: string; author_initial: string; rating: number; comment: string; created_at: string; }
 const TRAINING_TYPE_LABELS_EN: Record<TrainingType, string> = { osnovna: 'Basic obedience', napredna: 'Advanced training', agility: 'Agility', ponasanje: 'Behaviour correction', stenci: 'Puppies' };
 
-interface TrainerProfileProps { trainer: Trainer; programs: TrainingProgram[]; reviews: TrainerReview[]; availableDates: Set<string>; }
+interface TrainerProfileProps { trainer: PublicTrainerProfile; programs: TrainingProgram[]; reviews: PublicProviderReview[]; availableDates: Set<string>; }
 
 export function TrainerProfile({ trainer, programs, reviews, availableDates }: TrainerProfileProps) {
   const { user } = useUser();
@@ -39,8 +39,8 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
   const trainingLabel = (type: TrainingType) => isEn ? TRAINING_TYPE_LABELS_EN[type] : TRAINING_TYPE_LABELS[type];
 
   const hasReviews = trainer.review_count > 0;
-  const safeRatingLabel = hasReviews ? trainer.rating.toFixed(1) : ((trainer as any).noReviewsLabel || 'Novo na PetParku · još nema recenzija');
-  const safeHourlyPrice = trainer.price_per_hour > 0 ? trainer.price_per_hour : null;
+  const safeRatingLabel = hasReviews && trainer.rating !== null ? trainer.rating.toFixed(1) : trainer.noReviewsLabel;
+  const safeHourlyPrice = trainer.price_per_hour && trainer.price_per_hour > 0 ? trainer.price_per_hour : null;
 
   const copy = {
     linkCopied: isEn ? 'Link copied!' : 'Link kopiran!',
@@ -200,7 +200,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
                 <div className="grid grid-cols-3 gap-4 mt-7 pt-6 border-t border-border/30">
                   <div className="text-center">
                     <div className="text-2xl md:text-3xl font-extrabold text-gradient font-[var(--font-heading)]">
-                      {hasReviews ? trainer.rating.toFixed(1) : '—'}
+                      {hasReviews && trainer.rating !== null ? trainer.rating.toFixed(1) : '—'}
                     </div>
                     <div className="text-xs text-muted-foreground font-medium mt-1">{copy.ratingLabel}</div>
                   </div>
@@ -315,7 +315,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
               ) : (
                 <div className="space-y-0">
                   {reviews.map((review, i) => (
-                    <div key={review.id} className={`detail-section-card p-6 md:p-7 ${i > 0 ? 'mt-4' : ''}`}>
+                    <div key={`${review.created_at}-${i}`} className={`detail-section-card p-6 md:p-7 ${i > 0 ? 'mt-4' : ''}`}>
                       <div className="flex items-start gap-4">
                         <Avatar className="h-11 w-11 border-2 border-border/20 flex-shrink-0">
                           <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm font-semibold">
@@ -365,7 +365,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
               {/* Price hero */}
               <div className="text-center">
                 <div className="text-5xl md:text-6xl font-extrabold text-gradient font-[var(--font-heading)] leading-none">
-                  {safeHourlyPrice ? `${safeHourlyPrice}€` : ((trainer as any).priceFallbackLabel || 'Cijena po dogovoru')}
+                  {safeHourlyPrice ? `${safeHourlyPrice}€` : trainer.priceFallbackLabel}
                 </div>
                 <p className="text-muted-foreground text-xs mt-2.5">{copy.perHour}</p>
               </div>

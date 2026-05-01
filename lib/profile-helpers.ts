@@ -108,7 +108,7 @@ export function formatWorkingHours(hours: { start: string; end: string }): strin
   return `${hours.start} – ${hours.end}`;
 }
 
-export function hasWorkingHours(groomer: Groomer): boolean {
+export function hasWorkingHours(groomer: { working_hours?: Groomer['working_hours'] }): boolean {
   return Boolean(groomer.working_hours && Object.keys(groomer.working_hours).length > 0);
 }
 
@@ -175,11 +175,11 @@ export function getNoProgramsMessage(): string {
 
 // ── Active Services (filters out zero-price or disabled) ──
 
-export function getActiveServices(groomer: Groomer): GroomingServiceType[] {
+export function getActiveServices(groomer: { services: GroomingServiceType[]; prices: Record<GroomingServiceType, number> }): GroomingServiceType[] {
   return groomer.services.filter(s => groomer.prices[s] > 0);
 }
 
-export function getActiveServiceCount(groomer: Groomer): number {
+export function getActiveServiceCount(groomer: { services: GroomingServiceType[]; prices: Record<GroomingServiceType, number> }): number {
   return getActiveServices(groomer).length;
 }
 

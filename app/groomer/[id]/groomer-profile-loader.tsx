@@ -61,8 +61,8 @@ export function GroomerProfileLoader({ id, initialGroomer }: GroomerProfileLoade
 
   return (
     <GroomerProfile
-      groomer={(data.groomer ?? initialGroomer) as any}
-      reviews={data.reviews as any}
+      groomer={data.groomer ?? initialGroomer}
+      reviews={data.reviews}
       availableDates={availableDatesSet}
     />
   );

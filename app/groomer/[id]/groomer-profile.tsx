@@ -20,11 +20,11 @@ import { AvailabilityCalendar } from '@/components/shared/availability-calendar'
 import {
   GROOMING_SERVICE_LABELS,
   GROOMER_SPECIALIZATION_LABELS,
-  type Groomer,
   type GroomingServiceType,
   type GroomerAvailabilitySlot,
   type GroomerSpecialization,
 } from '@/lib/types';
+import type { PublicGroomerProfile, PublicProviderReview } from '@/lib/public/provider-profile-sanitizers';
 import {
   formatAddress,
   getActiveServices,
@@ -36,15 +36,6 @@ import { useUser } from '@/hooks/use-user';
 import { useLanguage } from '@/lib/i18n/context';
 import { GroomerBookingDialog } from './booking-dialog';
 
-interface GroomerReview {
-  id: string;
-  groomer_id: string;
-  author_name: string;
-  author_initial: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-}
 
 const serviceIcons: Record<GroomingServiceType, React.ElementType> = {
   sisanje: Scissors,
@@ -89,8 +80,8 @@ const DAY_LABELS_EN: Record<string, string> = {
 };
 
 interface GroomerProfileProps {
-  groomer: Groomer;
-  reviews: GroomerReview[];
+  groomer: PublicGroomerProfile;
+  reviews: PublicProviderReview[];
   availableDates: Set<string>;
 }
 
@@ -109,8 +100,8 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
 
   const lowestPrice = Math.min(...Object.values(groomer.prices).filter((price) => price > 0));
   const hasReviews = groomer.review_count > 0;
-  const safeRatingLabel = hasReviews ? groomer.rating.toFixed(1) : ((groomer as any).noReviewsLabel || 'Novo na PetParku · još nema recenzija');
-  const safePriceLabel = Number.isFinite(lowestPrice) ? `${lowestPrice}` : ((groomer as any).priceFallbackLabel || 'Cijena po dogovoru');
+  const safeRatingLabel = hasReviews && groomer.rating !== null ? groomer.rating.toFixed(1) : groomer.noReviewsLabel;
+  const safePriceLabel = Number.isFinite(lowestPrice) ? `${lowestPrice}` : groomer.priceFallbackLabel;
   const serviceLabel = (value: GroomingServiceType) =>
     isEn ? GROOMING_SERVICE_LABELS_EN[value] : GROOMING_SERVICE_LABELS[value];
   const specializationLabel = isEn
@@ -309,7 +300,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                 <div className="grid grid-cols-3 gap-4 mt-7 pt-6 border-t border-border/30">
                   <div className="text-center">
                     <div className="text-2xl md:text-3xl font-extrabold text-gradient font-[var(--font-heading)]">
-                      {hasReviews ? groomer.rating.toFixed(1) : '—'}
+                      {hasReviews && groomer.rating !== null ? groomer.rating.toFixed(1) : '—'}
                     </div>
                     <div className="text-xs text-muted-foreground font-medium mt-1">{copy.ratingLabel}</div>
                   </div>
@@ -448,7 +439,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
               ) : (
                 <div className="space-y-0">
                   {reviews.map((review, i) => (
-                    <div key={review.id} className={`detail-section-card p-6 md:p-7 ${i > 0 ? 'mt-4' : ''}`}>
+                    <div key={`${review.created_at}-${i}`} className={`detail-section-card p-6 md:p-7 ${i > 0 ? 'mt-4' : ''}`}>
                       <div className="flex items-start gap-4">
                         <Avatar className="h-11 w-11 border-2 border-border/20 flex-shrink-0">
                           <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-300 text-white text-sm font-semibold">

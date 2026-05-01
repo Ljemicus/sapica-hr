@@ -62,9 +62,9 @@ export function TrainerProfileLoader({ id, initialTrainer }: TrainerProfileLoade
 
   return (
     <TrainerProfile
-      trainer={(data.trainer ?? initialTrainer) as any}
-      programs={data.programs as any}
-      reviews={data.reviews as any}
+      trainer={data.trainer ?? initialTrainer}
+      programs={data.programs}
+      reviews={data.reviews}
       availableDates={availableDatesSet}
     />
   );

@@ -55,8 +55,8 @@ export function SitterProfileLoader({ id, initialProfile }: SitterProfileLoaderP
 
   return (
     <SitterProfileContent
-      profile={(data.profile ?? initialProfile) as any}
-      reviews={data.reviews as any}
+      profile={data.profile ?? initialProfile}
+      reviews={data.reviews}
       availability={data.availability}
       bookingPets={[]}
       bookingUserId={null}
