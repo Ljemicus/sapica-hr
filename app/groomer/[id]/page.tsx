@@ -34,9 +34,10 @@ async function createGroomerShell(id: string): Promise<Groomer> {
 export async function generateMetadata({ params }: GroomerPageProps): Promise<Metadata> {
   const { id } = await params;
   const groomer = await createGroomerShell(id);
+  const publicGroomer = sanitizeGroomerProfile(groomer)!;
   return {
-    title: { absolute: `${groomer.name} | PetPark` },
-    description: groomer.bio || 'Profil groomera na PetParku.',
+    title: { absolute: `${publicGroomer.name} | PetPark` },
+    description: publicGroomer.safeBio || 'Profil groomera na PetParku.',
     alternates: { canonical: `/groomer/${id}` },
     robots: robotsMeta(shouldIndexGroomer(groomer)),
   };
@@ -45,14 +46,15 @@ export async function generateMetadata({ params }: GroomerPageProps): Promise<Me
 export default async function GroomerPage({ params }: GroomerPageProps) {
   const { id } = await params;
   const groomer = await createGroomerShell(id);
+  const publicGroomer = sanitizeGroomerProfile(groomer)!;
 
   return (
     <>
       <Breadcrumbs items={[
         { label: 'Grooming', href: '/njega' },
-        { label: groomer.name, href: `/groomer/${id}` },
+        { label: publicGroomer.name, href: `/groomer/${id}` },
       ]} />
-      <GroomerProfileLoader id={id} initialGroomer={sanitizeGroomerProfile(groomer)!} />
+      <GroomerProfileLoader id={id} initialGroomer={publicGroomer} />
     </>
   );
 }

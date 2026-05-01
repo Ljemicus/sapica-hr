@@ -106,7 +106,7 @@ export type PublicTrainerPageData = {
 
 export type PublicSitterPageData = {
   profile: PublicSitterProfile | null;
-  reviews: PublicSitterReview[];
+  reviews: ReturnType<typeof sanitizeSitterReviews>;
   availability: Availability[];
 };
 
@@ -225,6 +225,29 @@ export function sanitizeTrainingPrograms(programs: TrainingProgram[]): PublicTra
     name: safeText(program.name, 'Program treninga'),
     description: safeText(program.description),
     price: Number(program.price || 0) > 0 ? Number(program.price) : 0,
+  }));
+}
+
+export function sanitizeSitterReviews(reviews: PublicSitterReview[]) {
+  return reviews.map((review) => ({
+    id: review.id,
+    booking_id: '',
+    reviewer_id: '',
+    reviewee_id: '',
+    rating: Number(review.rating || 0),
+    comment: safeText(review.comment),
+    created_at: review.created_at,
+    reviewer: {
+      id: '',
+      email: '',
+      name: safeText(review.reviewer?.name, 'PetPark korisnik'),
+      role: 'owner' as const,
+      avatar_url: review.reviewer?.avatar_url || null,
+      phone: null,
+      city: null,
+      created_at: review.reviewer?.created_at || review.created_at,
+    },
+    booking: { service_type: review.booking?.service_type || 'boarding' },
   }));
 }
 
