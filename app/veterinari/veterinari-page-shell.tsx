@@ -8,13 +8,13 @@ const VETERINARI_COPY = {
   hr: {
     breadcrumbLabel: 'Veterinari',
     jsonLdName: 'Veterinarske stanice i ambulante u Hrvatskoj',
-    jsonLdDescription: 'Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj s adresama i kontakt podacima.',
+    jsonLdDescription: 'Pregled veterinarskih stanica i ambulanti u Hrvatskoj s adresama i kontakt podacima.',
     pathname: '/veterinari',
   },
   en: {
     breadcrumbLabel: 'Veterinarians',
     jsonLdName: 'Veterinary stations and clinics in Croatia',
-    jsonLdDescription: 'Official directory of veterinary stations and clinics in Croatia with addresses and contact details.',
+    jsonLdDescription: 'Overview of veterinary stations and clinics in Croatia with addresses and contact details.',
     pathname: '/veterinari/en',
   },
 } as const;

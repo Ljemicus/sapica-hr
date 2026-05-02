@@ -69,15 +69,15 @@ export function VeterinariContent({ veterinarians, forcedLanguage }: VeterinariC
       <section className="organizations-hero-gradient py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">
           <p className="section-kicker mb-6">
-            {isEn ? 'Official veterinary directory' : 'Službeni veterinarski imenik'}
+            {isEn ? 'Veterinary directory' : 'Veterinarski imenik'}
           </p>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 font-[var(--font-heading)] text-white">
             {isEn ? 'Veterinary stations and clinics' : 'Veterinarske stanice i ambulante'}
           </h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             {isEn
-              ? 'Official registry of veterinary stations and clinics in Croatia, with clearly marked verified emergency contacts where confirmed.'
-              : 'Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj, uz posebno označene verificirane hitne kontakte gdje su potvrđeni.'}
+              ? 'Overview of veterinary stations and clinics in Croatia, with clearly marked verified emergency contacts where confirmed.'
+              : 'Pregled veterinarskih stanica i ambulanti u Hrvatskoj, uz posebno označene verificirane hitne kontakte gdje su potvrđeni.'}
           </p>
         </div>
       </section>
@@ -142,12 +142,12 @@ export function VeterinariContent({ veterinarians, forcedLanguage }: VeterinariC
       <section className="container mx-auto px-4 py-10">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
           <p className="text-sm text-muted-foreground">
-            {isEn ? 'Found ' : 'Pronađeno '}<span className="font-semibold text-foreground">{filteredClinics.length}</span>{isEn ? ' entries from the official registry and verified emergency additions.' : ' unosa iz službenog registra i verificiranih hitnih dopuna.'}
+            {isEn ? 'Found ' : 'Pronađeno '}<span className="font-semibold text-foreground">{filteredClinics.length}</span>{isEn ? ' entries in the directory and verified emergency additions.' : ' unosa u imeniku i verificiranih hitnih dopuna.'}
           </p>
           <div className="flex flex-wrap gap-2">
             <Badge variant="secondary" className="w-fit bg-emerald-50 text-emerald-700 border border-emerald-200">
               <ShieldCheck className="h-3.5 w-3.5 mr-1" />
-              {isEn ? 'Official source' : 'Službeni izvor'}
+              {isEn ? 'Public source' : 'Javni izvor'}
             </Badge>
             <Badge variant="secondary" className="w-fit bg-red-50 text-red-700 border border-red-200">
               <ShieldAlert className="h-3.5 w-3.5 mr-1" />
@@ -265,7 +265,7 @@ export function VeterinariContent({ veterinarians, forcedLanguage }: VeterinariC
                         )}
                         {clinic.verified && (
                           <Badge className="text-xs bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0">
-                            {isEn ? 'Officially verified' : 'Službeno verificirano'}
+                            {isEn ? 'Data checked' : 'Podaci provjereni'}
                           </Badge>
                         )}
                         {clinic.emergency_verified && emergencyLabel && (
