@@ -61,13 +61,13 @@ const steps = {
     { step: 1, title: 'Registrirajte se', description: 'Kreirajte profil, dodajte fotografije i opišite svoje iskustvo s ljubimcima.', icon: UserCheck, color: 'from-orange-500 to-amber-500' },
     { step: 2, title: 'Pošaljite dokumente', description: 'Uploadajte osobnu iskaznicu i ispunite obrazac za provjeru pozadine.', icon: Upload, color: 'from-blue-500 to-cyan-500' },
     { step: 3, title: 'Dobijte oznaku', description: 'Naš tim pregledava prijavu i javlja se s odlukom ili dodatnim pitanjima.', icon: ShieldCheck, color: 'from-teal-500 to-emerald-500' },
-    { step: 4, title: 'Rastite do Premium', description: 'Prikupljajte recenzije, održavajte aktivan profil i s vremenom možete dobiti dodatne oznake.', icon: Star, color: 'from-amber-500 to-orange-500' },
+    { step: 4, title: 'Razvijajte profil kroz recenzije', description: 'Prikupljajte recenzije, održavajte aktivan profil i s vremenom možete dobiti dodatne oznake.', icon: Star, color: 'from-amber-500 to-orange-500' },
   ],
   en: [
     { step: 1, title: 'Create your account', description: 'Build your profile, add photos, and describe your experience with pets.', icon: UserCheck, color: 'from-orange-500 to-amber-500' },
     { step: 2, title: 'Upload documents', description: 'Upload your ID and complete the background review form.', icon: Upload, color: 'from-blue-500 to-cyan-500' },
     { step: 3, title: 'Get verified', description: 'Our team reviews each application and follows up with a decision or additional questions.', icon: ShieldCheck, color: 'from-teal-500 to-emerald-500' },
-    { step: 4, title: 'Grow into Premium', description: 'Collect reviews, keep your profile active, and you may become eligible for additional badges over time.', icon: Star, color: 'from-amber-500 to-orange-500' },
+    { step: 4, title: 'Build your profile through reviews', description: 'Collect reviews, keep your profile active, and you may become eligible for additional badges over time.', icon: Star, color: 'from-amber-500 to-orange-500' },
   ],
 } as const;
 
