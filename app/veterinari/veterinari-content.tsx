@@ -77,7 +77,7 @@ export function VeterinariContent({ veterinarians, forcedLanguage }: VeterinariC
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             {isEn
               ? 'Official registry of veterinary stations and clinics in Croatia, with clearly marked verified emergency contacts where confirmed.'
-              : 'Službeni registar veterinarskih stanice i ambulanti u Hrvatskoj, uz posebno označene verificirane hitne kontakte gdje su potvrđeni.'}
+              : 'Službeni registar veterinarskih stanica i ambulanti u Hrvatskoj, uz posebno označene verificirane hitne kontakte gdje su potvrđeni.'}
           </p>
         </div>
       </section>

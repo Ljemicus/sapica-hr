@@ -201,15 +201,15 @@ export function DogFriendlyContent({ locations, forcedLanguage }: { locations: D
 
         <div className="container mx-auto px-4 text-center relative z-10">
           <p className="section-kicker mb-6">
-            {isEn ? '35+ locations in 7 cities' : '35+ lokacija u 7 gradova'}
+            {locations.length} {isEn ? (locations.length === 1 ? 'location' : 'locations') : (locations.length === 1 ? 'lokacija' : 'lokacija')} · {CITY_LIST.length} {isEn ? 'cities' : 'gradova'}
           </p>
 
           <h1 className="text-4xl md:text-6xl font-extrabold font-[var(--font-heading)] tracking-tight text-white mb-4">
-            Dog-Friendly {isEn ? 'Places' : 'Lokacije'}
+            {isEn ? 'Dog-friendly places' : 'Dog-friendly mjesta'}
           </h1>
 
           <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-10">
-            {isEn ? 'Find places that love dogs as much as you do' : 'Pronađite mjesta koja vole pse koliko i vi'}
+            {isEn ? 'Find cafes, parks, beaches, shops and stays where going with your dog feels simple.' : 'Pronađite kafiće, parkove, plaže, trgovine i smještaje gdje je dolazak s psom jednostavniji.'}
           </p>
 
           {/* Search input */}

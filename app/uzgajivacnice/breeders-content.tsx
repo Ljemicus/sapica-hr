@@ -51,31 +51,12 @@ interface BreedersContentProps {
   initialParams: { species?: string; city?: string; breed?: string; sort?: string };
 }
 
-const HERO_COPY = {
-  hr: {
-    badge: 'Uzgajivači',
-    titlePrefix: 'Pronađite',
-    titleHighlight: 'uzgajivače',
-    description:
-      'Pregledajte uzgajivače pasa i mačaka u Hrvatskoj, usporedite profile i brzo pronađite kontakt koji vam odgovara.',
-  },
-  en: {
-    badge: 'Breeders',
-    titlePrefix: 'Find',
-    titleHighlight: 'breeders',
-    description:
-      'Browse dog and cat breeders in Croatia, compare profiles, and quickly find the right contact for your next companion.',
-  },
-} as const;
-
 export function BreedersContent({ breeders, initialParams, forcedLanguage }: BreedersContentProps & { forcedLanguage?: 'hr' | 'en' }) {
   const { language } = useLanguage();
   const activeLanguage = forcedLanguage || language;
   const isEn = activeLanguage === 'en';
   const localeSegment = getLocaleSegment(activeLanguage);
   const basePath = `/uzgajivacnice${localeSegment}`;
-  const hero = HERO_COPY[activeLanguage];
-
   // Breed lists based on language
   const dogBreeds = isEn ? DOG_BREEDS_EN : DOG_BREEDS_HR;
   const catBreeds = isEn ? CAT_BREEDS_EN : CAT_BREEDS_HR;
@@ -150,12 +131,12 @@ export function BreedersContent({ breeders, initialParams, forcedLanguage }: Bre
           <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
             <p className="section-kicker">{isEn ? 'Breeders' : 'Uzgajivači'}</p>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 font-[var(--font-heading)] leading-[1.05]">
-              {isEn ? 'Registered breeders\nyou can trust.' : 'Registrirani uzgajivači\nkojima možete vjerovati.'}
+              {isEn ? 'Breeder profiles\nin one place.' : 'Uzgajivačnice\nna jednom mjestu.'}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
               {isEn
-                ? 'Browse verified breeders across Croatia. Every profile is reviewed for quality and animal welfare standards.'
-                : 'Pretražite verificirane uzgajivače diljem Hrvatske. Svaki profil je provjeren prema standardima kvalitete i dobrobiti životinja.'}
+                ? 'Browse breeder profiles across Croatia, compare available litters and use profile badges as extra context where verification exists.'
+                : 'Pregledajte profile uzgajivačnica diljem Hrvatske, usporedite dostupna legla i koristite oznake profila kao dodatni kontekst gdje postoji verifikacija.'}
             </p>
           </div>
         </div>

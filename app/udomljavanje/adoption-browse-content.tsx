@@ -87,7 +87,7 @@ export function AdoptionBrowseContent({ listings, forcedLanguage }: { listings: 
     });
   }, [listings, speciesFilter, cityFilter, sizeFilter, genderFilter, search]);
 
-  // Mock urgent pets for "Spasi me" alert (in production, this would come from API)
+  // Surface urgent listings first, then keep the rescue banner useful when real listings exist.
   const urgentPets = useMemo(() => {
     const urgent = listings
       .filter(l => l.is_urgent || l.name.toLowerCase().includes('hitno'))
@@ -102,7 +102,6 @@ export function AdoptionBrowseContent({ listings, forcedLanguage }: { listings: 
         city: l.city,
       }));
     
-    // If no urgent pets, show first 2 as examples
     if (urgent.length === 0 && listings.length > 0) {
       return listings.slice(0, 2).map(l => ({
         id: l.id,
