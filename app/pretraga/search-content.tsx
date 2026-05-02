@@ -502,7 +502,7 @@ export function SearchContent({
           all: 'Find the right care\nfor your pet.',
           sitter: 'Find a trusted\npet sitter.',
           grooming: 'Find a professional\ngroomer.',
-          dresura: 'Find a certified\ndog trainer.',
+          dresura: 'Find a dog\ntrainer.',
         },
         heroSub: {
           all: 'Browse sitters, groomers, and trainers across Croatia, then compare profiles, reviews, prices, and availability.',
@@ -532,7 +532,7 @@ export function SearchContent({
           all: 'Pronađite pravu brigu\nza svog ljubimca.',
           sitter: 'Pronađite pouzdanog\nčuvara ljubimaca.',
           grooming: 'Pronađite profesionalnog\ngroomera.',
-          dresura: 'Pronađite certificiranog\ntrenera za pse.',
+          dresura: 'Pronađite trenera\nza pse.',
         },
         heroSub: {
           all: 'Pretražite sittere, groomere i trenere diljem Hrvatske te usporedite profile, recenzije, cijene i dostupnost.',
