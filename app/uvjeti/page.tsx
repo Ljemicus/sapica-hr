@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function UvjetiPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-clip">
       {/* Hero */}
       <section className="organizations-hero-gradient py-16">
         <div className="container mx-auto px-4 text-center">
@@ -30,8 +30,8 @@ export default function UvjetiPage() {
 
           {/* 1. Opći uvjeti */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Opći uvjeti</h2>
-            <p className="text-gray-600 leading-relaxed">
+            <h2 className="text-2xl font-bold text-foreground mb-4">1. Opći uvjeti</h2>
+            <p className="text-muted-foreground leading-relaxed">
               PetPark (<a href="https://petpark.hr" className="text-orange-600 hover:underline">petpark.hr</a>)
               je online platforma koja povezuje vlasnike ljubimaca s čuvarima (sitterima), groomerima i trenerima.
               Korištenjem naše platforme pristajete na ove uvjete korištenja. Ako se ne slažete s ovim uvjetima,
@@ -41,11 +41,11 @@ export default function UvjetiPage() {
 
           {/* 2. Registracija */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">2. Registracija i korisnički račun</h2>
-            <p className="text-gray-600 leading-relaxed mb-3">
+            <h2 className="text-2xl font-bold text-foreground mb-4">2. Registracija i korisnički račun</h2>
+            <p className="text-muted-foreground leading-relaxed mb-3">
               Za korištenje većine funkcionalnosti platforme potreban je korisnički račun. Prilikom registracije obvezujete se:
             </p>
-            <ul className="space-y-2 text-gray-600">
+            <ul className="space-y-2 text-muted-foreground">
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Navesti točne i potpune podatke</li>
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Redovito ažurirati svoje podatke</li>
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Čuvati sigurnost svojih pristupnih podataka</li>
@@ -60,10 +60,10 @@ export default function UvjetiPage() {
               <div className="w-10 h-10 rounded-xl bg-warm-orange/10 flex items-center justify-center">
                 <Users className="h-5 w-5 text-warm-orange" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">3. Odgovornosti vlasnika ljubimaca</h2>
+              <h2 className="text-2xl font-bold text-foreground">3. Odgovornosti vlasnika ljubimaca</h2>
             </div>
-            <p className="text-gray-600 leading-relaxed mb-3">Kao vlasnik ljubimaca koji koristi platformu, odgovorni ste za:</p>
-            <ul className="space-y-2 text-gray-600">
+            <p className="text-muted-foreground leading-relaxed mb-3">Kao vlasnik ljubimaca koji koristi platformu, odgovorni ste za:</p>
+            <ul className="space-y-2 text-muted-foreground">
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Pružanje točnih informacija o svom ljubimcu (zdravstveno stanje, ponašanje, posebne potrebe)</li>
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Osiguravanje da je ljubimac cijepljen i zdrav za boravak kod sittera</li>
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Pravovremenu komunikaciju sa sitterom</li>
@@ -78,10 +78,10 @@ export default function UvjetiPage() {
               <div className="w-10 h-10 rounded-xl bg-warm-teal/10 flex items-center justify-center">
                 <ShieldCheck className="h-5 w-5 text-warm-teal" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">4. Odgovornosti čuvara (sittera)</h2>
+              <h2 className="text-2xl font-bold text-foreground">4. Odgovornosti čuvara (sittera)</h2>
             </div>
-            <p className="text-gray-600 leading-relaxed mb-3">Kao sitter na platformi, obvezujete se:</p>
-            <ul className="space-y-2 text-gray-600">
+            <p className="text-muted-foreground leading-relaxed mb-3">Kao sitter na platformi, obvezujete se:</p>
+            <ul className="space-y-2 text-muted-foreground">
               <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Pružati kvalitetnu brigu o ljubimcima u skladu s dogovorom</li>
               <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Poštivati sve upute vlasnika o prehrani, lijekovima i rutini ljubimca</li>
               <li className="flex gap-2"><span className="text-orange-500 font-bold">•</span>Odmah obavijestiti vlasnika u slučaju bilo kakvih problema ili hitnih situacija</li>
@@ -97,9 +97,9 @@ export default function UvjetiPage() {
               <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
                 <BookOpen className="h-5 w-5 text-orange-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">5. Rezervacije i plaćanje</h2>
+              <h2 className="text-2xl font-bold text-foreground">5. Rezervacije i plaćanje</h2>
             </div>
-            <div className="space-y-3 text-gray-600 leading-relaxed">
+            <div className="space-y-3 text-muted-foreground leading-relaxed">
               <p>
                 Rezervacije se dogovaraju izravno između vlasnika i sittera putem platforme.
                 PetPark služi kao posrednik koji omogućuje povezivanje korisnika.
@@ -121,9 +121,9 @@ export default function UvjetiPage() {
               <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
                 <Camera className="h-5 w-5 text-orange-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">6. Pravila sadržaja</h2>
+              <h2 className="text-2xl font-bold text-foreground">6. Pravila sadržaja</h2>
             </div>
-            <p className="text-gray-600 leading-relaxed mb-3">
+            <p className="text-muted-foreground leading-relaxed mb-3">
               Korisnici su odgovorni za sav sadržaj koji objavljuju na platformi (fotografije, recenzije, poruke, objave na forumu). Zabranjeno je objavljivati:
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -138,12 +138,12 @@ export default function UvjetiPage() {
                 <Card key={item} className="border-0 shadow-sm">
                   <CardContent className="pt-4 pb-4 flex items-start gap-2">
                     <Ban className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-gray-600">{item}</p>
+                    <p className="text-sm text-muted-foreground">{item}</p>
                   </CardContent>
                 </Card>
               ))}
             </div>
-            <p className="text-gray-600 mt-3">
+            <p className="text-muted-foreground mt-3">
               Zadržavamo pravo ukloniti bilo koji sadržaj koji krši ova pravila bez prethodne najave.
             </p>
           </section>
@@ -154,9 +154,9 @@ export default function UvjetiPage() {
               <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
                 <AlertTriangle className="h-5 w-5 text-amber-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">7. Ograničenje odgovornosti</h2>
+              <h2 className="text-2xl font-bold text-foreground">7. Ograničenje odgovornosti</h2>
             </div>
-            <div className="space-y-3 text-gray-600 leading-relaxed">
+            <div className="space-y-3 text-muted-foreground leading-relaxed">
               <p>
                 PetPark je platforma koja povezuje vlasnike ljubimaca i pružatelje usluga.
                 Ne pružamo usluge čuvanja, njege ili dresure ljubimaca izravno.
@@ -179,9 +179,9 @@ export default function UvjetiPage() {
               <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
                 <CreditCard className="h-5 w-5 text-orange-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">8. Plaćanje i provizije</h2>
+              <h2 className="text-2xl font-bold text-foreground">8. Plaćanje i provizije</h2>
             </div>
-            <div className="space-y-3 text-gray-600 leading-relaxed">
+            <div className="space-y-3 text-muted-foreground leading-relaxed">
               <p>
                 Registracija i osnovno korištenje platforme je besplatno. Plaćanje usluga vrši se sigurno
                 putem Stripe platnog sustava.
@@ -191,9 +191,9 @@ export default function UvjetiPage() {
                 Provizija se automatski odbija od ukupnog iznosa prije isplate sitteru/pružatelju usluge.
               </p>
               <p>
-                <strong>Otkazivanje i povrat:</strong> Vlasnik može otkazati rezervaciju do 12 sati prije
-                početka usluge uz potpuni povrat novca. Otkazivanja unutar 12 sati podliježu nakandi od 50%.
-                Ako sitter otkaže, vlasnik uvijek dobiva potpuni povrat.
+                <strong>Otkazivanje i povrat:</strong> Pravila otkazivanja ovise o vrsti usluge, dogovorenom terminu
+                i statusu rezervacije. Ako pružatelj usluge otkaže potvrđenu rezervaciju, korisnik se može javiti
+                podršci radi pomoći oko sljedećeg koraka i povrata prema važećim pravilima.
               </p>
               <p>
                 <strong>Naknada nakon obavljene usluge:</strong> Nakon što je usluga uspješno obavljena,
@@ -209,9 +209,9 @@ export default function UvjetiPage() {
               <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
                 <HeartHandshake className="h-5 w-5 text-teal-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">8a. Udruge i donacije</h2>
+              <h2 className="text-2xl font-bold text-foreground">8a. Udruge i donacije</h2>
             </div>
-            <div className="space-y-3 text-gray-600 leading-relaxed">
+            <div className="space-y-3 text-muted-foreground leading-relaxed">
               <p>
                 PetPark omogućuje udruge za zaštitu životinja da objavljuju apelacije za pomoć i prikupljanje donacija.
                 Platforma služi isključivo kao poveznica između udruge i potencijalnih donatora.
@@ -241,12 +241,12 @@ export default function UvjetiPage() {
               <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
                 <Ban className="h-5 w-5 text-red-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">8b. Zabranjena ponašanja</h2>
+              <h2 className="text-2xl font-bold text-foreground">8b. Zabranjena ponašanja</h2>
             </div>
-            <p className="text-gray-600 leading-relaxed mb-3">
+            <p className="text-muted-foreground leading-relaxed mb-3">
               Sljedeća ponašanja su strogo zabranjena i mogu rezultirati trajnom suspenzijom računa:
             </p>
-            <ul className="space-y-2 text-gray-600">
+            <ul className="space-y-2 text-muted-foreground">
               <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Zlostavljanje, zanemarivanje ili neadekvatna briga o ljubimcima</li>
               <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Lažno predstavljanje, korištenje tuđih identiteta ili lažnih referenci</li>
               <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Pokušaj izbjegavanja plaćanja putem platforme (dogovaranje &quot;ispod stola&quot;)</li>
@@ -262,9 +262,9 @@ export default function UvjetiPage() {
               <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
                 <Scale className="h-5 w-5 text-orange-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">9. Prekid korištenja i gašenje računa</h2>
+              <h2 className="text-2xl font-bold text-foreground">9. Prekid korištenja i gašenje računa</h2>
             </div>
-            <div className="space-y-3 text-gray-600 leading-relaxed">
+            <div className="space-y-3 text-muted-foreground leading-relaxed">
               <p>
                 Možete u bilo kojem trenutku zatvoriti svoj korisnički račun kontaktiranjem korisničke podrške
                 na <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline">info@petpark.hr</a>.
@@ -282,8 +282,8 @@ export default function UvjetiPage() {
 
           {/* 10. Intelektualno vlasništvo */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">10. Intelektualno vlasništvo</h2>
-            <p className="text-gray-600 leading-relaxed">
+            <h2 className="text-2xl font-bold text-foreground mb-4">10. Intelektualno vlasništvo</h2>
+            <p className="text-muted-foreground leading-relaxed">
               Sav sadržaj platforme PetPark (logotipi, dizajn, tekst, grafike) zaštićen je autorskim pravima
               i vlasništvo je PetParka. Nije dopušteno kopiranje, distribucija ili komercijalna upotreba
               sadržaja bez prethodnog pisanog odobrenja.
@@ -292,8 +292,8 @@ export default function UvjetiPage() {
 
           {/* 11. Promjene uvjeta */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">11. Promjene uvjeta korištenja</h2>
-            <p className="text-gray-600 leading-relaxed">
+            <h2 className="text-2xl font-bold text-foreground mb-4">11. Promjene uvjeta korištenja</h2>
+            <p className="text-muted-foreground leading-relaxed">
               Zadržavamo pravo izmjene ovih uvjeta korištenja. O svim značajnim promjenama obavijestit ćemo
               vas putem e-maila ili obavijesti na platformi. Nastavak korištenja platforme nakon objave
               izmjena smatra se prihvaćanjem novih uvjeta.
@@ -302,8 +302,8 @@ export default function UvjetiPage() {
 
           {/* 12. Primjenjivo pravo */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">12. Primjenjivo pravo i rješavanje sporova</h2>
-            <p className="text-gray-600 leading-relaxed">
+            <h2 className="text-2xl font-bold text-foreground mb-4">12. Primjenjivo pravo i rješavanje sporova</h2>
+            <p className="text-muted-foreground leading-relaxed">
               Na ove uvjete korištenja primjenjuje se pravo Republike Hrvatske.
               Za sve sporove koji proizlaze iz korištenja platforme nadležan je sud u Zagrebu.
               Prije pokretanja sudskog postupka, obvezujemo se pokušati riješiti spor mirnim putem.
@@ -317,8 +317,8 @@ export default function UvjetiPage() {
                 <Mail className="h-6 w-6 text-orange-600" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Trebate pojašnjenje?</h2>
-                <p className="text-gray-600">
+                <h2 className="text-xl font-bold text-foreground mb-2">Trebate pojašnjenje?</h2>
+                <p className="text-muted-foreground">
                   Za sva pitanja vezana uz ove uvjete korištenja, obratite nam se na{' '}
                   <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline font-medium">info@petpark.hr</a>.
                 </p>

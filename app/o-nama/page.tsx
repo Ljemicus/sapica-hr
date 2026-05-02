@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Heart, MapPin, Users, PawPrint, Shield, Search } from 'lucide-react';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
@@ -15,7 +16,7 @@ const VALUES = [
   {
     icon: Shield,
     title: 'Povjerenje',
-    description: 'Verificirani sitteri, recenzije, transparentnost. Znate s kim ostavljate ljubimca.',
+    description: 'Profili, recenzije i jasne informacije pomažu vam donijeti mirniju odluku.',
     color: 'text-warm-orange',
     bg: 'bg-warm-orange/5',
   },
@@ -43,10 +44,13 @@ export default function AboutPage() {
       <section className="relative overflow-hidden min-h-[70vh] flex items-center justify-center">
         {/* Pozadinska slika */}
         <div className="absolute inset-0">
-          <img 
-            src="/images/o-nama-ljubav.png" 
-            alt="Ljudi i psi u parku" 
-            className="w-full h-full object-cover"
+          <Image
+            src="/images/o-nama-ljubav.png"
+            alt="Ljudi i psi u parku"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
           {/* Tamni overlay za bolju čitljivost teksta */}
           <div className="absolute inset-0 bg-black/40" />
@@ -91,9 +95,9 @@ export default function AboutPage() {
               </div>
 
               <p className="text-lg animate-fade-in-up delay-300">
-                U Hrvatskoj živi preko <strong className="text-foreground">800.000 pasa</strong> —
-                a platforma koja sve to objedinjuje? Nije postojala. Izvan Zagreba praktički
-                ništa ne postoji. Mi to mijenjamo.
+                U Hrvatskoj živi ogroman broj pasa i mačaka — a vlasnicima često nedostaje jedno mjesto
+                za usluge, provjeru informacija i zajednicu. Izvan najvećih gradova ta je praznina
+                još vidljivija. Mi to mijenjamo.
               </p>
               <p className="text-lg animate-fade-in-up delay-400">
                 Vjerujemo da ljudi u susjedstvu mogu jedni drugima pomoći. Da studentica koja
@@ -152,7 +156,7 @@ export default function AboutPage() {
               PetPark nije samo app. 🐾
             </h2>
             <p className="text-white/85 text-lg mb-8 max-w-xl mx-auto">
-              To je mjesto gdje se ljudi koji vole životinje pronalaze i pomažu jedni drugima
+              To je mjesto gdje ljudi koji vole životinje lakše pronalaze pomoć, usluge i korisne informacije.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/pretraga">
