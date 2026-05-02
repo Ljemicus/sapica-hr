@@ -16,11 +16,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 export const metadata: Metadata = {
   title: 'Čuvanje pasa u Splitu — pronađite pouzdanog sittera',
-  description: 'Pronađite iskusne i verificirane pet sittere u Splitu. Čuvanje pasa u vašem kvartu — Bačvice, Firule, Marjan, Spinut, Solin i okolica. Pošaljite upit online.',
+  description: 'Pronađite pet sittere u Splitu i pošaljite upit za čuvanje. Čuvanje pasa u vašem kvartu — Bačvice, Firule, Marjan, Spinut, Solin i okolica. Pošaljite upit online.',
   keywords: ['čuvanje pasa split', 'pet sitter split', 'čuvanje ljubimaca split', 'dog sitter split', 'šetanje pasa split', 'dnevna njega pasa split'],
   openGraph: {
     title: 'Čuvanje pasa u Splitu — pronađite pouzdanog sittera | PetPark',
-    description: 'Pronađite verificirane pet sittere u Splitu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
+    description: 'Pronađite pet sittere u Splitu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     siteName: 'PetPark',
     type: 'website',
     ...buildLocaleOpenGraph('/cuvanje-pasa-split'),
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Čuvanje pasa u Splitu — pronađite pouzdanog sittera | PetPark',
-    description: 'Pronađite verificirane pet sittere u Splitu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
+    description: 'Pronađite pet sittere u Splitu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     images: [`${BASE_URL}/opengraph-image`],
   },
   alternates: buildLocaleAlternates('/cuvanje-pasa-split'),
@@ -119,7 +119,7 @@ export default function CuvanjePasaSplit() {
               <span className="text-gradient">Splitu</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in-up delay-200 leading-relaxed max-w-2xl mx-auto">
-              Pronađite verificirane pet sittere u Splitu i okolici. Vaš ljubimac zaslužuje najbolju njegu dok ste na putu ili na poslu.
+              Pronađite pet sittere u Splitu i okolici za čuvanje, šetnje ili posjete dok ste na putu ili na poslu.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
               <Link href="/pretraga?city=Split">
@@ -209,7 +209,7 @@ export default function CuvanjePasaSplit() {
           </h2>
           <div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground mb-8">
             <p>
-              Park-šuma Marjan je bez premca najbolja lokacija za šetnje pasa u Splitu. S preko 300 hektara
+              Park-šuma Marjan jedna je od najpoznatijih lokacija za šetnje pasa u Splitu. S preko 300 hektara
               šumskog područja, kilometrima staza i svježim zrakom, Marjan pruža bijeg od gradske vreve.
               Staze su raznolike — od laganog šetališta uz more do zahtjevnijih planinskih puteva po
               brdu. Naši sitteri posebno cijene rane jutarnje šetnje po Marjanu kada je temperatura ugodna,
@@ -259,8 +259,7 @@ export default function CuvanjePasaSplit() {
                 Ako planirate putovanje tijekom ljeta, rezervirajte sittera što ranije — idealno 2-3
                 tjedna unaprijed. Ljeto je vršna sezona i najtraženiji sitteri se brzo popune.
                 Upoznajte sittera s vašim psom prije rezervacije i obavezno ostavite detaljne
-                upute o hranjenju, lijekovima i posebnim potrebama. S PetParkom imate sigurnost
-                verificiranog sittera i korisničke podrške dostupne pon–sub 8–20h.
+                upute o hranjenju, lijekovima i posebnim potrebama. PetPark vam pomaže usporediti profile i dogovoriti detalje na jednom mjestu, uz podršku dostupnu pon–sub 8–20h.
               </p>
             </div>
           </div>
@@ -298,7 +297,7 @@ export default function CuvanjePasaSplit() {
       <InternalLinkSection
         eyebrow="Idući korak"
         title="Istražite Split i srodne usluge"
-        description="Split ima realan grooming i training supply, pa iz landingice možete odmah skočiti na relevantne filtered/service rute umjesto da stranica ostane SEO slijepa ulica."
+        description="Ako osim čuvanja tražite grooming ili trening, možete odmah otvoriti relevantne PetPark rute i nastaviti pretragu."
         items={[
           ...getCityServiceLinks('Split').slice(0, 4),
           ...getSiblingCityLinks('Split'),
@@ -368,7 +367,7 @@ export default function CuvanjePasaSplit() {
       <section className="bg-gradient-to-r from-blue-500 to-teal-500 py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-[var(--font-heading)]">
-            Pronađite savršenog sittera u Splitu
+            Pronađite sittera u Splitu
           </h2>
           <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
             Verificirani profili u svim splitskim kvartovima spremni su za vaš upit. Pošaljite upit brzo i jasno.

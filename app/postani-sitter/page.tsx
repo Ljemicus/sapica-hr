@@ -5,12 +5,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 export const metadata: Metadata = {
-  title: 'Postani sitter — fleksibilna zarada uz ljubimce',
-  description: 'Zarađuj čuvajući pse i mačke u svom gradu. Prijava je besplatna, onboarding traje par minuta, a ti biraš termine i cijene.',
-  keywords: ['pet sitter posao', 'čuvanje pasa posao', 'zarada uz pse', 'postani sitter hrvatska'],
+  title: 'Postani sitter — fleksibilan rad s ljubimcima',
+  description: 'Kreiraj profil za čuvanje pasa i mačaka u svom gradu. Ti biraš usluge, termine i tempo koji ti odgovara.',
+  keywords: ['pet sitter posao', 'čuvanje pasa posao', 'rad sa psima', 'postani sitter hrvatska'],
   openGraph: {
-    title: 'Postani sitter — fleksibilna zarada uz ljubimce | PetPark',
-    description: 'Zarađuj čuvajući pse i mačke u svom gradu. Ti biraš termine, usluge i cijene.',
+    title: 'Postani sitter — fleksibilan rad s ljubimcima | PetPark',
+    description: 'Kreiraj profil za čuvanje pasa i mačaka u svom gradu. Ti biraš termine, usluge i tempo.',
     url: 'https://petpark.hr/postani-sitter',
     type: 'website',
   },
@@ -20,23 +20,23 @@ export const metadata: Metadata = {
 const BENEFITS = [
   {
     icon: Wallet,
-    title: 'Dodatna zarada na svoj način',
-    description: 'Sam/a određuješ cijene, usluge i koliko rezervacija želiš prihvatiti.',
+    title: 'Profil pod tvojim uvjetima',
+    description: 'Sam/a određuješ usluge, dostupnost i koje upite želiš prihvatiti.',
   },
   {
     icon: CalendarDays,
     title: 'Ti biraš termine',
-    description: 'Radi kad ti odgovara — vikendom, navečer ili samo povremeno.',
+    description: 'Postavi dostupnost za vikende, večeri ili povremene termine.',
   },
   {
     icon: Heart,
     title: 'Posao za ljude koji vole životinje',
-    description: 'Ako voliš pse i mačke, ovo je jedan od rijetkih side-jobova koji je stvarno gušt.',
+    description: 'Ako voliš pse i mačke, profil može postati ozbiljan način da radiš ono što ti je prirodno.',
   },
   {
     icon: ShieldCheck,
-    title: 'Sigurniji i ozbiljniji od dogovora "preko poruke"',
-    description: 'Profil, upiti, recenzije i onboarding na jednom mjestu — bez kaosa u inboxu.',
+    title: 'Urednije od dogovora preko poruka',
+    description: 'Profil, upiti, recenzije i onboarding stoje na jednom mjestu — manje kaosa u inboxu.',
   },
 ];
 
@@ -51,7 +51,7 @@ const SERVICES = [
 const STEPS = [
   'Ispuni prijavu i pošalji osnovne podatke',
   'Dodaj grad, usluge i kratki opis profila',
-  'Nakon odobrenja primaš prve upite vlasnika',
+  'Nakon pregleda profila možeš početi primati upite vlasnika',
   'Prihvaćaš samo rezervacije koje ti odgovaraju',
 ];
 
@@ -66,11 +66,11 @@ const FAQ = [
   },
   {
     q: 'Koliko traje prijava?',
-    a: 'Par minuta. Dovoljno je da pošalješ osnovne podatke i kratki opis.',
+    a: 'Osnovna prijava je kratka. Nakon toga profil možeš dopuniti informacijama, uslugama i dostupnošću.',
   },
   {
     q: 'Mogu li raditi uz postojeći posao ili faks?',
-    a: 'Da, to je i poanta. Ovo je fleksibilna dodatna zarada, ne klasična smjena od 8 sati.',
+    a: 'Da. Dostupnost postavljaš prema svom rasporedu i prihvaćaš samo upite koji ti odgovaraju.',
   },
 ];
 
@@ -92,8 +92,8 @@ export default function PostaniSitterPage() {
             </h1>
 
             <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed mb-8">
-              Ako voliš životinje i želiš ozbiljan, fleksibilan side-job, prijavi se za PetPark sittera.
-              Ti biraš termine, usluge i tempo — mi ti dajemo profil, upite i jasniji proces.
+              Ako voliš životinje i želiš uredan profil za čuvanje, prijavi se za PetPark sittera.
+              Ti biraš termine, usluge i tempo — PetPark ti daje profil, upite i jasniji proces.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
@@ -104,11 +104,11 @@ export default function PostaniSitterPage() {
             <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
               <div className="community-section-card p-4 bg-white/10 border-white/20">
                 <div className="text-2xl font-extrabold text-white">0€</div>
-                <div className="text-sm text-white/70">prijava</div>
+                <div className="text-sm text-white/70">osnovna prijava</div>
               </div>
               <div className="community-section-card p-4 bg-white/10 border-white/20">
-                <div className="text-2xl font-extrabold text-white">par min</div>
-                <div className="text-sm text-white/70">do prijave</div>
+                <div className="text-2xl font-extrabold text-white">kratko</div>
+                <div className="text-sm text-white/70">za početak</div>
               </div>
               <div className="community-section-card p-4 bg-white/10 border-white/20">
                 <div className="text-2xl font-extrabold text-white">ti biraš</div>
@@ -123,7 +123,7 @@ export default function PostaniSitterPage() {
       <section className="container mx-auto px-4 py-14 md:py-18">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] mb-4">Zašto postati sitter?</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Fleksibilnost, dodatna zarada i posao koji voliš.</p>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Fleksibilnost, jasniji upiti i rad s ljubimcima.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {BENEFITS.map((item) => (
@@ -165,7 +165,7 @@ export default function PostaniSitterPage() {
               <CardContent className="p-7">
                 <Badge className="mb-4 bg-teal-100 text-teal-700 hover:bg-teal-100 border-0">Za koga je ovo?</Badge>
                 <div className="space-y-4 text-sm md:text-base">
-                  <p>✅ Za ljude koji vole životinje i žele dodatnu zaradu</p>
+                  <p>✅ Za ljude koji vole životinje i žele uredan profil za usluge</p>
                   <p>✅ Za studente, freelancere i zaposlene koji žele fleksibilnost</p>
                   <p>✅ Za one koji već čuvaju ljubimce &quot;usput&quot;, ali to žele raditi ozbiljnije</p>
                   <p>❌ Nije za osobe koje ne mogu preuzeti odgovornost za tuđeg ljubimca</p>
@@ -180,7 +180,7 @@ export default function PostaniSitterPage() {
       <section id="kako-radi" className="container mx-auto px-4 py-14 md:py-18 scroll-mt-24">
         <div className="max-w-3xl mx-auto text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] mb-4">Kako izgleda prijava?</h2>
-          <p className="text-lg text-muted-foreground">Bez filozofije. Jednostavno i brzo.</p>
+          <p className="text-lg text-muted-foreground">Kratko, jasno i bez nepotrebnih koraka.</p>
         </div>
 
         <div className="max-w-3xl mx-auto space-y-4">
@@ -220,7 +220,7 @@ export default function PostaniSitterPage() {
             </div>
             <div className="rounded-2xl bg-white/10 p-6 backdrop-blur-sm border border-white/15">
               <p className="text-sm uppercase tracking-wide text-white/70 mb-2">Kreni bez čekanja</p>
-              <p className="text-xl font-bold mb-5">Ako želiš krenuti, prijava traje samo par minuta.</p>
+              <p className="text-xl font-bold mb-5">Ako želiš krenuti, osnovna prijava je kratka i jasna.</p>
               <LandingPrimaryCTA className="w-full h-13 rounded-xl bg-white text-orange-600 hover:bg-white/90 font-bold" />
             </div>
           </div>
@@ -231,7 +231,7 @@ export default function PostaniSitterPage() {
       <section className="container mx-auto px-4 pb-20">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] mb-4">Pitanja koja će ljudi imati</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] mb-4">Česta pitanja</h2>
           </div>
           <div className="space-y-4">
             {FAQ.map((item) => (

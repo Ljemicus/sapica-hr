@@ -16,11 +16,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 export const metadata: Metadata = {
   title: 'Čuvanje pasa u Zagrebu — pronađite pouzdanog sittera',
-  description: 'Pronađite iskusne i verificirane pet sittere u Zagrebu. Čuvanje pasa u vašem kvartu — Maksimir, Trešnjevka, Novi Zagreb, Dubrava i drugi. Pošaljite upit online.',
+  description: 'Pronađite pet sittere u Zagrebu i pošaljite upit za čuvanje. Čuvanje pasa u vašem kvartu — Maksimir, Trešnjevka, Novi Zagreb, Dubrava i drugi. Pošaljite upit online.',
   keywords: ['čuvanje pasa zagreb', 'pet sitter zagreb', 'čuvanje ljubimaca zagreb', 'dog sitter zagreb', 'šetanje pasa zagreb', 'dnevna njega pasa zagreb'],
   openGraph: {
     title: 'Čuvanje pasa u Zagrebu — pronađite pouzdanog sittera | PetPark',
-    description: 'Pronađite verificirane pet sittere u Zagrebu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
+    description: 'Pronađite pet sittere u Zagrebu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     siteName: 'PetPark',
     type: 'website',
     ...buildLocaleOpenGraph('/cuvanje-pasa-zagreb'),
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Čuvanje pasa u Zagrebu — pronađite pouzdanog sittera | PetPark',
-    description: 'Pronađite verificirane pet sittere u Zagrebu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
+    description: 'Pronađite pet sittere u Zagrebu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     images: [`${BASE_URL}/opengraph-image`],
   },
   alternates: buildLocaleAlternates('/cuvanje-pasa-zagreb'),
@@ -119,7 +119,7 @@ export default function CuvanjePasaZagreb() {
               <span className="text-gradient">Zagrebu</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in-up delay-200 leading-relaxed max-w-2xl mx-auto">
-              Pronađite verificirane i iskusne pet sittere u vašem zagrebačkom kvartu. Smještaj, dnevna njega, šetnje i posjete — sve na jednom mjestu.
+              Pronađite pet sittere u vašem zagrebačkom kvartu. Smještaj, dnevna njega, šetnje i posjete — sve na jednom mjestu.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
               <Link href="/pretraga?city=Zagreb">
@@ -144,7 +144,7 @@ export default function CuvanjePasaZagreb() {
               Zagreb je grad s više od 800.000 stanovnika i desecima tisuća kućnih ljubimaca. Svaki vlasnik psa u nekom
               trenutku treba pouzdanu osobu koja će se brinuti o njegovom ljubimcu — bilo da putuje na godišnji odmor,
               ima poslovne obveze ili jednostavno treba pomoć s dnevnim šetnjama. PetPark povezuje vlasnike pasa u
-              Zagrebu s verificiranim i iskusnim pet sitterima koji pružaju profesionalnu njegu u ugodnom okruženju.
+              Zagrebu s profilima sittera koji nude čuvanje, šetnje i posjete u dogovoru s vlasnicima.
             </p>
             <p>
               Naša platforma pokriva sve zagrebačke kvartove i gradske četvrti. Bez obzira živite li na Trešnjevci,
@@ -202,14 +202,14 @@ export default function CuvanjePasaZagreb() {
           </h2>
           <div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground mb-8">
             <p>
-              Zagreb obiluje zelenim površinama koje su savršene za šetnje i igru s vašim ljubimcem. Park-šuma Maksimir
+              Zagreb obiluje zelenim površinama koje su odlične za šetnje i igru s vašim ljubimcem. Park-šuma Maksimir
               je najveći i najpoznatiji gradski park s kilometrima šetnica kroz šumu i travnate površine. Mnogi
               zagrebački sitteri koriste Maksimir za dugačke šetnje jer nudi obilje prostora gdje psi mogu sigurno
               trčati i istraživati.
             </p>
             <p>
               Jezero Jarun omiljena je destinacija za vlasnike aktivnih pasa. Šljunčane plaže i staze oko jezera
-              pružaju savršen teren za trčanje, plivanje i igru. Bundek u Novom Zagrebu manja je, ali jednako
+              pružaju dobar teren za trčanje, plivanje i igru. Bundek u Novom Zagrebu manja je, ali jednako
               popularna opcija sa uređenim stazama oko jezera. Park Ribnjak u centru grada, Tuškanac i Zelengaj
               na obroncima Medvednice te Savski nasip koji se proteže kroz cijeli grad — sve su to lokacije koje
               naši sitteri redovito koriste za šetnje vaših ljubimaca.
@@ -256,10 +256,8 @@ export default function CuvanjePasaZagreb() {
                 gdje psi mogu slobodno trčati, uključujući onaj na Jarunu i u parku Mladenaca.
               </p>
               <p>
-                Odabirom verificiranog sittera na PetParku dobivate dodatnu sigurnost. Svi naši sitteri prolaze
-                provjeru identiteta, imaju ocjene i recenzije od prethodnih korisnika, a PetPark nudi osiguranje
-                za svaku rezervaciju. To znači da možete mirne savjesti otputovati znajući da je vaš ljubimac
-                u sigurnim rukama.
+                PetPark vam daje jasnije profile, recenzije i dogovor na jednom mjestu. Prije rezervacije preporučujemo
+                upoznavanje, provjeru detalja profila i dogovor o rutini, veterinaru i hitnom kontaktu.
               </p>
             </div>
           </div>
@@ -367,7 +365,7 @@ export default function CuvanjePasaZagreb() {
       <section className="bg-gradient-to-r from-orange-500 to-teal-500 py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-[var(--font-heading)]">
-            Pronađite savršenog sittera u Zagrebu
+            Pronađite sittera u Zagrebu
           </h2>
           <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
             Verificirani profili u svim zagrebačkim kvartovima čekaju vaš upit. Pošaljite upit online u par klikova.

@@ -12,7 +12,7 @@ export function LandingPrimaryCTA({ className = '' }: { className?: string }) {
       onClick={() => trackEvent('Sitter Landing CTA Click', { location: className || 'default' })}
     >
       <Button size="lg" className={className || 'h-14 px-8 rounded-xl text-lg font-bold bg-orange-500 hover:bg-orange-600'}>
-        Prijavi se odmah
+        Kreni s prijavom
         <ArrowRight className="ml-2 h-5 w-5" />
       </Button>
     </Link>

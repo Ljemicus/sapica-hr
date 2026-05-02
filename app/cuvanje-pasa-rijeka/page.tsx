@@ -16,11 +16,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 export const metadata: Metadata = {
   title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera',
-  description: 'Pronađite iskusne i verificirane pet sittere u Rijeci. Čuvanje pasa u vašem kvartu — Trsat, Kantrida, Sušak, Kozala, Turnić i okolica. Pošaljite upit online.',
+  description: 'Pronađite pet sittere u Rijeci i pošaljite upit za čuvanje. Čuvanje pasa u vašem kvartu — Trsat, Kantrida, Sušak, Kozala, Turnić i okolica. Pošaljite upit online.',
   keywords: ['čuvanje pasa rijeka', 'pet sitter rijeka', 'čuvanje ljubimaca rijeka', 'dog sitter rijeka', 'šetanje pasa rijeka', 'dnevna njega pasa rijeka'],
   openGraph: {
     title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera | PetPark',
-    description: 'Pronađite verificirane pet sittere u Rijeci. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
+    description: 'Pronađite pet sittere u Rijeci. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     siteName: 'PetPark',
     type: 'website',
     ...buildLocaleOpenGraph('/cuvanje-pasa-rijeka'),
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera | PetPark',
-    description: 'Pronađite verificirane pet sittere u Rijeci. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
+    description: 'Pronađite pet sittere u Rijeci. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     images: [`${BASE_URL}/opengraph-image`],
   },
   alternates: buildLocaleAlternates('/cuvanje-pasa-rijeka'),
@@ -157,7 +157,7 @@ export default function CuvanjePasaRijeka() {
               Bilo da živite na Trsatu s pogledom na Kvarner, u mirnom Sušaku, na vjetrovitoj Kantridi
               uz more ili u živahnom centru grada — na PetParku ćete pronaći iskusnog sittera koji će
               se brinuti o vašem ljubimcu kao o vlastitom. Naša zajednica sittera u Rijeci stalno raste,
-              a svaki prolazi verificaciju koja uključuje provjeru identiteta i iskustva sa životinjama.
+              a profili sadrže informacije koje vlasnicima pomažu lakše procijeniti kome šalju upit.
             </p>
           </div>
         </div>
@@ -209,7 +209,7 @@ export default function CuvanjePasaRijeka() {
           </h2>
           <div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground mb-8">
             <p>
-              Šetnica Lungo mare jedna je od najljepših obalnih šetnica u Hrvatskoj i savršena je za
+              Šetnica Lungo mare jedna je od najpoznatijih obalnih šetnica u Hrvatskoj i odlična je za
               svakodnevne šetnje s psom. Proteže se od Opatije do Voloskog, prolazi kroz Kantridu i
               pruža spektakularne poglede na Kvarnerski zaljev. Mnogi naši sitteri ovu šetnicu koriste
               za jutarnje i večernje šetnje jer kombinira more, svježi zrak i ravan teren.
@@ -369,7 +369,7 @@ export default function CuvanjePasaRijeka() {
       <section className="bg-gradient-to-r from-teal-500 to-blue-500 py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-[var(--font-heading)]">
-            Pronađite savršenog sittera u Rijeci
+            Pronađite sittera u Rijeci
           </h2>
           <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
             Pouzdani profili u svim riječkim kvartovima čekaju vaš upit. Pošaljite upit online brzo i jasno.
