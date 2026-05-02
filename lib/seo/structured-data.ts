@@ -344,7 +344,7 @@ export class StructuredDataGenerator {
           name: 'What types of pet care services are available?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'PetPark offers boarding, dog walking, house sitting, drop-in visits, daycare, grooming, training, veterinary services, and pet transportation. Each service provider is verified and reviewed by the community.',
+            text: 'PetPark offers boarding, dog walking, house sitting, drop-in visits, daycare, grooming, training, veterinary services, and pet transportation. Profiles can include reviews, photos, and service details to help owners compare options.',
           },
         },
         {
@@ -352,7 +352,7 @@ export class StructuredDataGenerator {
           name: 'How are sitters and service providers verified?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'All providers undergo identity verification, background checks, and reference verification. We also monitor reviews and ratings to ensure quality service.',
+            text: 'Provider profiles can include identity/profile checks, reviews, ratings, photos, and listed service details. Pet owners should review each profile and confirm details before booking.',
           },
         },
         {
@@ -427,7 +427,7 @@ export class StructuredDataGenerator {
     DOG_WALKING_SERVICE: (providerName: string, price: number, area: string): ServiceData => ({
       '@type': 'Service',
       name: 'Professional Dog Walking',
-      description: 'Regular exercise and companionship for your dog with our certified walkers.',
+      description: 'Regular exercise and companionship for your dog with listed dog-walking providers.',
       provider: {
         '@type': 'LocalBusiness',
         name: providerName,

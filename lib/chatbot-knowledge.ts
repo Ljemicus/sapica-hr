@@ -77,7 +77,7 @@ export const knowledgeBase: KBEntry[] = [
   // === OPĆENITO ===
   {
     keywords: ['što je petpark', 'sto je petpark', 'petpark', 'o čemu', 'o cemu', 'što je ovo', 'sto je ovo'],
-    response: 'PetPark je hrvatski marketplace za ljubimce! 🐾 Povezujemo vlasnike ljubimaca s pouzdanim čuvarima (sitterima), grooming salonima i trenerima za školovanje pasa. Besplatno pretraži, pronađi savršenog čuvara i bookaj — sve na jednom mjestu.',
+    response: 'PetPark je hrvatski marketplace za ljubimce! 🐾 Povezujemo vlasnike ljubimaca s čuvarima (sitterima), grooming salonima i trenerima za školovanje pasa. Besplatno pretraži profile, usporedi informacije i pošalji booking upit — sve na jednom mjestu.',
     category: 'general',
   },
   {
@@ -126,7 +126,7 @@ export const knowledgeBase: KBEntry[] = [
   // === USLUGE ===
   {
     keywords: ['pet sitting', 'čuvanje', 'cuvanje', 'čuvati ljubimca', 'cuvati ljubimca', 'čuvanje psa', 'čuvanje mačke'],
-    response: 'Pet sitting je naša glavna usluga! 🏠 Tvoj ljubimac može biti čuvan:\n\n• **Kod sittera** — ljubimac ide na "mini odmor"\n• **Kod tebe** — sitter dolazi k tebi\n\nSvaki sitter ima profil s recenzijama, cijenama i opisom. Pretraži po gradu i pronađi savršeni match!',
+    response: 'Pet sitting je naša glavna usluga! 🏠 Tvoj ljubimac može biti čuvan:\n\n• **Kod sittera** — ljubimac ide na "mini odmor"\n• **Kod tebe** — sitter dolazi k tebi\n\nSvaki sitter ima profil s recenzijama, cijenama i opisom. Pretraži po gradu i usporedi opcije koje ti odgovaraju!',
     category: 'services',
   },
   {

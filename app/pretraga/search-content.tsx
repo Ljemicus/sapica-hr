@@ -500,7 +500,7 @@ export function SearchContent({
         heroKicker: 'Discover',
         heroTitle: {
           all: 'Find the right care\nfor your pet.',
-          sitter: 'Find a trusted\npet sitter.',
+          sitter: 'Find a pet\nsitter.',
           grooming: 'Find a professional\ngroomer.',
           dresura: 'Find a dog\ntrainer.',
         },

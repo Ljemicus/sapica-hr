@@ -151,7 +151,7 @@ export class SEOGenerator {
       default:
         return {
           title: 'PetPark',
-          description: 'Your trusted platform for pet care services',
+          description: 'A platform for finding and comparing pet care services',
         };
     }
   }
