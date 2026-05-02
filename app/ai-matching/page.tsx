@@ -3,10 +3,10 @@ import { AIMatchingContent } from './ai-matching-content';
 
 export const metadata: Metadata = {
   title: 'AI Pronalaženje Čuvara | PetPark',
-  description: 'Naš AI analizira iskustvo, ocjene, vrijeme odgovora i lokaciju da pronađe najboljeg čuvara za vašeg ljubimca.',
+  description: 'Naš AI uspoređuje iskustvo, ocjene, vrijeme odgovora i lokaciju kako bi predložio prikladne čuvare za vašeg ljubimca.',
   openGraph: {
     title: 'AI Pronalaženje Čuvara | PetPark',
-    description: 'Pronađite savršenog čuvara uz pomoć umjetne inteligencije.',
+    description: 'Pronađite prikladnog čuvara uz pomoć umjetne inteligencije.',
   },
 };
 

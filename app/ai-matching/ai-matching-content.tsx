@@ -115,12 +115,12 @@ export function AIMatchingContent() {
             {isEn ? 'AI Powered' : 'Pokreće AI'}
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 font-[var(--font-heading)] text-white">
-            {isEn ? 'Find Your Perfect Match' : 'Pronađite Savršenog Čuvara'}
+            {isEn ? 'Find a Strong Match' : 'Pronađite Dobrog Čuvara'}
           </h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             {isEn 
-              ? 'Our AI analyzes experience, ratings, response time, and location to find the best sitter for your pet.'
-              : 'Naš AI analizira iskustvo, ocjene, vrijeme odgovora i lokaciju da pronađe najboljeg čuvara za vašeg ljubimca.'}
+              ? 'Our AI compares experience, ratings, response time, and location to suggest suitable sitters for your pet.'
+              : 'Naš AI uspoređuje iskustvo, ocjene, vrijeme odgovora i lokaciju kako bi predložio prikladne čuvare za vašeg ljubimca.'}
           </p>
         </div>
       </section>
@@ -362,8 +362,8 @@ export function AIMatchingContent() {
               <h3 className="font-semibold mb-2">{isEn ? 'Experience & Rating' : 'Iskustvo i Ocjene'}</h3>
               <p className="text-sm text-muted-foreground">
                 {isEn 
-                  ? 'Considers years of experience and verified reviews'
-                  : 'Uzima u obzir godine iskustva i verificirane recenzije'}
+                  ? 'Considers years of experience and review signals'
+                  : 'Uzima u obzir godine iskustva i signale iz recenzija'}
               </p>
             </CardContent>
           </Card>

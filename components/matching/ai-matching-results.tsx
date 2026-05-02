@@ -96,7 +96,7 @@ export function AIMatchingResults({
         <CardContent className="p-8 text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-orange-500" />
           <p className="text-slate-600">
-            {isEn ? 'Finding the best sitters for your pet...' : 'Tražimo najbolje čuvare za vašeg ljubimca...'}
+            {isEn ? 'Finding suitable sitters for your pet...' : 'Tražimo prikladne čuvare za vašeg ljubimca...'}
           </p>
         </CardContent>
       </Card>

@@ -39,10 +39,10 @@ export function SmartBookingDialog({ open, onOpenChange, pets }: SmartBookingDia
   const [showMatching, setShowMatching] = useState(false);
 
   const copy = {
-    title: isEn ? 'Find the Perfect Sitter' : 'Pronađite Savršenog Čuvara',
+    title: isEn ? 'Find a Suitable Sitter' : 'Pronađite Prikladnog Čuvara',
     description: isEn 
-      ? 'Our AI will match you with the best sitters for your pet based on location, experience, and your specific needs.'
-      : 'Naš AI će vas spojiti s najboljim čuvarima za vašeg ljubimca temeljem lokacije, iskustva i vaših specifičnih potreba.',
+      ? 'Our AI can suggest sitters for your pet based on location, experience, and your specific needs.'
+      : 'Naš AI može predložiti čuvare za vašeg ljubimca prema lokaciji, iskustvu i vašim specifičnim potrebama.',
     petLabel: isEn ? 'Which pet needs care?' : 'Koji ljubimac treba skrb?',
     serviceLabel: isEn ? 'What service do you need?' : 'Koja usluga vam treba?',
     datesLabel: isEn ? 'When do you need care?' : 'Kada vam treba skrb?',

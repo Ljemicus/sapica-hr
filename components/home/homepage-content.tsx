@@ -52,7 +52,7 @@ const copy = {
     philoStat1: '4.9',
     philoStat1Label: 'Prosječna ocjena',
     philoStat2: '500+',
-    philoStat2Label: 'Verificiranih partnera',
+    philoStat2Label: 'Profila partnera',
     philoStat3: '6',
     philoStat3Label: 'Gradova u Hrvatskoj',
 
@@ -63,13 +63,13 @@ const copy = {
     svc2Title: 'Njega i grooming',
     svc2Body: 'Profesionalna njega dlake, kupanje i styling. Jer vaš ljubimac zaslužuje osjećaj svježine.',
     svc3Title: 'Školovanje i trening',
-    svc3Body: 'Certificirani treneri za poslušnost, socijalizaciju i agility. Svaki pas može biti najbolja verzija sebe.',
+    svc3Body: 'Treneri za poslušnost, socijalizaciju i agility. Svaki pas može napredovati uz dobar plan i podršku.',
     svcCta: 'Saznajte više',
 
     // Trust
     trustKicker: 'Zašto PetPark',
     trustItems: [
-      { title: 'Verificirani profili', body: 'Svaki partner prolazi provjeru identiteta i profila prije objave.' },
+      { title: 'Jasni profili', body: 'Profili prikazuju ključne informacije kako biste lakše usporedili pružatelje usluga.' },
       { title: 'Stvarne recenzije', body: 'Iskustva vlasnika bez filtera — jer transparentnost gradi povjerenje.' },
       { title: 'Sigurno plaćanje', body: 'Plaćanje kroz platformu s podrškom za sve probleme i nejasnoće.' },
       { title: 'Podrška kad treba', body: 'Posvećen tim pon–sub 8–20h. Svaki slučaj gledamo zasebno.' },
@@ -111,7 +111,7 @@ const copy = {
     philoStat1: '4.9',
     philoStat1Label: 'Average rating',
     philoStat2: '500+',
-    philoStat2Label: 'Verified partners',
+    philoStat2Label: 'Partner profiles',
     philoStat3: '6',
     philoStat3Label: 'Cities in Croatia',
 
@@ -121,12 +121,12 @@ const copy = {
     svc2Title: 'Grooming & care',
     svc2Body: 'Professional coat care, bathing, and styling. Because your pet deserves to feel fresh.',
     svc3Title: 'Training & agility',
-    svc3Body: 'Certified trainers for obedience, socialisation, and agility. Every dog can be the best version of themselves.',
+    svc3Body: 'Trainers for obedience, socialisation, and agility. Every dog can improve with a clear plan and support.',
     svcCta: 'Learn more',
 
     trustKicker: 'Why PetPark',
     trustItems: [
-      { title: 'Verified profiles', body: 'Every partner passes identity and profile checks before publishing.' },
+      { title: 'Clear profiles', body: 'Profiles show key details so you can compare providers more easily.' },
       { title: 'Real reviews', body: 'Unfiltered owner experiences — because transparency builds trust.' },
       { title: 'Secure payments', body: 'Pay through the platform with support for any issues.' },
       { title: 'Support when needed', body: 'Dedicated team Mon–Sat 8am–8pm. Every case reviewed individually.' },
@@ -134,7 +134,7 @@ const copy = {
 
     sittersKicker: 'Featured partners',
     sittersHeadline: 'People owners trust.',
-    sittersSub: 'Profiles with outstanding reviews, clear descriptions, and verified details.',
+    sittersSub: 'Profiles with useful reviews, clear descriptions, and listed details.',
     sittersViewAll: 'View all',
     sittersViewProfile: 'View profile',
     sittersFallbackBio: 'A trusted sitter for dogs and cats in your city.',

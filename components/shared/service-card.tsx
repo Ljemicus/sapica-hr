@@ -170,13 +170,13 @@ export function ServiceCardsGrid() {
     {
       type: 'grooming',
       title: 'Njega i grooming',
-      description: 'Profesionalna njega dlake, kupanje, šišanje i styling. Vaš ljubimac zaslužuje da bude u najboljem izdanju.',
+      description: 'Njega dlake, kupanje, šišanje i styling. Lakše pronađite grooming uslugu koja odgovara vašem ljubimcu.',
       href: '/njega'
     },
     {
       type: 'dresura',
       title: 'Dresura i trening',
-      description: 'Certificirani treneri za poslušnost, socijalizaciju i agility. Pomozite svom psu da bude najbolja verzija sebe.',
+      description: 'Treneri za poslušnost, socijalizaciju i agility. Pomozite svom psu da napreduje uz strukturiran rad.',
       href: '/dresura'
     },
     {
