@@ -1,6 +1,6 @@
 import { SearchContent } from './search-content';
 import { ServiceHubOverview } from '@/components/shared/petpark/service-hub-overview';
-import { InternalLinkSection, type InternalLinkItem } from '@/components/shared/internal-link-section';
+import { type InternalLinkItem } from '@/components/shared/internal-link-section';
 import { DiscoveryPageShell } from '@/components/shared/discovery-page-shell';
 import { getUnifiedProviders, normalizeProviderSearchParams } from '@/lib/search/providers';
 
@@ -9,32 +9,32 @@ export type SearchPageLocale = 'hr' | 'en';
 export const SEARCH_PAGE_COPY = {
   hr: {
     title: 'Pronađite sittere i usluge za ljubimce u svom gradu',
-    description: 'Pretražite verificirane sittere, groomere i trenere za svog ljubimca. Filtrirajte po gradu, usluzi, cijeni i ocjeni.',
+    description: 'Pretražite sittere, groomere i trenere za svog ljubimca. Filtrirajte po gradu, usluzi, cijeni i ocjeni.',
     keywords: ['pet sitter', 'groomer', 'trener pasa', 'pretraga', 'čuvanje ljubimaca'],
     openGraphTitle: 'Pronađite sittere i usluge za ljubimce | PetPark',
-    openGraphDescription: 'Pretražite verificirane sittere, groomere i trenere za svog ljubimca u Hrvatskoj.',
+    openGraphDescription: 'Pretražite sittere, groomere i trenere za svog ljubimca u Hrvatskoj.',
     jsonLdName: 'PetPark pretraga usluga za ljubimce',
-    jsonLdDescription: 'Pretražite verificirane sittere, groomere i trenere za svog ljubimca u Hrvatskoj.',
+    jsonLdDescription: 'Pretražite sittere, groomere i trenere za svog ljubimca u Hrvatskoj.',
     breadcrumbLabel: 'Pretraga',
     loadingLabel: 'Učitavanje...',
     internalLinksEyebrow: 'Popularne rute',
     internalLinksTitle: 'Ako niste našli odmah što tražite',
-    internalLinksDescription: 'Pretraga je hub, ali ove rute daju jače city/service signale i lakši ulaz u sadržajni sloj gdje već postoji konkretna vrijednost.',
+    internalLinksDescription: 'Ako želite krenuti od grada ili vrste usluge, ove rute vode na lokalizirane vodiče i korisne stranice za usporedbu.',
     internalLinksCta: 'Otvori',
   },
   en: {
     title: 'Find sitters and pet services in your city',
-    description: 'Browse verified sitters, groomers, and dog trainers. Filter by city, service, price, and rating.',
+    description: 'Browse sitters, groomers, and dog trainers. Filter by city, service, price, and rating.',
     keywords: ['pet sitter croatia', 'pet grooming croatia', 'dog trainer croatia', 'pet services search', 'petpark search'],
     openGraphTitle: 'Find sitters and pet services | PetPark',
-    openGraphDescription: 'Browse verified sitters, groomers, and dog trainers across Croatia.',
+    openGraphDescription: 'Browse sitters, groomers, and dog trainers across Croatia.',
     jsonLdName: 'PetPark pet services search',
-    jsonLdDescription: 'Browse verified sitters, groomers, and dog trainers across Croatia.',
+    jsonLdDescription: 'Browse sitters, groomers, and dog trainers across Croatia.',
     breadcrumbLabel: 'Search',
     loadingLabel: 'Loading...',
     internalLinksEyebrow: 'Popular routes',
     internalLinksTitle: 'If you did not find the right match right away',
-    internalLinksDescription: 'Search is the hub, but these routes provide stronger city/service signals and an easier entry into richer localized content.',
+    internalLinksDescription: 'If you want to start from a city or service type, these routes lead to localized guides and useful comparison pages.',
     internalLinksCta: 'Open',
   },
 } as const;

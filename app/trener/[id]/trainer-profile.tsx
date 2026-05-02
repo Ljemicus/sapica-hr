@@ -50,7 +50,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
     share: isEn ? 'Share' : 'Podijeli',
     copied: isEn ? 'Copied!' : 'Kopirano!',
     dogTrainer: isEn ? 'Dog trainer' : 'Trener pasa',
-    certified: isEn ? 'Certified trainer' : 'Certificirani trener',
+    certified: isEn ? 'Certificate listed' : 'Certifikat naveden',
     reviews: isEn ? 'reviews' : 'recenzija',
     programs: isEn ? 'programs' : 'programa',
     aboutKicker: isEn ? 'Get to know' : 'Upoznajte',

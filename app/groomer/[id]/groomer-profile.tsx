@@ -115,7 +115,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
     back: isEn ? 'Back' : 'Natrag',
     share: isEn ? 'Share' : 'Podijeli',
     copied: isEn ? 'Copied!' : 'Kopirano!',
-    verified: isEn ? 'Verified profile' : 'Verificiran profil',
+    verified: isEn ? 'Profile checked' : 'Profil provjeren',
     reviews: isEn ? 'reviews' : 'recenzija',
     services: isEn ? 'services' : 'usluga',
     aboutKicker: isEn ? 'Get to know' : 'Upoznajte',
