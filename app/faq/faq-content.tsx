@@ -19,7 +19,7 @@ const FAQ_COPY = {
     data: {
       vlasnici: [
         { q: 'Kako funkcionira rezervacija?', a: 'Pretražite sittere u vašem gradu, pregledajte profile i recenzije te pošaljite upit za željene datume. Sitter potvrđuje termin, a vi zatim dovršavate rezervaciju.' },
-        { q: 'Mogu li otkazati rezervaciju?', a: 'Da, besplatno otkazivanje do 24 sata prije početka. Otkazivanja unutar 24 sata podliježu naknadi od 50%. Detalji su navedeni u Uvjetima korištenja.' },
+        { q: 'Mogu li otkazati rezervaciju?', a: 'Da. Pravila otkazivanja ovise o vrsti usluge i trenutku otkazivanja, a detalji su navedeni uz rezervaciju i u Uvjetima korištenja.' },
         { q: 'Što ako se ljubimac razboli tijekom čuvanja?', a: 'Sitter vas odmah kontaktira i zajedno reagirate. U hitnim slučajevima preporučujemo da s vlasnicima unaprijed dogovorite veterinara i kontakt.' },
         { q: 'Kako funkcioniraju recenzije?', a: 'Nakon svake završene rezervacije možete ostaviti recenziju i ocjenu (1-5 zvjezdica). Recenzije su javne i pomažu drugim vlasnicima.' },
         { q: 'Mogu li posjetiti ljubimca tijekom čuvanja?', a: 'Naravno! Dogovorite se sa sitterom o posjetu. Većina sittera rado šalje foto i video ažuriranja svaki dan.' },
@@ -40,7 +40,7 @@ const FAQ_COPY = {
       sigurnost: [
         { q: 'Kako PetPark osigurava sigurnost ljubimaca?', a: 'PetPark koristi verifikaciju profila, recenzije korisnika i podršku za probleme s rezervacijom. Prije potvrde termina preporučujemo da provjerite profil i detalje usluge.' },
         { q: 'Što ako imam problem sa sitterom?', a: 'Kontaktirajte našu podršku putem emaila info@petpark.hr. Odgovaramo pon–sub 8–20h, u roku od jednog radnog dana.' },
-        { q: 'Jesu li moji podaci sigurni?', a: 'Koristimo SSL enkripciju, ne dijelimo podatke s trećim stranama i pridržavamo se GDPR propisa.' },
+        { q: 'Jesu li moji podaci sigurni?', a: 'Koristimo tehničke i organizacijske mjere zaštite, podatke ne prodajemo trećim stranama i pridržavamo se GDPR pravila.' },
         { q: 'Ima li PetPark osiguranje?', a: 'Radimo na uvođenju osiguranja za rezervacije. Detalje o pokriću pratite na stranici uvjeta korištenja ili nas kontaktirajte.' },
       ],
       opcenito: [
@@ -71,7 +71,7 @@ const FAQ_COPY = {
     data: {
       vlasnici: [
         { q: 'How does booking work?', a: 'Browse sitters in your city, review profiles and ratings, and send a request for your preferred dates. The sitter confirms the stay, and then you complete the booking.' },
-        { q: 'Can I cancel a booking?', a: 'Yes, cancellation is free up to 24 hours before the start time. Cancellations within 24 hours are subject to a 50% fee. Full details are listed in the Terms of Use.' },
+        { q: 'Can I cancel a booking?', a: 'Yes. Cancellation rules depend on the service type and timing, and the details are shown with the booking and in the Terms of Use.' },
         { q: 'What if my pet gets sick during the stay?', a: 'Your sitter should contact you right away so you can decide on the next step together. For emergencies, we recommend agreeing on a vet and emergency contact in advance.' },
         { q: 'How do reviews work?', a: 'After each completed booking, you can leave a review and a rating from 1 to 5 stars. Reviews are public and help other owners choose with confidence.' },
         { q: 'Can I visit my pet during the stay?', a: 'Of course. Arrange visits directly with the sitter. Many sitters are happy to send daily photo or video updates too.' },
@@ -92,7 +92,7 @@ const FAQ_COPY = {
       sigurnost: [
         { q: 'How does PetPark help keep pets safe?', a: 'PetPark uses profile verification, user reviews, and support for booking-related issues. Before confirming a booking, we recommend checking the profile carefully and reviewing service details.' },
         { q: 'What if I have an issue with a sitter?', a: 'Contact our support team at info@petpark.hr. We reply Monday to Saturday from 8:00 to 20:00, usually within one business day.' },
-        { q: 'Is my data secure?', a: 'We use SSL encryption, we do not share your personal data with third parties, and we follow GDPR rules.' },
+        { q: 'Is my data secure?', a: 'We use technical and organizational safeguards, we do not sell personal data to third parties, and we follow GDPR rules.' },
         { q: 'Does PetPark offer insurance?', a: 'We are working on introducing booking insurance. For current coverage details, please check the terms page or contact us directly.' },
       ],
       opcenito: [
