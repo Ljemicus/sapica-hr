@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { enUS, hr } from 'date-fns/locale';
 import {
   Star, MapPin, Award, ChevronLeft, GraduationCap, Clock, Calendar,
-  MessageCircle, CheckCircle2, Share2, Check, Phone, Mail, MapPinned,
+  MessageCircle, CheckCircle2, Share2, Check, Mail,
   BookOpen, ArrowRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -41,6 +41,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
   const hasReviews = trainer.review_count > 0;
   const safeRatingLabel = hasReviews && trainer.rating !== null ? trainer.rating.toFixed(1) : trainer.noReviewsLabel;
   const safeHourlyPrice = trainer.price_per_hour && trainer.price_per_hour > 0 ? trainer.price_per_hour : null;
+  const hasPrice = safeHourlyPrice !== null;
 
   const copy = {
     linkCopied: isEn ? 'Link copied!' : 'Link kopiran!',
@@ -75,6 +76,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
     noReviews: isEn ? 'No reviews yet' : 'Još nema recenzija',
     beFirst: isEn ? 'Be the first to share an experience with this trainer' : 'Budite prvi koji će podijeliti iskustvo s ovim trenerom',
     perHour: isEn ? 'per hour' : 'po satu',
+    priceByArrangement: isEn ? 'price by arrangement' : 'cijena po dogovoru',
     specializationsCount: isEn ? 'specializations' : 'specijalizacija',
     certificatesCount: isEn ? 'certificates' : 'certifikata',
     book: isEn ? 'Book training' : 'Zakaži trening',
@@ -100,7 +102,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
   };
 
   return (
-    <div className="concept-zero">
+    <div className="concept-zero overflow-x-clip">
       {/* ── Cinematic Hero ── */}
       <section className="relative overflow-hidden min-h-[70vh] md:min-h-[75vh] flex flex-col">
         <div className="absolute inset-0 detail-hero-gradient" />
@@ -166,7 +168,11 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
                     {trainer.city}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    {hasReviews ? (
+                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    ) : (
+                      <CheckCircle2 className="h-4 w-4 text-teal-600" />
+                    )}
                     {safeRatingLabel}
                   </span>
                   {programs.length > 0 && (
@@ -307,7 +313,7 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
               {reviews.length === 0 ? (
                 <div className="detail-section-card p-10 md:p-12 text-center">
                   <div className="inline-flex h-16 w-16 rounded-full bg-warm-peach dark:bg-warm-orange/15 items-center justify-center mb-5">
-                    <Star className="h-7 w-7 text-warm-orange" />
+                    <MessageCircle className="h-7 w-7 text-warm-orange" />
                   </div>
                   <p className="text-foreground font-bold text-lg font-[var(--font-heading)] mb-2">{copy.noReviews}</p>
                   <p className="text-sm text-muted-foreground max-w-xs mx-auto">{copy.beFirst}</p>
@@ -364,10 +370,13 @@ export function TrainerProfile({ trainer, programs, reviews, availableDates }: T
 
               {/* Price hero */}
               <div className="text-center">
-                <div className="text-5xl md:text-6xl font-extrabold text-gradient font-[var(--font-heading)] leading-none">
-                  {safeHourlyPrice ? `${safeHourlyPrice}€` : trainer.priceFallbackLabel}
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium mb-2">
+                  {hasPrice ? (isEn ? 'from' : 'već od') : copy.priceByArrangement}
+                </p>
+                <div className="text-4xl md:text-5xl font-extrabold text-gradient font-[var(--font-heading)] leading-none">
+                  {hasPrice ? `${safeHourlyPrice}€` : trainer.priceFallbackLabel}
                 </div>
-                <p className="text-muted-foreground text-xs mt-2.5">{copy.perHour}</p>
+                <p className="text-muted-foreground text-xs mt-2.5">{hasPrice ? copy.perHour : copy.contactBtn}</p>
               </div>
 
               {/* Primary CTA */}

@@ -69,7 +69,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
   const { user } = useUser();
   const [showBooking, setShowBooking] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [activePhoto, setActivePhoto] = useState(0);
+  const [activePhoto] = useState(0);
   const router = useRouter();
   const { language } = useLanguage();
   const isEn = language === 'en';
@@ -100,6 +100,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
     noReviews: isEn ? 'No reviews yet' : 'Još nema recenzija',
     beFirst: isEn ? 'Be the first to share an experience with this sitter.' : 'Budite prvi koji će podijeliti iskustvo s ovim sitterom.',
     from: isEn ? 'from' : 'već od',
+    priceByArrangement: isEn ? 'price by arrangement' : 'cijena po dogovoru',
     depending: isEn ? 'depending on service and timing' : 'ovisno o usluzi i terminu',
     sendBooking: isEn ? 'Book this sitter' : 'Rezerviraj sittera',
     sendMessage: isEn ? 'Send a message' : 'Pošalji poruku',
@@ -120,6 +121,8 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
   const galleryPhotos = hasPhotos ? profile.photos! : [];
 
   const lowestPrice = Math.min(...Object.values(profile.prices).filter((p): p is number => typeof p === 'number' && p > 0));
+  const hasReviews = profile.review_count > 0;
+  const hasPrice = Number.isFinite(lowestPrice);
 
   const handleShare = async () => {
     try {
@@ -133,7 +136,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
   };
 
   return (
-    <div className="concept-zero">
+    <div className="concept-zero overflow-x-clip">
       {/* ── Cinematic Hero ── */}
       <section className="relative overflow-hidden min-h-[70vh] md:min-h-[75vh] flex flex-col">
         {/* Background — photo or warm editorial gradient */}
@@ -228,8 +231,12 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
                     {profile.city}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <Star className={`h-4 w-4 ${heroPhoto ? 'fill-amber-300 text-amber-300' : 'fill-amber-400 text-amber-400'}`} />
-                    {profile.review_count > 0 && profile.rating_avg !== null ? profile.rating_avg.toFixed(1) : profile.noReviewsLabel}
+                    {hasReviews ? (
+                      <Star className={`h-4 w-4 ${heroPhoto ? 'fill-amber-300 text-amber-300' : 'fill-amber-400 text-amber-400'}`} />
+                    ) : (
+                      <Heart className={`h-4 w-4 ${heroPhoto ? 'text-white/85' : 'text-emerald-600'}`} />
+                    )}
+                    {hasReviews && profile.rating_avg !== null ? profile.rating_avg.toFixed(1) : profile.noReviewsLabel}
                   </span>
                   {profile.response_time && (
                     <span className="flex items-center gap-1.5">
@@ -365,7 +372,7 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
               {reviews.length === 0 ? (
                 <div className="detail-section-card p-10 md:p-12 text-center">
                   <div className="inline-flex h-16 w-16 rounded-full bg-warm-peach dark:bg-warm-orange/15 items-center justify-center mb-5">
-                    <Star className="h-7 w-7 text-warm-orange" />
+                    <MessageCircle className="h-7 w-7 text-warm-orange" />
                   </div>
                   <p className="text-foreground font-bold text-lg font-[var(--font-heading)] mb-2">{copy.noReviews}</p>
                   <p className="text-sm text-muted-foreground max-w-xs mx-auto">{copy.beFirst}</p>
@@ -409,11 +416,11 @@ export function SitterProfileContent({ profile, reviews, availability, bookingPe
 
               {/* Price hero */}
               <div className="text-center">
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium mb-2">{copy.from}</p>
-                <div className="text-5xl md:text-6xl font-extrabold text-gradient font-[var(--font-heading)] leading-none">
-                  {Number.isFinite(lowestPrice) ? `${lowestPrice}€` : profile.priceFallbackLabel}
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium mb-2">{hasPrice ? copy.from : copy.priceByArrangement}</p>
+                <div className="text-4xl md:text-5xl font-extrabold text-gradient font-[var(--font-heading)] leading-none">
+                  {hasPrice ? `${lowestPrice}€` : profile.priceFallbackLabel}
                 </div>
-                <p className="text-muted-foreground text-xs mt-2.5">{copy.depending}</p>
+                <p className="text-muted-foreground text-xs mt-2.5">{hasPrice ? copy.depending : copy.sendMessage}</p>
               </div>
 
               {/* Primary CTA */}
