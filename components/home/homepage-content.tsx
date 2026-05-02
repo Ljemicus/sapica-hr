@@ -117,7 +117,7 @@ const copy = {
 
     svcKicker: 'Services',
     svc1Title: 'Boarding & sitting',
-    svc1Body: 'Trusted sitters who care for your pet like their own — at their home or yours.',
+    svc1Body: 'Sitters who can care for your pet at their home or yours — with profiles you can compare before booking.',
     svc2Title: 'Grooming & care',
     svc2Body: 'Professional coat care, bathing, and styling. Because your pet deserves to feel fresh.',
     svc3Title: 'Training & agility',
@@ -133,11 +133,11 @@ const copy = {
     ],
 
     sittersKicker: 'Featured partners',
-    sittersHeadline: 'People owners trust.',
+    sittersHeadline: 'Profiles worth comparing.',
     sittersSub: 'Profiles with useful reviews, clear descriptions, and listed details.',
     sittersViewAll: 'View all',
     sittersViewProfile: 'View profile',
-    sittersFallbackBio: 'A trusted sitter for dogs and cats in your city.',
+    sittersFallbackBio: 'A sitter for dogs and cats in your city.',
     sittersVerified: 'Verified',
 
     citiesKicker: 'Cities',
@@ -145,7 +145,7 @@ const copy = {
     citiesCta: 'Explore',
 
     ctaHeadline: 'Ready for\nbetter care?',
-    ctaBody: 'Find a trusted sitter, groomer, or trainer in your city — or join a growing network of partners.',
+    ctaBody: 'Find a sitter, groomer, or trainer in your city — or join a growing network of partners.',
     ctaPrimary: 'Find a service',
     ctaSecondary: 'Become a partner',
 

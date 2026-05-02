@@ -20,7 +20,7 @@ export interface OpenGraphImageOptions {
 export class OpenGraphImageGenerator {
   private static readonly DEFAULT_OPTIONS: Required<OpenGraphImageOptions> = {
     title: 'PetPark',
-    description: 'Your trusted platform for pet care services',
+    description: 'A platform for finding and comparing pet care services',
     siteName: 'PetPark',
     theme: 'light',
     width: 1200,

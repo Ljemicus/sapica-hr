@@ -180,7 +180,7 @@ export function generateTwitterCard(
         card: 'summary_large_image',
         site: '@petparkhr',
         title: `${service} u ${location} — PetPark`,
-        description: `Pronađite najbolje ${service} usluge u ${location}.`,
+        description: `Pregledajte ${service} usluge u ${location}.`,
       });
     }
     case 'BLOG_POST': {

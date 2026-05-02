@@ -187,7 +187,7 @@ export function getActiveServiceCount(groomer: { services: GroomingServiceType[]
 
 export function groomerSummary(groomer: Groomer): string {
   const parts: string[] = [];
-  if (groomer.verified) parts.push('Verificirani salon');
+  if (groomer.verified) parts.push('Profil provjeren');
   const spec = GROOMER_SPECIALIZATION_LABELS[groomer.specialization];
   if (spec) parts.push(spec.toLowerCase());
   parts.push(groomer.city);
@@ -198,7 +198,7 @@ export function groomerSummary(groomer: Groomer): string {
 
 export function trainerSummary(trainer: Trainer): string {
   const parts: string[] = [];
-  if (trainer.certified) parts.push('Certificirani trener');
+  if (trainer.certified) parts.push('Certifikat naveden');
   parts.push(trainer.city);
   if (trainer.specializations.length > 0) {
     parts.push(`${trainer.specializations.length} specijalizacija`);
