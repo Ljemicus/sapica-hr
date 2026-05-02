@@ -58,7 +58,7 @@ const copy = {
     trustKicker: 'Zašto PetPark',
     trustTitle: 'Izgrađeno na povjerenju,\nprovenjeno kroz iskustvo.',
     trustItems: [
-      { title: 'Verificirani profili', body: 'Svaki partner prolazi temeljitu provjeru prije objave.' },
+      { title: 'Jasni profili', body: 'Profili prikazuju ključne informacije prije prvog upita.' },
       { title: 'Stvarne recenzije', body: 'Iskustva vlasnika bez filtera — transparentnost gradi povjerenje.' },
       { title: 'Sigurno plaćanje', body: 'Plaćanje kroz platformu s potpunom zaštitom.' },
       { title: 'Podrška 7 dana', body: 'Tim stručnjaka uvijek na raspolaganju.' },
@@ -68,13 +68,13 @@ const copy = {
     citiesTitle: 'Aktivni u svim većim gradovima.',
 
     ctaTitle: 'Spremni pronaći\nsvog partnera?',
-    ctaSub: 'Pridružite se tisućama vlasnika koji su već pronašli pouzdanu brigu za svoje ljubimce.',
+    ctaSub: 'Pridružite se vlasnicima koji preko PetParka lakše traže brigu za svoje ljubimce.',
     ctaButton: 'Započnite pretragu',
   },
   en: {
     heroKicker: 'PetPark Croatia',
     heroHeadline: 'Pet care you can\ntruly rely on.',
-    heroSub: 'Connecting pet owners with verified experts for sitting, grooming, and pet health. Simple, secure, trusted.',
+    heroSub: 'Connecting pet owners with service providers for sitting, grooming, and pet health. Simple, clearer, easier.',
     heroCta: 'Find a sitter',
     heroSecondaryCta: 'Become a partner',
 
@@ -95,7 +95,7 @@ const copy = {
     trustKicker: 'Why PetPark',
     trustTitle: 'Built on trust,\nproven through experience.',
     trustItems: [
-      { title: 'Verified profiles', body: 'Every partner undergoes thorough verification before listing.' },
+      { title: 'Clear profiles', body: 'Profiles show key details before the first inquiry.' },
       { title: 'Real reviews', body: 'Unfiltered owner experiences — transparency builds trust.' },
       { title: 'Secure payment', body: 'Platform payment with complete protection.' },
       { title: '7-day support', body: 'Expert team always available.' },
@@ -123,7 +123,7 @@ const services = [
   },
   {
     title: { hr: 'Školovanje pasa', en: 'Dog Training' },
-    description: { hr: 'Certificirani treneri za poslušnost i socijalizaciju.', en: 'Certified trainers for obedience and socialization.' },
+    description: { hr: 'Treneri za poslušnost, socijalizaciju i strukturiran rad.', en: 'Trainers for obedience, socialization, and structured work.' },
     href: '/dresura',
   },
   {
@@ -238,7 +238,7 @@ export function PremiumHomepageContent({ featuredSitters, cities }: PremiumHomep
                     <Shield className="w-6 h-6 text-[#5A7D5A]" />
                   </div>
                   <div>
-                    <div className="font-semibold text-[#2D2D2D]">100% Sigurno</div>
+                    <div className="font-semibold text-[#2D2D2D]">Sigurniji prvi korak</div>
                     <div className="text-sm text-[#6B6B6B]">Verificirani partneri</div>
                   </div>
                 </div>

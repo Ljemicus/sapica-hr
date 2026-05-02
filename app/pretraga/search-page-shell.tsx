@@ -60,7 +60,7 @@ export function getLocalizedDiscoveryLinks(locale: SearchPageLocale): InternalLi
     { href: '/cuvanje-pasa-split/en', title: 'Dog sitting in Split', description: 'A practical guide for pet owners looking for care in Split and nearby areas.', badge: 'City page' },
     { href: '/cuvanje-pasa-rijeka/en', title: 'Dog sitting in Rijeka', description: 'Local context and useful information for finding pet care in Rijeka.', badge: 'City page' },
     { href: '/grooming-zagreb/en', title: 'Grooming Zagreb', description: 'Pet grooming salons, pricing, and practical grooming guidance in Zagreb.', badge: 'Landing' },
-    { href: '/veterinari/en', title: 'Veterinarians in Croatia', description: 'Official directory of veterinary stations and clinics with contact details.', badge: 'Directory' },
+    { href: '/veterinari/en', title: 'Veterinarians in Croatia', description: 'Directory of veterinary stations and clinics with contact details.', badge: 'Directory' },
     { href: '/dog-friendly/en', title: 'Dog-friendly places', description: 'Cafés, parks, and other dog-friendly places worth bookmarking.', badge: 'Lifestyle' },
   ];
 }

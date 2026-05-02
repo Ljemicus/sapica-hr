@@ -244,7 +244,7 @@ export function ShopContent({ products }: { products: Product[] }) {
             PetPark Shop — Sve za vašeg ljubimca 🛍️
           </h1>
           <p className="text-orange-100 text-lg max-w-xl mx-auto mb-6 animate-fade-in-up delay-100">
-            Pronađite najbolje proizvode za svog ljubimca — od hrane do igračaka, sve na jednom mjestu.
+            Pregledajte proizvode za svog ljubimca — od hrane do igračaka, sve na jednom mjestu.
           </p>
           <div className="max-w-md mx-auto relative animate-fade-in-up delay-200">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
