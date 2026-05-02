@@ -128,7 +128,7 @@ const CATEGORY_CTA: Record<BlogCategory, {
     title: 'Nastavite s boljom rutinom hranjenja bez previše improvizacije',
     text: 'Nakon vodiča o prehrani, najviše koristi donosi dobar plan, provjerene navike i dodatni sadržaj o zdravlju i rutini.',
     primary: { label: 'Savjeti o zdravlju', href: '/blog?category=zdravlje' },
-    secondary: { label: 'Pogledaj zajednicu', href: '/forum' },
+    secondary: { label: 'Pogledaj zajednicu', href: '/zajednica' },
   },
   dresura: {
     kicker: 'Trening u praksi',
@@ -149,7 +149,7 @@ const CATEGORY_CTA: Record<BlogCategory, {
     title: 'Pretvorite ideje iz članka u stvarne aktivnosti',
     text: 'Ako vaš ljubimac treba više stimulacije, kombinacija aktivnosti, rutine i dobrih mjesta radi čuda.',
     primary: { label: 'Istraži dog-friendly mjesta', href: '/dog-friendly' },
-    secondary: { label: 'Pogledaj zajednicu', href: '/forum' },
+    secondary: { label: 'Pogledaj zajednicu', href: '/zajednica' },
   },
   psi: {
     kicker: 'Život sa psom',
@@ -163,7 +163,7 @@ const CATEGORY_CTA: Record<BlogCategory, {
     title: 'Trebate više praktičnih ideja za mačju rutinu?',
     text: 'Od svakodnevice u stanu do zdravstvenih pitanja, nastavite kroz članke i zajednicu gdje se skupljaju iskustva vlasnika.',
     primary: { label: 'Čitaj mačje članke', href: '/blog?category=macke' },
-    secondary: { label: 'Pogledaj zajednicu', href: '/forum' },
+    secondary: { label: 'Pogledaj zajednicu', href: '/zajednica' },
   },
 };
 
@@ -175,7 +175,7 @@ const CATEGORY_INTERNAL_LINKS: Record<BlogCategory, LinkItem[]> = {
   ],
   prehrana: [
     { title: 'Članci o zdravlju', href: '/blog?category=zdravlje', description: 'Prehrana i zdravlje idu zajedno — ovdje je najlogičniji nastavak.' },
-    { title: 'Forum zajednica', href: '/forum', description: 'Pogledajte iskustva drugih vlasnika oko hrane, rutine i osjetljivih trbuha.' },
+    { title: 'Zajednica', href: '/zajednica', description: 'Pogledajte iskustva drugih vlasnika oko hrane, rutine i osjetljivih trbuha.' },
     { title: 'FAQ', href: '/faq', description: 'Brzi odgovori za česta pitanja oko platforme i usluga.' },
   ],
   dresura: [
@@ -190,7 +190,7 @@ const CATEGORY_INTERNAL_LINKS: Record<BlogCategory, LinkItem[]> = {
   ],
   zabava: [
     { title: 'Dog-friendly mjesta', href: '/dog-friendly', description: 'Iskoristite ideje iz članka i pretvorite ih u stvarni izlazak.' },
-    { title: 'Forum zajednica', href: '/forum', description: 'Pogledajte kako drugi vlasnici rješavaju dosadu i obogaćenje rutine.' },
+    { title: 'Zajednica', href: '/zajednica', description: 'Pogledajte kako drugi vlasnici rješavaju dosadu i obogaćenje rutine.' },
     { title: 'Članci za školovanje', href: '/blog?category=dresura', description: 'Kad zabava preraste u trening, ovo je prirodan sljedeći korak.' },
   ],
   psi: [
@@ -200,7 +200,7 @@ const CATEGORY_INTERNAL_LINKS: Record<BlogCategory, LinkItem[]> = {
   ],
   macke: [
     { title: 'Mačji članci', href: '/blog?category=macke', description: 'Brz ulaz u još relevantnih tekstova za vlasnike mačaka.' },
-    { title: 'Forum zajednica', href: '/forum', description: 'Pitanja, iskustva i savjeti koje vrijedi pročitati prije iduće odluke.' },
+    { title: 'Zajednica', href: '/zajednica', description: 'Pitanja, iskustva i savjeti koje vrijedi pročitati prije iduće odluke.' },
     { title: 'Članci o zdravlju', href: '/blog?category=zdravlje', description: 'Kad vas zanimaju simptomi, preventiva i veterinarski kontekst.' },
   ],
 };
@@ -273,7 +273,7 @@ export function ArticleContent({ article, relatedArticles, comments, currentUser
       </Button>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
-        <main className="min-w-0">
+        <article className="min-w-0">
           <div className={`relative overflow-hidden rounded-[28px] bg-gradient-to-br ${heroGradient} p-6 md:p-8 text-white mb-8 shadow-sm`}>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.22),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.18),transparent_30%)]" />
             <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -503,7 +503,7 @@ export function ArticleContent({ article, relatedArticles, comments, currentUser
               </div>
             </div>
           )}
-        </main>
+        </article>
 
         <aside className="hidden lg:block space-y-4">
           <Card className="border-0 shadow-sm rounded-2xl">
