@@ -41,7 +41,7 @@ const FAQS = [
   },
   {
     q: 'Ima li u Splitu pet sittera koji primaju pse tijekom ljeta?',
-    a: 'Da! Na PetParku imate desetke aktivnih sittera u Splitu koji primaju pse tijekom cijele godine, uključujući ljetnu sezonu. Preporučujemo da rezervirate unaprijed jer je ljeto najtraženije razdoblje. Mnogi splitski sitteri imaju dvorišta ili blizinu parkova idealne za šetnje i igru.',
+    a: 'Na PetParku možete usporediti dostupne profile sittera u Splitu i poslati upit za željene datume. Preporučujemo da rezervirate unaprijed jer je ljeto najtraženije razdoblje.',
   },
   {
     q: 'Može li sitter šetati mog psa po Marjanu?',
@@ -58,7 +58,7 @@ export default function CuvanjePasaSplit() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'PetPark — Čuvanje pasa u Splitu',
-    description: 'Pronađite pouzdane pet sittere za čuvanje pasa u Splitu. Verificirani profili i slanje upita online.',
+    description: 'Pronađite pet sittere za čuvanje pasa u Splitu. Profili sittera i slanje upita online.',
     url: `${BASE_URL}/cuvanje-pasa-split`,
     logo: `${BASE_URL}/opengraph-image`,
     image: `${BASE_URL}/opengraph-image`,
@@ -275,7 +275,7 @@ export default function CuvanjePasaSplit() {
             </h2>
             <div className="grid sm:grid-cols-3 gap-6">
               {[
-                { icon: Shield, title: 'Verificirani profili', desc: 'Svaki profil prolazi osnovnu provjeru prije objave kako biste lakše procijenili kome šaljete upit.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
+                { icon: Shield, title: 'Jasniji profili', desc: 'Profili prikazuju osnovne informacije, usluge i recenzije kako biste lakše odlučili kome poslati upit.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
                 { icon: Heart, title: 'Sigurna platforma', desc: 'Sve rezervacije prolaze kroz platformu — transparentno plaćanje i komunikacija na jednom mjestu.', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' },
                 { icon: Clock, title: 'Lokalni sitteri', desc: 'Sitteri iz vašeg kvarta koji poznaju Split, lokalne parkove i specifičnosti mediteranske klime.', color: 'text-teal-500', bg: 'bg-teal-50 dark:bg-teal-950/20' },
               ].map((item) => (
@@ -370,7 +370,7 @@ export default function CuvanjePasaSplit() {
             Pronađite sittera u Splitu
           </h2>
           <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-            Verificirani profili u svim splitskim kvartovima spremni su za vaš upit. Pošaljite upit brzo i jasno.
+            Profili sittera u splitskim kvartovima dostupni su za usporedbu i upit. Pošaljite upit brzo i jasno.
           </p>
           <Link href="/pretraga?city=Split">
               <Button size="lg" className="bg-white text-blue-600 hover:bg-white/90 rounded-full px-8 font-semibold">

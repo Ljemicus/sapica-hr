@@ -58,7 +58,7 @@ export default function CuvanjePasaZagreb() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'PetPark — Čuvanje pasa u Zagrebu',
-    description: 'Pronađite pouzdane pet sittere za čuvanje pasa u Zagrebu. Verificirani profili i slanje upita online.',
+    description: 'Pronađite pet sittere za čuvanje pasa u Zagrebu. Profili sittera i slanje upita online.',
     url: `${BASE_URL}/cuvanje-pasa-zagreb`,
     logo: `${BASE_URL}/opengraph-image`,
     image: `${BASE_URL}/opengraph-image`,
@@ -273,7 +273,7 @@ export default function CuvanjePasaZagreb() {
             </h2>
             <div className="grid sm:grid-cols-3 gap-6">
               {[
-                { icon: Shield, title: 'Verificirani profili', desc: 'Svaki profil prolazi osnovnu provjeru prije objave kako biste lakše procijenili kome šaljete upit.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
+                { icon: Shield, title: 'Jasniji profili', desc: 'Profili prikazuju osnovne informacije, usluge i recenzije kako biste lakše odlučili kome poslati upit.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
                 { icon: Heart, title: 'Jasniji dogovor', desc: 'Profil, recenzije i detalji usluge su na jednom mjestu kako biste lakše poslali pravi upit.', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' },
                 { icon: Clock, title: 'Brz prvi korak', desc: 'Pronađite sittera i pošaljite upit u nekoliko minuta, bez nepotrebnog lutanja po stranici.', color: 'text-teal-500', bg: 'bg-teal-50 dark:bg-teal-950/20' },
               ].map((item) => (
@@ -368,7 +368,7 @@ export default function CuvanjePasaZagreb() {
             Pronađite sittera u Zagrebu
           </h2>
           <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-            Verificirani profili u svim zagrebačkim kvartovima čekaju vaš upit. Pošaljite upit online u par klikova.
+            Profili sittera u zagrebačkim kvartovima dostupni su za usporedbu i upit. Pošaljite upit online u par klikova.
           </p>
           <Link href="/pretraga?city=Zagreb">
               <Button size="lg" className="bg-white text-orange-600 hover:bg-white/90 rounded-full px-8 font-semibold">

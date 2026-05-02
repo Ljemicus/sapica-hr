@@ -355,8 +355,8 @@ export function CityLandingPageEn({ config }: { config: CityLandingEnConfig }) {
 export const defaultWhyCards = {
   verifiedProfiles: {
     icon: Shield,
-    title: 'Verified Profiles',
-    desc: 'Every profile goes through a basic check before publishing so you can better assess who you are contacting.',
+    title: 'Clearer Profiles',
+    desc: 'Profiles show key details, services and reviews so you can better assess who you are contacting.',
     color: 'text-blue-500',
     bg: 'bg-blue-50 dark:bg-blue-950/20',
   },

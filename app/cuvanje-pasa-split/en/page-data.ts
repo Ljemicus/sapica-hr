@@ -19,7 +19,7 @@ export const splitEnPageData: CityLandingEnConfig = {
   heroBadgeClassName: 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100',
   heroSectionClassName: 'bg-gradient-to-br from-blue-50 via-white to-orange-50 dark:from-blue-950/20 dark:via-background dark:to-orange-950/20',
   heroTitle: 'Dog Sitting in Split',
-  heroDescription: 'Find pet sitters in Split and the surrounding area. Your pet deserves the best care while you are away or at work.',
+  heroDescription: 'Find pet sitters in Split and the surrounding area. Compare pet sitter profiles while you are away or at work.',
   heroCtaLabel: 'Find a sitter in Split',
   searchCity: 'Split',
   introTitle: 'Dog Sitting in Split — Everything You Need to Know',
@@ -44,7 +44,7 @@ export const splitEnPageData: CityLandingEnConfig = {
   neighborhoodIconBgClass: 'bg-blue-100 dark:bg-blue-900/30',
   highlightsTitle: 'Best Places for Dog Walking in Split',
   highlightsIntroParagraphs: [
-    'Marjan park-forest is by far the best location for dog walking in Split. With over 300 hectares of forested area, kilometers of trails and fresh air, Marjan provides an escape from the city bustle. The trails are varied — from an easy seaside promenade to more demanding mountain paths up the hill. Our sitters especially value early morning walks on Marjan when the temperature is pleasant and the trails are empty.',
+    'Marjan park-forest is one of the most familiar locations for dog walking in Split. With over 300 hectares of forested area, kilometers of trails and fresh air, Marjan provides an escape from the city bustle. The trails are varied — from an easy seaside promenade to more demanding mountain paths up the hill. Our sitters especially value early morning walks on Marjan when the temperature is pleasant and the trails are empty.',
     'The Žnjan promenade is popular for evening walks along the sea. Žnjan beach also has areas that are dog-tolerant, especially outside the main tourist season. The Jadro river in Solin offers a green environment with shade along the water, while Sustipan is a small but beautiful park at the tip of the Marjan peninsula with views of the sea and islands.',
   ],
   highlights: [
@@ -74,7 +74,7 @@ export const splitEnPageData: CityLandingEnConfig = {
     },
     {
       q: 'Are there pet sitters in Split who accept dogs during summer?',
-      a: 'Yes! On PetPark you have dozens of active sitters in Split who accept dogs throughout the entire year, including the summer season. We recommend booking in advance as summer is the busiest period. Many Split sitters have yards or are close to parks ideal for walks and play.',
+      a: 'You can compare available sitter profiles in Split and send an inquiry for the dates you need. We recommend booking in advance because summer is the busiest period.',
     },
     {
       q: 'Can a sitter walk my dog on Marjan?',
@@ -125,12 +125,12 @@ export const splitEnPageData: CityLandingEnConfig = {
     },
   ],
   finalCtaSectionClassName: 'bg-gradient-to-r from-blue-500 to-teal-500 py-16',
-  finalCtaTitle: 'Find the Perfect Sitter in Split',
-  finalCtaDescription: 'Verified profiles across all Split neighborhoods are ready for your inquiry. Send an inquiry quickly and easily.',
+  finalCtaTitle: 'Find a Sitter in Split',
+  finalCtaDescription: 'Sitter profiles across Split neighborhoods are available for comparison and inquiry. Send an inquiry quickly and easily.',
   finalCtaButtonClassName: 'bg-white text-blue-600 hover:bg-white/90 rounded-full px-8 font-semibold',
   finalCtaLabel: 'Browse sitters in Split',
   localBusinessName: 'PetPark — Dog Sitting in Split',
-  localBusinessDescription: 'Find reliable pet sitters for dog sitting in Split. Verified profiles and online inquiries.',
+  localBusinessDescription: 'Find pet sitter profiles for dog sitting in Split. Compare options and send an inquiry online.',
   addressRegion: 'Splitsko-dalmatinska županija',
   latitude: 43.5081,
   longitude: 16.4402,
