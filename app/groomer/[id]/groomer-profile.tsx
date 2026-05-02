@@ -7,8 +7,8 @@ import { format } from 'date-fns';
 import { enUS, hr } from 'date-fns/locale';
 import {
   Star, MapPin, Shield, ChevronLeft, Scissors, Droplets, Sparkles,
-  Calendar, MessageCircle, Share2, Check, Clock, Phone, Mail,
-  MapPinned, ClipboardList, ArrowRight,
+  Calendar, MessageCircle, Share2, Check, Clock, Mail,
+  ClipboardList, ArrowRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -26,7 +26,6 @@ import {
 } from '@/lib/types';
 import type { PublicGroomerProfile, PublicProviderReview } from '@/lib/public/provider-profile-sanitizers';
 import {
-  formatAddress,
   getActiveServices,
   getOrderedDays,
   formatWorkingHours,
@@ -100,8 +99,9 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
 
   const lowestPrice = Math.min(...Object.values(groomer.prices).filter((price) => price > 0));
   const hasReviews = groomer.review_count > 0;
+  const hasPrice = Number.isFinite(lowestPrice);
   const safeRatingLabel = hasReviews && groomer.rating !== null ? groomer.rating.toFixed(1) : groomer.noReviewsLabel;
-  const safePriceLabel = Number.isFinite(lowestPrice) ? `${lowestPrice}` : groomer.priceFallbackLabel;
+  const safePriceLabel = hasPrice ? `${lowestPrice}` : groomer.priceFallbackLabel;
   const serviceLabel = (value: GroomingServiceType) =>
     isEn ? GROOMING_SERVICE_LABELS_EN[value] : GROOMING_SERVICE_LABELS[value];
   const specializationLabel = isEn
@@ -150,6 +150,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
     noReviews: isEn ? 'No reviews yet' : 'Još nema recenzija',
     beFirst: isEn ? 'Be the first to rate this groomer.' : 'Budite prvi koji će ocijeniti ovog groomera.',
     from: isEn ? 'from' : 'već od',
+    priceByArrangement: isEn ? 'price by arrangement' : 'cijena po dogovoru',
     depending: isEn ? 'depending on service and pet size' : 'ovisno o usluzi i veličini ljubimca',
     perService: isEn ? 'per service' : 'po usluzi',
     book: isEn ? 'Book appointment' : 'Zakaži termin',
@@ -202,7 +203,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
   };
 
   return (
-    <div className="concept-zero">
+    <div className="concept-zero overflow-x-clip">
       {/* ── Cinematic Hero ── */}
       <section className="relative overflow-hidden min-h-[70vh] md:min-h-[75vh] flex flex-col">
         <div className="absolute inset-0 detail-hero-gradient" />
@@ -268,7 +269,11 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
                     {groomer.city}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    {hasReviews ? (
+                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    ) : (
+                      <Shield className="h-4 w-4 text-emerald-600" />
+                    )}
                     {safeRatingLabel}
                   </span>
                   <span className="flex items-center gap-1.5">
@@ -431,7 +436,7 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
               {reviews.length === 0 ? (
                 <div className="detail-section-card p-10 md:p-12 text-center">
                   <div className="inline-flex h-16 w-16 rounded-full bg-warm-peach dark:bg-warm-orange/15 items-center justify-center mb-5">
-                    <Star className="h-7 w-7 text-warm-orange" />
+                    <MessageCircle className="h-7 w-7 text-warm-orange" />
                   </div>
                   <p className="text-foreground font-bold text-lg font-[var(--font-heading)] mb-2">{copy.noReviews}</p>
                   <p className="text-sm text-muted-foreground max-w-xs mx-auto">{copy.beFirst}</p>
@@ -470,11 +475,11 @@ export function GroomerProfile({ groomer, reviews, availableDates }: GroomerProf
 
               {/* Price hero */}
               <div className="text-center">
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium mb-2">{copy.from}</p>
-                <div className="text-5xl md:text-6xl font-extrabold text-gradient font-[var(--font-heading)] leading-none">
-                  {Number.isFinite(lowestPrice) ? `${safePriceLabel}€` : safePriceLabel}
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium mb-2">{hasPrice ? copy.from : copy.priceByArrangement}</p>
+                <div className="text-4xl md:text-5xl font-extrabold text-gradient font-[var(--font-heading)] leading-none">
+                  {hasPrice ? `${safePriceLabel}€` : safePriceLabel}
                 </div>
-                <p className="text-muted-foreground text-xs mt-2.5">{copy.depending}</p>
+                <p className="text-muted-foreground text-xs mt-2.5">{hasPrice ? copy.depending : copy.contactBtn}</p>
               </div>
 
               {/* Primary CTA */}
