@@ -34,14 +34,16 @@ const sections = [
     title: 'Izazovi',
     description: 'Lagane aktivnosti i teme za ljubimce i vlasnike. Otvaramo ih postupno kako zajednica raste.',
     href: '/zajednica/izazovi',
+    cta: 'Pogledaj status',
     icon: Sparkles,
     tone: 'from-purple-500 to-pink-500',
   },
   {
     eyebrow: 'Istaknuto',
     title: 'Najbolji ljubimci',
-    description: 'Prostor za favorite zajednice, ljubimce tjedna i objave koje vrijedi pokazati svima.',
+    description: 'Prostor za favorite zajednice i objave koje vrijedi istaknuti, bez obećanja nagrada ili posebnih pogodnosti.',
     href: '/zajednica/najbolji',
+    cta: 'Saznaj više',
     icon: Crown,
     tone: 'from-yellow-500 to-orange-500',
   },
@@ -141,7 +143,7 @@ export default function ZajednicaPage() {
                   </div>
                 </div>
                 <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-warm-orange">
-                  Otvori
+                  {section.cta ?? 'Otvori'}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </Link>

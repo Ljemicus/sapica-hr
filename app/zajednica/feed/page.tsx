@@ -8,8 +8,8 @@ export const metadata: Metadata = {
 
 export default function FeedPage() {
   return (
-    <main className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       <SocialFeedContent />
-    </main>
+    </div>
   );
 }
