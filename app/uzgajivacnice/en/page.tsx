@@ -3,12 +3,12 @@ import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-me
 import { BreedersPageShell } from '../breeders-page-shell';
 
 export const metadata: Metadata = {
-  title: 'Breeders — Certified dog and cat breeders in Croatia',
-  description: 'Find certified dog and cat breeders in Croatia. Browse breeder profiles with FCI registration, available litters, and owner ratings.',
+  title: 'Breeders — dog and cat breeder profiles in Croatia',
+  description: 'Find dog and cat breeder profiles in Croatia. Browse available information, litters, and owner ratings.',
   keywords: ['dog breeders croatia', 'cat breeders croatia', 'puppies for sale croatia', 'fci breeder croatia', 'kittens for sale croatia'],
   openGraph: {
-    title: 'Breeders — Certified breeders | PetPark',
-    description: 'Find certified dog and cat breeders in Croatia.',
+    title: 'Breeders — breeder profiles | PetPark',
+    description: 'Find dog and cat breeder profiles in Croatia.',
     type: 'website',
     ...buildLocaleOpenGraph('/uzgajivacnice/en'),
   },

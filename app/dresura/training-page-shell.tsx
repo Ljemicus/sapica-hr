@@ -12,7 +12,7 @@ export const TRAINING_PAGE_COPY = {
   hr: {
     breadcrumbLabel: 'Školovanje pasa',
     jsonLdName: 'Školovanje pasa',
-    jsonLdDescription: 'Pronađite certificirane trenere pasa za školovanje, agility, korekciju ponašanja i rad sa štencima.',
+    jsonLdDescription: 'Pronađite trenere pasa za školovanje, agility, korekciju ponašanja i rad sa štencima.',
     pathname: '/dresura',
     eyebrow: 'Gradovi s ponudom',
     internalTitle: 'Tražite trening u određenom gradu?',
@@ -28,7 +28,7 @@ export const TRAINING_PAGE_COPY = {
   en: {
     breadcrumbLabel: 'Dog training',
     jsonLdName: 'Dog training',
-    jsonLdDescription: 'Find certified dog trainers in Croatia for obedience, agility, behaviour work, and puppy training.',
+    jsonLdDescription: 'Find dog trainers in Croatia for obedience, agility, behaviour work, and puppy training.',
     pathname: '/dresura/en',
     eyebrow: 'Cities with supply',
     internalTitle: 'Looking for a trainer in a specific city?',

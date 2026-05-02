@@ -4,11 +4,11 @@ import { TrainingPageShell } from './training-page-shell';
 
 export const metadata: Metadata = {
   title: 'Školovanje pasa — treneri i programi',
-  description: 'Pronađite certificirane trenere pasa za školovanje, agility, korekciju ponašanja i rad sa štencima u Hrvatskoj.',
+  description: 'Pronađite trenere pasa za školovanje, agility, korekciju ponašanja i rad sa štencima u Hrvatskoj.',
   keywords: ['školovanje pasa', 'trener pasa', 'dresura pasa', 'agility', 'korekcija ponašanja', 'obuka štenaca'],
   openGraph: {
     title: 'Školovanje pasa — treneri i programi | PetPark',
-    description: 'Pronađite certificirane trenere pasa za školovanje, agility i korekciju ponašanja.',
+    description: 'Pronađite trenere pasa za školovanje, agility i korekciju ponašanja.',
     type: 'website',
     ...buildLocaleOpenGraph('/dresura'),
   },

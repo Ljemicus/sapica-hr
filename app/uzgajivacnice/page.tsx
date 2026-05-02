@@ -3,12 +3,12 @@ import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-me
 import { BreedersPageShell } from './breeders-page-shell';
 
 export const metadata: Metadata = {
-  title: 'Uzgajivači — Certificirani uzgajivači u Hrvatskoj',
-  description: 'Pronađite certificirane uzgajivače pasa i mačaka u Hrvatskoj. Pregledajte uzgajivače s FCI registracijom, dostupne legla i ocjene vlasnika.',
+  title: 'Uzgajivači — profili uzgajivača u Hrvatskoj',
+  description: 'Pronađite profile uzgajivača pasa i mačaka u Hrvatskoj. Pregledajte dostupne informacije, legla i ocjene vlasnika.',
   keywords: ['uzgajivači pasa hrvatska', 'uzgajivač pasa', 'štenci na prodaju', 'uzgajivači mačaka', 'FCI uzgajivač', 'legla štenaca'],
   openGraph: {
-    title: 'Uzgajivači — Certificirani uzgajivači | PetPark',
-    description: 'Pronađite certificirane uzgajivače pasa i mačaka u Hrvatskoj.',
+    title: 'Uzgajivači — profili uzgajivača | PetPark',
+    description: 'Pronađite profile uzgajivača pasa i mačaka u Hrvatskoj.',
     type: 'website',
     ...buildLocaleOpenGraph('/uzgajivacnice'),
   },

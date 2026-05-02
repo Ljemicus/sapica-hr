@@ -13,11 +13,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 export const metadata: Metadata = {
   title: 'Grooming saloni u Zagrebu — pronađite salon za ljubimca',
-  description: 'Pronađite najbolje grooming salone za pse i mačke u Zagrebu. Šišanje, kupanje, trimanje, njega zubi i kandži. Usporedite cijene i recenzije na PetParku!',
+  description: 'Pronađite grooming salone za pse i mačke u Zagrebu. Šišanje, kupanje, trimanje, njega zubi i kandži. Usporedite usluge, cijene i recenzije na PetParku.',
   keywords: ['grooming zagreb', 'salon za pse zagreb', 'šišanje pasa zagreb', 'grooming salon zagreb', 'njega pasa zagreb', 'kupanje pasa zagreb', 'trimanje pasa zagreb'],
   openGraph: {
     title: 'Grooming saloni u Zagrebu — pronađite salon za ljubimca | PetPark',
-    description: 'Pronađite najbolje grooming salone u Zagrebu. Usporedite cijene, usluge i recenzije.',
+    description: 'Pronađite grooming salone u Zagrebu. Usporedite cijene, usluge i recenzije.',
     siteName: 'PetPark',
     type: 'website',
     ...buildLocaleOpenGraph('/grooming-zagreb'),
@@ -45,7 +45,7 @@ const FAQS = [
   },
   {
     q: 'Kako odabrati dobar grooming salon u Zagrebu?',
-    a: 'Provjerite recenzije na PetParku, pitajte za kvalifikacije groomera, posjetite salon prije prvog termina i obratite pažnju na čistoću prostora. Dobar salon koristi kvalitetne proizvode, ima strpljive groomere i ne koristi sedative. Na PetParku možete usporediti salone po ocjenama, cijenama i uslugama.',
+    a: 'Provjerite recenzije na PetParku, pitajte za iskustvo groomera, posjetite salon prije prvog termina i obratite pažnju na čistoću prostora. Dobar salon jasno komunicira proizvode, postupak i način rada sa životinjama. Na PetParku možete usporediti salone po ocjenama, cijenama i uslugama.',
   },
   {
     q: 'Može li moj pas dobiti grooming ako ima kožne probleme?',
@@ -58,7 +58,7 @@ export default function GroomingZagreb() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'PetPark — Grooming saloni u Zagrebu',
-    description: 'Pronađite najbolje grooming salone za pse i mačke u Zagrebu. Usporedite cijene, usluge i recenzije.',
+    description: 'Pronađite grooming salone za pse i mačke u Zagrebu. Usporedite cijene, usluge i recenzije.',
     url: `${BASE_URL}/grooming-zagreb`,
     logo: `${BASE_URL}/opengraph-image`,
     image: `${BASE_URL}/opengraph-image`,
@@ -113,7 +113,7 @@ export default function GroomingZagreb() {
               <span className="text-gradient">Zagrebu</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in-up delay-200 leading-relaxed max-w-2xl mx-auto">
-              Pronađite najbolje grooming salone za vašeg ljubimca. Šišanje, kupanje, trimanje i spa tretmani — sve na jednom mjestu.
+              Usporedite grooming salone za vašeg ljubimca. Šišanje, kupanje, trimanje i spa tretmani — sve na jednom mjestu.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
               <Link href="/pretraga?category=grooming&city=Zagreb">
@@ -138,18 +138,18 @@ export default function GroomingZagreb() {
               Grooming nije samo estetska usluga — to je bitan dio zdravstvene njege vašeg ljubimca. Redovito
               šišanje, kupanje i njega dlake sprječavaju kožne probleme, smanjuju rizik od parazita i održavaju
               vašeg psa ili mačku zdravima i sretnima. U Zagrebu postoji rastući broj profesionalnih grooming
-              salona, ali pronalaženje pravog može biti izazov bez pouzdanih informacija.
+              salona, ali odabir može biti izazov bez jasnih informacija.
             </p>
             <p>
               PetPark vam omogućuje da na jednom mjestu usporedite grooming salone u Zagrebu po cijenama,
               uslugama, lokaciji i recenzijama stvarnih korisnika. Svaki salon na našoj platformi ima
               detaljni profil s popisom usluga, cjenikom, fotografijama radova i ocjenama vlasnika
               koji su već koristili njihove usluge. To vam pomaže donijeti informiranu odluku i
-              pronaći salon koji najbolje odgovara potrebama vašeg ljubimca.
+              pronaći salon koji odgovara potrebama vašeg ljubimca.
             </p>
             <p>
               Zagreb ima salone za sve budžete — od pristupačnih opcija za osnovno kupanje i šišanje
-              do luksuznih spa tretmana koji uključuju masažu, aromaterapiju i premium proizvode za
+              do naprednijih spa tretmana koji uključuju masažu, aromaterapiju i posebne proizvode za
               njegu dlake. Bez obzira na to kakvu uslugu tražite, na PetParku ćete pronaći salon u
               vašem kvartu koji nudi upravo ono što vaš ljubimac treba.
             </p>
@@ -199,7 +199,7 @@ export default function GroomingZagreb() {
               Pasmine s žičanom dlakom kao što su Schnauzer, Wire Fox terrier i Škotski terrier zahtijevaju
               trimanje — posebnu tehniku uklanjanja stare dlake koja održava teksturu i boju dlake.
               Trimanje je zahtjevniji postupak od običnog šišanja i traži iskusnog groomera koji poznaje
-              tehniku. U Zagrebu nekoliko salona specijaliziranih je za trimanje i nude vrhunsku uslugu
+              tehniku. U Zagrebu postoje saloni koji navode trimanje među svojim uslugama
               za ove pasmine.
             </p>
             <p>
@@ -242,9 +242,9 @@ export default function GroomingZagreb() {
           <div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground">
             <p>
               Prije prvog posjeta salonu, posjetite prostor i upoznajte groomera. Obratite pažnju na čistoću
-              salona, kvalitetu opreme i kako se groomer odnosi prema životinjama. Profesionalni groomer
-              trebao bi biti strpljiv, nježan i imati iskustvo s vašom pasminom. Pitajte za certifikate
-              i edukaciju — kvalitetni groomeri redovito pohađaju seminare i usavršavanja.
+              salona, opremu i kako se groomer odnosi prema životinjama. Dobar groomer
+              trebao bi jasno objasniti postupak i imati iskustvo s vašom pasminom. Pitajte za edukaciju,
+              način rada i proizvode koje koristi.
             </p>
             <p>
               Pripremite svog ljubimca za grooming postupno. Ako vaš pas nikada nije bio na groomingu,
@@ -266,9 +266,9 @@ export default function GroomingZagreb() {
             </h2>
             <div className="grid sm:grid-cols-3 gap-6">
               {[
-                { icon: Star, title: 'Stvarne recenzije', desc: 'Svaka recenzija dolazi od verificiranog korisnika koji je stvarno posjetio salon.', color: 'text-yellow-500', bg: 'bg-yellow-50 dark:bg-yellow-950/20' },
-                { icon: Shield, title: 'Verificirani saloni', desc: 'Provjeravamo kvalifikacije groomera i uvjete u salonu prije objave na platformi.', color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-950/20' },
-                { icon: Sparkles, title: 'Usporedba cijena', desc: 'Na jednom mjestu vidite cijene svih salona u vašem kvartu i odaberite najbolju opciju.', color: 'text-pink-500', bg: 'bg-pink-50 dark:bg-pink-950/20' },
+                { icon: Star, title: 'Stvarne recenzije', desc: 'Recenzije i iskustva vlasnika pomažu da lakše procijenite salon prije prvog upita.', color: 'text-yellow-500', bg: 'bg-yellow-50 dark:bg-yellow-950/20' },
+                { icon: Shield, title: 'Jasniji profili', desc: 'Profili prikazuju usluge, cijene i dostupne informacije kako biste lakše usporedili opcije.', color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-950/20' },
+                { icon: Sparkles, title: 'Usporedba cijena', desc: 'Na jednom mjestu usporedite raspon cijena i usluge dostupnih profila u vašem području.', color: 'text-pink-500', bg: 'bg-pink-50 dark:bg-pink-950/20' },
               ].map((item) => (
                 <Card key={item.title} className="border-0 shadow-sm text-center">
                   <CardContent className="p-6">
@@ -322,7 +322,7 @@ export default function GroomingZagreb() {
       <section className="bg-gradient-to-r from-purple-500 to-pink-500 py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-[var(--font-heading)]">
-            Pronađite savršeni grooming salon u Zagrebu
+            Pronađite grooming salon u Zagrebu
           </h2>
           <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
             Usporedite salone, pročitajte recenzije i zakažite termin za vašeg ljubimca. Sve na jednom mjestu.
