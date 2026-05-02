@@ -76,7 +76,7 @@ const FAQ = [
 
 export default function PostaniSitterPage() {
   return (
-    <div className="bg-background">
+    <div className="overflow-x-clip bg-background">
       {/* Hero */}
       <section className="relative auth-hero-gradient overflow-hidden">
         <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
@@ -87,13 +87,13 @@ export default function PostaniSitterPage() {
             </p>
 
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight font-[var(--font-heading)] mb-5 text-white">
-              Zarađuj čuvajući pse i mačke
-              <span className="block text-white/80">u svom gradu</span>
+              Postani osoba kojoj vlasnici vjeruju
+              <span className="block text-white/80">kad trebaju čuvanje</span>
             </h1>
 
             <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed mb-8">
-              Ako voliš životinje i želiš fleksibilnu dodatnu zaradu, prijavi se za PetPark sittera.
-              Ti biraš kad radiš, koje usluge nudiš i koliko rezervacija prihvaćaš.
+              Ako voliš životinje i želiš ozbiljan, fleksibilan side-job, prijavi se za PetPark sittera.
+              Ti biraš termine, usluge i tempo — mi ti dajemo profil, upite i jasniji proces.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
@@ -168,7 +168,7 @@ export default function PostaniSitterPage() {
                   <p>✅ Za ljude koji vole životinje i žele dodatnu zaradu</p>
                   <p>✅ Za studente, freelancere i zaposlene koji žele fleksibilnost</p>
                   <p>✅ Za one koji već čuvaju ljubimce &quot;usput&quot;, ali to žele raditi ozbiljnije</p>
-                  <p>❌ Nije za ekipu koja želi brzu lovu bez odgovornosti</p>
+                  <p>❌ Nije za osobe koje ne mogu preuzeti odgovornost za tuđeg ljubimca</p>
                 </div>
               </CardContent>
             </Card>
@@ -219,8 +219,8 @@ export default function PostaniSitterPage() {
               </div>
             </div>
             <div className="rounded-2xl bg-white/10 p-6 backdrop-blur-sm border border-white/15">
-              <p className="text-sm uppercase tracking-wide text-white/70 mb-2">Call to action bez glupiranja</p>
-              <p className="text-xl font-bold mb-5">Ako želiš krenuti, prijava ti je doslovno par minuta.</p>
+              <p className="text-sm uppercase tracking-wide text-white/70 mb-2">Kreni bez čekanja</p>
+              <p className="text-xl font-bold mb-5">Ako želiš krenuti, prijava traje samo par minuta.</p>
               <LandingPrimaryCTA className="w-full h-13 rounded-xl bg-white text-orange-600 hover:bg-white/90 font-bold" />
             </div>
           </div>
