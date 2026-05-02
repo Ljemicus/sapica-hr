@@ -8,13 +8,13 @@ const BREEDERS_COPY = {
   hr: {
     breadcrumbLabel: 'Uzgajivači',
     jsonLdName: 'Uzgajivači',
-    jsonLdDescription: 'Pronađite certificirane uzgajivače pasa i mačaka u Hrvatskoj.',
+    jsonLdDescription: 'Pronađite profile uzgajivača pasa i mačaka u Hrvatskoj.',
     pathname: '/uzgajivacnice',
   },
   en: {
     breadcrumbLabel: 'Breeders',
     jsonLdName: 'Breeders',
-    jsonLdDescription: 'Find certified dog and cat breeders in Croatia.',
+    jsonLdDescription: 'Find dog and cat breeder profiles in Croatia.',
     pathname: '/uzgajivacnice/en',
   },
 } as const;

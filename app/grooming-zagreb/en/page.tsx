@@ -158,7 +158,7 @@ export default function GroomingZagrebEnPage() {
               Pet Grooming in <span className="text-gradient">Zagreb</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in-up delay-200 leading-relaxed max-w-2xl mx-auto">
-              Find trusted grooming salons for your pet. Haircuts, bathing, hand stripping and spa treatments — all in one place.
+              Compare grooming salons for your pet. Haircuts, bathing, hand stripping and spa treatments — all in one place.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
               <Link href="/pretraga?category=grooming&city=Zagreb">
@@ -188,7 +188,7 @@ export default function GroomingZagrebEnPage() {
               used that salon. That gives you a more confident starting point when choosing care for your pet.
             </p>
             <p>
-              Zagreb offers options for different budgets — from practical salons for basic bathing and clipping to more premium
+              Zagreb offers options for different budgets — from practical salons for basic bathing and clipping to more advanced
               spa-style treatments with massage, aromatherapy and specialized coat care products. Whether you need a routine wash
               or breed-specific grooming, you can start with a salon that matches your pet’s needs and your budget.
             </p>
@@ -294,14 +294,14 @@ export default function GroomingZagrebEnPage() {
                 {
                   icon: Star,
                   title: 'Real reviews',
-                  desc: 'Every review comes from a verified user who actually visited the salon.',
+                  desc: 'Reviews and owner experiences help you assess a salon before the first inquiry.',
                   color: 'text-yellow-500',
                   bg: 'bg-yellow-50 dark:bg-yellow-950/20',
                 },
                 {
                   icon: Shield,
-                  title: 'Verified salons',
-                  desc: 'We aim to surface salons with clearer profile information so comparison is easier.',
+                  title: 'Clearer profiles',
+                  desc: 'Profiles surface services, prices and available details so comparison is easier.',
                   color: 'text-purple-500',
                   bg: 'bg-purple-50 dark:bg-purple-950/20',
                 },
