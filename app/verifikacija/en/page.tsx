@@ -5,10 +5,10 @@ import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-me
 
 export const metadata: Metadata = {
   title: { absolute: 'Sitter verification | PetPark' },
-  description: 'Learn about PetPark verification levels — Basic, Verified, and Premium sitter. Build trust and attract more clients.',
+  description: 'Learn about PetPark profile statuses — basic profile, checks and additional badges that help owners choose.',
   openGraph: {
     title: 'Sitter verification | PetPark',
-    description: 'Learn about PetPark verification levels — Basic, Verified, and Premium sitter.',
+    description: 'Learn about PetPark profile statuses — basic profile, checks and additional badges.',
     type: 'website',
     ...buildLocaleOpenGraph('/verifikacija/en'),
   },

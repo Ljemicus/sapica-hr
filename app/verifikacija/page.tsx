@@ -9,10 +9,10 @@ import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-me
 
 export const metadata: Metadata = {
   title: { absolute: 'Verifikacija sittera | PetPark' },
-  description: 'Saznajte više o verifikacijskim razinama na PetParku — Basic, Verificiran i Premium sitter. Izgradite povjerenje i privucite više klijenata.',
+  description: 'Saznajte više o statusima profila na PetParku — osnovni profil, provjera i dodatne oznake koje pomažu vlasnicima pri odabiru.',
   openGraph: {
     title: 'Verifikacija sittera | PetPark',
-    description: 'Saznajte više o verifikacijskim razinama na PetParku — Basic, Verificiran i Premium sitter.',
+    description: 'Saznajte više o statusima profila na PetParku — osnovni profil, provjera i dodatne oznake.',
     type: 'website',
     ...buildLocaleOpenGraph('/verifikacija'),
   },
@@ -27,14 +27,14 @@ const tiers = {
       requirements: ['Registracija na platformi', 'Ispunjen profil s fotografijom'],
     },
     {
-      level: 'Verificiran', subtitle: 'Pouzdani čuvar', icon: ShieldCheck, color: 'from-blue-500 to-cyan-500', borderColor: 'border-blue-200 dark:border-blue-800',
-      benefits: ['Plava oznaka na profilu', 'Viši rang u pretrazi', 'Pristup premium klijentima', 'Prioritetna podrška', 'PetPark osiguranje'],
-      requirements: ['Provjera identiteta (osobna iskaznica)', 'Provjera pozadine', 'Verifikacija adrese'], featured: true,
+      level: 'Provjeren', subtitle: 'Dodatni kontekst', icon: ShieldCheck, color: 'from-blue-500 to-cyan-500', borderColor: 'border-blue-200 dark:border-blue-800',
+      benefits: ['Jasnija oznaka na profilu', 'Više konteksta za vlasnike', 'Pregled osnovnih podataka', 'Uredniji profil u rezultatima', 'Lakša komunikacija s podrškom'],
+      requirements: ['Provjera identiteta', 'Usklađen i potpun profil', 'Dodatne informacije prema vrsti usluge'], featured: true,
     },
     {
-      level: 'Premium', subtitle: 'Elitni sitter', icon: Award, color: 'from-amber-500 to-orange-500', borderColor: 'border-amber-200 dark:border-amber-800',
-      benefits: ['Zlatna Premium oznaka', 'Najviši rang u pretrazi', 'Istaknuti profil na naslovnici', 'Ekskluzivne promocije', 'Niža provizija (8% umjesto 10%)', 'Personalizirani marketing'],
-      requirements: ['Verificiran status', '10+ pozitivnih recenzija', 'Prosječna ocjena 4.5+', 'Aktivni profil 3+ mjeseca'],
+      level: 'Istaknuti', subtitle: 'Aktivan profil', icon: Award, color: 'from-amber-500 to-orange-500', borderColor: 'border-amber-200 dark:border-amber-800',
+      benefits: ['Posebna oznaka profila', 'Bolja vidljivost gdje je primjenjivo', 'Mogućnost isticanja u kampanjama', 'Dodatni prostor za opis usluge', 'Više povjerenja kroz recenzije'],
+      requirements: ['Provjeren status profila', 'Pozitivne recenzije', 'Stabilna aktivnost profila', 'Usklađenost s pravilima platforme'],
     },
   ],
   en: [
@@ -44,14 +44,14 @@ const tiers = {
       requirements: ['Register on the platform', 'Complete profile with a photo'],
     },
     {
-      level: 'Verified', subtitle: 'Trusted sitter', icon: ShieldCheck, color: 'from-blue-500 to-cyan-500', borderColor: 'border-blue-200 dark:border-blue-800',
-      benefits: ['Blue trust badge on your profile', 'Higher search ranking', 'Access to premium clients', 'Priority support', 'PetPark insurance'],
-      requirements: ['Identity check (ID card)', 'Background review', 'Address verification'], featured: true,
+      level: 'Checked', subtitle: 'Additional context', icon: ShieldCheck, color: 'from-blue-500 to-cyan-500', borderColor: 'border-blue-200 dark:border-blue-800',
+      benefits: ['Clearer profile badge', 'More context for owners', 'Basic information review', 'Cleaner profile presentation in results', 'Easier support communication'],
+      requirements: ['Identity check', 'Complete and consistent profile', 'Additional details depending on service type'], featured: true,
     },
     {
-      level: 'Premium', subtitle: 'Elite sitter', icon: Award, color: 'from-amber-500 to-orange-500', borderColor: 'border-amber-200 dark:border-amber-800',
-      benefits: ['Gold Premium badge', 'Top search ranking', 'Featured homepage profile', 'Exclusive promotions', 'Lower commission (8% instead of 10%)', 'Personalized marketing'],
-      requirements: ['Verified status', '10+ positive reviews', 'Average rating 4.5+', 'Active profile for 3+ months'],
+      level: 'Featured', subtitle: 'Active profile', icon: Award, color: 'from-amber-500 to-orange-500', borderColor: 'border-amber-200 dark:border-amber-800',
+      benefits: ['Special profile badge', 'Improved visibility where applicable', 'Potential campaign features', 'More room to describe your service', 'More trust through reviews'],
+      requirements: ['Checked profile status', 'Positive reviews', 'Stable profile activity', 'Compliance with platform rules'],
     },
   ],
 } as const;
@@ -60,14 +60,14 @@ const steps = {
   hr: [
     { step: 1, title: 'Registrirajte se', description: 'Kreirajte profil, dodajte fotografije i opišite svoje iskustvo s ljubimcima.', icon: UserCheck, color: 'from-orange-500 to-amber-500' },
     { step: 2, title: 'Pošaljite dokumente', description: 'Uploadajte osobnu iskaznicu i ispunite obrazac za provjeru pozadine.', icon: Upload, color: 'from-blue-500 to-cyan-500' },
-    { step: 3, title: 'Dobijte oznaku', description: 'Naš tim pregleda prijavu u roku 24-48h. Nakon odobrenja dobivate verificiranu oznaku.', icon: ShieldCheck, color: 'from-teal-500 to-emerald-500' },
-    { step: 4, title: 'Rastite do Premium', description: 'Prikupite recenzije, održavajte visoku ocjenu i automatski napredujte na Premium razinu.', icon: Star, color: 'from-amber-500 to-orange-500' },
+    { step: 3, title: 'Dobijte oznaku', description: 'Naš tim pregledava prijavu i javlja se s odlukom ili dodatnim pitanjima.', icon: ShieldCheck, color: 'from-teal-500 to-emerald-500' },
+    { step: 4, title: 'Razvijajte profil kroz recenzije', description: 'Prikupljajte recenzije, održavajte aktivan profil i s vremenom možete dobiti dodatne oznake.', icon: Star, color: 'from-amber-500 to-orange-500' },
   ],
   en: [
     { step: 1, title: 'Create your account', description: 'Build your profile, add photos, and describe your experience with pets.', icon: UserCheck, color: 'from-orange-500 to-amber-500' },
     { step: 2, title: 'Upload documents', description: 'Upload your ID and complete the background review form.', icon: Upload, color: 'from-blue-500 to-cyan-500' },
-    { step: 3, title: 'Get verified', description: 'Our team reviews each application within 24–48 hours. Once approved, you receive your verified badge.', icon: ShieldCheck, color: 'from-teal-500 to-emerald-500' },
-    { step: 4, title: 'Grow into Premium', description: 'Collect reviews, keep your rating high, and progress to Premium automatically.', icon: Star, color: 'from-amber-500 to-orange-500' },
+    { step: 3, title: 'Get verified', description: 'Our team reviews each application and follows up with a decision or additional questions.', icon: ShieldCheck, color: 'from-teal-500 to-emerald-500' },
+    { step: 4, title: 'Build your profile through reviews', description: 'Collect reviews, keep your profile active, and you may become eligible for additional badges over time.', icon: Star, color: 'from-amber-500 to-orange-500' },
   ],
 } as const;
 
@@ -76,16 +76,16 @@ function VerificationBody({ language }: { language: 'hr' | 'en' }) {
   const stepCopy = steps[language];
   const labels = language === 'en'
     ? {
-        heroBadge: 'Trust and safety', heroTitleA: 'Sitter', heroTitleB: 'verification', heroText: 'Build trust with pet owners. Verified sitters can get up to 3x more bookings and access to premium features.',
-        tierBadge: 'Verification levels', tierTitle: 'Three levels for your growth', tierText: 'From beginner to elite sitter — each level unlocks new benefits', featured: 'Most popular', benefits: 'Benefits', requirements: 'Requirements',
-        stepsBadge: 'How verification works', stepsTitle: 'Four simple steps', stepsText: 'From registration to Premium status',
-        ctaTitle: 'Ready to get verified?', ctaText: 'Start the verification process today and build more trust with future clients.', ctaPrimary: 'Start verification', ctaSecondary: 'Frequently asked questions',
+        heroBadge: 'Trust and safety', heroTitleA: 'Profile', heroTitleB: 'checks', heroText: 'Give owners clearer context before they send a request. Profile checks and badges help explain who you are and how you work.',
+        tierBadge: 'Verification levels', tierTitle: 'Profile statuses, clearly explained', tierText: 'From a basic profile to additional badges — each status gives owners more context', featured: 'Most popular', benefits: 'Benefits', requirements: 'Requirements',
+        stepsBadge: 'How verification works', stepsTitle: 'Four simple steps', stepsText: 'From registration to a clearer public profile',
+        ctaTitle: 'Ready to build your profile?', ctaText: 'Create a profile, add the right details and make it easier for owners to understand your service.', ctaPrimary: 'Create profile', ctaSecondary: 'Frequently asked questions',
       }
     : {
-        heroBadge: 'Povjerenje i sigurnost', heroTitleA: 'Verifikacija', heroTitleB: 'sittera', heroText: 'Izgradite povjerenje s vlasnicima ljubimaca. Verificirani sitteri dobivaju do 3x više rezervacija i pristup premium značajkama.',
-        tierBadge: 'Razine verifikacije', tierTitle: 'Tri razine za vaš uspjeh', tierText: 'Od početnika do elitnog sittera — svaka razina donosi nove pogodnosti', featured: 'Najpopularniji', benefits: 'Pogodnosti', requirements: 'Zahtjevi',
-        stepsBadge: 'Kako do verifikacije', stepsTitle: 'Četiri jednostavna koraka', stepsText: 'Od registracije do Premium statusa',
-        ctaTitle: 'Spremni za verifikaciju?', ctaText: 'Pokrenite proces verifikacije danas i počnite privlačiti više klijenata.', ctaPrimary: 'Započni verifikaciju', ctaSecondary: 'Česta pitanja',
+        heroBadge: 'Povjerenje i sigurnost', heroTitleA: 'Provjere', heroTitleB: 'profila', heroText: 'Dajte vlasnicima jasniji kontekst prije slanja upita. Provjere i oznake profila pomažu objasniti tko ste i kako radite.',
+        tierBadge: 'Razine verifikacije', tierTitle: 'Statusi profila, jasno objašnjeni', tierText: 'Od osnovnog profila do dodatnih oznaka — svaki status daje vlasnicima više konteksta', featured: 'Najpopularniji', benefits: 'Pogodnosti', requirements: 'Zahtjevi',
+        stepsBadge: 'Kako do verifikacije', stepsTitle: 'Četiri jednostavna koraka', stepsText: 'Od registracije do jasnijeg javnog profila',
+        ctaTitle: 'Spremni izgraditi profil?', ctaText: 'Kreirajte profil, dodajte prave informacije i olakšajte vlasnicima da razumiju vašu uslugu.', ctaPrimary: 'Kreiraj profil', ctaSecondary: 'Česta pitanja',
       };
 
   return (

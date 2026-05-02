@@ -139,7 +139,7 @@ export function LoginForm() {
             <button
               type="button"
               onClick={() => handleOAuthLogin('google')}
-              className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl border-2 border-gray-200 font-medium hover:bg-gray-50 hover:border-gray-300 transition-colors"
+              className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl border-2 border-border bg-background font-medium hover:bg-muted/50 hover:border-border transition-colors"
               disabled={loading}
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -164,15 +164,15 @@ export function LoginForm() {
           </div>
 
           <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
-            <div className="relative flex justify-center text-sm"><span className="bg-white px-4 text-muted-foreground">{copy.divider}</span></div>
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border"></div></div>
+            <div className="relative flex justify-center text-sm"><span className="bg-background px-4 text-muted-foreground">{copy.divider}</span></div>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 animate-fade-in-up delay-200">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input id="email" type="email" placeholder={language === 'en' ? 'you@email.com' : 'vas@email.com'} className="pl-10" {...register('email')} />
               </div>
               {errors.email && <p className="text-sm text-red-500">{translateFormError(errors.email.message, language)}</p>}
@@ -192,7 +192,7 @@ export function LoginForm() {
                   type="button"
                   aria-label={showPassword ? (language === 'en' ? 'Hide password' : 'Sakrij lozinku') : (language === 'en' ? 'Show password' : 'Prikaži lozinku')}
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
