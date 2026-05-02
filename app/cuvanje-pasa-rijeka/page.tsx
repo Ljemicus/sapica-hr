@@ -16,11 +16,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 export const metadata: Metadata = {
   title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera',
-  description: 'Pronađite iskusne i verificirane pet sittere u Rijeci. Čuvanje pasa u vašem kvartu — Trsat, Kantrida, Sušak, Kozala, Turnić i okolica. Pošaljite upit online.',
+  description: 'Pronađite pet sittere u Rijeci i pošaljite upit za čuvanje. Čuvanje pasa u vašem kvartu — Trsat, Kantrida, Sušak, Kozala, Turnić i okolica. Pošaljite upit online.',
   keywords: ['čuvanje pasa rijeka', 'pet sitter rijeka', 'čuvanje ljubimaca rijeka', 'dog sitter rijeka', 'šetanje pasa rijeka', 'dnevna njega pasa rijeka'],
   openGraph: {
     title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera | PetPark',
-    description: 'Pronađite verificirane pet sittere u Rijeci. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
+    description: 'Pronađite pet sittere u Rijeci. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     siteName: 'PetPark',
     type: 'website',
     ...buildLocaleOpenGraph('/cuvanje-pasa-rijeka'),
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera | PetPark',
-    description: 'Pronađite verificirane pet sittere u Rijeci. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
+    description: 'Pronađite pet sittere u Rijeci. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     images: [`${BASE_URL}/opengraph-image`],
   },
   alternates: buildLocaleAlternates('/cuvanje-pasa-rijeka'),
@@ -40,7 +40,7 @@ const FAQS = [
     a: 'Cijene čuvanja pasa u Rijeci kreću se od 10 do 25 eura po danu. Noćni smještaj obično košta 15-22€, dnevna njega 10-16€, a šetnje od 7€ po šetnji. Rijeka je generalno povoljnija od Zagreba i Splita za usluge čuvanja kućnih ljubimaca.',
   },
   {
-    q: 'Koji su najbolji kvartovi za pse u Rijeci?',
+    q: 'Koji riječki kvartovi dobro funkcioniraju za pse?',
     a: 'Trsat je odličan izbor zahvaljujući blizini šume i mirnom okruženju. Kantrida nudi pristup plaži i šetnici Lungo mare. Kozala i Turnić imaju zelene površine pogodne za šetnje. Sušak je dobro povezan i ima nekoliko manjih parkova ideanih za svakodnevne šetnje.',
   },
   {
@@ -58,7 +58,7 @@ export default function CuvanjePasaRijeka() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'PetPark — Čuvanje pasa u Rijeci',
-    description: 'Pronađite pouzdane pet sittere za čuvanje pasa u Rijeci. Verificirani profili i slanje upita online.',
+    description: 'Pronađite pet sittere za čuvanje pasa u Rijeci. Profili sittera i slanje upita online.',
     url: `${BASE_URL}/cuvanje-pasa-rijeka`,
     logo: `${BASE_URL}/opengraph-image`,
     image: `${BASE_URL}/opengraph-image`,
@@ -119,7 +119,7 @@ export default function CuvanjePasaRijeka() {
               <span className="text-gradient">Rijeci</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in-up delay-200 leading-relaxed max-w-2xl mx-auto">
-              Pronađite pouzdane pet sittere u Rijeci i okolici. Od Trsata do Kantrida — vaš ljubimac je u sigurnim rukama.
+              Pronađite pouzdane pet sittere u Rijeci i okolici. Od Trsata do Kantride — usporedite profile i pošaljite upit online.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
               <Link href="/pretraga?city=Rijeka">
@@ -157,7 +157,7 @@ export default function CuvanjePasaRijeka() {
               Bilo da živite na Trsatu s pogledom na Kvarner, u mirnom Sušaku, na vjetrovitoj Kantridi
               uz more ili u živahnom centru grada — na PetParku ćete pronaći iskusnog sittera koji će
               se brinuti o vašem ljubimcu kao o vlastitom. Naša zajednica sittera u Rijeci stalno raste,
-              a svaki prolazi verificaciju koja uključuje provjeru identiteta i iskustva sa životinjama.
+              a profili sadrže informacije koje vlasnicima pomažu lakše procijeniti kome šalju upit.
             </p>
           </div>
         </div>
@@ -209,7 +209,7 @@ export default function CuvanjePasaRijeka() {
           </h2>
           <div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground mb-8">
             <p>
-              Šetnica Lungo mare jedna je od najljepših obalnih šetnica u Hrvatskoj i savršena je za
+              Šetnica Lungo mare jedna je od najpoznatijih obalnih šetnica u Hrvatskoj i odlična je za
               svakodnevne šetnje s psom. Proteže se od Opatije do Voloskog, prolazi kroz Kantridu i
               pruža spektakularne poglede na Kvarnerski zaljev. Mnogi naši sitteri ovu šetnicu koriste
               za jutarnje i večernje šetnje jer kombinira more, svježi zrak i ravan teren.
@@ -277,7 +277,7 @@ export default function CuvanjePasaRijeka() {
             </h2>
             <div className="grid sm:grid-cols-3 gap-6">
               {[
-                { icon: Shield, title: 'Verificirani profili', desc: 'Svaki profil prolazi osnovnu provjeru prije objave kako biste lakše procijenili kome šaljete upit.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
+                { icon: Shield, title: 'Jasniji profili', desc: 'Profili prikazuju osnovne informacije, usluge i recenzije kako biste lakše odlučili kome poslati upit.', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
                 { icon: Heart, title: 'Nastali u Rijeci', desc: 'PetPark je osnovan u Rijeci. Poznajemo grad, zajednicu i potrebe lokalnih vlasnika ljubimaca.', color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-950/20' },
                 { icon: Clock, title: 'Podrška pon–sub', desc: 'Naš tim podrške dostupan je pon–sub od 8 do 20h. Tu smo kad vam treba pomoć.', color: 'text-teal-500', bg: 'bg-teal-50 dark:bg-teal-950/20' },
               ].map((item) => (
@@ -369,7 +369,7 @@ export default function CuvanjePasaRijeka() {
       <section className="bg-gradient-to-r from-teal-500 to-blue-500 py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-[var(--font-heading)]">
-            Pronađite savršenog sittera u Rijeci
+            Pronađite sittera u Rijeci
           </h2>
           <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
             Pouzdani profili u svim riječkim kvartovima čekaju vaš upit. Pošaljite upit online brzo i jasno.

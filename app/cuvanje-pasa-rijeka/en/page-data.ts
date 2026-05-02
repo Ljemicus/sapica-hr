@@ -11,22 +11,22 @@ export const rijekaEnPageData: CityLandingEnConfig = {
   route: '/cuvanje-pasa-rijeka/en',
   title: 'Dog Sitting in Rijeka — Find a Trusted Sitter',
   description:
-    'Find experienced and verified pet sitters in Rijeka. Dog sitting in your neighborhood — Trsat, Kantrida, Sušak, Kozala, Turnić and surroundings. Send an inquiry online.',
+    'Find pet sitters in Rijeka. Dog sitting in your neighborhood — Trsat, Kantrida, Sušak, Kozala, Turnić and surroundings. Send an inquiry online.',
   keywords: ['dog sitting rijeka', 'pet sitter rijeka', 'pet care rijeka', 'dog sitter rijeka', 'dog walking rijeka', 'day care dogs rijeka'],
-  openGraphDescription: 'Find verified pet sitters in Rijeka. Boarding, walks and day care for dogs in your neighborhood.',
+  openGraphDescription: 'Find pet sitters in Rijeka. Boarding, walks and day care for dogs in your neighborhood.',
   heroBadgeLabel: 'Rijeka, Croatia',
   heroBadgeIcon: Anchor,
   heroBadgeClassName: 'bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 hover:bg-teal-100',
   heroSectionClassName: 'bg-gradient-to-br from-teal-50 via-white to-blue-50 dark:from-teal-950/20 dark:via-background dark:to-blue-950/20',
   heroTitle: 'Dog Sitting in Rijeka',
-  heroDescription: 'Find reliable pet sitters in Rijeka and the surrounding area. From Trsat to Kantrida — your pet is in safe hands.',
+  heroDescription: 'Find reliable pet sitters in Rijeka and the surrounding area. From Trsat to Kantrida — compare profiles and send an inquiry online.',
   heroCtaLabel: 'Find a sitter in Rijeka',
   searchCity: 'Rijeka',
   introTitle: 'Dog Sitting in Rijeka — A Seaside City with a Big Heart for Pets',
   introParagraphs: [
     'Rijeka is the third largest city in Croatia, situated on the northern Adriatic between the sea and the mountains. This unique position makes Rijeka an exceptional city for dog owners — on one side you have access to the seafront and the Lungo mare promenade, and on the other side hills and forests that offer endless possibilities for walks and adventures with your four-legged friend.',
     'The people of Rijeka are known for their love of animals. The city has an active community of dog owners and an increasing number of pet-friendly amenities. However, the specific terrain of the city — hills, stairs and narrow streets in the old part — makes finding the right sitter who knows the city even more important. PetPark helps you find a sitter who lives in your neighborhood, knows the local parks and trails, and understands the specifics of life with a dog in Rijeka.',
-    'Whether you live on Trsat with a view of the Kvarner bay, in quiet Sušak, on windy Kantrida by the sea or in the lively city center — on PetPark you will find an experienced sitter who will care for your pet as their own. Our community of sitters in Rijeka is constantly growing, and each one undergoes verification that includes identity and animal experience checks.',
+    'Whether you live on Trsat with a view of the Kvarner bay, in quiet Sušak, on windy Kantrida by the sea or in the lively city center — on PetPark you will find an experienced sitter who will care for your pet as their own. Our community of sitters in Rijeka is constantly growing, and profiles include details that help owners decide who to contact.',
   ],
   neighborhoodsTitle: "Dog Sitting Across Rijeka's Neighborhoods",
   neighborhoods: [
@@ -44,7 +44,7 @@ export const rijekaEnPageData: CityLandingEnConfig = {
   neighborhoodIconBgClass: 'bg-teal-100 dark:bg-teal-900/30',
   highlightsTitle: 'Best Places for Dog Walking in Rijeka',
   highlightsIntroParagraphs: [
-    'The Lungo mare promenade is one of the most beautiful coastal walkways in Croatia and is perfect for daily dog walks. It stretches from Opatija to Volosko, passes through Kantrida and offers spectacular views of the Kvarner bay. Many of our sitters use this promenade for morning and evening walks because it combines the sea, fresh air and flat terrain.',
+    'The Lungo mare promenade is one of the most beautiful coastal walkways in Croatia and is great for daily dog walks. It stretches from Opatija to Volosko, passes through Kantrida and offers spectacular views of the Kvarner bay. Many of our sitters use this promenade for morning and evening walks because it combines the sea, fresh air and flat terrain.',
     'The Trsat forest above the neighborhood of the same name offers beautiful trails through dense forest with views of the city and the bay. Park Mlaka in the city center is smaller but practical for quick walks. For more active dogs, the Rijeka surroundings offer access to mountain trails towards Učka and Gorski kotar, where your pet can enjoy nature far from the city bustle. Preluk is a popular dog-friendly beach where dogs can enjoy the sea during warmer months.',
   ],
   highlights: [
@@ -74,7 +74,7 @@ export const rijekaEnPageData: CityLandingEnConfig = {
       a: 'Dog sitting prices in Rijeka range from 10 to 25 euros per day. Overnight boarding typically costs €15–22, day care €10–16, and walks start from €7 per walk. Rijeka is generally more affordable than Zagreb and Split for pet care services.',
     },
     {
-      q: 'What are the best neighborhoods for dogs in Rijeka?',
+      q: 'Which Rijeka neighborhoods work well for dogs?',
       a: 'Trsat is an excellent choice thanks to its proximity to the forest and quiet surroundings. Kantrida offers access to the beach and the Lungo mare promenade. Kozala and Turnić have green spaces suitable for walks. Sušak is well-connected and has several smaller parks ideal for daily walks.',
     },
     {
@@ -83,7 +83,7 @@ export const rijekaEnPageData: CityLandingEnConfig = {
     },
     {
       q: 'Can I find a sitter for emergencies in Rijeka?',
-      a: 'Yes, on PetPark you can find sitters who accept short-notice bookings. Use the "quick response" filter in the search to find sitters who typically respond within an hour. For the best results we still recommend booking at least a few days in advance.',
+      a: 'Yes, on PetPark you can find sitters who accept short-notice bookings. Use the "quick response" filter in the search to find sitters who typically respond within an hour. We still recommend booking at least a few days in advance when possible.',
     },
   ],
   crossLinksTitle: 'Dog Sitting in Other Cities',
@@ -126,12 +126,12 @@ export const rijekaEnPageData: CityLandingEnConfig = {
     },
   ],
   finalCtaSectionClassName: 'bg-gradient-to-r from-teal-500 to-blue-500 py-16',
-  finalCtaTitle: 'Find the Perfect Sitter in Rijeka',
+  finalCtaTitle: 'Find a Sitter in Rijeka',
   finalCtaDescription: 'Trusted profiles across all Rijeka neighborhoods are waiting for your inquiry. Send an inquiry online quickly and easily.',
   finalCtaButtonClassName: 'bg-white text-teal-600 hover:bg-white/90 rounded-full px-8 font-semibold',
   finalCtaLabel: 'Browse sitters in Rijeka',
   localBusinessName: 'PetPark — Dog Sitting in Rijeka',
-  localBusinessDescription: 'Find reliable pet sitters for dog sitting in Rijeka. Verified profiles and online inquiries.',
+  localBusinessDescription: 'Find pet sitter profiles for dog sitting in Rijeka. Compare options and send an inquiry online.',
   addressRegion: 'Primorsko-goranska županija',
   latitude: 45.3271,
   longitude: 14.4422,
