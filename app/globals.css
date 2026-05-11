@@ -1304,48 +1304,47 @@ textarea:focus {
   letter-spacing: 0.2em;
 }
 
-/* Route-scoped chrome override for Figma-matched PetPark marketplace redesign. */
-body:has([data-petpark-route^="usluge"]) section {
+/* Route-scoped chrome override for Figma-matched PetPark v6 pages. */
+body:has([data-petpark-route]) section {
   display: block;
   justify-content: normal;
 }
 
-body:has([data-petpark-route^="usluge"]) > header,
-body:has([data-petpark-route^="usluge"]) > div.pb-20,
-body:has([data-petpark-route^="usluge"]) nav[aria-label="Bottom navigation"],
-body:has([data-petpark-route^="usluge"]) nav.fixed,
-body:has([data-petpark-route^="usluge"]) [class*="fixed"][class*="bottom-0"],
-body:has([data-petpark-route^="usluge"]) [class*="fixed"][class*="bottom-20"],
-body:has([data-petpark-route^="usluge"]) [data-testid="chat-widget"],
-body:has([data-petpark-route^="usluge"]) [data-testid="cookie-consent-banner"] {
+body:has([data-petpark-route]) > header,
+body:has([data-petpark-route]) > div.pb-20,
+body:has([data-petpark-route]) nav[aria-label="Bottom navigation"],
+body:has([data-petpark-route]) nav.fixed,
+body:has([data-petpark-route]) [class*="fixed"][class*="bottom-0"],
+body:has([data-petpark-route]) [class*="fixed"][class*="bottom-20"],
+body:has([data-petpark-route]) [data-testid="chat-widget"],
+body:has([data-petpark-route]) [data-testid="cookie-consent-banner"] {
   display: none !important;
 }
 
 @media (max-width: 767px) {
-  body:has([data-petpark-route^="usluge"]) [data-petpark-route^="usluge"] > section {
+  body:has([data-petpark-route]) [data-petpark-route] > section {
     padding-left: 20px !important;
     padding-right: 20px !important;
   }
 
-  body:has([data-petpark-route^="usluge"]) [data-petpark-route^="usluge"] [aria-hidden="true"].absolute,
-  body:has([data-petpark-route^="usluge"]) [data-petpark-route^="usluge"] svg.absolute {
+  body:has([data-petpark-route]) [data-petpark-route] [aria-hidden="true"].absolute,
+  body:has([data-petpark-route]) [data-petpark-route] svg.absolute {
     pointer-events: none;
   }
 }
 
-body:has([data-petpark-route^="usluge"]) #main-content {
+body:has([data-petpark-route]) #main-content {
   width: 100%;
 }
 
-body:has([data-petpark-route^="usluge"]) [data-petpark-route^="usluge"] header > div,
-body:has([data-petpark-route^="usluge"]) [data-petpark-route^="usluge"] > section > div {
+body:has([data-petpark-route]) [data-petpark-route] > section > div {
   margin-left: auto !important;
   margin-right: auto !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
 
-body:has([data-petpark-route^="usluge"]) [data-petpark-route^="usluge"] > section {
+body:has([data-petpark-route]) [data-petpark-route] > section {
   padding-left: 80px !important;
   padding-right: 80px !important;
 }
@@ -1376,13 +1375,13 @@ body:has([data-petpark-route^="usluge"]) [data-petpark-route="usluge"] article >
 /* Keep Figma screenshot baselines deterministic: PageTransition's initial
    opacity/y-offset can otherwise freeze under Playwright screenshots and
    increase full-page capture height by 20px on route load. */
-body:has([data-petpark-route^="usluge"]) #main-content > div {
+body:has([data-petpark-route]) #main-content > div {
   opacity: 1 !important;
   transform: none !important;
 }
 
-body:has([data-petpark-route^="usluge"]) button.fixed.bottom-20.right-4,
-body:has([data-petpark-route^="usluge"]) div.fixed.bottom-0.left-0.right-0.z-50,
-body:has([data-petpark-route^="usluge"]) .nextjs-toast {
+body:has([data-petpark-route]) button.fixed.bottom-20.right-4,
+body:has([data-petpark-route]) div.fixed.bottom-0.left-0.right-0.z-50,
+body:has([data-petpark-route]) .nextjs-toast {
   display: none !important;
 }
