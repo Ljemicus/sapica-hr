@@ -161,17 +161,17 @@ export function CategoryCard({ category }: { category: Category }) {
 
 function FilterRow({ label, value }: { label: string; value: string }) {
   return (
-    <label className="block space-y-2">
+    <label className="flex flex-col gap-3 rounded-[18px] bg-[color:var(--pp-color-cream-surface)] p-3 sm:bg-transparent sm:p-0">
       <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">{label}</span>
-      <Input defaultValue={value} className="h-11 shadow-none" />
+      <Input defaultValue={value} className="h-12 shadow-none lg:h-11" />
     </label>
   );
 }
 
 export function FilterSidebar() {
   return (
-    <aside className="space-y-5">
-      <Card radius="24" className="p-5">
+    <aside className="space-y-8 sm:space-y-7 lg:space-y-5">
+      <Card radius="24" className="p-6 sm:p-6 lg:p-5">
         <div className="mb-5 flex items-center justify-between gap-3">
           <h2 className="flex items-center gap-2 text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">
             <SlidersHorizontal className="size-5 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
@@ -181,19 +181,21 @@ export function FilterSidebar() {
             Poništi sve
           </button>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-6 lg:space-y-4">
           <FilterRow label="Lokacija" value="Zagreb, Hrvatska" />
           <FilterRow label="Kategorija" value="Sve kategorije" />
           <FilterRow label="Cijena" value="0 EUR - 100+ EUR" />
           <FilterRow label="Dostupnost" value="Bilo kada" />
           <FilterRow label="Ocjena" value="4+ i više" />
-          <label className="flex items-center gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-sage-surface)] p-3 text-sm font-extrabold text-[color:var(--pp-color-forest-text)]">
+          <label className="flex items-start gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-sage-surface)] p-4 text-sm font-extrabold leading-6 text-[color:var(--pp-color-forest-text)] lg:items-center lg:p-3 lg:leading-normal">
             <input type="checkbox" className="size-4 accent-[color:var(--pp-color-teal-accent)]" defaultChecked />
             Samo provjereni pružatelji
           </label>
         </div>
       </Card>
-      <SafetyCard />
+      <div className="mt-3 sm:mt-2 lg:mt-0">
+        <SafetyCard />
+      </div>
     </aside>
   );
 }
@@ -237,9 +239,9 @@ export function ServiceCard({ service }: { service: Service }) {
 
 export function SafetyCard() {
   return (
-    <Card tone="sage" radius="24" className="relative overflow-hidden p-5">
-      <PawDecoration className="-right-4 -top-4 opacity-60" />
-      <div className="relative z-10 flex gap-4">
+    <Card tone="sage" radius="24" className="relative overflow-hidden p-7 lg:p-5">
+      <PawDecoration className="-right-4 -top-4 hidden opacity-60 sm:block" />
+      <div className="relative z-10 flex gap-4 sm:gap-5 lg:gap-4">
         <span className="flex size-12 shrink-0 items-center justify-center rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] text-[color:var(--pp-color-teal-accent)] shadow-[var(--pp-shadow-small-card)]">
           <ShieldCheck className="size-6" aria-hidden />
         </span>
@@ -263,7 +265,7 @@ export function TrustStrip() {
   ];
 
   return (
-    <section className="mx-auto mt-8 max-w-[var(--pp-content-width)] rounded-[24px] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] px-6 py-5 shadow-[var(--pp-shadow-small-card)]">
+    <section className="mx-auto mt-16 max-w-[var(--pp-content-width)] rounded-[24px] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] px-6 py-6 shadow-[var(--pp-shadow-small-card)] lg:mt-20">
       <div className="grid gap-5 md:grid-cols-4">
         {items.map(([title, description]) => (
           <div key={title} className="flex items-start gap-3">
@@ -362,7 +364,7 @@ export function ServicesMarketplacePage() {
           </div>
 
           <TrustStrip />
-          <footer className="mt-4 py-8 text-center text-sm font-bold text-[color:var(--pp-color-muted-text)]">
+          <footer className="mt-12 pb-16 pt-12 text-center text-sm font-bold text-[color:var(--pp-color-muted-text)]">
             <PetParkLogo className="mx-auto mb-3" width={126} height={38} />
             PetPark povezuje lokalnu zajednicu ljubimaca i provjerene pružatelje usluga.
           </footer>

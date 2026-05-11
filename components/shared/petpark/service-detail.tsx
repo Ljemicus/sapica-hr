@@ -83,13 +83,13 @@ function PhotoPlaceholder({ label, className }: { label: string; className?: str
 
 export function ImageGallery() {
   return (
-    <Card radius="28" className="grid h-[430px] gap-5 p-5 md:grid-cols-[1fr_200px]">
-      <PhotoPlaceholder label="topli dom i dvorište" className="h-full" />
-      <div className="grid gap-4">
-        <PhotoPlaceholder label="dvorište" />
-        <PhotoPlaceholder label="igra" />
-        <div className="relative overflow-hidden rounded-[22px] bg-[color:var(--pp-color-sage-surface)]">
-          <PhotoPlaceholder label="+14 fotografija" className="absolute inset-0 rounded-[22px]" />
+    <Card radius="28" className="grid h-auto gap-5 p-5 md:h-[430px] md:grid-cols-[1fr_200px]">
+      <PhotoPlaceholder label="topli dom i dvorište" className="h-[260px] md:h-full" />
+      <div className="grid grid-cols-3 gap-3 md:grid-cols-1 md:gap-4">
+        <PhotoPlaceholder label="dvorište" className="min-h-[92px]" />
+        <PhotoPlaceholder label="igra" className="min-h-[92px]" />
+        <div className="relative min-h-[92px] overflow-hidden rounded-[22px] bg-[color:var(--pp-color-sage-surface)]">
+          <PhotoPlaceholder label="+14" className="absolute inset-0 rounded-[22px]" />
           <div className="absolute inset-0 bg-[color:var(--pp-color-forest-text)]/8" />
         </div>
       </div>
@@ -99,7 +99,7 @@ export function ImageGallery() {
 
 export function IncludedFeatures() {
   return (
-    <Card radius="24" className="p-7">
+    <Card radius="24" className="p-8">
       <h2 className="text-2xl font-black tracking-[-0.03em]">Što je uključeno</h2>
       <div className="mt-5 grid gap-x-10 gap-y-4 sm:grid-cols-2">
         {features.map((feature) => (
@@ -117,7 +117,7 @@ export function IncludedFeatures() {
 
 export function ServiceDescription() {
   return (
-    <Card radius="24" className="grid gap-8 p-6 md:grid-cols-[1fr_0.88fr]">
+    <Card radius="24" className="grid gap-8 p-8 md:grid-cols-[1fr_0.88fr]">
       <div>
         <h2 className="text-2xl font-black tracking-[-0.03em]">Opis usluge</h2>
         <p className="mt-4 max-w-md text-base font-semibold leading-8 text-[color:var(--pp-color-muted-text)]">
@@ -145,7 +145,7 @@ function MiniCalendar() {
   const weekdays = ['PON', 'UTO', 'SRI', 'ČET', 'PET', 'SUB', 'NED'];
 
   return (
-    <div className="rounded-[20px] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-cream-surface)] p-4">
+    <div className="rounded-[20px] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-cream-surface)] p-5 lg:p-4">
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Lipanj 2024.</p>
         <CalendarDays className="size-5 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
@@ -176,8 +176,8 @@ function MiniCalendar() {
 
 export function BookingPanel() {
   return (
-    <Card radius="28" className="sticky top-24 p-7">
-      <div className="flex items-start justify-between gap-4">
+    <Card radius="28" className="sticky top-24 p-8 lg:p-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">{service.price}</p>
           <p className="mt-2 text-xs font-bold text-[color:var(--pp-color-muted-text)]">Minimalno 2 dana • Maksimalno 14 dana</p>
@@ -185,12 +185,17 @@ export function BookingPanel() {
         <Badge variant="orange">DOSTUPNO</Badge>
       </div>
 
-      <div className="mt-6 space-y-4">
-        <div className="rounded-[var(--pp-radius-control)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] px-4 py-3 shadow-[var(--pp-shadow-small-card)]">
+      <div className="mt-8 space-y-6 lg:space-y-5">
+        <div className="rounded-[var(--pp-radius-control)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] px-5 py-4 shadow-[var(--pp-shadow-small-card)] lg:px-4 lg:py-3">
           <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">Odaberi datume</p>
           <p className="mt-1 text-sm font-black text-[color:var(--pp-color-forest-text)]">12. lip - 17. lip</p>
         </div>
-        <MiniCalendar />
+        <div className="hidden sm:block">
+          <MiniCalendar />
+        </div>
+        <div className="rounded-[20px] bg-[color:var(--pp-color-cream-surface)] p-4 text-sm font-extrabold leading-6 text-[color:var(--pp-color-muted-text)] sm:hidden">
+          Kalendar je dostupan na većim ekranima. Odabrani termini su 12. lip - 17. lip.
+        </div>
         <div className="grid gap-1 text-sm">
           <span className="font-extrabold text-[color:var(--pp-color-muted-text)]">{service.range}</span>
           <button type="button" className="w-fit font-black text-[color:var(--pp-color-orange-primary)]">Promijeni datume</button>
@@ -198,16 +203,16 @@ export function BookingPanel() {
         <PetSelector />
       </div>
 
-      <div className="my-6 h-px bg-[color:var(--pp-color-warm-border)]" />
+      <div className="my-8 h-px bg-[color:var(--pp-color-warm-border)]" />
       <PriceSummary />
-      <Button className="mt-5 w-full" size="lg">Rezerviraj sada</Button>
+      <Button className="mt-6 w-full" size="lg">Rezerviraj sada</Button>
     </Card>
   );
 }
 
 export function PetSelector() {
   return (
-    <div className="flex items-center gap-3 rounded-[var(--pp-radius-control)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] px-4 py-3 shadow-[var(--pp-shadow-small-card)]">
+    <div className="flex items-center gap-3 rounded-[var(--pp-radius-control)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] px-4 py-4 shadow-[var(--pp-shadow-small-card)]">
       <span className="flex size-11 items-center justify-center rounded-full bg-[color:var(--pp-color-sage-surface)] text-[color:var(--pp-color-success)]">
         <PawPrint className="size-5" aria-hidden />
       </span>
@@ -221,7 +226,7 @@ export function PetSelector() {
 
 export function PriceSummary() {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-[18px] bg-[color:var(--pp-color-cream-surface)] px-5 py-3">
+    <div className="flex items-center justify-between gap-4 rounded-[18px] bg-[color:var(--pp-color-cream-surface)] px-5 py-4">
       <p className="text-lg font-black text-[color:var(--pp-color-forest-text)]">Ukupno</p>
       <p className="text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{service.total}</p>
     </div>
@@ -234,7 +239,7 @@ export function ProviderTrustCard() {
   return (
     <Card radius="28" className="p-7">
       <h2 className="text-2xl font-black tracking-[-0.03em]">Tvoj čuvar</h2>
-      <div className="mt-5 flex gap-5">
+      <div className="mt-6 flex flex-col gap-5 sm:flex-row lg:mt-5">
         <Avatar initials="AK" size="lg" className="size-24 text-2xl" />
         <div className="min-w-0">
           <p className="text-xl font-black tracking-[-0.02em]">Ana K.</p>
@@ -255,7 +260,7 @@ export function ProviderTrustCard() {
 
 export function ReviewsSection() {
   return (
-    <Card radius="24" className="p-6">
+    <Card radius="24" className="p-8">
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-2xl font-black tracking-[-0.03em]">Recenzije (28)</h2>
         <Button variant="secondary" size="sm">Pogledaj sve recenzije</Button>
@@ -275,7 +280,7 @@ export function ReviewsSection() {
 
 export function SimilarServices() {
   return (
-    <Card radius="24" className="p-6">
+    <Card radius="24" className="p-8">
       <h2 className="text-2xl font-black tracking-[-0.03em]">Slične usluge</h2>
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         {similar.map(([title, provider, price]) => (
@@ -343,10 +348,10 @@ export function ServiceDetailPage() {
               <ReviewsSection />
               <SimilarServices />
             </div>
-            <aside className="flex flex-col gap-7">
+            <aside className="mt-2 flex flex-col gap-8 lg:mt-5">
               <BookingPanel />
               <ProviderTrustCard />
-              <Card tone="sage" radius="24" className="p-5">
+              <Card tone="sage" radius="24" className="p-7 lg:p-5">
                 <div className="flex gap-3">
                   <ShieldCheck className="mt-1 size-6 shrink-0 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
                   <p className="text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
@@ -357,7 +362,7 @@ export function ServiceDetailPage() {
             </aside>
           </div>
 
-          <footer className="py-8 text-center text-sm font-bold text-[color:var(--pp-color-muted-text)]">
+          <footer className="pb-16 pt-14 text-center text-sm font-bold text-[color:var(--pp-color-muted-text)]">
             <PetParkLogo className="mx-auto mb-3" width={126} height={38} />
             PetPark povezuje lokalnu zajednicu ljubimaca i provjerene pružatelje usluga.
           </footer>
