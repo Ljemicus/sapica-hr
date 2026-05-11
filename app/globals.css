@@ -57,37 +57,127 @@
 
 /* ── PetPark Design Tokens ── */
 :root {
+  /* Figma source-of-truth tokens (WqVPwNJN5169UaLZgN1J8B / 15:61, 15:375) */
+  --pp-color-cream-background: #fff8ee;
+  --pp-color-card-surface: #ffffff;
+  --pp-color-cream-surface: #fffcf5;
+  --pp-color-forest-text: #073f35;
+  --pp-color-orange-primary: #f36b00;
+  --pp-color-teal-accent: #009b96;
+  --pp-color-sage-surface: #f1f6ee;
+  --pp-color-sage-surface-strong: #e7f0e4;
+  --pp-color-warm-border: #eadfcc;
+  --pp-color-muted-text: #60746f;
+  --pp-color-success: #2f8b57;
+  --pp-color-success-surface: #e7f0e4;
+  --pp-color-warning: #f36b00;
+  --pp-color-warning-surface: #fff0e4;
+  --pp-color-error: #c94b3f;
+  --pp-color-error-surface: #fff1ec;
+  --pp-color-info: #009b96;
+  --pp-color-info-surface: #e3f5f3;
+  --pp-shadow-soft-card: 0 18px 45px rgba(42, 31, 16, 0.08);
+  --pp-shadow-small-card: 0 8px 22px rgba(42, 31, 16, 0.06);
+  --pp-shadow-button-glow: 0 10px 22px rgba(243, 107, 0, 0.22);
+  --pp-radius-card-20: 20px;
+  --pp-radius-card-24: 24px;
+  --pp-radius-card-28: 28px;
+  --pp-radius-control: 14px;
+  --pp-content-width: 1240px;
+
   /* Backgrounds */
+  --pp-bg: #FBF4E8;
+  --pp-bg-soft: #FFF7ED;
   --pp-cream: #F5F4F0;
+  --pp-surface: #FFFFFF;
+  --pp-surface-warm: #FFFAF1;
+  --pp-surface-strong: #FFF7ED;
   --pp-warm-white: #FAF9F6;
+  --pp-green-soft: #E7F3EA;
+  --pp-mint: #DFF3E6;
+  --pp-orange-soft: #FFE6D1;
   --pp-grooming-bg: #F0F7F4;
   --pp-trainer-bg: #F5F0FA;
-  
+  --pp-sitter-bg: #E7F3EA;
+  --pp-community-bg: #FFF7ED;
+  --pp-lost-bg: #FFF1EC;
+  --pp-vet-bg: #ECFEFF;
+  --pp-adoption-bg: #FFF7ED;
+  --pp-breeder-bg: #F5F0FA;
+
   /* Text */
+  --pp-text: #163528;
   --pp-ink: #2D2D2D;
-  --pp-muted: #6B6B6B;
-  
+  --pp-muted: #5F6B63;
+  --pp-green-950: #0B2F22;
+  --pp-green-900: #123829;
+  --pp-green-700: #0F6B57;
+  --pp-green-100: #E7F3EA;
+
   /* Brand */
+  --pp-green: #0F6B57;
+  --pp-orange: #F97316;
+  --pp-orange-600: #F97316;
+  --pp-orange-500: #FB8A22;
+  --pp-orange-100: #FFE6D1;
   --pp-logo-teal: #14b8a6;
   --pp-logo-orange: #FFB347;
   --pp-logo-yellow: #F5E6A3;
-  
+
   /* Accents */
   --pp-grooming-accent: #5A7D5A;
   --pp-trainer-accent: #7D5A7D;
-  --pp-forest: #4A6741;
-  --pp-forest-dark: #3A5232;
-  
+  --pp-sitter-accent: #0F6B57;
+  --pp-community-accent: #F97316;
+  --pp-lost-accent: #DC5A3D;
+  --pp-vet-accent: #0F766E;
+  --pp-adoption-accent: #F97316;
+  --pp-breeder-accent: #7D5A7D;
+  --pp-forest: #123829;
+  --pp-forest-dark: #0B2F22;
+  --pp-danger: #DC5A3D;
+  --pp-success: #3B8A5A;
+  --pp-info: #0F766E;
+
   /* UI */
-  --pp-line: #E8E6E0;
-  --pp-shadow-card: 0 4px 24px rgba(45, 45, 45, 0.08);
-  
+  --pp-border: #EADFCC;
+  --pp-line: #EADFCC;
+  --pp-card-border: 1px solid var(--pp-border);
+  --pp-shadow-sm: 0 4px 14px rgba(18, 56, 41, 0.06);
+  --pp-shadow-md: 0 10px 28px rgba(18, 56, 41, 0.10);
+  --pp-shadow-lg: 0 22px 60px rgba(18, 56, 41, 0.14);
+  --pp-shadow-card: 0 10px 28px rgba(18, 56, 41, 0.10);
+  --pp-shadow-orange: 0 14px 32px rgba(249, 115, 22, 0.26);
+
+  /* Typography */
+  --pp-font-display: var(--font-fraunces), var(--font-lora), Georgia, serif;
+  --pp-font-sans: var(--font-inter), var(--font-manrope), system-ui, sans-serif;
+  --pp-text-hero: clamp(48px, 5.2vw, 82px);
+  --pp-text-page: clamp(36px, 4vw, 64px);
+  --pp-text-section: clamp(24px, 2.2vw, 36px);
+  --pp-text-card: 20px;
+  --pp-text-body: 16px;
+  --pp-text-meta: 13px;
+
+  /* Spacing/layout */
+  --pp-container: 1360px;
+  --pp-container-narrow: 1120px;
+  --pp-header-height: 76px;
+  --pp-mobile-header-height: 64px;
+  --pp-hero-orbit-size: clamp(360px, 40vw, 600px);
+
   /* Radius */
+  --pp-radius-xs: 8px;
+  --pp-radius-sm: 12px;
+  --pp-radius-md: 16px;
+  --pp-radius-lg: 22px;
+  --pp-radius-xl: 28px;
+  --pp-radius-card: 22px;
   --pp-radius-16: 16px;
   --pp-radius-20: 20px;
   --pp-radius-28: 28px;
   --pp-radius-32: 32px;
-  --pp-radius-pill: 9999px;
+  --pp-radius-pill: 999px;
 }
 
 :root {
@@ -1212,4 +1302,72 @@ textarea:focus {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.2em;
+}
+
+/* Route-scoped chrome override for Figma-matched PetPark marketplace redesign. */
+body:has([data-petpark-route^="usluge"]) section {
+  display: block;
+  justify-content: normal;
+}
+
+body:has([data-petpark-route^="usluge"]) > header,
+body:has([data-petpark-route^="usluge"]) > div.pb-20,
+body:has([data-petpark-route^="usluge"]) nav[aria-label="Bottom navigation"],
+body:has([data-petpark-route^="usluge"]) [data-testid="chat-widget"],
+body:has([data-petpark-route^="usluge"]) [data-testid="cookie-consent-banner"] {
+  display: none !important;
+}
+
+body:has([data-petpark-route^="usluge"]) #main-content {
+  width: 100%;
+}
+
+body:has([data-petpark-route^="usluge"]) [data-petpark-route^="usluge"] header > div,
+body:has([data-petpark-route^="usluge"]) [data-petpark-route^="usluge"] > section > div {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+body:has([data-petpark-route^="usluge"]) [data-petpark-route^="usluge"] > section {
+  padding-left: 80px !important;
+  padding-right: 80px !important;
+}
+
+body:has([data-petpark-route^="usluge"]) [data-petpark-route="usluge-detail"] > section {
+  padding-top: 33px !important;
+}
+
+body:has([data-petpark-route^="usluge"]) form[aria-label="Pretraga usluga"] {
+  padding: 16px !important;
+}
+
+body:has([data-petpark-route^="usluge"]) form[aria-label="Pretraga usluga"] input,
+body:has([data-petpark-route^="usluge"]) form[aria-label="Pretraga usluga"] select,
+body:has([data-petpark-route^="usluge"]) form[aria-label="Pretraga usluga"] button {
+  min-height: 54px !important;
+}
+
+body:has([data-petpark-route^="usluge"]) [data-petpark-route="usluge"] article {
+  min-height: 158px !important;
+  padding: 18px !important;
+}
+
+body:has([data-petpark-route^="usluge"]) [data-petpark-route="usluge"] article > div:first-child {
+  min-height: 122px !important;
+}
+
+/* Keep Figma screenshot baselines deterministic: PageTransition's initial
+   opacity/y-offset can otherwise freeze under Playwright screenshots and
+   increase full-page capture height by 20px on route load. */
+body:has([data-petpark-route^="usluge"]) #main-content > div {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+body:has([data-petpark-route^="usluge"]) button.fixed.bottom-20.right-4,
+body:has([data-petpark-route^="usluge"]) div.fixed.bottom-0.left-0.right-0.z-50,
+body:has([data-petpark-route^="usluge"]) .nextjs-toast {
+  display: none !important;
 }

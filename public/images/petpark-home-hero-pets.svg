@@ -1,0 +1,49 @@
+<svg width="420" height="320" viewBox="0 0 420 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Refined dog and cat portrait for PetPark</title>
+  <desc id="desc">A clean non-emoji vector illustration of a dog and cat used as the PetPark homepage service circle center.</desc>
+  <defs>
+    <linearGradient id="cream" x1="54" y1="34" x2="364" y2="286" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF7ED"/>
+      <stop offset="0.52" stop-color="#F7FFF8"/>
+      <stop offset="1" stop-color="#FFE6D1"/>
+    </linearGradient>
+    <linearGradient id="dog" x1="88" y1="92" x2="220" y2="258" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D89152"/>
+      <stop offset="1" stop-color="#A76033"/>
+    </linearGradient>
+    <linearGradient id="cat" x1="205" y1="80" x2="330" y2="253" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#BFE4CB"/>
+      <stop offset="1" stop-color="#79B792"/>
+    </linearGradient>
+    <filter id="soft" x="34" y="26" width="356" height="274" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#123829" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#soft)">
+    <path d="M62 166C62 93.0984 121.098 34 194 34H226C298.902 34 358 93.0984 358 166C358 238.902 298.902 298 226 298H194C121.098 298 62 238.902 62 166Z" fill="url(#cream)"/>
+  </g>
+  <path d="M80 248C128 277 286 280 344 238" stroke="#0F6B57" stroke-opacity="0.12" stroke-width="18" stroke-linecap="round"/>
+
+  <path d="M102 126C85 105 65 111 55 132C74 133 88 143 96 161" fill="#A76033"/>
+  <path d="M177 126C194 105 214 111 224 132C205 133 191 143 183 161" fill="#A76033"/>
+  <path d="M73 175C73 125 102 91 140 91C178 91 207 125 207 175V195C207 232 177 262 140 262C103 262 73 232 73 195V175Z" fill="url(#dog)"/>
+  <path d="M100 178C100 147 116 124 140 124C164 124 180 147 180 178V193C180 215 162 233 140 233C118 233 100 215 100 193V178Z" fill="#FFE6D1" fill-opacity="0.92"/>
+  <path d="M118 171C124 165 131 165 136 171" stroke="#123829" stroke-width="6" stroke-linecap="round"/>
+  <path d="M145 171C151 165 158 165 163 171" stroke="#123829" stroke-width="6" stroke-linecap="round"/>
+  <path d="M133 190C133 186 136 183 140 183C144 183 147 186 147 190C147 194 144 197 140 197C136 197 133 194 133 190Z" fill="#123829"/>
+  <path d="M129 209C136 215 145 215 152 209" stroke="#123829" stroke-width="6" stroke-linecap="round"/>
+
+  <path d="M227 127L209 76L256 103" fill="#79B792"/>
+  <path d="M314 127L333 76L285 103" fill="#79B792"/>
+  <path d="M217 174C217 126 239 92 271 92C303 92 325 126 325 174V198C325 232 301 259 271 259C241 259 217 232 217 198V174Z" fill="url(#cat)"/>
+  <path d="M239 174C239 146 251 126 271 126C291 126 303 146 303 174V193C303 213 289 230 271 230C253 230 239 213 239 193V174Z" fill="#F7FFF8" fill-opacity="0.95"/>
+  <path d="M250 169C256 163 263 163 268 169" stroke="#123829" stroke-width="6" stroke-linecap="round"/>
+  <path d="M274 169C280 163 287 163 292 169" stroke="#123829" stroke-width="6" stroke-linecap="round"/>
+  <path d="M265 190C265 187 268 184 271 184C274 184 277 187 277 190C277 193 274 196 271 196C268 196 265 193 265 190Z" fill="#123829"/>
+  <path d="M260 209C267 214 275 214 282 209" stroke="#123829" stroke-width="5.5" stroke-linecap="round"/>
+
+  <circle cx="80" cy="78" r="7" fill="#F97316" fill-opacity="0.24"/>
+  <circle cx="345" cy="112" r="10" fill="#0F6B57" fill-opacity="0.16"/>
+  <circle cx="344" cy="229" r="6" fill="#F97316" fill-opacity="0.20"/>
+</svg>

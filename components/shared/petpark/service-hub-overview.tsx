@@ -106,14 +106,6 @@ const upcomingServices: HubCard[] = [
     statusLabel: 'U pripremi',
     icon: '☀️',
   },
-  {
-    title: 'Shop',
-    description: 'Odabrani proizvodi i oprema planiraju se kao koristan dodatak svakodnevnoj brizi.',
-    href: '/shop',
-    category: 'shop',
-    statusLabel: 'U pripremi',
-    icon: '🛍️',
-  },
 ];
 
 const quickLinks = [
