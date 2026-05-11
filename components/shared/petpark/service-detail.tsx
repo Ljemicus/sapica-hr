@@ -303,7 +303,7 @@ export function ServiceDetailPage() {
           { href: '/blog', label: 'Blog' },
         ]}
         actions={(
-          <div className="flex items-center gap-5">
+          <div className="hidden items-center gap-5 lg:flex">
             <Button variant="secondary" size="md" className="min-w-[130px]">Prijava</Button>
             <Button size="md" className="min-w-[190px]">+ Objavi uslugu</Button>
           </div>
@@ -312,7 +312,7 @@ export function ServiceDetailPage() {
       <section className="relative mx-auto max-w-[1440px] px-4 pb-10 pt-8 sm:px-6 lg:px-10">
         <LeafDecoration className="-left-24 top-[940px] size-[221px] opacity-55" />
         <LeafDecoration className="right-[-58px] top-[118px] size-[153px] opacity-55" />
-        <PawDecoration className="right-[17%] top-[190px] size-[59px] rotate-12 opacity-70" />
+        <PawDecoration className="right-[17%] top-[190px] hidden size-[59px] rotate-12 opacity-70 sm:block" />
 
         <div className="mx-auto max-w-[var(--pp-content-width)]">
           <Breadcrumb />

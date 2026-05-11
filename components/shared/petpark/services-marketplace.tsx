@@ -135,7 +135,7 @@ export function SearchBar() {
         <label className="relative space-y-1">
           <span className="sr-only">Ključna riječ</span>
           <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
-          <Input name="pojam" placeholder="Pretraži usluge..." className="pl-14 shadow-none" />
+          <Input name="pojam" placeholder="Pretraži usluge..." className="shadow-none" style={{ paddingLeft: 56 }} />
         </label>
         <Button type="submit" className="h-12">Pretraži usluge</Button>
       </div>
@@ -307,7 +307,7 @@ export function ServicesMarketplacePage() {
           { href: '/blog', label: 'Blog' },
         ]}
         actions={(
-          <div className="flex items-center gap-5">
+          <div className="hidden items-center gap-5 lg:flex">
             <Button variant="secondary" size="md" className="min-w-[130px]">Prijava</Button>
             <Button size="md" className="min-w-[190px]">+ Objavi uslugu</Button>
           </div>
@@ -316,8 +316,8 @@ export function ServicesMarketplacePage() {
       <section className="relative mx-auto max-w-[1440px] px-4 pb-10 pt-8 sm:px-6 lg:px-10">
         <LeafDecoration className="-left-20 top-[820px] size-[230px] opacity-55" />
         <LeafDecoration className="right-[-60px] top-10 size-[170px] opacity-55" />
-        <PawDecoration className="left-[45%] top-12 size-[76px] rotate-12 opacity-80" />
-        <PawDecoration className="left-[38%] top-36 size-[59px] -rotate-12 opacity-60" />
+        <PawDecoration className="left-[45%] top-12 hidden size-[76px] rotate-12 opacity-80 sm:block" />
+        <PawDecoration className="left-[38%] top-36 hidden size-[59px] -rotate-12 opacity-60 sm:block" />
 
         <div className="mx-auto max-w-[var(--pp-content-width)]">
           <div className="grid items-center gap-10 lg:grid-cols-[560px_1fr]">

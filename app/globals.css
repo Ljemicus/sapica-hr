@@ -1313,9 +1313,24 @@ body:has([data-petpark-route^="usluge"]) section {
 body:has([data-petpark-route^="usluge"]) > header,
 body:has([data-petpark-route^="usluge"]) > div.pb-20,
 body:has([data-petpark-route^="usluge"]) nav[aria-label="Bottom navigation"],
+body:has([data-petpark-route^="usluge"]) nav.fixed,
+body:has([data-petpark-route^="usluge"]) [class*="fixed"][class*="bottom-0"],
+body:has([data-petpark-route^="usluge"]) [class*="fixed"][class*="bottom-20"],
 body:has([data-petpark-route^="usluge"]) [data-testid="chat-widget"],
 body:has([data-petpark-route^="usluge"]) [data-testid="cookie-consent-banner"] {
   display: none !important;
+}
+
+@media (max-width: 767px) {
+  body:has([data-petpark-route^="usluge"]) [data-petpark-route^="usluge"] > section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  body:has([data-petpark-route^="usluge"]) [data-petpark-route^="usluge"] [aria-hidden="true"].absolute,
+  body:has([data-petpark-route^="usluge"]) [data-petpark-route^="usluge"] svg.absolute {
+    pointer-events: none;
+  }
 }
 
 body:has([data-petpark-route^="usluge"]) #main-content {
