@@ -1,38 +1,43 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
+import { useCallback, useMemo, useState } from 'react';
 import {
-  Filter, MapIcon, Grid, LayoutList, SlidersHorizontal, X, MapPin, Star,
-  Clock, Shield, Award, ArrowRight, PawPrint, ChevronRight,
+  ArrowRight,
+  Bell,
+  BookOpen,
+  CalendarDays,
+  CheckCircle2,
+  ChevronRight,
+  Dog,
+  Filter,
+  HeartHandshake,
+  MapPin,
+  MessageCircle,
+  Newspaper,
+  PawPrint,
+  Search,
+  ShieldCheck,
+  SlidersHorizontal,
+  Star,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { EmptyState } from '@/components/shared/empty-state';
-import { SERVICE_LABELS, GROOMING_SERVICE_LABELS, TRAINING_TYPE_LABELS, CITIES, type ServiceType } from '@/lib/types';
-import { useLanguage } from '@/lib/i18n';
-import type { UnifiedProvider, ProviderCategory } from './types';
-import { CATEGORY_LABELS, CATEGORY_EMOJI, CATEGORY_BADGE_STYLES } from './types';
-
-const MapView = dynamic(() => import('./map-view'), {
-  ssr: false,
-  loading: () => (
-    <div className="h-[600px] rounded-2xl bg-accent animate-pulse flex items-center justify-center">
-      <div className="text-center text-muted-foreground">
-        <MapIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
-        <p className="text-sm">Loading map...</p>
-      </div>
-    </div>
-  ),
-});
+import {
+  AppHeader,
+  Avatar,
+  Badge,
+  Button,
+  ButtonLink,
+  Card,
+  Input,
+  LeafDecoration,
+  PawDecoration,
+  Rating,
+  Select,
+} from '@/components/shared/petpark/design-foundation';
+import { CITIES, GROOMING_SERVICE_LABELS, SERVICE_LABELS, TRAINING_TYPE_LABELS, type ServiceType } from '@/lib/types';
+import { cn } from '@/lib/utils';
+import type { ProviderCategory, UnifiedProvider } from './types';
 
 interface SearchContentProps {
   providers: UnifiedProvider[];
@@ -47,14 +52,97 @@ interface SearchContentProps {
   };
   showEditorialHero?: boolean;
   resultsAnchorId?: string;
+  forcedLanguage?: 'hr' | 'en';
 }
 
-const CATEGORY_TABS: { key: ProviderCategory | 'all'; emoji: string }[] = [
-  { key: 'all', emoji: '🔍' },
-  { key: 'sitter', emoji: '🐾' },
-  { key: 'grooming', emoji: '✂️' },
-  { key: 'dresura', emoji: '🎓' },
+type SearchTab = 'sve' | 'usluge' | 'zajednica' | 'blog' | 'ljubimci' | 'izgubljeni';
+
+const navItems = [
+  { href: '/usluge', label: 'Usluge' },
+  { href: '/zajednica', label: 'Zajednica' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/izgubljeni', label: 'Izgubljeni' },
+  { href: '/udomljavanje', label: 'Udomljavanje' },
 ];
+
+const tabs: Array<{ key: SearchTab; label: string; icon: typeof Search }> = [
+  { key: 'sve', label: 'Sve', icon: Search },
+  { key: 'usluge', label: 'Usluge', icon: PawPrint },
+  { key: 'zajednica', label: 'Zajednica', icon: MessageCircle },
+  { key: 'blog', label: 'Blog', icon: Newspaper },
+  { key: 'ljubimci', label: 'Ljubimci', icon: Dog },
+  { key: 'izgubljeni', label: 'Izgubljeni', icon: Bell },
+];
+
+const articles = [
+  {
+    title: 'Kako pripremiti psa za prvo čuvanje',
+    href: '/blog/prvo-cuvanje-psa',
+    category: 'Blog',
+    description: 'Kratka lista stvari koje olakšavaju prvi susret sa sitterom.',
+    meta: '5 min čitanja',
+  },
+  {
+    title: 'Pet Passport: što treba biti upisano',
+    href: '/blog/pet-passport-vodic',
+    category: 'Vodič',
+    description: 'Cijepljenja, kontakti, alergije i dokumenti na jednom mjestu.',
+    meta: 'Ažurirano danas',
+  },
+];
+
+const communityPosts = [
+  {
+    title: 'Preporuka za grooming u Rijeci?',
+    href: '/zajednica',
+    description: 'Vlasnici dijele iskustva i cijene za manje pasmine.',
+    meta: '12 odgovora',
+  },
+  {
+    title: 'Socijalizacija šteneta nakon cijepljenja',
+    href: '/forum',
+    description: 'Rasprava o parkovima, grupnim treninzima i sigurnim susretima.',
+    meta: 'Aktivno danas',
+  },
+];
+
+const petResults = [
+  {
+    title: 'Luna · Lagotto romagnolo',
+    href: '/pet-passport',
+    description: 'Pet Passport profil s cijepljenjem i napomenama za čuvanje.',
+    meta: 'Passport spreman',
+  },
+  {
+    title: 'Milo · Europska kratkodlaka',
+    href: '/pet-passport',
+    description: 'Osnovni karton, kontakt vlasnika i veterinarske napomene.',
+    meta: 'Treba dopunu',
+  },
+];
+
+const lostAndAdoption = [
+  {
+    title: 'Nestao pas u Trsatu',
+    href: '/izgubljeni',
+    description: 'Smeđi pas srednje veličine, zadnji put viđen blizu parka.',
+    meta: 'Hitno · Rijeka',
+    tone: 'orange' as const,
+  },
+  {
+    title: 'Mlada mačka traži dom',
+    href: '/udomljavanje',
+    description: 'Socijalizirana, cijepljena i spremna za udomljavanje.',
+    meta: 'Udomljavanje · Zagreb',
+    tone: 'teal' as const,
+  },
+];
+
+function activeTabFromCategory(category?: string): SearchTab {
+  if (category === 'zajednica' || category === 'blog' || category === 'ljubimci' || category === 'izgubljeni') return category;
+  if (category === 'usluge' || category === 'sitter' || category === 'grooming' || category === 'dresura') return 'usluge';
+  return 'sve';
+}
 
 function getServiceLabel(service: string, category?: ProviderCategory): string {
   if (category === 'grooming') return GROOMING_SERVICE_LABELS[service as keyof typeof GROOMING_SERVICE_LABELS] || service;
@@ -62,781 +150,449 @@ function getServiceLabel(service: string, category?: ProviderCategory): string {
   return SERVICE_LABELS[service as ServiceType] || service;
 }
 
-function getTranslatedServiceLabel(service: string, category: ProviderCategory | undefined, language: 'hr' | 'en'): string {
-  if (language !== 'en') return getServiceLabel(service, category);
-
-  const sitterLabels: Record<string, string> = {
-    boarding: 'Boarding',
-    walking: 'Dog walking',
-    'house-sitting': 'House sitting',
-    'drop-in': 'Drop-in visit',
-    daycare: 'Day care',
-  };
-
-  const groomingLabels: Record<string, string> = {
-    sisanje: 'Haircut',
-    kupanje: 'Bath',
-    trimanje: 'Hand stripping',
-    nokti: 'Nail trim',
-    cetkanje: 'Brushing',
-  };
-
-  const trainingLabels: Record<string, string> = {
-    osnovna: 'Basic obedience',
-    napredna: 'Advanced training',
-    agility: 'Agility',
-    ponasanje: 'Behavior training',
-    stenci: 'Puppy training',
-  };
-
-  if (category === 'grooming') return groomingLabels[service] || service;
-  if (category === 'dresura') return trainingLabels[service] || service;
-  return sitterLabels[service] || service;
+function initials(name: string) {
+  return name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase();
 }
 
-interface SearchFilterPanelProps {
-  city: string;
-  service: string;
-  minPrice: string;
-  maxPrice: string;
-  minRating: string;
-  activeFilterCount: number;
-  category: ProviderCategory | 'all';
-  onCityChange: (v: string) => void;
-  onServiceChange: (v: string) => void;
-  onMinPriceChange: (v: string) => void;
-  onMaxPriceChange: (v: string) => void;
-  onMinRatingChange: (v: string) => void;
-  onApply: () => void;
-  onClear: () => void;
+function categoryLabel(category: ProviderCategory) {
+  if (category === 'grooming') return 'Grooming';
+  if (category === 'dresura') return 'Školovanje pasa';
+  return 'Sitter';
 }
 
-function SearchFilterPanel({
-  city, service, minPrice, maxPrice, minRating, activeFilterCount, category,
-  onCityChange, onServiceChange, onMinPriceChange, onMaxPriceChange, onMinRatingChange,
-  onApply, onClear,
-}: SearchFilterPanelProps) {
-  const { language } = useLanguage();
-  const copy = language === 'en'
-    ? {
-        city: 'City',
-        chooseCity: 'All cities',
-        serviceType: 'Service type',
-        clearSelection: 'Clear selection',
-        priceRange: 'Price range (€)',
-        minPlaceholder: 'Min',
-        maxPlaceholder: 'Max',
-        minRating: 'Minimum rating',
-        noMinRating: 'Any rating',
-        showResults: 'Show results',
-      }
-    : {
-        city: 'Grad',
-        chooseCity: 'Svi gradovi',
-        serviceType: 'Vrsta usluge',
-        clearSelection: 'Poništi odabir',
-        priceRange: 'Raspon cijena (€)',
-        minPlaceholder: 'Min',
-        maxPlaceholder: 'Max',
-        minRating: 'Minimalna ocjena',
-        noMinRating: 'Bilo koja',
-        showResults: 'Prikaži rezultate',
-      };
-
-  const serviceOptions = category === 'sitter'
-    ? Object.entries(SERVICE_LABELS) as [string, string][]
-    : category === 'grooming'
-    ? Object.entries(GROOMING_SERVICE_LABELS) as [string, string][]
-    : category === 'dresura'
-    ? Object.entries(TRAINING_TYPE_LABELS) as [string, string][]
-    : null;
-
+function FilterChip({ children, active = false }: { children: React.ReactNode; active?: boolean }) {
   return (
-    <div className="space-y-7">
-      <div>
-        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{copy.city}</Label>
-        <select
-          value={city}
-          onChange={(e) => onCityChange(e.target.value)}
-          className="premium-select"
-        >
-          <option value="">{copy.chooseCity}</option>
-          {CITIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-      </div>
-
-      {serviceOptions && (
-        <div>
-          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{copy.serviceType}</Label>
-          <div className="space-y-1">
-            {serviceOptions.map(([key]) => (
-              <label key={key} className="premium-radio-option group">
-                <input
-                  type="radio"
-                  name="service"
-                  value={key}
-                  checked={service === key}
-                  onChange={(e) => onServiceChange(e.target.value)}
-                  className="accent-orange-500 w-4 h-4"
-                />
-                <span className="text-sm group-hover:text-foreground transition-colors">
-                  {getTranslatedServiceLabel(key, category === 'all' ? undefined : category, language)}
-                </span>
-              </label>
-            ))}
-            {service && (
-              <button onClick={() => onServiceChange('')} className="text-xs text-warm-orange hover:underline mt-2 pl-3">
-                {copy.clearSelection}
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {(category === 'all' || category === 'sitter') && (
-        <div>
-          <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{copy.priceRange}</Label>
-          <div className="flex gap-3 items-center">
-            <Input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              placeholder={copy.minPlaceholder}
-              value={minPrice}
-              onChange={(e) => onMinPriceChange(e.target.value.replace(/[^0-9]/g, ''))}
-              className="w-full rounded-xl border-border/60 focus:border-orange-300"
-            />
-            <span className="text-muted-foreground text-sm">—</span>
-            <Input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              placeholder={copy.maxPlaceholder}
-              value={maxPrice}
-              onChange={(e) => onMaxPriceChange(e.target.value.replace(/[^0-9]/g, ''))}
-              className="w-full rounded-xl border-border/60 focus:border-orange-300"
-            />
-          </div>
-        </div>
-      )}
-
-      <div>
-        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 block">{copy.minRating}</Label>
-        <select
-          value={minRating}
-          onChange={(e) => onMinRatingChange(e.target.value)}
-          className="premium-select"
-        >
-          <option value="">{copy.noMinRating}</option>
-          <option value="4.5">4.5+</option>
-          <option value="4">4.0+</option>
-          <option value="3.5">3.5+</option>
-          <option value="3">3.0+</option>
-        </select>
-      </div>
-
-      <div className="pt-2">
-        <Button onClick={onApply} className="w-full bg-orange-500 hover:bg-orange-600 btn-hover rounded-xl h-11 font-semibold">
-          {copy.showResults}
-        </Button>
-        {activeFilterCount > 0 && (
-          <button onClick={onClear} className="w-full text-center text-xs text-muted-foreground hover:text-warm-orange mt-3 transition-colors">
-            {language === 'en' ? 'Clear all filters' : 'Očisti sve filtere'}
-          </button>
-        )}
-      </div>
-    </div>
+    <span className={cn(
+      'inline-flex items-center rounded-full border px-3 py-2 text-xs font-black',
+      active
+        ? 'border-[color:var(--pp-color-orange-primary)] bg-[color:var(--pp-color-warning-surface)] text-[color:var(--pp-color-orange-primary)]'
+        : 'border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] text-[color:var(--pp-color-muted-text)]',
+    )}>
+      {children}
+    </span>
   );
 }
 
-const gradients = [
-  'from-orange-400 to-amber-300',
-  'from-blue-400 to-cyan-300',
-  'from-purple-400 to-pink-300',
-  'from-green-400 to-emerald-300',
-  'from-rose-400 to-orange-300',
-  'from-teal-400 to-cyan-300',
-];
-
-function ProviderCard({ provider }: { provider: UnifiedProvider }) {
-  const { language } = useLanguage();
-  const gradientIndex = provider.name.charCodeAt(0) % gradients.length;
-  const copy = language === 'en'
-    ? {
-        from: 'from',
-        verified: 'Checked profile',
-        topPick: 'Highlighted',
-        certified: 'Certificate listed',
-        trusted: 'Profile info listed',
-        viewProfile: 'View profile',
-        categoryLabels: {
-          sitter: 'Sitters',
-          grooming: 'Grooming',
-          dresura: 'Dog training',
-        } as Record<ProviderCategory, string>,
-      }
-    : {
-        from: 'već od',
-        verified: 'Profil provjeren',
-        topPick: 'Istaknuto',
-        certified: 'Certifikat naveden',
-        trusted: 'Podaci profila navedeni',
-        viewProfile: 'Pogledaj profil',
-        categoryLabels: CATEGORY_LABELS,
-      };
-
+function FilterPanel({
+  city,
+  minPrice,
+  maxPrice,
+  minRating,
+  verifiedOnly,
+  date,
+  onCityChange,
+  onMinPriceChange,
+  onMaxPriceChange,
+  onMinRatingChange,
+  onVerifiedChange,
+  onDateChange,
+  onApply,
+  onClear,
+}: {
+  city: string;
+  minPrice: string;
+  maxPrice: string;
+  minRating: string;
+  verifiedOnly: boolean;
+  date: string;
+  onCityChange: (value: string) => void;
+  onMinPriceChange: (value: string) => void;
+  onMaxPriceChange: (value: string) => void;
+  onMinRatingChange: (value: string) => void;
+  onVerifiedChange: (value: boolean) => void;
+  onDateChange: (value: string) => void;
+  onApply: () => void;
+  onClear: () => void;
+}) {
   return (
-    <Link href={provider.profileUrl}>
-      <article className="community-section-card group overflow-hidden cursor-pointer">
-        {/* Card header — gradient with avatar */}
-        <div className={`relative h-48 bg-gradient-to-br ${gradients[gradientIndex]} flex items-center justify-center overflow-hidden`}>
-          <div className="absolute inset-0 paw-pattern opacity-[0.07]" />
-          <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-500" />
+    <Card radius="28" className="p-5">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-[color:var(--pp-color-muted-text)]">
+          <Filter className="size-4" aria-hidden /> Filteri
+        </h2>
+        <button type="button" onClick={onClear} className="text-xs font-black text-[color:var(--pp-color-orange-primary)] hover:underline">
+          Očisti
+        </button>
+      </div>
 
-          {/* Avatar */}
-          <Avatar className="h-24 w-24 border-4 border-white shadow-xl group-hover:scale-105 transition-transform duration-500">
-            <AvatarImage src={provider.avatarUrl || ''} alt={provider.name} />
-            <AvatarFallback className="bg-white text-gray-700 text-2xl font-bold">
-              {provider.name.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+      <div className="mt-5 space-y-5">
+        <label className="space-y-2 block">
+          <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Kategorija</span>
+          <Select defaultValue="sve" disabled>
+            <option value="sve">Sve kategorije</option>
+          </Select>
+        </label>
 
-          {/* Category badge — top left */}
-          <div className="absolute top-4 left-4">
-            <span className={`inline-flex items-center gap-1 text-xs font-semibold rounded-full px-3 py-1.5 shadow-sm border ${CATEGORY_BADGE_STYLES[provider.category]}`}>
-              {CATEGORY_EMOJI[provider.category]} {copy.categoryLabels[provider.category]}
-            </span>
-          </div>
+        <label className="space-y-2 block">
+          <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Lokacija</span>
+          <Select value={city} onChange={(event) => onCityChange(event.target.value)}>
+            <option value="">Svi gradovi</option>
+            {CITIES.map((item) => <option key={item} value={item}>{item}</option>)}
+          </Select>
+        </label>
 
-          {/* Trust badges — top right */}
-          <div className="absolute top-4 right-4 flex gap-1.5">
-            {provider.verified && (
-              <span className="inline-flex items-center bg-white/90 text-blue-600 text-xs font-medium shadow-sm rounded-full px-2.5 py-1">
-                <Shield className="h-3 w-3 mr-1" />
-                {copy.verified}
-              </span>
-            )}
-            {provider.superhost && (
-              <span className="inline-flex items-center bg-white/90 text-amber-600 text-xs font-semibold shadow-sm rounded-full px-2.5 py-1">
-                <Award className="h-3 w-3 mr-1" />
-                {copy.topPick}
-              </span>
-            )}
-            {provider.certified && !provider.superhost && (
-              <span className="inline-flex items-center bg-white/90 text-amber-600 text-xs font-semibold shadow-sm rounded-full px-2.5 py-1">
-                <Award className="h-3 w-3 mr-1" />
-                {copy.certified}
-              </span>
-            )}
-          </div>
-
-          {/* Bottom info — city + price */}
-          <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between pointer-events-none">
-            <span className="text-white/90 text-xs font-medium drop-shadow-sm flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              {provider.city}
-            </span>
-            {provider.lowestPrice != null && (
-              <span className="rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-orange-600 shadow-sm">
-                {copy.from} {provider.lowestPrice}&euro;
-              </span>
-            )}
+        <div className="space-y-2">
+          <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Raspon cijene</span>
+          <div className="grid grid-cols-2 gap-2">
+            <Input inputMode="numeric" placeholder="Od €" value={minPrice} onChange={(event) => onMinPriceChange(event.target.value.replace(/[^0-9]/g, ''))} />
+            <Input inputMode="numeric" placeholder="Do €" value={maxPrice} onChange={(event) => onMaxPriceChange(event.target.value.replace(/[^0-9]/g, ''))} />
           </div>
         </div>
 
-        {/* Card body */}
-        <div className="p-6 space-y-4">
-          {/* Name + Rating */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="font-bold text-lg font-[var(--font-heading)] group-hover:text-warm-orange transition-colors">
-                {provider.name}
-              </h3>
-              <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/30 px-2.5 py-1 rounded-full">
-                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                <span className="text-sm font-bold text-amber-700 dark:text-amber-400">{provider.rating.toFixed(1)}</span>
-                <span className="text-xs text-amber-600/60 dark:text-amber-500/60">({provider.reviews})</span>
-              </div>
+        <label className="space-y-2 block">
+          <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Ocjena</span>
+          <Select value={minRating} onChange={(event) => onMinRatingChange(event.target.value)}>
+            <option value="">Bilo koja ocjena</option>
+            <option value="4.5">4.5+</option>
+            <option value="4">4.0+</option>
+            <option value="3.5">3.5+</option>
+          </Select>
+        </label>
+
+        <label className="space-y-2 block">
+          <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Datum</span>
+          <Input type="date" value={date} onChange={(event) => onDateChange(event.target.value)} />
+        </label>
+
+        <label className="flex items-center justify-between gap-4 rounded-[var(--pp-radius-control)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-cream-surface)] p-4">
+          <span>
+            <span className="block text-sm font-black text-[color:var(--pp-color-forest-text)]">Samo verificirani</span>
+            <span className="mt-1 block text-xs font-semibold text-[color:var(--pp-color-muted-text)]">Prikaži provjerene profile.</span>
+          </span>
+          <input type="checkbox" checked={verifiedOnly} onChange={(event) => onVerifiedChange(event.target.checked)} className="size-5 accent-[color:var(--pp-color-orange-primary)]" />
+        </label>
+
+        <Button onClick={onApply} className="w-full"><SlidersHorizontal className="size-4" /> Primijeni filtere</Button>
+      </div>
+    </Card>
+  );
+}
+
+function ServiceResultCard({ provider }: { provider: UnifiedProvider }) {
+  return (
+    <Link href={provider.profileUrl} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2">
+      <Card radius="28" interactive className="h-full overflow-hidden p-5">
+        <div className="flex items-start gap-4">
+          <Avatar src={provider.avatarUrl || undefined} initials={initials(provider.name)} alt={provider.name} size="lg" />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="orange">{categoryLabel(provider.category)}</Badge>
+              {provider.verified ? <Badge variant="success"><ShieldCheck className="size-3" /> Verificirano</Badge> : null}
             </div>
-          </div>
-
-          {/* Bio */}
-          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
-            {provider.bio}
-          </p>
-
-          {/* Service tags */}
-          <div className="flex flex-wrap gap-1.5">
-            {provider.services.slice(0, 3).map((s) => (
-              <span key={s} className="inline-flex items-center text-xs font-medium bg-accent dark:bg-accent/50 text-accent-foreground px-2.5 py-1 rounded-lg">
-                {getTranslatedServiceLabel(s, provider.category, language)}
-              </span>
-            ))}
-            {provider.services.length > 3 && (
-              <span className="inline-flex items-center text-xs font-medium bg-accent dark:bg-accent/50 text-muted-foreground px-2.5 py-1 rounded-lg">
-                +{provider.services.length - 3}
-              </span>
-            )}
-          </div>
-
-          {/* Footer */}
-          <div className="flex items-center justify-between pt-4 border-t border-border/40">
-            <div className="text-xs text-muted-foreground">
-              {provider.responseTime ? (
-                <span className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  {provider.responseTime}
-                </span>
-              ) : provider.certificates && provider.certificates.length > 0 ? (
-                <span className="text-indigo-600 dark:text-indigo-400 font-medium">{provider.certificates[0]}</span>
-              ) : provider.verified ? (
-                <span className="text-emerald-600 dark:text-emerald-400 font-medium">{copy.trusted}</span>
-              ) : null}
-            </div>
-            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-warm-orange group-hover:gap-2.5 transition-all">
-              {copy.viewProfile}
-              <ArrowRight className="h-4 w-4" />
-            </span>
+            <h3 className="mt-3 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)] group-hover:text-[color:var(--pp-color-orange-primary)]">{provider.name}</h3>
+            <p className="mt-1 flex items-center gap-1 text-sm font-bold text-[color:var(--pp-color-muted-text)]"><MapPin className="size-4" /> {provider.city || 'Hrvatska'}</p>
           </div>
         </div>
-      </article>
+        <p className="mt-4 line-clamp-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{provider.bio || 'PetPark profil s uslugama, recenzijama i dostupnošću.'}</p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {provider.services.slice(0, 3).map((service) => <Badge key={service} variant="sage">{getServiceLabel(service, provider.category)}</Badge>)}
+        </div>
+        <div className="mt-5 flex items-center justify-between border-t border-[color:var(--pp-color-warm-border)] pt-4">
+          <Rating value={provider.rating} count={provider.reviews} />
+          {provider.lowestPrice != null ? <span className="text-sm font-black text-[color:var(--pp-color-orange-primary)]">od {provider.lowestPrice}€</span> : null}
+        </div>
+      </Card>
     </Link>
   );
 }
 
-export function SearchContent({
-  providers,
-  initialParams,
-  forcedLanguage,
-  showEditorialHero = true,
-  resultsAnchorId,
-}: SearchContentProps & { forcedLanguage?: 'hr' | 'en' }) {
+function CompactResultCard({
+  title,
+  href,
+  description,
+  meta,
+  icon: Icon,
+  tone = 'sage',
+}: {
+  title: string;
+  href: string;
+  description: string;
+  meta: string;
+  icon: typeof Search;
+  tone?: 'sage' | 'teal' | 'orange' | 'cream';
+}) {
+  return (
+    <Link href={href} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2">
+      <Card radius="24" tone={tone} interactive className="p-5">
+        <div className="flex items-start gap-4">
+          <span className="flex size-12 shrink-0 items-center justify-center rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] text-[color:var(--pp-color-orange-primary)] shadow-[var(--pp-shadow-small-card)]">
+            <Icon className="size-5" aria-hidden />
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="text-lg font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)] group-hover:text-[color:var(--pp-color-orange-primary)]">{title}</h3>
+              <ChevronRight className="mt-1 size-4 shrink-0 text-[color:var(--pp-color-muted-text)] transition group-hover:translate-x-1" />
+            </div>
+            <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{description}</p>
+            <p className="mt-3 text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-teal-accent)]">{meta}</p>
+          </div>
+        </div>
+      </Card>
+    </Link>
+  );
+}
+
+function ResultGroup({ title, description, count, children }: { title: string; description: string; count: number; children: React.ReactNode }) {
+  return (
+    <section className="space-y-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 className="text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{title}</h2>
+          <p className="mt-1 text-sm font-semibold text-[color:var(--pp-color-muted-text)]">{description}</p>
+        </div>
+        <Badge variant="teal">{count} rezultata</Badge>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+export function SearchContent({ providers, initialParams, resultsAnchorId }: SearchContentProps) {
   const router = useRouter();
-  const { language } = useLanguage();
-  const activeLanguage = forcedLanguage || language;
-  const [showMap, setShowMap] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const activeCategory = (initialParams.category || 'all') as ProviderCategory | 'all';
+  const [activeTab, setActiveTab] = useState<SearchTab>(() => activeTabFromCategory(initialParams.category));
+  const [query, setQuery] = useState('');
   const [city, setCity] = useState(initialParams.city || '');
-  const [service, setService] = useState(initialParams.service || '');
   const [minPrice, setMinPrice] = useState(initialParams.min_price || '');
   const [maxPrice, setMaxPrice] = useState(initialParams.max_price || '');
   const [minRating, setMinRating] = useState(initialParams.min_rating || '');
-  const [sort, setSort] = useState(initialParams.sort || 'rating');
-  const basePath = activeLanguage === 'en' ? '/pretraga/en' : '/pretraga';
+  const [date, setDate] = useState('');
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
 
-  const buildUrl = useCallback((overrides?: Record<string, string | undefined>) => {
-    const current: Record<string, string> = {};
-    const cat = activeCategory as string;
-    if (cat !== 'all') current.category = cat;
-    if (city) current.city = city;
-    if (service) current.service = service;
-    if (minPrice) current.min_price = minPrice;
-    if (maxPrice) current.max_price = maxPrice;
-    if (minRating) current.min_rating = minRating;
-    if (sort && sort !== 'rating') current.sort = sort;
+  const filteredProviders = useMemo(() => {
+    return providers.filter((provider) => {
+      if (minRating && provider.rating < Number(minRating)) return false;
+      if (verifiedOnly && !provider.verified) return false;
+      if (query) {
+        const haystack = `${provider.name} ${provider.city || ''} ${provider.bio || ''} ${provider.services.join(' ')}`.toLowerCase();
+        if (!haystack.includes(query.toLowerCase())) return false;
+      }
+      return true;
+    });
+  }, [minRating, providers, query, verifiedOnly]);
 
-    const merged = { ...current, ...overrides };
-    const params = new URLSearchParams();
-    for (const [k, v] of Object.entries(merged)) {
-      if (v) params.set(k, v);
-    }
-    const queryString = params.toString();
-    return queryString ? `${basePath}?${queryString}` : basePath;
-  }, [activeCategory, basePath, city, service, minPrice, maxPrice, minRating, sort]);
-
-  const applyFilters = useCallback(() => {
-    router.push(buildUrl());
-  }, [router, buildUrl]);
-
-  const clearFilters = () => {
-    setCity('');
-    setService('');
-    setMinPrice('');
-    setMaxPrice('');
-    setMinRating('');
-    setSort('rating');
-    const params = new URLSearchParams();
-    if (activeCategory && activeCategory !== 'all') params.set('category', activeCategory);
-    router.push(`${basePath}${params.toString() ? '?' + params.toString() : ''}`);
+  const serviceCount = filteredProviders.length;
+  const counts: Record<SearchTab, number> = {
+    sve: serviceCount + communityPosts.length + articles.length + petResults.length + lostAndAdoption.length,
+    usluge: serviceCount,
+    zajednica: communityPosts.length,
+    blog: articles.length,
+    ljubimci: petResults.length + lostAndAdoption.filter((item) => item.href === '/udomljavanje').length,
+    izgubljeni: lostAndAdoption.filter((item) => item.href === '/izgubljeni').length,
   };
 
-  const setCategory = (cat: ProviderCategory | 'all') => {
-    setService('');
+  const buildUrl = useCallback((tab: SearchTab = activeTab) => {
     const params = new URLSearchParams();
-    if (cat !== 'all') params.set('category', cat);
+    if (tab !== 'sve') params.set('category', tab);
     if (city) params.set('city', city);
     if (minPrice) params.set('min_price', minPrice);
     if (maxPrice) params.set('max_price', maxPrice);
     if (minRating) params.set('min_rating', minRating);
-    if (sort && sort !== 'rating') params.set('sort', sort);
-    router.push(`${basePath}${params.toString() ? '?' + params.toString() : ''}`);
+    const queryString = params.toString();
+    return queryString ? `/pretraga?${queryString}` : '/pretraga';
+  }, [activeTab, city, maxPrice, minPrice, minRating]);
+
+  const applyFilters = useCallback(() => {
+    router.push(buildUrl());
+  }, [buildUrl, router]);
+
+  const clearFilters = useCallback(() => {
+    setQuery('');
+    setCity('');
+    setMinPrice('');
+    setMaxPrice('');
+    setMinRating('');
+    setDate('');
+    setVerifiedOnly(false);
+    router.push(activeTab === 'sve' ? '/pretraga' : `/pretraga?category=${activeTab}`);
+  }, [activeTab, router]);
+
+  const selectTab = (tab: SearchTab) => {
+    setActiveTab(tab);
+    router.push(buildUrl(tab));
   };
 
-  let filtered = providers;
-  if (minRating) {
-    const minR = Number(minRating);
-    filtered = filtered.filter((p) => p.rating >= minR);
-  }
-
-  const activeFilterCount = [city, service, minPrice, maxPrice, minRating].filter(Boolean).length;
-  const localeCityLinks = activeLanguage === 'en'
-    ? {
-        zagreb: '/cuvanje-pasa-zagreb/en',
-        rijeka: '/cuvanje-pasa-rijeka/en',
-        split: '/cuvanje-pasa-split/en',
-      }
-    : {
-        zagreb: '/cuvanje-pasa-zagreb',
-        rijeka: '/cuvanje-pasa-rijeka',
-        split: '/cuvanje-pasa-split',
-      };
-
-  const copy = activeLanguage === 'en'
-    ? {
-        tabs: { all: 'All', sitter: 'Sitters', grooming: 'Grooming', dresura: 'Dog training' },
-        heroKicker: 'Discover',
-        heroTitle: {
-          all: 'Find the right care\nfor your pet.',
-          sitter: 'Find a pet\nsitter.',
-          grooming: 'Find a professional\ngroomer.',
-          dresura: 'Find a dog\ntrainer.',
-        },
-        heroSub: {
-          all: 'Browse sitters, groomers, and trainers across Croatia, then compare profiles, reviews, prices, and availability.',
-          sitter: 'Compare sitter profiles for care at their home or yours, then send an inquiry for the dates you need.',
-          grooming: 'Compare grooming services for coat care, bathing, trimming, and styling.',
-          dresura: 'Find trainer profiles for obedience, socialisation, agility, and behaviour support.',
-        },
-        profilesMatch: filtered.length === 1 ? 'profile matches' : 'profiles match',
-        filters: 'Filters',
-        narrowSearch: 'Refine search',
-        sortBest: 'Top rated',
-        sortMostReviews: 'Most reviews',
-        sortLowestPrice: 'Lowest price first',
-        rating: 'rating',
-        from: 'from',
-        upTo: 'up to',
-        clearFilters: 'Clear filters',
-        emptyTitle: 'No matching profiles yet',
-        emptyDescription: 'Try another city or remove a few filters — there are probably more results just around the corner.',
-        exploreCities: 'Explore by city',
-        exploreCitiesSub: 'Dedicated city guides with local context and neighbourhood recommendations.',
-      }
-    : {
-        tabs: { all: 'Sve', sitter: 'Sitteri', grooming: 'Grooming', dresura: 'Školovanje pasa' },
-        heroKicker: 'Otkrijte',
-        heroTitle: {
-          all: 'Pronađite pravu brigu\nza svog ljubimca.',
-          sitter: 'Pronađite pouzdanog\nčuvara ljubimaca.',
-          grooming: 'Pronađite profesionalnog\ngroomera.',
-          dresura: 'Pronađite trenera\nza pse.',
-        },
-        heroSub: {
-          all: 'Pretražite sittere, groomere i trenere diljem Hrvatske te usporedite profile, recenzije, cijene i dostupnost.',
-          sitter: 'Usporedite profile sittera za čuvanje u njihovom ili vašem domu i pošaljite upit za željene datume.',
-          grooming: 'Usporedite grooming usluge za njegu dlake, kupanje, šišanje i styling.',
-          dresura: 'Pronađite profile trenera za poslušnost, socijalizaciju, agility i podršku u ponašanju.',
-        },
-        profilesMatch: filtered.length === 1 ? 'profil odgovara' : 'profila odgovara',
-        filters: 'Filteri',
-        narrowSearch: 'Suzi pretragu',
-        sortBest: 'Najbolje ocijenjeni',
-        sortMostReviews: 'Najviše recenzija',
-        sortLowestPrice: 'Najniža cijena prvo',
-        rating: 'ocjena',
-        from: 'od',
-        upTo: 'do',
-        clearFilters: 'Očisti filtere',
-        emptyTitle: 'Nema profila za ove filtere',
-        emptyDescription: 'Promijenite grad ili maknite neke filtere — vjerojatno ima više rezultata odmah iza ugla.',
-        exploreCities: 'Istražite po gradovima',
-        exploreCitiesSub: 'Posvećeni gradski vodiči s lokalnim kontekstom i preporukama za kvartove.',
-      };
+  const showServices = activeTab === 'sve' || activeTab === 'usluge';
+  const showCommunity = activeTab === 'sve' || activeTab === 'zajednica';
+  const showBlog = activeTab === 'sve' || activeTab === 'blog';
+  const showPets = activeTab === 'sve' || activeTab === 'ljubimci';
+  const showLost = activeTab === 'sve' || activeTab === 'izgubljeni';
+  const hasResults = counts[activeTab] > 0;
 
   return (
-    <div id={resultsAnchorId}>
-      {/* ══════════════════════════════════════════
-          EDITORIAL HERO
-          ══════════════════════════════════════════ */}
-      {showEditorialHero ? (
-        <section className="relative browse-hero-gradient overflow-hidden">
-          <div className="absolute inset-0 paw-pattern opacity-[0.02]" />
-          <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24 relative">
-            <div className="max-w-2xl">
-              <p className="section-kicker animate-fade-in-up">
-                {copy.heroKicker}
-              </p>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] mb-6 font-[var(--font-heading)] whitespace-pre-line animate-fade-in-up delay-100">
-                {copy.heroTitle[activeCategory]}
-              </h1>
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg animate-fade-in-up delay-200">
-                {copy.heroSub[activeCategory]}
-              </p>
+    <main id={resultsAnchorId} data-petpark-route="pretraga" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
+      <AppHeader navItems={navItems} actions={<ButtonLink href="/objavi-uslugu" size="sm">Dodaj uslugu</ButtonLink>} />
+
+      <section className="relative px-5 pb-12 pt-10 sm:px-8 lg:px-20">
+        <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block" />
+        <LeafDecoration className="-left-16 top-[760px] hidden scale-110 -rotate-12 lg:block" />
+        <PawDecoration className="right-[12%] top-[390px] hidden size-16 rotate-12 opacity-40 xl:block" />
+
+        <div className="mx-auto max-w-[1500px] space-y-6">
+          <Card radius="28" className="relative overflow-hidden p-6 sm:p-8 lg:p-10">
+            <div className="absolute right-10 top-10 hidden size-32 rounded-full bg-[color:var(--pp-color-warning-surface)] lg:block" />
+            <div className="relative grid gap-8 xl:grid-cols-[1fr_520px] xl:items-end">
+              <div>
+                <Badge variant="orange"><Search className="size-3" /> Univerzalna pretraga</Badge>
+                <h1 className="mt-5 text-5xl font-black leading-[0.98] tracking-[-0.06em] text-[color:var(--pp-color-forest-text)] sm:text-7xl lg:text-8xl">Pretraži PetPark</h1>
+                <p className="mt-6 max-w-2xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">
+                  Pronađi usluge, savjete, ljubimce, objave i ljude iz zajednice.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <FilterChip active>Usluge</FilterChip>
+                  <FilterChip>Zajednica</FilterChip>
+                  <FilterChip>Blog</FilterChip>
+                  <FilterChip>Izgubljeni ljubimci</FilterChip>
+                  <FilterChip>Udomljavanje</FilterChip>
+                </div>
+              </div>
+
+              <Card radius="28" tone="cream" className="p-4 sm:p-5">
+                <form action="/pretraga" className="space-y-3">
+                  <label className="relative block">
+                    <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
+                    <Input name="q" placeholder="Što tražite?" value={query} onChange={(event) => setQuery(event.target.value)} className="pl-12" />
+                  </label>
+                  <label className="relative block">
+                    <MapPin className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[color:var(--pp-color-orange-primary)]" aria-hidden />
+                    <Input name="city" placeholder="Grad ili kvart" value={city} onChange={(event) => setCity(event.target.value)} className="pl-12" />
+                  </label>
+                  <Button type="submit" size="lg" className="w-full"><Search className="size-5" /> Pretraži</Button>
+                </form>
+              </Card>
             </div>
-          </div>
-        </section>
-      ) : null}
+          </Card>
 
-      {/* ══════════════════════════════════════════
-          CATEGORY TABS
-          ══════════════════════════════════════════ */}
-      <div className={`container mx-auto px-6 md:px-10 lg:px-16 relative z-10 ${showEditorialHero ? '-mt-5' : 'pt-2'}`}>
-        <div className="flex flex-wrap justify-center gap-2">
-          {CATEGORY_TABS.map((tab) => {
-            const isActive = activeCategory === tab.key;
-            return (
-              <button
-                key={tab.key}
-                onClick={() => setCategory(tab.key)}
-                data-active={isActive}
-                className={`filter-pill flex items-center gap-2 whitespace-nowrap ${
-                  isActive
-                    ? 'bg-warm-orange text-white'
-                    : 'bg-white dark:bg-card border border-border/40 text-foreground hover:border-warm-orange/30'
-                }`}
-              >
-                <span>{tab.emoji}</span>
-                <span>{copy.tabs[tab.key]}</span>
-                {isActive && (
-                  <span className="bg-white/20 text-xs px-2 py-0.5 rounded-full ml-0.5">
-                    {filtered.length}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+          <Card radius="24" className="p-3">
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.key;
+                return (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    onClick={() => selectTab(tab.key)}
+                    aria-pressed={isActive}
+                    className={cn(
+                      'inline-flex shrink-0 items-center gap-2 rounded-[var(--pp-radius-control)] px-4 py-3 text-sm font-black transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)]',
+                      isActive
+                        ? 'bg-[color:var(--pp-color-orange-primary)] text-white shadow-[var(--pp-shadow-small-card)]'
+                        : 'text-[color:var(--pp-color-muted-text)] hover:bg-[color:var(--pp-color-sage-surface)] hover:text-[color:var(--pp-color-forest-text)]',
+                    )}
+                  >
+                    <Icon className="size-4" aria-hidden />
+                    {tab.label}
+                    <span className={cn('rounded-full px-2 py-0.5 text-xs', isActive ? 'bg-white/20' : 'bg-[color:var(--pp-color-sage-surface)] text-[color:var(--pp-color-teal-accent)]')}>{counts[tab.key]}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </Card>
 
-      {/* ══════════════════════════════════════════
-          TOOLBAR
-          ══════════════════════════════════════════ */}
-      <div className="sticky top-14 z-30 glass-strong border-b border-border/50">
-        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-4">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">{filtered.length}</span> {copy.profilesMatch}
-              {city && <span className="text-warm-orange"> · {city}</span>}
-            </p>
-            <div className="flex items-center gap-3">
-              {/* Mobile filter trigger */}
-              <Sheet>
-                <SheetTrigger render={<Button variant="outline" size="sm" />} className="md:hidden relative rounded-xl">
-                  <SlidersHorizontal className="h-4 w-4 mr-1.5" />
-                  {copy.filters}
-                  {activeFilterCount > 0 && (
-                    <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center bg-orange-500 text-xs">
-                      {activeFilterCount}
-                    </Badge>
+          <div className="grid gap-6 lg:grid-cols-[310px_1fr]">
+            <aside className="lg:sticky lg:top-28 lg:self-start">
+              <FilterPanel
+                city={city}
+                minPrice={minPrice}
+                maxPrice={maxPrice}
+                minRating={minRating}
+                verifiedOnly={verifiedOnly}
+                date={date}
+                onCityChange={setCity}
+                onMinPriceChange={setMinPrice}
+                onMaxPriceChange={setMaxPrice}
+                onMinRatingChange={setMinRating}
+                onVerifiedChange={setVerifiedOnly}
+                onDateChange={setDate}
+                onApply={applyFilters}
+                onClear={clearFilters}
+              />
+            </aside>
+
+            <div className="space-y-10">
+              <div className="flex flex-col gap-3 rounded-[var(--pp-radius-card-24)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] p-5 shadow-[var(--pp-shadow-small-card)] sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-black uppercase tracking-[0.14em] text-[color:var(--pp-color-muted-text)]">Rezultati</p>
+                  <p className="mt-1 text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{counts[activeTab]} pronađenih rezultata</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {city ? <Badge variant="orange"><MapPin className="size-3" /> {city}</Badge> : null}
+                  {minRating ? <Badge variant="teal"><Star className="size-3" /> {minRating}+ ocjena</Badge> : null}
+                  {verifiedOnly ? <Badge variant="success"><CheckCircle2 className="size-3" /> Verificirani</Badge> : null}
+                </div>
+              </div>
+
+              {!hasResults ? (
+                <Card radius="28" tone="sage" className="p-10 text-center">
+                  <PawPrint className="mx-auto size-12 text-[color:var(--pp-color-orange-primary)]" aria-hidden />
+                  <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">Nema rezultata za ovu pretragu.</h2>
+                  <p className="mx-auto mt-3 max-w-xl text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Pokušajte promijeniti filtere ili pretražiti širi pojam.</p>
+                  <Button onClick={clearFilters} className="mt-6" variant="secondary">Očisti filtere</Button>
+                </Card>
+              ) : null}
+
+              {showServices ? (
+                <ResultGroup title="Usluge i provideri" description="Sitteri, groomeri i treneri s profilima, cijenama i recenzijama." count={serviceCount}>
+                  {filteredProviders.length ? (
+                    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                      {filteredProviders.map((provider) => <ServiceResultCard key={`${provider.category}-${provider.id}`} provider={provider} />)}
+                    </div>
+                  ) : (
+                    <Card radius="24" tone="sage" className="p-6 text-sm font-semibold text-[color:var(--pp-color-muted-text)]">Nema rezultata za ovu pretragu.</Card>
                   )}
-                </SheetTrigger>
-                <SheetContent side="left" className="w-[300px] overflow-y-auto">
-                  <SheetTitle className="mb-6 font-[var(--font-heading)]">{copy.narrowSearch}</SheetTitle>
-                  <SearchFilterPanel
-                    city={city} service={service} minPrice={minPrice} maxPrice={maxPrice} minRating={minRating}
-                    activeFilterCount={activeFilterCount} category={activeCategory}
-                    onCityChange={setCity} onServiceChange={setService} onMinPriceChange={setMinPrice}
-                    onMaxPriceChange={setMaxPrice} onMinRatingChange={setMinRating}
-                    onApply={applyFilters} onClear={clearFilters}
-                  />
-                </SheetContent>
-              </Sheet>
+                </ResultGroup>
+              ) : null}
 
-              {/* Sort */}
-              <select
-                value={sort}
-                onChange={(e) => { setSort(e.target.value); setTimeout(applyFilters, 0); }}
-                className="h-9 rounded-xl border border-border/60 bg-white dark:bg-card px-3 text-sm focus:border-orange-300 shadow-sm"
-              >
-                <option value="rating">{copy.sortBest}</option>
-                <option value="reviews">{copy.sortMostReviews}</option>
-                <option value="price">{copy.sortLowestPrice}</option>
-              </select>
+              {showBlog ? (
+                <ResultGroup title="Blog i savjeti" description="Kratki vodiči, edukacija i praktični članci za vlasnike ljubimaca." count={articles.length}>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {articles.map((item) => <CompactResultCard key={item.title} {...item} icon={BookOpen} tone="cream" />)}
+                  </div>
+                </ResultGroup>
+              ) : null}
 
-              {/* View toggles */}
-              <div className="hidden sm:flex items-center border border-border/60 rounded-xl overflow-hidden shadow-sm">
-                <button
-                  type="button"
-                  aria-label={activeLanguage === 'en' ? 'Show grid view' : 'Prikaži mrežni prikaz'}
-                  onClick={() => { setShowMap(false); setViewMode('grid'); }}
-                  className={`p-2.5 transition-colors ${!showMap && viewMode === 'grid' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
-                >
-                  <Grid className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  aria-label={activeLanguage === 'en' ? 'Show list view' : 'Prikaži prikaz liste'}
-                  onClick={() => { setShowMap(false); setViewMode('list'); }}
-                  className={`p-2.5 transition-colors ${!showMap && viewMode === 'list' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
-                >
-                  <LayoutList className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  aria-label={activeLanguage === 'en' ? 'Show map view' : 'Prikaži kartu'}
-                  onClick={() => setShowMap(true)}
-                  className={`p-2.5 transition-colors ${showMap ? 'bg-accent text-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
-                >
-                  <MapIcon className="h-4 w-4" />
-                </button>
-              </div>
+              {showCommunity ? (
+                <ResultGroup title="Zajednica" description="Pitanja, preporuke i odgovori drugih PetPark korisnika." count={communityPosts.length}>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {communityPosts.map((item) => <CompactResultCard key={item.title} {...item} icon={MessageCircle} tone="sage" />)}
+                  </div>
+                </ResultGroup>
+              ) : null}
 
-              {/* Mobile map toggle */}
-              <Button
-                variant={showMap ? 'default' : 'outline'}
-                size="sm"
-                aria-label={showMap
-                  ? activeLanguage === 'en' ? 'Show grid view' : 'Prikaži mrežni prikaz'
-                  : activeLanguage === 'en' ? 'Show map view' : 'Prikaži kartu'}
-                onClick={() => setShowMap(!showMap)}
-                className={`sm:hidden rounded-xl ${showMap ? 'bg-orange-500 hover:bg-orange-600' : ''}`}
-              >
-                {showMap ? <Grid className="h-4 w-4" /> : <MapIcon className="h-4 w-4" />}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+              {showPets ? (
+                <ResultGroup title="Ljubimci i udomljavanje" description="Pet Passport profili, kartoni i aktivni oglasi za udomljavanje." count={petResults.length + 1}>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {petResults.map((item) => <CompactResultCard key={item.title} {...item} icon={Dog} tone="teal" />)}
+                    <CompactResultCard {...lostAndAdoption[1]} icon={HeartHandshake} />
+                  </div>
+                </ResultGroup>
+              ) : null}
 
-      {/* ══════════════════════════════════════════
-          ACTIVE FILTERS
-          ══════════════════════════════════════════ */}
-      {activeFilterCount > 0 && (
-        <div className="container mx-auto px-6 md:px-10 lg:px-16 pt-6">
-          <div className="flex flex-wrap gap-2 animate-fade-in">
-            {city && (
-              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
-                <MapPin className="h-3 w-3" />
-                {city}
-                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setCity(''); applyFilters(); }} />
-              </Badge>
-            )}
-            {service && (
-              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
-                {getTranslatedServiceLabel(service, activeCategory === 'all' ? undefined : activeCategory, language)}
-                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setService(''); applyFilters(); }} />
-              </Badge>
-            )}
-            {minRating && (
-              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
-                {minRating}+ {copy.rating}
-                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMinRating(''); applyFilters(); }} />
-              </Badge>
-            )}
-            {minPrice && (
-              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
-                {copy.from} {minPrice}&euro;
-                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMinPrice(''); applyFilters(); }} />
-              </Badge>
-            )}
-            {maxPrice && (
-              <Badge variant="secondary" className="gap-1.5 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800 hover:bg-orange-100 rounded-lg px-3 py-1.5">
-                {copy.upTo} {maxPrice}&euro;
-                <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => { setMaxPrice(''); applyFilters(); }} />
-              </Badge>
-            )}
-            <button onClick={clearFilters} className="text-xs text-warm-orange hover:underline self-center ml-1">
-              {copy.clearFilters}
-            </button>
-          </div>
-        </div>
-      )}
+              {showLost ? (
+                <ResultGroup title="Izgubljeni i pronađeni" description="Hitne objave, lokacije i kontakti za pomoć u zajednici." count={1}>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <CompactResultCard {...lostAndAdoption[0]} icon={Bell} tone="orange" />
+                  </div>
+                </ResultGroup>
+              ) : null}
 
-      {/* ══════════════════════════════════════════
-          MAIN CONTENT
-          ══════════════════════════════════════════ */}
-      <div className="container mx-auto px-6 md:px-10 lg:px-16 py-10">
-        <div className="flex gap-10">
-          {/* Desktop filter sidebar */}
-          <aside className="hidden md:block w-64 flex-shrink-0">
-            <div className="sticky top-32 filter-panel rounded-2xl p-6 border border-border/30 shadow-sm">
-              <h2 className="font-bold mb-6 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                <Filter className="h-3.5 w-3.5" />
-                {copy.narrowSearch}
-              </h2>
-              <SearchFilterPanel
-                city={city} service={service} minPrice={minPrice} maxPrice={maxPrice} minRating={minRating}
-                activeFilterCount={activeFilterCount} category={activeCategory}
-                onCityChange={setCity} onServiceChange={setService} onMinPriceChange={setMinPrice}
-                onMaxPriceChange={setMaxPrice} onMinRatingChange={setMinRating}
-                onApply={applyFilters} onClear={clearFilters}
-              />
-            </div>
-          </aside>
-
-          {/* Results */}
-          <div className="flex-1 min-w-0">
-            {showMap ? (
-              <div className="h-[600px] rounded-2xl overflow-hidden border border-border/30 shadow-sm animate-fade-in">
-                <MapView providers={filtered} />
-              </div>
-            ) : filtered.length === 0 ? (
-              <EmptyState
-                icon={PawPrint}
-                title={copy.emptyTitle}
-                description={copy.emptyDescription}
-                action={
-                  <Button variant="outline" onClick={clearFilters} className="hover:bg-orange-50 hover:text-orange-600 rounded-xl">
-                    {copy.clearFilters}
-                  </Button>
-                }
-              />
-            ) : (
-              <div className={`animate-fade-in ${
-                viewMode === 'list'
-                  ? 'space-y-5'
-                  : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7'
-              }`}>
-                {filtered.map((provider) => (
-                  <ProviderCard key={`${provider.category}-${provider.id}`} provider={provider} />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ══════════════════════════════════════════
-          EXPLORE BY CITY — EDITORIAL
-          ══════════════════════════════════════════ */}
-      <section className="py-16 md:py-24 bg-warm-section">
-        <div className="container mx-auto px-6 md:px-10 lg:px-16">
-          <div className="mb-10">
-            <p className="section-kicker">
-              {copy.exploreCities}
-            </p>
-            <p className="text-base text-muted-foreground max-w-lg">
-              {copy.exploreCitiesSub}
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              { name: 'Zagreb', href: localeCityLinks.zagreb, color: 'hover:border-orange-300 hover:text-orange-600' },
-              { name: 'Rijeka', href: localeCityLinks.rijeka, color: 'hover:border-teal-300 hover:text-teal-600' },
-              { name: 'Split', href: localeCityLinks.split, color: 'hover:border-blue-300 hover:text-blue-600' },
-            ].map((c) => (
-              <Link
-                key={c.name}
-                href={c.href}
-                className={`group flex items-center gap-4 p-5 rounded-2xl border border-border/50 bg-white dark:bg-card transition-all duration-300 hover:shadow-md ${c.color}`}
-              >
-                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-accent">
-                  <MapPin className="h-5 w-5 text-muted-foreground group-hover:text-current transition-colors" />
+              <Card radius="28" tone="orange" className="p-6 sm:p-7">
+                <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <Badge variant="teal"><CalendarDays className="size-3" /> Sljedeći korak</Badge>
+                    <h2 className="mt-4 text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">Niste našli što tražite?</h2>
+                    <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Objavite upit ili krenite direktno na marketplace usluga.</p>
+                  </div>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <ButtonLink href="/usluge" variant="secondary">Marketplace <ArrowRight className="size-4" /></ButtonLink>
+                    <ButtonLink href="/zajednica" variant="teal">Pitaj zajednicu</ButtonLink>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-bold font-[var(--font-heading)]">{c.name}</h3>
-                </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-current group-hover:translate-x-0.5 transition-all" />
-              </Link>
-            ))}
+              </Card>
+            </div>
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }
-
-export { Skeleton as SitterSkeleton };
