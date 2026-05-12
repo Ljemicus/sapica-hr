@@ -1,8 +1,34 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, BookOpen, Camera, Crown, HeartHandshake, MessageCircle, Sparkles, UsersRound } from 'lucide-react';
-import { Breadcrumbs } from '@/components/shared/breadcrumbs';
-import { Button } from '@/components/ui/button';
+import {
+  AlertTriangle,
+  Bell,
+  BookOpen,
+  Bookmark,
+  Camera,
+  CheckCircle2,
+  Heart,
+  HeartHandshake,
+  MapPin,
+  MessageCircle,
+  PawPrint,
+  PlusCircle,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  UsersRound,
+} from 'lucide-react';
+import {
+  AppHeader,
+  Avatar,
+  Badge,
+  ButtonLink,
+  Card,
+  LeafDecoration,
+  PawDecoration,
+} from '@/components/shared/petpark/design-foundation';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: { absolute: 'Zajednica ljubitelja ljubimaca | PetPark' },
@@ -12,169 +38,244 @@ export const metadata: Metadata = {
   },
 };
 
-const sections = [
+const navItems = [
+  { href: '/usluge', label: 'Usluge' },
+  { href: '/pretraga', label: 'Pretraga' },
+  { href: '/forum', label: 'Forum' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/izgubljeni', label: 'Izgubljeni' },
+];
+
+const tabs = [
+  { label: 'Sve', href: '/zajednica', icon: Sparkles, active: true },
+  { label: 'Forum', href: '/forum', icon: MessageCircle },
+  { label: 'Izgubljeni / pronađeni', href: '/izgubljeni', icon: Bell },
+  { label: 'Udomljavanje', href: '/udomljavanje', icon: HeartHandshake },
+  { label: 'Savjeti', href: '/blog', icon: BookOpen },
+];
+
+const posts = [
   {
-    eyebrow: 'Magazin',
-    title: 'Savjeti i priče',
-    description: 'Članci o zdravlju, prehrani, ponašanju i svakodnevici s ljubimcima.',
+    author: 'Maja i Roko',
+    initials: 'MR',
+    category: 'Forum',
+    title: 'Kako ste riješili anksioznost kod psa nakon preseljenja?',
+    excerpt: 'Roko se nakon preseljenja u novi stan teže opušta kad ostane sam. Tražim praktične savjete i iskustva prije nego krenemo s trenerom.',
+    location: 'Zagreb · Trešnjevka',
+    href: '/forum',
+    tone: 'teal' as const,
+    likes: 24,
+    comments: 11,
+  },
+  {
+    author: 'Petra',
+    initials: 'P',
+    category: 'Izgubljeni / pronađeni',
+    title: 'Pronađena mlada maca kod parka Mlaka',
+    excerpt: 'Maca je pitoma, ima sivu ogrlicu bez privjeska. Trenutno je na sigurnom, molim dijeljenje ako netko zna vlasnika.',
+    location: 'Rijeka · Mlaka',
+    href: '/izgubljeni',
+    tone: 'orange' as const,
+    likes: 58,
+    comments: 19,
+    urgent: true,
+  },
+  {
+    author: 'Udruga Šapice',
+    initials: 'UŠ',
+    category: 'Udomljavanje',
+    title: 'Mila traži miran dom i strpljive ljude',
+    excerpt: 'Mila je nježna kujica od dvije godine, cijepljena i socijalizirana. Odlično reagira na mirne šetnje i rutinu.',
+    location: 'Osijek',
+    href: '/udomljavanje',
+    tone: 'sage' as const,
+    likes: 41,
+    comments: 8,
+  },
+  {
+    author: 'PetPark tim',
+    initials: 'PP',
+    category: 'Savjeti',
+    title: 'Mini vodič: što pripremiti za prvo čuvanje',
+    excerpt: 'Hrana, rutina, kontakt veterinara, navike u šetnji i napomena za alergije — mali checklist prije predaje ljubimca sitteru.',
+    location: 'Blog',
     href: '/blog',
-    icon: BookOpen,
-    tone: 'from-orange-500 to-amber-500',
-  },
-  {
-    eyebrow: 'Objave',
-    title: 'Feed zajednice',
-    description: 'Fotke, iskustva i novosti iz PetPark zajednice — kad želiš vidjeti što rade drugi vlasnici.',
-    href: '/zajednica/feed',
-    icon: Camera,
-    tone: 'from-teal-500 to-cyan-500',
-  },
-  {
-    eyebrow: 'Aktivnosti',
-    title: 'Izazovi',
-    description: 'Lagane aktivnosti i teme za ljubimce i vlasnike. Otvaramo ih postupno kako zajednica raste.',
-    href: '/zajednica/izazovi',
-    cta: 'Pogledaj status',
-    icon: Sparkles,
-    tone: 'from-purple-500 to-pink-500',
-  },
-  {
-    eyebrow: 'Istaknuto',
-    title: 'Najbolji ljubimci',
-    description: 'Prostor za favorite zajednice i objave koje vrijedi istaknuti, bez obećanja nagrada ili posebnih pogodnosti.',
-    href: '/zajednica/najbolji',
-    cta: 'Saznaj više',
-    icon: Crown,
-    tone: 'from-yellow-500 to-orange-500',
+    tone: 'cream' as const,
+    likes: 36,
+    comments: 5,
   },
 ];
 
-const stats = [
-  { label: 'članci i vodiči', value: '20+' },
-  { label: 'teme zajednice', value: '4' },
-  { label: 'jedan PetPark', value: 'sve' },
+const popularTopics = ['prvo čuvanje', 'socijalizacija šteneta', 'grooming preporuke', 'izgubljeni ljubimci', 'udomljavanje mačke'];
+const activeMembers = [
+  { name: 'Maja', detail: 'savjeti za pse', initials: 'M' },
+  { name: 'Dario', detail: 'trener · Rijeka', initials: 'D' },
+  { name: 'Ana', detail: 'udomljavanje', initials: 'A' },
 ];
+
+function StatCard({ value, label, icon: Icon }: { value: string; label: string; icon: typeof PawPrint }) {
+  return (
+    <Card radius="24" tone="sage" shadow="small" className="p-5">
+      <Icon className="size-5 text-[color:var(--pp-color-orange-primary)]" aria-hidden />
+      <p className="mt-3 text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">{value}</p>
+      <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">{label}</p>
+    </Card>
+  );
+}
+
+function PostCard({ post }: { post: (typeof posts)[number] }) {
+  return (
+    <Link href={post.href} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2">
+      <Card radius="28" tone={post.tone} interactive className="p-5 sm:p-6">
+        <div className="flex items-start gap-4">
+          <Avatar initials={post.initials} alt={post.author} size="lg" />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="font-black text-[color:var(--pp-color-forest-text)]">{post.author}</p>
+              <Badge variant={post.urgent ? 'warning' : 'teal'}>{post.category}</Badge>
+              {post.urgent ? <Badge variant="error"><AlertTriangle className="size-3" /> Hitno</Badge> : null}
+            </div>
+            <h2 className="mt-4 text-2xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)] group-hover:text-[color:var(--pp-color-orange-primary)]">{post.title}</h2>
+            <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{post.excerpt}</p>
+            <div className="mt-4 flex flex-wrap items-center gap-3 text-xs font-black text-[color:var(--pp-color-muted-text)]">
+              <span className="inline-flex items-center gap-1"><MapPin className="size-4" /> {post.location}</span>
+              <span className="inline-flex items-center gap-1"><Heart className="size-4" /> {post.likes}</span>
+              <span className="inline-flex items-center gap-1"><MessageCircle className="size-4" /> {post.comments}</span>
+              <span className="inline-flex items-center gap-1"><Bookmark className="size-4" /> Spremi</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </Link>
+  );
+}
+
+function SidebarCard({ title, icon: Icon, children, tone = 'default' }: { title: string; icon: typeof PawPrint; children: React.ReactNode; tone?: 'default' | 'sage' | 'cream' | 'teal' | 'orange' }) {
+  return (
+    <Card radius="28" tone={tone} className="p-5">
+      <h2 className="flex items-center gap-2 text-lg font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">
+        <Icon className="size-5 text-[color:var(--pp-color-orange-primary)]" aria-hidden />
+        {title}
+      </h2>
+      <div className="mt-4">{children}</div>
+    </Card>
+  );
+}
 
 export default function ZajednicaPage() {
   return (
-    <>
-      <Breadcrumbs items={[{ label: 'Zajednica', href: '/zajednica' }]} />
-      <div className="min-h-screen overflow-x-clip bg-background">
-        <section className="relative overflow-hidden organizations-hero-gradient">
-          <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
-          <div className="absolute -right-24 top-16 h-72 w-72 rounded-full bg-warm-orange/15 blur-3xl" />
-          <div className="absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-warm-teal/15 blur-3xl" />
+    <main data-petpark-route="zajednica" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
+      <AppHeader navItems={navItems} actions={<ButtonLink href="/zajednica/feed" size="sm"><PlusCircle className="size-4" /> Nova objava</ButtonLink>} />
 
-          <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24 relative">
-            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-              <div className="max-w-3xl animate-fade-in-up">
-                <p className="section-kicker mb-5">PetPark Community</p>
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold font-[var(--font-heading)] tracking-tight leading-[1.05] mb-6">
-                  Zajednica za ljude koji žive s ljubimcima
-                </h1>
-                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">
-                  Savjeti, priče, fotke, izgubljeni ljubimci i mali rituali koji čine život s psima i mačkama jednostavnijim.
+      <section className="relative px-5 pb-12 pt-10 sm:px-8 lg:px-20">
+        <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block" />
+        <LeafDecoration className="-left-16 top-[760px] hidden scale-110 -rotate-12 lg:block" />
+        <PawDecoration className="right-[12%] top-[360px] hidden size-16 rotate-12 opacity-40 xl:block" />
+
+        <div className="mx-auto max-w-[1500px] space-y-6">
+          <Card radius="28" className="relative overflow-hidden p-6 sm:p-8 lg:p-10">
+            <div className="absolute right-8 top-8 hidden size-32 rounded-full bg-[color:var(--pp-color-warning-surface)] lg:block" />
+            <div className="relative grid gap-8 xl:grid-cols-[1fr_430px] xl:items-end">
+              <div>
+                <Badge variant="orange"><UsersRound className="size-3" /> PetPark Community</Badge>
+                <h1 className="mt-5 text-5xl font-black leading-[0.98] tracking-[-0.06em] text-[color:var(--pp-color-forest-text)] sm:text-7xl lg:text-8xl">PetPark zajednica</h1>
+                <p className="mt-6 max-w-3xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">
+                  Savjeti, objave, izgubljeni ljubimci, udomljavanje i iskustva vlasnika — sve na jednom toplom mjestu.
                 </p>
-                <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                  <Link href="/blog">
-                    <Button size="lg" className="h-12 rounded-full bg-warm-orange px-7 text-white hover:bg-warm-orange/90">
-                      Čitaj savjete
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <Link href="/izgubljeni">
-                    <Button size="lg" variant="outline" className="h-12 rounded-full border-warm-orange/30 px-7 text-warm-orange hover:bg-warm-orange/5">
-                      Izgubljeni ljubimci
-                    </Button>
-                  </Link>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <ButtonLink href="/zajednica/feed" size="lg"><PlusCircle className="size-5" /> Nova objava</ButtonLink>
+                  <ButtonLink href="/izgubljeni/prijavi" variant="secondary" size="lg"><Bell className="size-5" /> Prijavi nestanak</ButtonLink>
+                  <ButtonLink href="/blog" variant="teal" size="lg"><BookOpen className="size-5" /> Čitaj savjete</ButtonLink>
                 </div>
               </div>
 
-              <div className="community-section-card p-5 md:p-6 animate-fade-in-up delay-200">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-warm-orange/10 text-warm-orange">
-                    <HeartHandshake className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="font-bold font-[var(--font-heading)]">Što je ovdje?</p>
-                    <p className="text-sm text-muted-foreground">Praktičan community hub, bez buke.</p>
-                  </div>
+              <div className="grid grid-cols-3 gap-3">
+                <StatCard value="20+" label="savjeta" icon={BookOpen} />
+                <StatCard value="4" label="ulaza" icon={Sparkles} />
+                <StatCard value="24/7" label="pomoć" icon={HeartHandshake} />
+              </div>
+            </div>
+          </Card>
+
+          <Card radius="24" className="p-3">
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {tabs.map((tab) => (
+                <Link
+                  key={tab.label}
+                  href={tab.href}
+                  className={cn(
+                    'inline-flex shrink-0 items-center gap-2 rounded-[var(--pp-radius-control)] px-4 py-3 text-sm font-black transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)]',
+                    tab.active
+                      ? 'bg-[color:var(--pp-color-orange-primary)] text-white shadow-[var(--pp-shadow-small-card)]'
+                      : 'text-[color:var(--pp-color-muted-text)] hover:bg-[color:var(--pp-color-sage-surface)] hover:text-[color:var(--pp-color-forest-text)]',
+                  )}
+                >
+                  <tab.icon className="size-4" aria-hidden />
+                  {tab.label}
+                </Link>
+              ))}
+            </div>
+          </Card>
+
+          <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+            <div className="space-y-5">
+              <div className="flex flex-col gap-3 rounded-[var(--pp-radius-card-24)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] p-5 shadow-[var(--pp-shadow-small-card)] sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-black uppercase tracking-[0.14em] text-[color:var(--pp-color-muted-text)]">Aktualno u zajednici</p>
+                  <h2 className="mt-1 text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">Objave i preporuke</h2>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
-                  {stats.map((item) => (
-                    <div key={item.label} className="rounded-2xl bg-muted/50 p-4 text-center">
-                      <div className="text-2xl font-extrabold font-[var(--font-heading)] text-foreground">{item.value}</div>
-                      <div className="text-xs text-muted-foreground">{item.label}</div>
+                <ButtonLink href="/pretraga?category=zajednica" variant="secondary" size="sm"><Search className="size-4" /> Pretraži</ButtonLink>
+              </div>
+
+              {posts.map((post) => <PostCard key={post.title} post={post} />)}
+
+              <Card radius="28" tone="sage" className="p-8 text-center">
+                <Camera className="mx-auto size-12 text-[color:var(--pp-color-orange-primary)]" aria-hidden />
+                <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">Feed zajednice se puni postupno.</h2>
+                <p className="mx-auto mt-3 max-w-2xl text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">
+                  Objavljivanje je trenutno UI-first placeholder. Kad odobrimo backend, ovdje ide stvarni feed, komentari i spremanje objava.
+                </p>
+                <ButtonLink href="/zajednica/feed" className="mt-6" variant="secondary">Pogledaj feed</ButtonLink>
+              </Card>
+            </div>
+
+            <aside className="space-y-5 xl:sticky xl:top-28 xl:self-start">
+              <SidebarCard title="Popularne teme" icon={Star}>
+                <div className="flex flex-wrap gap-2">
+                  {popularTopics.map((topic) => <Badge key={topic} variant="sage">#{topic}</Badge>)}
+                </div>
+              </SidebarCard>
+
+              <SidebarCard title="Aktivni članovi" icon={UsersRound} tone="sage">
+                <div className="space-y-3">
+                  {activeMembers.map((member) => (
+                    <div key={member.name} className="flex items-center gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] p-3">
+                      <Avatar initials={member.initials} alt={member.name} size="sm" />
+                      <div>
+                        <p className="text-sm font-black text-[color:var(--pp-color-forest-text)]">{member.name}</p>
+                        <p className="text-xs font-bold text-[color:var(--pp-color-muted-text)]">{member.detail}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
+              </SidebarCard>
 
-        <section className="container mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16">
-          <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="section-kicker mb-3">Ulazi u zajednicu</p>
-              <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] tracking-tight">Odaberi što ti treba danas</h2>
-            </div>
-            <p className="max-w-md text-muted-foreground">Magazine-style početna za sadržaj, objave i korisne community akcije.</p>
-          </div>
+              <SidebarCard title="Pravila zajednice" icon={ShieldCheck} tone="cream">
+                <ul className="space-y-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">
+                  <li className="flex gap-2"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[color:var(--pp-color-success)]" /> Budite konkretni i pristojni.</li>
+                  <li className="flex gap-2"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[color:var(--pp-color-success)]" /> Ne dijelite tuđe podatke bez dopuštenja.</li>
+                  <li className="flex gap-2"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[color:var(--pp-color-success)]" /> Hitne slučajeve prvo rješavajte s veterinarom ili policijom.</li>
+                </ul>
+              </SidebarCard>
 
-          <div className="grid gap-5 md:grid-cols-2">
-            {sections.map((section, index) => (
-              <Link
-                key={section.href}
-                href={section.href}
-                className="community-section-card group overflow-hidden p-6 md:p-7 focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-orange animate-fade-in-up"
-                style={{ animationDelay: `${Math.min(index * 90, 360)}ms` }}
-              >
-                <div className="flex items-start justify-between gap-5">
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold uppercase tracking-[0.22em] text-warm-orange mb-3">{section.eyebrow}</p>
-                    <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] tracking-tight mb-3 group-hover:text-warm-orange transition-colors">
-                      {section.title}
-                    </h2>
-                    <p className="text-muted-foreground leading-relaxed">{section.description}</p>
-                  </div>
-                  <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${section.tone} text-white shadow-sm`}>
-                    <section.icon className="h-6 w-6" />
-                  </div>
-                </div>
-                <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-warm-orange">
-                  {section.cta ?? 'Otvori'}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </div>
-              </Link>
-            ))}
+              <SidebarCard title="Hitna pomoć zajednice" icon={AlertTriangle} tone="orange">
+                <p className="text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Za izgubljenog ljubimca odmah pripremite sliku, lokaciju, kontakt i zadnje vrijeme viđenja.</p>
+                <ButtonLink href="/izgubljeni/prijavi" className="mt-5 w-full" variant="primary"><Bell className="size-4" /> Prijavi nestanak</ButtonLink>
+              </SidebarCard>
+            </aside>
           </div>
-        </section>
-
-        <section className="container mx-auto px-6 md:px-10 lg:px-16 pb-16 md:pb-20">
-          <div className="appeal-card p-8 md:p-10 grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
-            <div>
-              <p className="section-kicker mb-3">Hitno i korisno</p>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-[var(--font-heading)] mb-3">Zajednica najviše vrijedi kad netko treba pomoć.</h2>
-              <p className="text-muted-foreground max-w-2xl">Ako je ljubimac nestao, kreni s oglasom i dijeljenjem. Ako tražiš savjet, blog je najbrži ulaz.</p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/izgubljeni/prijavi">
-                <Button className="h-12 rounded-full bg-rose-600 px-6 text-white hover:bg-rose-700">
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  Prijavi nestanak
-                </Button>
-              </Link>
-              <Link href="/zajednica/feed">
-                <Button variant="outline" className="h-12 rounded-full px-6">
-                  <UsersRound className="mr-2 h-4 w-4" />
-                  Feed
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-      </div>
-    </>
+        </div>
+      </section>
+    </main>
   );
 }
