@@ -1349,6 +1349,13 @@ body:has([data-petpark-route]) [data-petpark-route] > section {
   padding-right: 80px !important;
 }
 
+@media (max-width: 767px) {
+  body:has([data-petpark-route]) [data-petpark-route] > section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+}
+
 body:has([data-petpark-route^="usluge"]) [data-petpark-route="usluge-detail"] > section {
   padding-top: 33px !important;
 }
