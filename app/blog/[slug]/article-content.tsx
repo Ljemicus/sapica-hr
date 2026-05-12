@@ -1,31 +1,36 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
-  Calendar,
-  User,
-  ChevronLeft,
-  Share2,
-  Check,
   ArrowRight,
-  Clock,
   BookOpen,
+  CalendarDays,
+  Check,
+  ChevronLeft,
+  Clock,
+  MessageCircle,
   RefreshCcw,
+  Share2,
   Sparkles,
+  UserRound,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
-  BLOG_CATEGORY_LABELS,
   BLOG_CATEGORY_EMOJI,
+  BLOG_CATEGORY_LABELS,
   type Article,
   type BlogCategory,
   type BlogComment,
 } from '@/lib/types';
+import {
+  Avatar,
+  Badge,
+  Button,
+  ButtonLink,
+  Card,
+  LeafDecoration,
+  PawDecoration,
+} from '@/components/shared/petpark/design-foundation';
 import { BlogComments } from './blog-comments';
 
 interface ArticleContentProps {
@@ -41,481 +46,205 @@ interface ArticleContentProps {
 }
 
 function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[čć]/g, 'c')
-    .replace(/[š]/g, 's')
-    .replace(/[ž]/g, 'z')
-    .replace(/[đ]/g, 'd')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
+  return text.toLowerCase().replace(/[čć]/g, 'c').replace(/[š]/g, 's').replace(/[ž]/g, 'z').replace(/[đ]/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
-interface Heading {
-  level: 2 | 3;
-  text: string;
-  id: string;
+function initials(name: string) {
+  return name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase();
 }
-
-interface LinkItem {
-  title: string;
-  href: string;
-  description: string;
-}
-
-function parseHeadings(body: string): Heading[] {
-  const headings: Heading[] = [];
-  const lines = body.split('\n');
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (trimmed.startsWith('### ')) {
-      const text = trimmed.slice(4).trim();
-      headings.push({ level: 3, text, id: slugify(text) });
-    } else if (trimmed.startsWith('## ')) {
-      const text = trimmed.slice(3).trim();
-      headings.push({ level: 2, text, id: slugify(text) });
-    }
-  }
-  return headings;
-}
-
-function getAuthorInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-}
-
-const AUTHOR_COLORS: Record<string, string> = {
-  A: 'bg-orange-500',
-  B: 'bg-blue-500',
-  C: 'bg-green-500',
-  D: 'bg-purple-500',
-  E: 'bg-pink-500',
-  F: 'bg-teal-500',
-  G: 'bg-red-500',
-  H: 'bg-indigo-500',
-  P: 'bg-orange-500',
-};
-
-function getAuthorColor(name: string): string {
-  const firstChar = name.charAt(0).toUpperCase();
-  return AUTHOR_COLORS[firstChar] || 'bg-orange-500';
-}
-
-function getAuthorBio(name: string): string {
-  return `${name} je autor i ljubitelj životinja koji redovito piše za PetPark blog. Strastveno dijeli savjete i iskustva iz svijeta kućnih ljubimaca kako bi pomogao vlasnicima pružiti najbolju moguću skrb.`;
-}
-
-const CATEGORY_CTA: Record<BlogCategory, {
-  kicker: string;
-  title: string;
-  text: string;
-  primary: { label: string; href: string };
-  secondary: { label: string; href: string };
-}> = {
-  zdravlje: {
-    kicker: 'Zdravlje ljubimca',
-    title: 'Trebate veterinara ili hitan savjet?',
-    text: 'Ako članak opisuje simptome koje primjećujete kod ljubimca, nemojte ostati samo na čitanju — pronađite veterinara ili otvorite hitne upute.',
-    primary: { label: 'Pronađi veterinara', href: '/veterinari' },
-    secondary: { label: 'Otvori hitne upute', href: '/hitno' },
-  },
-  prehrana: {
-    kicker: 'Prehrana bez lutanja',
-    title: 'Nastavite s boljom rutinom hranjenja bez previše improvizacije',
-    text: 'Nakon vodiča o prehrani, najviše koristi donosi dobar plan, provjerene navike i dodatni sadržaj o zdravlju i rutini.',
-    primary: { label: 'Savjeti o zdravlju', href: '/blog?category=zdravlje' },
-    secondary: { label: 'Pogledaj zajednicu', href: '/zajednica' },
-  },
-  dresura: {
-    kicker: 'Trening u praksi',
-    title: 'Trebate pomoć oko ponašanja ili treninga?',
-    text: 'Ako zapnete s reaktivnošću, povlačenjem ili osnovnim naredbama, najbolji rezultat često dolazi uz plan i stručnu pomoć.',
-    primary: { label: 'Istraži dresuru', href: '/dresura' },
-    secondary: { label: 'Pretraži usluge', href: '/pretraga' },
-  },
-  putovanje: {
-    kicker: 'Planirate izlazak ili put?',
-    title: 'Pronađite dog-friendly mjesta i pomoć kad vas nema',
-    text: 'Putovanja s ljubimcem postaju puno lakša kad unaprijed znate kamo možete i kome možete povjeriti ljubimca.',
-    primary: { label: 'Dog-friendly lokacije', href: '/dog-friendly' },
-    secondary: { label: 'Pronađi sittera', href: '/pretraga' },
-  },
-  zabava: {
-    kicker: 'Više zabave, manje dosade',
-    title: 'Pretvorite ideje iz članka u stvarne aktivnosti',
-    text: 'Ako vaš ljubimac treba više stimulacije, kombinacija aktivnosti, rutine i dobrih mjesta radi čuda.',
-    primary: { label: 'Istraži dog-friendly mjesta', href: '/dog-friendly' },
-    secondary: { label: 'Pogledaj zajednicu', href: '/zajednica' },
-  },
-  psi: {
-    kicker: 'Život sa psom',
-    title: 'Trebate pomoć oko šetnje, čuvanja ili novog psa?',
-    text: 'PetPark nije samo blog — možete pronaći konkretne usluge, provjerene profile i nove rute za život sa psom.',
-    primary: { label: 'Pretraži usluge', href: '/pretraga' },
-    secondary: { label: 'Pogledaj udomljavanje', href: '/udomljavanje' },
-  },
-  macke: {
-    kicker: 'Život s mačkom',
-    title: 'Trebate više praktičnih ideja za mačju rutinu?',
-    text: 'Od svakodnevice u stanu do zdravstvenih pitanja, nastavite kroz članke i zajednicu gdje se skupljaju iskustva vlasnika.',
-    primary: { label: 'Čitaj mačje članke', href: '/blog?category=macke' },
-    secondary: { label: 'Pogledaj zajednicu', href: '/zajednica' },
-  },
-};
-
-const CATEGORY_INTERNAL_LINKS: Record<BlogCategory, LinkItem[]> = {
-  zdravlje: [
-    { title: 'Veterinari', href: '/veterinari', description: 'Brži korak kad želite stručan pregled ili drugu procjenu.' },
-    { title: 'Hitne upute', href: '/hitno', description: 'Otvorite hitni vodič ako sumnjate na trovanje, ubod ili druge rizične simptome.' },
-    { title: 'Više članaka o zdravlju', href: '/blog?category=zdravlje', description: 'Nastavite kroz povezane teme bez vraćanja na početak.' },
-  ],
-  prehrana: [
-    { title: 'Članci o zdravlju', href: '/blog?category=zdravlje', description: 'Prehrana i zdravlje idu zajedno — ovdje je najlogičniji nastavak.' },
-    { title: 'Zajednica', href: '/zajednica', description: 'Pogledajte iskustva drugih vlasnika oko hrane, rutine i osjetljivih trbuha.' },
-    { title: 'FAQ', href: '/faq', description: 'Brzi odgovori za česta pitanja oko platforme i usluga.' },
-  ],
-  dresura: [
-    { title: 'Dresura', href: '/dresura', description: 'Pregled postojećih training ruta i ulaza u relevantne usluge.' },
-    { title: 'Pretraži usluge', href: '/pretraga', description: 'Ako želite prijeći s teorije na praksu, ovo je najbrži korak.' },
-    { title: 'Članci za vlasnike pasa', href: '/blog?category=psi', description: 'Povežite trening s rutinom, šetnjom i ponašanjem.' },
-  ],
-  putovanje: [
-    { title: 'Dog-friendly vodič', href: '/dog-friendly', description: 'Mjesta i ideje koja podržavaju izlete i kraće gradske planove.' },
-    { title: 'Pronađi sittera', href: '/pretraga', description: 'Kad ipak ne možete voditi ljubimca sa sobom, olakšajte si logistiku.' },
-    { title: 'Članci za pse', href: '/blog?category=psi', description: 'Dodatni sadržaj za rutinu, šetnju i pripremu prije puta.' },
-  ],
-  zabava: [
-    { title: 'Dog-friendly mjesta', href: '/dog-friendly', description: 'Iskoristite ideje iz članka i pretvorite ih u stvarni izlazak.' },
-    { title: 'Zajednica', href: '/zajednica', description: 'Pogledajte kako drugi vlasnici rješavaju dosadu i obogaćenje rutine.' },
-    { title: 'Članci za školovanje', href: '/blog?category=dresura', description: 'Kad zabava preraste u trening, ovo je prirodan sljedeći korak.' },
-  ],
-  psi: [
-    { title: 'Pretraži usluge', href: '/pretraga', description: 'Šetnja, čuvanje i ostale praktične usluge na jednom mjestu.' },
-    { title: 'Udomljavanje', href: '/udomljavanje', description: 'Ako razmišljate o novom članu obitelji, krenite ovdje.' },
-    { title: 'Članci o dresuri', href: '/blog?category=dresura', description: 'Nastavite s treninzima, rutinom i svakodnevnim ponašanjem.' },
-  ],
-  macke: [
-    { title: 'Mačji članci', href: '/blog?category=macke', description: 'Brz ulaz u još relevantnih tekstova za vlasnike mačaka.' },
-    { title: 'Zajednica', href: '/zajednica', description: 'Pitanja, iskustva i savjeti koje vrijedi pročitati prije iduće odluke.' },
-    { title: 'Članci o zdravlju', href: '/blog?category=zdravlje', description: 'Kad vas zanimaju simptomi, preventiva i veterinarski kontekst.' },
-  ],
-};
 
 function formatLongDate(date: string) {
-  return new Date(date).toLocaleDateString('hr-HR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+  return new Intl.DateTimeFormat('hr-HR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(date));
+}
+
+function readingTime(article: Article) {
+  const words = `${article.title} ${article.excerpt} ${article.body || ''}`.split(/\s+/).filter(Boolean).length;
+  return Math.max(2, Math.ceil(words / 190));
+}
+
+function parseHeadings(body: string) {
+  return body.split('\n').map((line) => line.trim()).filter((line) => line.startsWith('## ')).map((line) => {
+    const text = line.replace(/^##\s+/, '').trim();
+    return { text, id: slugify(text) };
   });
 }
 
-export function ArticleContent({ article, relatedArticles, comments, currentUser }: ArticleContentProps) {
-  const router = useRouter();
-  const [copied, setCopied] = useState(false);
+const CATEGORY_CTA: Record<BlogCategory, { title: string; text: string; primary: { label: string; href: string }; secondary: { label: string; href: string } }> = {
+  zdravlje: { title: 'Zdravlje prvo, savjet odmah iza toga.', text: 'Ako članak opisuje simptome koje vidite kod ljubimca, provjerite veterinara ili pitajte zajednicu za iskustva.', primary: { label: 'Pronađi veterinara', href: '/veterinari' }, secondary: { label: 'Pitaj zajednicu', href: '/zajednica' } },
+  prehrana: { title: 'Dobra rutina hranjenja počinje malim koracima.', text: 'Usporedite navike, pratite reakcije ljubimca i nastavite kroz povezane zdravstvene savjete.', primary: { label: 'Zdravlje', href: '/blog?category=zdravlje' }, secondary: { label: 'Zajednica', href: '/zajednica' } },
+  dresura: { title: 'Teoriju pretvorite u trening.', text: 'Ako zapnete s ponašanjem, kombinirajte vodič s trenerom ili iskustvima drugih vlasnika.', primary: { label: 'Pretraži usluge', href: '/pretraga?category=usluge' }, secondary: { label: 'Forum', href: '/forum' } },
+  putovanje: { title: 'Plan puta je pola mirnog putovanja.', text: 'Provjerite dog-friendly opcije i dogovorite skrb ako ljubimac ne ide s vama.', primary: { label: 'Dog-friendly', href: '/dog-friendly' }, secondary: { label: 'Pronađi sittera', href: '/pretraga' } },
+  zabava: { title: 'Više igre, manje dosade.', text: 'Dobre aktivnosti najviše vrijede kad ih lako ubacite u dnevnu rutinu.', primary: { label: 'Zajednica', href: '/zajednica' }, secondary: { label: 'Još savjeta', href: '/blog' } },
+  psi: { title: 'Život sa psom je lakši uz dobru podršku.', text: 'Od šetnje do čuvanja, PetPark može spojiti savjet s konkretnom uslugom.', primary: { label: 'Usluge', href: '/usluge' }, secondary: { label: 'Udomljavanje', href: '/udomljavanje' } },
+  macke: { title: 'Mačja rutina voli mir i dosljednost.', text: 'Nastavite kroz mačje članke ili pitajte zajednicu za praktična iskustva.', primary: { label: 'Mačji članci', href: '/blog?category=macke' }, secondary: { label: 'Zajednica', href: '/zajednica' } },
+};
 
-  const handleShare = async () => {
+function BodyBlock({ text, index }: { text: string; index: number }) {
+  const trimmed = text.trim();
+  if (trimmed.startsWith('### ')) {
+    const heading = trimmed.slice(4).trim();
+    return <h3 id={slugify(heading)} className="mt-8 scroll-mt-24 text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{heading}</h3>;
+  }
+  if (trimmed.startsWith('## ')) {
+    const heading = trimmed.slice(3).trim();
+    return <h2 id={slugify(heading)} className="mt-10 scroll-mt-24 text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">{heading}</h2>;
+  }
+  if (index === 2) {
+    return (
+      <Card radius="24" tone="orange" className="my-8 p-5">
+        <p className="text-sm font-black uppercase tracking-[0.14em] text-[color:var(--pp-color-orange-primary)]">PetPark savjet</p>
+        <p className="mt-2 text-base font-semibold leading-8 text-[color:var(--pp-color-forest-text)]">{trimmed}</p>
+      </Card>
+    );
+  }
+  return <p className="text-lg font-semibold leading-9 text-[color:var(--pp-color-muted-text)]">{trimmed}</p>;
+}
+
+function RelatedCard({ article }: { article: Article }) {
+  return (
+    <Link href={`/blog/${article.slug}`} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2">
+      <Card radius="24" interactive className="h-full overflow-hidden">
+        <div className="flex h-32 items-center justify-center border-b border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-sage-surface)]">
+          <span className="text-5xl transition group-hover:scale-110" aria-hidden>{article.emoji}</span>
+        </div>
+        <div className="p-4">
+          <Badge variant="orange">{BLOG_CATEGORY_EMOJI[article.category]} {BLOG_CATEGORY_LABELS[article.category]}</Badge>
+          <h3 className="mt-3 line-clamp-2 text-base font-black text-[color:var(--pp-color-forest-text)] group-hover:text-[color:var(--pp-color-orange-primary)]">{article.title}</h3>
+          <p className="mt-2 line-clamp-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{article.excerpt}</p>
+        </div>
+      </Card>
+    </Link>
+  );
+}
+
+export function ArticleContent({ article, relatedArticles, comments, currentUser }: ArticleContentProps) {
+  const [copied, setCopied] = useState(false);
+  const headings = useMemo(() => parseHeadings(article.body), [article.body]);
+  const blocks = useMemo(() => article.body.split('\n\n').filter(Boolean), [article.body]);
+  const cta = CATEGORY_CTA[article.category];
+  const minutes = readingTime(article);
+
+  async function handleShare() {
     try {
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback silently
-    }
-  };
-
-  const handleShareFacebook = () => {
-    const url = encodeURIComponent(window.location.href);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
-  };
-
-  const handleShareTwitter = () => {
-    const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(article.title);
-    window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'width=600,height=400');
-  };
-
-  const wordCount = useMemo(() => article.body.split(/\s+/).filter(Boolean).length, [article.body]);
-  const readingTime = Math.max(1, Math.ceil(wordCount / 200));
-  const headings = useMemo(() => parseHeadings(article.body), [article.body]);
-  const showToc = wordCount > 500 && headings.length > 0;
-
-  const bodyBlocks = useMemo(() => {
-    const segments = article.body.split('\n\n').filter(Boolean);
-    return segments.map((segment: string) => {
-      const trimmed = segment.trim();
-      if (trimmed.startsWith('### ')) {
-        const text = trimmed.slice(4).trim();
-        return { type: 'h3' as const, text, id: slugify(text) };
-      }
-      if (trimmed.startsWith('## ')) {
-        const text = trimmed.slice(3).trim();
-        return { type: 'h2' as const, text, id: slugify(text) };
-      }
-      return { type: 'p' as const, text: trimmed, id: '' };
-    });
-  }, [article.body]);
-
-  const categoryCta = CATEGORY_CTA[article.category];
-  const internalLinks = CATEGORY_INTERNAL_LINKS[article.category];
-  const updatedAt = article.updatedAt ?? article.date;
-  const heroGradient = article.coverGradient ?? 'from-orange-500 via-amber-500 to-teal-500';
-  const sameDayUpdate = updatedAt === article.date;
+      setTimeout(() => setCopied(false), 1800);
+    } catch {}
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <Button variant="ghost" onClick={() => router.back()} className="mb-4 -ml-2 hover:bg-orange-50 hover:text-orange-600">
-        <ChevronLeft className="h-4 w-4 mr-1" />
-        Natrag na blog
-      </Button>
+    <main data-petpark-route="blog-detail" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
+      <section className="relative px-5 pb-12 pt-8 sm:px-8 lg:px-20">
+        <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block" />
+        <LeafDecoration className="-left-16 top-[720px] hidden scale-110 -rotate-12 lg:block" />
+        <PawDecoration className="right-[12%] top-[420px] hidden size-16 rotate-12 opacity-35 xl:block" />
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
-        <article className="min-w-0">
-          <div className={`relative overflow-hidden rounded-[28px] bg-gradient-to-br ${heroGradient} p-6 md:p-8 text-white mb-8 shadow-sm`}>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.22),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.18),transparent_30%)]" />
-            <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-              <div className="max-w-2xl">
-                <Badge className="mb-4 bg-white/15 text-white border-white/15 hover:bg-white/15">
-                  {BLOG_CATEGORY_EMOJI[article.category]} {BLOG_CATEGORY_LABELS[article.category]}
-                </Badge>
-                <h1 className="text-3xl md:text-4xl font-bold mb-4 text-balance">{article.title}</h1>
-                <p className="text-white/85 text-base md:text-lg max-w-2xl">{article.excerpt}</p>
-              </div>
-              <div className="shrink-0 self-start md:self-auto rounded-3xl bg-white/10 backdrop-blur-sm px-6 py-5 text-center border border-white/15">
-                <div className="text-6xl md:text-7xl leading-none">{article.emoji}</div>
-                <div className="mt-3 text-xs uppercase tracking-[0.18em] text-white/70">PetPark blog</div>
-              </div>
-            </div>
+        <div className="mx-auto max-w-[1320px] space-y-6">
+          <div className="flex flex-wrap items-center gap-2 text-sm font-black text-[color:var(--pp-color-muted-text)]">
+            <Link href="/blog" className="hover:text-[color:var(--pp-color-orange-primary)]">Blog</Link>
+            <span>/</span>
+            <Link href={`/blog?category=${article.category}`} className="hover:text-[color:var(--pp-color-orange-primary)]">{BLOG_CATEGORY_LABELS[article.category]}</Link>
+            <span>/</span>
+            <span className="line-clamp-1 text-[color:var(--pp-color-forest-text)]">{article.title}</span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-muted-foreground mb-8">
-            <span className="flex items-center gap-1.5">
-              <User className="h-4 w-4" />
-              <span className="font-medium text-foreground">{article.author}</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Calendar className="h-4 w-4" />
-              Objavljeno {formatLongDate(article.date)}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <RefreshCcw className="h-4 w-4" />
-              Ažurirano {formatLongDate(updatedAt)}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4" />
-              {readingTime} min čitanja
-            </span>
-            {!sameDayUpdate && (
-              <Badge variant="secondary" className="bg-orange-50 text-orange-700 border-0">
-                Osvježeno izdanje
-              </Badge>
-            )}
-          </div>
+          <ButtonLink href="/blog" variant="ghost" size="sm"><ChevronLeft className="size-4" /> Natrag na blog</ButtonLink>
 
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_240px] xl:items-start">
-            <div className="min-w-0">
-              <div className="prose prose-lg max-w-none mb-10">
-                {bodyBlocks.map((block, i) => {
-                  if (block.type === 'h2') {
-                    return (
-                      <h2 key={i} id={block.id} className="text-2xl font-bold mt-8 mb-4 scroll-mt-20">
-                        {block.text}
-                      </h2>
-                    );
-                  }
-                  if (block.type === 'h3') {
-                    return (
-                      <h3 key={i} id={block.id} className="text-xl font-semibold mt-6 mb-3 scroll-mt-20">
-                        {block.text}
-                      </h3>
-                    );
-                  }
-                  return (
-                    <p key={i} className="text-gray-700 leading-relaxed mb-5">
-                      {block.text}
-                    </p>
-                  );
-                })}
+          <Card radius="28" className="relative overflow-hidden p-6 sm:p-8 lg:p-10">
+            <div className="absolute right-8 top-8 hidden size-32 rounded-full bg-[color:var(--pp-color-warning-surface)] lg:block" />
+            <div className="relative grid gap-8 xl:grid-cols-[1fr_360px] xl:items-end">
+              <div>
+                <Badge variant="orange">{BLOG_CATEGORY_EMOJI[article.category]} {BLOG_CATEGORY_LABELS[article.category]}</Badge>
+                <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-[color:var(--pp-color-forest-text)] sm:text-6xl lg:text-7xl">{article.title}</h1>
+                <p className="mt-6 max-w-3xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">{article.excerpt}</p>
+                <div className="mt-6 flex flex-wrap items-center gap-3 text-sm font-black text-[color:var(--pp-color-muted-text)]">
+                  <span className="inline-flex items-center gap-1"><UserRound className="size-4" /> {article.author}</span>
+                  <span className="inline-flex items-center gap-1"><CalendarDays className="size-4" /> {formatLongDate(article.date)}</span>
+                  <span className="inline-flex items-center gap-1"><Clock className="size-4" /> {minutes} min čitanja</span>
+                  {article.updatedAt ? <span className="inline-flex items-center gap-1"><RefreshCcw className="size-4" /> ažurirano {formatLongDate(article.updatedAt)}</span> : null}
+                </div>
+                <div className="mt-7 flex flex-wrap gap-2">
+                  <Button onClick={handleShare} variant="secondary"><Share2 className="size-4" /> {copied ? 'Kopirano!' : 'Kopiraj link'} {copied ? <Check className="size-4" /> : null}</Button>
+                  <ButtonLink href="/zajednica" variant="teal"><MessageCircle className="size-4" /> Pitaj zajednicu</ButtonLink>
+                </div>
               </div>
+
+              <Card radius="28" tone="sage" className="flex min-h-[280px] items-center justify-center p-8">
+                <span className="text-9xl" aria-hidden>{article.emoji}</span>
+              </Card>
             </div>
+          </Card>
 
-            <aside className="space-y-4 xl:sticky xl:top-20">
-              {showToc && (
-                <Card className="border border-orange-100 shadow-sm rounded-2xl">
-                  <CardContent className="p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <BookOpen className="h-4 w-4 text-orange-500" />
-                      <span className="font-semibold text-sm">Sadržaj</span>
-                    </div>
-                    <nav>
-                      <ul className="space-y-1.5">
-                        {headings.map((heading, i) => (
-                          <li key={i} className={heading.level === 3 ? 'ml-4' : ''}>
-                            <a
-                              href={`#${heading.id}`}
-                              className="text-sm text-muted-foreground hover:text-orange-600 transition-colors"
-                            >
-                              {heading.text}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </nav>
-                  </CardContent>
-                </Card>
-              )}
+          <div className="grid gap-6 xl:grid-cols-[240px_minmax(0,760px)_280px] xl:items-start xl:justify-center">
+            <aside className="hidden xl:block xl:sticky xl:top-28">
+              <Card radius="24" tone="cream" className="p-5">
+                <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-[color:var(--pp-color-muted-text)]"><BookOpen className="size-4" /> Sadržaj</h2>
+                <nav className="mt-4 space-y-2">
+                  {headings.length ? headings.map((heading) => (
+                    <a key={heading.id} href={`#${heading.id}`} className="block rounded-[var(--pp-radius-control)] px-3 py-2 text-sm font-bold text-[color:var(--pp-color-muted-text)] hover:bg-[color:var(--pp-color-sage-surface)] hover:text-[color:var(--pp-color-forest-text)]">{heading.text}</a>
+                  )) : <p className="text-sm font-semibold text-[color:var(--pp-color-muted-text)]">Kratki vodič bez dodatnih poglavlja.</p>}
+                </nav>
+              </Card>
+            </aside>
 
-              <Card className="border-0 shadow-sm rounded-2xl bg-slate-50/80">
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Sparkles className="h-4 w-4 text-orange-500" />
-                    <p className="font-semibold text-sm">Brzi nastavak</p>
+            <article className="min-w-0">
+              <Card radius="28" className="p-6 sm:p-8 lg:p-10">
+                <div className="space-y-6">
+                  {blocks.map((block, index) => <BodyBlock key={`${index}-${block.slice(0, 12)}`} text={block} index={index} />)}
+                </div>
+              </Card>
+
+              <Card radius="28" tone="orange" className="mt-6 p-6 sm:p-7">
+                <Badge variant="teal"><Sparkles className="size-3" /> Sljedeći korak</Badge>
+                <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">{cta.title}</h2>
+                <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{cta.text}</p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <ButtonLink href={cta.primary.href}>{cta.primary.label} <ArrowRight className="size-4" /></ButtonLink>
+                  <ButtonLink href={cta.secondary.href} variant="secondary">{cta.secondary.label}</ButtonLink>
+                </div>
+              </Card>
+
+              <Card radius="28" tone="cream" className="mt-6 p-6">
+                <div className="flex items-start gap-4">
+                  <Avatar initials={initials(article.author)} alt={article.author} size="lg" />
+                  <div>
+                    <h2 className="text-xl font-black text-[color:var(--pp-color-forest-text)]">{article.author}</h2>
+                    <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Autor PetPark vodiča s fokusom na praktične savjete koje vlasnici mogu odmah primijeniti.</p>
                   </div>
-                  <div className="space-y-3">
-                    {internalLinks.map((item) => (
-                      <Link key={item.href} href={item.href} className="block rounded-xl border bg-white p-3 hover:border-orange-200 hover:bg-orange-50/60 transition-colors">
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p className="font-medium text-sm text-foreground">{item.title}</p>
-                            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{item.description}</p>
-                          </div>
-                          <ArrowRight className="h-4 w-4 text-orange-400 shrink-0 mt-0.5" />
-                        </div>
-                      </Link>
-                    ))}
+                </div>
+              </Card>
+
+              <div className="mt-8">
+                <BlogComments articleSlug={article.slug} initialComments={comments} currentUser={currentUser} />
+              </div>
+
+              {relatedArticles.length ? (
+                <section className="mt-10 space-y-5">
+                  <div>
+                    <h2 className="text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">Nastavite čitati</h2>
+                    <p className="mt-2 text-sm font-semibold text-[color:var(--pp-color-muted-text)]">Još korisnih PetPark vodiča iz sličnih tema.</p>
                   </div>
-                </CardContent>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    {relatedArticles.map((related) => <RelatedCard key={related.slug} article={related} />)}
+                  </div>
+                </section>
+              ) : null}
+            </article>
+
+            <aside className="space-y-5 xl:sticky xl:top-28">
+              <Card radius="24" tone="sage" className="p-5">
+                <h2 className="text-lg font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">Zašto pročitati do kraja?</h2>
+                <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">PetPark članci vode od savjeta do konkretne akcije: usluge, zajednica i povezani vodiči su odmah pri ruci.</p>
+              </Card>
+              <Card radius="24" tone="teal" className="p-5">
+                <h2 className="text-lg font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">Pitanje nakon članka?</h2>
+                <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Otvori zajednicu i pitaj druge vlasnike ili providere.</p>
+                <ButtonLink href="/zajednica" className="mt-5 w-full" variant="secondary">Pitaj zajednicu</ButtonLink>
               </Card>
             </aside>
           </div>
-
-          <div className="rounded-[28px] bg-gradient-to-r from-orange-50 to-teal-50 p-6 md:p-8 mb-10 border border-orange-100/70">
-            <div className="max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-600 mb-3">{categoryCta.kicker}</p>
-              <h2 className="text-2xl font-bold mb-2">{categoryCta.title}</h2>
-              <p className="text-sm md:text-base text-muted-foreground mb-5 leading-relaxed">{categoryCta.text}</p>
-              <div className="flex flex-wrap gap-3">
-                <Link href={categoryCta.primary.href}>
-                  <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6">
-                    {categoryCta.primary.label}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link href={categoryCta.secondary.href}>
-                  <Button variant="outline" className="rounded-full hover:bg-white hover:text-orange-600 hover:border-orange-200">
-                    {categoryCta.secondary.label}
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="mb-10 pb-8 border-b">
-            <div className="flex items-start gap-4">
-              <Avatar size="lg">
-                <AvatarFallback className={`${getAuthorColor(article.author)} text-white font-semibold`}>
-                  {getAuthorInitials(article.author)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <p className="font-semibold">{article.author}</p>
-                <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                  {getAuthorBio(article.author)}
-                </p>
-                <div className="flex flex-wrap items-center gap-3 mt-3 text-sm">
-                  <Link href="/blog" className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 font-medium">
-                    Pogledaj sve članke
-                    <ArrowRight className="h-3 w-3" />
-                  </Link>
-                  <Link href={`/blog?category=${article.category}`} className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 font-medium">
-                    Više iz kategorije {BLOG_CATEGORY_LABELS[article.category].toLowerCase()}
-                    <ArrowRight className="h-3 w-3" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3 mb-10 pb-8 border-b">
-            <span className="text-sm text-muted-foreground">Podijelite članak:</span>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button variant="outline" size="sm" onClick={handleShare} className="hover:bg-orange-50 hover:text-orange-600">
-                {copied ? <Check className="h-4 w-4 mr-1" /> : <Share2 className="h-4 w-4 mr-1" />}
-                {copied ? 'Kopirano!' : 'Kopiraj link'}
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleShareFacebook} className="hover:bg-blue-50 hover:text-blue-600">
-                <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-                Facebook
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleShareTwitter} className="hover:bg-sky-50 hover:text-sky-600">
-                <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-                X
-              </Button>
-            </div>
-          </div>
-
-          <BlogComments articleSlug={article.slug} initialComments={comments} currentUser={currentUser} />
-
-          {relatedArticles.length > 0 && (
-            <div className="mb-10">
-              <div className="flex items-end justify-between gap-4 mb-6 flex-wrap">
-                <div>
-                  <h2 className="text-xl font-bold">Nastavite čitati</h2>
-                  <p className="text-sm text-muted-foreground mt-1">Još korisnog sadržaja iz sličnih ili susjednih tema.</p>
-                </div>
-                <Link href={`/blog?category=${article.category}`} className="text-sm font-medium text-orange-600 hover:text-orange-700 inline-flex items-center gap-1">
-                  Više iz kategorije
-                  <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {relatedArticles.map((related) => (
-                  <Link key={related.slug} href={`/blog/${related.slug}`}>
-                    <Card className="group card-hover h-full border-0 shadow-sm rounded-2xl overflow-hidden cursor-pointer">
-                      <CardContent className="p-0">
-                        <div className={`h-28 bg-gradient-to-br ${related.coverGradient ?? 'from-orange-100 to-amber-50'} flex items-center justify-center relative`}>
-                          <Badge className="absolute top-3 left-3 bg-white/90 text-orange-600 text-xs shadow-sm hover:bg-white/90 border-0">
-                            {BLOG_CATEGORY_EMOJI[related.category]} {BLOG_CATEGORY_LABELS[related.category]}
-                          </Badge>
-                          <span className="text-4xl group-hover:scale-110 transition-transform">{related.emoji}</span>
-                        </div>
-                        <div className="p-4">
-                          <h3 className="font-semibold text-sm group-hover:text-orange-500 transition-colors line-clamp-2">
-                            {related.title}
-                          </h3>
-                          <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{related.excerpt}</p>
-                          <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
-                            <span>{formatLongDate(related.updatedAt ?? related.date)}</span>
-                            <ArrowRight className="h-3 w-3 group-hover:text-orange-400 transition-colors" />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </article>
-
-        <aside className="hidden lg:block space-y-4">
-          <Card className="border-0 shadow-sm rounded-2xl">
-            <CardContent className="p-5">
-              <p className="text-sm font-semibold mb-2">Zašto ovo vrijedi pročitati do kraja?</p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Ovaj članak je dio PetPark baze praktičnih vodiča koji vas vode od savjeta do konkretne akcije — usluge, dodatni članci i korisne rute su odmah pri ruci.
-              </p>
-            </CardContent>
-          </Card>
-        </aside>
-      </div>
-    </div>
+        </div>
+      </section>
+    </main>
   );
 }
