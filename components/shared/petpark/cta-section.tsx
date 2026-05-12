@@ -16,7 +16,7 @@ type CTASectionProps = {
 };
 
 const variantClasses: Record<CtaVariant, string> = {
-  partner: 'bg-[linear-gradient(135deg,var(--pp-forest),var(--pp-forest-soft))] text-white',
+  partner: 'bg-[linear-gradient(135deg,var(--pp-forest),var(--pp-forest-soft,#2F6F55))] text-white',
   community: 'bg-[color:var(--pp-community-bg)] text-[color:var(--pp-ink)]',
   newsletter: 'bg-[color:var(--pp-trainer-bg)] text-[color:var(--pp-ink)]',
   lostPets: 'bg-[color:var(--pp-lost-bg)] text-[color:var(--pp-ink)]',

@@ -254,40 +254,18 @@ function QuickIcon({ tone, Icon }: { tone: Tone; Icon: React.ComponentType<{ cla
 }
 
 
-const officialCategoryCards: Record<CategoryIconName, string> = {
-  care: '/images/design-lab/official/icons/card-with-label/cuvanje.svg',
-  walk: '/images/design-lab/official/icons/card-with-label/setnja.svg',
-  grooming: '/images/design-lab/official/icons/card-with-label/grooming.svg',
-  training: '/images/design-lab/official/icons/card-with-label/trening.svg',
-  lost: '/images/design-lab/official/icons/card-with-label/izgubljeni.svg',
-  adoption: '/images/design-lab/official/icons/card-with-label/udomljavanje.svg',
-};
-
-const officialCategoryCardSizes: Record<CategoryIconName, number> = {
-  care: 93,
-  walk: 97,
-  grooming: 102,
-  training: 102,
-  lost: 102,
-  adoption: 106,
-};
-
-function MobileCategoryCard({ label, href, icon }: (typeof categories)[number]) {
+function MobileCategoryCard({ label, href, icon, tone }: (typeof categories)[number]) {
   return (
     <Link
       href={href}
       aria-label={label}
-      className="group flex min-h-[124px] shrink-0 snap-start items-center justify-center rounded-[20px] transition duration-200 ease-out hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAF6EA] sm:min-h-[124px]"
+      className="group flex min-h-[118px] w-full max-w-[112px] flex-col items-center justify-center rounded-[18px] border border-[#E7DDCC] bg-[#FFFDF8] px-2 text-center shadow-[0_12px_24px_rgba(80,55,25,.08)] transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(80,55,25,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAF6EA] sm:min-h-[124px] sm:max-w-[120px]"
+      style={{ paddingLeft: 8, paddingRight: 8 }}
     >
-      <img
-        src={officialCategoryCards[icon]}
-        alt=""
-        width={officialCategoryCardSizes[icon]}
-        height={122}
-        className="h-[122px] w-auto select-none drop-shadow-[0_12px_20px_rgba(70,45,20,.10)] transition duration-200 group-hover:drop-shadow-[0_16px_24px_rgba(70,45,20,.14)]"
-        draggable={false}
-      />
-      <span className="sr-only">{label}</span>
+      <span className={cn('mb-3 flex h-[56px] w-[56px] items-center justify-center rounded-full', tone === 'orange' ? 'bg-[#FBE9DB] text-[#E9651A]' : 'bg-[#E9F0DF] text-[#286D45]')}>
+        <CategoryGlyph name={icon} />
+      </span>
+      <span className="text-[12px] font-black leading-[14px] text-[#14231D] sm:text-[13px] sm:leading-4">{label}</span>
     </Link>
   );
 }
@@ -357,16 +335,15 @@ function MobileHomepage() {
         <div className="pointer-events-none absolute left-1/2 top-[120px] h-[440px] w-[440px] -translate-x-1/2 rounded-full bg-[#F8E3C9]/30 blur-3xl" />
 
         <header className="relative z-10 flex items-center justify-between gap-2 sm:gap-4">
-          <Link href="/" aria-label="PetPark početna" className="block shrink-0">
-            <PetParkLogo width={154} height={36} priority className="h-[33px] w-auto sm:h-[42px]" />
+          <Link href="/" aria-label="PetPark početna" className="block min-w-0 shrink">
+            <PetParkLogo width={154} height={36} priority className="h-[30px] w-auto max-w-[130px] min-[380px]:h-[33px] min-[380px]:max-w-[154px] sm:h-[42px] sm:max-w-none" />
           </Link>
-          <div className="flex shrink-0 items-center gap-2">
-            <Link href="/prijava" className="inline-flex h-10 items-center justify-center rounded-full bg-[#F26A00] px-4 text-[12px] font-black text-white shadow-[0_10px_22px_rgba(242,106,0,.22)] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 16, paddingRight: 16 }}>
+          <div className="flex shrink-0 items-center gap-1.5 min-[380px]:gap-2">
+            <Link href="/prijava" className="inline-flex h-10 items-center justify-center rounded-full bg-[#F26A00] px-3 text-[11px] font-black text-white shadow-[0_10px_22px_rgba(242,106,0,.22)] min-[380px]:px-4 min-[380px]:text-[12px] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
               Prijava
             </Link>
-            <Link href="/objavi-uslugu" className="inline-flex h-10 items-center justify-center rounded-full border border-[#D8CBB8] bg-[#FFFDF8] px-3 text-[12px] font-black text-[#123D36] shadow-[0_8px_18px_rgba(80,55,25,.07)] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
-              <span className="sm:hidden">Objavi</span>
-              <span className="hidden sm:inline">Objavi uslugu</span>
+            <Link href="/objavi-uslugu" className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-full border border-[#D8CBB8] bg-[#FFFDF8] px-3 text-[11px] font-black text-[#123D36] shadow-[0_8px_18px_rgba(80,55,25,.07)] min-[380px]:text-[12px] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
+              Objavi uslugu
             </Link>
           </div>
         </header>
@@ -413,7 +390,7 @@ function MobileHomepage() {
           </div>
         </section>
 
-        <section aria-label="PetPark usluge" className="relative z-10 -mx-1 mt-6 flex snap-x gap-3 overflow-x-auto px-1 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-3 sm:justify-items-center sm:overflow-visible sm:px-0 md:grid-cols-6 md:gap-x-0 [&::-webkit-scrollbar]:hidden">
+        <section aria-label="PetPark usluge" className="relative z-10 mt-6 grid grid-cols-2 justify-items-center gap-3 py-2 min-[390px]:grid-cols-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-6 md:gap-x-0">
           {categories.map((category) => <MobileCategoryCard key={category.label} {...category} />)}
         </section>
 
