@@ -489,7 +489,7 @@ function PixelPerfectDesktopHomepage({ isPreview }: { isPreview: boolean }) {
       <Link href="/izgubljeni" aria-label="Izgubljeni i pronađeni" className="absolute left-[62.5%] top-[64.4%] h-[6.4%] w-[33.7%]" />
       <Link href="/udomljavanje" aria-label="Udomljavanje" className="absolute left-[62.5%] top-[71.8%] h-[6.4%] w-[33.7%]" />
       <Link href="/blog" aria-label="Blog savjeti" className="absolute left-[62.5%] top-[79.1%] h-[6.4%] w-[33.7%]" />
-      <span className="sr-only">Mjesto gdje zajednica pomaže ljubimcima. PetPark povezuje usluge, upozorenja, savjete i udomljavanje — sve za ljubimce na jednom mjestu.</span>
+      <h1 className="sr-only">Mjesto gdje zajednica pomaže ljubimcima. PetPark povezuje usluge, upozorenja, savjete i udomljavanje — sve za ljubimce na jednom mjestu.</h1>
       {isPreview ? <span className="sr-only">Preview mode</span> : null}
     </div>
   );
