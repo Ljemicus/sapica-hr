@@ -22,6 +22,7 @@ import {
   Avatar,
   Badge,
   Button,
+  ButtonLink,
   Card,
   IconButton,
   LeafDecoration,
@@ -51,12 +52,12 @@ const navItems = [
 ];
 
 const sidebarItems = [
-  { label: 'Pregled', icon: Home, href: '#' },
+  { label: 'Pregled', icon: Home, href: '/moje-usluge' },
   { label: 'Kalendar', icon: CalendarDays, href: '/kalendar' },
   { label: 'Dnevni raspored', icon: Clock3, href: '/kalendar/dan', active: true },
-  { label: 'Moje usluge', icon: Scissors, href: '#' },
-  { label: 'Poruke', icon: MessageCircle, href: '#' },
-  { label: 'Profil', icon: UserRound, href: '#' },
+  { label: 'Moje usluge', icon: Scissors, href: '/moje-usluge' },
+  { label: 'Poruke', icon: MessageCircle, href: '/poruke' },
+  { label: 'Profil', icon: UserRound, href: '/dashboard/profile' },
 ];
 
 const appointments: Appointment[] = [
@@ -343,7 +344,7 @@ function OrdersList() {
 export function GroomerDaySchedulePage() {
   return (
     <main data-petpark-route="kalendar-dan" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
-      <AppHeader navItems={navItems} actions={<Button size="sm"><Plus className="size-4" /> Nova narudžba</Button>} />
+      <AppHeader navItems={navItems} actions={<ButtonLink href="/kalendar" size="sm"><Plus className="size-4" /> Kalendar</ButtonLink>} />
 
       <section className="relative px-5 pb-12 pt-10 sm:px-8 lg:px-20">
         <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block" />
@@ -366,8 +367,8 @@ export function GroomerDaySchedulePage() {
                       <option value="today">Danas, 12. svibnja</option>
                       <option value="tomorrow">Sutra, 13. svibnja</option>
                     </Select>
-                    <Button variant="secondary"><CalendarDays className="size-4" /> Mjesečni kalendar</Button>
-                    <Button><Plus className="size-4" /> Dodaj termin</Button>
+                    <ButtonLink href="/kalendar" variant="secondary"><CalendarDays className="size-4" /> Mjesečni kalendar</ButtonLink>
+                    <ButtonLink href="/objavi-uslugu"><Plus className="size-4" /> Objavi uslugu</ButtonLink>
                   </div>
                 </div>
               </Card>

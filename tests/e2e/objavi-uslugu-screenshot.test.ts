@@ -9,7 +9,7 @@ test.describe('/objavi-uslugu code-first v6 visual baseline', () => {
 
     await expect(page.getByRole('heading', { name: /^objavi uslugu$/i })).toBeVisible();
     await expect(page.getByRole('form', { name: /objava usluge/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /^nastavi$/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /^nastavi$/i })).toHaveAttribute('href', '/moje-usluge');
 
     await expect(page).toHaveScreenshot('objavi-uslugu-1440.png', {
       fullPage: true,

@@ -10,7 +10,7 @@ test.describe('/kalendar PetPark provider calendar visual baseline', () => {
     await expect(page.getByRole('heading', { name: /kalendar i rezervacije/i })).toBeVisible();
     await expect(page.getByText('Svibanj 2026.')).toBeVisible();
     await expect(page.getByText('Današnji raspored')).toBeVisible();
-    await expect(page.getByRole('button', { name: /blokiraj termin/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /dnevni raspored/i })).toHaveAttribute('href', '/kalendar/dan');
 
     await expect(page).toHaveScreenshot('kalendar-1440.png', {
       fullPage: true,

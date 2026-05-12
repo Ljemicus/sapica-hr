@@ -15,7 +15,7 @@ import {
   Stethoscope,
   Syringe,
 } from 'lucide-react';
-import { AppHeader, Badge, Button, Card, LeafDecoration } from '@/components/shared/petpark/design-foundation';
+import { AppHeader, Badge, Button, ButtonLink, Card, LeafDecoration } from '@/components/shared/petpark/design-foundation';
 
 const navItems = [
   { href: '/usluge', label: 'Usluge' },
@@ -168,7 +168,7 @@ export function PetPassportPdfPage() {
   return (
     <main data-petpark-route="pet-passport-pdf" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)] print:bg-white">
       <div className="print:hidden">
-        <AppHeader navItems={navItems} actions={<Button size="sm"><Download className="size-4" /> PDF</Button>} />
+        <AppHeader navItems={navItems} actions={<ButtonLink href="/pet-passport" size="sm"><Download className="size-4" /> Pet Passport</ButtonLink>} />
       </div>
       <section className="relative px-5 pb-12 pt-10 sm:px-8 lg:px-20 print:p-0">
         <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block print:hidden" />

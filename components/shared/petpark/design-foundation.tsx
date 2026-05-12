@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type {
+  AnchorHTMLAttributes,
   ButtonHTMLAttributes,
   HTMLAttributes,
   InputHTMLAttributes,
@@ -43,7 +44,7 @@ export function AppHeader({
   navItems = [
     { href: '/usluge', label: 'Usluge' },
     { href: '/kalendar', label: 'Kalendar' },
-    { href: '/treninzi', label: 'Grupni treninzi' },
+    { href: '/grupni-treninzi', label: 'Grupni treninzi' },
     { href: '/pet-passport', label: 'Pet Passport' },
   ],
 }: {
@@ -69,7 +70,7 @@ export function AppHeader({
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          {actions ?? <Button size="sm">Dodaj uslugu</Button>}
+          {actions ?? <ButtonLink href="/objavi-uslugu" size="sm">Dodaj uslugu</ButtonLink>}
           <IconButton aria-label="Otvori izbornik" className="lg:hidden">
             <Menu className="size-5" aria-hidden />
           </IconButton>
@@ -109,6 +110,28 @@ export function Button({
       type={type}
       className={cn(
         'inline-flex items-center justify-center gap-2 rounded-[var(--pp-radius-control)] font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-55',
+        'hover:-translate-y-0.5 active:translate-y-0',
+        buttonVariants[variant],
+        buttonSizes[size],
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function ButtonLink({
+  variant = 'primary',
+  size = 'md',
+  className,
+  href,
+  ...props
+}: AnchorHTMLAttributes<HTMLAnchorElement> & { href: string; variant?: ButtonVariant; size?: ButtonSize }) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        'inline-flex items-center justify-center gap-2 rounded-[var(--pp-radius-control)] font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2',
         'hover:-translate-y-0.5 active:translate-y-0',
         buttonVariants[variant],
         buttonSizes[size],

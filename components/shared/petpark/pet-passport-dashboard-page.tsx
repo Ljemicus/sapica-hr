@@ -26,6 +26,7 @@ import {
   Avatar,
   Badge,
   Button,
+  ButtonLink,
   Card,
   LeafDecoration,
   PawDecoration,
@@ -162,8 +163,8 @@ function PetIdentityHero() {
 function ActionRail() {
   return (
     <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-      <Button className="min-h-14 justify-start" variant="secondary"><Download className="size-4" /> PDF karton</Button>
-      <Button className="min-h-14 justify-start" variant="secondary"><Printer className="size-4" /> Ispiši</Button>
+      <ButtonLink href="/pet-passport/pdf" className="min-h-14 justify-start" variant="secondary"><Download className="size-4" /> PDF karton</ButtonLink>
+      <ButtonLink href="/pet-passport/pdf" className="min-h-14 justify-start" variant="secondary"><Printer className="size-4" /> Ispiši</ButtonLink>
       <Button className="min-h-14 justify-start" variant="teal"><Share2 className="size-4" /> Podijeli</Button>
     </div>
   );
@@ -284,7 +285,7 @@ function Timeline() {
 export function PetPassportDashboardPage() {
   return (
     <main data-petpark-route="pet-passport" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
-      <AppHeader navItems={navItems} actions={<Button size="sm"><Sparkles className="size-4" /> Novi ljubimac</Button>} />
+      <AppHeader navItems={navItems} actions={<ButtonLink href="/pet-passport/pdf" size="sm"><Sparkles className="size-4" /> PDF</ButtonLink>} />
       <section className="relative px-5 pb-12 pt-10 sm:px-8 lg:px-20">
         <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block" />
         <LeafDecoration className="-left-16 top-[640px] hidden scale-110 -rotate-12 lg:block" />

@@ -14,6 +14,7 @@ import {
   Avatar,
   Badge,
   Button,
+  ButtonLink,
   Card,
   IconButton,
   LeafDecoration,
@@ -303,14 +304,14 @@ export function ServiceDetailPage() {
       <AppHeader
         navItems={[
           { href: '/usluge', label: 'Usluge' },
-          { href: '/kako-radi', label: 'Kako radi' },
+          { href: '/#kako-radi', label: 'Kako radi' },
           { href: '/zajednica', label: 'Zajednica' },
           { href: '/blog', label: 'Blog' },
         ]}
         actions={(
           <div className="hidden items-center gap-5 lg:flex">
-            <Button variant="secondary" size="md" className="min-w-[130px]">Prijava</Button>
-            <Button size="md" className="min-w-[190px]">+ Objavi uslugu</Button>
+            <ButtonLink href="/prijava" variant="secondary" size="md" className="min-w-[130px]">Prijava</ButtonLink>
+            <ButtonLink href="/objavi-uslugu" size="md" className="min-w-[190px]">+ Objavi uslugu</ButtonLink>
           </div>
         )}
       />

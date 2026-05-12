@@ -20,6 +20,7 @@ import {
   Avatar,
   Badge,
   Button,
+  ButtonLink,
   Card,
   IconButton,
   LeafDecoration,
@@ -294,7 +295,7 @@ function InsightPanel() {
 export function MyServicesPage() {
   return (
     <main data-petpark-route="moje-usluge" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
-      <AppHeader navItems={navItems} actions={<Button size="sm"><Plus className="size-4" /> Objavi uslugu</Button>} />
+      <AppHeader navItems={navItems} actions={<ButtonLink href="/objavi-uslugu" size="sm"><Plus className="size-4" /> Objavi uslugu</ButtonLink>} />
       <section className="relative px-5 pb-12 pt-10 sm:px-8 lg:px-20">
         <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block" />
         <LeafDecoration className="-left-16 top-[560px] hidden scale-110 -rotate-12 lg:block" />
@@ -309,7 +310,7 @@ export function MyServicesPage() {
                     <h1 className="mt-4 text-4xl font-black leading-[1.05] tracking-[-0.04em] text-[color:var(--pp-color-forest-text)] sm:text-6xl">Moje usluge</h1>
                     <p className="mt-4 max-w-[600px] text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)]">Upravljajte svojim uslugama, rezervacijama i recenzijama na jednom mjestu.</p>
                   </div>
-                  <Button size="lg"><Plus className="size-5" /> Objavi novu uslugu</Button>
+                  <ButtonLink href="/objavi-uslugu" size="lg"><Plus className="size-5" /> Objavi novu uslugu</ButtonLink>
                 </div>
               </Card>
 

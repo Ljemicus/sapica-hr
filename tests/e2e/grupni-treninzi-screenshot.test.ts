@@ -8,7 +8,7 @@ test.describe('/grupni-treninzi PetPark group trainings visual baseline', () => 
     await page.goto(`${baseUrl}/grupni-treninzi`, { waitUntil: 'networkidle' });
 
     await expect(page.getByRole('heading', { name: /^grupni treninzi$/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /novi termin/i }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /novi termin/i }).first()).toHaveAttribute('href', '/kalendar');
     await expect(page.getByRole('heading', { name: /puppy socijalizacija/i }).first()).toBeVisible();
     await expect(page.getByRole('heading', { name: /rezerviraj točan trening/i })).toBeVisible();
 

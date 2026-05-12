@@ -20,6 +20,7 @@ import {
   Avatar,
   Badge,
   Button,
+  ButtonLink,
   Card,
   IconButton,
   LeafDecoration,
@@ -51,11 +52,11 @@ const navItems = [
 ];
 
 const sidebarItems = [
-  { label: 'Pregled', icon: Home, active: false },
-  { label: 'Kalendar', icon: CalendarDays, active: true },
-  { label: 'Moje usluge', icon: PawPrint, active: false },
-  { label: 'Poruke', icon: MessageCircle, active: false },
-  { label: 'Profil', icon: UserRound, active: false },
+  { label: 'Pregled', icon: Home, href: '/moje-usluge', active: false },
+  { label: 'Kalendar', icon: CalendarDays, href: '/kalendar', active: true },
+  { label: 'Moje usluge', icon: PawPrint, href: '/moje-usluge', active: false },
+  { label: 'Poruke', icon: MessageCircle, href: '/poruke', active: false },
+  { label: 'Profil', icon: UserRound, href: '/dashboard/profile', active: false },
 ];
 
 const calendarDays: CalendarDay[] = [
@@ -148,7 +149,7 @@ function ProviderSidebar() {
         <nav aria-label="Provider navigacija" className="mt-5 space-y-2">
           {sidebarItems.map((item) => (
             <Link
-              href={item.active ? '/kalendar' : '#'}
+              href={item.href}
               key={item.label}
               className={cn(
                 'flex items-center gap-3 rounded-[var(--pp-radius-control)] px-4 py-3 text-sm font-extrabold transition',
@@ -364,7 +365,7 @@ function AvailabilityCard() {
 export function ProviderCalendarPage() {
   return (
     <main data-petpark-route="kalendar" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
-      <AppHeader navItems={navItems} actions={<Button size="sm">Objavi uslugu</Button>} />
+      <AppHeader navItems={navItems} actions={<ButtonLink href="/objavi-uslugu" size="sm">Objavi uslugu</ButtonLink>} />
 
       <section className="relative px-5 pb-12 pt-10 sm:px-8 lg:px-20">
         <LeafDecoration className="-right-12 top-20 hidden rotate-12 lg:block" />
@@ -385,8 +386,8 @@ export function ProviderCalendarPage() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row">
-                  <Button variant="secondary">Izvezi raspored</Button>
-                  <Button><Plus className="size-4" aria-hidden /> Blokiraj termin</Button>
+                  <ButtonLink href="/kalendar/dan" variant="secondary">Dnevni raspored</ButtonLink>
+                  <ButtonLink href="/objavi-uslugu"><Plus className="size-4" aria-hidden /> Objavi uslugu</ButtonLink>
                 </div>
               </div>
 

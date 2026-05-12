@@ -13,6 +13,7 @@ import {
   AppHeader,
   Badge,
   Button,
+  ButtonLink,
   Card,
   Input,
   LeafDecoration,
@@ -176,8 +177,8 @@ export function PublishServiceForm() {
         </div>
 
         <div className="flex flex-col-reverse gap-3 border-t border-[color:var(--pp-color-warm-border)] pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <Button variant="secondary" size="lg" className="w-full sm:w-auto">Odustani</Button>
-          <Button type="submit" size="lg" className="w-full sm:w-auto">Nastavi</Button>
+          <ButtonLink href="/moje-usluge" variant="secondary" size="lg" className="w-full sm:w-auto">Odustani</ButtonLink>
+          <ButtonLink href="/moje-usluge" size="lg" className="w-full sm:w-auto">Nastavi</ButtonLink>
         </div>
       </form>
     </Card>
@@ -256,13 +257,13 @@ export function PublishServicePage() {
         navItems={[
           { href: '/usluge', label: 'Usluge' },
           { href: '/objavi-uslugu', label: 'Objavi uslugu' },
-          { href: '/kako-radi', label: 'Kako radi' },
+          { href: '/#kako-radi', label: 'Kako radi' },
           { href: '/zajednica', label: 'Zajednica' },
         ]}
         actions={(
           <div className="hidden items-center gap-5 lg:flex">
-            <Button variant="secondary" size="md" className="min-w-[130px]">Prijava</Button>
-            <Button size="md" className="min-w-[170px]">Spremi nacrt</Button>
+            <ButtonLink href="/prijava" variant="secondary" size="md" className="min-w-[130px]">Prijava</ButtonLink>
+            <ButtonLink href="/moje-usluge" size="md" className="min-w-[170px]">Moje usluge</ButtonLink>
           </div>
         )}
       />

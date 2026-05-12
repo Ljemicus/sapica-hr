@@ -35,15 +35,15 @@ const officialCategoryIcons: Record<CategoryIconName, string> = {
 };
 
 const navItems = [
-  { label: 'Usluge', href: '/pretraga' },
+  { label: 'Usluge', href: '/usluge' },
   { label: 'Kako radi', href: '#kako-radi' },
   { label: 'Zajednica', href: '/zajednica' },
   { label: 'Blog', href: '/blog' },
 ];
 
 const categories: { label: string; href: string; icon: CategoryIconName; tone: 'orange' | 'green' }[] = [
-  { label: 'Čuvanje', href: '/pretraga?category=sitter', icon: 'care', tone: 'orange' },
-  { label: 'Šetnja', href: '/pretraga?service=setnja', icon: 'walk', tone: 'green' },
+  { label: 'Čuvanje', href: '/usluge', icon: 'care', tone: 'orange' },
+  { label: 'Šetnja', href: '/usluge', icon: 'walk', tone: 'green' },
   { label: 'Grooming', href: '/njega', icon: 'grooming', tone: 'green' },
   { label: 'Trening', href: '/dresura', icon: 'training', tone: 'green' },
   { label: 'Izgubljeni', href: '/izgubljeni', icon: 'lost', tone: 'green' },
@@ -364,7 +364,7 @@ function MobileHomepage() {
             <Link href="/prijava" className="inline-flex h-10 items-center justify-center rounded-full bg-[#F26A00] px-4 text-[12px] font-black text-white shadow-[0_10px_22px_rgba(242,106,0,.22)] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 16, paddingRight: 16 }}>
               Prijava
             </Link>
-            <Link href="/postani-sitter" className="inline-flex h-10 items-center justify-center rounded-full border border-[#D8CBB8] bg-[#FFFDF8] px-3 text-[12px] font-black text-[#123D36] shadow-[0_8px_18px_rgba(80,55,25,.07)] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
+            <Link href="/objavi-uslugu" className="inline-flex h-10 items-center justify-center rounded-full border border-[#D8CBB8] bg-[#FFFDF8] px-3 text-[12px] font-black text-[#123D36] shadow-[0_8px_18px_rgba(80,55,25,.07)] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
               <span className="sm:hidden">Objavi</span>
               <span className="hidden sm:inline">Objavi uslugu</span>
             </Link>
@@ -396,7 +396,7 @@ function MobileHomepage() {
                 <Bell className="h-5 w-5" />
                 Objavi upozorenje
               </Link>
-              <Link href="/pretraga" className="inline-flex h-12 items-center justify-center gap-2 rounded-[14px] border border-[#4F7772] bg-[#FFFDF8] px-5 text-[14px] font-extrabold text-[#103D3A] shadow-[0_8px_18px_rgba(80,55,25,.06)] sm:w-auto sm:text-[15px]" style={{ paddingLeft: 20, paddingRight: 20 }}>
+              <Link href="/usluge" className="inline-flex h-12 items-center justify-center gap-2 rounded-[14px] border border-[#4F7772] bg-[#FFFDF8] px-5 text-[14px] font-extrabold text-[#103D3A] shadow-[0_8px_18px_rgba(80,55,25,.06)] sm:w-auto sm:text-[15px]" style={{ paddingLeft: 20, paddingRight: 20 }}>
                 <Search className="h-5 w-5" />
                 Pogledaj usluge
               </Link>
@@ -470,20 +470,20 @@ function PixelPerfectDesktopHomepage({ isPreview }: { isPreview: boolean }) {
       <Link href="/" aria-label="PetPark početna" className="absolute left-[45px] top-[24px] h-12 w-[211px]">
         <PetParkLogo width={211} height={48} priority className="h-12 w-auto" />
       </Link>
-      <Link href="/pretraga" aria-label="Usluge" className="absolute left-[29.2%] top-[3.2%] h-[2.4%] w-[4.4%]" />
+      <Link href="/usluge" aria-label="Usluge" className="absolute left-[29.2%] top-[3.2%] h-[2.4%] w-[4.4%]" />
       <Link href="#kako-radi" aria-label="Kako radi" className="absolute left-[36.3%] top-[3.2%] h-[2.4%] w-[5.6%]" />
       <Link href="/zajednica" aria-label="Zajednica" className="absolute left-[44.7%] top-[3.2%] h-[2.4%] w-[6.0%]" />
       <Link href="/blog" aria-label="Blog" className="absolute left-[53.4%] top-[3.2%] h-[2.4%] w-[3.4%]" />
       <Link href="/prijava" aria-label="Prijava" className="absolute left-[74.5%] top-[2.2%] h-[4.5%] w-[9.0%]" />
-      <Link href="/postani-sitter" aria-label="Objavi uslugu" className="absolute left-[84.8%] top-[2.2%] h-[4.5%] w-[12.0%]" />
-      <Link href="/pretraga?category=sitter" aria-label="Čuvanje" className="absolute left-[4.7%] top-[32.8%] h-[11.2%] w-[6.4%]" />
-      <Link href="/pretraga?service=setnja" aria-label="Šetnja" className="absolute left-[12.2%] top-[32.8%] h-[11.2%] w-[6.4%]" />
+      <Link href="/objavi-uslugu" aria-label="Objavi uslugu" className="absolute left-[84.8%] top-[2.2%] h-[4.5%] w-[12.0%]" />
+      <Link href="/usluge" aria-label="Čuvanje" className="absolute left-[4.7%] top-[32.8%] h-[11.2%] w-[6.4%]" />
+      <Link href="/usluge" aria-label="Šetnja" className="absolute left-[12.2%] top-[32.8%] h-[11.2%] w-[6.4%]" />
       <Link href="/njega" aria-label="Grooming" className="absolute left-[19.7%] top-[32.8%] h-[11.2%] w-[6.6%]" />
       <Link href="/dresura" aria-label="Trening" className="absolute left-[27.1%] top-[32.8%] h-[11.2%] w-[6.6%]" />
       <Link href="/izgubljeni" aria-label="Izgubljeni" className="absolute left-[34.5%] top-[32.8%] h-[11.2%] w-[6.7%]" />
       <Link href="/udomljavanje" aria-label="Udomljavanje" className="absolute left-[42.0%] top-[32.8%] h-[11.2%] w-[7.0%]" />
       <Link href="/izgubljeni/prijavi" aria-label="Objavi upozorenje" className="absolute left-[4.7%] top-[46.0%] h-[4.7%] w-[14.7%]" />
-      <Link href="/pretraga" aria-label="Pogledaj usluge" className="absolute left-[20.8%] top-[46.0%] h-[4.7%] w-[13.4%]" />
+      <Link href="/usluge" aria-label="Pogledaj usluge" className="absolute left-[20.8%] top-[46.0%] h-[4.7%] w-[13.4%]" />
       <Link href="/zajednica" aria-label="Pogledaj sve iz zajednice" className="absolute left-[53.0%] top-[53.7%] h-[3.0%] w-[8.0%]" />
       <Link href="/forum" aria-label="Forum" className="absolute left-[62.5%] top-[57.1%] h-[6.4%] w-[33.7%]" />
       <Link href="/izgubljeni" aria-label="Izgubljeni i pronađeni" className="absolute left-[62.5%] top-[64.4%] h-[6.4%] w-[33.7%]" />

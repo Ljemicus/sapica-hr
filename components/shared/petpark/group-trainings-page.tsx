@@ -22,6 +22,7 @@ import {
   Avatar,
   Badge,
   Button,
+  ButtonLink,
   Card,
   LeafDecoration,
   PawDecoration,
@@ -52,11 +53,11 @@ const navItems = [
 ];
 
 const sidebarItems = [
-  { label: 'Pregled', icon: Home, href: '#' },
+  { label: 'Pregled', icon: Home, href: '/moje-usluge' },
   { label: 'Kalendar', icon: CalendarDays, href: '/kalendar' },
   { label: 'Grupni treninzi', icon: UsersRound, href: '/grupni-treninzi', active: true },
-  { label: 'Poruke', icon: MessageCircle, href: '#' },
-  { label: 'Profil', icon: UserRound, href: '#' },
+  { label: 'Poruke', icon: MessageCircle, href: '/poruke' },
+  { label: 'Profil', icon: UserRound, href: '/dashboard/profile' },
 ];
 
 const sessions: TrainingSession[] = [
@@ -403,7 +404,7 @@ function TrainingBookingPanel() {
 export function GroupTrainingsPage() {
   return (
     <main data-petpark-route="grupni-treninzi" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
-      <AppHeader navItems={navItems} actions={<Button size="sm">Novi termin</Button>} />
+      <AppHeader navItems={navItems} actions={<ButtonLink href="/kalendar" size="sm">Kalendar</ButtonLink>} />
 
       <section className="relative px-5 pb-12 pt-10 sm:px-8 lg:px-20">
         <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block" />
@@ -423,8 +424,8 @@ export function GroupTrainingsPage() {
                     Organiziraj grupne termine, prati prijave i šalji obavijesti polaznicima bez ručnog prepisivanja.
                   </p>
                   <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                    <Button><Plus className="size-4" aria-hidden /> Novi termin</Button>
-                    <Button variant="secondary"><Bell className="size-4" aria-hidden /> Pošalji obavijest</Button>
+                    <ButtonLink href="/kalendar"><Plus className="size-4" aria-hidden /> Novi termin</ButtonLink>
+                    <ButtonLink href="/kalendar/dan" variant="secondary"><Bell className="size-4" aria-hidden /> Dnevni raspored</ButtonLink>
                   </div>
                 </div>
 
