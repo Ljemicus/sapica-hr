@@ -83,16 +83,16 @@ export async function getUnifiedProvidersFromProviderModel(): Promise<UnifiedPro
 
   const supabase = createAdminClient();
   
-  // Trust gate: only verified, listed, non-demo providers
+  // Trust gate: only verified and listed providers. Do not query optional demo/settings
+  // columns here because older Supabase schemas do not have them yet.
   const [providersRes, servicesRes, sitterSettingsRes, groomerSettingsRes, trainerSettingsRes] = await Promise.all([
     supabase
       .from('providers')
-      .select('id, profile_id, provider_kind, display_name, bio, city, lat, lng, verified_status, public_status, response_time_label, rating_avg, review_count, is_demo')
+      .select('id, profile_id, provider_kind, display_name, bio, city, lat, lng, verified_status, public_status, response_time_label, rating_avg, review_count')
       .eq('public_status', 'listed')
-      .eq('verified_status', 'verified')
-      .is('is_demo', false),
+      .eq('verified_status', 'verified'),
     supabase.from('provider_services').select('provider_id, service_code, base_price, is_active').eq('is_active', true),
-    supabase.from('provider_sitter_settings').select('provider_id, services, superhost'),
+    supabase.from('provider_sitter_settings').select('*'),
     supabase.from('provider_groomer_settings').select('provider_id, specialization'),
     supabase.from('provider_trainer_settings').select('provider_id, specializations, certified'),
   ]);

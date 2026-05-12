@@ -83,19 +83,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const admin = createAdminClient();
-  const [providersResult, trainers, groomers, adoptionResult, articles, topics, lostPets, rescueOrgsResult, rescueAppealsResult] = await Promise.all([
+  const [providersResult, trainers, groomers, articles, topics, lostPets] = await Promise.all([
     admin.from('providers').select('id, provider_kind').eq('public_status', 'listed').in('provider_kind', ['sitter', 'groomer', 'trainer']),
     getProviderTrainers().catch(() => []),
     getProviderGroomers().catch(() => []),
-    admin.from('adoption_listings').select('id, status, name, species, breed, age_months, gender, size, city, images, is_urgent, published_at').eq('status', 'active').order('published_at', { ascending: false, nullsFirst: false }),
     getArticles().catch(() => []),
     getTopics().catch(() => []),
     getLostPets().catch(() => []),
-    admin.from('rescue_organizations').select('id, slug, status, updated_at, created_at').eq('status', 'active'),
-    admin.from('rescue_appeals').select('id, slug, status, updated_at, created_at').eq('status', 'active'),
   ]);
 
-  const adoptionListings = (adoptionResult.data || []) as Array<Record<string, unknown>>;
+  // Avoid querying future rescue/adoption tables from sitemap until those schemas are deployed.
+  // Public hub routes remain indexed via STATIC_PAGES.
+  const adoptionListings: Array<Record<string, unknown>> = [];
+  const rescueOrganizations: Array<{ id: string; slug: string; status: string; updated_at?: string; created_at?: string }> = [];
+  const rescueAppeals: Array<{ id: string; slug: string; status: string; updated_at?: string; created_at?: string }> = [];
 
   const providerRows = ((providersResult.data || []) as Array<{ id: string; provider_kind: string }>);
   const sitterProviderIds = providerRows.filter((provider) => provider.provider_kind === 'sitter').map((provider) => provider.id);
@@ -162,9 +163,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
     alternates: { languages: buildLanguageAlternates(`/udomljavanje/${String(a.id)}`) },
   }));
-
-  const rescueOrganizations = (rescueOrgsResult.data || []) as Array<{ id: string; slug: string; status: string; updated_at?: string; created_at?: string }>;
-  const rescueAppeals = (rescueAppealsResult.data || []) as Array<{ id: string; slug: string; status: string; updated_at?: string; created_at?: string }>;
 
   const rescueOrgEntries: MetadataRoute.Sitemap = rescueOrganizations.map((org) => ({
     url: `${BASE_URL}/udruge/${org.slug}`,
