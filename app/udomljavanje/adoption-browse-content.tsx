@@ -1,442 +1,290 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Heart, HeartHandshake, MapPin, ArrowRight, Search, X, Sparkles } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { useAdoptionFavorites } from '@/hooks/use-adoption-favorites';
-import { EmptyState } from '@/components/shared/empty-state';
-import { RescueAlertBanner } from '@/components/adoption/rescue-alert-banner';
-import { BeforeAfterSlider } from '@/components/adoption/before-after-slider';
-import type { AdoptionListingCard } from '@/lib/types';
 import {
-  ADOPTION_SPECIES_EMOJI,
+  AlertTriangle,
+  ArrowRight,
+  Heart,
+  HeartHandshake,
+  Home,
+  MapPin,
+  PawPrint,
+  Search,
+  ShieldCheck,
+  Sparkles,
+} from 'lucide-react';
+import {
   ADOPTION_GENDER_LABELS,
   ADOPTION_SIZE_LABELS,
+  ADOPTION_SPECIES_EMOJI,
   CITIES,
+  type AdoptionListingCard,
 } from '@/lib/types';
-import { useLanguage } from '@/lib/i18n/context';
+import {
+  Badge,
+  Button,
+  ButtonLink,
+  Card,
+  Input,
+  LeafDecoration,
+  PawDecoration,
+  Select,
+} from '@/components/shared/petpark/design-foundation';
+import { cn } from '@/lib/utils';
 
-function formatAge(months: number | null, isEn: boolean): string {
-  if (months == null) return isEn ? 'Unknown' : 'Nepoznato';
-  if (months < 12) return isEn ? `${months} mo` : `${months} mj.`;
+function formatAge(months: number | null): string {
+  if (months == null) return 'Nepoznata dob';
+  if (months < 12) return `${months} mj.`;
   const years = Math.floor(months / 12);
   const rem = months % 12;
-  return rem > 0
-    ? (isEn ? `${years} yr ${rem} mo` : `${years} g. ${rem} mj.`)
-    : (isEn ? `${years} yr` : `${years} g.`);
+  return rem > 0 ? `${years} g. ${rem} mj.` : `${years} g.`;
 }
 
-export function AdoptionBrowseContent({ listings, forcedLanguage }: { listings: AdoptionListingCard[]; forcedLanguage?: 'hr' | 'en' }) {
-  const { language } = useLanguage();
-  const activeLanguage = forcedLanguage || language;
-  const isEn = activeLanguage === 'en';
-  const speciesFilters = [
-    { value: 'all', label: isEn ? 'All' : 'Sve', emoji: '' },
-    { value: 'dog', label: isEn ? 'Dogs' : 'Psi', emoji: '🐕' },
-    { value: 'cat', label: isEn ? 'Cats' : 'Mačke', emoji: '🐈' },
-    { value: 'rabbit', label: isEn ? 'Small pets' : 'Mali ljubimci', emoji: '🐰' },
-    { value: 'other', label: isEn ? 'Other' : 'Ostalo', emoji: '🐾' },
-  ];
-  const sizeFilters = [
-    { value: 'all', label: isEn ? 'All sizes' : 'Sve veličine' },
-    { value: 'small', label: isEn ? 'Small' : 'Mali' },
-    { value: 'medium', label: isEn ? 'Medium' : 'Srednji' },
-    { value: 'large', label: isEn ? 'Large' : 'Veliki' },
-  ];
-  const genderFilters = [
-    { value: 'all', label: isEn ? 'All genders' : 'Svi spolovi' },
-    { value: 'male', label: isEn ? 'Male' : 'Muški' },
-    { value: 'female', label: isEn ? 'Female' : 'Ženski' },
-  ];
-  const genderLabels = isEn ? { male: 'Male', female: 'Female' } : ADOPTION_GENDER_LABELS;
-  const sizeLabels = isEn ? { small: 'Small', medium: 'Medium', large: 'Large' } : ADOPTION_SIZE_LABELS;
-  const [speciesFilter, setSpeciesFilter] = useState('all');
-  const [cityFilter, setCityFilter] = useState<string | null>('all');
-  const [sizeFilter, setSizeFilter] = useState<string | null>('all');
-  const [genderFilter, setGenderFilter] = useState<string | null>('all');
+const fallbackListings: AdoptionListingCard[] = [
+  {
+    id: 'mila', status: 'active', name: 'Mila', species: 'dog', breed: 'Mješanac', age_months: 24, gender: 'female', size: 'medium', city: 'Rijeka', images: [], is_urgent: true, published_at: '2026-05-12', publisher_display_name: 'Udruga Šapice',
+  },
+  {
+    id: 'toto', status: 'active', name: 'Toto', species: 'cat', breed: 'Europska kratkodlaka', age_months: 8, gender: 'male', size: 'small', city: 'Zagreb', images: [], is_urgent: false, published_at: '2026-05-11', publisher_display_name: 'Privremeni dom Maksimir',
+  },
+  {
+    id: 'nala', status: 'active', name: 'Nala', species: 'dog', breed: 'Labrador mix', age_months: 36, gender: 'female', size: 'large', city: 'Split', images: [], is_urgent: false, published_at: '2026-05-10', publisher_display_name: 'Azil Split',
+  },
+  {
+    id: 'zeko', status: 'active', name: 'Zeko', species: 'rabbit', breed: 'Patuljasti kunić', age_months: 14, gender: 'male', size: 'small', city: 'Osijek', images: [], is_urgent: false, published_at: '2026-05-09', publisher_display_name: 'Mali spas',
+  },
+];
+
+const personalityTags: Record<string, string[]> = {
+  mila: ['nježna', 'mirna', 'voli šetnje'],
+  toto: ['mazan', 'znatiželjan', 'stan'],
+  nala: ['aktivna', 'djeca ok', 'uči brzo'],
+  zeko: ['tih', 'čist', 'mirni dom'],
+};
+
+function FilterPill({ active, children, onClick }: { active?: boolean; children: React.ReactNode; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'min-h-11 rounded-full border px-4 text-sm font-black transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)]',
+        active
+          ? 'border-[color:var(--pp-color-orange-primary)] bg-[color:var(--pp-color-orange-primary)] text-white shadow-[var(--pp-shadow-small-card)]'
+          : 'border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] text-[color:var(--pp-color-muted-text)] hover:bg-[color:var(--pp-color-sage-surface)] hover:text-[color:var(--pp-color-forest-text)]',
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function AdoptionCard({ listing }: { listing: AdoptionListingCard }) {
+  const primaryImage = listing.images?.find((img) => img.is_primary) ?? listing.images?.[0];
+  const tags = personalityTags[listing.id] || ['društven', 'spreman za dom', 'provjeren kontakt'];
+
+  return (
+    <Link href={`/udomljavanje/${listing.id}`} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2">
+      <Card radius="28" interactive className="h-full overflow-hidden">
+        <div className="relative flex h-56 items-center justify-center border-b border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-sage-surface)]">
+          {primaryImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={primaryImage.url} alt={primaryImage.alt || listing.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+          ) : (
+            <>
+              <span className="text-7xl transition duration-300 group-hover:scale-110" aria-hidden>{ADOPTION_SPECIES_EMOJI[listing.species]}</span>
+              <PawDecoration className="right-5 top-5 size-12 opacity-70" />
+            </>
+          )}
+          {listing.is_urgent ? <Badge variant="error" className="absolute left-4 top-4"><AlertTriangle className="size-3" /> Hitno</Badge> : null}
+          <button type="button" aria-label={`Spremi ${listing.name}`} className="absolute right-4 top-4 flex size-11 items-center justify-center rounded-full bg-[color:var(--pp-color-card-surface)] text-[color:var(--pp-color-orange-primary)] shadow-[var(--pp-shadow-small-card)]">
+            <Heart className="size-5" />
+          </button>
+        </div>
+        <div className="p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h3 className="text-2xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)] group-hover:text-[color:var(--pp-color-orange-primary)]">{listing.name}</h3>
+              <p className="mt-1 text-sm font-bold text-[color:var(--pp-color-muted-text)]">{listing.breed || 'Ljubimac za udomljavanje'}</p>
+            </div>
+            <Badge variant="teal">{listing.species === 'dog' ? 'Pas' : listing.species === 'cat' ? 'Mačka' : 'Ostalo'}</Badge>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Badge variant="sage">{formatAge(listing.age_months)}</Badge>
+            {listing.gender ? <Badge variant="sage">{ADOPTION_GENDER_LABELS[listing.gender]}</Badge> : null}
+            {listing.size ? <Badge variant="sage">{ADOPTION_SIZE_LABELS[listing.size]}</Badge> : null}
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {tags.map((tag) => <Badge key={tag} variant="cream">{tag}</Badge>)}
+          </div>
+
+          <div className="mt-5 space-y-2 text-sm font-bold text-[color:var(--pp-color-muted-text)]">
+            <p className="flex items-center gap-2"><MapPin className="size-4 text-[color:var(--pp-color-orange-primary)]" /> {listing.city}</p>
+            <p className="flex items-center gap-2"><HeartHandshake className="size-4 text-[color:var(--pp-color-teal-accent)]" /> {listing.publisher_display_name || 'Provjeren kontakt'}</p>
+          </div>
+
+          <div className="mt-5 flex items-center justify-between border-t border-[color:var(--pp-color-warm-border)] pt-4">
+            <span className="text-sm font-black text-[color:var(--pp-color-orange-primary)]">Saznaj više</span>
+            <ArrowRight className="size-4 text-[color:var(--pp-color-orange-primary)] transition group-hover:translate-x-1" />
+          </div>
+        </div>
+      </Card>
+    </Link>
+  );
+}
+
+export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingCard[]; forcedLanguage?: 'hr' | 'en' }) {
   const [search, setSearch] = useState('');
-  const { toggleFavorite, isFavorite } = useAdoptionFavorites();
+  const [speciesFilter, setSpeciesFilter] = useState<'all' | 'dog' | 'cat'>('all');
+  const [cityFilter, setCityFilter] = useState('all');
+  const [sizeFilter, setSizeFilter] = useState('all');
+  const [ageFilter, setAgeFilter] = useState('all');
+  const [urgentOnly, setUrgentOnly] = useState(false);
 
-  const hasActiveFilters = speciesFilter !== 'all' || (cityFilter && cityFilter !== 'all') || (sizeFilter && sizeFilter !== 'all') || (genderFilter && genderFilter !== 'all') || search.trim() !== '';
-
-  const clearFilters = () => {
-    setSpeciesFilter('all');
-    setCityFilter('all');
-    setSizeFilter('all');
-    setGenderFilter('all');
-    setSearch('');
-  };
-
+  const sourceListings = listings.length ? listings : fallbackListings;
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
-    return listings.filter((l) => {
-      if (speciesFilter !== 'all' && l.species !== speciesFilter) return false;
-      if (cityFilter && cityFilter !== 'all' && l.city !== cityFilter) return false;
-      if (sizeFilter && sizeFilter !== 'all' && l.size !== sizeFilter) return false;
-      if (genderFilter && genderFilter !== 'all' && l.gender !== genderFilter) return false;
+    return sourceListings.filter((listing) => {
+      if (speciesFilter !== 'all' && listing.species !== speciesFilter) return false;
+      if (cityFilter !== 'all' && listing.city !== cityFilter) return false;
+      if (sizeFilter !== 'all' && listing.size !== sizeFilter) return false;
+      if (urgentOnly && !listing.is_urgent) return false;
+      if (ageFilter === 'young' && (listing.age_months == null || listing.age_months > 18)) return false;
+      if (ageFilter === 'adult' && (listing.age_months == null || listing.age_months <= 18)) return false;
       if (q) {
-        const haystack = [l.name, l.breed, l.city, l.publisher_display_name]
-          .filter(Boolean)
-          .join(' ')
-          .toLowerCase();
+        const haystack = `${listing.name} ${listing.breed || ''} ${listing.city} ${listing.publisher_display_name || ''}`.toLowerCase();
         if (!haystack.includes(q)) return false;
       }
       return true;
     });
-  }, [listings, speciesFilter, cityFilter, sizeFilter, genderFilter, search]);
-
-  // Surface urgent listings first, then keep the rescue banner useful when real listings exist.
-  const urgentPets = useMemo(() => {
-    const urgent = listings
-      .filter(l => l.is_urgent || l.name.toLowerCase().includes('hitno'))
-      .slice(0, 3)
-      .map(l => ({
-        id: l.id,
-        name: l.name,
-        species: l.species,
-        reason: 'Traži dom hitno',
-        deadline: 'Ograničeno vrijeme',
-        image_url: l.images?.[0]?.url || '',
-        city: l.city,
-      }));
-    
-    if (urgent.length === 0 && listings.length > 0) {
-      return listings.slice(0, 2).map(l => ({
-        id: l.id,
-        name: l.name,
-        species: l.species,
-        reason: 'Čeka na dom',
-        deadline: 'Udomi me',
-        image_url: l.images?.[0]?.url || '',
-        city: l.city,
-      }));
-    }
-    
-    return urgent;
-  }, [listings]);
+  }, [ageFilter, cityFilter, search, sizeFilter, sourceListings, speciesFilter, urgentOnly]);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Rescue Alert Banner */}
-      <RescueAlertBanner urgentPets={urgentPets} />
+    <main data-petpark-route="udomljavanje" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
+      <section className="relative px-5 pb-12 pt-10 sm:px-8 lg:px-20">
+        <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block" />
+        <LeafDecoration className="-left-16 top-[760px] hidden scale-110 -rotate-12 lg:block" />
+        <PawDecoration className="right-[12%] top-[400px] hidden size-16 rotate-12 opacity-40 xl:block" />
 
-      {/* Editorial Hero */}
-      <section className="relative adoption-hero-gradient overflow-hidden">
-        <div className="absolute inset-0 paw-pattern opacity-[0.03]" />
-        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-20 md:py-28 relative">
-          <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
-            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange font-semibold mb-4">
-              {isEn ? 'Give a home' : 'Udomljavanje'}
-            </p>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold font-[var(--font-heading)] leading-[1.05] tracking-tight mb-6">
-              {isEn ? 'Adopt a pet' : 'Udomite ljubimca'}
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-8">
-              {isEn ? 'Give a home to the ones who need it most. Browse dogs, cats, and small pets available for adoption across Croatia.' : 'Dajte dom onima koji to najviše zaslužuju. Pregledajte pse, mačke i male ljubimce za udomljavanje diljem Hrvatske.'}
-            </p>
-            <div className="inline-flex items-center gap-2 bg-warm-orange/10 dark:bg-warm-orange/20 rounded-full px-6 py-3">
-              <Heart className="h-4 w-4 text-warm-orange fill-warm-orange" />
-              <span className="text-sm font-semibold text-foreground">
-                {listings.length} {isEn ? (listings.length === 1 ? 'pet waiting for a home' : 'pets waiting for a home') : (listings.length === 1 ? 'ljubimac čeka dom' : 'ljubimaca čeka dom')}
-              </span>
+        <div className="mx-auto max-w-[1500px] space-y-6">
+          <Card radius="28" className="relative overflow-hidden p-6 sm:p-8 lg:p-10">
+            <div className="absolute right-8 top-8 hidden size-32 rounded-full bg-[color:var(--pp-color-warning-surface)] lg:block" />
+            <div className="relative grid gap-8 xl:grid-cols-[1fr_420px] xl:items-end">
+              <div>
+                <Badge variant="orange"><HeartHandshake className="size-3" /> Novi dom</Badge>
+                <h1 className="mt-5 text-5xl font-black leading-[0.98] tracking-[-0.06em] text-[color:var(--pp-color-forest-text)] sm:text-7xl lg:text-8xl">Udomi ljubimca</h1>
+                <p className="mt-6 max-w-3xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">
+                  Psi, mačke i drugi ljubimci koji čekaju siguran dom i ljude koji će ih voljeti.
+                </p>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <ButtonLink href="#ljubimci" size="lg"><PawPrint className="size-5" /> Pogledaj ljubimce</ButtonLink>
+                  <ButtonLink href="/udomljavanje/novo" variant="secondary" size="lg"><Home className="size-5" /> Objavi ljubimca za udomljavanje</ButtonLink>
+                </div>
+              </div>
+
+              <Card radius="28" tone="sage" className="p-5">
+                <Sparkles className="size-7 text-[color:var(--pp-color-orange-primary)]" />
+                <h2 className="mt-4 text-2xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">Udomljavanje bez pritiska</h2>
+                <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Prvo upoznajte ljubimca i kontakt koji brine o njemu. Dobar dom je važniji od brzine.</p>
+                <div className="mt-5 grid grid-cols-3 gap-2 text-center">
+                  <Badge variant="teal">Psi</Badge>
+                  <Badge variant="teal">Mačke</Badge>
+                  <Badge variant="teal">Mali</Badge>
+                </div>
+              </Card>
             </div>
-          </div>
-        </div>
-      </section>
+          </Card>
 
-      {/* Filters */}
-      <section className="container mx-auto px-6 md:px-10 lg:px-16 -mt-8 relative z-10">
-        <div className="community-section-card p-5 md:p-7">
-          {/* Search */}
-          <div className="relative mb-5">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder={isEn ? 'Search by name, breed, city...' : 'Pretraži po imenu, pasmini, gradu...'}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="forum-search-input"
-              aria-label={isEn ? 'Search adoption listings' : 'Pretraži oglase za udomljavanje'}
-            />
-          </div>
-
-          {/* Species pills */}
-          <div className="flex flex-wrap gap-2 mb-5">
-            {speciesFilters.map((s) => (
-              <button
-                key={s.value}
-                onClick={() => setSpeciesFilter(s.value)}
-                data-active={speciesFilter === s.value}
-                className={`filter-pill ${
-                  speciesFilter === s.value
-                    ? 'bg-warm-orange text-white'
-                    : 'bg-white dark:bg-card border border-border/40 text-foreground hover:border-warm-orange/30'
-                }`}
-              >
-                {s.emoji && <span className="mr-1.5">{s.emoji}</span>}
-                {s.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Dropdown filters */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <select
-              value={cityFilter || 'all'}
-              onChange={(e) => setCityFilter(e.target.value)}
-              className="premium-select"
-            >
-              <option value="all">{isEn ? 'All cities' : 'Svi gradovi'}</option>
-              {CITIES.map((city) => (
-                <option key={city} value={city}>{city}</option>
-              ))}
-            </select>
-
-            <select
-              value={sizeFilter || 'all'}
-              onChange={(e) => setSizeFilter(e.target.value)}
-              className="premium-select"
-            >
-              {sizeFilters.map((s) => (
-                <option key={s.value} value={s.value}>{s.label}</option>
-              ))}
-            </select>
-
-            <select
-              value={genderFilter || 'all'}
-              onChange={(e) => setGenderFilter(e.target.value)}
-              className="premium-select"
-            >
-              {genderFilters.map((g) => (
-                <option key={g.value} value={g.value}>{g.label}</option>
-              ))}
-            </select>
-          </div>
-
-          {hasActiveFilters && (
-            <button
-              onClick={clearFilters}
-              className="mt-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <X className="h-3.5 w-3.5" />
-              {isEn ? 'Clear filters' : 'Poništi filtere'}
-            </button>
-          )}
-
-          {/* Result count */}
-          <div className="mt-4 pt-4 border-t border-border/30">
-            <p className="text-sm text-muted-foreground">
-              {filtered.length} {isEn ? (filtered.length === 1 ? 'pet found' : 'pets found') : (filtered.length === 1 ? 'ljubimac' : 'ljubimaca')} {isEn ? '' : 'pronađeno'}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Results */}
-      <section className="container mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16">
-        {filtered.length === 0 ? (
-          <EmptyState
-            icon={hasActiveFilters ? Search : HeartHandshake}
-            title={hasActiveFilters ? (isEn ? 'No results' : 'Nema rezultata') : (isEn ? 'No active listings right now' : 'Trenutno nema aktivnih oglasa')}
-            description={hasActiveFilters ? (isEn ? 'Try changing your filters or search term.' : 'Pokušajte promijeniti filtere ili pojam pretrage.') : (isEn ? 'New adoption listings appear as soon as they are published. Check back soon.' : 'Novi oglasi za udomljavanje pojavljuju se čim budu objavljeni. Provjerite ponovno uskoro.')}
-            action={hasActiveFilters ? (
-              <button
-                onClick={clearFilters}
-                className="text-sm font-semibold text-warm-orange hover:text-warm-orange/80 transition-colors"
-              >
-                {isEn ? 'Clear all filters' : 'Poništi sve filtere'}
-              </button>
-            ) : undefined}
-          />
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {filtered.map((listing, index) => {
-              const primaryImage = listing.images?.find((img) => img.is_primary) ?? listing.images?.[0];
-
-              return (
-                <Link key={listing.id} href={`/udomljavanje/${listing.id}`}>
-                  <div
-                    className="adoption-card group cursor-pointer overflow-hidden h-full animate-fade-in-up"
-                    style={{ animationDelay: `${Math.min(index * 80, 400)}ms` }}
-                  >
-                    {/* Image */}
-                    <div className={`relative h-52 ${primaryImage ? 'bg-muted' : 'bg-gradient-to-br from-warm-peach to-warm-orange/30'} flex items-center justify-center overflow-hidden`}>
-                      {primaryImage ? (
-                        <Image
-                          src={primaryImage.url}
-                          alt={primaryImage.alt || listing.name}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <>
-                          <div className="absolute inset-0 paw-pattern opacity-10" />
-                          <span className="text-6xl group-hover:scale-110 transition-transform duration-300">
-                            {ADOPTION_SPECIES_EMOJI[listing.species]}
-                          </span>
-                        </>
-                      )}
-
-                      {/* Gradient overlay */}
-                      {primaryImage && <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />}
-
-                      {/* Urgent badge */}
-                      {listing.is_urgent && (
-                        <div className="absolute top-3.5 left-3.5">
-                          <Badge className="bg-warm-coral text-white font-bold rounded-full flex items-center gap-1.5 px-3 py-1 hover:bg-warm-coral">
-                            <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                            {isEn ? 'Urgent' : 'Hitno'}
-                          </Badge>
-                        </div>
-                      )}
-
-                      {/* Favorite button */}
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          toggleFavorite(listing.id);
-                        }}
-                        aria-label={isFavorite(listing.id) ? (isEn ? `Remove ${listing.name} from favorites` : `Ukloni ${listing.name} iz favorita`) : (isEn ? `Add ${listing.name} to favorites` : `Dodaj ${listing.name} u favorite`)}
-                        className={`absolute top-3.5 right-3.5 p-2.5 rounded-full transition-all duration-200 ${
-                          isFavorite(listing.id)
-                            ? 'bg-warm-coral text-white shadow-lg shadow-warm-coral/30'
-                            : 'bg-white/90 dark:bg-card/90 text-muted-foreground hover:text-warm-coral hover:bg-white shadow-sm backdrop-blur-sm'
-                        }`}
-                      >
-                        <Heart className={`h-4 w-4 ${isFavorite(listing.id) ? 'fill-white' : ''}`} />
-                      </button>
-                    </div>
-
-                    {/* Info */}
-                    <div className="p-5">
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <h3 className="font-bold text-lg group-hover:text-warm-orange transition-colors font-[var(--font-heading)]">
-                          {listing.name}
-                        </h3>
-                        <span className="text-sm">{ADOPTION_SPECIES_EMOJI[listing.species]}</span>
-                      </div>
-                      {listing.breed && (
-                        <p className="text-sm text-muted-foreground mb-3">{listing.breed}</p>
-                      )}
-
-                      {/* Badges */}
-                      <div className="flex flex-wrap gap-1.5 mb-3">
-                        {listing.gender && (
-                          <Badge className="bg-secondary text-secondary-foreground hover:bg-secondary border-0 rounded-full text-xs font-medium">
-                            {genderLabels[listing.gender]}
-                          </Badge>
-                        )}
-                        <Badge className="bg-secondary text-secondary-foreground hover:bg-secondary border-0 rounded-full text-xs font-medium">
-                          {formatAge(listing.age_months, isEn)}
-                        </Badge>
-                        {listing.size && (
-                          <Badge className="bg-secondary text-secondary-foreground hover:bg-secondary border-0 rounded-full text-xs font-medium">
-                            {sizeLabels[listing.size]}
-                          </Badge>
-                        )}
-                      </div>
-
-                      {/* Location */}
-                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-3">
-                        <MapPin className="h-3.5 w-3.5 text-warm-orange" />
-                        {listing.city}
-                      </div>
-
-                      {/* Publisher */}
-                      {listing.publisher_display_name && (
-                        <div className="rounded-xl bg-warm-peach/30 dark:bg-warm-peach/10 px-3.5 py-2.5">
-                          <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground mb-0.5">{isEn ? 'Care provided by' : 'O njemu brine'}</p>
-                          <p className="text-sm font-semibold text-warm-orange">{listing.publisher_display_name}</p>
-                        </div>
-                      )}
-
-                      <div className="mt-4 pt-3 border-t border-border/30 flex items-center justify-between">
-                        <span className="text-sm font-semibold text-warm-orange flex items-center gap-1.5">
-                          {isEn ? 'View pet profile' : 'Pogledaj profil ljubimca'} <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      {/* Success Stories with Before/After */}
-      <section className="bg-warm-section">
-        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-16 md:py-24">
-          <div className="text-center mb-12 animate-fade-in-up">
-            <div className="inline-flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-full px-4 py-2 mb-4">
-              <Sparkles className="h-4 w-4" />
-              <span className="text-sm font-semibold">{isEn ? 'Success Stories' : 'Priče sretnog završetka'}</span>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] leading-[1.1] mb-4">
-              {isEn ? 'From rescue to beloved family member' : 'Od spasavanja do voljenog člana obitelji'}
-            </h2>
-            <p className="text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              {isEn
-                ? 'See the incredible transformations of pets who found their forever homes through PetPark.'
-                : 'Pogledajte nevjerojatne transformacije ljubimaca koji su pronašli svoje zauvijek domove putem PetParka.'}
-            </p>
-          </div>
-
-          {/* Before/After Sliders */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-              <BeforeAfterSlider
-                beforeImage="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&h=600&fit=crop"
-                afterImage="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&h=600&fit=crop"
-                beforeLabel={isEn ? 'Before' : 'Prije'}
-                afterLabel={isEn ? 'After' : 'Poslije'}
-                className="shadow-2xl"
-              />
-              <div className="mt-4 text-center">
-                <h3 className="font-bold text-lg">Max</h3>
-                <p className="text-sm text-muted-foreground">{isEn ? 'Found his forever home in Zagreb' : 'Pronašao dom u Zagrebu'}</p>
+          <Card radius="28" className="p-5 sm:p-6">
+            <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+              <div className="space-y-4">
+                <label className="relative block">
+                  <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
+                  <Input placeholder="Pretraži po imenu, pasmini, gradu..." value={search} onChange={(event) => setSearch(event.target.value)} className="pl-12" />
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  <FilterPill active={speciesFilter === 'dog'} onClick={() => setSpeciesFilter(speciesFilter === 'dog' ? 'all' : 'dog')}>Pas</FilterPill>
+                  <FilterPill active={speciesFilter === 'cat'} onClick={() => setSpeciesFilter(speciesFilter === 'cat' ? 'all' : 'cat')}>Mačka</FilterPill>
+                  <FilterPill active={urgentOnly} onClick={() => setUrgentOnly(!urgentOnly)}>Hitno</FilterPill>
+                </div>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3 lg:w-[620px]">
+                <label className="space-y-2">
+                  <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Dob</span>
+                  <Select value={ageFilter} onChange={(event) => setAgeFilter(event.target.value)}>
+                    <option value="all">Sve dobi</option>
+                    <option value="young">Mladi</option>
+                    <option value="adult">Odrasli</option>
+                  </Select>
+                </label>
+                <label className="space-y-2">
+                  <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Veličina</span>
+                  <Select value={sizeFilter} onChange={(event) => setSizeFilter(event.target.value)}>
+                    <option value="all">Sve</option>
+                    <option value="small">Mali</option>
+                    <option value="medium">Srednji</option>
+                    <option value="large">Veliki</option>
+                  </Select>
+                </label>
+                <label className="space-y-2">
+                  <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Lokacija</span>
+                  <Select value={cityFilter} onChange={(event) => setCityFilter(event.target.value)}>
+                    <option value="all">Svi gradovi</option>
+                    {CITIES.map((city) => <option key={city} value={city}>{city}</option>)}
+                  </Select>
+                </label>
               </div>
             </div>
+          </Card>
 
-            <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-              <BeforeAfterSlider
-                beforeImage="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&h=600&fit=crop"
-                afterImage="https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=800&h=600&fit=crop"
-                beforeLabel={isEn ? 'Before' : 'Prije'}
-                afterLabel={isEn ? 'After' : 'Poslije'}
-                className="shadow-2xl"
-              />
-              <div className="mt-4 text-center">
-                <h3 className="font-bold text-lg">Luna</h3>
-                <p className="text-sm text-muted-foreground">{isEn ? 'Rescued and thriving in Split' : 'Spašena i sretna u Splitu'}</p>
+          <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+            <section id="ljubimci" className="space-y-6">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-sm font-black uppercase tracking-[0.14em] text-[color:var(--pp-color-muted-text)]">Ljubimci za udomljavanje</p>
+                  <h2 className="mt-1 text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">{filtered.length} oglasa</h2>
+                </div>
+                <Badge variant="teal">Sigurni kontakti prvo</Badge>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Bottom CTA */}
-      <section className="bg-gradient-to-b from-warm-section to-background">
-        <div className="container mx-auto px-6 md:px-10 lg:px-16 py-20 md:py-28">
-          <div className="max-w-2xl mx-auto text-center animate-fade-in-up">
-            <p className="text-sm uppercase tracking-[0.25em] text-warm-orange font-semibold mb-4">
-              {isEn ? 'Every pet deserves love' : 'Svaki ljubimac zaslužuje ljubav'}
-            </p>
-            <h2 className="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] leading-[1.1] mb-6">
-              {isEn ? 'Open your heart and home' : 'Otvorite srce i dom'}
-            </h2>
-            <p className="text-muted-foreground leading-relaxed">
-              {isEn
-                ? 'Browse pets waiting for adoption. When you find the right match, send an inquiry and take the first step.'
-                : 'Pregledajte ljubimce koji čekaju udomljavanje. Kad pronađete pravog, pošaljite upit i napravite prvi korak.'}
-            </p>
+              {filtered.length ? (
+                <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                  {filtered.map((listing) => <AdoptionCard key={listing.id} listing={listing} />)}
+                </div>
+              ) : (
+                <Card radius="28" tone="sage" className="p-10 text-center">
+                  <HeartHandshake className="mx-auto size-12 text-[color:var(--pp-color-orange-primary)]" />
+                  <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">Trenutno nema ljubimaca koji odgovaraju filterima.</h2>
+                  <Button className="mt-6" variant="secondary" onClick={() => { setSearch(''); setSpeciesFilter('all'); setCityFilter('all'); setSizeFilter('all'); setAgeFilter('all'); setUrgentOnly(false); }}>Očisti filtere</Button>
+                </Card>
+              )}
+            </section>
+
+            <aside className="space-y-5 xl:sticky xl:top-28 xl:self-start">
+              <Card radius="28" tone="cream" className="p-5">
+                <h2 className="flex items-center gap-2 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]"><ShieldCheck className="size-5 text-[color:var(--pp-color-teal-accent)]" /> Sigurno udomljavanje</h2>
+                <div className="mt-4 space-y-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">
+                  <p>Udomljavanje treba ići kroz provjerene udruge, azile ili jasne rescue kontakte.</p>
+                  <p>Ne šaljite novac bez provjere identiteta i situacije.</p>
+                  <p>Upoznajte ljubimca, pitajte za zdravlje, cijepljenja i navike.</p>
+                </div>
+              </Card>
+
+              <Card radius="28" tone="orange" className="p-5">
+                <h2 className="flex items-center gap-2 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]"><Heart className="size-5 text-[color:var(--pp-color-orange-primary)]" /> Prije odluke</h2>
+                <ul className="mt-4 space-y-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">
+                  <li>• Provjerite imate li vrijeme i stabilne uvjete.</li>
+                  <li>• Dogovorite probni susret ako je moguće.</li>
+                  <li>• Pripremite prostor, hranu i veterinara.</li>
+                </ul>
+              </Card>
+            </aside>
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }
