@@ -62,6 +62,38 @@ export async function proxy(request: NextRequest) {
   request.headers.set(REQUEST_ID_HEADER, requestId);
   request.headers.set(LOCALE_HEADER, locale);
 
+  if (request.nextUrl.pathname.startsWith('/admin/service-listings')) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    let isAdmin = false;
+
+    if (supabaseUrl && supabaseAnonKey) {
+      const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll() {
+            // handled below by updateSession for normal requests
+          },
+        },
+      });
+      const { data: { user } } = await supabase.auth.getUser();
+      isAdmin = user?.user_metadata?.role === 'admin';
+    }
+
+    if (!isAdmin) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/hard-404';
+      const admin404 = NextResponse.rewrite(url, { status: 404 });
+      admin404.headers.set(REQUEST_ID_HEADER, requestId);
+      admin404.headers.set(LOCALE_HEADER, locale);
+      admin404.headers.set('Content-Security-Policy', buildCSPHeader({ nonce }));
+      admin404.headers.set(CSP_NONCE_HEADER, nonce);
+      return admin404;
+    }
+  }
+
   // Apply CSRF protection (skip for excluded routes)
   if (!isCsrfExcludedRoute(request.nextUrl.pathname)) {
     const csrfResponse = await csrfMiddleware(request);
@@ -109,19 +141,6 @@ export async function proxy(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     const pathname = request.nextUrl.pathname;
-    if (pathname.startsWith('/admin/service-listings')) {
-      const role = user?.user_metadata?.role;
-      if (!user || role !== 'admin') {
-        const url = request.nextUrl.clone();
-        url.pathname = '/hard-404';
-        const admin404 = NextResponse.rewrite(url, { status: 404 });
-        admin404.headers.set(REQUEST_ID_HEADER, requestId);
-        admin404.headers.set(LOCALE_HEADER, locale);
-        admin404.headers.set('Content-Security-Policy', buildCSPHeader({ nonce }));
-        admin404.headers.set(CSP_NONCE_HEADER, nonce);
-        return admin404;
-      }
-    }
 
     if (user) {
       const needsPublisherProfile = pathname.startsWith('/dashboard/adoption') || pathname.startsWith('/dashboard/profile');
