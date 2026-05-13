@@ -108,8 +108,22 @@ export async function proxy(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
+    const pathname = request.nextUrl.pathname;
+    if (pathname.startsWith('/admin/service-listings')) {
+      const role = user?.user_metadata?.role;
+      if (!user || role !== 'admin') {
+        const url = request.nextUrl.clone();
+        url.pathname = '/hard-404';
+        const admin404 = NextResponse.rewrite(url, { status: 404 });
+        admin404.headers.set(REQUEST_ID_HEADER, requestId);
+        admin404.headers.set(LOCALE_HEADER, locale);
+        admin404.headers.set('Content-Security-Policy', buildCSPHeader({ nonce }));
+        admin404.headers.set(CSP_NONCE_HEADER, nonce);
+        return admin404;
+      }
+    }
+
     if (user) {
-      const pathname = request.nextUrl.pathname;
       const needsPublisherProfile = pathname.startsWith('/dashboard/adoption') || pathname.startsWith('/dashboard/profile');
       const needsGroomerProfile = pathname.startsWith('/dashboard/groomer');
       const needsTrainerProfile = pathname.startsWith('/dashboard/trainer');
