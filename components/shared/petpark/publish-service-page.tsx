@@ -91,7 +91,7 @@ export function PhotoUploadPlaceholder() {
           <div>
             <p className="text-base font-black text-[color:var(--pp-color-forest-text)]">Dodaj fotografije usluge</p>
             <p className="mt-1 max-w-md text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">
-              Uploadaj prostor, opremu ili primjer aktivnosti. Za sada je ovo statičan placeholder za kasniju integraciju.
+              Dodaj prostor, opremu ili primjer aktivnosti. Odabir slika je pripremljen za kasnije, ali spremanje još nije uključeno.
             </p>
           </div>
         </div>
@@ -126,9 +126,9 @@ export function PublishServiceForm() {
         }),
       });
       const result = await response.json() as { ok?: boolean; message?: string };
-      setMessage(result.message || (result.ok ? 'Usluga je spremljena kao nacrt.' : 'Objava usluge je pripremljena, ali spremanje u produkciji još nije omogućeno.'));
+      setMessage(result.message || (result.ok ? 'Nacrt je spremljen.' : 'Nacrt je pripremljen, ali spremanje još nije uključeno. Ništa nije objavljeno.'));
     } catch {
-      setMessage('Objava usluge je pripremljena, ali spremanje u produkciji još nije omogućeno.');
+      setMessage('Nacrt je pripremljen, ali spremanje još nije uključeno. Ništa nije objavljeno.');
     } finally {
       setIsPending(false);
     }
@@ -252,7 +252,7 @@ export function ServicePreviewCard() {
   return (
     <Card radius="24" className="p-6">
       <div className="flex items-center justify-between gap-3">
-        <Badge variant="orange">Preview</Badge>
+        <Badge variant="orange">Pregled</Badge>
         <span className="flex items-center gap-1 text-sm font-black text-[color:var(--pp-color-forest-text)]">
           <Star className="size-4 fill-[color:var(--pp-color-orange-primary)] text-[color:var(--pp-color-orange-primary)]" aria-hidden />
           4.9
@@ -284,7 +284,7 @@ function SafetyNote() {
       <div className="flex gap-4">
         <ShieldCheck className="mt-1 size-6 shrink-0 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
         <p className="text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
-          Objave prolaze osnovnu provjeru prije isticanja u marketplaceu. Ne dijelimo privatne podatke bez tvoje potvrde.
+          Objave će prolaziti osnovnu provjeru prije isticanja u PetPark pretrazi. Trenutno je spremanje isključeno, pa ovaj ekran samo priprema nacrt.
         </p>
       </div>
     </Card>

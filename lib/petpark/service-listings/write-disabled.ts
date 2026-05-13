@@ -13,7 +13,7 @@ function notImplementedResult(): ServiceListingMutationResult {
   return {
     ok: false,
     reason: 'service_listings_not_implemented',
-    message: 'Service Listings spremanje čeka odobrenu migraciju i dodatnu produkcijsku provjeru.',
+    message: 'Spremanje usluga čeka odobrenu migraciju i dodatnu produkcijsku provjeru.',
   };
 }
 

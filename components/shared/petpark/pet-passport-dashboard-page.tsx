@@ -50,11 +50,11 @@ const navItems = [
 ];
 
 const sidebarItems = [
-  { label: 'Pregled', icon: Home, href: '#' },
-  { label: 'Ljubimci', icon: PawPrint, href: '#' },
+  { label: 'Pregled', icon: Home, href: '/profil' },
+  { label: 'Ljubimci', icon: PawPrint, href: '/profil' },
   { label: 'Pet Passport', icon: FileText, href: '/pet-passport', active: true },
-  { label: 'Veterinar', icon: Stethoscope, href: '#' },
-  { label: 'Profil', icon: UserRound, href: '#' },
+  { label: 'Veterinar', icon: Stethoscope, href: '/veterinari' },
+  { label: 'Profil', icon: UserRound, href: '/profil' },
 ];
 
 const vaccinations: HealthItem[] = [
@@ -254,7 +254,7 @@ function ContactAndTrust() {
           <ShieldCheck className="mt-1 size-6 shrink-0 text-[color:var(--pp-color-success)]" />
           <div>
             <h3 className="font-black text-[color:var(--pp-color-forest-text)]">Sigurno dijeljenje</h3>
-            <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Ovaj ekran je UI preview. PDF, ispis i dijeljenje nisu spojeni na stvarne zapise bez dodatnog odobrenja.</p>
+            <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Pet Passport je digitalni karton u PetParku. Nije zamjena za službenu EU putovnicu za kućne ljubimce niti za dokument koji izdaje ovlašteni veterinar.</p>
           </div>
         </div>
       </Card>
@@ -297,9 +297,9 @@ export function PetPassportDashboardPage() {
             <div className="order-1 min-w-0 space-y-6 lg:order-none">
               <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_190px]">
                 <Card radius="28" className="p-6 lg:p-8">
-                  <Badge variant="teal">Pet health hub</Badge>
+                  <Badge variant="teal">Zdravstveni karton</Badge>
                   <h1 className="mt-4 max-w-[360px] text-4xl font-black leading-[1.05] tracking-[-0.04em] text-[color:var(--pp-color-forest-text)] sm:text-5xl">Pet Passport</h1>
-                  <p className="mt-4 max-w-[500px] text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)]">Digitalni karton za cijepljenja, alergije, terapije i sigurno dijeljenje s čuvalicama, groomerima i veterinarima.</p>
+                  <p className="mt-4 max-w-[500px] text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)]">Digitalni karton za cijepljenja, alergije, terapije i sigurno dijeljenje s čuvalicama, groomerima i veterinarima. Službene putne dokumente uvijek potvrđuje ovlašteni veterinar.</p>
                 </Card>
                 <ActionRail />
               </div>

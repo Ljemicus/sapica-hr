@@ -584,7 +584,7 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
                     <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Objavite upit ili krenite direktno na marketplace usluga.</p>
                   </div>
                   <div className="flex flex-col gap-2 sm:flex-row">
-                    <ButtonLink href="/usluge" variant="secondary">Marketplace <ArrowRight className="size-4" /></ButtonLink>
+                    <ButtonLink href="/usluge" variant="secondary">Sve usluge <ArrowRight className="size-4" /></ButtonLink>
                     <ButtonLink href="/zajednica" variant="teal">Pitaj zajednicu</ButtonLink>
                   </div>
                 </div>

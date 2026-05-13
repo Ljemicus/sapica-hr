@@ -80,7 +80,7 @@ function PdfSheet() {
         </div>
         <div className="rounded-[18px] bg-[color:var(--pp-color-cream-surface)] p-4 text-center">
           <QrCode className="mx-auto size-20 text-[color:var(--pp-color-forest-text)]" />
-          <p className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-[color:var(--pp-color-muted-text)]">Scan access</p>
+          <p className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-[color:var(--pp-color-muted-text)]">QR pristup</p>
         </div>
       </div>
 
@@ -136,7 +136,7 @@ function PdfSheet() {
       </div>
 
       <footer className="mt-5 flex flex-col gap-2 border-t border-[color:var(--pp-color-warm-border)] pt-4 text-[11px] font-bold text-[color:var(--pp-color-muted-text)] sm:flex-row sm:items-center sm:justify-between">
-        <span>Generirano iz PetPark UI previewa · 12. svibnja 2026.</span>
+        <span>Generirano iz PetPark UI pregleda · 12. svibnja 2026. Nije službena EU putovnica za kućne ljubimce.</span>
         <span className="inline-flex items-center gap-1"><ShieldCheck className="size-3.5" /> Kontrolirano dijeljenje</span>
       </footer>
     </article>
@@ -148,7 +148,7 @@ function PreviewPanel() {
     <Card radius="28" shadow="small" className="p-5 print:hidden">
       <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[color:var(--pp-color-teal-accent)]">PDF alati</p>
       <h2 className="mt-1 text-2xl font-black text-[color:var(--pp-color-forest-text)]">Prije ispisa</h2>
-      <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Ova stranica je statični UI preview. Ne generira stvarni PDF i ne šalje podatke van.</p>
+      <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Ova stranica je statični UI pregled. Ne generira stvarni PDF, ne šalje podatke van i nije zamjena za dokument koji izdaje ovlašteni veterinar.</p>
       <div className="mt-5 grid gap-3">
         <Button><Download className="size-4" /> Preuzmi PDF</Button>
         <Button variant="secondary"><Printer className="size-4" /> Ispiši karton</Button>
@@ -178,9 +178,9 @@ export function PetPassportPdfPage() {
               <Link href="/pet-passport" className="inline-flex items-center gap-2 text-sm font-extrabold text-[color:var(--pp-color-muted-text)] hover:text-[color:var(--pp-color-forest-text)]">
                 <ArrowLeft className="size-4" /> Natrag na Pet Passport
               </Link>
-              <Badge variant="orange" className="mt-5">A4 PDF preview</Badge>
+              <Badge variant="orange" className="mt-5">A4 PDF pregled</Badge>
               <h1 className="mt-4 text-4xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)] sm:text-5xl">Pet Passport PDF i ispis</h1>
-              <p className="mt-3 max-w-[620px] text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)]">Pregled kartona spreman za ispis, dijeljenje s veterinarom ili privremeni pristup pružatelju usluge.</p>
+              <p className="mt-3 max-w-[620px] text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)]">Pregled kartona za ispis ili razgovor s veterinarom. Službeni dokumenti i putovanja s ljubimcem moraju se potvrditi kod ovlaštenog veterinara.</p>
             </div>
           </div>
 
