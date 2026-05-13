@@ -54,8 +54,8 @@ function PdfSection({ icon: Icon, title, children }: { icon: typeof Syringe; tit
 
 function PdfSheet() {
   return (
-    <article className="mx-auto w-full max-w-[620px] rounded-[28px] bg-white p-6 text-[color:var(--pp-color-forest-text)] shadow-[0_28px_80px_rgba(29,58,50,0.16)] ring-1 ring-[color:var(--pp-color-warm-border)] print:max-w-none print:rounded-none print:p-8 print:shadow-none print:ring-0">
-      <header className="flex items-start justify-between gap-6 border-b border-[color:var(--pp-color-warm-border)] pb-5">
+    <article className="mx-auto w-full max-w-[760px] rounded-[28px] bg-white p-5 text-[color:var(--pp-color-forest-text)] shadow-[0_28px_80px_rgba(29,58,50,0.16)] ring-1 ring-[color:var(--pp-color-warm-border)] sm:p-7 print:max-w-none print:rounded-none print:p-8 print:shadow-none print:ring-0">
+      <header className="flex flex-col gap-5 border-b border-[color:var(--pp-color-warm-border)] pb-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.22em] text-[color:var(--pp-color-orange-primary)]">PetPark Pet Passport</p>
           <h1 className="mt-2 text-4xl font-black tracking-[-0.04em]">Maks</h1>
@@ -68,7 +68,7 @@ function PdfSheet() {
         </div>
       </header>
 
-      <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_150px]">
+      <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_170px]">
         <div className="rounded-[18px] bg-[color:var(--pp-color-sage-surface)] p-4">
           <p className="text-xs font-black uppercase tracking-[0.16em] text-[color:var(--pp-color-teal-accent)]">Vlasnik</p>
           <p className="mt-2 text-xl font-black">Ana Lukić</p>
@@ -145,7 +145,7 @@ function PdfSheet() {
 
 function PreviewPanel() {
   return (
-    <Card radius="28" className="p-5 print:hidden">
+    <Card radius="28" shadow="small" className="p-5 print:hidden">
       <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[color:var(--pp-color-teal-accent)]">PDF alati</p>
       <h2 className="mt-1 text-2xl font-black text-[color:var(--pp-color-forest-text)]">Prije ispisa</h2>
       <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Ova stranica je statični UI preview. Ne generira stvarni PDF i ne šalje podatke van.</p>
@@ -184,7 +184,7 @@ export function PetPassportPdfPage() {
             </div>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px] print:block">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start print:block">
             <PdfSheet />
             <PreviewPanel />
           </div>

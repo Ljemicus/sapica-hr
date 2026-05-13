@@ -134,12 +134,12 @@ export function ArticleContent({ article, relatedArticles, comments, currentUser
 
   return (
     <main data-petpark-route="blog-detail" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
-      <section className="relative px-5 pb-12 pt-8 sm:px-8 lg:px-20">
+      <section className="relative px-5 pb-12 pt-7 sm:px-8 lg:px-20">
         <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block" />
         <LeafDecoration className="-left-16 top-[720px] hidden scale-110 -rotate-12 lg:block" />
         <PawDecoration className="right-[12%] top-[420px] hidden size-16 rotate-12 opacity-35 xl:block" />
 
-        <div className="mx-auto max-w-[1320px] space-y-6">
+        <div className="mx-auto max-w-[1320px] space-y-5">
           <div className="flex flex-wrap items-center gap-2 text-sm font-black text-[color:var(--pp-color-muted-text)]">
             <Link href="/blog" className="hover:text-[color:var(--pp-color-orange-primary)]">Blog</Link>
             <span>/</span>
@@ -150,13 +150,13 @@ export function ArticleContent({ article, relatedArticles, comments, currentUser
 
           <ButtonLink href="/blog" variant="ghost" size="sm"><ChevronLeft className="size-4" /> Natrag na blog</ButtonLink>
 
-          <Card radius="28" className="relative overflow-hidden p-6 sm:p-8 lg:p-10">
-            <div className="absolute right-8 top-8 hidden size-32 rounded-full bg-[color:var(--pp-color-warning-surface)] lg:block" />
-            <div className="relative grid gap-8 xl:grid-cols-[1fr_360px] xl:items-end">
+          <Card radius="28" shadow="small" className="relative overflow-hidden p-6 sm:p-8 lg:p-9">
+            <div className="absolute right-8 top-8 hidden size-28 rounded-full bg-[color:var(--pp-color-warning-surface)] lg:block" />
+            <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1fr)_400px] xl:items-stretch">
               <div>
                 <Badge variant="orange">{BLOG_CATEGORY_EMOJI[article.category]} {BLOG_CATEGORY_LABELS[article.category]}</Badge>
-                <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-[color:var(--pp-color-forest-text)] sm:text-6xl lg:text-7xl">{article.title}</h1>
-                <p className="mt-6 max-w-3xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">{article.excerpt}</p>
+                <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-[color:var(--pp-color-forest-text)] sm:text-6xl lg:text-6xl">{article.title}</h1>
+                <p className="mt-5 max-w-3xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">{article.excerpt}</p>
                 <div className="mt-6 flex flex-wrap items-center gap-3 text-sm font-black text-[color:var(--pp-color-muted-text)]">
                   <span className="inline-flex items-center gap-1"><UserRound className="size-4" /> {article.author}</span>
                   <span className="inline-flex items-center gap-1"><CalendarDays className="size-4" /> {formatLongDate(article.date)}</span>
@@ -169,13 +169,13 @@ export function ArticleContent({ article, relatedArticles, comments, currentUser
                 </div>
               </div>
 
-              <Card radius="28" tone="sage" className="flex min-h-[280px] items-center justify-center p-8">
+              <Card radius="28" tone="sage" shadow="small" className="flex min-h-[320px] items-center justify-center p-8">
                 <span className="text-9xl" aria-hidden>{article.emoji}</span>
               </Card>
             </div>
           </Card>
 
-          <div className="grid gap-6 xl:grid-cols-[240px_minmax(0,760px)_280px] xl:items-start xl:justify-center">
+          <div className="grid gap-6 xl:grid-cols-[240px_minmax(0,780px)_300px] xl:items-start xl:justify-center">
             <aside className="hidden xl:block xl:sticky xl:top-28">
               <Card radius="24" tone="cream" className="p-5">
                 <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-[color:var(--pp-color-muted-text)]"><BookOpen className="size-4" /> Sadržaj</h2>

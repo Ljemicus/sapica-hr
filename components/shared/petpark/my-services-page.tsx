@@ -51,11 +51,11 @@ const navItems = [
 ];
 
 const sidebarItems = [
-  { label: 'Pregled', icon: Home, href: '#' },
+  { label: 'Pregled', icon: Home, href: '/moje-usluge' },
   { label: 'Moje usluge', icon: PawPrint, href: '/moje-usluge', active: true },
   { label: 'Kalendar', icon: CalendarDays, href: '/kalendar' },
-  { label: 'Poruke', icon: MessageCircle, href: '#' },
-  { label: 'Profil', icon: UserRound, href: '#' },
+  { label: 'Poruke', icon: MessageCircle, href: '/poruke' },
+  { label: 'Profil', icon: UserRound, href: '/profil' },
 ];
 
 const services: ProviderService[] = [
@@ -178,8 +178,8 @@ function ProviderSidebar() {
 
 function StatCard({ label, value, icon: Icon, tone }: { label: string; value: string; icon: typeof PawPrint; tone: 'sage' | 'teal' | 'orange' | 'cream' }) {
   return (
-    <Card radius="24" tone={tone} className="p-5">
-      <div className="flex items-center justify-between gap-3">
+    <Card radius="24" tone={tone} shadow="small" className="p-5">
+      <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-3xl font-black text-[color:var(--pp-color-forest-text)]">{value}</p>
           <p className="mt-1 text-sm font-bold text-[color:var(--pp-color-muted-text)]">{label}</p>
@@ -194,11 +194,11 @@ function StatCard({ label, value, icon: Icon, tone }: { label: string; value: st
 
 function ServicesToolbar() {
   return (
-    <Card radius="24" shadow="small" className="p-3">
+    <Card radius="24" shadow="small" className="p-4">
       <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <p className="text-lg font-black text-[color:var(--pp-color-forest-text)]">Services table</p>
-          <p className="text-xs font-bold text-[color:var(--pp-color-muted-text)]">Upravljanje ponudom bez backend promjena u ovoj fazi.</p>
+          <p className="text-lg font-black text-[color:var(--pp-color-forest-text)]">Pregled usluga</p>
+          <p className="text-xs font-bold text-[color:var(--pp-color-muted-text)]">Upravljanje ponudom bez spremanja promjena dok je sigurni način aktivan.</p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <Select aria-label="Filter kategorije" defaultValue="all" className="min-h-10 shadow-none">
@@ -266,14 +266,14 @@ function ServicesTable() {
   const showGuardNote = !readsGuard.enabled || !writesGuard.enabled;
 
   return (
-    <Card radius="28" className="p-5">
+    <Card radius="28" className="p-5 sm:p-6">
       <ServicesToolbar />
       {showGuardNote ? (
         <div className="mt-4 rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warning)]/25 bg-[color:var(--pp-color-warning-surface)] px-5 py-4 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
           Objave usluga su pripremljene u sigurnom načinu rada. Dok backend migracija nije odobrena, prikazujemo postojeće demo/fallback usluge i ne spremamo promjene u produkciju.
         </div>
       ) : null}
-      <div className="mt-4 space-y-3">
+      <div className="mt-5 space-y-4">
         {services.map((service) => <ServiceRow key={service.title} service={service} />)}
       </div>
     </Card>
@@ -310,13 +310,13 @@ export function MyServicesPage() {
         <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block" />
         <LeafDecoration className="-left-16 top-[560px] hidden scale-110 -rotate-12 lg:block" />
         <div className="mx-auto max-w-[var(--pp-content-width)]">
-          <div className="grid gap-6 lg:grid-cols-[250px_1fr]">
+          <div className="grid gap-6 lg:grid-cols-[270px_1fr] xl:gap-8">
             <ProviderSidebar />
             <div className="order-1 min-w-0 space-y-6 lg:order-none">
               <Card radius="28" className="p-6 lg:p-8">
                 <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
                   <div>
-                    <Badge variant="orange">Provider services</Badge>
+                    <Badge variant="orange">Provider centar</Badge>
                     <h1 className="mt-4 text-4xl font-black leading-[1.05] tracking-[-0.04em] text-[color:var(--pp-color-forest-text)] sm:text-6xl">Moje usluge</h1>
                     <p className="mt-4 max-w-[600px] text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)]">Upravljajte svojim uslugama, rezervacijama i recenzijama na jednom mjestu.</p>
                   </div>

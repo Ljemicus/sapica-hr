@@ -41,7 +41,7 @@ function formatDate(date: string) {
 
 function ArticleVisual({ article, large = false }: { article: Article; large?: boolean }) {
   return (
-    <div className={cn('relative flex items-center justify-center overflow-hidden border-b border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-sage-surface)]', large ? 'min-h-[320px]' : 'h-52')}>
+    <div className={cn('relative flex items-center justify-center overflow-hidden border-b border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-sage-surface)]', large ? 'min-h-[300px]' : 'h-56')}>
       <span className={cn('transition duration-500 group-hover:scale-110', large ? 'text-9xl' : 'text-7xl')} aria-hidden>{article.emoji}</span>
       <PawDecoration className="right-5 top-5 size-12 opacity-70" />
       <Badge variant="orange" className="absolute left-4 top-4">
@@ -104,13 +104,13 @@ export function BlogContent({ articles, initialCategory }: BlogContentProps) {
         <PawDecoration className="right-[12%] top-[400px] hidden size-16 rotate-12 opacity-40 xl:block" />
 
         <div className="mx-auto max-w-[1500px] space-y-6">
-          <Card radius="28" className="relative overflow-hidden p-6 sm:p-8 lg:p-10">
-            <div className="absolute right-8 top-8 hidden size-32 rounded-full bg-[color:var(--pp-color-warning-surface)] lg:block" />
-            <div className="relative grid gap-8 xl:grid-cols-[1fr_500px] xl:items-end">
+          <Card radius="28" shadow="small" className="relative overflow-hidden p-6 sm:p-8 lg:p-9">
+            <div className="absolute right-8 top-8 hidden size-28 rounded-full bg-[color:var(--pp-color-warning-surface)] lg:block" />
+            <div className="relative grid gap-7 xl:grid-cols-[1fr_460px] xl:items-end">
               <div>
                 <Badge variant="orange"><BookOpen className="size-3" /> PetPark magazin</Badge>
-                <h1 className="mt-5 text-5xl font-black leading-[0.98] tracking-[-0.06em] text-[color:var(--pp-color-forest-text)] sm:text-7xl lg:text-8xl">PetPark savjeti</h1>
-                <p className="mt-6 max-w-3xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">
+                <h1 className="mt-5 text-5xl font-black leading-[0.98] tracking-[-0.06em] text-[color:var(--pp-color-forest-text)] sm:text-7xl lg:text-7xl">PetPark savjeti</h1>
+                <p className="mt-5 max-w-3xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">
                   Praktični vodiči o zdravlju, prehrani, treningu, putovanjima i svakodnevici s ljubimcima.
                 </p>
               </div>
@@ -187,11 +187,11 @@ export function BlogContent({ articles, initialCategory }: BlogContentProps) {
             </section>
 
             <aside className="space-y-5 xl:sticky xl:top-28 xl:self-start">
-              <Card radius="28" tone="cream" className="p-5">
+              <Card radius="28" tone="cream" className="p-6">
                 <h2 className="flex items-center gap-2 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]"><Sparkles className="size-5 text-[color:var(--pp-color-orange-primary)]" /> Popularni članci</h2>
                 <div className="mt-4 space-y-3">
                   {popularArticles.map((article) => (
-                    <Link key={article.slug} href={`/blog/${article.slug}`} className="block rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] p-3 text-sm font-black text-[color:var(--pp-color-forest-text)] shadow-[var(--pp-shadow-small-card)] transition hover:text-[color:var(--pp-color-orange-primary)]">
+                    <Link key={article.slug} href={`/blog/${article.slug}`} className="block rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] p-4 text-sm font-black leading-5 text-[color:var(--pp-color-forest-text)] shadow-[var(--pp-shadow-small-card)] transition hover:text-[color:var(--pp-color-orange-primary)]">
                       {article.emoji} {article.title}
                     </Link>
                   ))}

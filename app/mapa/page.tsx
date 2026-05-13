@@ -68,7 +68,7 @@ export default function MapPage() {
         <PawDecoration className="right-[12%] top-[360px] hidden size-16 rotate-12 opacity-35 xl:block" />
 
         <div className="mx-auto max-w-[1500px] space-y-6">
-          <Card radius="28" className="p-6 sm:p-8">
+          <Card radius="28" shadow="small" className="p-6 sm:p-8">
             <Badge variant="orange"><MapPin className="size-3" /> Lokalni pregled</Badge>
             <div className="mt-5 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
               <div>
@@ -111,16 +111,16 @@ export default function MapPage() {
               </Card>
             </aside>
 
-            <section className="min-h-[680px] overflow-hidden rounded-[var(--pp-radius-card-28)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-sage-surface)] shadow-[var(--pp-shadow-soft-card)]">
+            <section className="min-h-[680px] overflow-hidden rounded-[var(--pp-radius-card-28)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-sage-surface)] shadow-[var(--pp-shadow-soft-card)] ring-1 ring-[color:var(--pp-color-teal-accent)]/10">
               <div className="relative h-[680px] overflow-hidden">
-                <div className="absolute inset-0 opacity-70" style={{ backgroundImage: 'linear-gradient(90deg, rgba(45, 109, 104, .12) 1px, transparent 1px), linear-gradient(rgba(45, 109, 104, .12) 1px, transparent 1px)', backgroundSize: '72px 72px' }} />
-                <div className="absolute left-[8%] top-[18%] h-[62%] w-[78%] rounded-[48%] border-[18px] border-[color:var(--pp-color-card-surface)]/70" />
-                <div className="absolute left-[18%] top-[30%] h-[38%] w-[62%] -rotate-12 rounded-[45%] border-[14px] border-[color:var(--pp-color-cream-surface)]/80" />
+                <div className="absolute inset-0 opacity-100" style={{ backgroundImage: 'linear-gradient(90deg, rgba(45, 109, 104, .18) 1px, transparent 1px), linear-gradient(rgba(45, 109, 104, .18) 1px, transparent 1px)', backgroundSize: '72px 72px' }} />
+                <div className="absolute left-[8%] top-[18%] h-[62%] w-[78%] rounded-[48%] border-[18px] border-[color:var(--pp-color-card-surface)]/90" />
+                <div className="absolute left-[18%] top-[30%] h-[38%] w-[62%] -rotate-12 rounded-[45%] border-[14px] border-[color:var(--pp-color-cream-surface)]" />
                 <div className="absolute bottom-0 left-0 h-32 w-full bg-gradient-to-t from-[color:var(--pp-color-sage-surface-strong)] to-transparent" />
 
                 {places.map((place, index) => <Pin key={place.title} place={place} selected={index === 0} />)}
 
-                <Card radius="24" className="absolute bottom-6 left-6 right-6 max-w-md p-5 sm:right-auto">
+                <Card radius="24" shadow="small" className="absolute bottom-5 left-5 right-5 max-w-md p-5 sm:bottom-6 sm:left-6 sm:right-auto">
                   <Badge variant="orange"><ShieldCheck className="size-3" /> Odabrano</Badge>
                   <h2 className="mt-3 text-2xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">{selected.title}</h2>
                   <p className="mt-2 text-sm font-bold text-[color:var(--pp-color-muted-text)]">{selected.location}</p>

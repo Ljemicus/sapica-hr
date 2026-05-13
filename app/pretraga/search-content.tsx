@@ -271,7 +271,7 @@ function FilterPanel({
 function ServiceResultCard({ provider }: { provider: UnifiedProvider }) {
   return (
     <Link href={provider.profileUrl} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2">
-      <Card radius="28" interactive className="h-full overflow-hidden p-5">
+      <Card radius="28" shadow="small" interactive className="h-full overflow-hidden p-5 ring-1 ring-[color:var(--pp-color-warm-border)]/70">
         <div className="flex items-start gap-4">
           <Avatar src={provider.avatarUrl || undefined} initials={initials(provider.name)} alt={provider.name} size="lg" />
           <div className="min-w-0 flex-1">
@@ -428,13 +428,13 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
         <PawDecoration className="right-[12%] top-[390px] hidden size-16 rotate-12 opacity-40 xl:block" />
 
         <div className="mx-auto max-w-[1500px] space-y-6">
-          <Card radius="28" className="relative overflow-hidden p-6 sm:p-8 lg:p-10">
-            <div className="absolute right-10 top-10 hidden size-32 rounded-full bg-[color:var(--pp-color-warning-surface)] lg:block" />
-            <div className="relative grid gap-8 xl:grid-cols-[1fr_520px] xl:items-end">
+          <Card radius="28" shadow="small" className="relative overflow-hidden p-6 sm:p-8 lg:p-9">
+            <div className="absolute right-10 top-10 hidden size-28 rounded-full bg-[color:var(--pp-color-warning-surface)] lg:block" />
+            <div className="relative grid gap-7 xl:grid-cols-[1fr_500px] xl:items-end">
               <div>
                 <Badge variant="orange"><Search className="size-3" /> Univerzalna pretraga</Badge>
-                <h1 className="mt-5 text-5xl font-black leading-[0.98] tracking-[-0.06em] text-[color:var(--pp-color-forest-text)] sm:text-7xl lg:text-8xl">Pretraži PetPark</h1>
-                <p className="mt-6 max-w-2xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">
+                <h1 className="mt-5 text-5xl font-black leading-[0.98] tracking-[-0.06em] text-[color:var(--pp-color-forest-text)] sm:text-7xl lg:text-7xl">Pretraži PetPark</h1>
+                <p className="mt-5 max-w-2xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">
                   Pronađi usluge, savjete, ljubimce, objave i ljude iz zajednice.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-2">
@@ -446,8 +446,8 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
                 </div>
               </div>
 
-              <Card radius="28" tone="cream" className="p-4 sm:p-5">
-                <form action="/pretraga" className="space-y-3">
+              <Card radius="28" tone="cream" shadow="small" className="p-4 sm:p-5">
+                <form action="/pretraga" className="space-y-4">
                   <label className="relative block">
                     <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
                     <Input name="q" placeholder="Što tražite?" value={query} onChange={(event) => setQuery(event.target.value)} className="pl-12" />
@@ -489,7 +489,7 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
             </div>
           </Card>
 
-          <div className="grid gap-6 lg:grid-cols-[310px_1fr]">
+          <div className="grid gap-6 lg:grid-cols-[330px_1fr]">
             <aside className="lg:sticky lg:top-28 lg:self-start">
               <FilterPanel
                 city={city}
