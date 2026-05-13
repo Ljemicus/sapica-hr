@@ -9,7 +9,7 @@ test.describe('/moje-usluge PetPark provider services visual baseline', () => {
 
     await expect(page.getByRole('heading', { name: /^moje usluge$/i }).first()).toBeVisible();
     await expect(page.getByText('Čuvanje psa u kućnom okruženju')).toBeVisible();
-    await expect(page.getByText('Services table')).toBeVisible();
+    await expect(page.getByText('Pregled usluga')).toBeVisible();
 
     await expect(page).toHaveScreenshot('moje-usluge-1440.png', {
       fullPage: true,
