@@ -33,6 +33,7 @@ type ServiceStatus = 'active' | 'draft' | 'paused';
 type ServiceCategory = 'Čuvanje' | 'Grooming' | 'Trening';
 
 type ProviderService = {
+  id?: string;
   title: string;
   category: ServiceCategory;
   price: string;
@@ -251,8 +252,8 @@ function ServiceRow({ service }: { service: ProviderService }) {
           <StatusBadge status={service.status} />
           <div className="flex gap-2">
             <IconButton aria-label={`Pregled ${service.title}`} variant="ghost"><Eye className="size-4" /></IconButton>
-            <IconButton aria-label={`Uredi ${service.title}`} variant="secondary"><Edit3 className="size-4" /></IconButton>
-            <IconButton aria-label={`Opcije ${service.title}`} variant="secondary"><MoreHorizontal className="size-4" /></IconButton>
+            <IconButton aria-label={`Uredi ${service.title}`} variant="secondary" disabled={!service.id || service.status === 'active'}><Edit3 className="size-4" /></IconButton>
+            <IconButton aria-label={`Arhiviraj ili pauziraj ${service.title}`} variant="secondary" disabled={!service.id || service.status === 'active'}><MoreHorizontal className="size-4" /></IconButton>
           </div>
         </div>
       </div>

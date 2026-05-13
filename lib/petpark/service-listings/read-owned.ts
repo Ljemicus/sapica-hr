@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { serviceListingReadsGuard } from './guards';
 
 type OwnedServiceListingRow = {
+  id: string;
   title: string;
   display_category: string | null;
   status: string | null;
@@ -16,6 +17,7 @@ type OwnedServiceListingRow = {
 };
 
 export type OwnedServiceListingSummary = {
+  id?: string;
   title: string;
   category: 'Čuvanje' | 'Grooming' | 'Trening';
   price: string;
@@ -81,7 +83,7 @@ export async function getOwnedServiceListingSummaries(): Promise<OwnedServiceLis
     const providerIds = providers.map((provider) => provider.id);
     const { data, error } = await admin
       .from('service_listings')
-      .select('title, display_category, status, updated_at, provider_service_id, provider_services(base_price, currency, service_code)')
+      .select('id, title, display_category, status, updated_at, provider_service_id, provider_services(base_price, currency, service_code)')
       .in('provider_id', providerIds)
       .order('updated_at', { ascending: false });
 
@@ -91,6 +93,7 @@ export async function getOwnedServiceListingSummaries(): Promise<OwnedServiceLis
       const service = relatedProviderService(row);
 
       return {
+      id: row.id,
       title: row.title,
       category: categoryLabel(row.display_category || service?.service_code || null),
       price: priceLabel(row),
