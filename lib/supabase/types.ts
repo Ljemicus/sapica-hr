@@ -1053,6 +1053,99 @@ export type Database = {
           },
         ]
       }
+      service_listings: {
+        Row: {
+          availability_mode: string
+          category: string | null
+          city: string | null
+          created_at: string
+          description: string | null
+          display_category: string | null
+          district: string | null
+          house_rules: Json
+          id: string
+          included_features: Json
+          listed_at: string | null
+          moderation_status: string
+          photos: Json
+          provider_id: string
+          provider_service_id: string | null
+          seo_description: string | null
+          seo_title: string | null
+          service_area: string | null
+          short_description: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          availability_mode?: string
+          category?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          display_category?: string | null
+          district?: string | null
+          house_rules?: Json
+          id?: string
+          included_features?: Json
+          listed_at?: string | null
+          moderation_status?: string
+          photos?: Json
+          provider_id: string
+          provider_service_id?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          service_area?: string | null
+          short_description?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          availability_mode?: string
+          category?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          display_category?: string | null
+          district?: string | null
+          house_rules?: Json
+          id?: string
+          included_features?: Json
+          listed_at?: string | null
+          moderation_status?: string
+          photos?: Json
+          provider_id?: string
+          provider_service_id?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          service_area?: string | null
+          short_description?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_listings_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_listings_provider_service_id_fkey"
+            columns: ["provider_service_id"]
+            isOneToOne: false
+            referencedRelation: "provider_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stripe_events: {
         Row: {
           event_id: string
