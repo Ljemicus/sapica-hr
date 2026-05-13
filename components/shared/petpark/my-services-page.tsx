@@ -260,7 +260,7 @@ function ServiceRow({ service }: { service: ProviderService }) {
   );
 }
 
-function ServicesTable() {
+function ServicesTable({ providerServices = services }: { providerServices?: ProviderService[] }) {
   const readsGuard = serviceListingReadsGuard();
   const writesGuard = serviceListingWritesGuard();
   const showGuardNote = !readsGuard.enabled || !writesGuard.enabled;
@@ -274,7 +274,7 @@ function ServicesTable() {
         </div>
       ) : null}
       <div className="mt-5 space-y-4">
-        {services.map((service) => <ServiceRow key={service.title} service={service} />)}
+        {providerServices.map((service) => <ServiceRow key={service.title} service={service} />)}
       </div>
     </Card>
   );
@@ -302,7 +302,7 @@ function InsightPanel() {
   );
 }
 
-export function MyServicesPage() {
+export function MyServicesPage({ providerServices }: { providerServices?: ProviderService[] }) {
   return (
     <main data-petpark-route="moje-usluge" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
       <AppHeader navItems={navItems} actions={<ButtonLink href="/objavi-uslugu" size="sm"><Plus className="size-4" /> Pripremi nacrt</ButtonLink>} />
@@ -331,7 +331,7 @@ export function MyServicesPage() {
                 <StatCard label="Ukupan prihod" value="1.545 €" icon={TrendingUp} tone="cream" />
               </div>
 
-              <ServicesTable />
+              <ServicesTable providerServices={providerServices && providerServices.length > 0 ? providerServices : services} />
               <InsightPanel />
             </div>
           </div>
