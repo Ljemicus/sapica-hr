@@ -27,6 +27,7 @@ import {
   Select,
 } from '@/components/shared/petpark/design-foundation';
 import { cn } from '@/lib/utils';
+import type { MarketplaceServiceListing } from '@/lib/db/service-listings';
 
 type Category = {
   title: string;
@@ -35,18 +36,7 @@ type Category = {
   tone: 'orange' | 'sage' | 'teal' | 'cream';
 };
 
-type Service = {
-  slug: string;
-  title: string;
-  provider: string;
-  location: string;
-  rating: number;
-  reviews: number;
-  description: string;
-  price: string;
-  badges: string[];
-  tone: 'orange' | 'sage' | 'teal' | 'cream';
-};
+type Service = Pick<MarketplaceServiceListing, 'slug' | 'title' | 'provider' | 'location' | 'rating' | 'reviews' | 'description' | 'price' | 'badges' | 'tone'>;
 
 const categories: Category[] = [
   { title: 'Čuvanje', count: '312 usluga', icon: Home, tone: 'orange' },
@@ -299,7 +289,10 @@ function HeroPhotoArea() {
   );
 }
 
-export function ServicesMarketplacePage() {
+export function ServicesMarketplacePage({ realServices = [] }: { realServices?: MarketplaceServiceListing[] }) {
+  const visibleServices = realServices.length > 0 ? realServices.slice(0, services.length) : services;
+  const resultCountLabel = '1.220 usluga';
+
   return (
     <main data-petpark-route="usluge" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
       <AppHeader
@@ -348,7 +341,7 @@ export function ServicesMarketplacePage() {
             <FilterSidebar />
             <section aria-label="Rezultati pretrage" className="min-w-0">
               <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-                <p className="text-lg font-black text-[color:var(--pp-color-forest-text)]">Pronađeno 1.220 usluga</p>
+                <p className="text-lg font-black text-[color:var(--pp-color-forest-text)]">Pronađeno {resultCountLabel}</p>
                 <label className="min-w-[170px]">
                   <span className="sr-only">Sortiranje</span>
                   <Select defaultValue="najnovije" aria-label="Sortiranje rezultata">
@@ -359,7 +352,7 @@ export function ServicesMarketplacePage() {
                 </label>
               </div>
               <div className="space-y-5">
-                {services.map((service) => <ServiceCard key={service.slug} service={service} />)}
+                {visibleServices.map((service) => <ServiceCard key={service.slug} service={service} />)}
               </div>
             </section>
           </div>

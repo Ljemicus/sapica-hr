@@ -23,8 +23,9 @@ import {
   Rating,
 } from '@/components/shared/petpark/design-foundation';
 import { cn } from '@/lib/utils';
+import type { MarketplaceServiceListing } from '@/lib/db/service-listings';
 
-const service = {
+const fallbackService = {
   title: 'Čuvanje psa u kućnom okruženju',
   provider: 'Ana K.',
   location: 'Maksimir, Zagreb',
@@ -98,12 +99,12 @@ export function ImageGallery() {
   );
 }
 
-export function IncludedFeatures() {
+export function IncludedFeatures({ items = features }: { items?: string[] }) {
   return (
     <Card radius="24" className="p-8">
       <h2 className="text-2xl font-black tracking-[-0.03em]">Što je uključeno</h2>
       <div className="mt-5 grid gap-x-10 gap-y-4 sm:grid-cols-2">
-        {features.map((feature) => (
+        {items.map((feature) => (
           <div key={feature} className="flex items-center gap-3 text-sm font-extrabold text-[color:var(--pp-color-muted-text)]">
             <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[color:var(--pp-color-success-surface)] text-[color:var(--pp-color-success)]">
               <Check className="size-4" aria-hidden />
@@ -116,19 +117,19 @@ export function IncludedFeatures() {
   );
 }
 
-export function ServiceDescription() {
+export function ServiceDescription({ description = 'Vaš pas bit će dio naše obitelji dok ste vi odsutni. Živimo u mirnom stanu s puno zelenila u blizini, a svaki dan uključuje šetnje, igru i pažnju.', rules: ruleItems = rules }: { description?: string; rules?: string[] }) {
   return (
     <Card radius="24" className="grid gap-8 p-8 md:grid-cols-[1fr_0.88fr]">
       <div>
         <h2 className="text-2xl font-black tracking-[-0.03em]">Opis usluge</h2>
         <p className="mt-4 max-w-md text-base font-semibold leading-8 text-[color:var(--pp-color-muted-text)]">
-          Vaš pas bit će dio naše obitelji dok ste vi odsutni. Živimo u mirnom stanu s puno zelenila u blizini, a svaki dan uključuje šetnje, igru i pažnju.
+          {description}
         </p>
       </div>
       <div>
         <h2 className="text-2xl font-black tracking-[-0.03em]">Kućna pravila</h2>
         <div className="mt-4 space-y-3">
-          {rules.map((rule) => (
+          {ruleItems.map((rule) => (
             <p key={rule} className="flex items-center gap-3 text-sm font-extrabold text-[color:var(--pp-color-muted-text)]">
               <Check className="size-4 text-[color:var(--pp-color-success)]" aria-hidden />
               {rule}
@@ -175,12 +176,12 @@ function MiniCalendar() {
   );
 }
 
-export function BookingPanel() {
+export function BookingPanel({ currentService = fallbackService }: { currentService?: typeof fallbackService | MarketplaceServiceListing }) {
   return (
     <Card radius="28" className="sticky top-24 p-8 lg:p-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">{service.price}</p>
+          <p className="text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">{currentService.price}</p>
           <p className="mt-2 text-xs font-bold text-[color:var(--pp-color-muted-text)]">Minimalno 2 dana • Maksimalno 14 dana</p>
         </div>
         <Badge variant="orange">DOSTUPNO</Badge>
@@ -198,7 +199,7 @@ export function BookingPanel() {
           Kalendar je dostupan na većim ekranima. Odabrani termini su 12. lip - 17. lip.
         </div>
         <div className="grid gap-1 text-sm">
-          <span className="font-extrabold text-[color:var(--pp-color-muted-text)]">{service.range}</span>
+          <span className="font-extrabold text-[color:var(--pp-color-muted-text)]">{'range' in currentService ? currentService.range : 'Termin po dogovoru'}</span>
           <button type="button" className="w-fit font-black text-[color:var(--pp-color-orange-primary)]">Promijeni datume</button>
         </div>
         <PetSelector />
@@ -219,7 +220,7 @@ export function PetSelector() {
       </span>
       <div>
         <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">Ljubimac</p>
-        <p className="text-sm font-black text-[color:var(--pp-color-forest-text)]">{service.pet}</p>
+        <p className="text-sm font-black text-[color:var(--pp-color-forest-text)]">{fallbackService.pet}</p>
       </div>
     </div>
   );
@@ -229,13 +230,18 @@ export function PriceSummary() {
   return (
     <div className="flex items-center justify-between gap-4 rounded-[18px] bg-[color:var(--pp-color-cream-surface)] px-5 py-4">
       <p className="text-lg font-black text-[color:var(--pp-color-forest-text)]">Ukupno</p>
-      <p className="text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{service.total}</p>
+      <p className="text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{fallbackService.total}</p>
     </div>
   );
 }
 
-export function ProviderTrustCard() {
-  const items = ['Odgovara unutar 1 h', '4.9 ocjena', '156 uspješnih rezervacija', 'Zagreb, Maksimir'];
+export function ProviderTrustCard({ currentService = fallbackService }: { currentService?: typeof fallbackService | MarketplaceServiceListing }) {
+  const items = [
+    'responseTime' in currentService ? currentService.responseTime : 'Odgovara unutar 1 h',
+    `${currentService.rating.toFixed(1)} ocjena`,
+    `${'reviews' in currentService ? currentService.reviews : currentService.reviewCount} recenzija`,
+    currentService.location,
+  ];
 
   return (
     <Card radius="28" className="p-7">
@@ -243,7 +249,7 @@ export function ProviderTrustCard() {
       <div className="mt-6 flex flex-col gap-5 sm:flex-row lg:mt-5">
         <Avatar initials="AK" size="lg" className="size-24 text-2xl" />
         <div className="min-w-0">
-          <p className="text-xl font-black tracking-[-0.02em]">Ana K.</p>
+          <p className="text-xl font-black tracking-[-0.02em]">{currentService.provider}</p>
           <Badge variant="success" className="mt-2">PROVJERENI PRUŽATELJ</Badge>
           <div className="mt-4 space-y-2">
             {items.map((item) => (
@@ -298,7 +304,7 @@ export function SimilarServices() {
   );
 }
 
-export function ServiceDetailPage() {
+export function ServiceDetailPage({ service = fallbackService }: { service?: typeof fallbackService | MarketplaceServiceListing }) {
   return (
     <main data-petpark-route="usluge-detail" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
       <AppHeader
@@ -330,7 +336,7 @@ export function ServiceDetailPage() {
               <div className="mt-4 flex flex-wrap items-center gap-3 text-sm font-bold text-[color:var(--pp-color-muted-text)]" style={{ marginTop: 22 }}>
                 <span>{service.provider}</span>
                 <span aria-hidden>•</span>
-                <Rating value={service.rating} count={service.reviewCount} />
+                <Rating value={service.rating} count={'reviewCount' in service ? service.reviewCount : service.reviews} />
                 <span aria-hidden>•</span>
                 <span className="inline-flex items-center gap-1"><MapPin className="size-4" aria-hidden />{service.location}</span>
                 <Badge variant="success">PROVJERENO</Badge>
@@ -344,14 +350,14 @@ export function ServiceDetailPage() {
           <div className="mt-7 grid gap-8 lg:grid-cols-[800px_360px] lg:items-start lg:justify-between" style={{ marginTop: 29 }}>
             <div className="flex flex-col gap-6">
               <ImageGallery />
-              <IncludedFeatures />
-              <ServiceDescription />
+              <IncludedFeatures items={'includedFeatures' in service ? service.includedFeatures : features} />
+              <ServiceDescription description={'detailDescription' in service ? service.detailDescription : undefined} rules={'houseRules' in service ? service.houseRules : rules} />
               <ReviewsSection />
               <SimilarServices />
             </div>
             <aside className="mt-2 flex flex-col gap-8 lg:mt-5">
-              <BookingPanel />
-              <ProviderTrustCard />
+              <BookingPanel currentService={service} />
+              <ProviderTrustCard currentService={service} />
               <Card tone="sage" radius="24" className="p-7 lg:p-5">
                 <div className="flex gap-3">
                   <ShieldCheck className="mt-1 size-6 shrink-0 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
