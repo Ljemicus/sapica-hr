@@ -1,3 +1,6 @@
+'use client';
+
+import { useActionState } from 'react';
 import {
   Camera,
   Check,
@@ -22,6 +25,7 @@ import {
   Select,
 } from '@/components/shared/petpark/design-foundation';
 import { cn } from '@/lib/utils';
+import { submitPreparedServiceListing, type PublishServiceFormState } from '@/app/objavi-uslugu/actions';
 
 const steps = ['Osnovne informacije', 'Detalji usluge', 'Cijena i dostupnost', 'Pregled'];
 
@@ -92,7 +96,7 @@ export function PhotoUploadPlaceholder() {
             </p>
           </div>
         </div>
-        <Button variant="secondary" size="sm" className="w-full sm:w-auto">
+        <Button type="button" variant="secondary" size="sm" className="w-full sm:w-auto">
           <Camera className="size-4" aria-hidden />
           Odaberi slike
         </Button>
@@ -101,7 +105,11 @@ export function PhotoUploadPlaceholder() {
   );
 }
 
+const initialPublishState: PublishServiceFormState = { ok: false, message: '' };
+
 export function PublishServiceForm() {
+  const [state, formAction, isPending] = useActionState(submitPreparedServiceListing, initialPublishState);
+
   return (
     <Card radius="28" className="p-6 sm:p-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -115,7 +123,7 @@ export function PublishServiceForm() {
         <Badge variant="orange">Nacrt</Badge>
       </div>
 
-      <form className="mt-8 space-y-7" aria-label="Objava usluge">
+      <form action={formAction} className="mt-8 space-y-7" aria-label="Objava usluge">
         <div className="grid gap-5 md:grid-cols-2">
           <FormField label="Naziv usluge" required>
             <Input name="title" defaultValue="Čuvanje u domu" />
@@ -176,9 +184,18 @@ export function PublishServiceForm() {
           </FormField>
         </div>
 
+        {state.message ? (
+          <div
+            role="status"
+            className="rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warning)]/25 bg-[color:var(--pp-color-warning-surface)] px-5 py-4 text-sm font-extrabold leading-6 text-[color:var(--pp-color-forest-text)]"
+          >
+            {state.message}
+          </div>
+        ) : null}
+
         <div className="flex flex-col-reverse gap-3 border-t border-[color:var(--pp-color-warm-border)] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <ButtonLink href="/moje-usluge" variant="secondary" size="lg" className="w-full sm:w-auto">Odustani</ButtonLink>
-          <ButtonLink href="/moje-usluge" size="lg" className="w-full sm:w-auto">Nastavi</ButtonLink>
+          <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={isPending}>{isPending ? 'Priprema…' : 'Pripremi nacrt'}</Button>
         </div>
       </form>
     </Card>

@@ -27,6 +27,7 @@ import {
   Select,
 } from '@/components/shared/petpark/design-foundation';
 import { cn } from '@/lib/utils';
+import { serviceListingReadsGuard, serviceListingWritesGuard } from '@/lib/petpark/service-listings/guards';
 
 type ServiceStatus = 'active' | 'draft' | 'paused';
 type ServiceCategory = 'Čuvanje' | 'Grooming' | 'Trening';
@@ -260,9 +261,18 @@ function ServiceRow({ service }: { service: ProviderService }) {
 }
 
 function ServicesTable() {
+  const readsGuard = serviceListingReadsGuard();
+  const writesGuard = serviceListingWritesGuard();
+  const showGuardNote = !readsGuard.enabled || !writesGuard.enabled;
+
   return (
     <Card radius="28" className="p-5">
       <ServicesToolbar />
+      {showGuardNote ? (
+        <div className="mt-4 rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warning)]/25 bg-[color:var(--pp-color-warning-surface)] px-5 py-4 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
+          Objave usluga su pripremljene u sigurnom načinu rada. Dok backend migracija nije odobrena, prikazujemo postojeće demo/fallback usluge i ne spremamo promjene u produkciju.
+        </div>
+      ) : null}
       <div className="mt-4 space-y-3">
         {services.map((service) => <ServiceRow key={service.title} service={service} />)}
       </div>
