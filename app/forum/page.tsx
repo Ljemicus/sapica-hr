@@ -56,11 +56,11 @@ const navItems = [
 ];
 
 const categories = [
-  { title: 'Savjeti za njegu', icon: PawPrint, href: '/forum/njega', topics: 42, replies: 180, latest: 'Kako održavati šape nakon kišnih šetnji?', tone: 'sage' as const },
-  { title: 'Obuka i trening', icon: Sparkles, href: '/forum/trening', topics: 37, replies: 154, latest: 'Štene grize povodac — što pomaže?', tone: 'orange' as const },
-  { title: 'Zdravlje i prehrana', icon: HeartPulse, href: '/forum/zdravlje', topics: 58, replies: 221, latest: 'Osjetljiv želudac i prelazak na novu hranu', tone: 'teal' as const },
-  { title: 'Putovanja s ljubimcima', icon: Plane, href: '/forum/putovanja', topics: 21, replies: 75, latest: 'Trajekt i pas — što pripremiti?', tone: 'cream' as const },
-  { title: 'Preporuke usluga', icon: Star, href: '/forum/preporuke', topics: 33, replies: 119, latest: 'Grooming za male pasmine u Rijeci', tone: 'sage' as const },
+  { title: 'Savjeti za njegu', icon: PawPrint, href: '/forum?category=njega', topics: 42, replies: 180, latest: 'Kako održavati šape nakon kišnih šetnji?', tone: 'sage' as const },
+  { title: 'Obuka i trening', icon: Sparkles, href: '/forum?category=trening', topics: 37, replies: 154, latest: 'Štene grize povodac — što pomaže?', tone: 'orange' as const },
+  { title: 'Zdravlje i prehrana', icon: HeartPulse, href: '/forum?category=zdravlje', topics: 58, replies: 221, latest: 'Osjetljiv želudac i prelazak na novu hranu', tone: 'teal' as const },
+  { title: 'Putovanja s ljubimcima', icon: Plane, href: '/forum?category=putovanja', topics: 21, replies: 75, latest: 'Trajekt i pas — što pripremiti?', tone: 'cream' as const },
+  { title: 'Preporuke usluga', icon: Star, href: '/forum?category=preporuke', topics: 33, replies: 119, latest: 'Grooming za male pasmine u Rijeci', tone: 'sage' as const },
   { title: 'Izgubljeni i pronađeni', icon: MapPin, href: '/izgubljeni', topics: 16, replies: 64, latest: 'Pronađena maca kod parka Mlaka', tone: 'orange' as const },
 ];
 
@@ -92,7 +92,7 @@ export default function ForumPage() {
                   Pitanja, iskustva i korisne rasprave o životu sa psima, mačkama i drugim ljubimcima.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                  <ButtonLink href="/forum/nova-tema" size="lg"><MessageCircle className="size-5" /> Nova tema</ButtonLink>
+                  <ButtonLink href="/zajednica" size="lg"><MessageCircle className="size-5" /> Nova tema u zajednici</ButtonLink>
                   <ButtonLink href="/zajednica" variant="secondary" size="lg"><UsersRound className="size-5" /> Pogledaj zajednicu</ButtonLink>
                 </div>
               </div>
@@ -130,7 +130,7 @@ export default function ForumPage() {
                           <Badge variant="cream">Aktivno danas</Badge>
                         </div>
                         <p className="mt-4 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Zadnje: {category.latest}</p>
-                        <span className="mt-5 inline-flex items-center gap-2 text-sm font-black text-[color:var(--pp-color-orange-primary)]">Otvori kategoriju <ArrowRight className="size-4 transition group-hover:translate-x-1" /></span>
+                        <span className="mt-5 inline-flex items-center gap-2 text-sm font-black text-[color:var(--pp-color-orange-primary)]">Otvori temu <ArrowRight className="size-4 transition group-hover:translate-x-1" /></span>
                       </Card>
                     </Link>
                   );
