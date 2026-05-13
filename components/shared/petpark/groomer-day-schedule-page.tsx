@@ -368,7 +368,7 @@ export function GroomerDaySchedulePage() {
                       <option value="tomorrow">Sutra, 13. svibnja</option>
                     </Select>
                     <ButtonLink href="/kalendar" variant="secondary"><CalendarDays className="size-4" /> Mjesečni kalendar</ButtonLink>
-                    <ButtonLink href="/objavi-uslugu"><Plus className="size-4" /> Objavi uslugu</ButtonLink>
+                    <ButtonLink href="/objavi-uslugu"><Plus className="size-4" /> Pripremi nacrt</ButtonLink>
                   </div>
                 </div>
               </Card>

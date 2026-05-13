@@ -365,7 +365,7 @@ function AvailabilityCard() {
 export function ProviderCalendarPage() {
   return (
     <main data-petpark-route="kalendar" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
-      <AppHeader navItems={navItems} actions={<ButtonLink href="/objavi-uslugu" size="sm">Objavi uslugu</ButtonLink>} />
+      <AppHeader navItems={navItems} actions={<ButtonLink href="/objavi-uslugu" size="sm">Pripremi nacrt</ButtonLink>} />
 
       <section className="relative px-5 pb-12 pt-10 sm:px-8 lg:px-20">
         <LeafDecoration className="-right-12 top-20 hidden rotate-12 lg:block" />
@@ -387,7 +387,7 @@ export function ProviderCalendarPage() {
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <ButtonLink href="/kalendar/dan" variant="secondary">Dnevni raspored</ButtonLink>
-                  <ButtonLink href="/objavi-uslugu"><Plus className="size-4" aria-hidden /> Objavi uslugu</ButtonLink>
+                  <ButtonLink href="/objavi-uslugu"><Plus className="size-4" aria-hidden /> Pripremi nacrt</ButtonLink>
                 </div>
               </div>
 

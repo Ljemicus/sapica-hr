@@ -305,7 +305,7 @@ export function ServicesMarketplacePage({ realServices = [] }: { realServices?: 
         actions={(
           <div className="hidden items-center gap-5 lg:flex">
             <ButtonLink href="/prijava" variant="secondary" size="md" className="min-w-[130px]">Prijava</ButtonLink>
-            <ButtonLink href="/objavi-uslugu" size="md" className="min-w-[190px]">+ Objavi uslugu</ButtonLink>
+            <ButtonLink href="/objavi-uslugu" size="md" className="min-w-[190px]">+ Pripremi nacrt</ButtonLink>
           </div>
         )}
       />

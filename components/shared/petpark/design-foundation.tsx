@@ -70,7 +70,7 @@ export function AppHeader({
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          {actions ?? <ButtonLink href="/objavi-uslugu" size="sm">Dodaj uslugu</ButtonLink>}
+          {actions ?? <ButtonLink href="/objavi-uslugu" size="sm">Pripremi nacrt</ButtonLink>}
           <IconButton aria-label="Otvori izbornik" className="lg:hidden">
             <Menu className="size-5" aria-hidden />
           </IconButton>
