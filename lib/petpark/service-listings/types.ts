@@ -4,7 +4,12 @@ export type ServiceListingGuardReason =
   | 'service_listings_reads_disabled'
   | 'service_listings_writes_disabled'
   | 'service_listings_table_unavailable'
-  | 'service_listings_not_implemented';
+  | 'service_listings_not_implemented'
+  | 'service_listings_auth_required'
+  | 'service_listings_provider_required'
+  | 'service_listings_provider_service_required'
+  | 'service_listings_validation_failed'
+  | 'service_listings_write_failed';
 
 export type ServiceListingGuardResult =
   | { enabled: true }
