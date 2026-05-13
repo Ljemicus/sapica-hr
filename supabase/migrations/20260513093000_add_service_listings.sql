@@ -7,6 +7,9 @@
 -- - public.service_listings is a presentation/editorial layer for richer marketplace copy, SEO,
 --   photos, features, and moderation state; it should not replace booking/payment/provider_services flows.
 -- - Admin checks use the existing public.is_admin() helper seen in production RLS.
+-- - Initial apply is read-safe/write-locked for normal provider users: provider owners can
+--   select their own listings, but cannot insert/update/delete until a later explicitly
+--   approved write-phase migration adds provider-owner write policies.
 
 begin;
 
@@ -71,31 +74,33 @@ using (
   )
 );
 
--- Provider owner/admin management. Confirmed production ownership model:
--- public.providers.profile_id = auth.uid().
+-- Provider owner read: owners may inspect their own draft/listing rows, but this initial
+-- controlled migration intentionally does not grant provider-owner insert/update/delete.
+-- Provider owner writes must be added later in a separate, explicitly approved write-phase migration.
 drop policy if exists "service_listings_owner_or_admin_manage" on public.service_listings;
-create policy "service_listings_owner_or_admin_manage"
+drop policy if exists "service_listings_owner_select" on public.service_listings;
+create policy "service_listings_owner_select"
 on public.service_listings
-for all
+for select
 to authenticated
 using (
-  public.is_admin()
-  or exists (
-    select 1
-    from public.providers p
-    where p.id = service_listings.provider_id
-      and p.profile_id = (select auth.uid())
-  )
-)
-with check (
-  public.is_admin()
-  or exists (
+  exists (
     select 1
     from public.providers p
     where p.id = service_listings.provider_id
       and p.profile_id = (select auth.uid())
   )
 );
+
+-- Admin management only: normal provider owners cannot insert/update/delete service_listings
+-- at the database/RLS layer during the initial reads-first rollout.
+drop policy if exists "service_listings_admin_manage" on public.service_listings;
+create policy "service_listings_admin_manage"
+on public.service_listings
+for all
+to authenticated
+using ((select public.is_admin()))
+with check ((select public.is_admin()));
 
 -- Keep updated_at current if the common trigger helper exists.
 do $$
