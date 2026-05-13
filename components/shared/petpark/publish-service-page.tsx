@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { FormEvent, useState } from 'react';
 import {
   Camera,
   Check,
@@ -25,7 +25,6 @@ import {
   Select,
 } from '@/components/shared/petpark/design-foundation';
 import { cn } from '@/lib/utils';
-import { submitPreparedServiceListing, type PublishServiceFormState } from '@/app/objavi-uslugu/actions';
 
 const steps = ['Osnovne informacije', 'Detalji usluge', 'Cijena i dostupnost', 'Pregled'];
 
@@ -105,10 +104,35 @@ export function PhotoUploadPlaceholder() {
   );
 }
 
-const initialPublishState: PublishServiceFormState = { ok: false, message: '' };
-
 export function PublishServiceForm() {
-  const [state, formAction, isPending] = useActionState(submitPreparedServiceListing, initialPublishState);
+  const [message, setMessage] = useState('');
+  const [isPending, setIsPending] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    setIsPending(true);
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/service-listings/draft-disabled', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: formData.get('title'),
+          category: formData.get('category'),
+          description: formData.get('description'),
+          location: formData.get('location'),
+        }),
+      });
+      const result = await response.json() as { ok?: boolean; message?: string };
+      setMessage(result.message || (result.ok ? 'Usluga je spremljena kao nacrt.' : 'Objava usluge je pripremljena, ali spremanje u produkciji još nije omogućeno.'));
+    } catch {
+      setMessage('Objava usluge je pripremljena, ali spremanje u produkciji još nije omogućeno.');
+    } finally {
+      setIsPending(false);
+    }
+  }
 
   return (
     <Card radius="28" className="p-6 sm:p-8">
@@ -123,7 +147,7 @@ export function PublishServiceForm() {
         <Badge variant="orange">Nacrt</Badge>
       </div>
 
-      <form action={formAction} className="mt-8 space-y-7" aria-label="Objava usluge">
+      <form onSubmit={handleSubmit} className="mt-8 space-y-7" aria-label="Objava usluge">
         <div className="grid gap-5 md:grid-cols-2">
           <FormField label="Naziv usluge" required>
             <Input name="title" defaultValue="Čuvanje u domu" />
@@ -184,12 +208,12 @@ export function PublishServiceForm() {
           </FormField>
         </div>
 
-        {state.message ? (
+        {message ? (
           <div
             role="status"
             className="rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warning)]/25 bg-[color:var(--pp-color-warning-surface)] px-5 py-4 text-sm font-extrabold leading-6 text-[color:var(--pp-color-forest-text)]"
           >
-            {state.message}
+            {message}
           </div>
         ) : null}
 

@@ -44,6 +44,7 @@ function maybeHard404DynamicProfile(request: NextRequest) {
 const CSRF_EXCLUDED_ROUTES = [
   '/api/webhooks/',
   '/api/auth/callback',
+  '/api/service-listings/draft-disabled',
 ];
 
 function isCsrfExcludedRoute(pathname: string): boolean {
