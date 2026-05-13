@@ -26,17 +26,6 @@ interface ProviderServiceRow {
   is_active: boolean | null;
 }
 
-interface ProviderSitterSettingsRow {
-  provider_id: string;
-  services: string[] | null;
-  superhost: boolean | null;
-}
-
-interface ProviderGroomerSettingsRow {
-  provider_id: string;
-  specialization: string | null;
-}
-
 interface ProviderTrainerSettingsRow {
   provider_id: string;
   specializations: string[] | null;
@@ -85,31 +74,27 @@ export async function getUnifiedProvidersFromProviderModel(): Promise<UnifiedPro
   
   // Trust gate: only verified and listed providers. Do not query optional demo/settings
   // columns here because older Supabase schemas do not have them yet.
-  const [providersRes, servicesRes, sitterSettingsRes, groomerSettingsRes, trainerSettingsRes] = await Promise.all([
+  const [providersRes, servicesRes, trainerSettingsRes] = await Promise.all([
     supabase
       .from('providers')
       .select('id, profile_id, provider_kind, display_name, bio, city, lat, lng, verified_status, public_status, response_time_label, rating_avg, review_count')
       .eq('public_status', 'listed')
       .eq('verified_status', 'verified'),
     supabase.from('provider_services').select('provider_id, service_code, base_price, is_active').eq('is_active', true),
-    supabase.from('provider_sitter_settings').select('*'),
-    supabase.from('provider_groomer_settings').select('provider_id, specialization'),
     supabase.from('provider_trainer_settings').select('provider_id, specializations, certified'),
   ]);
 
   const providers = (providersRes.data || []) as ProviderRow[];
   const services = (servicesRes.data || []) as ProviderServiceRow[];
-  const sitterSettings = new Map(((sitterSettingsRes.data || []) as ProviderSitterSettingsRow[]).map((row) => [row.provider_id, row]));
-  const groomerSettings = new Map(((groomerSettingsRes.data || []) as ProviderGroomerSettingsRow[]).map((row) => [row.provider_id, row]));
   const trainerSettings = new Map(((trainerSettingsRes.data || []) as ProviderTrainerSettingsRow[]).map((row) => [row.provider_id, row]));
 
   const result: UnifiedProvider[] = [];
 
   for (const provider of providers) {
     if (provider.provider_kind === 'sitter') {
-      const settings = sitterSettings.get(provider.id);
-      const mappedServices = (settings?.services || [])
-        .map((value) => SITTER_SERVICE_MAP[String(value).toLowerCase()])
+      const serviceList = services
+        .filter((service) => service.provider_id === provider.id)
+        .map((service) => SITTER_SERVICE_MAP[String(service.service_code).toLowerCase()])
         .filter(Boolean);
 
       result.push({
@@ -121,9 +106,9 @@ export async function getUnifiedProvidersFromProviderModel(): Promise<UnifiedPro
         rating: Number(provider.rating_avg || 0),
         reviews: Number(provider.review_count || 0),
         verified: provider.verified_status === 'verified',
-        superhost: Boolean(settings?.superhost),
+        superhost: false,
         category: 'sitter',
-        services: mappedServices,
+        services: Array.from(new Set(serviceList)),
         lowestPrice: lowestPrice(services, provider.id),
         responseTime: provider.response_time_label,
         profileUrl: `/sitter/${provider.id}`,
