@@ -64,6 +64,27 @@ export type OwnedBookingRequestSummary = {
   contactConsent: boolean;
 };
 
+export type OwnerBookingRequestSummary = {
+  id: string;
+  providerSlug: string;
+  providerName: string;
+  serviceLabel: string;
+  priceSnapshot: string;
+  responseTimeSnapshot: string;
+  petName: string;
+  petType: string;
+  dateRange: string;
+  notes: string;
+  status: BookingRequestStatus;
+  statusLabel: 'Poslano' | 'Kontaktiran' | 'Zatvoreno';
+  submittedAt: string;
+  contactMethod: {
+    email: string | null;
+    phone: string | null;
+    consent: boolean;
+  };
+};
+
 export type BookingRequestStatusUpdateResult =
   | { ok: true; id: string; status: BookingRequestStatus }
   | { ok: false; statusCode: number; code: string; message: string };

@@ -43,7 +43,7 @@ export const metadata: Metadata = {
 
 const navItems = [
   { href: '/usluge', label: 'Usluge' },
-  { href: '/kalendar', label: 'Kalendar' },
+  { href: '/moji-upiti', label: 'Moji upiti' },
   { href: '/poruke', label: 'Poruke' },
   { href: '/pet-passport', label: 'Pet Passport' },
 ];
@@ -51,6 +51,7 @@ const navItems = [
 const sidebarItems = [
   { label: 'Pregled', icon: Home, href: '/moje-usluge' },
   { label: 'Profil', icon: UserRound, href: '/profil', active: true },
+  { label: 'Moji upiti', icon: MessageCircle, href: '/moji-upiti' },
   { label: 'Poruke', icon: MessageCircle, href: '/poruke' },
   { label: 'Kalendar', icon: CalendarDays, href: '/kalendar' },
   { label: 'Postavke', icon: Settings, href: '/dashboard/postavke' },
@@ -58,6 +59,7 @@ const sidebarItems = [
 
 const tabs = [
   { label: 'Profil', href: '/profil', active: true },
+  { label: 'Moji upiti', href: '/moji-upiti' },
   { label: 'Moji ljubimci', href: '/pet-passport' },
   { label: 'Moje usluge', href: '/moje-usluge' },
   { label: 'Pet Passport', href: '/pet-passport/pdf' },
