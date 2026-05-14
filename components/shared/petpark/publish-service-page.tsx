@@ -91,7 +91,7 @@ export function PhotoUploadPlaceholder() {
           <div>
             <p className="text-base font-black text-[color:var(--pp-color-forest-text)]">Dodaj fotografije usluge</p>
             <p className="mt-1 max-w-md text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">
-              Dodaj prostor, opremu ili primjer aktivnosti. Odabir slika je pripremljen za kasnije, ali spremanje još nije uključeno.
+              Dodaj prostor, opremu ili primjer aktivnosti. Fotografije će se dodati u sljedećem koraku uređivanja nacrta.
             </p>
           </div>
         </div>
@@ -126,9 +126,9 @@ export function PublishServiceForm() {
         }),
       });
       const result = await response.json() as { ok?: boolean; message?: string };
-      setMessage(result.message || (result.ok ? 'Nacrt je spremljen.' : 'Nacrt je pripremljen, ali spremanje još nije uključeno. Ništa nije objavljeno.'));
+      setMessage(result.message || (result.ok ? 'Nacrt je spremljen. Administrator ga može pregledati prije javne objave.' : 'Nacrt trenutno nije moguće spremiti. Provjeri prijavu i profil pružatelja.'));
     } catch {
-      setMessage('Nacrt je pripremljen, ali spremanje još nije uključeno. Ništa nije objavljeno.');
+      setMessage('Nacrt trenutno nije moguće spremiti. Provjeri vezu i pokušaj ponovno.');
     } finally {
       setIsPending(false);
     }
@@ -219,7 +219,7 @@ export function PublishServiceForm() {
 
         <div className="flex flex-col-reverse gap-3 border-t border-[color:var(--pp-color-warm-border)] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <ButtonLink href="/moje-usluge" variant="secondary" size="lg" className="w-full sm:w-auto">Odustani</ButtonLink>
-          <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={isPending}>{isPending ? 'Priprema…' : 'Pripremi nacrt'}</Button>
+          <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={isPending}>{isPending ? 'Spremanje…' : 'Spremi nacrt'}</Button>
         </div>
       </form>
     </Card>
@@ -284,7 +284,7 @@ function SafetyNote() {
       <div className="flex gap-4">
         <ShieldCheck className="mt-1 size-6 shrink-0 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
         <p className="text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
-          Objave će prolaziti osnovnu provjeru prije isticanja u PetPark pretrazi. Trenutno je spremanje isključeno, pa ovaj ekran samo priprema nacrt.
+          Objave prolaze osnovnu provjeru prije isticanja u PetPark pretrazi. Nacrt možeš spremiti, a javna objava ide tek nakon administratorskog odobrenja.
         </p>
       </div>
     </Card>
@@ -334,7 +334,7 @@ export function PublishServicePage() {
                 <div>
                   <h2 className="text-xl font-black tracking-[-0.03em]">Kreni kao provjereni pružatelj</h2>
                   <p className="mt-2 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
-                    Ova stranica je spremna kao statičan onboarding okvir za kasniju validaciju i backend povezivanje.
+                    Spremi nacrt usluge i pripremi podatke za administratorski pregled prije javne objave.
                   </p>
                 </div>
               </div>

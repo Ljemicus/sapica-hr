@@ -34,7 +34,7 @@ export function isServiceListingsUnavailableError(error: unknown) {
 }
 
 export function disabledServiceListingMessage(reason: 'service_listings_reads_disabled' | 'service_listings_writes_disabled' | 'service_listings_table_unavailable') {
-  if (reason === 'service_listings_writes_disabled') return 'Nacrt je pripremljen, ali spremanje još nije uključeno. Ništa nije objavljeno.';
+  if (reason === 'service_listings_writes_disabled') return 'Spremanje nacrta trenutno nije omogućeno. Ništa nije objavljeno.';
   if (reason === 'service_listings_table_unavailable') return 'Service listings tablica još nije dostupna; prikazuje se postojeća ponuda.';
   return 'Service listings čitanje još nije omogućeno; prikazuje se postojeća ponuda.';
 }

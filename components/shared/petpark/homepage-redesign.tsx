@@ -343,7 +343,7 @@ function MobileHomepage() {
               Prijava
             </Link>
             <Link href="/objavi-uslugu" className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-full border border-[#D8CBB8] bg-[#FFFDF8] px-3 text-[11px] font-black text-[#123D36] shadow-[0_8px_18px_rgba(80,55,25,.07)] min-[380px]:text-[12px] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
-              Pripremi nacrt
+              Spremi nacrt
             </Link>
           </div>
         </header>
@@ -452,7 +452,7 @@ function PixelPerfectDesktopHomepage({ isPreview }: { isPreview: boolean }) {
       <Link href="/zajednica" aria-label="Zajednica" className="absolute left-[44.7%] top-[3.2%] h-[2.4%] w-[6.0%]" />
       <Link href="/blog" aria-label="Blog" className="absolute left-[53.4%] top-[3.2%] h-[2.4%] w-[3.4%]" />
       <Link href="/prijava" aria-label="Prijava" className="absolute left-[74.5%] top-[2.2%] h-[4.5%] w-[9.0%]" />
-      <Link href="/objavi-uslugu" aria-label="Pripremi nacrt usluge" className="absolute left-[84.8%] top-[2.2%] h-[4.5%] w-[12.0%]" />
+      <Link href="/objavi-uslugu" aria-label="Spremi nacrt usluge" className="absolute left-[84.8%] top-[2.2%] h-[4.5%] w-[12.0%]" />
       <Link href="/usluge" aria-label="Čuvanje" className="absolute left-[4.7%] top-[32.8%] h-[11.2%] w-[6.4%]" />
       <Link href="/usluge" aria-label="Šetnja" className="absolute left-[12.2%] top-[32.8%] h-[11.2%] w-[6.4%]" />
       <Link href="/njega" aria-label="Grooming" className="absolute left-[19.7%] top-[32.8%] h-[11.2%] w-[6.6%]" />

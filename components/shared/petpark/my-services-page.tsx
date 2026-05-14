@@ -306,7 +306,7 @@ function InsightPanel() {
 export function MyServicesPage({ providerServices }: { providerServices?: ProviderService[] }) {
   return (
     <main data-petpark-route="moje-usluge" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
-      <AppHeader navItems={navItems} actions={<ButtonLink href="/objavi-uslugu" size="sm"><Plus className="size-4" /> Pripremi nacrt</ButtonLink>} />
+      <AppHeader navItems={navItems} actions={<ButtonLink href="/objavi-uslugu" size="sm"><Plus className="size-4" /> Spremi nacrt</ButtonLink>} />
       <section className="relative px-5 pb-12 pt-10 sm:px-8 lg:px-20">
         <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block" />
         <LeafDecoration className="-left-16 top-[560px] hidden scale-110 -rotate-12 lg:block" />

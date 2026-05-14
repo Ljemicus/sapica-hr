@@ -317,7 +317,7 @@ export function ServiceDetailPage({ service = fallbackService }: { service?: typ
         actions={(
           <div className="hidden items-center gap-5 lg:flex">
             <ButtonLink href="/prijava" variant="secondary" size="md" className="min-w-[130px]">Prijava</ButtonLink>
-            <ButtonLink href="/objavi-uslugu" size="md" className="min-w-[190px]">+ Pripremi nacrt</ButtonLink>
+            <ButtonLink href="/objavi-uslugu" size="md" className="min-w-[190px]">+ Spremi nacrt</ButtonLink>
           </div>
         )}
       />
