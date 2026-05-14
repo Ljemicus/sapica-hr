@@ -28,6 +28,7 @@ import {
 } from '@/components/shared/petpark/design-foundation';
 import { cn } from '@/lib/utils';
 import { serviceListingReadsGuard, serviceListingWritesGuard } from '@/lib/petpark/service-listings/guards';
+import type { OwnedBookingRequestSummary } from '@/lib/petpark/booking-requests/types';
 
 type ServiceStatus = 'active' | 'draft' | 'paused';
 type ServiceCategory = 'Čuvanje' | 'Grooming' | 'Trening';
@@ -281,6 +282,46 @@ function ServicesTable({ providerServices = services }: { providerServices?: Pro
   );
 }
 
+function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: OwnedBookingRequestSummary[] }) {
+  const statusLabel = (status: string) => status === 'pending' ? 'Novo' : status;
+
+  return (
+    <Card radius="28" className="p-5 sm:p-6" data-petpark-booking-requests-panel>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-[color:var(--pp-color-orange-primary)]">Booking upiti</p>
+          <h2 className="mt-1 text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">Novi upiti za usluge</h2>
+          <p className="mt-2 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">Ručni upiti bez plaćanja i bez zaključavanja termina. Provider ih potvrđuje izvan ovog MVP koraka.</p>
+        </div>
+        <Badge variant="orange">{bookingRequests.length} ukupno</Badge>
+      </div>
+
+      <div className="mt-5 space-y-3">
+        {bookingRequests.length === 0 ? (
+          <div className="rounded-[var(--pp-radius-card-20)] border border-dashed border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-cream-surface)] px-5 py-6 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
+            Još nema booking upita za tvoje objavljene usluge.
+          </div>
+        ) : bookingRequests.map((request) => (
+          <div key={request.id} className="rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] p-4 shadow-[var(--pp-shadow-small-card)]">
+            <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="font-black text-[color:var(--pp-color-forest-text)]">{request.serviceLabel}</h3>
+                  <StatusBadge status="draft" />
+                  <span className="rounded-full bg-[color:var(--pp-color-warning-surface)] px-3 py-1 text-xs font-black text-[color:var(--pp-color-orange-primary)]">{statusLabel(request.status)}</span>
+                </div>
+                <p className="mt-2 text-sm font-bold text-[color:var(--pp-color-muted-text)]">{request.petName} · {request.petType === 'pas' ? 'Pas' : request.petType === 'macka' ? 'Mačka' : 'Drugo'} · {request.dateRange}</p>
+                {request.notes ? <p className="mt-3 rounded-2xl bg-[color:var(--pp-color-cream-surface)] p-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">“{request.notes}”</p> : null}
+              </div>
+              <p className="shrink-0 text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">{request.submittedAt}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
 function InsightPanel() {
   return (
     <div className="grid gap-4 xl:grid-cols-3">
@@ -303,7 +344,7 @@ function InsightPanel() {
   );
 }
 
-export function MyServicesPage({ providerServices }: { providerServices?: ProviderService[] }) {
+export function MyServicesPage({ providerServices, bookingRequests }: { providerServices?: ProviderService[]; bookingRequests?: OwnedBookingRequestSummary[] }) {
   return (
     <main data-petpark-route="moje-usluge" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
       <AppHeader navItems={navItems} actions={<ButtonLink href="/objavi-uslugu" size="sm"><Plus className="size-4" /> Spremi nacrt</ButtonLink>} />
@@ -332,6 +373,7 @@ export function MyServicesPage({ providerServices }: { providerServices?: Provid
                 <StatCard label="Ukupan prihod" value="1.545 €" icon={TrendingUp} tone="cream" />
               </div>
 
+              <BookingRequestsPanel bookingRequests={bookingRequests} />
               <ServicesTable providerServices={providerServices && providerServices.length > 0 ? providerServices : services} />
               <InsightPanel />
             </div>

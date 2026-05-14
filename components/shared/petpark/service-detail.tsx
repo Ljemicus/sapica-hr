@@ -24,6 +24,7 @@ import {
 } from '@/components/shared/petpark/design-foundation';
 import { cn } from '@/lib/utils';
 import type { MarketplaceServiceListing } from '@/lib/db/service-listings';
+import { BookingRequestForm } from './booking-request-form';
 
 const fallbackService = {
   title: 'Čuvanje psa u kućnom okruženju',
@@ -188,26 +189,40 @@ export function BookingPanel({ currentService = fallbackService }: { currentServ
       </div>
 
       <div className="mt-8 space-y-6 lg:space-y-5">
-        <div className="rounded-[var(--pp-radius-control)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] px-5 py-4 shadow-[var(--pp-shadow-small-card)] lg:px-4 lg:py-3">
-          <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">Odaberi datume</p>
-          <p className="mt-1 text-sm font-black text-[color:var(--pp-color-forest-text)]">12. lip - 17. lip</p>
-        </div>
-        <div className="hidden sm:block">
-          <MiniCalendar />
-        </div>
-        <div className="rounded-[20px] bg-[color:var(--pp-color-cream-surface)] p-4 text-sm font-extrabold leading-6 text-[color:var(--pp-color-muted-text)] sm:hidden">
-          Kalendar je dostupan na većim ekranima. Odabrani termini su 12. lip - 17. lip.
-        </div>
-        <div className="grid gap-1 text-sm">
-          <span className="font-extrabold text-[color:var(--pp-color-muted-text)]">{'range' in currentService ? currentService.range : 'Termin po dogovoru'}</span>
-          <button type="button" className="w-fit font-black text-[color:var(--pp-color-orange-primary)]">Promijeni datume</button>
-        </div>
-        <PetSelector />
+        {'slug' in currentService ? (
+          <BookingRequestForm service={currentService} />
+        ) : (
+          <>
+            <div className="rounded-[var(--pp-radius-control)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] px-5 py-4 shadow-[var(--pp-shadow-small-card)] lg:px-4 lg:py-3">
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">Odaberi datume</p>
+              <p className="mt-1 text-sm font-black text-[color:var(--pp-color-forest-text)]">12. lip - 17. lip</p>
+            </div>
+            <div className="hidden sm:block">
+              <MiniCalendar />
+            </div>
+            <div className="rounded-[20px] bg-[color:var(--pp-color-cream-surface)] p-4 text-sm font-extrabold leading-6 text-[color:var(--pp-color-muted-text)] sm:hidden">
+              Kalendar je dostupan na većim ekranima. Odabrani termini su 12. lip - 17. lip.
+            </div>
+            <div className="grid gap-1 text-sm">
+              <span className="font-extrabold text-[color:var(--pp-color-muted-text)]">{'range' in currentService ? currentService.range : 'Termin po dogovoru'}</span>
+              <button type="button" className="w-fit font-black text-[color:var(--pp-color-orange-primary)]">Promijeni datume</button>
+            </div>
+            <PetSelector />
+          </>
+        )}
       </div>
 
       <div className="my-8 h-px bg-[color:var(--pp-color-warm-border)]" />
-      <PriceSummary />
-      <Button className="mt-6 w-full" size="lg">Rezerviraj sada</Button>
+      {'slug' in currentService ? (
+        <p className="rounded-[18px] bg-[color:var(--pp-color-cream-surface)] px-5 py-4 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
+          Pružatelj ručno potvrđuje dostupnost prije bilo kakve rezervacije. Plaćanje nije uključeno u ovaj MVP.
+        </p>
+      ) : (
+        <>
+          <PriceSummary />
+          <Button className="mt-6 w-full" size="lg">Rezerviraj sada</Button>
+        </>
+      )}
     </Card>
   );
 }
@@ -362,7 +377,7 @@ export function ServiceDetailPage({ service = fallbackService }: { service?: typ
                 <div className="flex gap-3">
                   <ShieldCheck className="mt-1 size-6 shrink-0 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
                   <p className="text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
-                    Rezervacija je statički prikaz za ovaj korak. Prava logika bookinga dolazi kasnije.
+                    Booking Request MVP je uključen: vlasnik šalje upit, pružatelj ga ručno potvrđuje. Nema Stripea, plaćanja ni zaključavanja kalendarskog termina.
                   </p>
                 </div>
               </Card>
