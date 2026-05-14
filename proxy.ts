@@ -148,6 +148,13 @@ export async function proxy(request: NextRequest) {
 
     const pathname = request.nextUrl.pathname;
 
+    if (!user && pathname === '/moji-upiti') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/prijava';
+      url.searchParams.set('redirect', '/moji-upiti');
+      return NextResponse.redirect(url);
+    }
+
     if (user) {
       const needsPublisherProfile = pathname.startsWith('/dashboard/adoption') || pathname.startsWith('/dashboard/profile');
       const needsGroomerProfile = pathname.startsWith('/dashboard/groomer');
