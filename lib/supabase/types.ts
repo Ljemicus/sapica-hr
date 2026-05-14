@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.4"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       availability_slots: {
@@ -132,11 +107,14 @@ export type Database = {
       }
       booking_requests: {
         Row: {
+          contact_consent: boolean
+          contact_source: string
           created_at: string
           end_date: string
           id: string
           mode: string
           notes: string
+          owner_profile_id: string | null
           pet_name: string
           pet_type: string
           price_snapshot: string
@@ -144,6 +122,9 @@ export type Database = {
           provider_district: string
           provider_name: string
           provider_slug: string
+          requester_email: string | null
+          requester_name: string | null
+          requester_phone: string | null
           response_time_snapshot: string
           service_label: string
           source: string
@@ -152,11 +133,14 @@ export type Database = {
           submitted_at: string
         }
         Insert: {
+          contact_consent?: boolean
+          contact_source?: string
           created_at?: string
           end_date: string
           id?: string
           mode: string
           notes: string
+          owner_profile_id?: string | null
           pet_name: string
           pet_type: string
           price_snapshot: string
@@ -164,6 +148,9 @@ export type Database = {
           provider_district: string
           provider_name: string
           provider_slug: string
+          requester_email?: string | null
+          requester_name?: string | null
+          requester_phone?: string | null
           response_time_snapshot: string
           service_label: string
           source?: string
@@ -172,11 +159,14 @@ export type Database = {
           submitted_at?: string
         }
         Update: {
+          contact_consent?: boolean
+          contact_source?: string
           created_at?: string
           end_date?: string
           id?: string
           mode?: string
           notes?: string
+          owner_profile_id?: string | null
           pet_name?: string
           pet_type?: string
           price_snapshot?: string
@@ -184,6 +174,9 @@ export type Database = {
           provider_district?: string
           provider_name?: string
           provider_slug?: string
+          requester_email?: string | null
+          requester_name?: string | null
+          requester_phone?: string | null
           response_time_snapshot?: string
           service_label?: string
           source?: string
@@ -191,7 +184,15 @@ export type Database = {
           status?: string
           submitted_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "booking_requests_owner_profile_id_fkey"
+            columns: ["owner_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bookings: {
         Row: {
@@ -1724,9 +1725,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },
