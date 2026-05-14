@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Odaberite valjani datum.');
+const optionalTrimmed = (max: number) => z.string().trim().max(max).optional().default('');
 
 export const bookingRequestInputSchema = z.object({
   providerSlug: z.string().trim().min(1).max(180),
@@ -15,7 +16,11 @@ export const bookingRequestInputSchema = z.object({
   endDate: isoDate,
   petName: z.string().trim().min(1, 'Unesite ime ljubimca.').max(80),
   petType: z.enum(['pas', 'macka', 'drugo']),
-  notes: z.string().trim().max(1000).optional().default(''),
+  notes: optionalTrimmed(1000),
+  requesterName: z.string().trim().min(2, 'Unesite ime vlasnika.').max(120),
+  requesterEmail: z.string().trim().toLowerCase().max(180).optional().default(''),
+  requesterPhone: optionalTrimmed(40),
+  contactConsent: z.literal(true, { error: 'Potrebna je privola za prosljeđivanje kontakt podataka pružatelju.' }),
 }).superRefine((value, ctx) => {
   const start = new Date(`${value.startDate}T00:00:00.000Z`);
   const end = new Date(`${value.endDate}T00:00:00.000Z`);
@@ -33,6 +38,19 @@ export const bookingRequestInputSchema = z.object({
 
   if (end < start) {
     ctx.addIssue({ code: 'custom', path: ['endDate'], message: 'Datum završetka ne može biti prije početka.' });
+  }
+
+  if (!value.requesterEmail && !value.requesterPhone) {
+    ctx.addIssue({ code: 'custom', path: ['requesterEmail'], message: 'Unesite e-mail ili telefon za odgovor pružatelja.' });
+    ctx.addIssue({ code: 'custom', path: ['requesterPhone'], message: 'Unesite e-mail ili telefon za odgovor pružatelja.' });
+  }
+
+  if (value.requesterEmail && !z.email().safeParse(value.requesterEmail).success) {
+    ctx.addIssue({ code: 'custom', path: ['requesterEmail'], message: 'Unesite valjani e-mail.' });
+  }
+
+  if (value.requesterPhone && !/^[+()\d\s.-]{6,40}$/.test(value.requesterPhone)) {
+    ctx.addIssue({ code: 'custom', path: ['requesterPhone'], message: 'Unesite valjani telefon.' });
   }
 });
 

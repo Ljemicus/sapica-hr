@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, CheckCircle2, Send } from 'lucide-react';
 import { Button, Input, Select } from '@/components/shared/petpark/design-foundation';
 import type { MarketplaceServiceListing } from '@/lib/db/service-listings';
@@ -21,11 +21,34 @@ export function BookingRequestForm({ service }: { service: MarketplaceServiceLis
   const [petName, setPetName] = useState('');
   const [petType, setPetType] = useState<'pas' | 'macka' | 'drugo'>('pas');
   const [notes, setNotes] = useState('');
+  const [requesterName, setRequesterName] = useState('');
+  const [requesterEmail, setRequesterEmail] = useState('');
+  const [requesterPhone, setRequesterPhone] = useState('');
+  const [contactConsent, setContactConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
-  const canSubmit = useMemo(() => Boolean(startDate && endDate && petName.trim() && !submitting), [endDate, petName, startDate, submitting]);
+  useEffect(() => {
+    let active = true;
+    fetch('/api/auth/me')
+      .then((response) => response.ok ? response.json() : null)
+      .then((body) => {
+        if (!active || !body?.user) return;
+        setRequesterName((current) => current || body.user.name || '');
+        setRequesterEmail((current) => current || body.user.email || '');
+      })
+      .catch(() => {});
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const canSubmit = useMemo(
+    () => Boolean(startDate && endDate && petName.trim() && requesterName.trim() && (requesterEmail.trim() || requesterPhone.trim()) && contactConsent && !submitting),
+    [contactConsent, endDate, petName, requesterEmail, requesterName, requesterPhone, startDate, submitting],
+  );
 
   async function submitRequest() {
     if (!canSubmit) return;
@@ -51,6 +74,10 @@ export function BookingRequestForm({ service }: { service: MarketplaceServiceLis
           petName: petName.trim(),
           petType,
           notes: notes.trim(),
+          requesterName: requesterName.trim(),
+          requesterEmail: requesterEmail.trim(),
+          requesterPhone: requesterPhone.trim(),
+          contactConsent,
         }),
       });
 
@@ -61,7 +88,7 @@ export function BookingRequestForm({ service }: { service: MarketplaceServiceLis
       }
 
       setStatus('success');
-      setMessage('Upit je poslan. Pružatelj ga može pregledati u svom provider centru.');
+      setMessage('Upit je poslan. Pružatelj je dobio kontakt podatke za odgovor na ovaj upit.');
       setNotes('');
     } catch {
       setStatus('error');
@@ -99,6 +126,25 @@ export function BookingRequestForm({ service }: { service: MarketplaceServiceLis
         </label>
       </div>
 
+      <div className="rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-cream-surface)] p-4">
+        <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Kontakt za odgovor</p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <label className="space-y-2 sm:col-span-2">
+            <span className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">Ime vlasnika</span>
+            <Input value={requesterName} onChange={(event) => setRequesterName(event.target.value)} placeholder="npr. Niko" maxLength={120} autoComplete="name" />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">E-mail</span>
+            <Input value={requesterEmail} onChange={(event) => setRequesterEmail(event.target.value)} placeholder="ime@email.com" maxLength={180} autoComplete="email" inputMode="email" />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">Telefon opcionalno</span>
+            <Input value={requesterPhone} onChange={(event) => setRequesterPhone(event.target.value)} placeholder="+385…" maxLength={40} autoComplete="tel" inputMode="tel" />
+          </label>
+        </div>
+        <p className="mt-3 text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Kontakt podatke šaljemo samo odabranom pružatelju kako bi odgovorio na ovaj upit. Ovo nije potvrđena rezervacija i ne pokreće plaćanje.</p>
+      </div>
+
       <label className="block space-y-2">
         <span className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">Napomena</span>
         <textarea
@@ -108,6 +154,16 @@ export function BookingRequestForm({ service }: { service: MarketplaceServiceLis
           maxLength={1000}
           className="min-h-24 w-full rounded-[var(--pp-radius-control)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] px-4 py-3 text-sm font-semibold text-[color:var(--pp-color-forest-text)] shadow-[var(--pp-shadow-small-card)] outline-none transition placeholder:text-[color:var(--pp-color-muted-text)]/70 focus:border-[color:var(--pp-color-teal-accent)] focus:ring-2 focus:ring-[color:var(--pp-color-teal-accent)]/20"
         />
+      </label>
+
+      <label className="flex gap-3 rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] p-4 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)] shadow-[var(--pp-shadow-small-card)]">
+        <input
+          type="checkbox"
+          checked={contactConsent}
+          onChange={(event) => setContactConsent(event.target.checked)}
+          className="mt-1 size-4 rounded border-[color:var(--pp-color-warm-border)] accent-[color:var(--pp-color-orange-primary)]"
+        />
+        <span>Slažem se da PetPark proslijedi moje kontakt podatke pružatelju radi odgovora na upit.</span>
       </label>
 
       <Button className="w-full" size="lg" disabled={!canSubmit} onClick={submitRequest}>

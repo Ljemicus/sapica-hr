@@ -16,6 +16,7 @@ function toDateRange(startDate: string, endDate: string) {
 export async function createBookingRequest(input: BookingRequestInputPayload): Promise<BookingRequestRow | null> {
   if (!isSupabaseConfigured()) return null;
 
+  const user = await getAuthUser();
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from('booking_requests')
@@ -33,6 +34,12 @@ export async function createBookingRequest(input: BookingRequestInputPayload): P
       pet_name: input.petName,
       pet_type: input.petType,
       notes: input.notes || '',
+      owner_profile_id: user?.id || null,
+      requester_name: input.requesterName,
+      requester_email: input.requesterEmail || null,
+      requester_phone: input.requesterPhone || null,
+      contact_consent: input.contactConsent,
+      contact_source: 'booking_request_form',
       status: 'pending',
       source: 'web_request_flow',
     })
@@ -153,6 +160,10 @@ export async function getOwnedBookingRequestSummaries(): Promise<OwnedBookingReq
       notes: request.notes,
       status: request.status,
       submittedAt: new Date(request.created_at).toLocaleDateString('hr-HR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+      requesterName: request.requester_name,
+      requesterEmail: request.requester_email,
+      requesterPhone: request.requester_phone,
+      contactConsent: request.contact_consent,
     }));
   } catch {
     return [];

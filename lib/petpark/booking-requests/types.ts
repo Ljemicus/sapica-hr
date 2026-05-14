@@ -15,6 +15,10 @@ export type BookingRequestInput = {
   petName: string;
   petType: 'pas' | 'macka' | 'drugo';
   notes?: string;
+  requesterName: string;
+  requesterEmail?: string;
+  requesterPhone?: string;
+  contactConsent: true;
 };
 
 export type BookingRequestRow = {
@@ -36,6 +40,12 @@ export type BookingRequestRow = {
   source: string;
   submitted_at: string;
   created_at: string;
+  owner_profile_id: string | null;
+  requester_name: string | null;
+  requester_email: string | null;
+  requester_phone: string | null;
+  contact_consent: boolean;
+  contact_source: string;
 };
 
 export type OwnedBookingRequestSummary = {
@@ -48,6 +58,10 @@ export type OwnedBookingRequestSummary = {
   notes: string;
   status: string;
   submittedAt: string;
+  requesterName: string | null;
+  requesterEmail: string | null;
+  requesterPhone: string | null;
+  contactConsent: boolean;
 };
 
 export type BookingRequestStatusUpdateResult =

@@ -15,6 +15,10 @@ const validPayload = {
   petName: 'Luna',
   petType: 'pas' as const,
   notes: 'Mirna kujica, osnovni trening.',
+  requesterName: 'Niko Miljanić',
+  requesterEmail: 'niko@example.com',
+  requesterPhone: '',
+  contactConsent: true as const,
 };
 
 describe('bookingRequestInputSchema', () => {
@@ -23,7 +27,39 @@ describe('bookingRequestInputSchema', () => {
     expect(parsed.success).toBe(true);
     if (parsed.success) {
       expect(parsed.data.mode).toBe('visit');
+      expect(parsed.data.requesterEmail).toBe('niko@example.com');
     }
+  });
+
+  it('trims requester fields and lowercases email', () => {
+    const parsed = bookingRequestInputSchema.safeParse({
+      ...validPayload,
+      requesterName: '  Niko Miljanić  ',
+      requesterEmail: '  NIKO@EXAMPLE.COM  ',
+      requesterPhone: '  +385 91 111 2222  ',
+    });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.requesterName).toBe('Niko Miljanić');
+      expect(parsed.data.requesterEmail).toBe('niko@example.com');
+      expect(parsed.data.requesterPhone).toBe('+385 91 111 2222');
+    }
+  });
+
+  it('accepts phone-only contact when consent is given', () => {
+    expect(bookingRequestInputSchema.safeParse({ ...validPayload, requesterEmail: '', requesterPhone: '+385 91 111 2222' }).success).toBe(true);
+  });
+
+  it('rejects missing requester contact method', () => {
+    expect(bookingRequestInputSchema.safeParse({ ...validPayload, requesterEmail: '', requesterPhone: '' }).success).toBe(false);
+  });
+
+  it('rejects missing contact consent', () => {
+    expect(bookingRequestInputSchema.safeParse({ ...validPayload, contactConsent: false }).success).toBe(false);
+  });
+
+  it('rejects invalid requester email', () => {
+    expect(bookingRequestInputSchema.safeParse({ ...validPayload, requesterEmail: 'not-email' }).success).toBe(false);
   });
 
   it('rejects missing pet name', () => {

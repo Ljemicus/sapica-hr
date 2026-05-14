@@ -6,9 +6,11 @@ import {
   Edit3,
   Eye,
   Home,
+  Mail,
   MessageCircle,
   MoreHorizontal,
   PawPrint,
+  Phone,
   Plus,
   ShieldCheck,
   Star,
@@ -322,6 +324,19 @@ function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: Owne
                   <span className={`rounded-full px-3 py-1 text-xs font-black ${statusClass(request.status)}`}>{statusLabel(request.status)}</span>
                 </div>
                 <p className="mt-2 text-sm font-bold text-[color:var(--pp-color-muted-text)]">{request.petName} · {request.petType === 'pas' ? 'Pas' : request.petType === 'macka' ? 'Mačka' : 'Drugo'} · {request.dateRange}</p>
+                <div className="mt-3 rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-cream-surface)] p-3">
+                  <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Kontakt vlasnika</p>
+                  {request.requesterName || request.requesterEmail || request.requesterPhone ? (
+                    <div className="mt-2 grid gap-2 text-sm font-bold leading-6 text-[color:var(--pp-color-forest-text)] sm:grid-cols-2">
+                      {request.requesterName ? <p className="sm:col-span-2"><UserRound className="mr-2 inline size-4 text-[color:var(--pp-color-teal-accent)]" aria-hidden />{request.requesterName}</p> : null}
+                      {request.requesterEmail ? <p className="break-all"><Mail className="mr-2 inline size-4 text-[color:var(--pp-color-teal-accent)]" aria-hidden />{request.requesterEmail}</p> : null}
+                      {request.requesterPhone ? <p className="break-all"><Phone className="mr-2 inline size-4 text-[color:var(--pp-color-teal-accent)]" aria-hidden />{request.requesterPhone}</p> : null}
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">Kontakt podaci nisu zabilježeni za ovaj stariji upit.</p>
+                  )}
+                  <p className="mt-2 text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Kontakt podatke koristi samo za odgovor na ovaj upit.</p>
+                </div>
                 {request.notes ? <p className="mt-3 rounded-2xl bg-[color:var(--pp-color-cream-surface)] p-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">“{request.notes}”</p> : null}
               </div>
               <div className="flex shrink-0 flex-col gap-3 xl:items-end">
