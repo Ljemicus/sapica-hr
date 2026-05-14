@@ -36,4 +36,16 @@ export const bookingRequestInputSchema = z.object({
   }
 });
 
+export const bookingRequestStatusActionSchema = z.object({
+  status: z.enum(['contacted', 'closed']),
+});
+
+export function canTransitionBookingRequestStatus(currentStatus: string, nextStatus: 'contacted' | 'closed') {
+  if (currentStatus === 'closed') return false;
+  if (currentStatus === 'pending') return nextStatus === 'contacted' || nextStatus === 'closed';
+  if (currentStatus === 'contacted') return nextStatus === 'closed';
+  return false;
+}
+
 export type BookingRequestInputPayload = z.infer<typeof bookingRequestInputSchema>;
+export type BookingRequestStatusActionPayload = z.infer<typeof bookingRequestStatusActionSchema>;

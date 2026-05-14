@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bookingRequestInputSchema } from '../schema';
+import { bookingRequestInputSchema, bookingRequestStatusActionSchema, canTransitionBookingRequestStatus } from '../schema';
 
 const validPayload = {
   providerSlug: 'osnovni-trening-poslusnosti-rijeka-31000000',
@@ -36,5 +36,21 @@ describe('bookingRequestInputSchema', () => {
 
   it('rejects past start dates', () => {
     expect(bookingRequestInputSchema.safeParse({ ...validPayload, startDate: '2020-01-01', endDate: '2020-01-02' }).success).toBe(false);
+  });
+
+  it('accepts only contacted or closed as provider action statuses', () => {
+    expect(bookingRequestStatusActionSchema.safeParse({ status: 'contacted' }).success).toBe(true);
+    expect(bookingRequestStatusActionSchema.safeParse({ status: 'closed' }).success).toBe(true);
+    expect(bookingRequestStatusActionSchema.safeParse({ status: 'pending' }).success).toBe(false);
+    expect(bookingRequestStatusActionSchema.safeParse({ status: 'confirmed' }).success).toBe(false);
+  });
+
+  it('allows only safe manual status transitions', () => {
+    expect(canTransitionBookingRequestStatus('pending', 'contacted')).toBe(true);
+    expect(canTransitionBookingRequestStatus('pending', 'closed')).toBe(true);
+    expect(canTransitionBookingRequestStatus('contacted', 'closed')).toBe(true);
+    expect(canTransitionBookingRequestStatus('contacted', 'contacted')).toBe(false);
+    expect(canTransitionBookingRequestStatus('closed', 'contacted')).toBe(false);
+    expect(canTransitionBookingRequestStatus('closed', 'closed')).toBe(false);
   });
 });

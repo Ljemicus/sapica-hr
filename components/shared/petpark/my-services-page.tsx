@@ -29,6 +29,7 @@ import {
 import { cn } from '@/lib/utils';
 import { serviceListingReadsGuard, serviceListingWritesGuard } from '@/lib/petpark/service-listings/guards';
 import type { OwnedBookingRequestSummary } from '@/lib/petpark/booking-requests/types';
+import { BookingRequestStatusActions } from './booking-request-status-actions';
 
 type ServiceStatus = 'active' | 'draft' | 'paused';
 type ServiceCategory = 'Čuvanje' | 'Grooming' | 'Trening';
@@ -283,7 +284,17 @@ function ServicesTable({ providerServices = services }: { providerServices?: Pro
 }
 
 function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: OwnedBookingRequestSummary[] }) {
-  const statusLabel = (status: string) => status === 'pending' ? 'Novo' : status;
+  const statusLabel = (status: string) => {
+    if (status === 'pending') return 'Novo';
+    if (status === 'contacted') return 'Kontaktirano';
+    if (status === 'closed') return 'Zatvoreno';
+    return status;
+  };
+  const statusClass = (status: string) => {
+    if (status === 'contacted') return 'bg-[color:var(--pp-color-sage-surface)] text-[color:var(--pp-color-success)]';
+    if (status === 'closed') return 'bg-[color:var(--pp-color-cream-surface)] text-[color:var(--pp-color-muted-text)]';
+    return 'bg-[color:var(--pp-color-warning-surface)] text-[color:var(--pp-color-orange-primary)]';
+  };
 
   return (
     <Card radius="28" className="p-5 sm:p-6" data-petpark-booking-requests-panel>
@@ -291,7 +302,7 @@ function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: Owne
         <div>
           <p className="text-xs font-black uppercase tracking-[0.16em] text-[color:var(--pp-color-orange-primary)]">Booking upiti</p>
           <h2 className="mt-1 text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">Novi upiti za usluge</h2>
-          <p className="mt-2 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">Ručni upiti bez plaćanja i bez zaključavanja termina. Provider ih potvrđuje izvan ovog MVP koraka.</p>
+          <p className="mt-2 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">Ručni upiti bez plaćanja i bez zaključavanja termina. Označavanje statusa ne potvrđuje rezervaciju i ne pokreće plaćanje.</p>
         </div>
         <Badge variant="orange">{bookingRequests.length} ukupno</Badge>
       </div>
@@ -299,7 +310,7 @@ function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: Owne
       <div className="mt-5 space-y-3">
         {bookingRequests.length === 0 ? (
           <div className="rounded-[var(--pp-radius-card-20)] border border-dashed border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-cream-surface)] px-5 py-6 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
-            Još nema booking upita za tvoje objavljene usluge.
+            Još nema booking upita. Kad vlasnik pošalje upit s javne stranice tvoje usluge, pojavit će se ovdje za ručni follow-up.
           </div>
         ) : bookingRequests.map((request) => (
           <div key={request.id} className="rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] p-4 shadow-[var(--pp-shadow-small-card)]">
@@ -308,12 +319,15 @@ function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: Owne
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="font-black text-[color:var(--pp-color-forest-text)]">{request.serviceLabel}</h3>
                   <StatusBadge status="draft" />
-                  <span className="rounded-full bg-[color:var(--pp-color-warning-surface)] px-3 py-1 text-xs font-black text-[color:var(--pp-color-orange-primary)]">{statusLabel(request.status)}</span>
+                  <span className={`rounded-full px-3 py-1 text-xs font-black ${statusClass(request.status)}`}>{statusLabel(request.status)}</span>
                 </div>
                 <p className="mt-2 text-sm font-bold text-[color:var(--pp-color-muted-text)]">{request.petName} · {request.petType === 'pas' ? 'Pas' : request.petType === 'macka' ? 'Mačka' : 'Drugo'} · {request.dateRange}</p>
                 {request.notes ? <p className="mt-3 rounded-2xl bg-[color:var(--pp-color-cream-surface)] p-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">“{request.notes}”</p> : null}
               </div>
-              <p className="shrink-0 text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">{request.submittedAt}</p>
+              <div className="flex shrink-0 flex-col gap-3 xl:items-end">
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">{request.submittedAt}</p>
+                <BookingRequestStatusActions requestId={request.id} status={request.status} />
+              </div>
             </div>
           </div>
         ))}

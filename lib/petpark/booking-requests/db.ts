@@ -1,8 +1,10 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
+import { getAuthUser } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
+import { canTransitionBookingRequestStatus } from './schema';
 import type { BookingRequestInputPayload } from './schema';
-import type { BookingRequestRow, OwnedBookingRequestSummary } from './types';
+import type { BookingRequestActionStatus, BookingRequestRow, BookingRequestStatusUpdateResult, OwnedBookingRequestSummary } from './types';
 
 function toDateRange(startDate: string, endDate: string) {
   const start = new Date(`${startDate}T00:00:00.000Z`);
@@ -39,6 +41,69 @@ export async function createBookingRequest(input: BookingRequestInputPayload): P
 
   if (error || !data) return null;
   return data as BookingRequestRow;
+}
+
+export async function updateOwnedBookingRequestStatus(requestId: string, nextStatus: BookingRequestActionStatus): Promise<BookingRequestStatusUpdateResult> {
+  if (!isSupabaseConfigured()) {
+    return { ok: false, statusCode: 503, code: 'SUPABASE_NOT_CONFIGURED', message: 'Supabase is not configured.' };
+  }
+
+  const user = await getAuthUser();
+  if (!user) {
+    return { ok: false, statusCode: 401, code: 'UNAUTHORIZED', message: 'Prijavi se prije promjene statusa upita.' };
+  }
+
+  const admin = createAdminClient();
+  const { data: request, error: requestError } = await admin
+    .from('booking_requests')
+    .select('*')
+    .eq('id', requestId)
+    .single();
+
+  if (requestError || !request) {
+    return { ok: false, statusCode: 404, code: 'BOOKING_REQUEST_NOT_FOUND', message: 'Booking upit nije pronađen.' };
+  }
+
+  const bookingRequest = request as BookingRequestRow;
+  if (!canTransitionBookingRequestStatus(bookingRequest.status, nextStatus)) {
+    return { ok: false, statusCode: 400, code: 'INVALID_STATUS_TRANSITION', message: 'Ovaj status upita više nije moguće promijeniti na taj način.' };
+  }
+
+  if (user.role !== 'admin') {
+    const { data: listing, error: listingError } = await admin
+      .from('service_listings')
+      .select('provider_id')
+      .eq('slug', bookingRequest.provider_slug)
+      .single();
+
+    if (listingError || !listing?.provider_id) {
+      return { ok: false, statusCode: 404, code: 'SERVICE_LISTING_NOT_FOUND', message: 'Povezana usluga nije pronađena.' };
+    }
+
+    const { data: provider, error: providerError } = await admin
+      .from('providers')
+      .select('id')
+      .eq('id', listing.provider_id)
+      .eq('profile_id', user.id)
+      .maybeSingle();
+
+    if (providerError || !provider) {
+      return { ok: false, statusCode: 403, code: 'FORBIDDEN', message: 'Možeš mijenjati samo upite za svoje usluge.' };
+    }
+  }
+
+  const { data: updated, error: updateError } = await admin
+    .from('booking_requests')
+    .update({ status: nextStatus })
+    .eq('id', requestId)
+    .select('id, status')
+    .single();
+
+  if (updateError || !updated) {
+    return { ok: false, statusCode: 500, code: 'BOOKING_REQUEST_STATUS_UPDATE_FAILED', message: 'Status upita trenutno nije moguće promijeniti.' };
+  }
+
+  return { ok: true, id: updated.id, status: updated.status };
 }
 
 export async function getOwnedBookingRequestSummaries(): Promise<OwnedBookingRequestSummary[]> {

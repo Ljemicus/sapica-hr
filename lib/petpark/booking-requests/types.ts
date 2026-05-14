@@ -1,4 +1,5 @@
 export type BookingRequestStatus = 'pending' | 'contacted' | 'closed';
+export type BookingRequestActionStatus = Exclude<BookingRequestStatus, 'pending'>;
 
 export type BookingRequestInput = {
   providerSlug: string;
@@ -48,3 +49,7 @@ export type OwnedBookingRequestSummary = {
   status: string;
   submittedAt: string;
 };
+
+export type BookingRequestStatusUpdateResult =
+  | { ok: true; id: string; status: BookingRequestStatus }
+  | { ok: false; statusCode: number; code: string; message: string };
