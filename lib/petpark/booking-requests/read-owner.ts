@@ -6,6 +6,7 @@ const ownerStatusLabels: Record<BookingRequestStatus, OwnerBookingRequestSummary
   pending: 'Poslano',
   contacted: 'Kontaktiran',
   closed: 'Zatvoreno',
+  withdrawn: 'Povučen',
 };
 
 function toDateRange(startDate: string, endDate: string) {
@@ -22,7 +23,7 @@ function toSubmittedAt(createdAt: string) {
 }
 
 function normalizeStatus(status: string): BookingRequestStatus {
-  if (status === 'contacted' || status === 'closed') return status;
+  if (status === 'contacted' || status === 'closed' || status === 'withdrawn') return status;
   return 'pending';
 }
 

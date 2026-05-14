@@ -59,10 +59,14 @@ export const bookingRequestStatusActionSchema = z.object({
 });
 
 export function canTransitionBookingRequestStatus(currentStatus: string, nextStatus: 'contacted' | 'closed') {
-  if (currentStatus === 'closed') return false;
+  if (currentStatus === 'closed' || currentStatus === 'withdrawn') return false;
   if (currentStatus === 'pending') return nextStatus === 'contacted' || nextStatus === 'closed';
   if (currentStatus === 'contacted') return nextStatus === 'closed';
   return false;
+}
+
+export function canWithdrawBookingRequestStatus(currentStatus: string) {
+  return currentStatus === 'pending' || currentStatus === 'contacted';
 }
 
 export type BookingRequestInputPayload = z.infer<typeof bookingRequestInputSchema>;

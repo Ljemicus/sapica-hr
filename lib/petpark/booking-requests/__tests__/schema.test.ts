@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bookingRequestInputSchema, bookingRequestStatusActionSchema, canTransitionBookingRequestStatus } from '../schema';
+import { bookingRequestInputSchema, bookingRequestStatusActionSchema, canTransitionBookingRequestStatus, canWithdrawBookingRequestStatus } from '../schema';
 
 const validPayload = {
   providerSlug: 'osnovni-trening-poslusnosti-rijeka-31000000',
@@ -88,5 +88,15 @@ describe('bookingRequestInputSchema', () => {
     expect(canTransitionBookingRequestStatus('contacted', 'contacted')).toBe(false);
     expect(canTransitionBookingRequestStatus('closed', 'contacted')).toBe(false);
     expect(canTransitionBookingRequestStatus('closed', 'closed')).toBe(false);
+    expect(canTransitionBookingRequestStatus('withdrawn', 'contacted')).toBe(false);
+    expect(canTransitionBookingRequestStatus('withdrawn', 'closed')).toBe(false);
+  });
+
+  it('allows owners to withdraw only active manual request statuses', () => {
+    expect(canWithdrawBookingRequestStatus('pending')).toBe(true);
+    expect(canWithdrawBookingRequestStatus('contacted')).toBe(true);
+    expect(canWithdrawBookingRequestStatus('closed')).toBe(false);
+    expect(canWithdrawBookingRequestStatus('withdrawn')).toBe(false);
+    expect(canWithdrawBookingRequestStatus('confirmed')).toBe(false);
   });
 });

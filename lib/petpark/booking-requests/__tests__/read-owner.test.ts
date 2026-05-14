@@ -45,6 +45,7 @@ describe('owner booking request mapping', () => {
     expect(getOwnerBookingRequestStatusLabel('pending')).toBe('Poslano');
     expect(getOwnerBookingRequestStatusLabel('contacted')).toBe('Kontaktiran');
     expect(getOwnerBookingRequestStatusLabel('closed')).toBe('Zatvoreno');
+    expect(getOwnerBookingRequestStatusLabel('withdrawn')).toBe('Povučen');
     expect(getOwnerBookingRequestStatusLabel('unexpected')).toBe('Poslano');
   });
 

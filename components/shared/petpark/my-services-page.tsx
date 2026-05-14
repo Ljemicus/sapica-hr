@@ -290,11 +290,13 @@ function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: Owne
     if (status === 'pending') return 'Novo';
     if (status === 'contacted') return 'Kontaktirano';
     if (status === 'closed') return 'Zatvoreno';
+    if (status === 'withdrawn') return 'Povučen';
     return status;
   };
   const statusClass = (status: string) => {
     if (status === 'contacted') return 'bg-[color:var(--pp-color-sage-surface)] text-[color:var(--pp-color-success)]';
     if (status === 'closed') return 'bg-[color:var(--pp-color-cream-surface)] text-[color:var(--pp-color-muted-text)]';
+    if (status === 'withdrawn') return 'bg-[color:var(--pp-color-warning-surface)] text-[color:var(--pp-color-orange-primary)]';
     return 'bg-[color:var(--pp-color-warning-surface)] text-[color:var(--pp-color-orange-primary)]';
   };
 
@@ -337,6 +339,7 @@ function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: Owne
                   )}
                   <p className="mt-2 text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Kontakt podatke koristi samo za odgovor na ovaj upit.</p>
                 </div>
+                {request.status === 'withdrawn' ? <p className="mt-3 rounded-2xl bg-[color:var(--pp-color-warning-surface)] p-3 text-sm font-black leading-6 text-[color:var(--pp-color-orange-primary)]">Vlasnik je povukao ovaj upit. Ne trebaš odgovarati.</p> : null}
                 {request.notes ? <p className="mt-3 rounded-2xl bg-[color:var(--pp-color-cream-surface)] p-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">“{request.notes}”</p> : null}
               </div>
               <div className="flex shrink-0 flex-col gap-3 xl:items-end">

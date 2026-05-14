@@ -2,7 +2,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 import { getAuthUser } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
-import { canTransitionBookingRequestStatus } from './schema';
+import { canTransitionBookingRequestStatus, canWithdrawBookingRequestStatus } from './schema';
 import type { BookingRequestInputPayload } from './schema';
 import type { BookingRequestActionStatus, BookingRequestRow, BookingRequestStatusUpdateResult, OwnedBookingRequestSummary } from './types';
 
@@ -108,6 +108,51 @@ export async function updateOwnedBookingRequestStatus(requestId: string, nextSta
 
   if (updateError || !updated) {
     return { ok: false, statusCode: 500, code: 'BOOKING_REQUEST_STATUS_UPDATE_FAILED', message: 'Status upita trenutno nije moguće promijeniti.' };
+  }
+
+  return { ok: true, id: updated.id, status: updated.status };
+}
+
+export async function withdrawOwnedBookingRequest(requestId: string): Promise<BookingRequestStatusUpdateResult> {
+  if (!isSupabaseConfigured()) {
+    return { ok: false, statusCode: 503, code: 'SUPABASE_NOT_CONFIGURED', message: 'Supabase is not configured.' };
+  }
+
+  const user = await getAuthUser();
+  if (!user) {
+    return { ok: false, statusCode: 401, code: 'UNAUTHORIZED', message: 'Prijavi se prije povlačenja upita.' };
+  }
+
+  const admin = createAdminClient();
+  const { data: request, error: requestError } = await admin
+    .from('booking_requests')
+    .select('*')
+    .eq('id', requestId)
+    .single();
+
+  if (requestError || !request) {
+    return { ok: false, statusCode: 404, code: 'BOOKING_REQUEST_NOT_FOUND', message: 'Booking upit nije pronađen.' };
+  }
+
+  const bookingRequest = request as BookingRequestRow;
+  if (!bookingRequest.owner_profile_id || bookingRequest.owner_profile_id !== user.id) {
+    return { ok: false, statusCode: 403, code: 'FORBIDDEN', message: 'Možeš povući samo upite koje si poslao/la s ovim računom.' };
+  }
+
+  if (!canWithdrawBookingRequestStatus(bookingRequest.status)) {
+    return { ok: false, statusCode: 400, code: 'INVALID_WITHDRAW_TRANSITION', message: 'Ovaj upit više nije moguće povući.' };
+  }
+
+  const { data: updated, error: updateError } = await admin
+    .from('booking_requests')
+    .update({ status: 'withdrawn' })
+    .eq('id', requestId)
+    .eq('owner_profile_id', user.id)
+    .select('id, status')
+    .single();
+
+  if (updateError || !updated) {
+    return { ok: false, statusCode: 500, code: 'BOOKING_REQUEST_WITHDRAW_FAILED', message: 'Upit trenutno nije moguće povući.' };
   }
 
   return { ok: true, id: updated.id, status: updated.status };

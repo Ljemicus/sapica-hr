@@ -10,13 +10,14 @@ const statusCopy: Record<BookingRequestStatus, string> = {
   pending: 'Novo',
   contacted: 'Kontaktirano',
   closed: 'Zatvoreno',
+  withdrawn: 'Povučen',
 };
 
 export function BookingRequestStatusActions({ requestId, status }: { requestId: string; status: string }) {
   const router = useRouter();
   const [pendingAction, setPendingAction] = useState<BookingRequestActionStatus | null>(null);
   const [message, setMessage] = useState('');
-  const normalizedStatus = (['pending', 'contacted', 'closed'].includes(status) ? status : 'pending') as BookingRequestStatus;
+  const normalizedStatus = (['pending', 'contacted', 'closed', 'withdrawn'].includes(status) ? status : 'pending') as BookingRequestStatus;
 
   async function updateStatus(nextStatus: BookingRequestActionStatus) {
     setPendingAction(nextStatus);
@@ -42,6 +43,18 @@ export function BookingRequestStatusActions({ requestId, status }: { requestId: 
     } finally {
       setPendingAction(null);
     }
+  }
+
+  if (normalizedStatus === 'withdrawn') {
+    return (
+      <div className="space-y-2" data-petpark-booking-request-actions>
+        <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--pp-color-warning-surface)] px-3 py-2 text-xs font-black text-[color:var(--pp-color-orange-primary)]">
+          <CheckCircle2 className="size-4" aria-hidden />
+          {statusCopy.withdrawn}
+        </div>
+        <p className="text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Vlasnik je povukao ovaj upit. Ne trebaš odgovarati.</p>
+      </div>
+    );
   }
 
   if (normalizedStatus === 'closed') {

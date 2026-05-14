@@ -3,6 +3,7 @@ import { CalendarDays, CheckCircle2, Clock3, Eye, HeartHandshake, Home, MessageC
 import { AppHeader, Avatar, Badge, ButtonLink, Card, LeafDecoration, PawDecoration } from '@/components/shared/petpark/design-foundation';
 import { cn } from '@/lib/utils';
 import type { OwnerBookingRequestSummary } from '@/lib/petpark/booking-requests/types';
+import { BookingRequestWithdrawAction } from './booking-request-withdraw-action';
 
 const navItems = [
   { href: '/usluge', label: 'Usluge' },
@@ -23,12 +24,14 @@ const statusClasses: Record<OwnerBookingRequestSummary['status'], string> = {
   pending: 'border-[color:var(--pp-color-warning)]/25 bg-[color:var(--pp-color-warning-surface)] text-[color:var(--pp-color-warning)]',
   contacted: 'border-[color:var(--pp-color-teal-accent)]/25 bg-[color:var(--pp-color-info-surface)] text-[color:var(--pp-color-teal-accent)]',
   closed: 'border-[color:var(--pp-color-muted-text)]/20 bg-[color:var(--pp-color-cream-surface)] text-[color:var(--pp-color-muted-text)]',
+  withdrawn: 'border-[color:var(--pp-color-orange-primary)]/25 bg-[color:var(--pp-color-warning-surface)] text-[color:var(--pp-color-orange-primary)]',
 };
 
 const lifecycleCopy: Record<OwnerBookingRequestSummary['status'], string> = {
   pending: 'Poslano znači da pružatelj još nije označio da te kontaktirao.',
   contacted: 'Kontaktiran znači da je pružatelj označio da je odgovorio ili se javio.',
   closed: 'Zatvoreno znači da je pružatelj zatvorio ovaj upit.',
+  withdrawn: 'Povučen znači da si odustao od ovog upita. Nema potvrđene rezervacije ni plaćanja.',
 };
 
 function petTypeLabel(type: string) {
@@ -102,6 +105,7 @@ function RequestCard({ request }: { request: OwnerBookingRequestSummary }) {
           </div>
           <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{lifecycleCopy[request.status]}</p>
           {notesPreview ? <p className="mt-4 rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-cream-surface)] p-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">“{notesPreview}”</p> : null}
+          <BookingRequestWithdrawAction requestId={request.id} status={request.status} />
         </div>
         <ButtonLink href={`/usluge/${request.providerSlug}`} variant="secondary" size="md" className="shrink-0 justify-center">
           <Eye className="size-4" aria-hidden />
@@ -151,7 +155,7 @@ export function MyRequestsPage({ requests }: { requests: OwnerBookingRequestSumm
   const counts = requests.reduce<Record<OwnerBookingRequestSummary['status'], number>>((acc, request) => {
     acc[request.status] += 1;
     return acc;
-  }, { pending: 0, contacted: 0, closed: 0 });
+  }, { pending: 0, contacted: 0, closed: 0, withdrawn: 0 });
 
   return (
     <main data-petpark-route="moji-upiti" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
@@ -171,11 +175,12 @@ export function MyRequestsPage({ requests }: { requests: OwnerBookingRequestSumm
                     Prati upite koje si poslao pružateljima usluga.
                   </p>
                 </div>
-                <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
                   {([
                     ['Poslano', counts.pending],
                     ['Kontaktiran', counts.contacted],
                     ['Zatvoreno', counts.closed],
+                    ['Povučen', counts.withdrawn],
                   ] as const).map(([label, value]) => (
                     <div key={label} className="rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-cream-surface)] px-4 py-3">
                       <p className="text-2xl font-black text-[color:var(--pp-color-forest-text)]">{value}</p>

@@ -1,5 +1,5 @@
-export type BookingRequestStatus = 'pending' | 'contacted' | 'closed';
-export type BookingRequestActionStatus = Exclude<BookingRequestStatus, 'pending'>;
+export type BookingRequestStatus = 'pending' | 'contacted' | 'closed' | 'withdrawn';
+export type BookingRequestActionStatus = 'contacted' | 'closed';
 
 export type BookingRequestInput = {
   providerSlug: string;
@@ -76,7 +76,7 @@ export type OwnerBookingRequestSummary = {
   dateRange: string;
   notes: string;
   status: BookingRequestStatus;
-  statusLabel: 'Poslano' | 'Kontaktiran' | 'Zatvoreno';
+  statusLabel: 'Poslano' | 'Kontaktiran' | 'Zatvoreno' | 'Povučen';
   submittedAt: string;
   contactMethod: {
     email: string | null;
