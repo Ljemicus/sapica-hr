@@ -56,8 +56,8 @@ export function BookingRequestConversation({ requestId, enabled = true }: { requ
 
   const helperCopy = useMemo(() => {
     if (!enabled) return 'In-app razgovor je dostupan samo za upite poslane s prijavljenim PetPark računom.';
-    if (messages.length === 0) return 'Pošalji kratku tekstualnu poruku vezanu samo za ovaj upit.';
-    return 'Ovo je tekstualni razgovor za ovaj upit. Nema plaćanja, potvrde termina ni vanjskog slanja.';
+    if (messages.length === 0) return 'Razgovor je vezan samo uz ovaj upit. Ne stvara rezervaciju niti plaćanje.';
+    return 'Razgovor je vezan samo uz ovaj upit. Ne stvara rezervaciju niti plaćanje, niti šalje poruke izvan PetParka.';
   }, [enabled, messages.length]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {

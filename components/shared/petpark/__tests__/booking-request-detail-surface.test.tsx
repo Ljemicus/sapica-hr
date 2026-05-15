@@ -32,6 +32,8 @@ describe('BookingRequestDetailSurface', () => {
     expect(screen.getByText('Otvoreno iz obavijesti')).toBeInTheDocument();
     expect(screen.getByText('ni••@example.com')).toBeInTheDocument();
     expect(screen.queryByText('niko@example.com')).not.toBeInTheDocument();
+    expect(screen.getByText('Što ovaj status znači')).toBeInTheDocument();
+    expect(screen.getByText('Upit je poslan. Pružatelj ga može pregledati i odgovoriti.')).toBeInTheDocument();
     expect(screen.getByText(/Ovo je upit, ne potvrđena rezervacija/)).toBeInTheDocument();
   });
 
@@ -41,6 +43,7 @@ describe('BookingRequestDetailSurface', () => {
         {...baseProps}
         role="provider"
         statusLabel="Novo"
+        statusTone="withdrawn"
         contact={{ name: 'Niko', email: 'niko@example.com', phone: '+385 91 123 4567' }}
       />,
     );
@@ -50,6 +53,7 @@ describe('BookingRequestDetailSurface', () => {
     expect(screen.getByText('niko@example.com')).toBeInTheDocument();
     expect(screen.getByText('+385 91 123 4567')).toBeInTheDocument();
     expect(screen.getByText('Razgovor o upitu')).toBeInTheDocument();
+    expect(screen.getByText('Vlasnik je povukao upit. Nema akcije, rezervacije ni zaključavanja termina.')).toBeInTheDocument();
     expect(screen.getByText(/Nema automatskog plaćanja ni zaključavanja termina/)).toBeInTheDocument();
   });
 });

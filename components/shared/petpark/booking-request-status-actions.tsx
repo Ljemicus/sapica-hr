@@ -36,7 +36,7 @@ export function BookingRequestStatusActions({ requestId, status }: { requestId: 
         return;
       }
 
-      setMessage(nextStatus === 'contacted' ? 'Upit je označen kao kontaktiran.' : 'Upit je zatvoren.');
+      setMessage(nextStatus === 'contacted' ? 'Upit je označen kao kontaktiran. Osvježavam prikaz…' : 'Upit je zatvoren. Osvježavam prikaz…');
       router.refresh();
     } catch {
       setMessage('Mrežna greška. Pokušaj ponovno za trenutak.');
@@ -52,7 +52,7 @@ export function BookingRequestStatusActions({ requestId, status }: { requestId: 
           <CheckCircle2 className="size-4" aria-hidden />
           {statusCopy.withdrawn}
         </div>
-        <p className="text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Vlasnik je povukao ovaj upit. Ne trebaš odgovarati.</p>
+        <p className="text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Vlasnik je povukao ovaj upit. Nema akcije, rezervacije ni zaključavanja termina.</p>
       </div>
     );
   }
@@ -64,7 +64,7 @@ export function BookingRequestStatusActions({ requestId, status }: { requestId: 
           <CheckCircle2 className="size-4" aria-hidden />
           {statusCopy.closed}
         </div>
-        <p className="text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Zatvoreni upiti se u ovom MVP-u ne otvaraju ponovno.</p>
+        <p className="text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Zatvoreni upiti se u ovom MVP-u ne otvaraju ponovno i ne stvaraju potvrđenu rezervaciju.</p>
       </div>
     );
   }
@@ -83,7 +83,11 @@ export function BookingRequestStatusActions({ requestId, status }: { requestId: 
           Zatvori
         </Button>
       </div>
-      <p className="text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Ovo ne potvrđuje rezervaciju i ne pokreće plaćanje.</p>
+      <p className="text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">
+        {normalizedStatus === 'pending'
+          ? 'Označi kontaktirano kad si se javio vlasniku. Zatvaranje samo arhivira upit — ne potvrđuje rezervaciju, ne zaključava kalendar i ne pokreće plaćanje.'
+          : 'Owner je već označen kao kontaktiran. Zatvaranje samo završava ručni follow-up — bez rezervacije, kalendara ili plaćanja.'}
+      </p>
       {message ? <p className="text-xs font-black leading-5 text-[color:var(--pp-color-teal-accent)]" role="status">{message}</p> : null}
     </div>
   );

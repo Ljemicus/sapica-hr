@@ -359,7 +359,7 @@ function BookingRequestsPanel({ bookingRequests = [], selectedRequestId }: { boo
               </div>
               <div className="flex shrink-0 flex-col gap-3 xl:items-end">
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">{request.submittedAt}</p>
-                <BookingRequestStatusActions requestId={request.id} status={request.status} />
+                <p className="max-w-56 text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Akcije i razgovor su u detaljima upita.</p>
               </div>
             </div>
           </div>

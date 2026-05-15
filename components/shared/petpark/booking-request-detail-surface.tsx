@@ -74,6 +74,31 @@ function Timeline({ events }: { events: BookingRequestEventSummary[] }) {
   );
 }
 
+const ownerStatusCopy: Record<NonNullable<BookingRequestDetailSurfaceProps['statusTone']>, string> = {
+  pending: 'Upit je poslan. Pružatelj ga može pregledati i odgovoriti.',
+  contacted: 'Pružatelj je označio da je kontaktirao vlasnika.',
+  closed: 'Upit je zatvoren. Za novi termin pošalji novi upit.',
+  withdrawn: 'Povučen upit više nije aktivan.',
+};
+
+const providerStatusCopy: Record<NonNullable<BookingRequestDetailSurfaceProps['statusTone']>, string> = {
+  pending: 'Novi upit čeka tvoj odgovor. Možeš ga označiti kontaktiranim ili zatvoriti bez potvrde rezervacije.',
+  contacted: 'Owner je označen kao kontaktiran. Sljedeći korak je ručni dogovor ili zatvaranje upita.',
+  closed: 'Upit je zatvoren. U ovom MVP-u ga ne otvaramo ponovno i ne stvara rezervaciju.',
+  withdrawn: 'Vlasnik je povukao upit. Nema akcije, rezervacije ni zaključavanja termina.',
+};
+
+function StatusExplanation({ role, statusTone }: { role: 'owner' | 'provider'; statusTone: NonNullable<BookingRequestDetailSurfaceProps['statusTone']> }) {
+  return (
+    <div className="rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-cream-surface)] p-3" data-petpark-booking-request-status-help>
+      <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Što ovaj status znači</p>
+      <p className="mt-1 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
+        {role === 'owner' ? ownerStatusCopy[statusTone] : providerStatusCopy[statusTone]}
+      </p>
+    </div>
+  );
+}
+
 function ContactCard({ contact, role }: { contact?: ContactField; role: 'owner' | 'provider' }) {
   const hasContact = Boolean(contact?.name || contact?.email || contact?.phone);
 
@@ -159,6 +184,8 @@ export function BookingRequestDetailSurface({
             <span><Clock3 className="mr-1 inline size-4 text-[color:var(--pp-color-muted-text)]" aria-hidden />Poslano {submittedAt}</span>
           </div>
         </div>
+
+        <StatusExplanation role={role} statusTone={statusTone} />
 
         <div className="grid gap-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)] md:grid-cols-2">
           {fields.map((field) => (

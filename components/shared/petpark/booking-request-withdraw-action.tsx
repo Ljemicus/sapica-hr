@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Loader2, Undo2, XCircle } from 'lucide-react';
+import { CheckCircle2, Loader2, Undo2, XCircle } from 'lucide-react';
 import { Button } from '@/components/shared/petpark/design-foundation';
 import type { BookingRequestStatus } from '@/lib/petpark/booking-requests/types';
 
@@ -25,7 +25,7 @@ export function BookingRequestWithdrawAction({ requestId, status }: { requestId:
         return;
       }
 
-      setMessage('Upit je povučen.');
+      setMessage('Upit je povučen. Osvježavam prikaz…');
       setConfirming(false);
       router.refresh();
     } catch {
@@ -36,7 +36,19 @@ export function BookingRequestWithdrawAction({ requestId, status }: { requestId:
   }
 
   if (!canWithdraw) {
-    return null;
+    const copy = status === 'closed'
+      ? 'Upit je zatvoren i više ga nije moguće povući. Za novi termin pošalji novi upit.'
+      : 'Povučen upit više nije aktivan. Pružatelj ga vidi kao povučen, ali se zapis ne briše.';
+
+    return (
+      <div className="space-y-2" data-petpark-owner-withdraw-action>
+        <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--pp-color-sage-surface)] px-3 py-2 text-xs font-black text-[color:var(--pp-color-muted-text)]">
+          <CheckCircle2 className="size-4" aria-hidden />
+          Nema dostupne akcije
+        </div>
+        <p className="text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">{copy}</p>
+      </div>
+    );
   }
 
   if (!confirming) {
