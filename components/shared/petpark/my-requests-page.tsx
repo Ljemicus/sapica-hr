@@ -118,12 +118,20 @@ function RequestCard({ request }: { request: OwnerBookingRequestSummary }) {
   const notesPreview = request.notes.length > 140 ? `${request.notes.slice(0, 140).trim()}…` : request.notes;
 
   return (
-    <Card radius="28" className="p-5 shadow-[var(--pp-shadow-small-card)] md:p-6">
+    <Card
+      id={`request-${request.id}`}
+      radius="28"
+      className={cn(
+        'scroll-mt-28 p-5 shadow-[var(--pp-shadow-small-card)] target:border-[color:var(--pp-color-orange-primary)]/60 target:ring-4 target:ring-[color:var(--pp-color-orange-primary)]/15 md:p-6',
+        request.unreadNotificationCount > 0 && 'border-[color:var(--pp-color-orange-primary)]/35',
+      )}
+    >
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="teal"><Sparkles className="size-3" aria-hidden /> {request.providerName}</Badge>
             <RequestStatusChip request={request} />
+            {request.unreadNotificationCount > 0 ? <Badge variant="orange">{request.unreadNotificationCount} novo</Badge> : null}
           </div>
           <h2 className="mt-4 text-2xl font-black leading-tight tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{request.serviceLabel}</h2>
           <div className="mt-3 flex flex-wrap gap-3 text-sm font-bold text-[color:var(--pp-color-muted-text)]">
@@ -143,7 +151,7 @@ function RequestCard({ request }: { request: OwnerBookingRequestSummary }) {
 
       <details className="group mt-5 rounded-[var(--pp-radius-card-24)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] p-4">
         <summary className="cursor-pointer list-none text-sm font-black text-[color:var(--pp-color-forest-text)] marker:hidden">
-          Pogledaj detalje upita
+          {request.unreadNotificationCount > 0 ? `${request.unreadNotificationCount} nepročitano · ` : ''}Pogledaj detalje upita
           <span className="ml-2 text-xs font-bold text-[color:var(--pp-color-muted-text)] group-open:hidden">+</span>
           <span className="ml-2 hidden text-xs font-bold text-[color:var(--pp-color-muted-text)] group-open:inline">−</span>
         </summary>

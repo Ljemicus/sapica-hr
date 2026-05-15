@@ -9,6 +9,7 @@ import {
   createProviderClosedArtifacts,
   createProviderContactedArtifacts,
   getBookingRequestEventsByRequestIds,
+  getUnreadNotificationCountsByBookingRequest,
 } from './activity';
 import type { BookingRequestInputPayload } from './schema';
 import type { BookingRequestActionStatus, BookingRequestRow, BookingRequestStatusUpdateResult, OwnedBookingRequestSummary } from './types';
@@ -216,7 +217,9 @@ export async function getOwnedBookingRequestSummaries(): Promise<OwnedBookingReq
     if (error || !data) return [];
 
     const requests = data as BookingRequestRow[];
-    const eventsByRequest = await getBookingRequestEventsByRequestIds(requests.map((request) => request.id));
+    const requestIds = requests.map((request) => request.id);
+    const eventsByRequest = await getBookingRequestEventsByRequestIds(requestIds);
+    const unreadCountsByRequest = await getUnreadNotificationCountsByBookingRequest(userId, requestIds);
 
     return requests.map((request) => ({
       id: request.id,
@@ -233,6 +236,7 @@ export async function getOwnedBookingRequestSummaries(): Promise<OwnedBookingReq
       requesterPhone: request.requester_phone,
       contactConsent: request.contact_consent,
       conversationEnabled: Boolean(request.owner_profile_id),
+      unreadNotificationCount: unreadCountsByRequest.get(request.id) || 0,
       events: eventsByRequest.get(request.id) || [],
     }));
   } catch {

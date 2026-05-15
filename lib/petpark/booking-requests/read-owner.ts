@@ -1,6 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
-import { getBookingRequestEventsByRequestIds } from './activity';
+import { getBookingRequestEventsByRequestIds, getUnreadNotificationCountsByBookingRequest } from './activity';
 import type { BookingRequestRow, BookingRequestStatus, OwnerBookingRequestSummary } from './types';
 
 const ownerStatusLabels: Record<BookingRequestStatus, OwnerBookingRequestSummary['statusLabel']> = {
@@ -47,7 +47,7 @@ export function maskRequesterPhone(phone?: string | null) {
   return `${compact.slice(0, 4)}••••${compact.slice(-3)}`;
 }
 
-export function mapOwnerBookingRequestSummary(request: BookingRequestRow, events: OwnerBookingRequestSummary['events'] = []): OwnerBookingRequestSummary {
+export function mapOwnerBookingRequestSummary(request: BookingRequestRow, events: OwnerBookingRequestSummary['events'] = [], unreadNotificationCount = 0): OwnerBookingRequestSummary {
   const status = normalizeStatus(request.status);
   return {
     id: request.id,
@@ -69,6 +69,7 @@ export function mapOwnerBookingRequestSummary(request: BookingRequestRow, events
       consent: Boolean(request.contact_consent),
     },
     conversationEnabled: Boolean(request.owner_profile_id),
+    unreadNotificationCount,
     events,
   };
 }
@@ -88,8 +89,10 @@ export async function getOwnerBookingRequestSummaries(ownerProfileId: string): P
     if (error || !data) return [];
 
     const requests = data as BookingRequestRow[];
-    const eventsByRequest = await getBookingRequestEventsByRequestIds(requests.map((request) => request.id));
-    return requests.map((request) => mapOwnerBookingRequestSummary(request, eventsByRequest.get(request.id) || []));
+    const requestIds = requests.map((request) => request.id);
+    const eventsByRequest = await getBookingRequestEventsByRequestIds(requestIds);
+    const unreadCountsByRequest = await getUnreadNotificationCountsByBookingRequest(ownerProfileId, requestIds);
+    return requests.map((request) => mapOwnerBookingRequestSummary(request, eventsByRequest.get(request.id) || [], unreadCountsByRequest.get(request.id) || 0));
   } catch {
     return [];
   }

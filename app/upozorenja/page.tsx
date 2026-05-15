@@ -31,9 +31,15 @@ const tabs = ['Sve', 'Booking upiti', 'Nepročitano', 'Pročitano'];
 
 function notificationTone(type: BookingRequestNotificationSummary['type']) {
   if (type === 'booking_request_created') return 'orange' as const;
+  if (type === 'booking_request_message') return 'teal' as const;
   if (type === 'booking_request_withdrawn') return 'error' as const;
   if (type === 'booking_request_closed') return 'sage' as const;
   return 'teal' as const;
+}
+
+function notificationLabel(type: BookingRequestNotificationSummary['type']) {
+  if (type === 'booking_request_message') return 'Nova poruka';
+  return 'Booking upit';
 }
 
 function NotificationCard({ item }: { item: BookingRequestNotificationSummary }) {
@@ -54,14 +60,14 @@ function NotificationCard({ item }: { item: BookingRequestNotificationSummary })
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant={tone === 'error' ? 'error' : tone === 'orange' ? 'orange' : tone === 'teal' ? 'teal' : 'sage'}>Booking upit</Badge>
-            {unread ? <Badge variant="orange">Novo</Badge> : <Badge variant="sage">Pročitano</Badge>}
+            <Badge variant={tone === 'error' ? 'error' : tone === 'orange' ? 'orange' : tone === 'teal' ? 'teal' : 'sage'}>{notificationLabel(item.type)}</Badge>
+            {unread ? <Badge variant="orange">Nepročitano</Badge> : <Badge variant="sage">Pročitano</Badge>}
             <span className="text-xs font-black text-[color:var(--pp-color-muted-text)]">{item.createdAtLabel}</span>
           </div>
-          <h2 className="mt-3 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{item.title}</h2>
+          <h2 className={cn('mt-3 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]', unread && 'text-[color:var(--pp-color-orange-primary)]')}>{item.title}</h2>
           <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{item.body}</p>
           <div className="mt-4 flex flex-wrap items-center gap-4">
-            <Link href={item.targetPath} className="inline-flex text-sm font-black text-[color:var(--pp-color-orange-primary)]">Otvori</Link>
+            <Link href={item.targetPath} className="inline-flex text-sm font-black text-[color:var(--pp-color-orange-primary)]">Otvori upit</Link>
             <NotificationReadAction notificationId={item.id} read={!unread} />
           </div>
         </div>

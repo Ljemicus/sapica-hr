@@ -65,6 +65,7 @@ export type OwnedBookingRequestSummary = {
   requesterPhone: string | null;
   contactConsent: boolean;
   conversationEnabled: boolean;
+  unreadNotificationCount: number;
   events: BookingRequestEventSummary[];
 };
 
@@ -88,6 +89,7 @@ export type OwnerBookingRequestSummary = {
     consent: boolean;
   };
   conversationEnabled: boolean;
+  unreadNotificationCount: number;
   events: BookingRequestEventSummary[];
 };
 

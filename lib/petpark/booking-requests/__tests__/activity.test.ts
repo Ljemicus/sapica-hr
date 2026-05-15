@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  bookingRequestTargetPath,
   eventSummaryFor,
   mapBookingRequestEventSummary,
   mapBookingRequestNotificationSummary,
@@ -41,6 +42,26 @@ describe('booking request activity helpers', () => {
     expect(mapped.type).toBe('booking_request_withdrawn');
     expect(mapped.targetPath).toBe('/moje-usluge');
     expect(mapped.readAt).toBeNull();
+  });
+
+  it('maps booking request message notifications without downgrading their type', () => {
+    const mapped = mapBookingRequestNotificationSummary({
+      id: 'notification-message-1',
+      type: 'booking_request_message',
+      title: 'Nova poruka za upit',
+      body: 'Imaš novu poruku za upit.',
+      target_path: '/moji-upiti?request=request-1#request-request-1',
+      read_at: null,
+      created_at: '2026-05-15T00:00:00.000Z',
+    });
+
+    expect(mapped.type).toBe('booking_request_message');
+    expect(mapped.targetPath).toBe('/moji-upiti?request=request-1#request-request-1');
+  });
+
+  it('builds deep links to focused booking request cards', () => {
+    expect(bookingRequestTargetPath('/moji-upiti', 'request 1')).toBe('/moji-upiti?request=request%201#request-request%201');
+    expect(bookingRequestTargetPath('/moje-usluge', 'abc-123')).toBe('/moje-usluge?request=abc-123#request-abc-123');
   });
 
   it('keeps anonymous owners notification-free for owner-facing notifications', () => {

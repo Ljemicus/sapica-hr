@@ -4,7 +4,7 @@ import type { BookingRequestRow } from './types';
 
 export type BookingRequestEventType = 'created' | 'provider_contacted' | 'provider_closed' | 'owner_withdrawn';
 export type BookingRequestActorRole = 'owner' | 'provider' | 'admin' | 'system';
-export type BookingRequestNotificationType = 'booking_request_created' | 'booking_request_contacted' | 'booking_request_closed' | 'booking_request_withdrawn';
+export type BookingRequestNotificationType = 'booking_request_created' | 'booking_request_contacted' | 'booking_request_closed' | 'booking_request_withdrawn' | 'booking_request_message';
 
 export type BookingRequestEventSummary = {
   id: string;
@@ -50,6 +50,10 @@ type NotificationRow = {
   created_at: string;
 };
 
+type UnreadNotificationCountRow = {
+  booking_request_id: string | null;
+};
+
 function toDateTimeLabel(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
@@ -67,8 +71,13 @@ function normalizeActorRole(value: string): BookingRequestActorRole {
 }
 
 function normalizeNotificationType(value: string): BookingRequestNotificationType {
-  if (value === 'booking_request_contacted' || value === 'booking_request_closed' || value === 'booking_request_withdrawn') return value;
+  if (value === 'booking_request_contacted' || value === 'booking_request_closed' || value === 'booking_request_withdrawn' || value === 'booking_request_message') return value;
   return 'booking_request_created';
+}
+
+export function bookingRequestTargetPath(basePath: '/moji-upiti' | '/moje-usluge', bookingRequestId: string) {
+  const request = encodeURIComponent(bookingRequestId);
+  return `${basePath}?request=${request}#request-${request}`;
 }
 
 export function mapBookingRequestEventSummary(row: EventRow): BookingRequestEventSummary {
@@ -193,7 +202,7 @@ export async function createBookingRequestCreatedArtifacts(request: BookingReque
     type: 'booking_request_created',
     title: 'Novi upit',
     body: `${request.requester_name || 'Vlasnik'} je poslao upit za ${request.service_label}.`,
-    targetPath: '/moje-usluge',
+    targetPath: bookingRequestTargetPath('/moje-usluge', request.id),
     metadata: { providerSlug: request.provider_slug, serviceLabel: request.service_label },
   });
 }
@@ -215,7 +224,7 @@ export async function createProviderContactedArtifacts(request: BookingRequestRo
     type: 'booking_request_contacted',
     title: 'Pružatelj je označio upit kao kontaktiran',
     body: `${request.provider_name} je označio da te kontaktirao za ${request.service_label}.`,
-    targetPath: '/moji-upiti',
+    targetPath: bookingRequestTargetPath('/moji-upiti', request.id),
     metadata: { providerSlug: request.provider_slug, serviceLabel: request.service_label },
   });
 }
@@ -237,7 +246,7 @@ export async function createProviderClosedArtifacts(request: BookingRequestRow, 
     type: 'booking_request_closed',
     title: 'Upit je zatvoren',
     body: `${request.provider_name} je zatvorio upit za ${request.service_label}.`,
-    targetPath: '/moji-upiti',
+    targetPath: bookingRequestTargetPath('/moji-upiti', request.id),
     metadata: { providerSlug: request.provider_slug, serviceLabel: request.service_label },
   });
 }
@@ -260,7 +269,7 @@ export async function createOwnerWithdrawnArtifacts(request: BookingRequestRow, 
     type: 'booking_request_withdrawn',
     title: 'Vlasnik je povukao upit',
     body: `${request.requester_name || 'Vlasnik'} je povukao upit za ${request.service_label}.`,
-    targetPath: '/moje-usluge',
+    targetPath: bookingRequestTargetPath('/moje-usluge', request.id),
     metadata: { providerSlug: request.provider_slug, serviceLabel: request.service_label },
   });
 }
@@ -300,6 +309,26 @@ export async function getNotificationsForProfile(profileId: string): Promise<Boo
 
   if (error || !data) return [];
   return (data as NotificationRow[]).map(mapBookingRequestNotificationSummary);
+}
+
+export async function getUnreadNotificationCountsByBookingRequest(profileId: string, requestIds: string[]) {
+  const counts = new Map<string, number>();
+  if (!isSupabaseConfigured() || !profileId || requestIds.length === 0) return counts;
+
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from('notifications')
+    .select('booking_request_id')
+    .eq('recipient_profile_id', profileId)
+    .is('read_at', null)
+    .in('booking_request_id', requestIds);
+
+  if (error || !data) return counts;
+  for (const row of data as UnreadNotificationCountRow[]) {
+    if (!row.booking_request_id) continue;
+    counts.set(row.booking_request_id, (counts.get(row.booking_request_id) || 0) + 1);
+  }
+  return counts;
 }
 
 export async function markNotificationRead(notificationId: string, profileId: string) {

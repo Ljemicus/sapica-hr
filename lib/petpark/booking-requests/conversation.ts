@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
+import { bookingRequestTargetPath } from './activity';
 import type { BookingRequestRow } from './types';
 
 export type BookingRequestConversationRole = 'owner' | 'provider' | 'admin';
@@ -167,7 +168,7 @@ export async function createBookingRequestMessage(input: { requestId: string; pr
         body: participant.role === 'owner'
           ? `${participant.request.requester_name || 'Vlasnik'} je poslao poruku za ${participant.request.service_label}.`
           : `${participant.request.provider_name} je poslao poruku za ${participant.request.service_label}.`,
-        target_path: participant.role === 'owner' ? '/moje-usluge' : '/moji-upiti',
+        target_path: participant.role === 'owner' ? bookingRequestTargetPath('/moje-usluge', input.requestId) : bookingRequestTargetPath('/moji-upiti', input.requestId),
         metadata: { providerSlug: participant.request.provider_slug, serviceLabel: participant.request.service_label },
       });
     } catch {

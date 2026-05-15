@@ -50,6 +50,7 @@ const CSRF_EXCLUDED_ROUTES = [
   '/api/auth/logout',
   '/api/admin/service-listings',
   '/api/booking-requests',
+  '/api/notifications',
   '/api/service-listings/draft-disabled',
 ];
 

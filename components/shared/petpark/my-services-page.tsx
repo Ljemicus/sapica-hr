@@ -338,13 +338,21 @@ function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: Owne
             Još nema booking upita. Kad vlasnik pošalje upit s javne stranice tvoje usluge, pojavit će se ovdje za ručni follow-up.
           </div>
         ) : bookingRequests.map((request) => (
-          <div key={request.id} className="rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] p-4 shadow-[var(--pp-shadow-small-card)]">
+          <div
+            key={request.id}
+            id={`request-${request.id}`}
+            className={cn(
+              'scroll-mt-28 rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] p-4 shadow-[var(--pp-shadow-small-card)] target:border-[color:var(--pp-color-orange-primary)]/60 target:ring-4 target:ring-[color:var(--pp-color-orange-primary)]/15',
+              request.unreadNotificationCount > 0 && 'border-[color:var(--pp-color-orange-primary)]/35',
+            )}
+          >
             <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="font-black text-[color:var(--pp-color-forest-text)]">{request.serviceLabel}</h3>
                   <StatusBadge status="draft" />
                   <span className={`rounded-full px-3 py-1 text-xs font-black ${statusClass(request.status)}`}>{statusLabel(request.status)}</span>
+                  {request.unreadNotificationCount > 0 ? <Badge variant="orange">{request.unreadNotificationCount} novo</Badge> : null}
                 </div>
                 <p className="mt-2 text-sm font-bold text-[color:var(--pp-color-muted-text)]">{request.petName} · {request.petType === 'pas' ? 'Pas' : request.petType === 'macka' ? 'Mačka' : 'Drugo'} · {request.dateRange}</p>
                 <div className="mt-3 rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-cream-surface)] p-3">
