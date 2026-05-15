@@ -8,11 +8,16 @@ export const metadata: Metadata = {
   description: 'Provider dashboard za upravljanje PetPark uslugama, rezervacijama, recenzijama i prihodima.',
 };
 
-export default async function MojeUslugeRoute() {
-  const [providerServices, bookingRequests] = await Promise.all([
+type MojeUslugeRouteProps = {
+  searchParams: Promise<{ request?: string }>;
+};
+
+export default async function MojeUslugeRoute({ searchParams }: MojeUslugeRouteProps) {
+  const [providerServices, bookingRequests, params] = await Promise.all([
     getOwnedServiceListingSummaries(),
     getOwnedBookingRequestSummaries(),
+    searchParams,
   ]);
 
-  return <MyServicesPage providerServices={providerServices} bookingRequests={bookingRequests} />;
+  return <MyServicesPage providerServices={providerServices} bookingRequests={bookingRequests} selectedRequestId={params.request} />;
 }

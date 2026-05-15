@@ -6,11 +6,9 @@ import {
   Edit3,
   Eye,
   Home,
-  Mail,
   MessageCircle,
   MoreHorizontal,
   PawPrint,
-  Phone,
   Plus,
   ShieldCheck,
   Star,
@@ -31,7 +29,7 @@ import {
 import { cn } from '@/lib/utils';
 import { serviceListingReadsGuard, serviceListingWritesGuard } from '@/lib/petpark/service-listings/guards';
 import type { OwnedBookingRequestSummary } from '@/lib/petpark/booking-requests/types';
-import { BookingRequestConversation } from './booking-request-conversation';
+import { BookingRequestDetailSurface } from './booking-request-detail-surface';
 import { BookingRequestStatusActions } from './booking-request-status-actions';
 
 type ServiceStatus = 'active' | 'draft' | 'paused';
@@ -286,27 +284,7 @@ function ServicesTable({ providerServices = services }: { providerServices?: Pro
   );
 }
 
-function BookingRequestTimeline({ events }: { events: OwnedBookingRequestSummary['events'] }) {
-  if (!events.length) {
-    return null;
-  }
-
-  return (
-    <div className="mt-3 rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-sage-surface)] p-3">
-      <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Aktivnost upita</p>
-      <ol className="mt-2 space-y-2">
-        {events.map((event) => (
-          <li key={event.id} className="flex gap-2 text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">
-            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-[color:var(--pp-color-teal-accent)]" aria-hidden />
-            <span><strong className="text-[color:var(--pp-color-forest-text)]">{event.summary}</strong> · {event.createdAtLabel}</span>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
-}
-
-function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: OwnedBookingRequestSummary[] }) {
+function BookingRequestsPanel({ bookingRequests = [], selectedRequestId }: { bookingRequests?: OwnedBookingRequestSummary[]; selectedRequestId?: string }) {
   const statusLabel = (status: string) => {
     if (status === 'pending') return 'Novo';
     if (status === 'contacted') return 'Kontaktirano';
@@ -355,23 +333,29 @@ function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: Owne
                   {request.unreadNotificationCount > 0 ? <Badge variant="orange">{request.unreadNotificationCount} novo</Badge> : null}
                 </div>
                 <p className="mt-2 text-sm font-bold text-[color:var(--pp-color-muted-text)]">{request.petName} · {request.petType === 'pas' ? 'Pas' : request.petType === 'macka' ? 'Mačka' : 'Drugo'} · {request.dateRange}</p>
-                <div className="mt-3 rounded-[var(--pp-radius-card-20)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-cream-surface)] p-3">
-                  <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Kontakt vlasnika</p>
-                  {request.requesterName || request.requesterEmail || request.requesterPhone ? (
-                    <div className="mt-2 grid gap-2 text-sm font-bold leading-6 text-[color:var(--pp-color-forest-text)] sm:grid-cols-2">
-                      {request.requesterName ? <p className="sm:col-span-2"><UserRound className="mr-2 inline size-4 text-[color:var(--pp-color-teal-accent)]" aria-hidden />{request.requesterName}</p> : null}
-                      {request.requesterEmail ? <p className="break-all"><Mail className="mr-2 inline size-4 text-[color:var(--pp-color-teal-accent)]" aria-hidden />{request.requesterEmail}</p> : null}
-                      {request.requesterPhone ? <p className="break-all"><Phone className="mr-2 inline size-4 text-[color:var(--pp-color-teal-accent)]" aria-hidden />{request.requesterPhone}</p> : null}
-                    </div>
-                  ) : (
-                    <p className="mt-2 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">Kontakt podaci nisu zabilježeni za ovaj stariji upit.</p>
-                  )}
-                  <p className="mt-2 text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Kontakt podatke koristi samo za odgovor na ovaj upit.</p>
-                </div>
                 {request.status === 'withdrawn' ? <p className="mt-3 rounded-2xl bg-[color:var(--pp-color-warning-surface)] p-3 text-sm font-black leading-6 text-[color:var(--pp-color-orange-primary)]">Vlasnik je povukao ovaj upit. Ne trebaš odgovarati.</p> : null}
-                <BookingRequestTimeline events={request.events} />
-                <BookingRequestConversation requestId={request.id} enabled={request.conversationEnabled} />
-                {request.notes ? <p className="mt-3 rounded-2xl bg-[color:var(--pp-color-cream-surface)] p-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">“{request.notes}”</p> : null}
+                <BookingRequestDetailSurface
+                  requestId={request.id}
+                  role="provider"
+                  isTargeted={selectedRequestId === request.id}
+                  unreadNotificationCount={request.unreadNotificationCount}
+                  serviceLabel={request.serviceLabel}
+                  statusLabel={statusLabel(request.status)}
+                  statusTone={request.status === 'contacted' || request.status === 'closed' || request.status === 'withdrawn' ? request.status : 'pending'}
+                  dateRange={request.dateRange}
+                  petName={request.petName}
+                  petTypeLabel={request.petType === 'pas' ? 'Pas' : request.petType === 'macka' ? 'Mačka' : 'Drugo'}
+                  submittedAt={request.submittedAt}
+                  notes={request.notes}
+                  events={request.events}
+                  conversationEnabled={request.conversationEnabled}
+                  contact={{ name: request.requesterName, email: request.requesterEmail, phone: request.requesterPhone }}
+                  fields={[
+                    { label: 'Cijena', value: request.priceSnapshot || 'Cijena po dogovoru' },
+                    { label: 'Odgovor', value: request.responseTimeSnapshot || 'Pružatelj odgovara prema dostupnosti' },
+                  ]}
+                  actions={<BookingRequestStatusActions requestId={request.id} status={request.status} />}
+                />
               </div>
               <div className="flex shrink-0 flex-col gap-3 xl:items-end">
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-muted-text)]">{request.submittedAt}</p>
@@ -407,7 +391,7 @@ function InsightPanel() {
   );
 }
 
-export function MyServicesPage({ providerServices, bookingRequests }: { providerServices?: ProviderService[]; bookingRequests?: OwnedBookingRequestSummary[] }) {
+export function MyServicesPage({ providerServices, bookingRequests, selectedRequestId }: { providerServices?: ProviderService[]; bookingRequests?: OwnedBookingRequestSummary[]; selectedRequestId?: string }) {
   return (
     <main data-petpark-route="moje-usluge" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
       <AppHeader navItems={navItems} actions={<ButtonLink href="/objavi-uslugu" size="sm"><Plus className="size-4" /> Spremi nacrt</ButtonLink>} />
@@ -436,7 +420,7 @@ export function MyServicesPage({ providerServices, bookingRequests }: { provider
                 <StatCard label="Ukupan prihod" value="1.545 €" icon={TrendingUp} tone="cream" />
               </div>
 
-              <BookingRequestsPanel bookingRequests={bookingRequests} />
+              <BookingRequestsPanel bookingRequests={bookingRequests} selectedRequestId={selectedRequestId} />
               <ServicesTable providerServices={providerServices && providerServices.length > 0 ? providerServices : services} />
               <InsightPanel />
             </div>

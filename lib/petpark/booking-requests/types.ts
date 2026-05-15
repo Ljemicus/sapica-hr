@@ -54,6 +54,8 @@ export type OwnedBookingRequestSummary = {
   id: string;
   providerSlug: string;
   serviceLabel: string;
+  priceSnapshot: string;
+  responseTimeSnapshot: string;
   petName: string;
   petType: string;
   dateRange: string;

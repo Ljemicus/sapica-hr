@@ -225,6 +225,8 @@ export async function getOwnedBookingRequestSummaries(): Promise<OwnedBookingReq
       id: request.id,
       providerSlug: request.provider_slug,
       serviceLabel: request.service_label,
+      priceSnapshot: request.price_snapshot,
+      responseTimeSnapshot: request.response_time_snapshot,
       petName: request.pet_name,
       petType: request.pet_type,
       dateRange: toDateRange(request.start_date, request.end_date),

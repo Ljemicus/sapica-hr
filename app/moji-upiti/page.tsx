@@ -9,11 +9,18 @@ export const metadata: Metadata = {
   description: 'Pregled upita koje si poslao pružateljima PetPark usluga.',
 };
 
-export default async function MojiUpitiRoute() {
+type MojiUpitiRouteProps = {
+  searchParams: Promise<{ request?: string }>;
+};
+
+export default async function MojiUpitiRoute({ searchParams }: MojiUpitiRouteProps) {
   const user = await getAuthUser();
   if (!user) redirect('/prijava?redirect=%2Fmoji-upiti');
 
-  const requests = await getOwnerBookingRequestSummaries(user.id);
+  const [requests, params] = await Promise.all([
+    getOwnerBookingRequestSummaries(user.id),
+    searchParams,
+  ]);
 
-  return <MyRequestsPage requests={requests} />;
+  return <MyRequestsPage requests={requests} selectedRequestId={params.request} />;
 }

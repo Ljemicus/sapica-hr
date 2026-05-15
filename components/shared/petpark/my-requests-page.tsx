@@ -1,9 +1,8 @@
-import Link from 'next/link';
-import { CalendarDays, CheckCircle2, Clock3, Eye, HeartHandshake, Home, MessageCircle, PawPrint, ShieldCheck, Sparkles, UserRound } from 'lucide-react';
+import { CalendarDays, CheckCircle2, Clock3, Eye, HeartHandshake, Home, MessageCircle, PawPrint, Sparkles, UserRound } from 'lucide-react';
 import { AppHeader, Avatar, Badge, ButtonLink, Card, LeafDecoration, PawDecoration } from '@/components/shared/petpark/design-foundation';
 import { cn } from '@/lib/utils';
 import type { OwnerBookingRequestSummary } from '@/lib/petpark/booking-requests/types';
-import { BookingRequestConversation } from './booking-request-conversation';
+import { BookingRequestDetailSurface } from './booking-request-detail-surface';
 import { BookingRequestWithdrawAction } from './booking-request-withdraw-action';
 
 const navItems = [
@@ -69,33 +68,6 @@ function RequestStatusChip({ request }: { request: OwnerBookingRequestSummary })
   return <span className={cn('rounded-full border px-3 py-1 text-xs font-black', statusClasses[request.status])}>{request.statusLabel}</span>;
 }
 
-function BookingRequestTimeline({ events }: { events: OwnerBookingRequestSummary['events'] }) {
-  if (!events.length) {
-    return (
-      <div className="mt-4 rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-sage-surface)] p-3 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
-        Aktivnost će se pojaviti ovdje kada se status upita promijeni.
-      </div>
-    );
-  }
-
-  return (
-    <div className="mt-4 rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-sage-surface)] p-4">
-      <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Aktivnost upita</p>
-      <ol className="mt-3 space-y-3">
-        {events.map((event) => (
-          <li key={event.id} className="flex gap-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">
-            <span className="mt-1 size-2 shrink-0 rounded-full bg-[color:var(--pp-color-teal-accent)]" aria-hidden />
-            <span>
-              <strong className="block text-[color:var(--pp-color-forest-text)]">{event.summary}</strong>
-              <span>{event.createdAtLabel}</span>
-            </span>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
-}
-
 function EmptyState() {
   return (
     <Card radius="28" className="p-8 text-center md:p-12">
@@ -114,7 +86,7 @@ function EmptyState() {
   );
 }
 
-function RequestCard({ request }: { request: OwnerBookingRequestSummary }) {
+function RequestCard({ request, isTargeted }: { request: OwnerBookingRequestSummary; isTargeted?: boolean }) {
   const notesPreview = request.notes.length > 140 ? `${request.notes.slice(0, 140).trim()}…` : request.notes;
 
   return (
@@ -141,7 +113,6 @@ function RequestCard({ request }: { request: OwnerBookingRequestSummary }) {
           </div>
           <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{lifecycleCopy[request.status]}</p>
           {notesPreview ? <p className="mt-4 rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-cream-surface)] p-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">“{notesPreview}”</p> : null}
-          <BookingRequestWithdrawAction requestId={request.id} status={request.status} />
         </div>
         <ButtonLink href={`/usluge/${request.providerSlug}`} variant="secondary" size="md" className="shrink-0 justify-center">
           <Eye className="size-4" aria-hidden />
@@ -149,47 +120,35 @@ function RequestCard({ request }: { request: OwnerBookingRequestSummary }) {
         </ButtonLink>
       </div>
 
-      <details className="group mt-5 rounded-[var(--pp-radius-card-24)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] p-4">
-        <summary className="cursor-pointer list-none text-sm font-black text-[color:var(--pp-color-forest-text)] marker:hidden">
-          {request.unreadNotificationCount > 0 ? `${request.unreadNotificationCount} nepročitano · ` : ''}Pogledaj detalje upita
-          <span className="ml-2 text-xs font-bold text-[color:var(--pp-color-muted-text)] group-open:hidden">+</span>
-          <span className="ml-2 hidden text-xs font-bold text-[color:var(--pp-color-muted-text)] group-open:inline">−</span>
-        </summary>
-        <BookingRequestTimeline events={request.events} />
-        <BookingRequestConversation requestId={request.id} enabled={request.conversationEnabled} />
-        <div className="mt-4 grid gap-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)] md:grid-cols-2">
-          <div className="rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-cream-surface)] p-3">
-            <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Cijena</p>
-            <p className="mt-1 text-[color:var(--pp-color-forest-text)]">{request.priceSnapshot || 'Cijena po dogovoru'}</p>
-          </div>
-          <div className="rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-cream-surface)] p-3">
-            <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Odgovor</p>
-            <p className="mt-1 text-[color:var(--pp-color-forest-text)]">{request.responseTimeSnapshot || 'Pružatelj odgovara prema dostupnosti'}</p>
-          </div>
-          <div className="rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-cream-surface)] p-3 md:col-span-2">
-            <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Kontakt koji si poslao</p>
-            <p className="mt-1 text-[color:var(--pp-color-forest-text)]">
-              {[request.contactMethod.email, request.contactMethod.phone].filter(Boolean).join(' · ') || 'Kontakt je zabilježen uz upit.'}
-            </p>
-          </div>
-          {request.notes ? (
-            <div className="rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-cream-surface)] p-3 md:col-span-2">
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Tvoja napomena</p>
-              <p className="mt-1 whitespace-pre-wrap text-[color:var(--pp-color-forest-text)]">{request.notes}</p>
-            </div>
-          ) : null}
-        </div>
-      </details>
-
-      <div className="mt-4 flex gap-3 rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-sage-surface)] p-3 text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">
-        <ShieldCheck className="mt-0.5 size-4 shrink-0 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
-        <span>Kontakt podatke dijelimo samo s pružateljem kojem šalješ upit. Ovaj prikaz je samo za praćenje statusa; upit nije potvrđena rezervacija.</span>
-      </div>
+      <BookingRequestDetailSurface
+        requestId={request.id}
+        role="owner"
+        isTargeted={isTargeted}
+        unreadNotificationCount={request.unreadNotificationCount}
+        serviceLabel={request.serviceLabel}
+        providerName={request.providerName}
+        statusLabel={request.statusLabel}
+        statusTone={request.status}
+        dateRange={request.dateRange}
+        petName={request.petName}
+        petTypeLabel={petTypeLabel(request.petType)}
+        submittedAt={request.submittedAt}
+        notes={request.notes}
+        events={request.events}
+        conversationEnabled={request.conversationEnabled}
+        contact={{ email: request.contactMethod.email, phone: request.contactMethod.phone, masked: true }}
+        fields={[
+          { label: 'Cijena', value: request.priceSnapshot || 'Cijena po dogovoru' },
+          { label: 'Odgovor', value: request.responseTimeSnapshot || 'Pružatelj odgovara prema dostupnosti' },
+        ]}
+        actions={<BookingRequestWithdrawAction requestId={request.id} status={request.status} />}
+        footerCopy="Ovo je upit, ne potvrđena rezervacija. Pružatelj ručno dogovara detalje. Kontakt podatke dijelimo samo s pružateljem kojem šalješ upit."
+      />
     </Card>
   );
 }
 
-export function MyRequestsPage({ requests }: { requests: OwnerBookingRequestSummary[] }) {
+export function MyRequestsPage({ requests, selectedRequestId }: { requests: OwnerBookingRequestSummary[]; selectedRequestId?: string }) {
   const counts = requests.reduce<Record<OwnerBookingRequestSummary['status'], number>>((acc, request) => {
     acc[request.status] += 1;
     return acc;
@@ -236,7 +195,7 @@ export function MyRequestsPage({ requests }: { requests: OwnerBookingRequestSumm
               </div>
             </Card>
 
-            {requests.length ? <div className="space-y-4">{requests.map((request) => <RequestCard key={request.id} request={request} />)}</div> : <EmptyState />}
+            {requests.length ? <div className="space-y-4">{requests.map((request) => <RequestCard key={request.id} request={request} isTargeted={selectedRequestId === request.id} />)}</div> : <EmptyState />}
           </div>
         </div>
       </section>
