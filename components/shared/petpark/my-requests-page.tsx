@@ -3,6 +3,7 @@ import { CalendarDays, CheckCircle2, Clock3, Eye, HeartHandshake, Home, MessageC
 import { AppHeader, Avatar, Badge, ButtonLink, Card, LeafDecoration, PawDecoration } from '@/components/shared/petpark/design-foundation';
 import { cn } from '@/lib/utils';
 import type { OwnerBookingRequestSummary } from '@/lib/petpark/booking-requests/types';
+import { BookingRequestConversation } from './booking-request-conversation';
 import { BookingRequestWithdrawAction } from './booking-request-withdraw-action';
 
 const navItems = [
@@ -147,6 +148,7 @@ function RequestCard({ request }: { request: OwnerBookingRequestSummary }) {
           <span className="ml-2 hidden text-xs font-bold text-[color:var(--pp-color-muted-text)] group-open:inline">−</span>
         </summary>
         <BookingRequestTimeline events={request.events} />
+        <BookingRequestConversation requestId={request.id} enabled={request.conversationEnabled} />
         <div className="mt-4 grid gap-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)] md:grid-cols-2">
           <div className="rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-cream-surface)] p-3">
             <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Cijena</p>

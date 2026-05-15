@@ -232,6 +232,7 @@ export async function getOwnedBookingRequestSummaries(): Promise<OwnedBookingReq
       requesterEmail: request.requester_email,
       requesterPhone: request.requester_phone,
       contactConsent: request.contact_consent,
+      conversationEnabled: Boolean(request.owner_profile_id),
       events: eventsByRequest.get(request.id) || [],
     }));
   } catch {

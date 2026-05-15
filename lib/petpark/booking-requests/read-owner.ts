@@ -68,6 +68,7 @@ export function mapOwnerBookingRequestSummary(request: BookingRequestRow, events
       phone: maskRequesterPhone(request.requester_phone),
       consent: Boolean(request.contact_consent),
     },
+    conversationEnabled: Boolean(request.owner_profile_id),
     events,
   };
 }

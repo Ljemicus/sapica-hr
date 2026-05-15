@@ -159,6 +159,51 @@ export type Database = {
           },
         ]
       }
+      booking_request_messages: {
+        Row: {
+          body: string
+          booking_request_id: string
+          created_at: string
+          id: string
+          metadata: Json
+          sender_profile_id: string
+          sender_role: string
+        }
+        Insert: {
+          body: string
+          booking_request_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          sender_profile_id: string
+          sender_role: string
+        }
+        Update: {
+          body?: string
+          booking_request_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          sender_profile_id?: string
+          sender_role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_request_messages_booking_request_id_fkey"
+            columns: ["booking_request_id"]
+            isOneToOne: false
+            referencedRelation: "booking_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_request_messages_sender_profile_id_fkey"
+            columns: ["sender_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_requests: {
         Row: {
           contact_consent: boolean

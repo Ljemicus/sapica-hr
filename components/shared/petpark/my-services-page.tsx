@@ -31,6 +31,7 @@ import {
 import { cn } from '@/lib/utils';
 import { serviceListingReadsGuard, serviceListingWritesGuard } from '@/lib/petpark/service-listings/guards';
 import type { OwnedBookingRequestSummary } from '@/lib/petpark/booking-requests/types';
+import { BookingRequestConversation } from './booking-request-conversation';
 import { BookingRequestStatusActions } from './booking-request-status-actions';
 
 type ServiceStatus = 'active' | 'draft' | 'paused';
@@ -361,6 +362,7 @@ function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: Owne
                 </div>
                 {request.status === 'withdrawn' ? <p className="mt-3 rounded-2xl bg-[color:var(--pp-color-warning-surface)] p-3 text-sm font-black leading-6 text-[color:var(--pp-color-orange-primary)]">Vlasnik je povukao ovaj upit. Ne trebaš odgovarati.</p> : null}
                 <BookingRequestTimeline events={request.events} />
+                <BookingRequestConversation requestId={request.id} enabled={request.conversationEnabled} />
                 {request.notes ? <p className="mt-3 rounded-2xl bg-[color:var(--pp-color-cream-surface)] p-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">“{request.notes}”</p> : null}
               </div>
               <div className="flex shrink-0 flex-col gap-3 xl:items-end">
