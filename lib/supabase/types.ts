@@ -105,6 +105,60 @@ export type Database = {
           },
         ]
       }
+      booking_request_events: {
+        Row: {
+          actor_profile_id: string | null
+          actor_role: string
+          booking_request_id: string
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json
+          new_status: string | null
+          old_status: string | null
+          summary: string
+        }
+        Insert: {
+          actor_profile_id?: string | null
+          actor_role: string
+          booking_request_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json
+          new_status?: string | null
+          old_status?: string | null
+          summary: string
+        }
+        Update: {
+          actor_profile_id?: string | null
+          actor_role?: string
+          booking_request_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+          new_status?: string | null
+          old_status?: string | null
+          summary?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_request_events_actor_profile_id_fkey"
+            columns: ["actor_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_request_events_booking_request_id_fkey"
+            columns: ["booking_request_id"]
+            isOneToOne: false
+            referencedRelation: "booking_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_requests: {
         Row: {
           contact_consent: boolean
@@ -420,6 +474,60 @@ export type Database = {
           {
             foreignKeyName: "messages_sender_profile_id_fkey"
             columns: ["sender_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string
+          booking_request_id: string | null
+          created_at: string
+          id: string
+          metadata: Json
+          read_at: string | null
+          recipient_profile_id: string
+          target_path: string
+          title: string
+          type: string
+        }
+        Insert: {
+          body: string
+          booking_request_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          read_at?: string | null
+          recipient_profile_id: string
+          target_path: string
+          title: string
+          type: string
+        }
+        Update: {
+          body?: string
+          booking_request_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          read_at?: string | null
+          recipient_profile_id?: string
+          target_path?: string
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_booking_request_id_fkey"
+            columns: ["booking_request_id"]
+            isOneToOne: false
+            referencedRelation: "booking_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_recipient_profile_id_fkey"
+            columns: ["recipient_profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
