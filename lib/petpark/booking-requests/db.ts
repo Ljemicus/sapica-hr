@@ -1,5 +1,4 @@
 import { createAdminClient } from '@/lib/supabase/admin';
-import { createClient } from '@/lib/supabase/server';
 import { getAuthUser } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { canTransitionBookingRequestStatus, canWithdrawBookingRequestStatus } from './schema';
@@ -183,10 +182,9 @@ export async function getOwnedBookingRequestSummaries(): Promise<OwnedBookingReq
   if (!isSupabaseConfigured()) return [];
 
   try {
-    const supabase = await createClient();
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    const userId = userData.user?.id;
-    if (userError || !userId) return [];
+    const user = await getAuthUser();
+    const userId = user?.id;
+    if (!userId) return [];
 
     const admin = createAdminClient();
     const { data: providers, error: providersError } = await admin
