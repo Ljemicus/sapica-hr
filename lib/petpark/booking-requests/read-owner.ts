@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
+import { getBookingRequestEventsByRequestIds } from './activity';
 import type { BookingRequestRow, BookingRequestStatus, OwnerBookingRequestSummary } from './types';
 
 const ownerStatusLabels: Record<BookingRequestStatus, OwnerBookingRequestSummary['statusLabel']> = {
@@ -46,7 +47,7 @@ export function maskRequesterPhone(phone?: string | null) {
   return `${compact.slice(0, 4)}••••${compact.slice(-3)}`;
 }
 
-export function mapOwnerBookingRequestSummary(request: BookingRequestRow): OwnerBookingRequestSummary {
+export function mapOwnerBookingRequestSummary(request: BookingRequestRow, events: OwnerBookingRequestSummary['events'] = []): OwnerBookingRequestSummary {
   const status = normalizeStatus(request.status);
   return {
     id: request.id,
@@ -67,6 +68,7 @@ export function mapOwnerBookingRequestSummary(request: BookingRequestRow): Owner
       phone: maskRequesterPhone(request.requester_phone),
       consent: Boolean(request.contact_consent),
     },
+    events,
   };
 }
 
@@ -83,7 +85,10 @@ export async function getOwnerBookingRequestSummaries(ownerProfileId: string): P
       .limit(50);
 
     if (error || !data) return [];
-    return (data as BookingRequestRow[]).map(mapOwnerBookingRequestSummary);
+
+    const requests = data as BookingRequestRow[];
+    const eventsByRequest = await getBookingRequestEventsByRequestIds(requests.map((request) => request.id));
+    return requests.map((request) => mapOwnerBookingRequestSummary(request, eventsByRequest.get(request.id) || []));
   } catch {
     return [];
   }

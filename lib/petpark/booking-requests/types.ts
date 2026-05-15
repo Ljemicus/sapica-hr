@@ -1,3 +1,5 @@
+import type { BookingRequestEventSummary } from './activity';
+
 export type BookingRequestStatus = 'pending' | 'contacted' | 'closed' | 'withdrawn';
 export type BookingRequestActionStatus = 'contacted' | 'closed';
 
@@ -62,6 +64,7 @@ export type OwnedBookingRequestSummary = {
   requesterEmail: string | null;
   requesterPhone: string | null;
   contactConsent: boolean;
+  events: BookingRequestEventSummary[];
 };
 
 export type OwnerBookingRequestSummary = {
@@ -83,6 +86,7 @@ export type OwnerBookingRequestSummary = {
     phone: string | null;
     consent: boolean;
   };
+  events: BookingRequestEventSummary[];
 };
 
 export type BookingRequestStatusUpdateResult =

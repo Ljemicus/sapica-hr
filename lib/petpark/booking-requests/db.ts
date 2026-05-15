@@ -3,6 +3,13 @@ import { createClient } from '@/lib/supabase/server';
 import { getAuthUser } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { canTransitionBookingRequestStatus, canWithdrawBookingRequestStatus } from './schema';
+import {
+  createBookingRequestCreatedArtifacts,
+  createOwnerWithdrawnArtifacts,
+  createProviderClosedArtifacts,
+  createProviderContactedArtifacts,
+  getBookingRequestEventsByRequestIds,
+} from './activity';
 import type { BookingRequestInputPayload } from './schema';
 import type { BookingRequestActionStatus, BookingRequestRow, BookingRequestStatusUpdateResult, OwnedBookingRequestSummary } from './types';
 
@@ -47,7 +54,11 @@ export async function createBookingRequest(input: BookingRequestInputPayload): P
     .single();
 
   if (error || !data) return null;
-  return data as BookingRequestRow;
+
+  const bookingRequest = data as BookingRequestRow;
+  await createBookingRequestCreatedArtifacts(bookingRequest, user?.id || null).catch(() => undefined);
+
+  return bookingRequest;
 }
 
 export async function updateOwnedBookingRequestStatus(requestId: string, nextStatus: BookingRequestActionStatus): Promise<BookingRequestStatusUpdateResult> {
@@ -110,6 +121,13 @@ export async function updateOwnedBookingRequestStatus(requestId: string, nextSta
     return { ok: false, statusCode: 500, code: 'BOOKING_REQUEST_STATUS_UPDATE_FAILED', message: 'Status upita trenutno nije moguće promijeniti.' };
   }
 
+  const actorRole = user.role === 'admin' ? 'admin' : 'provider';
+  if (nextStatus === 'contacted') {
+    await createProviderContactedArtifacts(bookingRequest, user.id, bookingRequest.status, actorRole).catch(() => undefined);
+  } else {
+    await createProviderClosedArtifacts(bookingRequest, user.id, bookingRequest.status, actorRole).catch(() => undefined);
+  }
+
   return { ok: true, id: updated.id, status: updated.status };
 }
 
@@ -155,6 +173,8 @@ export async function withdrawOwnedBookingRequest(requestId: string): Promise<Bo
     return { ok: false, statusCode: 500, code: 'BOOKING_REQUEST_WITHDRAW_FAILED', message: 'Upit trenutno nije moguće povući.' };
   }
 
+  await createOwnerWithdrawnArtifacts(bookingRequest, user.id, bookingRequest.status).catch(() => undefined);
+
   return { ok: true, id: updated.id, status: updated.status };
 }
 
@@ -195,7 +215,10 @@ export async function getOwnedBookingRequestSummaries(): Promise<OwnedBookingReq
 
     if (error || !data) return [];
 
-    return (data as BookingRequestRow[]).map((request) => ({
+    const requests = data as BookingRequestRow[];
+    const eventsByRequest = await getBookingRequestEventsByRequestIds(requests.map((request) => request.id));
+
+    return requests.map((request) => ({
       id: request.id,
       providerSlug: request.provider_slug,
       serviceLabel: request.service_label,
@@ -209,6 +232,7 @@ export async function getOwnedBookingRequestSummaries(): Promise<OwnedBookingReq
       requesterEmail: request.requester_email,
       requesterPhone: request.requester_phone,
       contactConsent: request.contact_consent,
+      events: eventsByRequest.get(request.id) || [],
     }));
   } catch {
     return [];

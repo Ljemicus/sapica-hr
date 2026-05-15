@@ -285,6 +285,26 @@ function ServicesTable({ providerServices = services }: { providerServices?: Pro
   );
 }
 
+function BookingRequestTimeline({ events }: { events: OwnedBookingRequestSummary['events'] }) {
+  if (!events.length) {
+    return null;
+  }
+
+  return (
+    <div className="mt-3 rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-sage-surface)] p-3">
+      <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Aktivnost upita</p>
+      <ol className="mt-2 space-y-2">
+        {events.map((event) => (
+          <li key={event.id} className="flex gap-2 text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">
+            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-[color:var(--pp-color-teal-accent)]" aria-hidden />
+            <span><strong className="text-[color:var(--pp-color-forest-text)]">{event.summary}</strong> · {event.createdAtLabel}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
 function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: OwnedBookingRequestSummary[] }) {
   const statusLabel = (status: string) => {
     if (status === 'pending') return 'Novo';
@@ -340,6 +360,7 @@ function BookingRequestsPanel({ bookingRequests = [] }: { bookingRequests?: Owne
                   <p className="mt-2 text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Kontakt podatke koristi samo za odgovor na ovaj upit.</p>
                 </div>
                 {request.status === 'withdrawn' ? <p className="mt-3 rounded-2xl bg-[color:var(--pp-color-warning-surface)] p-3 text-sm font-black leading-6 text-[color:var(--pp-color-orange-primary)]">Vlasnik je povukao ovaj upit. Ne trebaš odgovarati.</p> : null}
+                <BookingRequestTimeline events={request.events} />
                 {request.notes ? <p className="mt-3 rounded-2xl bg-[color:var(--pp-color-cream-surface)] p-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">“{request.notes}”</p> : null}
               </div>
               <div className="flex shrink-0 flex-col gap-3 xl:items-end">

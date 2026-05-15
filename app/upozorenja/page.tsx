@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { Bell, CalendarDays, CheckCircle2, MessageCircle, PawPrint, Settings, ShieldAlert, Syringe, UsersRound } from 'lucide-react';
+import { Bell, CalendarDays, MessageCircle, PawPrint, Settings, ShieldAlert } from 'lucide-react';
 import {
   AppHeader,
   Badge,
@@ -10,7 +10,9 @@ import {
   LeafDecoration,
   PawDecoration,
 } from '@/components/shared/petpark/design-foundation';
+import { NotificationReadAction } from '@/components/shared/petpark/notification-read-action';
 import { getAuthUser } from '@/lib/auth';
+import { getNotificationsForProfile, type BookingRequestNotificationSummary } from '@/lib/petpark/booking-requests/activity';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
@@ -25,52 +27,55 @@ const navItems = [
   { href: '/postavke', label: 'Postavke' },
 ];
 
-const tabs = ['Sve', 'Važno', 'Poruke', 'Rezervacije', 'Ljubimci', 'Zajednica'];
+const tabs = ['Sve', 'Booking upiti', 'Nepročitano', 'Pročitano'];
 
-const notifications = [
-  { title: 'Nestao pas Roko u Spinutu', description: 'Nova hitna objava u vašem području. Ako ste u blizini, provjerite detalje i podijelite.', time: 'prije 8 min', category: 'Važno', href: '/izgubljeni', icon: ShieldAlert, tone: 'error' as const, unread: true },
-  { title: 'Maca Milo je pronađena', description: 'Objava koju ste pratili označena je kao pronađena i sigurna.', time: 'prije 24 min', category: 'Ljubimci', href: '/izgubljeni', icon: CheckCircle2, tone: 'success' as const, unread: true },
-  { title: 'Nova poruka od Maje', description: 'Maja je odgovorila na upit za čuvanje preko vikenda.', time: 'prije 1 h', category: 'Poruke', href: '/poruke', icon: MessageCircle, tone: 'teal' as const, unread: true },
-  { title: 'Rezervacija prihvaćena', description: 'Termin za grooming je potvrđen za petak u 17:30.', time: 'danas 12:10', category: 'Rezervacije', href: '/kalendar', icon: CalendarDays, tone: 'success' as const, unread: false },
-  { title: 'Podsjetnik prije rezervacije', description: 'Sutra imate dogovorenu šetnju. Provjerite lokaciju i napomene.', time: 'danas 09:00', category: 'Rezervacije', href: '/kalendar/dan', icon: Bell, tone: 'orange' as const, unread: false },
-  { title: 'Cjepivo uskoro istječe', description: 'Pet Passport podsjetnik: provjerite godišnje cijepljenje za Lunu.', time: 'jučer', category: 'Ljubimci', href: '/pet-passport', icon: Syringe, tone: 'orange' as const, unread: false },
-  { title: 'Odgovor u zajednici', description: 'Netko je odgovorio na vašu temu o socijalizaciji šteneta.', time: 'jučer', category: 'Zajednica', href: '/zajednica', icon: UsersRound, tone: 'teal' as const, unread: false },
-];
+function notificationTone(type: BookingRequestNotificationSummary['type']) {
+  if (type === 'booking_request_created') return 'orange' as const;
+  if (type === 'booking_request_withdrawn') return 'error' as const;
+  if (type === 'booking_request_closed') return 'sage' as const;
+  return 'teal' as const;
+}
 
-function NotificationCard({ item }: { item: (typeof notifications)[number] }) {
-  const Icon = item.icon;
+function NotificationCard({ item }: { item: BookingRequestNotificationSummary }) {
+  const tone = notificationTone(item.type);
+  const unread = !item.readAt;
+
   return (
-    <Link href={item.href} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2">
-      <Card radius="28" interactive className={cn('p-5', item.unread && 'border-[color:var(--pp-color-orange-primary)]/35')}>
-        <div className="flex items-start gap-4">
-          <span className={cn(
-            'flex size-12 shrink-0 items-center justify-center rounded-[var(--pp-radius-control)] text-white shadow-[var(--pp-shadow-small-card)]',
-            item.tone === 'error' && 'bg-[color:var(--pp-color-error)]',
-            item.tone === 'success' && 'bg-[color:var(--pp-color-success)]',
-            item.tone === 'teal' && 'bg-[color:var(--pp-color-teal-accent)]',
-            item.tone === 'orange' && 'bg-[color:var(--pp-color-orange-primary)]',
-          )}>
-            <Icon className="size-5" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant={item.tone === 'error' ? 'error' : item.tone === 'success' ? 'success' : item.tone === 'orange' ? 'orange' : 'teal'}>{item.category}</Badge>
-              {item.unread ? <Badge variant="orange">Novo</Badge> : <Badge variant="sage">Pročitano</Badge>}
-              <span className="text-xs font-black text-[color:var(--pp-color-muted-text)]">{item.time}</span>
-            </div>
-            <h2 className="mt-3 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)] group-hover:text-[color:var(--pp-color-orange-primary)]">{item.title}</h2>
-            <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{item.description}</p>
-            <span className="mt-4 inline-flex text-sm font-black text-[color:var(--pp-color-orange-primary)]">Otvori</span>
+    <Card radius="28" interactive className={cn('p-5', unread && 'border-[color:var(--pp-color-orange-primary)]/35')}>
+      <div className="flex items-start gap-4">
+        <span className={cn(
+          'flex size-12 shrink-0 items-center justify-center rounded-[var(--pp-radius-control)] text-white shadow-[var(--pp-shadow-small-card)]',
+          tone === 'error' && 'bg-[color:var(--pp-color-error)]',
+          tone === 'sage' && 'bg-[color:var(--pp-color-muted-text)]',
+          tone === 'teal' && 'bg-[color:var(--pp-color-teal-accent)]',
+          tone === 'orange' && 'bg-[color:var(--pp-color-orange-primary)]',
+        )}>
+          <Bell className="size-5" aria-hidden />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant={tone === 'error' ? 'error' : tone === 'orange' ? 'orange' : tone === 'teal' ? 'teal' : 'sage'}>Booking upit</Badge>
+            {unread ? <Badge variant="orange">Novo</Badge> : <Badge variant="sage">Pročitano</Badge>}
+            <span className="text-xs font-black text-[color:var(--pp-color-muted-text)]">{item.createdAtLabel}</span>
+          </div>
+          <h2 className="mt-3 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{item.title}</h2>
+          <p className="mt-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{item.body}</p>
+          <div className="mt-4 flex flex-wrap items-center gap-4">
+            <Link href={item.targetPath} className="inline-flex text-sm font-black text-[color:var(--pp-color-orange-primary)]">Otvori</Link>
+            <NotificationReadAction notificationId={item.id} read={!unread} />
           </div>
         </div>
-      </Card>
-    </Link>
+      </div>
+    </Card>
   );
 }
 
 export default async function AlertsPage() {
   const user = await getAuthUser();
   if (!user) redirect('/prijava?redirect=%2Fupozorenja');
+
+  const notifications = await getNotificationsForProfile(user.id);
+  const unreadCount = notifications.filter((notification) => !notification.readAt).length;
 
   return (
     <main data-petpark-route="upozorenja" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
@@ -84,7 +89,7 @@ export default async function AlertsPage() {
           <Card radius="28" className="p-6 sm:p-8 lg:p-10">
             <Badge variant="orange"><Bell className="size-3" /> Centar obavijesti</Badge>
             <h1 className="mt-5 text-5xl font-black leading-[0.98] tracking-[-0.06em] text-[color:var(--pp-color-forest-text)] sm:text-7xl">Upozorenja</h1>
-            <p className="mt-5 max-w-3xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">Poruke, rezervacije, izgubljeni ljubimci i podsjetnici na jednom mjestu.</p>
+            <p className="mt-5 max-w-3xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">In-app obavijesti za booking upite. Nema emaila, SMS-a ni vanjskih slanja.</p>
           </Card>
 
           <Card radius="24" className="p-3">
@@ -97,32 +102,32 @@ export default async function AlertsPage() {
 
           <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
             <section className="space-y-4">
-              {notifications.length ? notifications.map((item) => <NotificationCard key={item.title} item={item} />) : (
+              {notifications.length ? notifications.map((item) => <NotificationCard key={item.id} item={item} />) : (
                 <Card radius="28" tone="sage" className="p-10 text-center">
                   <Bell className="mx-auto size-12 text-[color:var(--pp-color-orange-primary)]" />
                   <h2 className="mt-5 text-3xl font-black tracking-[-0.04em]">Nema novih upozorenja.</h2>
-                  <p className="mt-3 text-sm font-semibold text-[color:var(--pp-color-muted-text)]">Kad se nešto važno dogodi, pojavit će se ovdje.</p>
+                  <p className="mt-3 text-sm font-semibold text-[color:var(--pp-color-muted-text)]">Kad se dogodi nešto važno oko booking upita, pojavit će se ovdje.</p>
                 </Card>
               )}
             </section>
 
             <aside className="space-y-5 xl:sticky xl:top-28 xl:self-start">
               <Card radius="28" tone="cream" className="p-5">
-                <h2 className="flex items-center gap-2 text-xl font-black tracking-[-0.03em]"><Settings className="size-5 text-[color:var(--pp-color-orange-primary)]" /> Preference</h2>
-                <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Uredi koje vrste obavijesti želiš primati.</p>
-                <ButtonLink href="/postavke" className="mt-5 w-full" variant="secondary">Otvori postavke</ButtonLink>
+                <h2 className="flex items-center gap-2 text-xl font-black tracking-[-0.03em]"><Settings className="size-5 text-[color:var(--pp-color-orange-primary)]" /> Pregled</h2>
+                <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Imaš {notifications.length} obavijesti, od toga {unreadCount} nepročitanih.</p>
+                <ButtonLink href="/moji-upiti" className="mt-5 w-full" variant="secondary">Moji upiti</ButtonLink>
               </Card>
 
               <Card radius="28" tone="orange" className="p-5">
                 <h2 className="flex items-center gap-2 text-xl font-black tracking-[-0.03em]"><ShieldAlert className="size-5 text-[color:var(--pp-color-error)]" /> Sigurnost</h2>
-                <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Za izgubljene ljubimce provjerite identitet i ne šaljite novac unaprijed.</p>
+                <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Ove obavijesti su samo unutar PetParka. Ne šalju se e-mail, SMS, WhatsApp ni push poruke.</p>
               </Card>
 
               <Card radius="28" tone="teal" className="p-5">
                 <h2 className="text-xl font-black tracking-[-0.03em]">Brzi linkovi</h2>
                 <div className="mt-4 grid gap-2">
-                  <ButtonLink href="/poruke" variant="secondary" className="justify-start"><MessageCircle className="size-4" /> Poruke</ButtonLink>
-                  <ButtonLink href="/kalendar" variant="secondary" className="justify-start"><CalendarDays className="size-4" /> Kalendar</ButtonLink>
+                  <ButtonLink href="/moji-upiti" variant="secondary" className="justify-start"><MessageCircle className="size-4" /> Moji upiti</ButtonLink>
+                  <ButtonLink href="/moje-usluge" variant="secondary" className="justify-start"><CalendarDays className="size-4" /> Moje usluge</ButtonLink>
                   <ButtonLink href="/pet-passport" variant="secondary" className="justify-start"><PawPrint className="size-4" /> Pet Passport</ButtonLink>
                 </div>
               </Card>

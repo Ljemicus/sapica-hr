@@ -68,6 +68,33 @@ function RequestStatusChip({ request }: { request: OwnerBookingRequestSummary })
   return <span className={cn('rounded-full border px-3 py-1 text-xs font-black', statusClasses[request.status])}>{request.statusLabel}</span>;
 }
 
+function BookingRequestTimeline({ events }: { events: OwnerBookingRequestSummary['events'] }) {
+  if (!events.length) {
+    return (
+      <div className="mt-4 rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-sage-surface)] p-3 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
+        Aktivnost će se pojaviti ovdje kada se status upita promijeni.
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-4 rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-sage-surface)] p-4">
+      <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Aktivnost upita</p>
+      <ol className="mt-3 space-y-3">
+        {events.map((event) => (
+          <li key={event.id} className="flex gap-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">
+            <span className="mt-1 size-2 shrink-0 rounded-full bg-[color:var(--pp-color-teal-accent)]" aria-hidden />
+            <span>
+              <strong className="block text-[color:var(--pp-color-forest-text)]">{event.summary}</strong>
+              <span>{event.createdAtLabel}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
 function EmptyState() {
   return (
     <Card radius="28" className="p-8 text-center md:p-12">
@@ -119,6 +146,7 @@ function RequestCard({ request }: { request: OwnerBookingRequestSummary }) {
           <span className="ml-2 text-xs font-bold text-[color:var(--pp-color-muted-text)] group-open:hidden">+</span>
           <span className="ml-2 hidden text-xs font-bold text-[color:var(--pp-color-muted-text)] group-open:inline">−</span>
         </summary>
+        <BookingRequestTimeline events={request.events} />
         <div className="mt-4 grid gap-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)] md:grid-cols-2">
           <div className="rounded-[var(--pp-radius-card-20)] bg-[color:var(--pp-color-cream-surface)] p-3">
             <p className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)]">Cijena</p>
